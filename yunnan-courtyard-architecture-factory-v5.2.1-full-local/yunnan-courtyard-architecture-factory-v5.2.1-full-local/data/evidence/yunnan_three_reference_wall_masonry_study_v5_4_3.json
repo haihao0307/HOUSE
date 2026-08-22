@@ -1,0 +1,245 @@
+{
+  "schemaVersion": "5.4.3",
+  "recordId": "YN-THREE-REFERENCE-WALL-MASONRY-STUDY-001",
+  "status": "reference-calibrated",
+  "sourceCases": ["REFERENCE-DALI-001", "REFERENCE-HAOSI1-WULONG-001", "YN_TUANJIE_001"],
+  "method": {
+    "visibleEvidence": ["scan geometry", "base-color textures", "normal textures where present", "consistent WebGL quicklooks"],
+    "rule": "Visible surface and massing observations may calibrate material rendering. Internal wall build-up, material recipes, chronology and structural capacity require measured or documentary evidence.",
+    "modernAndScanArtifactsExcluded": true
+  },
+  "caseStudies": [
+    {
+      "caseId": "REFERENCE-DALI-001",
+      "evidenceClass": "scanned-surface-evidence",
+      "wallSystem": {
+        "mainSurface": {
+          "colorFamily": ["warm-ochre", "earth-brown", "pale-weathered-earth"],
+          "surfaceCondition": ["mottling", "erosion", "patching", "localized loss"],
+          "materialIdentity": "earth-or-plaster candidate, unresolved"
+        },
+        "masonryBands": {
+          "cornerQuoinsCandidate": "blue-gray stone or brick bands visible at corners",
+          "openingSurroundsCandidate": "blue-gray masonry frames around openings",
+          "horizontalBandCandidate": "visible lower-level masonry courses and bands",
+          "baseCandidate": "stone or brick base integrated with lower wall"
+        },
+        "openingTreatment": {
+          "archedOpeningCandidates": "visible on lower facade",
+          "upperOpeningFrames": "masonry-framed vertical openings",
+          "closureState": "partly blocked or closed in scan, chronology unresolved"
+        }
+      },
+      "productionUse": {
+        "allowed": [
+          "high-grade masonry corner and opening-surround vocabulary",
+          "warm earth wall with cool masonry contrast",
+          "surface patch and erosion calibration",
+          "multi-band base and wall composition"
+        ],
+        "prohibited": [
+          "using these high-grade bands on ordinary dwellings without type evidence",
+          "inferring stone species, mortar, structural role or construction date"
+        ]
+      }
+    },
+    {
+      "caseId": "REFERENCE-HAOSI1-WULONG-001",
+      "evidenceClass": "scanned-surface-evidence",
+      "wallSystem": {
+        "mainSurface": {
+          "colorFamily": ["warm-yellow-earth", "gray-brown", "pale-plaster-repair"],
+          "visibleHorizontalLiftsCandidate": true,
+          "surfaceCondition": ["rough granular surface", "water streaks", "faded zones", "repair patches", "local edge loss"],
+          "materialIdentity": "rammed-earth or earth-plaster candidate, unresolved"
+        },
+        "wallMassing": {
+          "externalCharacter": "tall, thick and largely closed",
+          "openingRhythm": "sparse small high openings",
+          "batterCandidate": "subtle, requires orthographic and measured confirmation"
+        },
+        "baseAndGround": {
+          "stoneBaseCandidate": "locally visible",
+          "dampZoneCandidate": "lower wall darkening and vegetation at wall foot",
+          "scanArtifacts": "large triangulated ground shards excluded"
+        },
+        "modernAttachments": [
+          "red electrical or service box candidate",
+          "surface-mounted conduits or service fittings",
+          "chimney or service projection candidate"
+        ]
+      },
+      "productionUse": {
+        "allowed": [
+          "ordinary dwelling wall color family",
+          "large-scale wall tone variation",
+          "water streak and lower-wall damp masks",
+          "sparse high-opening rhythm",
+          "stone-base and wall-surface separation"
+        ],
+        "prohibited": [
+          "copying modern service attachments into 1940s output",
+          "treating vegetation or scan ground shards as masonry",
+          "confirming rammed-earth recipe or lift dimensions from the scan alone"
+        ]
+      }
+    },
+    {
+      "caseId": "YN_TUANJIE_001",
+      "evidenceClass": "semantic-component-evidence",
+      "wallSystem": {
+        "mainSurface": {
+          "colorFamily": ["warm-red-brown-earth", "dark-weathered-brown", "pale-gray-repair", "white-repair"],
+          "surfaceCondition": ["granular exposure", "erosion", "rain streaks", "large repair patches", "base transition"],
+          "userConfirmed": "representative long-term weathered Yunnan earthen-wall appearance"
+        },
+        "outerEnvelope": {
+          "character": "high solid walls with sparse openings",
+          "courtyardRelation": "inward-facing compound",
+          "baseCandidate": "rough stone or masonry base"
+        },
+        "semanticLimit": {
+          "groups": "coarse site, level and roof scan partitions",
+          "verifiedWallComponents": false,
+          "bimStatus": "unresolved"
+        }
+      },
+      "productionUse": {
+        "allowed": [
+          "long-term weathering palette",
+          "large repair-zone masks",
+          "earth-wall to stone-base transition",
+          "outer-wall sparse-opening character",
+          "exposure-dependent exterior timber color comparison"
+        ],
+        "prohibited": [
+          "using display scale as measured wall dimensions",
+          "assigning material causes or repair dates",
+          "treating scan partitions as verified wall assemblies"
+        ]
+      }
+    }
+  ],
+  "crossCaseFindings": {
+    "layeredWallDisplay": {
+      "finding": "A convincing Yunnan wall needs separate core mass, visible surface, base or plinth, corner or opening edge, repair and weathering layers.",
+      "confidence": "high",
+      "status": "reference-calibrated"
+    },
+    "colorAndAging": {
+      "finding": "Earth walls use restrained warm earth families with large, soft value shifts. Rain streaks, lower-wall dampening, faded zones and repairs create secondary variation.",
+      "confidence": "high",
+      "status": "reference-calibrated"
+    },
+    "masonryContrast": {
+      "finding": "Stone or brick bases, corner bands and opening surrounds may contrast with the earth wall, but their use is building-class and case dependent.",
+      "confidence": "medium-high",
+      "status": "class-dependent-reference-calibration"
+    },
+    "surfaceRelief": {
+      "finding": "Large geometric loss, medium-scale surface deformation, normal-map relief and base-color staining must remain distinct channels.",
+      "confidence": "high",
+      "status": "renderer-contract"
+    },
+    "openingHierarchy": {
+      "finding": "External elevations tend toward sparse, small and high openings, while courtyard elevations can be more open. Exact opening types remain typology-specific.",
+      "confidence": "medium-high",
+      "status": "typology-controlled"
+    }
+  },
+  "generatorContract": {
+    "wallAssemblyRequiredFields": [
+      "wallId",
+      "hostBuildingId",
+      "wallRole",
+      "coreProfileId",
+      "surfaceProfileId",
+      "baseProfileId",
+      "cornerAndOpeningEdgeProfileId",
+      "repairProfileId",
+      "weatheringProfileId",
+      "colorFieldSeed",
+      "evidenceStatus"
+    ],
+    "displayLayers": [
+      {
+        "layer": "wall-core-mass",
+        "function": "thickness, batter and silhouette",
+        "evidenceRequirement": "measured or typology rule"
+      },
+      {
+        "layer": "surface-finish",
+        "function": "earth, plaster or exposed masonry appearance",
+        "evidenceRequirement": "case material evidence"
+      },
+      {
+        "layer": "stone-or-brick-base",
+        "function": "moisture-resistant lower band and visual weight",
+        "evidenceRequirement": "visible or measured"
+      },
+      {
+        "layer": "corner-and-opening-edges",
+        "function": "quoins, brick corners, masonry frames or timber jambs",
+        "evidenceRequirement": "building-class and case evidence"
+      },
+      {
+        "layer": "repair",
+        "function": "patches, replacements and later closures",
+        "evidenceRequirement": "visible reference, chronology may remain unresolved"
+      },
+      {
+        "layer": "weathering",
+        "function": "rain streaks, damp base, fading, erosion and deposits",
+        "evidenceRequirement": "reference calibrated"
+      }
+    ],
+    "weatheringRules": [
+      "Use large soft masks before adding small granular variation.",
+      "Increase moisture and darkening near the wall base and drainage routes.",
+      "Keep sheltered zones under eaves drier and darker where reference supports it.",
+      "Separate repair color from natural weathering color.",
+      "Keep all random fields deterministic per wall and building seed.",
+      "Exclude modern service boxes, cables, plants and scan holes from the historical base layer."
+    ],
+    "geometryTextureDivision": {
+      "geometry": ["wall batter", "major erosion", "missing corners", "stone base depth", "opening recess"],
+      "normalOrHeight": ["earth grains", "small cracks", "mortar relief", "minor pitting"],
+      "baseColor": ["fading", "rain stains", "smoke", "repair color", "moss or deposits when historically appropriate"],
+      "roughness": ["polished stone", "dry earth", "damp earth", "old plaster", "weathered brick"]
+    }
+  },
+  "regionalAndClassControls": {
+    "ordinaryCourtyardDwelling": {
+      "default": "earth or plaster wall with restrained stone base and sparse exterior openings",
+      "highGradeMasonryBands": "off unless supported"
+    },
+    "DaliHighGradeTowerOrGate": {
+      "cornerQuoins": "candidate-on",
+      "masonryOpeningFrames": "candidate-on",
+      "decorativeBanding": "case-specific"
+    },
+    "TuanjieWeatheredCompound": {
+      "largeRepairPatches": "reference-calibrated",
+      "warmRedBrownEarth": "reference-calibrated",
+      "stoneBase": "visible-candidate"
+    }
+  },
+  "unresolved": [
+    "wall thickness and exact batter",
+    "earth mix, lift height and compaction method",
+    "brick and stone dimensions",
+    "mortar and binder composition",
+    "repair chronology and causes",
+    "original versus later plaster layers",
+    "precise historical opening hardware and closure states"
+  ],
+  "qaRequirements": [
+    "wall core, finish, base, edge, repair and weathering can be toggled independently",
+    "weathering is deterministic and spatially coherent",
+    "lower-wall dampening follows ground and drainage context",
+    "modern attachments remain excluded from 1940s output",
+    "scan boundary artifacts do not create authored wall damage",
+    "exterior and courtyard wall openness follow typology rules",
+    "large-angle rotation preserves correct wall and opening depth occlusion"
+  ]
+}
