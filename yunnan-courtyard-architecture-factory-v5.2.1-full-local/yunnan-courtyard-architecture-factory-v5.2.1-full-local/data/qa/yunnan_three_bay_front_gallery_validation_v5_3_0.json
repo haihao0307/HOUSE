@@ -1,0 +1,49 @@
+{
+  "schemaVersion": "5.3.0",
+  "caseId": "CASE-YUNNAN-THREE-BAY-FRONT-GALLERY-2F",
+  "testedAt": "2026-08-21",
+  "status": "draft",
+  "automated": {
+    "staticValidation": "passed",
+    "jsonFilesParsed": 20,
+    "playwrightScript": "blockedDependencyNotInstalled",
+    "inAppBrowserSmoke": "passed"
+  },
+  "checks": [
+    {"id": "YFG-QA-001", "name": "threeBaysFourFrames", "status": "passed", "note": "3 bays map to 4 transverse frames."},
+    {"id": "YFG-QA-002", "name": "widthChainClosure", "status": "passed", "note": "0.565 + 3.20 + 4.00 + 3.20 + 0.565 = 11.53 m."},
+    {"id": "YFG-QA-003", "name": "depthChainClosure", "status": "passed", "note": "0.75 + 1.87 + 4.775 + 0.525 = 7.92 m."},
+    {"id": "YFG-QA-004", "name": "verticalLedger", "status": "passed", "note": "Upper floor 2.85 m, main eave 5.045 m, ridge 7.04 m."},
+    {"id": "YFG-QA-005", "name": "mixedFrameSemantics", "status": "passed", "note": "Outer chuandou frames and inner tailiang frames remain separate semantic assemblies."},
+    {"id": "YFG-QA-006", "name": "separateRoofAssemblies", "status": "passed", "note": "Main suspended-gable roof and front-gallery lean-to are independent assemblies."},
+    {"id": "YFG-QA-007", "name": "runtimeViews", "status": "passed", "note": "Building, plan, section, structure, roof, evidence and data views render in the in-app browser."},
+    {"id": "YFG-QA-008", "name": "regionalAttribution", "status": "locked", "note": "Original location, date and ethnic attribution are not established by supplied metadata."},
+    {"id": "YFG-QA-009", "name": "completeTileSystem", "status": "passed", "note": "In-app WebGL roof-top and front-eave inspection confirms curved tapered pan tiles (about 242/221 mm mouths by 223 mm long) below curved tapered cover tiles (about 115/90 mm mouths by 222 mm long), with explicit course ends, ridge pieces, continuous mud-backed sheathing, eave boards and 210 mm rafters. Longitudinal exposure remains a user-photo visual calibration, not a measured lap."},
+    {"id": "YFG-QA-010", "name": "carvingDetail", "status": "locked", "note": "Only semantic markers are modeled until close-up evidence is supplied."},
+    {"id": "YFG-QA-011", "name": "gableWallRoofUndersideClosure", "status": "passed", "note": "Side gable top is computed at the wall-plane intersection with both roof slopes, not stopped at the outer eave elevation."},
+    {"id": "YFG-QA-012", "name": "roundGalleryColumns", "status": "passed", "note": "Gallery supports use round timber shafts over square stone footings."},
+    {"id": "YFG-QA-013", "name": "dailyUseDoglegStair", "status": "passed", "note": "The rejected straight 13-step stair was replaced by an 8+8-riser dogleg stair with daily-use going/rise proportions, an intermediate landing and continuous handrails."},
+    {"id": "YFG-QA-014", "name": "timberFacadePartitions", "status": "passed", "note": "Courtyard-facing room boundaries are framed timber partitions with lower panels and lattice fields, not monolithic earth infill."},
+    {"id": "YFG-QA-015", "name": "curvedTileRoofAndRidge", "status": "passed", "note": "Main and gallery roofs use slightly curved pan-and-cover tile surfaces; the main roof has a continuous simple ridge."},
+    {"id": "YFG-QA-016", "name": "roofEnvelopeNoColorLeak", "status": "passed", "note": "Browser exterior, top and first-person underside inspection shows a continuous ceramic tile envelope over a complete backed roof build-up without exposed wall color or grey tile backs."},
+    {"id": "YFG-QA-017", "name": "batteredEarthEnvelope", "status": "passed", "note": "Both end walls and the rear earth wall taper inward from bottom to top; gable fill closes against the curved roof underside."},
+    {"id": "YFG-QA-018", "name": "concealedOuterFrame", "status": "passed", "note": "Outer chuandou posts remain semantically modeled but are concealed behind the earth envelope in complete view."},
+    {"id": "YFG-QA-019", "name": "firstPersonInspection", "status": "passed", "note": "Eye-height entrance, gallery, room, stair and upper-floor stations are available with direct walking controls."}
+  ],
+  "screenshots": [
+    "qa/screenshots/v530_three_bay_front_gallery_exterior.png",
+    "qa/screenshots/v530_three_bay_front_gallery_plan.png",
+    "qa/screenshots/v530_three_bay_front_gallery_section.png",
+    "qa/screenshots/v530_measured_gable_roof_underside_closed_tile_courses.png",
+    "qa/screenshots/v530_measured_round_columns_curved_tile_roof.png",
+    "qa/screenshots/v530_measured_board_barrel_tile_exterior.png",
+    "qa/screenshots/v530_measured_domestic_dogleg_stair_first_person.png",
+    "qa/screenshots/v530_three_bay_front_gallery_tile_roof.png",
+    "qa/screenshots/v530_three_bay_front_gallery_front_eave.png"
+  ],
+  "releaseGate": {
+    "geometryAndInteraction": "passed",
+    "researchAttribution": "locked",
+    "fullTileAndCarvingDetail": "passedBrowserTileRecheckMeasuredLapAndCarvingStillLocked"
+  }
+}

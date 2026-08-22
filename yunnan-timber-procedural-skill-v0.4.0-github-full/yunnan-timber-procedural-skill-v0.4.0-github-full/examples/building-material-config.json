@@ -1,0 +1,58 @@
+{
+  "skill": "yunnan_timber_procedural",
+  "skillVersion": "0.4.0",
+  "generationSeed": 1234567890,
+  "buildingId": "kunming-yikeyin-demo-001",
+  "defaultPresetId": "dark_aged",
+  "qualityCap": "inspection",
+  "members": [
+    {
+      "memberId": "west-round-column-01",
+      "sourceTimberId": "source-log-west-01",
+      "floorId": "1",
+      "presetId": "dark_aged",
+      "geometryLengthAxis": [
+        0,
+        1,
+        0
+      ],
+      "radialAxisHint": [
+        1,
+        0,
+        0
+      ],
+      "grainOffset": [
+        0,
+        0,
+        0
+      ],
+      "weathering": 0.34,
+      "toolMarks": 0.28,
+      "profile": "round"
+    },
+    {
+      "memberId": "main-beam-01",
+      "sourceTimberId": "source-log-beam-01",
+      "floorId": "1",
+      "presetId": "dark_aged",
+      "geometryLengthAxis": [
+        1,
+        0,
+        0
+      ],
+      "radialAxisHint": [
+        0,
+        1,
+        0
+      ],
+      "grainOffset": [
+        0,
+        0,
+        0
+      ],
+      "weathering": 0.26,
+      "toolMarks": 0.36,
+      "profile": "rectangular"
+    }
+  ]
+}

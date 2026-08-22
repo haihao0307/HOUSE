@@ -1,0 +1,50 @@
+{
+  "schemaVersion": "5.3.3",
+  "assetId": "YN_TUANJIE_001_EDITABLE",
+  "sampleId": "YN_TUANJIE_001",
+  "testedAt": "2026-08-21",
+  "checks": [
+    {
+      "name": "GLB 2.0 container and buffer integrity",
+      "ok": true,
+      "detail": "Single-buffer GLB parses; all bufferView ranges stay within the BIN chunk."
+    },
+    {
+      "name": "geometry preserved",
+      "ok": true,
+      "detail": "48 meshes/primitives, 608634 vertices and 464288 triangles match the High source."
+    },
+    {
+      "name": "editable naming and grouping",
+      "ok": true,
+      "detail": "48 stable named mesh nodes are grouped under site, unresolved details, level 01, level 02 and roof parents."
+    },
+    {
+      "name": "runtime baggage",
+      "ok": true,
+      "detail": "0 animations, 0 skins, 0 morph targets, 0 cameras, 0 lights and no required glTF extensions."
+    },
+    {
+      "name": "embedded textures",
+      "ok": true,
+      "detail": "3072-square PNG base colour preserves alpha; 1024-square PNG normal map is embedded."
+    },
+    {
+      "name": "website integration",
+      "ok": true,
+      "detail": "The production page exposes an explicit-load viewer, download link, group controls and evidence summary; browser smoke test passed 19/19."
+    },
+    {
+      "name": "evidence boundary",
+      "ok": true,
+      "detail": "Display bounds are not represented as surveyed building dimensions and scan partitions are not represented as BIM semantics."
+    }
+  ],
+  "summary": {
+    "passed": 7,
+    "failed": 0,
+    "status": "passed"
+  },
+  "browserEvidence": "qa/screenshots/v533_tuanjie_reference_viewer.png",
+  "browserReport": "data/qa/local_browser_smoke_test.json"
+}

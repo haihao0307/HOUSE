@@ -1,0 +1,88 @@
+{
+  "schemaVersion": "5.3.3",
+  "asset": {
+    "id": "YN_TUANJIE_001_EDITABLE",
+    "sampleId": "YN_TUANJIE_001",
+    "legacyAssetId": "YN_C2_Meirenkao",
+    "name": "团结乡样本 01 可编辑 GLB 主档",
+    "role": "production-line editable scan reference",
+    "format": "glTF 2.0 GLB",
+    "path": "assets/models/YN_TUANJIE_001_EDITABLE.glb",
+    "source": "references-private/c2-meirenkao/C2_Meirenkao_Reference_High.glb",
+    "generator": "tools/prepare_tuanjie_glb.py"
+  },
+  "editability": {
+    "importTarget": "Blender or any glTF 2.0 editor",
+    "meshSelection": "48 independent named meshes",
+    "nodeGroups": [
+      "YN_TUANJIE_001_GROUP_SITE",
+      "YN_TUANJIE_001_GROUP_DETAILS_UNRESOLVED",
+      "YN_TUANJIE_001_GROUP_LEVEL_01",
+      "YN_TUANJIE_001_GROUP_LEVEL_02",
+      "YN_TUANJIE_001_GROUP_ROOF"
+    ],
+    "semanticBoundary": "Groups are editable spatial scan partitions only; they are not verified columns, beams, walls, rooms or BIM objects."
+  },
+  "technical": {
+    "sha256": "3a54374b9dcc06a478eb76e2c659b3f56141ea20ad05e5097ffa8f03558d1a07",
+    "sizeBytes": 45457960,
+    "nodes": 54,
+    "meshes": 48,
+    "primitives": 48,
+    "vertices": 608634,
+    "triangles": 464288,
+    "materials": 1,
+    "embeddedImages": 2,
+    "extensionsUsed": [],
+    "animations": 0,
+    "skins": 0,
+    "morphTargets": 0,
+    "cameras": 0,
+    "lights": 0,
+    "displayBoundsXYZ": [3.8132214546, 1.3960776329, 2.3314409256],
+    "displayBoundsOnly": true,
+    "physicalScaleStatus": "unverifiedNoSurveyControl"
+  },
+  "textures": {
+    "baseColor": {
+      "format": "PNG",
+      "dimensions": [3072, 3072],
+      "alphaPreserved": true
+    },
+    "normal": {
+      "format": "PNG",
+      "dimensions": [1024, 1024]
+    }
+  },
+  "webRuntime": {
+    "page": "index.html",
+    "viewId": "reference",
+    "viewer": "assets/js/tuanjie-glb-viewer.js",
+    "loadingPolicy": "explicit user click; never autoload the 45.5 MB master",
+    "decoderDependency": "none",
+    "fbxRuntimeDependency": false,
+    "mobilePolicy": "manual load only; a future decimated LOD is recommended for bandwidth-constrained devices"
+  },
+  "productionUse": {
+    "allowedNow": [
+      "whole-compound silhouette and enclosure comparison",
+      "courtyard void and roof-mass topology comparison",
+      "relative entrance, stair, terrain and wall-base sequence",
+      "surface colour, roughness and weathering reference",
+      "manual mesh isolation for evidence review"
+    ],
+    "requiresEvidenceBeforeGeometryLock": [
+      "absolute dimensions and orientation",
+      "room functions, floor levels and structural grid",
+      "wall thickness and batter value",
+      "tile type, single-piece dimensions, lap and roof build-up",
+      "door, window, stair, eave, ridge and joinery construction"
+    ]
+  },
+  "rights": {
+    "productionWebsite": "user-authorized local integration",
+    "externalRedistribution": "pending rights and attribution confirmation",
+    "sourcePrivacy": "original FBX and source textures remain under references-private"
+  },
+  "validation": "data/qa/tuanjie_township_001_editable_glb_validation_v5_3_3.json"
+}

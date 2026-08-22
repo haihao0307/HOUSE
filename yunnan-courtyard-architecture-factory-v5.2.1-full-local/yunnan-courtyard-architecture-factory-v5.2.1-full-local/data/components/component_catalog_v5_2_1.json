@@ -1,0 +1,1062 @@
+{
+  "schemaVersion": "5.3.0",
+  "count": 102,
+  "categories": [
+    "analysis",
+    "circulation",
+    "drainage",
+    "enclosure",
+    "finish",
+    "floor",
+    "floorFrame",
+    "foundation",
+    "frame",
+    "frameDetail",
+    "historicalState",
+    "joint",
+    "opening",
+    "openingMechanism",
+    "plan",
+    "regionalDetail",
+    "roofAssembly",
+    "roofCovering",
+    "roofDetail",
+    "roofFrame",
+    "roofOrnament",
+    "site",
+    "siteDetail",
+    "surfaceDetail",
+    "wall",
+    "wallDetail",
+    "wallLayer"
+  ],
+  "components": [
+    {
+      "id": "C-SITE-001",
+      "name": "场地边界",
+      "category": "site",
+      "parentDependency": "sourceSurvey",
+      "geometryState": "polygon",
+      "evidenceRequirement": "surveyOrMap",
+      "qa": "closedPolygon",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-SITE-002",
+      "name": "地坪基准",
+      "category": "site",
+      "parentDependency": "siteBoundary",
+      "geometryState": "planeAndElevation",
+      "evidenceRequirement": "survey",
+      "qa": "singleDatum",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-SITE-003",
+      "name": "主轴",
+      "category": "site",
+      "parentDependency": "siteDatum",
+      "geometryState": "line",
+      "evidenceRequirement": "planEvidence",
+      "qa": "axisReferenced",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-SITE-004",
+      "name": "坡度场",
+      "category": "site",
+      "parentDependency": "siteDatum",
+      "geometryState": "heightField",
+      "evidenceRequirement": "survey",
+      "qa": "drainageConsistent",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-SITE-005",
+      "name": "水沟与水系",
+      "category": "site",
+      "parentDependency": "siteDatum",
+      "geometryState": "polyline",
+      "evidenceRequirement": "surveyOrHeritageMap",
+      "qa": "flowDirectionKnown",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-PLAN-001",
+      "name": "单体边界",
+      "category": "plan",
+      "parentDependency": "compoundTopology",
+      "geometryState": "polygon",
+      "evidenceRequirement": "planEvidence",
+      "qa": "noOverlap",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-PLAN-002",
+      "name": "面阔轴",
+      "category": "plan",
+      "parentDependency": "buildingBoundary",
+      "geometryState": "lineArray",
+      "evidenceRequirement": "bayEvidence",
+      "qa": "axisCountEqualsBaysPlusOne",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-PLAN-003",
+      "name": "进深轴",
+      "category": "plan",
+      "parentDependency": "buildingBoundary",
+      "geometryState": "lineArray",
+      "evidenceRequirement": "depthEvidence",
+      "qa": "supportsRoofAndFrame",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-PLAN-004",
+      "name": "房间边界",
+      "category": "plan",
+      "parentDependency": "bayGrid",
+      "geometryState": "polygon",
+      "evidenceRequirement": "planEvidence",
+      "qa": "closedAndLabeled",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-PLAN-005",
+      "name": "天井边界",
+      "category": "plan",
+      "parentDependency": "compoundTopology",
+      "geometryState": "polygon",
+      "evidenceRequirement": "planEvidence",
+      "qa": "drainageTargetKnown",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-PLAN-006",
+      "name": "照壁平面",
+      "category": "plan",
+      "parentDependency": "compoundTopology",
+      "geometryState": "thinPolygon",
+      "evidenceRequirement": "planEvidence",
+      "qa": "entryRelationKnown",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-PLAN-007",
+      "name": "廊厦边界",
+      "category": "plan",
+      "parentDependency": "buildingBoundary",
+      "geometryState": "stripPolygon",
+      "evidenceRequirement": "planAndSection",
+      "qa": "hostSideKnown",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-PLAN-008",
+      "name": "楼梯洞口",
+      "category": "plan",
+      "parentDependency": "floorBoundary",
+      "geometryState": "polygon",
+      "evidenceRequirement": "planAndSection",
+      "qa": "headroomChecked",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-FND-001",
+      "name": "基础沟槽",
+      "category": "foundation",
+      "parentDependency": "wallOrFrameAxis",
+      "geometryState": "solid",
+      "evidenceRequirement": "sectionOrExcavationEvidence",
+      "qa": "continuousWhereRequired",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-FND-002",
+      "name": "独立柱基",
+      "category": "foundation",
+      "parentDependency": "columnCandidate",
+      "geometryState": "solid",
+      "evidenceRequirement": "sectionOrFieldEvidence",
+      "qa": "centeredUnderColumn",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-FND-003",
+      "name": "毛石勒脚",
+      "category": "foundation",
+      "parentDependency": "wallBase",
+      "geometryState": "solidLayer",
+      "evidenceRequirement": "photoAndSection",
+      "qa": "continuousAndDry",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-FND-004",
+      "name": "条石基座",
+      "category": "foundation",
+      "parentDependency": "wallBase",
+      "geometryState": "solidLayer",
+      "evidenceRequirement": "photoAndSection",
+      "qa": "levelAndJointed",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-FND-005",
+      "name": "柱础石",
+      "category": "foundation",
+      "parentDependency": "columnCandidate",
+      "geometryState": "solid",
+      "evidenceRequirement": "measuredDetail",
+      "qa": "columnCentered",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-FND-006",
+      "name": "夯实地基土",
+      "category": "foundation",
+      "parentDependency": "siteDatum",
+      "geometryState": "volume",
+      "evidenceRequirement": "constructionEvidence",
+      "qa": "compactionLayered",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-FND-007",
+      "name": "三合泥地面",
+      "category": "floor",
+      "parentDependency": "groundFloorBoundary",
+      "geometryState": "surfaceLayer",
+      "evidenceRequirement": "materialSampleOrText",
+      "qa": "slopeAndThicknessKnown",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-FND-008",
+      "name": "石板院地",
+      "category": "floor",
+      "parentDependency": "courtyardBoundary",
+      "geometryState": "surfaceTiles",
+      "evidenceRequirement": "photoOrSurvey",
+      "qa": "drainageSlopeKnown",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-FRM-001",
+      "name": "木柱",
+      "category": "frame",
+      "parentDependency": "columnBase",
+      "geometryState": "cylinderOrPrism",
+      "evidenceRequirement": "sectionAndSpecies",
+      "qa": "verticalAndSupported",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-FRM-002",
+      "name": "角柱",
+      "category": "frame",
+      "parentDependency": "columnBase",
+      "geometryState": "cylinderOrPrism",
+      "evidenceRequirement": "sectionAndPlan",
+      "qa": "cornerAxisMatch",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-FRM-003",
+      "name": "檐柱",
+      "category": "frame",
+      "parentDependency": "columnBase",
+      "geometryState": "cylinderOrPrism",
+      "evidenceRequirement": "sectionAndPlan",
+      "qa": "eaveLineSupported",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-FRM-004",
+      "name": "内柱",
+      "category": "frame",
+      "parentDependency": "columnBase",
+      "geometryState": "cylinderOrPrism",
+      "evidenceRequirement": "sectionAndPlan",
+      "qa": "purlinOrBeamSupported",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-FRM-005",
+      "name": "厦柱",
+      "category": "frame",
+      "parentDependency": "galleryPlan",
+      "geometryState": "cylinderOrPrism",
+      "evidenceRequirement": "gallerySection",
+      "qa": "galleryRoofSupported",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-FRM-006",
+      "name": "灯笼柱候选",
+      "category": "frame",
+      "parentDependency": "galleryPlan",
+      "geometryState": "cylinderOrPrism",
+      "evidenceRequirement": "localSection",
+      "qa": "heightAndJointKnown",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-FRM-007",
+      "name": "穿枋",
+      "category": "frame",
+      "parentDependency": "columnPair",
+      "geometryState": "beamPrism",
+      "evidenceRequirement": "frameSection",
+      "qa": "tenonConnectionRecorded",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-FRM-008",
+      "name": "斗枋",
+      "category": "frame",
+      "parentDependency": "columnPair",
+      "geometryState": "beamPrism",
+      "evidenceRequirement": "frameSection",
+      "qa": "levelKnown",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-FRM-009",
+      "name": "纵向联系枋",
+      "category": "frame",
+      "parentDependency": "frameBentArray",
+      "geometryState": "beamPrism",
+      "evidenceRequirement": "framePlan",
+      "qa": "continuousOrSegmentedKnown",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-FRM-010",
+      "name": "梁",
+      "category": "frame",
+      "parentDependency": "columnOrShortPost",
+      "geometryState": "beamPrism",
+      "evidenceRequirement": "section",
+      "qa": "loadPathContinuous",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-FRM-011",
+      "name": "短柱",
+      "category": "frame",
+      "parentDependency": "beam",
+      "geometryState": "postPrism",
+      "evidenceRequirement": "section",
+      "qa": "centeredOnBeam",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-FRM-012",
+      "name": "枕方",
+      "category": "frame",
+      "parentDependency": "beamOrPurlin",
+      "geometryState": "beamPrism",
+      "evidenceRequirement": "section",
+      "qa": "jointKnown",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-FRM-013",
+      "name": "花枋",
+      "category": "frameDetail",
+      "parentDependency": "galleryColumns",
+      "geometryState": "decoratedBeam",
+      "evidenceRequirement": "photoOrMeasuredDetail",
+      "qa": "nonStructuralOrStructuralFlag",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-FRM-014",
+      "name": "前檐挑头",
+      "category": "frameDetail",
+      "parentDependency": "galleryFrame",
+      "geometryState": "projectingBeam",
+      "evidenceRequirement": "sectionDetail",
+      "qa": "projectionAndSupportKnown",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-FRM-015",
+      "name": "榫卯节点",
+      "category": "joint",
+      "parentDependency": "memberIntersection",
+      "geometryState": "parametricJoint",
+      "evidenceRequirement": "measuredJoint",
+      "qa": "memberIdsAndRotationKnown",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-FRM-016",
+      "name": "半刚性节点模型",
+      "category": "analysis",
+      "parentDependency": "tenonJoint",
+      "geometryState": "rotationalSpring",
+      "evidenceRequirement": "testOrResearch",
+      "qa": "stiffnessRangeRecorded",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-FLR-001",
+      "name": "楼袱",
+      "category": "floorFrame",
+      "parentDependency": "groundFrame",
+      "geometryState": "beamPrism",
+      "evidenceRequirement": "section",
+      "qa": "spanAndBearingKnown",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-FLR-002",
+      "name": "楼楞",
+      "category": "floorFrame",
+      "parentDependency": "floorBeam",
+      "geometryState": "joistArray",
+      "evidenceRequirement": "section",
+      "qa": "spacingKnown",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-FLR-003",
+      "name": "楼板",
+      "category": "floor",
+      "parentDependency": "joists",
+      "geometryState": "boardArray",
+      "evidenceRequirement": "boardSample",
+      "qa": "thicknessAndDirectionKnown",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-FLR-004",
+      "name": "地脚枋",
+      "category": "frame",
+      "parentDependency": "columns",
+      "geometryState": "beamPrism",
+      "evidenceRequirement": "section",
+      "qa": "levelKnown",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-FLR-005",
+      "name": "裙板",
+      "category": "enclosure",
+      "parentDependency": "frameBay",
+      "geometryState": "panel",
+      "evidenceRequirement": "photoOrDetail",
+      "qa": "hostBayKnown",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-FLR-006",
+      "name": "栏杆",
+      "category": "circulation",
+      "parentDependency": "galleryOrStair",
+      "geometryState": "railAssembly",
+      "evidenceRequirement": "photoOrDetail",
+      "qa": "heightAndSpacingKnown",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-WAL-001",
+      "name": "夯土墙体",
+      "category": "wall",
+      "parentDependency": "wallBase",
+      "geometryState": "layeredSolid",
+      "evidenceRequirement": "sectionAndMaterial",
+      "qa": "thicknessAndOpeningsKnown",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-WAL-002",
+      "name": "土坯墙体",
+      "category": "wall",
+      "parentDependency": "wallBase",
+      "geometryState": "unitMasonry",
+      "evidenceRequirement": "sampleOrPhoto",
+      "qa": "unitSizeAndBondKnown",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-WAL-003",
+      "name": "青砖墙体",
+      "category": "wall",
+      "parentDependency": "wallBase",
+      "geometryState": "unitMasonry",
+      "evidenceRequirement": "sampleOrPhoto",
+      "qa": "unitSizeAndBondKnown",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-WAL-004",
+      "name": "金包银外砖皮",
+      "category": "wallLayer",
+      "parentDependency": "earthWall",
+      "geometryState": "thinMasonryLayer",
+      "evidenceRequirement": "section",
+      "qa": "tieAndThicknessKnown",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-WAL-005",
+      "name": "金包银土芯",
+      "category": "wallLayer",
+      "parentDependency": "wallBase",
+      "geometryState": "earthSolid",
+      "evidenceRequirement": "section",
+      "qa": "thicknessKnown",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-WAL-006",
+      "name": "金包玉砖包角",
+      "category": "wallDetail",
+      "parentDependency": "wallCorner",
+      "geometryState": "masonryWrap",
+      "evidenceRequirement": "photoAndSection",
+      "qa": "wrapWidthKnown",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-WAL-007",
+      "name": "麻雀台",
+      "category": "wallDetail",
+      "parentDependency": "lowerWall",
+      "geometryState": "setbackProfile",
+      "evidenceRequirement": "section",
+      "qa": "profileKnown",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-WAL-008",
+      "name": "抹灰层",
+      "category": "finish",
+      "parentDependency": "wallSurface",
+      "geometryState": "surfaceLayer",
+      "evidenceRequirement": "materialEvidence",
+      "qa": "thicknessAndExtentKnown",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-WAL-009",
+      "name": "清水砖面",
+      "category": "finish",
+      "parentDependency": "brickWall",
+      "geometryState": "surfacePattern",
+      "evidenceRequirement": "photo",
+      "qa": "bondAndJointKnown",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-WAL-010",
+      "name": "山墙",
+      "category": "wall",
+      "parentDependency": "gableFrame",
+      "geometryState": "polygonSolid",
+      "evidenceRequirement": "elevationAndSection",
+      "qa": "roofInterfaceKnown",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-OPN-001",
+      "name": "门洞",
+      "category": "opening",
+      "parentDependency": "hostWall",
+      "geometryState": "void",
+      "evidenceRequirement": "planAndElevation",
+      "qa": "insideHostAndNoCollision",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-OPN-002",
+      "name": "门框",
+      "category": "opening",
+      "parentDependency": "doorOpening",
+      "geometryState": "framePrism",
+      "evidenceRequirement": "detail",
+      "qa": "fitsOpening",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-OPN-003",
+      "name": "门扇",
+      "category": "opening",
+      "parentDependency": "doorFrame",
+      "geometryState": "panelAssembly",
+      "evidenceRequirement": "detail",
+      "qa": "angleWithinRange",
+      "activeStateMachine": true
+    },
+    {
+      "id": "C-OPN-004",
+      "name": "门轴或铰链",
+      "category": "openingMechanism",
+      "parentDependency": "doorLeaf",
+      "geometryState": "pivot",
+      "evidenceRequirement": "detail",
+      "qa": "pivotMatchesLeaf",
+      "activeStateMachine": true
+    },
+    {
+      "id": "C-OPN-005",
+      "name": "屏门",
+      "category": "opening",
+      "parentDependency": "screenWallOrEntry",
+      "geometryState": "panelAssembly",
+      "evidenceRequirement": "planAndPhoto",
+      "qa": "hostAndSwingKnown",
+      "activeStateMachine": true
+    },
+    {
+      "id": "C-OPN-006",
+      "name": "窗洞",
+      "category": "opening",
+      "parentDependency": "hostWall",
+      "geometryState": "void",
+      "evidenceRequirement": "planAndElevation",
+      "qa": "insideHost",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-OPN-007",
+      "name": "窗框",
+      "category": "opening",
+      "parentDependency": "windowOpening",
+      "geometryState": "framePrism",
+      "evidenceRequirement": "detail",
+      "qa": "fitsOpening",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-OPN-008",
+      "name": "窗扇",
+      "category": "opening",
+      "parentDependency": "windowFrame",
+      "geometryState": "panelAssembly",
+      "evidenceRequirement": "detail",
+      "qa": "mechanismVerified",
+      "activeStateMachine": true
+    },
+    {
+      "id": "C-OPN-009",
+      "name": "板门",
+      "category": "opening",
+      "parentDependency": "doorFrame",
+      "geometryState": "boardLeaf",
+      "evidenceRequirement": "photoOrDetail",
+      "qa": "boardDirectionKnown",
+      "activeStateMachine": true
+    },
+    {
+      "id": "C-OPN-010",
+      "name": "门枋",
+      "category": "frameDetail",
+      "parentDependency": "doorBay",
+      "geometryState": "beamPrism",
+      "evidenceRequirement": "section",
+      "qa": "supportsOpening",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-RRF-001",
+      "name": "檐檩",
+      "category": "roofFrame",
+      "parentDependency": "frameBent",
+      "geometryState": "beamPrism",
+      "evidenceRequirement": "section",
+      "qa": "eaveLineSupported",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-RRF-002",
+      "name": "中檩",
+      "category": "roofFrame",
+      "parentDependency": "frameBent",
+      "geometryState": "beamPrism",
+      "evidenceRequirement": "section",
+      "qa": "heightAndSupportKnown",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-RRF-003",
+      "name": "脊檩",
+      "category": "roofFrame",
+      "parentDependency": "frameBent",
+      "geometryState": "beamPrism",
+      "evidenceRequirement": "section",
+      "qa": "ridgeContinuous",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-RRF-004",
+      "name": "腰檩",
+      "category": "roofFrame",
+      "parentDependency": "galleryOrSecondaryRoof",
+      "geometryState": "beamPrism",
+      "evidenceRequirement": "section",
+      "qa": "hostKnown",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-RRF-005",
+      "name": "椽子",
+      "category": "roofFrame",
+      "parentDependency": "purlins",
+      "geometryState": "slopedBeamArray",
+      "evidenceRequirement": "sectionAndSpacing",
+      "qa": "allEndsSupported",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-RRF-006",
+      "name": "博风板",
+      "category": "roofDetail",
+      "parentDependency": "suspendedGable",
+      "geometryState": "boardProfile",
+      "evidenceRequirement": "elevationAndDetail",
+      "qa": "projectionKnown",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-RRF-007",
+      "name": "硬山封檐",
+      "category": "roofDetail",
+      "parentDependency": "hardGable",
+      "geometryState": "profile",
+      "evidenceRequirement": "detail",
+      "qa": "wallRoofInterfaceKnown",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-RRF-008",
+      "name": "悬山出挑",
+      "category": "roofDetail",
+      "parentDependency": "gableRoof",
+      "geometryState": "projectionProfile",
+      "evidenceRequirement": "section",
+      "qa": "projectionMeasured",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-RRF-009",
+      "name": "腰檐",
+      "category": "roofAssembly",
+      "parentDependency": "upperFrame",
+      "geometryState": "secondaryRoof",
+      "evidenceRequirement": "section",
+      "qa": "hostAndDrainageKnown",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-RRF-010",
+      "name": "披檐",
+      "category": "roofAssembly",
+      "parentDependency": "hostWallOrGallery",
+      "geometryState": "leanToRoof",
+      "evidenceRequirement": "section",
+      "qa": "accessoryIdentityRecorded",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-RRF-011",
+      "name": "羊角厦屋架",
+      "category": "roofAssembly",
+      "parentDependency": "mainHouse",
+      "geometryState": "independentSecondaryFrame",
+      "evidenceRequirement": "measuredSection",
+      "qa": "axesAndSupportKnown",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-RRF-012",
+      "name": "厦子屋架",
+      "category": "roofAssembly",
+      "parentDependency": "naxiFang",
+      "geometryState": "galleryRoofFrame",
+      "evidenceRequirement": "measuredSection",
+      "qa": "stepAndSupportKnown",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-TIL-001",
+      "name": "望板或屋面基层",
+      "category": "roofCovering",
+      "parentDependency": "rafters",
+      "geometryState": "boardOrLayer",
+      "evidenceRequirement": "section",
+      "qa": "continuityKnown",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-TIL-002",
+      "name": "泥背或找平层",
+      "category": "roofCovering",
+      "parentDependency": "roofBase",
+      "geometryState": "layer",
+      "evidenceRequirement": "section",
+      "qa": "materialAndThicknessKnown",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-TIL-003",
+      "name": "底瓦",
+      "category": "roofCovering",
+      "parentDependency": "roofBase",
+      "geometryState": "tileArray",
+      "evidenceRequirement": "tileProfileAndLap",
+      "qa": "courseFlowContinuous",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-TIL-004",
+      "name": "盖瓦",
+      "category": "roofCovering",
+      "parentDependency": "baseTiles",
+      "geometryState": "tileArray",
+      "evidenceRequirement": "tileProfileAndLap",
+      "qa": "coversJoints",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-TIL-005",
+      "name": "小青瓦阴瓦",
+      "category": "roofCovering",
+      "parentDependency": "roofBase",
+      "geometryState": "tileArray",
+      "evidenceRequirement": "localTileProfile",
+      "qa": "courseSpacingKnown",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-TIL-006",
+      "name": "小青瓦阳瓦",
+      "category": "roofCovering",
+      "parentDependency": "yinTiles",
+      "geometryState": "tileArray",
+      "evidenceRequirement": "localTileProfile",
+      "qa": "overlapKnown",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-TIL-007",
+      "name": "滴水",
+      "category": "roofDetail",
+      "parentDependency": "eaveCourse",
+      "geometryState": "edgeTileArray",
+      "evidenceRequirement": "eaveDetail",
+      "qa": "dripLineContinuous",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-TIL-008",
+      "name": "勾头",
+      "category": "roofDetail",
+      "parentDependency": "eaveCourse",
+      "geometryState": "edgeTileArray",
+      "evidenceRequirement": "eaveDetail",
+      "qa": "alignmentKnown",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-TIL-009",
+      "name": "正脊",
+      "category": "roofDetail",
+      "parentDependency": "ridgeLine",
+      "geometryState": "ridgeAssembly",
+      "evidenceRequirement": "ridgeDetail",
+      "qa": "weatherTight",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-TIL-010",
+      "name": "清水脊候选",
+      "category": "roofDetail",
+      "parentDependency": "ridgeLine",
+      "geometryState": "ridgeAssembly",
+      "evidenceRequirement": "localDetail",
+      "qa": "profileKnown",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-TIL-011",
+      "name": "垂脊或山面收边",
+      "category": "roofDetail",
+      "parentDependency": "gableEdge",
+      "geometryState": "edgeAssembly",
+      "evidenceRequirement": "detail",
+      "qa": "edgeWeatherTight",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-TIL-012",
+      "name": "瓦猫",
+      "category": "roofOrnament",
+      "parentDependency": "ridge",
+      "geometryState": "ornamentMesh",
+      "evidenceRequirement": "measuredPhotoSet",
+      "qa": "orientationAndBaseKnown",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-TIL-013",
+      "name": "悬鱼",
+      "category": "roofOrnament",
+      "parentDependency": "bargeboard",
+      "geometryState": "ornamentMesh",
+      "evidenceRequirement": "measuredPhotoSet",
+      "qa": "attachmentKnown",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-DRN-001",
+      "name": "屋面汇水面",
+      "category": "drainage",
+      "parentDependency": "roofPlane",
+      "geometryState": "flowSurface",
+      "evidenceRequirement": "roofGeometry",
+      "qa": "allFlowDirected",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-DRN-002",
+      "name": "雨落线",
+      "category": "drainage",
+      "parentDependency": "eaveEdge",
+      "geometryState": "polyline",
+      "evidenceRequirement": "roofGeometry",
+      "qa": "noUnassignedSegment",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-DRN-003",
+      "name": "天井地坪坡向",
+      "category": "drainage",
+      "parentDependency": "courtyardFloor",
+      "geometryState": "slopeField",
+      "evidenceRequirement": "surveyOrRule",
+      "qa": "noPonding",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-DRN-004",
+      "name": "暗沟",
+      "category": "drainage",
+      "parentDependency": "courtyardFloor",
+      "geometryState": "channelSolid",
+      "evidenceRequirement": "section",
+      "qa": "outletKnown",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-DRN-005",
+      "name": "明沟",
+      "category": "drainage",
+      "parentDependency": "siteDatum",
+      "geometryState": "channelSolid",
+      "evidenceRequirement": "survey",
+      "qa": "flowDirectionKnown",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-DRN-006",
+      "name": "水井或水缸槽位",
+      "category": "siteDetail",
+      "parentDependency": "courtyard",
+      "geometryState": "cylinderOrFootprint",
+      "evidenceRequirement": "planOrPhoto",
+      "qa": "doesNotBlockCirculation",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-DRN-007",
+      "name": "漏角小天井",
+      "category": "drainage",
+      "parentDependency": "cornerGap",
+      "geometryState": "courtyardVoid",
+      "evidenceRequirement": "planEvidence",
+      "qa": "ventilationAndDrainagePathKnown",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-DEC-001",
+      "name": "照壁",
+      "category": "regionalDetail",
+      "parentDependency": "entrySide",
+      "geometryState": "wallAssembly",
+      "evidenceRequirement": "planElevationPhoto",
+      "qa": "heightAndFinishKnown",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-DEC-002",
+      "name": "门楼",
+      "category": "regionalDetail",
+      "parentDependency": "mainGate",
+      "geometryState": "smallRoofedAssembly",
+      "evidenceRequirement": "photoAndSection",
+      "qa": "independentStructureKnown",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-DEC-003",
+      "name": "木雕梁枋",
+      "category": "surfaceDetail",
+      "parentDependency": "timberMember",
+      "geometryState": "reliefOrTexture",
+      "evidenceRequirement": "photoAndMotifStudy",
+      "qa": "doesNotReplaceMember",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-DEC-004",
+      "name": "木雕门窗",
+      "category": "surfaceDetail",
+      "parentDependency": "openingAssembly",
+      "geometryState": "reliefOrSubcomponents",
+      "evidenceRequirement": "photoAndDetail",
+      "qa": "openingStillOperable",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-DEC-005",
+      "name": "墙面修补层",
+      "category": "historicalState",
+      "parentDependency": "wallSurface",
+      "geometryState": "patchLayer",
+      "evidenceRequirement": "datedPhoto",
+      "qa": "periodTagged",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-DEC-006",
+      "name": "战争或地震损伤层",
+      "category": "historicalState",
+      "parentDependency": "anyComponent",
+      "geometryState": "damageOverlay",
+      "evidenceRequirement": "datedEvidence",
+      "qa": "nonDestructiveToBaseData",
+      "activeStateMachine": false
+    },
+    {
+      "id": "C-DEC-007",
+      "name": "后期加建层",
+      "category": "historicalState",
+      "parentDependency": "siteOrBuilding",
+      "geometryState": "separateAssembly",
+      "evidenceRequirement": "datedEvidence",
+      "qa": "toggleableAndReversible",
+      "activeStateMachine": false
+    }
+  ],
+  "catalogRules": [
+    "每个构件必须有唯一 ID 和父级依赖。",
+    "活动构件必须拥有状态机。",
+    "瓦片和装饰不能代替结构构件。",
+    "历史损伤和后期加建必须作为可关闭的增量层。"
+  ],
+  "compatibilityNote": "由 V4.0 详细规则层迁移并纳入 V5.2.1 当前稳定生产线，旧版渲染器与旧坐标实现不在本文件中。"
+}

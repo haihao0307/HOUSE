@@ -1,0 +1,14 @@
+# Local source and generated bundles that are not part of the public site
+**/references-private/
+**/release/
+**/.browser-test/
+**/playwright-report/
+**/test-results/
+**/__pycache__/
+**/*.pyc
+**/*.zip
+**/*.tar.gz
+
+# The high-resolution Tuanjie source is kept locally; the public Pages build
+# ships the browser-standard GLB instead.
+yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/assets/models/YN_TUANJIE_001_EDITABLE_HIGH.glb

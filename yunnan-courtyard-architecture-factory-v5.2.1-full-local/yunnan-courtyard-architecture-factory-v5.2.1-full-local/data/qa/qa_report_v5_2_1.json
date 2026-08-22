@@ -1,0 +1,283 @@
+{
+  "version": "5.2.1",
+  "testedAt": "2026-08-20",
+  "renderer": "WebGL 1.0 with depth buffer",
+  "tests": [
+    {
+      "name": "WebGL renderer active",
+      "ok": true,
+      "detail": {
+        "fallback": false,
+        "triangles": 1682,
+        "lines": 3713,
+        "camera": {
+          "yaw": -0.78,
+          "pitch": -0.54,
+          "dist": 32.178000000000004,
+          "target": [
+            6.3,
+            3.03,
+            7.65
+          ]
+        },
+        "options": {
+          "cut": false,
+          "roof": true,
+          "walls": true,
+          "timber": true,
+          "auto": false,
+          "preset": "exterior"
+        },
+        "tour": {
+          "active": false,
+          "paused": false,
+          "elapsed": 0,
+          "duration": 23,
+          "showRoute": false,
+          "currentStep": -1,
+          "person": null,
+          "completed": false,
+          "cameraPhase": -1,
+          "revealUpper": false
+        },
+        "motion": {
+          "gate": 0,
+          "inner": 0,
+          "windows": 0,
+          "targetDoors": 0,
+          "targetWindows": 0
+        },
+        "personFloor": null
+      }
+    },
+    {
+      "name": "Depth-rendered geometry populated",
+      "ok": true,
+      "detail": {
+        "triangles": 1682,
+        "lines": 3713
+      }
+    },
+    {
+      "name": "Default cut disabled",
+      "ok": true,
+      "detail": {
+        "cut": false,
+        "roof": true,
+        "walls": true,
+        "timber": true,
+        "auto": false,
+        "preset": "exterior"
+      }
+    },
+    {
+      "name": "Manual rotation keeps full geometry",
+      "ok": true,
+      "detail": {
+        "cut": false,
+        "revealUpper": false
+      }
+    },
+    {
+      "name": "Courtyard preset does not cut geometry",
+      "ok": true,
+      "detail": {
+        "cut": false,
+        "note": "完整几何",
+        "camera": {
+          "yaw": -0.78,
+          "pitch": -0.78,
+          "dist": 30.794,
+          "target": [
+            6.3,
+            2.4799999999999995,
+            6.9
+          ]
+        }
+      }
+    },
+    {
+      "name": "Explicit cutaway activates",
+      "ok": true,
+      "detail": {
+        "cut": true,
+        "roof": true,
+        "walls": true,
+        "timber": true,
+        "auto": false,
+        "preset": "courtyard"
+      }
+    },
+    {
+      "name": "Manual rotation exits cutaway",
+      "ok": true,
+      "detail": {
+        "cut": false,
+        "roof": true,
+        "walls": true,
+        "timber": true,
+        "auto": false,
+        "preset": "courtyard"
+      }
+    },
+    {
+      "name": "Automatic gate opening visible",
+      "ok": true,
+      "detail": {
+        "gate": 1,
+        "inner": 1,
+        "windows": 1,
+        "targetDoors": 0,
+        "targetWindows": 0
+      }
+    },
+    {
+      "name": "Automatic window opening visible",
+      "ok": true,
+      "detail": {
+        "gate": 1,
+        "inner": 1,
+        "windows": 1,
+        "targetDoors": 0,
+        "targetWindows": 0
+      }
+    },
+    {
+      "name": "Automatic inner-door opening visible",
+      "ok": true,
+      "detail": {
+        "gate": 1,
+        "inner": 1,
+        "windows": 1,
+        "targetDoors": 0,
+        "targetWindows": 0
+      }
+    },
+    {
+      "name": "Gate opens before entry",
+      "ok": true,
+      "detail": {
+        "motion": {
+          "gate": 0.944606413994169,
+          "inner": 0,
+          "windows": 0,
+          "targetDoors": 0,
+          "targetWindows": 0
+        },
+        "personFloor": 0.06
+      }
+    },
+    {
+      "name": "Person climbs the stair",
+      "ok": true,
+      "detail": {
+        "personFloor": 1.5002974194488987,
+        "step": 5
+      }
+    },
+    {
+      "name": "Person reaches upper floor",
+      "ok": true,
+      "detail": {
+        "personFloor": 2.73,
+        "step": 6
+      }
+    },
+    {
+      "name": "Upper door opens for arrival",
+      "ok": true,
+      "detail": {
+        "gate": 1,
+        "inner": 1,
+        "windows": 1,
+        "targetDoors": 0,
+        "targetWindows": 0
+      }
+    },
+    {
+      "name": "Tour never enables full cutaway",
+      "ok": true,
+      "detail": {
+        "cut": false,
+        "roof": true,
+        "walls": true,
+        "timber": true,
+        "auto": false,
+        "preset": "courtyard"
+      }
+    },
+    {
+      "name": "Person reaches upper main room",
+      "ok": true,
+      "detail": {
+        "personFloor": 2.73,
+        "step": 7,
+        "person": [
+          6.3,
+          2.73,
+          10.35
+        ]
+      }
+    },
+    {
+      "name": "Manual inspection restores temporarily hidden roofs",
+      "ok": true,
+      "detail": {
+        "revealUpper": false,
+        "cut": false,
+        "paused": true
+      }
+    },
+    {
+      "name": "Control present: 门窗自动演示",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "Control present: 人物入户上楼",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "Control present: 暂停",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "Control present: 路线",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "Control present: 人物复位",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "No page JavaScript errors",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "No console errors",
+      "ok": true,
+      "detail": []
+    }
+  ],
+  "summary": {
+    "passed": 24,
+    "failed": 0,
+    "total": 24
+  },
+  "pageErrors": [],
+  "consoleErrors": [],
+  "screenshots": [
+    "v521_openings_demo.png",
+    "v521_visitor_upper_floor.png",
+    "v521_visitor_destination.png",
+    "v521_rotated_occlusion_fixed.png",
+    "v521_courtyard_camera_full_geometry.png",
+    "v521_visitor_on_stairs.png",
+    "v521_default_complete.png"
+  ]
+}

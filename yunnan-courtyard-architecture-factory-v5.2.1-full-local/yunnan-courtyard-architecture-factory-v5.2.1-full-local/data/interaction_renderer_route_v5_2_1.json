@@ -1,0 +1,90 @@
+{
+  "schemaVersion": "5.3.0",
+  "module": "renderer_openings_visitor_route",
+  "renderer": {
+    "backend": "WebGL 1.0",
+    "depthBuffer": true,
+    "depthFunction": "LEQUAL",
+    "projection": "perspective",
+    "nearClip": 0.1,
+    "farClip": "camera-derived",
+    "lineRendering": "depth-tested structural overlay",
+    "canvasAverageDepthSorting": "rejected for primary renderer",
+    "fallback": "Canvas 2D only when WebGL context cannot be created"
+  },
+  "viewBehavior": {
+    "default": "complete exterior geometry",
+    "courtyardPreset": "camera change only",
+    "cutaway": "explicit diagnostic mode",
+    "manualRotation": "restores complete geometry and pauses tour",
+    "tourLegibility": "temporarily hides only named roof groups during stair and upper-floor stages"
+  },
+  "openings": {
+    "mainGate": {
+      "leaves": 2,
+      "pivot": "left_and_right_jambs",
+      "automatic": true
+    },
+    "upperMainDoors": {
+      "leaves": 2,
+      "automatic": true,
+      "trigger": "visitor_reaches_upper_gallery"
+    },
+    "earHighWindows": {
+      "count": 4,
+      "leavesPerOpening": 2,
+      "automatic": true,
+      "trigger": "visitor_enters_courtyard"
+    },
+    "manualControls": [
+      "open_all_doors",
+      "open_all_windows",
+      "automatic_demo"
+    ]
+  },
+  "visitorSequence": [
+    {
+      "step": 1,
+      "name": "门外识别入口",
+      "level": 0.06
+    },
+    {
+      "step": 2,
+      "name": "门扇自动开启",
+      "level": 0.06
+    },
+    {
+      "step": 3,
+      "name": "穿过倒座门廊",
+      "level": 0.06
+    },
+    {
+      "step": 4,
+      "name": "进入中央天井",
+      "level": 0.06
+    },
+    {
+      "step": 5,
+      "name": "沿小厦到楼梯巷",
+      "level": 0.06
+    },
+    {
+      "step": 6,
+      "name": "登单跑木梯",
+      "levelRange": [
+        0.06,
+        2.73
+      ]
+    },
+    {
+      "step": 7,
+      "name": "沿二层大厦通行",
+      "level": 2.73
+    },
+    {
+      "step": 8,
+      "name": "进入正房二层",
+      "level": 2.73
+    }
+  ]
+}

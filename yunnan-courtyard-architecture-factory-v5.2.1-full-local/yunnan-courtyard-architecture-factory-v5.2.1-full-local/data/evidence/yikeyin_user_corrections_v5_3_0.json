@@ -1,0 +1,20 @@
+{
+  "schemaVersion": "5.3.0",
+  "recordedAt": "2026-08-21",
+  "scope": "userReviewOfLocalRuntime",
+  "sources": [
+    {
+      "privateFile": "references-private/yikeyin-corrections/user-correction-half-door.png",
+      "sha256": "d05e3aef6ed1391cb6f5890696eb02ee69d0229eb518e179d757a344223a1fc4",
+      "claim": "Each leaf of the double door must be one half of the host opening width.",
+      "authority": "directUserCorrection"
+    },
+    {
+      "privateFile": "references-private/yikeyin-corrections/user-correction-gable-to-ridge.png",
+      "sha256": "3a22dd5a3a9e30fadad8bd45c9c3b67547811d9035fac49fa8921a5ce6dab768",
+      "claim": "The gable wall must continue from eave level to the underside of the ridge rather than stopping at the eave.",
+      "authority": "directUserCorrection"
+    }
+  ],
+  "redistribution": "Raw review screenshots remain in the Git-ignored private evidence directory."
+}

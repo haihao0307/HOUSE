@@ -1,0 +1,147 @@
+{
+  "schemaVersion": "5.3.6",
+  "recordId": "YN_TUANJIE_001_MATERIAL_WEATHERING_REFERENCE",
+  "sampleId": "YN_TUANJIE_001",
+  "displayName": "团结乡样本 01 · 墙体风化、云南瓦作与旧木色参考",
+  "purpose": "把用户确认的实物表观证据转成生产线可复用的材质、构造识别与质量门槛，同时避免从扫描外观虚构尺寸、材料配比或隐蔽做法。",
+  "sources": [
+    {
+      "role": "primaryGeometryAndTextureEvidence",
+      "path": "assets/models/YN_TUANJIE_001_EDITABLE_HIGH.glb",
+      "sha256": "26eb6fa1b88ef4509c3ad46cfad943f865777612e6ff844a166fb40cba6962c6",
+      "geometry": {
+        "meshes": 48,
+        "vertices": 608634,
+        "triangles": 464288
+      },
+      "textures": {
+        "baseColor": [7000, 7000],
+        "normal": [2500, 2500]
+      }
+    },
+    {
+      "role": "userReviewScreenshot",
+      "path": "references-private/tuanjie-township/2026-08-21_user-confirmed-material-reference.png",
+      "sha256": "698064094f918d2ba1456fc82e40ff94fd3b372e3107746f257c5489349e60bf",
+      "sizeBytes": 1734625,
+      "publicationStatus": "localEvidenceOnly"
+    }
+  ],
+  "authority": {
+    "userConfirmedOn2026_08_21": [
+      "The visible earthen-wall surface is a representative long-term weathered state and must not be dismissed as a texture defect.",
+      "The visible roof-tile relationship is representative of traditional Yunnan tile roofing and is an approved visual reference for this production line.",
+      "The visible colors of the exterior timber members are approved as reference colors for aged local timber work."
+    ],
+    "directVisualObservations": [
+      "The main wall field is warm reddish earth-ochre with irregular loss, rounded erosion and exposed coarse courses or clods.",
+      "Lower and side wall areas contain pale gray-white patches, darker staining and repairs or deposits whose exact causes cannot be separated from the scan alone.",
+      "The roof reads as discrete gray ceramic pieces with alternating concave field channels and convex cover rows, visible downslope overlap rhythm and rounded eave ends.",
+      "Tile color and roughness vary locally; ridge and eave lines retain small age-related irregularities rather than a perfectly straight manufactured finish.",
+      "Exterior timber reads as matte, low-saturation gray-brown to dark brown, with exposure-dependent variation and no uniform bright red-orange coating."
+    ],
+    "domainInformedInterpretation": [
+      "The approved visible relationship is consistent with a pan-tile and cover-tile system in which lower pan tiles drain water and upper cover tiles bridge adjacent joints.",
+      "Wall appearance should be reproduced as layered exposure, erosion, patching and staining zones rather than as uniform procedural noise."
+    ],
+    "unresolved": [
+      "exact earth composition, lifts, binders and construction sequence",
+      "whether each pale wall patch is lime wash, mineral deposit, repair mortar, exposed substrate or a combination",
+      "wood species, original coating, repair date and replacement-member chronology",
+      "individual pan-tile and cover-tile dimensions, taper, course spacing, longitudinal lap, bedding, fastening and hidden roof build-up",
+      "exact ridge, verge, eave closure and drainage details"
+    ]
+  },
+  "productionReferenceSystems": [
+    {
+      "systemId": "TJ001-MAT-EARTH-WALL-WEATHERED",
+      "label": "长期风化土墙",
+      "referenceStatus": "userConfirmedVisualReference",
+      "appearanceLayers": [
+        "warm reddish earth-ochre body",
+        "coarse exposed and rounded erosion zones",
+        "pale gray-white patch or deposit zones",
+        "darker runoff, damp-looking or sheltered staining zones",
+        "stone or masonry base transition"
+      ],
+      "implementationGuidance": [
+        "Use large-scale non-repeating masks aligned to exposure and construction zones.",
+        "Preserve height-dependent and shelter-dependent variation at wall base, openings, eaves and corners.",
+        "Keep displacement or normal relief subordinate to the scanned wall form; do not replace real surface relief with generic noise.",
+        "Retain local repairs and surface loss as readable patches instead of homogenizing the wall."
+      ],
+      "rejectIf": [
+        "surface is uniformly clean or uniformly noisy",
+        "wall becomes polished concrete, stucco or a seamless brick texture",
+        "weathering is reduced to random speckles with no exposure logic",
+        "scan holes, floating fragments or occlusion spikes are copied as architectural fabric"
+      ]
+    },
+    {
+      "systemId": "TJ001-ROOF-YUNNAN-PAN-COVER-TILE-AGED",
+      "label": "云南传统板瓦—筒瓦旧瓦面",
+      "referenceStatus": "userConfirmedVisualAndRelationshipReference",
+      "visibleRelationship": [
+        "discrete lower pan-tile channels",
+        "convex cover-tile rows bridging adjacent pan-tile joints",
+        "downslope piece-by-piece overlap",
+        "rounded or semicircular eave-end rhythm",
+        "locally varied gray ceramic color and roughness"
+      ],
+      "implementationGuidance": [
+        "Model tile pieces or instanced modules as discrete units; a single corrugated sheet is not an acceptable substitute.",
+        "Keep pan and cover roles readable at eaves and close oblique views.",
+        "Use restrained variation in tone, roughness, edge wear and alignment while preserving a coherent drainage direction.",
+        "Retain small ridge and eave irregularities that are supported by the scan, but do not amplify photogrammetry noise."
+      ],
+      "rejectIf": [
+        "roof resembles metal, fiber-cement or continuous corrugated sheeting",
+        "all ribs are continuous from ridge to eave with no individual-tile overlap",
+        "pan and cover roles cannot be distinguished at the eave",
+        "tile dimensions or lap are asserted as measured from this scan without a control scale"
+      ]
+    },
+    {
+      "systemId": "TJ001-MAT-AGED-EXTERIOR-TIMBER",
+      "label": "云南旧木构综合色",
+      "referenceStatus": "userConfirmedColorReference",
+      "appearanceLayers": [
+        "desaturated gray-brown exposed members",
+        "dark brown sheltered, end-grain or accumulated-finish zones",
+        "matte to low-sheen weathered surface",
+        "member-to-member repair and exposure variation"
+      ],
+      "implementationGuidance": [
+        "Use the high-resolution scan as the color anchor for exterior posts, rails, boards and door leaves.",
+        "Separate color variation by exposure and member role rather than applying one saturated wood material everywhere.",
+        "Preserve a matte aged response and restrained specular highlights."
+      ],
+      "rejectIf": [
+        "all timber is bright orange, glossy red or newly varnished",
+        "different exposure zones share an identical flat material",
+        "wood species or historic coating is named without separate evidence"
+      ]
+    }
+  ],
+  "scanArtifactExclusions": [
+    "far-edge spikes and stretched triangles",
+    "holes caused by occlusion or missing photography",
+    "floating fragments and clipped background surfaces",
+    "texture seams, blur and projection contamination",
+    "geometry fused across unrelated surfaces by photogrammetry"
+  ],
+  "pipelineUses": [
+    "material and weathering art direction for Yunnan courtyard scans and procedural reconstructions",
+    "roof QA for rejecting corrugated-sheet substitutes",
+    "exterior timber color calibration",
+    "close-view comparison in the Tuanjie reference viewer",
+    "future sample-to-sample regional comparison after evidence is kept separate per building"
+  ],
+  "qaGates": [
+    "Wall weathering remains zoned and physically plausible rather than uniformly noisy.",
+    "Roof reads as discrete pan-and-cover ceramic tile work in silhouette, eave view and close oblique view.",
+    "Timber stays within the approved low-saturation gray-brown to dark-brown family.",
+    "No exact tile, wall or timber construction dimension is promoted without sample-specific measurement evidence.",
+    "Photogrammetry artifacts remain excluded from reusable architectural rules."
+  ]
+}

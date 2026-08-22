@@ -1,0 +1,163 @@
+{
+  "schemaVersion": "5.3.0",
+  "id": "CASE-YUNNAN-THREE-BAY-FRONT-GALLERY-2F",
+  "name": "云南民居三开间带前廊两层建筑测绘个案",
+  "classification": {
+    "system": "YUNNAN-COURTYARD-SYSTEM",
+    "branch": "unassignedRegionalCase",
+    "culturalAttribution": "notEstablishedBySuppliedEvidence",
+    "candidateRelation": "与三开间两层前廊型、两步厦类空间关系可比较，但不得直接归为纳西或白族支系",
+    "period": "现状改造阶段；原建年代未由所供资料确定"
+  },
+  "coordinateSystem": {
+    "origin": "frontLeftOuterRoofProjectionAtGround",
+    "x": "facadeLeftToRight",
+    "y": "up",
+    "z": "frontToBack",
+    "units": "m"
+  },
+  "evidenceState": {
+    "plan": "measuredDrawingAvailable",
+    "frontElevation": "measuredDrawingAndPhotoAvailable",
+    "sections": "twoMeasuredSectionsAvailable",
+    "timberFrame": "assemblyDiagramAndSectionsAvailable",
+    "wallMaterial": "userStatementSupportedByModelImage",
+    "tileProfile": "supportingSurveySketchAvailable",
+    "fullTileLapAndSubstrate": "locked",
+    "carvingProfiles": "visualOnlyDimensionsPending"
+  },
+  "plan": {
+    "overallWidth": 11.53,
+    "facadeDimensionChain": [0.565, 3.2, 4.0, 3.2, 0.565],
+    "bayAxesX": [0.565, 3.765, 7.765, 10.965],
+    "overallDepth": 7.92,
+    "depthDimensionChain": [0.75, 1.87, 4.775, 0.525],
+    "depthAxesZ": {
+      "A_frontGalleryColumn": 0.75,
+      "B_mainFrontFrame": 2.62,
+      "D_mainRearFrame": 7.395
+    },
+    "galleryClearDepth": 1.87,
+    "mainBodyDepth": 4.775,
+    "bayCount": 3,
+    "frameCountAcrossFacade": 4,
+    "dimensionClosure": {
+      "width": 11.53,
+      "depth": 7.92,
+      "status": "passed"
+    }
+  },
+  "verticalControl": {
+    "groundFloor": 0.0,
+    "upperFloor": 2.85,
+    "galleryWaistEave": 3.82,
+    "upperFacadeReference": 4.76,
+    "mainEave": 5.045,
+    "ridge": 7.04,
+    "foundationBottomCandidate": -0.43,
+    "status": "measuredDrawingCalibrated"
+  },
+  "programAfterAdaptation": {
+    "groundFloor": [
+      {
+        "zone": "centerBay",
+        "use": "楼梯通道与分设卫生间",
+        "authority": "userStatementAndPlanDrawing"
+      },
+      {
+        "zone": "leftSideBay",
+        "use": "客房",
+        "authority": "userStatement"
+      },
+      {
+        "zone": "rightSideBay",
+        "use": "客房",
+        "authority": "userStatement"
+      },
+      {
+        "zone": "frontGallery",
+        "use": "半室外休憩、采光与观院",
+        "authority": "userStatementAndPlanDrawing"
+      }
+    ],
+    "upperFloor": [
+      {
+        "zone": "centerBay",
+        "use": "楼梯到达与交通",
+        "authority": "planAndSectionDrawing"
+      },
+      {
+        "zone": "sideBays",
+        "use": "客房候选",
+        "authority": "userStatement"
+      }
+    ],
+    "historicOriginalProgram": "notEstablished"
+  },
+  "construction": {
+    "wall": {
+      "material": "adobeEarth",
+      "role": "thickThermalEnvelopeParticipatingWithTimberFrame",
+      "nominalThicknessCandidate": 0.525,
+      "candidateStatus": true
+    },
+    "timberFrame": {
+      "gableFrames": {
+        "count": 2,
+        "system": "chuandou",
+        "authority": "userStatement"
+      },
+      "internalFrames": {
+        "count": 2,
+        "system": "tailiang",
+        "authority": "userStatement"
+      },
+      "assemblyRule": "四榀横向梁架按四条面阔轴逐榀生成，楼面、檩条和纵向枋将其联系为整体"
+    },
+    "roof": {
+      "mainType": "suspendedGable",
+      "slopes": 2,
+      "galleryRoof": "independentFrontLeanToEave",
+      "visualDescription": "青灰色筒板瓦，缓坡，整齐瓦行",
+      "tileGeometryState": "directionAndEaveProfileOnly",
+      "ridgeDetailState": "亮龙筋节点可作为方法参考，地域对应关系待核",
+      "prohibition": "不得把前廊披檐与主体悬山合并为单一连续拉伸体，也不得在完整搭接未闭合时宣称写实瓦面已完成"
+    }
+  },
+  "decoration": {
+    "locations": ["beamEnds", "roofFrames", "tuodun", "eaveFang"],
+    "motifsReported": ["flowers", "animals", "figures"],
+    "geometryState": "semanticMarkersOnly",
+    "reason": "所供图片不足以建立可量取的雕刻轮廓和深度"
+  },
+  "semanticAssemblies": [
+    "foundation",
+    "fourTransverseFrames",
+    "adobeEnvelope",
+    "upperFloor",
+    "frontGallery",
+    "mainSuspendedGableRoof",
+    "frontGalleryEave",
+    "doorsAndWindows",
+    "stairAndBathrooms",
+    "carvingMarkers"
+  ],
+  "validation": {
+    "status": "draft",
+    "passed": [
+      "widthDimensionChainCloses",
+      "depthDimensionChainCloses",
+      "bayCountEqualsFrameCountMinusOne",
+      "galleryDepthMatchesUserStatement",
+      "mainAndGalleryRoofsRemainSeparate",
+      "culturalAttributionRemainsUnassigned"
+    ],
+    "openIssues": [
+      "原建地点、年代与族属",
+      "主体瓦作搭接长度、行距、基层与泥背",
+      "梁、枋、檩、椽和柱的完整截面表",
+      "木雕轮廓、深度与图案分区",
+      "门窗五金、枢轴和开启范围"
+    ]
+  }
+}

@@ -1,0 +1,21 @@
+# Local reference materials supplied during research
+references-private/
+
+# Generated release folders and archives
+release/
+_site/
+*.zip
+*.tar.gz
+
+# Local server and test output
+__pycache__/
+*.pyc
+playwright-report/
+test-results/
+.browser-test/
+
+# Editor and operating system
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

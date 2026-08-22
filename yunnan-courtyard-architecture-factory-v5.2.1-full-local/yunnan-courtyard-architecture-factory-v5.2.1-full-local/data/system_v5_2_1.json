@@ -1,0 +1,1195 @@
+{
+  "schemaVersion": "5.4.0",
+  "title": "云南院落历史建筑生产线 V5.4.0",
+  "periodFocus": "1940—1945；早期测绘个案仅用于类型与构造校准",
+  "systemHierarchy": {
+    "root": {
+      "id": "YUNNAN-COURTYARD-SYSTEM",
+      "name": "云南院落民居母系统",
+      "definition": "以坊房、间架、院落、廊厦和独立屋面为基本语汇，通过主轴、地形、水系和家庭组织形成地方支系。",
+      "sharedCore": [
+        "先定场地与主轴，再定院落拓扑",
+        "每座坊房先按间数和步架建立柱网",
+        "正房或主坊具有空间与屋脊等级",
+        "外部围护较封闭，内部院落一侧更开放",
+        "檐下廊厦连接房间、楼梯与院落",
+        "每座主体建筑拥有独立双坡或多坡主屋面",
+        "地基、木构、围护、楼面、屋面和瓦作分层生成"
+      ]
+    },
+    "branches": [
+      {
+        "id": "BRANCH-CENTRAL-YUNNAN-YIKEYIN",
+        "name": "滇中紧凑合院支系",
+        "canonicalType": "一颗印",
+        "relationshipToRoot": "以三间正房、耳房、入口倒座和小天井将母体语法压缩为高围合、内向型院落。",
+        "status": "measuredCaseAvailable"
+      },
+      {
+        "id": "BRANCH-WESTERN-YUNNAN-NAXI",
+        "name": "滇西纳西院落支系",
+        "canonicalTypes": [
+          "三坊一照壁",
+          "四合五天井"
+        ],
+        "relationshipToRoot": "沿用坊房与院落母体语法，形成悬山、厦子、照壁、转角小天井和更开放的木构院落。",
+        "status": "planGrammarAvailableMetricPending"
+      },
+      {
+        "id": "CASE-YUNNAN-THREE-BAY-FRONT-GALLERY-2F",
+        "name": "云南地域未定测绘个案",
+        "canonicalType": "三开间带前廊两层建筑",
+        "relationshipToRoot": "以单座三开间坊房、前廊、两层木构与厚土墙体现母体坊房语法；地点和族属尚未由所供资料确定。",
+        "status": "measuredCaseAvailableAttributionPending"
+      },
+      {
+        "id": "REFERENCE-TUANJIE-001",
+        "name": "团结乡样本 01",
+        "canonicalType": null,
+        "relationshipToRoot": "作为完整院落摄影测量参考，用于比较围合、院落空腔、屋面拓扑、入口和坡地关系；不替代已测绘个案。",
+        "status": "editableGLBReferenceScaleAndSemanticsPending",
+        "asset": "assets/models/YN_TUANJIE_001_EDITABLE_HIGH.glb",
+        "assetProfiles": {
+          "highFidelity": "assets/models/YN_TUANJIE_001_EDITABLE_HIGH.glb",
+          "webStandard": "assets/models/YN_TUANJIE_001_EDITABLE.glb",
+          "geometryIdentity": "same 48 meshes and 464288 triangles"
+        }
+      }
+    ],
+    "lockedFutureBranches": [
+      {
+        "id": "BRANCH-BAI",
+        "name": "白族院落支系",
+        "status": "pendingEvidence"
+      },
+      {
+        "id": "BRANCH-YI",
+        "name": "彝族土筑支系",
+        "status": "pendingEvidence"
+      }
+    ]
+  },
+  "logicOrder": [
+    {
+      "id": "L01",
+      "name": "证据与年代",
+      "question": "资料属于哪个地点、年代、类型与改造阶段？",
+      "output": "来源主张、置信度和适用范围"
+    },
+    {
+      "id": "L02",
+      "name": "场地与主轴",
+      "question": "入口、主朝向、地坪高差、水沟与街巷在哪里？",
+      "output": "场地基准和坐标系"
+    },
+    {
+      "id": "L03",
+      "name": "院落拓扑",
+      "question": "几座坊房围合几个院落，照壁或倒座位于何处？",
+      "output": "不可连续拉伸的离散院落图"
+    },
+    {
+      "id": "L04",
+      "name": "间架与柱网",
+      "question": "每座房有几间、几步架、多少构架榀？",
+      "output": "轴号、柱位、间宽和进深链"
+    },
+    {
+      "id": "L05",
+      "name": "地基与墙脚",
+      "question": "木柱和厚墙分别如何落地、防潮和适应地形？",
+      "output": "基础、柱础、石勒脚和地面层"
+    },
+    {
+      "id": "L06",
+      "name": "一层平面",
+      "question": "堂屋、卧室、厨房、畜厩、入口和天井如何组织？",
+      "output": "房间、门洞、交通和排水边界"
+    },
+    {
+      "id": "L07",
+      "name": "楼面与二层",
+      "question": "楼梯、楼板、祖堂、储藏和居室如何叠合？",
+      "output": "楼面支承和二层功能图"
+    },
+    {
+      "id": "L08",
+      "name": "立面等级",
+      "question": "主房、耳房、倒座、门楼的檐口、屋脊和开口等级如何？",
+      "output": "外立面与院内立面控制线"
+    },
+    {
+      "id": "L09",
+      "name": "控制剖面",
+      "question": "层高、檩位、出檐、廊厦和屋脊如何连接？",
+      "output": "标高账本和支承关系"
+    },
+    {
+      "id": "L10",
+      "name": "木构装配",
+      "question": "柱、枋、梁、楼袱、檩、椽按什么顺序装配？",
+      "output": "构件树和节点接口"
+    },
+    {
+      "id": "L11",
+      "name": "屋面与瓦作",
+      "question": "每片坡面向哪里排水，瓦片怎样搭接与收边？",
+      "output": "独立屋面、瓦行、脊与檐口"
+    },
+    {
+      "id": "L12",
+      "name": "门窗运动",
+      "question": "洞口、框、扇、转轴、开启范围和碰撞关系是否明确？",
+      "output": "可开启门窗状态机"
+    },
+    {
+      "id": "L13",
+      "name": "历史状态",
+      "question": "1940—1945年的材料、损伤、修补和后加建是什么？",
+      "output": "可回滚的年代增量层"
+    },
+    {
+      "id": "L14",
+      "name": "三维装配与验收",
+      "question": "每个三维构件能否追溯到平面、剖面和证据？",
+      "output": "可审计模型与质量报告"
+    }
+  ],
+  "sharedPlanGrammar": {
+    "terms": {
+      "坊房": "独立的条形房屋单元，可由三间或其他离散间数组成。",
+      "间": "相邻构架轴之间的结构与空间模数；三间对应四条构架轴。",
+      "步架": "沿进深方向由柱列、梁架和檩位形成的结构段。",
+      "院落": "由坊房、照壁、倒座或围墙围合的室外核心空间。",
+      "厦子或廊厦": "主体房屋檐下的附属交通与活动空间，必须有独立柱位和屋面。",
+      "照壁": "入口侧的空间界面，其承重角色必须单独注明。",
+      "倒座": "位于主房对侧的入口或服务建筑段，地方术语与尺寸须按个案解释。"
+    },
+    "rules": [
+      "院落单元由离散房屋组合形成，禁止把整体包络连续拉伸为新类型。",
+      "主体房屋的间数决定面阔轴数；墙和门窗必须挂接到轴间。",
+      "主房、侧房和入口建筑分别生成，屋面不得由一个整体网格覆盖。",
+      "楼梯必须连接明确的楼面标高和交通节点。",
+      "天井与院落必须保存地面坡向、暗沟或明沟及汇水目标。",
+      "外墙开口和院内开口分别建模，以表达外闭内开的空间性格。"
+    ]
+  },
+  "branches": {
+    "yikeyin": {
+      "id": "BRANCH-CENTRAL-YUNNAN-YIKEYIN",
+      "name": "滇中一颗印",
+      "whyItForms": [
+        {
+          "topic": "紧凑围合",
+          "reason": "在有限地块中将三间正房、四耳和入口段紧密组织，形成高效、内向的院落。",
+          "authority": "typeAndPlanEvidence"
+        },
+        {
+          "topic": "高墙小窗",
+          "reason": "外部厚墙与少量高窗减少外界干扰，采光、通风和日常活动主要转向中央天井。",
+          "authority": "facadeEvidence"
+        },
+        {
+          "topic": "四水归堂",
+          "reason": "各独立屋面朝天井组织排水，天井地面承担集水和排水。",
+          "authority": "planSectionRoofEvidence"
+        },
+        {
+          "topic": "木土复合",
+          "reason": "木构架、土墙或砖包土墙、石勒脚形成承重、围护、防潮分工。",
+          "authority": "constructionEvidence"
+        },
+        {
+          "topic": "主次等级",
+          "reason": "正房位于主轴尊位且屋脊最高，耳房降低，入口建筑最低，空间功能与立面等级一致。",
+          "authority": "planElevationEvidence"
+        }
+      ],
+      "typeFamily": [
+        {
+          "id": "YKY-T01",
+          "name": "正三间",
+          "composition": {
+            "mainBays": 3,
+            "ears": 0,
+            "daozuo": 0,
+            "courtyard": 0
+          }
+        },
+        {
+          "id": "YKY-T02",
+          "name": "正三间带羊角厦",
+          "composition": {
+            "mainBays": 3,
+            "ears": 0,
+            "daozuo": 0,
+            "courtyard": 0,
+            "gallery": "yangjiaoxia"
+          }
+        },
+        {
+          "id": "YKY-T03",
+          "name": "两间单耳",
+          "composition": {
+            "mainBays": 2,
+            "ears": 1,
+            "daozuo": 0,
+            "courtyard": "partial"
+          }
+        },
+        {
+          "id": "YKY-T04",
+          "name": "两间两耳",
+          "composition": {
+            "mainBays": 2,
+            "ears": 2,
+            "daozuo": 0,
+            "courtyard": "threeSided"
+          }
+        },
+        {
+          "id": "YKY-T05",
+          "name": "三间两耳",
+          "composition": {
+            "mainBays": 3,
+            "ears": 2,
+            "daozuo": 0,
+            "courtyard": "threeSided"
+          }
+        },
+        {
+          "id": "YKY-T06",
+          "name": "三间四耳",
+          "composition": {
+            "mainBays": 3,
+            "ears": 4,
+            "daozuo": 0,
+            "courtyard": "entranceOpen"
+          }
+        },
+        {
+          "id": "YKY-T07",
+          "name": "三间四耳倒八尺",
+          "composition": {
+            "mainBays": 3,
+            "ears": 4,
+            "daozuo": 1,
+            "courtyard": "enclosed"
+          },
+          "canonical": true
+        },
+        {
+          "id": "YKY-T08",
+          "name": "前三后三中四耳",
+          "composition": {
+            "mainBays": 3,
+            "ears": 4,
+            "daozuo": 1,
+            "courtyards": 2
+          }
+        },
+        {
+          "id": "YKY-T09",
+          "name": "五间六耳倒八尺",
+          "composition": {
+            "mainBays": 5,
+            "ears": 6,
+            "daozuo": 1,
+            "courtyard": "wide"
+          }
+        },
+        {
+          "id": "YKY-T10",
+          "name": "联排一颗印",
+          "composition": {
+            "modules": "multiple",
+            "courtyards": "multiple"
+          }
+        }
+      ],
+      "measuredCase": {
+        "id": "CASE-YKY-XIAOYAO-MENG-XUANTONG",
+        "name": "小窑村孟宅一颗印测绘个案",
+        "dateNote": "图录标注宣统元年建；用于尺度与构造校准，不直接代表1940—1945年的保存状态。",
+        "coordinateSystem": {
+          "origin": "southWestOuterCorner",
+          "x": "east",
+          "y": "north",
+          "unit": "m"
+        },
+        "overall": {
+          "width": 12.6,
+          "depth": 15.3
+        },
+        "dimensionChains": {
+          "mainHouseWidth": [
+            0.6,
+            3.65,
+            4.1,
+            3.65,
+            0.6
+          ],
+          "entranceZoneWidth": [
+            0.6,
+            2.6,
+            1.45,
+            3.3,
+            1.45,
+            2.6,
+            0.6
+          ],
+          "depthSouthToNorth": [
+            0.6,
+            4.15,
+            3.25,
+            1.3,
+            2.7,
+            2.7,
+            0.6
+          ]
+        },
+        "axes": {
+          "mainX": [
+            0.6,
+            4.25,
+            8.35,
+            12.0
+          ],
+          "sideX": [
+            0.6,
+            3.2,
+            9.4,
+            12.0
+          ],
+          "y": [
+            0.6,
+            4.75,
+            8.0,
+            9.3,
+            12.0,
+            14.7
+          ]
+        },
+        "courtyard": {
+          "clearWidth": 4.56,
+          "clearDepth": 3.75,
+          "sourceState": "dimensionVisibleInDrawing",
+          "note": "清空尺寸用于图证校准，边缘廊厦与墙厚仍按构件层处理。"
+        },
+        "verticalControl": {
+          "groundFloor": 0.0,
+          "upperFloor": 2.73,
+          "mainEaveSupport": 5.11,
+          "midPurlin": 5.55,
+          "ridge": 6.18,
+          "mainEaveProjection": 0.8,
+          "mainPurlinRuns": [
+            1.35,
+            1.35
+          ],
+          "bigGalleryWidth": 1.3,
+          "bigGalleryProjection": 1.1,
+          "bigGalleryColumnHeight": 3.23
+        },
+        "programGround": [
+          {
+            "zone": "mainCenter",
+            "use": "客堂或堂屋",
+            "authority": "measuredCaseLabel"
+          },
+          {
+            "zone": "mainSides",
+            "use": "房间",
+            "authority": "planAndType"
+          },
+          {
+            "zone": "westSouth",
+            "use": "马厩候选",
+            "authority": "measuredCaseLabel"
+          },
+          {
+            "zone": "eastSouth",
+            "use": "猪厩候选",
+            "authority": "measuredCaseLabel"
+          },
+          {
+            "zone": "eastNorth",
+            "use": "灶房候选",
+            "authority": "measuredCaseLabel"
+          },
+          {
+            "zone": "center",
+            "use": "天井、屏风与入口序列",
+            "authority": "measuredCaseDrawing"
+          }
+        ],
+        "programUpper": [
+          {
+            "zone": "mainCenter",
+            "use": "祖堂或佛堂",
+            "authority": "measuredCaseLabel"
+          },
+          {
+            "zone": "mainSides",
+            "use": "居室或储藏",
+            "authority": "planEvidence"
+          },
+          {
+            "zone": "sideWings",
+            "use": "耳房上层居室或储藏",
+            "authority": "typeEvidence"
+          },
+          {
+            "zone": "southCenter",
+            "use": "倒座上层或储藏候选",
+            "authority": "planEvidence"
+          }
+        ],
+        "roofLogic": {
+          "mainHouse": {
+            "type": "symmetricGable",
+            "slopes": 2,
+            "ridgeRank": 1,
+            "gable": "hardGableCandidate"
+          },
+          "westEar": {
+            "type": "asymmetricDoublePitch",
+            "slopes": 2,
+            "longSlope": "courtyard",
+            "ridgeRank": 2
+          },
+          "eastEar": {
+            "type": "asymmetricDoublePitch",
+            "slopes": 2,
+            "longSlope": "courtyard",
+            "ridgeRank": 2
+          },
+          "entranceDaozuo": {
+            "type": "independentDoublePitch",
+            "slopes": 2,
+            "ridgeRank": 3
+          },
+          "bigGallery": {
+            "type": "accessoryLeanTo",
+            "host": "mainHouse",
+            "ridgeRank": 4
+          },
+          "smallGalleries": {
+            "type": "accessoryLeanTo",
+            "host": "earOrDaozuo",
+            "ridgeRank": 4
+          },
+          "prohibition": "不得把正房、耳房和倒座合并成单一屋面，也不得自动生成斜沟。"
+        },
+        "openings": {
+          "doors": [
+            {
+              "id": "D-GATE-L",
+              "host": "southGate",
+              "leaf": "left",
+              "pivot": "southGateLeftJamb",
+              "range": [
+                0,
+                95
+              ],
+              "default": 0
+            },
+            {
+              "id": "D-GATE-R",
+              "host": "southGate",
+              "leaf": "right",
+              "pivot": "southGateRightJamb",
+              "range": [
+                -95,
+                0
+              ],
+              "default": 0
+            },
+            {
+              "id": "D-MAIN-W",
+              "host": "mainHouseSouthWallWestBay",
+              "leaf": "single",
+              "pivot": "westJamb",
+              "range": [
+                0,
+                100
+              ],
+              "default": 15
+            },
+            {
+              "id": "D-MAIN-E",
+              "host": "mainHouseSouthWallEastBay",
+              "leaf": "single",
+              "pivot": "eastJamb",
+              "range": [
+                -100,
+                0
+              ],
+              "default": -15
+            },
+            {
+              "id": "D-EAR-W1",
+              "host": "westEarInnerWall",
+              "leaf": "single",
+              "pivot": "northJamb",
+              "range": [
+                0,
+                95
+              ],
+              "default": 0
+            },
+            {
+              "id": "D-EAR-E1",
+              "host": "eastEarInnerWall",
+              "leaf": "single",
+              "pivot": "northJamb",
+              "range": [
+                -95,
+                0
+              ],
+              "default": 0
+            }
+          ],
+          "windows": {
+            "external": "smallAndHigh",
+            "courtyard": "largerOpeningsAndDoors",
+            "motionMechanism": "pendingCloseUpEvidence"
+          }
+        },
+        "tileCase": {
+          "source": "刘致平昆明东北乡古建筑图录瓦作图",
+          "status": "caseSpecificProvisional",
+          "units": "cm",
+          "profiles": [
+            {
+              "id": "TILE-A",
+              "description": "弧形瓦样本A",
+              "length": 24,
+              "overallWidth": 21,
+              "innerSpan": 19,
+              "rise": 4
+            },
+            {
+              "id": "TILE-B",
+              "description": "筒形瓦样本B",
+              "length": 24,
+              "overallWidth": 12.5
+            }
+          ],
+          "eavePieces": [
+            {
+              "id": "ROUND-EAVE",
+              "description": "圆形勾头样本",
+              "diameter": 13
+            },
+            {
+              "id": "DRIP-EAVE",
+              "description": "滴水样本",
+              "width": 21
+            }
+          ],
+          "rule": "只有在屋面基层、搭接长度、行距和收边均明确后，才可生成完整瓦面。"
+        }
+      },
+      "facadeLogic": {
+        "exterior": [
+          "正立面以中央大门为唯一主要入口。",
+          "外墙高而厚，开窗少且位置较高。",
+          "石勒脚或墙脚保护土墙和砖土复合墙。",
+          "正房屋脊在后方显露，耳房和门楼形成较低层次。"
+        ],
+        "courtyard": [
+          "正房朝天井一侧最开放，堂屋门和上层开口沿间架组织。",
+          "大厦连接正房与天井，小厦沿耳房和入口段形成环行交通。",
+          "楼梯位于正房与耳房转角，进入上层回廊。",
+          "正房、耳房和倒座檐口形成清晰高差。"
+        ]
+      }
+    },
+    "naxi": {
+      "id": "BRANCH-WESTERN-YUNNAN-NAXI",
+      "name": "滇西纳西院落",
+      "positionInSystem": "云南院落民居母系统的滇西木构支系",
+      "whyItForms": [
+        {
+          "topic": "坊房组合",
+          "reason": "以三开间坊房为基本单元，按地块和家庭规模组合为一坊、两坊、三坊与四合院。",
+          "authority": "userPlanEvidence"
+        },
+        {
+          "topic": "照壁与宽院",
+          "reason": "三坊一照壁以入口侧照壁完成院落界面，院落尺度与厦子共同组织日常活动。",
+          "authority": "userPlanEvidence"
+        },
+        {
+          "topic": "悬山与厦子",
+          "reason": "屋面伸出山墙，檐下厦子连接室内和院落，构成区别于滇中硬山紧凑院落的立面特征。",
+          "authority": "userFacadeEvidence"
+        },
+        {
+          "topic": "五天井",
+          "reason": "四合五天井在中央院落之外保留四个转角小天井，解决转角采光、通风和交通。",
+          "authority": "userPlanEvidence"
+        },
+        {
+          "topic": "木构与水系",
+          "reason": "木构坊房、石铺地、水沟和顺应地形的院落共同适应丽江坝区与聚落水系。",
+          "authority": "userAndSiteEvidence"
+        }
+      ],
+      "typeFamily": [
+        {
+          "id": "NAXI-T01",
+          "name": "一坊房",
+          "composition": {
+            "fang": 1,
+            "courtyard": "forecourt"
+          },
+          "role": "basicUnit"
+        },
+        {
+          "id": "NAXI-T02",
+          "name": "两坊拐角",
+          "composition": {
+            "fang": 2,
+            "courtyard": "L-shaped"
+          },
+          "role": "transitional"
+        },
+        {
+          "id": "NAXI-T03",
+          "name": "三坊一照壁",
+          "composition": {
+            "fang": 3,
+            "screenWall": 1,
+            "courtyard": 1
+          },
+          "role": "canonicalThreeSide"
+        },
+        {
+          "id": "NAXI-T04",
+          "name": "四合五天井",
+          "composition": {
+            "fang": 4,
+            "courtyard": 1,
+            "cornerSkywells": 4
+          },
+          "role": "canonicalFourSide"
+        }
+      ],
+      "buildingForms": [
+        {
+          "id": "NF-01",
+          "name": "平房",
+          "stories": 1,
+          "gallery": "noneOrSimple",
+          "status": "typeOnly"
+        },
+        {
+          "id": "NF-02",
+          "name": "明楼",
+          "stories": 2,
+          "gallery": "none",
+          "waistEave": "optional",
+          "status": "typeOnly"
+        },
+        {
+          "id": "NF-03",
+          "name": "两步厦",
+          "stories": 2,
+          "gallery": "frontTwoStep",
+          "status": "typeOnly"
+        },
+        {
+          "id": "NF-04",
+          "name": "两面厦",
+          "stories": 2,
+          "gallery": "frontAndRear",
+          "status": "typeOnly"
+        },
+        {
+          "id": "NF-05",
+          "name": "蛮楼",
+          "stories": 2,
+          "gallery": "openUnderEave",
+          "attic": true,
+          "status": "typeOnly"
+        },
+        {
+          "id": "NF-06",
+          "name": "闷楼",
+          "stories": 2,
+          "gallery": "none",
+          "upperClosed": true,
+          "status": "typeOnly"
+        },
+        {
+          "id": "NF-07",
+          "name": "骑厦楼",
+          "stories": 2,
+          "gallery": "verticalComposite",
+          "status": "typeOnly"
+        }
+      ],
+      "sharedFacadeLogic": [
+        "主坊居主轴尊位，侧坊转向围合院落。",
+        "主体屋面采用悬山，屋面越过山墙，博风板与悬鱼位于山面。",
+        "院内木构立面和厦子开放，外部墙面相对封闭。",
+        "瓦猫、悬鱼、麻雀台、金包玉属于地方构件层，不能替代主体结构。",
+        "三坊一照壁的照壁位于入口侧，四合五天井的转角小天井必须保持独立。"
+      ],
+      "metricState": "pendingMeasuredPlansAndSections"
+    }
+  },
+  "constructionLayers": [
+    {
+      "id": "C01",
+      "name": "场地整平与排水",
+      "dependsOn": []
+    },
+    {
+      "id": "C02",
+      "name": "石基础与墙脚",
+      "dependsOn": [
+        "C01"
+      ]
+    },
+    {
+      "id": "C03",
+      "name": "柱础与首层柱网",
+      "dependsOn": [
+        "C02"
+      ]
+    },
+    {
+      "id": "C04",
+      "name": "穿枋、梁枋与纵向联系",
+      "dependsOn": [
+        "C03"
+      ]
+    },
+    {
+      "id": "C05",
+      "name": "厚墙与砖土复合围护",
+      "dependsOn": [
+        "C02",
+        "C04"
+      ]
+    },
+    {
+      "id": "C06",
+      "name": "首层门窗框与洞口",
+      "dependsOn": [
+        "C04",
+        "C05"
+      ]
+    },
+    {
+      "id": "C07",
+      "name": "楼袱、楼楞与楼板",
+      "dependsOn": [
+        "C04"
+      ]
+    },
+    {
+      "id": "C08",
+      "name": "上层柱网与围护",
+      "dependsOn": [
+        "C07"
+      ]
+    },
+    {
+      "id": "C09",
+      "name": "檩条、椽子与廊厦屋架",
+      "dependsOn": [
+        "C08"
+      ]
+    },
+    {
+      "id": "C10",
+      "name": "屋面基层与泥背",
+      "dependsOn": [
+        "C09"
+      ]
+    },
+    {
+      "id": "C11",
+      "name": "瓦行、檐口、脊与山面收边",
+      "dependsOn": [
+        "C10"
+      ]
+    },
+    {
+      "id": "C12",
+      "name": "地面、天井、暗沟与水缸或井",
+      "dependsOn": [
+        "C05"
+      ]
+    },
+    {
+      "id": "C13",
+      "name": "门窗扇安装与运动校验",
+      "dependsOn": [
+        "C06",
+        "C08"
+      ]
+    },
+    {
+      "id": "C14",
+      "name": "饰面、历史损伤与修补层",
+      "dependsOn": [
+        "C11",
+        "C12",
+        "C13"
+      ]
+    }
+  ],
+  "qualityRules": [
+    {
+      "id": "QA-001",
+      "name": "支系层级",
+      "test": "naxiBranchNestedUnderYunnanCourtyardRoot",
+      "severity": "error"
+    },
+    {
+      "id": "QA-002",
+      "name": "先平面后立面",
+      "test": "facadeRequiresAcceptedPlanTopology",
+      "severity": "error"
+    },
+    {
+      "id": "QA-003",
+      "name": "间架对应",
+      "test": "axisCountEqualsBayCountPlusOne",
+      "severity": "error"
+    },
+    {
+      "id": "QA-004",
+      "name": "尺寸链闭合",
+      "test": "measuredDimensionChainsSumToOverall",
+      "severity": "error"
+    },
+    {
+      "id": "QA-005",
+      "name": "主轴对齐",
+      "test": "mainHouseCourtyardGateShareAxis",
+      "severity": "error"
+    },
+    {
+      "id": "QA-006",
+      "name": "屋面独立",
+      "test": "mainEarDaozuoRoofsAreSeparateAssemblies",
+      "severity": "error"
+    },
+    {
+      "id": "QA-007",
+      "name": "主体双坡",
+      "test": "everyMainBuildingHasAtLeastTwoSlopes",
+      "severity": "error"
+    },
+    {
+      "id": "QA-008",
+      "name": "耳房长短坡",
+      "test": "yikeyinEarRoofIsAsymmetricDoublePitch",
+      "severity": "error"
+    },
+    {
+      "id": "QA-009",
+      "name": "纳西悬山",
+      "test": "naxiRoofProjectsBeyondGable",
+      "severity": "error"
+    },
+    {
+      "id": "QA-010",
+      "name": "五天井数量",
+      "test": "naxiFourHeHasOneMainAndFourCornerSkywells",
+      "severity": "error"
+    },
+    {
+      "id": "QA-011",
+      "name": "门窗状态机",
+      "test": "openableDoorHasHostFramePivotRangeState",
+      "severity": "error"
+    },
+    {
+      "id": "QA-012",
+      "name": "瓦作边界",
+      "test": "tileGeometryUsesCaseSpecificDimensionsAndPendingLap",
+      "severity": "error"
+    },
+    {
+      "id": "QA-013",
+      "name": "排水闭合",
+      "test": "everyRoofPlaneHasDrainageTarget",
+      "severity": "error"
+    },
+    {
+      "id": "QA-014",
+      "name": "三维追溯",
+      "test": "everyRenderedAssemblyReferencesPlanAndSection",
+      "severity": "error"
+    },
+    {
+      "id": "QA-015",
+      "name": "年代分层",
+      "test": "measuredHistoricCaseSeparateFrom1940sState",
+      "severity": "error"
+    }
+  ],
+  "evidence": [
+    {
+      "id": "SRC-YKY-PLAN",
+      "title": "孟宅三间四耳一颗印一层、二层测绘平面",
+      "kind": "measuredDrawing",
+      "use": [
+        "12.60×15.30总尺寸",
+        "面阔与进深尺寸链",
+        "房间、楼梯、天井、入口"
+      ],
+      "thumbnail": "measured_plan"
+    },
+    {
+      "id": "SRC-YKY-SECTION",
+      "title": "一颗印正房带厦横断面",
+      "kind": "measuredDrawing",
+      "use": [
+        "2.73、5.11、5.55、6.18米标高",
+        "大厦宽度与出檐",
+        "柱、楼板、檩位"
+      ],
+      "thumbnail": "section"
+    },
+    {
+      "id": "SRC-YKY-FACADE",
+      "title": "孟宅一颗印立面与横剖面",
+      "kind": "measuredDrawing",
+      "use": [
+        "外墙高小窗",
+        "中央门楼",
+        "正房、耳房和大厦层次"
+      ],
+      "thumbnail": "facade"
+    },
+    {
+      "id": "SRC-YKY-TILE",
+      "title": "昆明东北乡砖瓦作与勾头样本",
+      "kind": "measuredDetail",
+      "use": [
+        "瓦样本尺寸",
+        "勾头与滴水",
+        "砖和墙脚做法"
+      ],
+      "thumbnail": "tile_masonry"
+    },
+    {
+      "id": "SRC-NAXI-TYPES",
+      "title": "纳西民居平面形制图组",
+      "kind": "typologyDiagram",
+      "use": [
+        "一坊、两坊、三坊一照壁、四合五天井",
+        "组合演变"
+      ],
+      "thumbnail": "naxi_typology"
+    },
+    {
+      "id": "SRC-NAXI-FORMS",
+      "title": "纳西民居木构楼型图组",
+      "kind": "typologyDiagram",
+      "use": [
+        "平房、明楼、两步厦、两面厦、蛮楼、闷楼、骑厦楼"
+      ],
+      "thumbnail": "naxi_forms"
+    },
+    {
+      "id": "SRC-ROOF-PHOTO",
+      "title": "云南传统小青瓦屋面照片",
+      "kind": "photo",
+      "use": [
+        "瓦行方向、独立屋面、脊线和旧化观察"
+      ],
+      "thumbnail": "roof_photo"
+    },
+    {
+      "id": "SRC-YFG-PLAN-SECTION",
+      "title": "三开间带前廊两层建筑平面与剖面",
+      "kind": "userSuppliedMeasuredDrawing",
+      "use": [
+        "11.53米面阔尺寸链",
+        "7.92米进深",
+        "1.87米前廊",
+        "2.85米二层与7.04米屋脊"
+      ],
+      "record": "data/evidence/yunnan_three_bay_front_gallery_sources_v5_3_0.json"
+    },
+    {
+      "id": "SRC-YFG-ROOF-RIDGE",
+      "title": "《营造法原》亮龙筋瓦作方法图",
+      "kind": "crossRegionalMethodReference",
+      "use": [
+        "底瓦与盖瓦梢顶",
+        "人字木",
+        "鸳鸯砖与千斤砖方法参考",
+        "不直接移植地域尺寸"
+      ],
+      "record": "data/evidence/yunnan_three_bay_front_gallery_sources_v5_3_0.json"
+    }
+  ],
+  "missingEvidence": [
+    {
+      "rank": 1,
+      "topic": "纳西三坊一照壁测绘平面",
+      "needed": [
+        "总尺寸",
+        "三坊间架",
+        "天井与照壁尺寸",
+        "厦子宽度",
+        "门窗与楼梯"
+      ]
+    },
+    {
+      "rank": 2,
+      "topic": "纳西典型剖面",
+      "needed": [
+        "悬山出挑",
+        "楼层标高",
+        "厦子柱网",
+        "檩条与椽子",
+        "墙体收分"
+      ]
+    },
+    {
+      "rank": 3,
+      "topic": "一颗印入口倒座完整剖面",
+      "needed": [
+        "倒八尺所指尺寸方向",
+        "门楼、倒座与上层储藏关系"
+      ]
+    },
+    {
+      "rank": 4,
+      "topic": "当地门窗近照与节点",
+      "needed": [
+        "门轴或合页",
+        "窗扇类型",
+        "插销",
+        "格心和裙板尺寸"
+      ]
+    },
+    {
+      "rank": 5,
+      "topic": "瓦作搭接与基层",
+      "needed": [
+        "搭接长度",
+        "瓦行间距",
+        "泥背与望板",
+        "檐口、正脊和山面收边"
+      ]
+    },
+    {
+      "rank": 6,
+      "topic": "1940—1945个案状态",
+      "needed": [
+        "旧照片",
+        "修缮前记录",
+        "损伤和后加建",
+        "地点与年代"
+      ]
+    }
+  ],
+  "viewer3D": {
+    "defaultView": "completeBuilding",
+    "renderer": "selfContainedCanvasSoftware3D",
+    "defaultStage": 14,
+    "cameraPresets": [
+      "exterior",
+      "courtyard",
+      "top",
+      "front"
+    ],
+    "visibilityControls": [
+      "roof",
+      "walls",
+      "timber",
+      "cutaway"
+    ],
+    "measuredModels": [
+      "CASE-YKY-XIAOYAO-MENG-XUANTONG",
+      "CASE-YUNNAN-THREE-BAY-FRONT-GALLERY-2F"
+    ],
+    "qualityBoundary": "瓦行只显示铺设方向，完整搭接与基层仍按证据门槛管理"
+  },
+  "renderingContract": {
+    "renderer": "raw WebGL 1.0 single-file renderer",
+    "depthBuffer": true,
+    "depthFunction": "LEQUAL",
+    "canvasPainterSortingRemoved": true,
+    "courtyardPresetChangesGeometry": false,
+    "cutawayIsExplicitDiagnosticOnly": true,
+    "manualRotationRestoresFullGeometry": true,
+    "fallback": "Canvas 2D only when WebGL creation fails"
+  },
+  "openingMotionContract": {
+    "mainGate": {
+      "leaves": 2,
+      "pivot": "each jamb",
+      "automatic": true,
+      "manual": true
+    },
+    "upperMainDoors": {
+      "leaves": 2,
+      "automatic": true,
+      "manual": true
+    },
+    "earHighWindows": {
+      "count": 4,
+      "wallOpeningsAreReal": true,
+      "leavesPerWindow": 2,
+      "automatic": true,
+      "manual": true
+    },
+    "collisionState": "interface prepared; detailed historical hardware still evidence-gated"
+  },
+  "visitorSequence": [
+    {
+      "step": 1,
+      "name": "门外识别入口",
+      "position": "南侧中轴门外"
+    },
+    {
+      "step": 2,
+      "name": "门扇自动开启",
+      "trigger": "approach main gate"
+    },
+    {
+      "step": 3,
+      "name": "穿过倒座门廊",
+      "route": "central axis"
+    },
+    {
+      "step": 4,
+      "name": "进入中央天井",
+      "trigger": "high windows open"
+    },
+    {
+      "step": 5,
+      "name": "沿西侧小厦到楼梯巷",
+      "route": "covered gallery"
+    },
+    {
+      "step": 6,
+      "name": "登单跑木梯",
+      "fromElevationM": 0.06,
+      "toElevationM": 2.73
+    },
+    {
+      "step": 7,
+      "name": "沿二层大厦通行",
+      "trigger": "upper doors open"
+    },
+    {
+      "step": 8,
+      "name": "进入正房二层",
+      "destination": "upper main-house room"
+    }
+  ]
+}

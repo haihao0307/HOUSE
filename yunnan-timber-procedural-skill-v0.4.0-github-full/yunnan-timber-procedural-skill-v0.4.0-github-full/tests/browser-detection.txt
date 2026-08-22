@@ -1,0 +1,4 @@
+Chromium path: /usr/bin/chromium
+Chromium version: Chromium 144.0.7559.96 built on Debian GNU/Linux 13 (trixie)
+Xvfb path: /usr/bin/xvfb-run
+Browser visual result: skipped-environment

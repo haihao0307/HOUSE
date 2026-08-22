@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "1.0.0",
+  "sampleId": "YN_TUANJIE_001",
+  "derivedAsset": "assets/models/YN_TUANJIE_001_EDITABLE.glb",
+  "sourceAsset": "references-private/c2-meirenkao/C2_Meirenkao_Reference_High.glb",
+  "sourceMethod": "deterministic GLB JSON/BIN rewrite and embedded texture resize",
+  "generator": "tools/prepare_tuanjie_glb.py",
+  "generatedAt": "2026-08-21",
+  "sha256": "3a54374b9dcc06a478eb76e2c659b3f56141ea20ad05e5097ffa8f03558d1a07",
+  "sizeBytes": 45457960,
+  "preserved": [
+    "all 48 source meshes and primitives",
+    "608634 source vertices and 464288 triangles",
+    "base-colour alpha and normal mapping",
+    "source spatial placement"
+  ],
+  "changed": [
+    "stable ASCII node and mesh names",
+    "five editable spatial parent groups",
+    "base-colour texture resized to 3072 square",
+    "normal texture resized to 1024 square",
+    "unused KHR_materials_specular metadata removed",
+    "asset metadata and evidence boundary embedded"
+  ],
+  "notClaimed": [
+    "physical survey scale",
+    "BIM or component semantics",
+    "hidden structure, room function or construction chronology",
+    "external redistribution rights"
+  ]
+}

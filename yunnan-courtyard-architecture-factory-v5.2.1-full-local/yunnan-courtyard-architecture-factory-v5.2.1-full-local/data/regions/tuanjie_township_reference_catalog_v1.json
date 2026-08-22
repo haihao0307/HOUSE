@@ -1,0 +1,58 @@
+{
+  "schemaVersion": "1.2.0",
+  "catalogId": "YN_TUANJIE_REFERENCE_SERIES",
+  "displayName": "云南·团结乡建筑参考系列",
+  "location": {
+    "province": "云南省",
+    "locality": "团结乡",
+    "localityAuthority": "userConfirmed",
+    "preciseAdministrativeUnit": null,
+    "coordinates": null,
+    "coordinateStatus": "notProvided"
+  },
+  "purpose": "持续登记用户导入的团结乡建筑资料，并将每个样本拆成可追溯、可比较、可供 Three.js 参数化生产线使用的参考档案。",
+  "rules": {
+    "stableIdPattern": "YN_TUANJIE_###",
+    "rawEvidence": "never overwrite; keep local-only unless rights are confirmed",
+    "requiredRecords": [
+      "source provenance and hashes",
+      "coordinate and physical-scale status",
+      "scan or drawing audit",
+      "architectural decomposition",
+      "reusable and prohibited extraction targets",
+      "uncertainty ledger",
+      "asset contract and QA"
+    ],
+    "evidenceOrder": [
+      "user-confirmed locality or identity",
+      "measured drawing or surveyed control",
+      "directly visible scan or photograph evidence",
+      "regional comparison",
+      "domain-informed hypothesis"
+    ],
+    "geometryGate": "Only measured or directly locked evidence may become exact production geometry. Regional knowledge and hypotheses stay advisory.",
+    "seriesPolicy": "New buildings are appended as new stable sample IDs; they do not silently overwrite earlier interpretations."
+  },
+  "samples": [
+    {
+      "sampleId": "YN_TUANJIE_001",
+      "displayName": "团结乡样本 01",
+      "legacyAssetId": "YN_C2_Meirenkao",
+      "legacyWorkingName": "民居 C2 美人靠",
+      "sourceType": "photogrammetryScan",
+      "scope": "complete courtyard compound reference",
+      "status": "editableGLBIntegrated",
+      "physicalScaleStatus": "unverifiedNoSurveyControl",
+      "sourceRecord": "data/evidence/yunnan_c2_meirenkao_reference_sources_v5_3_1.json",
+      "decompositionRecord": "data/cases/tuanjie_township_001_reference_decomposition_v1.json",
+      "materialWeatheringRecord": "data/evidence/tuanjie_township_001_material_weathering_reference_v5_3_6.json",
+      "editableMaster": "assets/models/YN_TUANJIE_001_EDITABLE_HIGH.glb",
+      "webStandard": "assets/models/YN_TUANJIE_001_EDITABLE.glb",
+      "websiteView": "index.html#reference",
+      "assetContract": "data/assets/tuanjie_township_001_glb_quality_profiles_v5_3_5.json",
+      "validation": "data/qa/tuanjie_township_001_glb_quality_validation_v5_3_5.json",
+      "materialValidation": "data/qa/tuanjie_township_001_material_reference_validation_v5_3_6.json",
+      "integrationGuide": "docs/TUANJIE_TOWNSHIP_REFERENCE_REGISTER.md"
+    }
+  ]
+}

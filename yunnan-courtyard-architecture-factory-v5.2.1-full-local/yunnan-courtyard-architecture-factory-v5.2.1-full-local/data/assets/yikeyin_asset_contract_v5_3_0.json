@@ -1,0 +1,45 @@
+{
+  "schemaVersion": "5.3.0",
+  "asset": {
+    "name": "滇中一颗印三间四耳倒八尺",
+    "role": "hero interactive architecture",
+    "sourceMethod": "evidence-backed procedural geometry",
+    "provenance": [
+      "data/cases/yikeyin_basic_drawing_logic_v5_3_0.json",
+      "data/evidence/yikeyin_additional_sources_2026_08_21.json"
+    ],
+    "licenseNotes": "用户提供图片仅作本地研究，默认不随公开版本分发。"
+  },
+  "visual": {
+    "closestCameraMeters": 0.35,
+    "maximumScreenCoveragePercent": 90,
+    "silhouetteCriticalViews": ["south exterior", "courtyard", "side gable", "roof top", "open roof construction"],
+    "constructionCriticalItems": ["round courtyard timber columns", "concealed exterior embedded posts", "square stone bases", "8+8-riser daily-use dogleg stairs", "battered earth walls", "open gallery", "timber room partitions", "tapered individual concave pan tiles with visible course ends", "tapered individual convex joint-covering barrel tiles with visible course ends", "mud-backed sheathing", "210 mm rafters", "eave boards", "overlapped ridge tiles", "half-width framed door leaves", "first-person entry"]
+  },
+  "runtime": {
+    "renderer": "raw WebGL 1.0 single-file renderer",
+    "targetDevices": ["desktop", "tablet", "mobileWebGL1"],
+    "animation": true,
+    "physics": false,
+    "semanticNodeNamesRequired": true
+  },
+  "budgets": {
+    "triangles": 600000,
+    "lineSegments": 40000,
+    "decodedTextureMiB": 0,
+    "materials": 10,
+    "frameTimeMs": 16.7,
+    "observedInAppBrowserTriangles": 586552,
+    "observedInAppBrowserLineSegments": 26617,
+    "note": "The 600k-triangle ceiling preserves the user-required individual tapered ceramic tile shells and explicit course-end lips. The in-app WebGL result measured 586552 triangles and 26617 structural line segments and remained interactive; texture memory remains zero."
+  },
+  "delivery": {
+    "format": "project-native procedural WebGL geometry",
+    "glb": false,
+    "editableSourceRequired": true
+  },
+  "validation": {
+    "status": "draft",
+    "reason": "User-supplied local tile dimensions and pan-cover ordering are integrated and browser multi-view QA passed. Measured longitudinal lap, ridge-end treatment and exact timber joinery remain pending."
+  }
+}

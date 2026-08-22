@@ -1,0 +1,16 @@
+{
+  "name": "yunnan-timber-procedural-skill",
+  "version": "0.4.0",
+  "entry": "index.html",
+  "standalone": true,
+  "externalRuntimeDependencies": [],
+  "textureImageAssets": [],
+  "buildingIntegration": "src/integration/HistoricalBuildingTimberSkill.mjs",
+  "threeAdapter": "src/three/YunnanTimberThreeAdapter.mjs",
+  "schema": "schemas/yunnan-timber-member.schema.json",
+  "publicModuleEntry": "src/index.mjs",
+  "publishHelpers": [
+    "scripts/publish-github.ps1",
+    "scripts/publish-github.sh"
+  ]
+}

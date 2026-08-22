@@ -1,0 +1,162 @@
+{
+  "schemaVersion": "5.3.3",
+  "recordRevision": "5.3.3-legacy-source-contract",
+  "supersededForRuntimeBy": "data/assets/tuanjie_township_001_glb_quality_profiles_v5_3_5.json",
+  "asset": {
+    "id": "YN_C2_Meirenkao",
+    "sampleId": "YN_TUANJIE_001",
+    "regionSeriesId": "YN_TUANJIE_REFERENCE_SERIES",
+    "name": "团结乡样本 01",
+    "legacyWorkingName": "民居 C2 美人靠",
+    "role": "Three.js 3GIS local whole-compound reference scan",
+    "sourceMethod": "RealityCapture FBX converted to glTF 2.0 GLB in Blender",
+    "provenance": [
+      "data/evidence/yunnan_c2_meirenkao_reference_sources_v5_3_1.json"
+    ],
+    "licenseNotes": "源 FBX/High/Lite 仍为私有来源链；用户已授权本生产线网页接入派生可编辑 GLB，外部分发和署名仍待确认。",
+    "decomposition": "data/cases/tuanjie_township_001_reference_decomposition_v1.json"
+  },
+  "artDirection": {
+    "subject": "团结乡紧凑内向院落建筑群",
+    "visualPriorities": [
+      "完整院落围合与中央空腔",
+      "主次灰瓦坡屋面拓扑",
+      "高实墙、石基和坡地入口关系",
+      "真实扫描纹理中的材料风化"
+    ],
+    "mustPreserve": [
+      "whole-compound silhouette",
+      "courtyard void",
+      "relative roof and wall hierarchy",
+      "entry, steps and terrain sequence"
+    ],
+    "mustAvoid": [
+      "converting scan fragments into unsupported BIM semantics",
+      "inventing unseen interiors or structure",
+      "treating normalized display bounds as measured dimensions",
+      "borrowing exact tile, stair or timber dimensions from another case"
+    ]
+  },
+  "runtime": {
+    "renderer": "Three.js 3GIS host",
+    "loader": "GLTFLoader",
+    "units": "meters",
+    "upAxis": "Y",
+    "originRule": "XY bounding-box center at minimum Z",
+    "displayBoundsMeters": [3.81322, 2.33144, 1.39608],
+    "displayBoundsOnly": true,
+    "physicalScaleStatus": "unverifiedNoSurveyControl",
+    "baseUrl": "/assets/models",
+    "loaderModule": "threejs/C2MeirenkaoAsset.js",
+    "editableMaster": {
+      "file": "YN_TUANJIE_001_EDITABLE_HIGH.glb",
+      "sizeBytes": 113819176,
+      "triangles": 464288,
+      "extensions": [],
+      "sha256": "26eb6fa1b88ef4509c3ad46cfad943f865777612e6ff844a166fb40cba6962c6"
+    },
+    "legacyPrivateVariants": {
+      "lite": {
+        "file": "C2_Meirenkao_Reference_Lite.glb",
+        "sizeBytes": 13925932,
+        "triangles": 162818,
+        "extensions": ["KHR_draco_mesh_compression"],
+        "decoderPath": "/draco/"
+      },
+      "high": {
+        "file": "C2_Meirenkao_Reference_High.glb",
+        "sizeBytes": 114452600,
+        "triangles": 464288,
+        "extensions": []
+      }
+    },
+    "fallback": "none required; editable master uses no decoder extension",
+    "performanceBudget": {
+      "defaultVariant": "editableMaster",
+      "defaultTriangleTarget": 500000,
+      "highTriangleCeiling": 500000,
+      "defaultDownloadBytesCeiling": 50000000,
+      "highDownloadBytesCeiling": 120000000,
+      "mobilePolicy": "Do not load automatically; require explicit click. Produce a separate decimated LOD before default mobile use."
+    }
+  },
+  "spatialGroups": [
+    {
+      "id": "C2_Building_Base_Stairs",
+      "label": "台基、楼梯、地面",
+      "pipelineStages": ["L05", "L07"],
+      "semanticStatus": "spatial reference only",
+      "evidenceStatus": "pending measured decomposition"
+    },
+    {
+      "id": "C2_Building_Level01",
+      "label": "一层墙体及立面",
+      "pipelineStages": ["L06", "L08", "L12"],
+      "semanticStatus": "spatial reference only",
+      "evidenceStatus": "pending wall, opening and bay mapping"
+    },
+    {
+      "id": "C2_Building_Level02",
+      "label": "二层墙体及立面",
+      "pipelineStages": ["L07", "L08", "L09"],
+      "semanticStatus": "spatial reference only",
+      "evidenceStatus": "pending floor and circulation mapping"
+    },
+    {
+      "id": "C2_Building_Roof",
+      "label": "屋面",
+      "pipelineStages": ["L09", "L11"],
+      "semanticStatus": "spatial reference only",
+      "evidenceStatus": "pending roof slope, ridge and drainage evidence"
+    },
+    {
+      "id": "C2_Building_Detail_###",
+      "label": "零散细部候选",
+      "pipelineStages": ["L10", "L12"],
+      "semanticStatus": "unassigned spatial detail",
+      "evidenceStatus": "pending close-up and component identity"
+    }
+  ],
+  "productionUse": {
+    "mode": "referenceObservation",
+    "allowed": [
+      "overall silhouette and proportion comparison",
+      "layered observation of base, first floor, second floor, roof and details",
+      "candidate extraction of walls, stairs, columns, beams, doors and windows for later evidence review"
+    ],
+    "notAllowed": [
+      "treat scan mesh as editable BIM semantics",
+      "auto-fit procedural walls, roofs or bays from the scan without evidence",
+      "claim exact door, window, column, beam or stair dimensions from the current scan alone",
+      "replace the existing canonical Yunnan procedural cases"
+    ],
+    "nextActions": [
+      "lock a measured plan and section against the scan before assigning bay and floor IDs",
+      "extract candidate columns, beams, walls, stairs, doors and windows into editable Three.js data",
+      "compare C2 proportions with the existing three-bay front-gallery and Yikeyin cases",
+      "keep unresolved roof, opening and joinery claims pending until close-up evidence is available"
+    ]
+  },
+  "acceptance": {
+    "visual": [
+      "The complete enclosure and courtyard void remain visible in the reference view.",
+      "Roof, wall, stone-base and terrain relationships do not show new gaps or intersections introduced by conversion.",
+      "The editable master retains the High source composition and material assignment."
+    ],
+    "technical": [
+      "The editable master parses as glTF 2.0 GLB with no container error.",
+      "The editable master stays below 500000 triangles and the high-profile 120 MB ceiling.",
+      "Runtime metadata labels the bounds as display-only and the physical scale as unverified.",
+      "The production webpage loads the derived GLB only after an explicit click; the private source files remain excluded."
+    ],
+    "semantic": [
+      "No scan fragment is asserted as a verified architectural component.",
+      "Locality is user-confirmed; all precise measurements and construction claims remain evidence-gated."
+    ]
+  },
+  "validation": {
+    "status": "superseded_by_editable_master",
+    "report": "data/qa/tuanjie_township_001_glb_quality_validation_v5_3_5.json",
+    "semanticCompleteness": "reference-only"
+  }
+}

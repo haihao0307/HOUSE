@@ -1,0 +1,73 @@
+{
+  "schemaVersion": "5.3.5",
+  "assetId": "YN_TUANJIE_001",
+  "testedAt": "2026-08-21",
+  "status": "passed",
+  "checks": [
+    {
+      "name": "high-fidelity editable master",
+      "ok": true,
+      "detail": "YN_TUANJIE_001_EDITABLE_HIGH.glb is 113819176 bytes with SHA-256 26eb6fa1b88ef4509c3ad46cfad943f865777612e6ff844a166fb40cba6962c6; it embeds a 7000x7000 PNG base-colour texture and a 2500x2500 PNG normal texture."
+    },
+    {
+      "name": "web-standard editable profile",
+      "ok": true,
+      "detail": "YN_TUANJIE_001_EDITABLE.glb is 45457960 bytes with SHA-256 3a54374b9dcc06a478eb76e2c659b3f56141ea20ad05e5097ffa8f03558d1a07; it embeds a 3072x3072 PNG base-colour texture and a 1024x1024 PNG normal texture."
+    },
+    {
+      "name": "geometry parity",
+      "ok": true,
+      "detail": "Both profiles preserve the same 48 meshes/primitives, 608634 vertices and 464288 triangles. Neither profile decimates the source High scan geometry."
+    },
+    {
+      "name": "editable grouping and runtime baggage",
+      "ok": true,
+      "detail": "Both profiles retain named mesh nodes grouped under site, unresolved details, level 01, level 02 and roof; each has 0 animations, 0 skins, 0 morph targets and 0 cameras."
+    },
+    {
+      "name": "browser rendering quality",
+      "ok": true,
+      "detail": "The viewer loads both colour and normal textures, enables derivative normal mapping and anisotropic filtering, and caps device pixel ratio at 2.5. Runtime validation reported MAX_TEXTURE_SIZE 8192 and an active normal map for both profiles."
+    },
+    {
+      "name": "profile switching and local-file workflow",
+      "ok": true,
+      "detail": "Automated browser checks loaded the 7000/2500 high profile, switched to the 3072/1024 standard profile with identical geometry counts, and loaded a local GLB through the file picker path."
+    },
+    {
+      "name": "browser regression suite",
+      "ok": true,
+      "detail": "The V5.3.5 local browser smoke suite passed 28 of 28 checks."
+    },
+    {
+      "name": "source-evidence boundary",
+      "ok": true,
+      "detail": "Higher-resolution textures improve visible surface detail but do not reconstruct holes, fragmented boundaries, vegetation artifacts, occlusion gaps, physical dimensions or orientation missing from the source scan."
+    }
+  ],
+  "summary": {
+    "passed": 8,
+    "failed": 0,
+    "status": "passed"
+  },
+  "runtimeEvidence": {
+    "maximumTextureSize": 8192,
+    "high": {
+      "baseColor": "7000x7000",
+      "normal": "2500x2500",
+      "normalMapActive": true,
+      "screenshot": "qa/screenshots/v535_tuanjie_reference_high.png"
+    },
+    "standard": {
+      "baseColor": "3072x3072",
+      "normal": "1024x1024",
+      "normalMapActive": true,
+      "screenshot": "qa/screenshots/v535_tuanjie_reference_standard.png"
+    },
+    "localFile": {
+      "screenshot": "qa/screenshots/v535_tuanjie_file_loader.png"
+    }
+  },
+  "browserReport": "data/qa/local_browser_smoke_test.json",
+  "qualityContract": "data/assets/tuanjie_township_001_glb_quality_profiles_v5_3_5.json"
+}

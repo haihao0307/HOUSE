@@ -1,0 +1,109 @@
+{
+  "schemaVersion": "5.3.0",
+  "caseId": "CASE-YKY-XIAOYAO-MENG-XUANTONG",
+  "revisionState": "workingCorrection",
+  "reason": "User review identified reversed inter-storey/gallery assemblies, an incorrect side-elevation silhouette, exposed exterior timber where thick earth walls should conceal the frame, missing wall batter, square columns, an unusable carpenter-like stair, crude doors, solid infill where an open timber gallery belongs, and leaking metal-sheet-like roofs.",
+  "coordinateContract": {
+    "x": "westToEast",
+    "y": "up",
+    "z": "southToNorth",
+    "unit": "m"
+  },
+  "projectionRules": [
+    {
+      "view": "southExteriorElevation",
+      "rule": "Daozuo eave and east-west ridges project as horizontal lines; west/east ear gables remain separate at the sides; the north main-house ridge is a rear occluded line."
+    },
+    {
+      "view": "eastWestSideElevation",
+      "rule": "South daozuo, longitudinal ear house and north main-house gable are separate depth assemblies and must not be joined into a continuous twin-peak outline."
+    },
+    {
+      "view": "northCourtyardElevation",
+      "rule": "Main ridge, main eave, upper-floor line and gallery eave project horizontally; the gallery stays below the upper-floor facade and does not become a second gable."
+    },
+    {
+      "view": "mainHouseTransverseSection",
+      "rule": "The main roof is a symmetric two-slope assembly about the ridge purlin; the gallery is an independent lean-to attached on the courtyard side."
+    }
+  ],
+  "correctedAssemblies": [
+    {
+      "id": "mainDoubleGate",
+      "rule": "eachLeafWidthEqualsOpeningWidthDividedByTwo",
+      "status": "corrected"
+    },
+    {
+      "id": "mainAndEarGableWalls",
+      "rule": "solidWallContinuesFromEaveToRidgeUnderside",
+      "status": "corrected"
+    },
+    {
+      "id": "westSmallGallery",
+      "highEdge": "westEarInnerWall",
+      "lowEdge": "courtyard",
+      "status": "corrected"
+    },
+    {
+      "id": "eastSmallGallery",
+      "highEdge": "eastEarInnerWall",
+      "lowEdge": "courtyard",
+      "status": "corrected"
+    },
+    {
+      "id": "mainHouseRoofSection",
+      "highPoint": "ridgePurlin",
+      "lowEdges": ["courtyardEave", "rearEave"],
+      "status": "corrected"
+    },
+    {
+      "id": "roundTimberColumns",
+      "rule": "primaryVerticalTimberSupportsUseRoundShaftsWithSquareStoneBases",
+      "status": "corrected"
+    },
+    {
+      "id": "galleryStairs",
+      "rule": "dailyUseDoglegStairWithEightPlusEightRisersIntermediateLandingMinimum260mmTreadAndContinuousHandrails",
+      "status": "corrected"
+    },
+    {
+      "id": "openGalleryTimberPartitions",
+      "rule": "courtyardGalleryRemainsOpenAndRoomEdgesUseFramedTimberPanelsAndLatticeInsteadOfContinuousEarthWalls",
+      "status": "corrected"
+    },
+    {
+      "id": "curvedPanAndCoverTileRoofs",
+      "rule": "taperedIndividualConcavePanTilesBelowAndTaperedIndividualConvexCoverTilesAboveEveryPanJointWithVisibleCourseEndsPlusMudBackedSheathing210mmRaftersEaveBoardsAndRidgeTiles",
+      "status": "corrected"
+    },
+    {
+      "id": "batteredEarthEnvelope",
+      "rule": "exteriorEarthWallsTaperInwardFromBottomToTopAndGableInfillClosesToTheRoofUnderside",
+      "status": "corrected"
+    },
+    {
+      "id": "concealedExteriorTimber",
+      "rule": "timberPostsEmbeddedInOuterEarthWallsAreHiddenInCompleteViewAndBecomeVisibleOnlyWhenTheWallLayerIsDisabled",
+      "status": "corrected"
+    },
+    {
+      "id": "framedHalfWidthDoorLeaves",
+      "rule": "eachLeafIsHalfTheOpeningWidthWithStilesRailsLowerPanelsAndUpperLatticeBelowASolidWallHead",
+      "status": "corrected"
+    },
+    {
+      "id": "firstPersonEntryInspection",
+      "rule": "eyeHeightEntryStationsPlusMouseLookWASDAndWheelMovementFromGateToCourtyardStairAndUpperFloor",
+      "status": "corrected"
+    }
+  ],
+  "lockedAgainstGuessing": [
+    "exact side-elevation openings",
+    "roof junction flashing and gutter detail",
+    "inter-storey bracket and carving geometry",
+    "historic versus renovated fabric",
+    "case-specific measured longitudinal tile lap and bedding thickness; current course exposure is only visually calibrated from the user-supplied local roof photograph",
+    "exact ridge-end and terminal ornament geometry",
+    "exact historic stair count and timber-partition joinery"
+  ]
+}

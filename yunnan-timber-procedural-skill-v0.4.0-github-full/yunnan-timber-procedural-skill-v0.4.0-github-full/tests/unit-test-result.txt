@@ -1,0 +1,76 @@
+
+> yunnan-timber-procedural-skill@0.4.0 validate
+> npm run check:standalone && npm test
+
+
+> yunnan-timber-procedural-skill@0.4.0 check:standalone
+> node --check tests/_standalone-script-check.mjs
+
+
+> yunnan-timber-procedural-skill@0.4.0 test
+> node tests/run-tests.mjs
+
+ok 1 - skill version is 0.4.0
+ok 2 - four Yunnan colour presets exist
+ok 3 - all colour presets use restrained contrast
+ok 4 - lacquered preset is smoother than dark aged timber
+ok 5 - all presets define pore scale
+ok 6 - preset JSON matches skill version
+ok 7 - round profile code is one
+ok 8 - rectangular profile code is zero
+ok 9 - profile resolver accepts round
+ok 10 - profile resolver rejects unknown profile
+ok 11 - hash is deterministic
+ok 12 - different member names hash differently
+ok 13 - source timber seed is deterministic
+ok 14 - two pieces from one source timber retain the same source seed
+ok 15 - member detail seeds vary within one source timber
+ok 16 - Y axis cylinder maps length to canonical X
+ok 17 - Y axis cylinder radial point remains in cross section
+ok 18 - Y axis cylinder cap is end grain
+ok 19 - Y axis cylinder side is longitudinal
+ok 20 - Y axis material basis is right handed
+ok 21 - building view disables parallax and displacement
+ok 22 - close view uses six parallax steps
+ok 23 - inspection view uses ten parallax steps
+ok 24 - inspection displacement stays within 4.5 millimetres
+ok 25 - quality cap prevents high cost displacement
+ok 26 - round member preserves Y axis geometry contract
+ok 27 - round member stores round profile code
+ok 28 - rectangular member stores rectangular profile code
+ok 29 - member spec produces separate source and member seeds
+ok 30 - member spec rejects unknown preset
+ok 31 - building state serializes its generation seed
+ok 32 - building state stores source timber identity
+ok 33 - building state stores round profile
+ok 34 - index and standalone preview are identical
+ok 35 - standalone preview contains no external script dependency
+ok 36 - standalone preview contains no texture image references
+ok 37 - package contains no texture image files
+ok 38 - standalone preview uses WebGL2
+ok 39 - standalone preview creates a real Y axis cylinder
+ok 40 - standalone preview uses the corrected Y axis basis
+ok 41 - round column selects round profile
+ok 42 - round purlin selects round profile
+ok 43 - round material branch prioritizes longitudinal fibre
+ok 44 - rectangular material branch keeps ring contribution
+ok 45 - shader uses object space timber basis
+ok 46 - shader has unified height driven micro normal
+ok 47 - shader has parallax search
+ok 48 - shader has controlled vertex displacement
+ok 49 - end and joint surfaces lock vertex displacement
+ok 50 - standalone page includes independent member seed control
+ok 51 - standalone page includes all four colour categories
+ok 52 - Three adapter includes round profile uniform
+ok 53 - Three adapter includes round profile mask
+ok 54 - Three adapter gives round side a longitudinal fibre majority
+ok 55 - Three adapter supports preset updates
+ok 56 - schema requires a timber profile
+ok 57 - schema accepts round profile
+ok 58 - GitHub Pages workflow validates before deployment
+ok 59 - GitHub Pages workflow uploads repository root
+ok 60 - public module entry exports all skill layers
+ok 61 - PowerShell publisher validates before Git push
+ok 62 - Shell publisher validates before Git push
+ok 63 - release manifest points to root index
+1..63

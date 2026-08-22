@@ -1,0 +1,522 @@
+{
+  "version": "5.4.0",
+  "results": [
+    {
+      "name": "title",
+      "ok": true,
+      "detail": "云南院落历史建筑生产线 V5.4.0"
+    },
+    {
+      "name": "canvas",
+      "ok": true
+    },
+    {
+      "name": "openings button",
+      "ok": true
+    },
+    {
+      "name": "visitor button",
+      "ok": true
+    },
+    {
+      "name": "cutaway button",
+      "ok": true
+    },
+    {
+      "name": "WebGL active",
+      "ok": true,
+      "detail": {
+        "fallback": false,
+        "triangles": 586614,
+        "lines": 26665,
+        "camera": {
+          "yaw": -0.78,
+          "pitch": -0.54,
+          "dist": 32.178000000000004,
+          "target": [
+            6.3,
+            3.13225,
+            7.65
+          ]
+        },
+        "walk": {
+          "active": false,
+          "station": 0,
+          "eye": [
+            6.3,
+            1.62,
+            -1.3
+          ],
+          "yaw": 0,
+          "pitch": 0,
+          "keys": {},
+          "stationName": "院门外"
+        },
+        "options": {
+          "cut": false,
+          "roof": true,
+          "walls": true,
+          "timber": true,
+          "tuanjie": true,
+          "auto": false,
+          "preset": "exterior"
+        },
+        "tuanjieLayer": {
+          "enabled": true,
+          "evidence": "TUANJIE-MATERIAL-EVIDENCE",
+          "source": "团结乡高精度扫描与用户提供的瓦作/测绘资料",
+          "integratedInto": "current-main-generator",
+          "standalone": false,
+          "branch": "yikeyin",
+          "typeId": "YKY-T07",
+          "wallFaces": 388,
+          "roofTiles": 236192,
+          "timberFaces": 5532,
+          "stoneFaces": 258,
+          "weatheringPatches": 18,
+          "detailFaces": 13
+        },
+        "tour": {
+          "active": false,
+          "paused": false,
+          "elapsed": 0,
+          "duration": 29,
+          "showRoute": false,
+          "currentStep": -1,
+          "person": null,
+          "completed": false,
+          "cameraPhase": -1,
+          "revealUpper": false
+        },
+        "motion": {
+          "gate": 0,
+          "inner": 0,
+          "windows": 0,
+          "targetDoors": 0,
+          "targetWindows": 0
+        },
+        "personFloor": null
+      }
+    },
+    {
+      "name": "geometry populated",
+      "ok": true
+    },
+    {
+      "name": "default complete geometry",
+      "ok": true
+    },
+    {
+      "name": "Tuanjie production-layer control",
+      "ok": true
+    },
+    {
+      "name": "Tuanjie evidence integrated into main generator",
+      "ok": true,
+      "detail": {
+        "enabled": true,
+        "evidence": "TUANJIE-MATERIAL-EVIDENCE",
+        "source": "团结乡高精度扫描与用户提供的瓦作/测绘资料",
+        "integratedInto": "current-main-generator",
+        "standalone": false,
+        "branch": "yikeyin",
+        "typeId": "YKY-T07",
+        "wallFaces": 388,
+        "roofTiles": 236192,
+        "timberFaces": 5532,
+        "stoneFaces": 258,
+        "weatheringPatches": 18,
+        "detailFaces": 13
+      }
+    },
+    {
+      "name": "Tuanjie evidence layer can be disabled",
+      "ok": true,
+      "detail": {
+        "enabled": false,
+        "evidence": "TUANJIE-MATERIAL-EVIDENCE",
+        "source": "团结乡高精度扫描与用户提供的瓦作/测绘资料",
+        "integratedInto": "current-main-generator",
+        "standalone": false,
+        "branch": "yikeyin",
+        "typeId": "YKY-T07",
+        "wallFaces": 0,
+        "roofTiles": 0,
+        "timberFaces": 0,
+        "stoneFaces": 0,
+        "weatheringPatches": 0,
+        "detailFaces": 0
+      }
+    },
+    {
+      "name": "Tuanjie evidence layer can be restored",
+      "ok": true,
+      "detail": {
+        "enabled": true,
+        "evidence": "TUANJIE-MATERIAL-EVIDENCE",
+        "source": "团结乡高精度扫描与用户提供的瓦作/测绘资料",
+        "integratedInto": "current-main-generator",
+        "standalone": false,
+        "branch": "yikeyin",
+        "typeId": "YKY-T07",
+        "wallFaces": 388,
+        "roofTiles": 236192,
+        "timberFaces": 5532,
+        "stoneFaces": 258,
+        "weatheringPatches": 18,
+        "detailFaces": 13
+      }
+    },
+    {
+      "name": "measured case selectable",
+      "ok": true
+    },
+    {
+      "name": "measured dimensions visible",
+      "ok": true
+    },
+    {
+      "name": "measured geometry populated",
+      "ok": true,
+      "detail": {
+        "fallback": false,
+        "triangles": 275420,
+        "lines": 11096,
+        "camera": {
+          "yaw": -0.78,
+          "pitch": -0.54,
+          "dist": 25.1658,
+          "target": [
+            5.765,
+            3.5617,
+            3.96
+          ]
+        },
+        "walk": {
+          "active": false,
+          "station": 0,
+          "eye": [
+            6.3,
+            1.62,
+            -1.3
+          ],
+          "yaw": 0,
+          "pitch": 0,
+          "keys": {},
+          "stationName": "外部正看入口"
+        },
+        "options": {
+          "cut": false,
+          "roof": true,
+          "walls": true,
+          "timber": true,
+          "tuanjie": true,
+          "auto": false,
+          "preset": "exterior"
+        },
+        "tuanjieLayer": {
+          "enabled": true,
+          "evidence": "TUANJIE-MATERIAL-EVIDENCE",
+          "source": "团结乡高精度扫描与用户提供的瓦作/测绘资料",
+          "integratedInto": "current-main-generator",
+          "standalone": false,
+          "branch": "measured",
+          "typeId": "YFG-T01",
+          "wallFaces": 52,
+          "roofTiles": 116560,
+          "timberFaces": 2470,
+          "stoneFaces": 78,
+          "weatheringPatches": 18,
+          "detailFaces": 0
+        },
+        "tour": {
+          "active": false,
+          "paused": false,
+          "elapsed": 0,
+          "duration": 29,
+          "showRoute": false,
+          "currentStep": -1,
+          "person": null,
+          "completed": false,
+          "cameraPhase": -1,
+          "revealUpper": false
+        },
+        "motion": {
+          "gate": 0,
+          "inner": 0,
+          "windows": 0,
+          "targetDoors": 0,
+          "targetWindows": 0
+        },
+        "personFloor": null
+      }
+    },
+    {
+      "name": "Tuanjie layer follows measured branch",
+      "ok": true,
+      "detail": {
+        "enabled": true,
+        "evidence": "TUANJIE-MATERIAL-EVIDENCE",
+        "source": "团结乡高精度扫描与用户提供的瓦作/测绘资料",
+        "integratedInto": "current-main-generator",
+        "standalone": false,
+        "branch": "measured",
+        "typeId": "YFG-T01",
+        "wallFaces": 52,
+        "roofTiles": 116560,
+        "timberFaces": 2470,
+        "stoneFaces": 78,
+        "weatheringPatches": 18,
+        "detailFaces": 0
+      }
+    },
+    {
+      "name": "openings demo",
+      "ok": true,
+      "detail": {
+        "gate": 1,
+        "inner": 1,
+        "windows": 1,
+        "targetDoors": 0,
+        "targetWindows": 0
+      }
+    },
+    {
+      "name": "visitor climbs stairs",
+      "ok": true,
+      "detail": 0.2494233599999998
+    },
+    {
+      "name": "visitor reaches second floor",
+      "ok": true,
+      "detail": 2.73
+    },
+    {
+      "name": "tour keeps cutaway disabled",
+      "ok": true
+    },
+    {
+      "name": "Tuanjie viewer visible before load",
+      "ok": true
+    },
+    {
+      "name": "Tuanjie local-file control",
+      "ok": true
+    },
+    {
+      "name": "Tuanjie GLB canvas",
+      "ok": true
+    },
+    {
+      "name": "Tuanjie editable meshes",
+      "ok": true,
+      "detail": {
+        "loaded": true,
+        "url": "assets/models/YN_TUANJIE_001_EDITABLE_HIGH.glb",
+        "source": "assets/models/YN_TUANJIE_001_EDITABLE_HIGH.glb",
+        "nodes": 54,
+        "meshes": 48,
+        "primitives": 48,
+        "vertices": 608634,
+        "triangles": 464288,
+        "animations": 0,
+        "skins": 0,
+        "cameras": 0,
+        "textures": {
+          "base": {
+            "width": 7000,
+            "height": 7000,
+            "mimeType": "image/png",
+            "source": 1,
+            "label": "底色"
+          },
+          "normal": {
+            "width": 2500,
+            "height": 2500,
+            "mimeType": "image/png",
+            "source": 0,
+            "label": "法线"
+          }
+        },
+        "normalMapActive": true,
+        "maxTextureSize": 8192,
+        "dpr": 1.0000000298023224,
+        "groups": {
+          "site": true,
+          "details": true,
+          "level1": true,
+          "level2": true,
+          "roof": true
+        },
+        "auto": false
+      }
+    },
+    {
+      "name": "Tuanjie geometry",
+      "ok": true
+    },
+    {
+      "name": "Tuanjie high texture profile",
+      "ok": true,
+      "detail": {
+        "base": {
+          "width": 7000,
+          "height": 7000,
+          "mimeType": "image/png",
+          "source": 1,
+          "label": "底色"
+        },
+        "normal": {
+          "width": 2500,
+          "height": 2500,
+          "mimeType": "image/png",
+          "source": 0,
+          "label": "法线"
+        }
+      }
+    },
+    {
+      "name": "Tuanjie normal-map rendering",
+      "ok": true,
+      "detail": {
+        "normalMapActive": true,
+        "maxTextureSize": 8192,
+        "dpr": 1.0000000298023224
+      }
+    },
+    {
+      "name": "Tuanjie high texture device support",
+      "ok": true,
+      "detail": 8192
+    },
+    {
+      "name": "Tuanjie editable roof group",
+      "ok": true,
+      "detail": {
+        "site": true,
+        "details": true,
+        "level1": true,
+        "level2": true,
+        "roof": false
+      }
+    },
+    {
+      "name": "Tuanjie standard geometry parity",
+      "ok": true,
+      "detail": {
+        "loaded": true,
+        "url": "assets/models/YN_TUANJIE_001_EDITABLE.glb",
+        "source": "assets/models/YN_TUANJIE_001_EDITABLE.glb",
+        "nodes": 54,
+        "meshes": 48,
+        "primitives": 48,
+        "vertices": 608634,
+        "triangles": 464288,
+        "animations": 0,
+        "skins": 0,
+        "cameras": 0,
+        "textures": {
+          "base": {
+            "width": 3072,
+            "height": 3072,
+            "mimeType": "image/png",
+            "source": 1,
+            "label": "底色"
+          },
+          "normal": {
+            "width": 1024,
+            "height": 1024,
+            "mimeType": "image/png",
+            "source": 0,
+            "label": "法线"
+          }
+        },
+        "normalMapActive": true,
+        "maxTextureSize": 8192,
+        "dpr": 1.0000000298023224,
+        "groups": {
+          "site": true,
+          "details": true,
+          "level1": true,
+          "level2": true,
+          "roof": true
+        },
+        "auto": false
+      }
+    },
+    {
+      "name": "Tuanjie standard texture profile",
+      "ok": true,
+      "detail": {
+        "base": {
+          "width": 3072,
+          "height": 3072,
+          "mimeType": "image/png",
+          "source": 1,
+          "label": "底色"
+        },
+        "normal": {
+          "width": 1024,
+          "height": 1024,
+          "mimeType": "image/png",
+          "source": 0,
+          "label": "法线"
+        }
+      }
+    },
+    {
+      "name": "file protocol recovery instruction",
+      "ok": true
+    },
+    {
+      "name": "local GLB re-import",
+      "ok": true,
+      "detail": {
+        "loaded": true,
+        "url": "YN_TUANJIE_001_EDITABLE.glb",
+        "source": "YN_TUANJIE_001_EDITABLE.glb",
+        "nodes": 54,
+        "meshes": 48,
+        "primitives": 48,
+        "vertices": 608634,
+        "triangles": 464288,
+        "animations": 0,
+        "skins": 0,
+        "cameras": 0,
+        "textures": {
+          "base": {
+            "width": 3072,
+            "height": 3072,
+            "mimeType": "image/png",
+            "source": 1,
+            "label": "底色"
+          },
+          "normal": {
+            "width": 1024,
+            "height": 1024,
+            "mimeType": "image/png",
+            "source": 0,
+            "label": "法线"
+          }
+        },
+        "normalMapActive": true,
+        "maxTextureSize": 8192,
+        "dpr": 1.0000000298023224,
+        "groups": {
+          "site": true,
+          "details": true,
+          "level1": true,
+          "level2": true,
+          "roof": true
+        },
+        "auto": false
+      }
+    }
+  ],
+  "errors": [],
+  "summary": {
+    "passed": 33,
+    "failed": 0,
+    "total": 33
+  }
+}

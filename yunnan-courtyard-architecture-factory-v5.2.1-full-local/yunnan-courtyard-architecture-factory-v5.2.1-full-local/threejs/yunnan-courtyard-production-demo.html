@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>滇中合院 Three.js 生产原型</title>
+  <link rel="icon" href="data:,">
+  <style>
+    :root{color-scheme:dark;--bg:#111815;--panel:#1b251f;--line:#53655b;--gold:#d5a765;--paper:#ede6d8}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:system-ui,"Microsoft YaHei",sans-serif;color:#e9eee9;overflow:hidden}
+    #app{position:fixed;inset:0;display:grid;grid-template-rows:auto 1fr auto}
+    header{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;border-bottom:1px solid #314238;background:#0e1412cc;backdrop-filter:blur(8px);z-index:2}
+    h1{margin:0;color:var(--gold);font-size:17px}p{margin:3px 0 0;color:#aeb8b0;font-size:11px}
+    .badges{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end}.badge{border:1px solid #77603b;border-radius:99px;padding:5px 9px;color:#e7c78f;font-size:10px}
+    #stage{position:relative;min-height:0}canvas{display:block;width:100%;height:100%;touch-action:none}
+    #hud{position:absolute;left:16px;top:16px;width:min(370px,calc(100% - 32px));padding:12px;border:1px solid var(--line);border-radius:9px;background:#101814e6;line-height:1.55;font-size:11px;pointer-events:none}
+    #hud b{color:#f0cc91;font-size:13px}#hud .muted{color:#a7b3aa}
+    #toolbar{display:flex;gap:7px;flex-wrap:wrap;padding:10px 14px;border-top:1px solid #314238;background:#111a16ee;z-index:2}
+    button{border:1px solid #6c5a3b;background:#241f17;color:#f1d49e;border-radius:6px;padding:7px 10px;font-size:11px;cursor:pointer}button:hover{background:#4a3520}button.active{border-color:#d3a45d;background:#45321c}
+    #toast{position:absolute;right:16px;bottom:16px;padding:9px 11px;background:#151e19e8;border:1px solid var(--line);border-radius:7px;color:#d5ded7;font-size:11px;opacity:0;transition:opacity .2s;pointer-events:none}.show{opacity:1!important}
+    @media(max-width:700px){header{align-items:flex-start;gap:8px;flex-direction:column}.badges{justify-content:flex-start}}
+  </style>
+  <script type="importmap">
+    {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.162.0/build/three.module.js"}}
+  </script>
+</head>
+<body>
+<div id="app">
+  <header><div><h1>滇中合院 · 团结乡风化生产原型</h1><p>可编辑 Three.js 源模型：收分夯土 / 板瓦—筒瓦 / 木门洞 / 柴屋 / 日常楼梯</p></div><div class="badges"><span class="badge">source-first</span><span class="badge">Y-up · meters</span><span class="badge">未测量尺寸不冒充实测</span></div></header>
+  <main id="stage"><div id="hud"><b>生产原型，不是扫描 GLB</b><br>拖拽旋转 · 滚轮缩放 · 右键平移<br><span class="muted">材料依据：团结乡用户确认外观；瓦的具体尺寸、搭接、脊收头继续锁定，等待校准图。</span><div id="stats" style="margin-top:7px"></div></div><div id="toast"></div></main>
+  <nav id="toolbar"><button data-layer="walls" class="active">墙体</button><button data-layer="roof-tiles" class="active">逐片瓦顶</button><button data-layer="timber-frame" class="active">木构/围廊</button><button data-layer="doors-windows" class="active">门窗</button><button data-layer="stone-and-ground" class="active">石板/台基</button><button id="humanView">人的视角</button><button id="resetView">复位视角</button></nav>
+</div>
+<script type="module">
+  import * as THREE from 'three';
+  import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.162.0/examples/jsm/controls/OrbitControls.js';
+  import { createYunnanCourtyardPrototype, disposeYunnanCourtyardPrototype } from './YunnanCourtyardProduction.js';
+
+  const stage = document.getElementById('stage');
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color('#101714');
+  const camera = new THREE.PerspectiveCamera(42, 1, 0.05, 100);
+  camera.position.set(15, 11, 17);
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.75));
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  stage.appendChild(renderer.domElement);
+  const controls = new OrbitControls(camera, renderer.domElement);
+  controls.target.set(0, 2.2, 0); controls.enableDamping = true; controls.dampingFactor = 0.06; controls.minDistance = 7; controls.maxDistance = 34;
+  scene.add(new THREE.HemisphereLight('#f0ddba', '#23322c', 2.1));
+  const key = new THREE.DirectionalLight('#fff0d2', 3.6); key.position.set(9, 18, 7); key.castShadow = true; scene.add(key);
+  const fill = new THREE.DirectionalLight('#9eb3be', 1.1); fill.position.set(-12, 7, -9); scene.add(fill);
+  const ground = new THREE.Mesh(new THREE.PlaneGeometry(70, 70), new THREE.MeshStandardMaterial({ color: '#18231e', roughness: 1 }));
+  ground.rotation.x = -Math.PI / 2; ground.position.y = -0.02; ground.receiveShadow = true; scene.add(ground);
+  const model = createYunnanCourtyardPrototype({ seed: 401 });
+  model.rotation.y = Math.PI * 0.08;
+  scene.add(model);
+  const stats = model.userData.stats;
+  document.getElementById('stats').textContent = `独立网格 ${stats.meshCount} · 顶点 ${stats.vertexCount.toLocaleString()} · 三角面 ${Math.round(stats.triangleCount).toLocaleString()}`;
+  function resize(){ const w=stage.clientWidth,h=stage.clientHeight; camera.aspect=w/h; camera.updateProjectionMatrix(); renderer.setSize(w,h,false); }
+  window.addEventListener('resize', resize); resize();
+  function toast(message){ const el=document.getElementById('toast'); el.textContent=message; el.classList.add('show'); clearTimeout(window.__toastTimer); window.__toastTimer=setTimeout(()=>el.classList.remove('show'),1800); }
+  document.querySelectorAll('[data-layer]').forEach((button)=>button.addEventListener('click',()=>{ const target=model.children.find((child)=>child.userData?.layer===button.dataset.layer); if(!target)return; target.visible=!target.visible; button.classList.toggle('active',target.visible); toast(`${button.textContent}：${target.visible?'显示':'隐藏'}`); }));
+  document.getElementById('resetView').addEventListener('click',()=>{ camera.position.set(15,11,17); controls.target.set(0,2.2,0); controls.update(); toast('视角已复位'); });
+  document.getElementById('humanView').addEventListener('click',()=>{ camera.position.set(10.8,2.0,13.2); controls.target.set(0,2.1,0); controls.update(); toast('已切换到入口人的视角'); });
+  window.__YUNNAN_PRODUCTION_TEST__ = { model, stats, dispose:()=>disposeYunnanCourtyardPrototype(model) };
+  function animate(){ requestAnimationFrame(animate); controls.update(); renderer.render(scene,camera); }
+  animate();
+</script>
+</body>
+</html>
