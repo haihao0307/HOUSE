@@ -54,9 +54,9 @@ jobs:
           python -m pip install -r requirements-dev.txt
           python -m playwright install --with-deps chromium
 
-      - name: Run browser smoke test
+      - name: Run WebGL browser smoke test under Xvfb
         working-directory: ${{ env.PROJECT_DIR }}
-        run: python tools/browser_smoke_test.py
+        run: xvfb-run -a python tools/browser_smoke_test.py
 
       - name: Upload QA outputs
         if: always()
