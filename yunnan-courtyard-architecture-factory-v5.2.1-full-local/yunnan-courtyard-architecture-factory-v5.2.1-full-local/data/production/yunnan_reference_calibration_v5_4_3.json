@@ -1,0 +1,164 @@
+{
+  "schemaVersion": "5.4.3",
+  "contractId": "YN-REFERENCE-CALIBRATION-CONTRACT-V543",
+  "status": "reference-calibrated",
+  "runtimeModule": "threejs/YunnanReferenceCalibrationV543.js",
+  "comparisonPage": "threejs/yunnan-reference-calibration-demo.html",
+  "studyPage": "three-reference-study.html",
+  "sourceEvidence": [
+    "data/evidence/yunnan_three_reference_glb_analysis_v5_4_3.json",
+    "data/evidence/yunnan_three_reference_roof_study_v5_4_3.json",
+    "data/evidence/yunnan_three_reference_wall_masonry_study_v5_4_3.json",
+    "data/evidence/yunnan_three_reference_visual_observation_seed_v5_4_3.json"
+  ],
+  "activation": {
+    "defaultOnStableMain": false,
+    "mode": "optional-reversible-layer",
+    "promoteAfter": [
+      "browser QA passes",
+      "visual comparison accepted",
+      "no regression in openings, visitor route or roof workbench",
+      "evidence status remains visible"
+    ]
+  },
+  "roofCalibration": {
+    "independentRoofUnits": true,
+    "heightOffsetsMeters": {
+      "north-main-roof": 0.1,
+      "west-ear-roof": -0.025,
+      "east-ear-roof": -0.025,
+      "front-gate-roof": -0.075,
+      "shed-tile-roof": -0.12
+    },
+    "visibleBuildUpMeters": {
+      "value": 0.16,
+      "status": "visual-calibration-only",
+      "meaning": "combined visible depth for current renderer, not a measured construction section"
+    },
+    "eaveProjectionMeters": {
+      "value": 0.66,
+      "status": "reference-calibrated"
+    },
+    "tileColorFamilies": [
+      "cool-gray",
+      "warm-gray",
+      "brown-gray",
+      "pale-weathered-gray"
+    ],
+    "weatheringZones": [
+      "eave",
+      "slope",
+      "ridge",
+      "sheltered",
+      "drainage",
+      "repair"
+    ],
+    "deterministicSeed": 543,
+    "repairAppearanceRate": {
+      "value": 0.028,
+      "status": "visual-calibration-only"
+    },
+    "stableIdentifiers": [
+      "roofUnitId",
+      "course",
+      "tileIndex",
+      "roofSide",
+      "colorFieldSeed",
+      "weatheringZone",
+      "evidenceStatus"
+    ]
+  },
+  "wallCalibration": {
+    "displayLayers": [
+      "core-mass",
+      "visible-finish",
+      "stone-or-brick-base",
+      "corner-and-opening-edge",
+      "repair",
+      "weathering"
+    ],
+    "colorFamilies": [
+      "warm-red-brown",
+      "warm-ochre",
+      "gray-brown"
+    ],
+    "deterministicSeed": 543,
+    "repairOpacity": {
+      "value": 0.3,
+      "status": "visual-calibration-only"
+    },
+    "weatheringRules": [
+      "large soft color fields before fine grain",
+      "stronger dampening and deposits near wall base",
+      "distinct repair color and natural weathering color",
+      "modern utilities, plants and scan holes excluded from historical base layer"
+    ],
+    "stableIdentifiers": [
+      "wall type",
+      "colorFieldSeed",
+      "colorFamilyId",
+      "wallAssemblyLayers",
+      "evidenceStatus"
+    ]
+  },
+  "buildingClassControls": {
+    "ordinaryCourtyardDwelling": {
+      "strongDaliCornerLift": false,
+      "highGradeRidgeDecoration": false,
+      "multiRoofElevationBands": true,
+      "earthWallWeathering": true
+    },
+    "DaliHighGradeTowerOrGate": {
+      "strongCornerLift": "candidate",
+      "pavilionRoofTier": "candidate",
+      "masonryCornerAndOpeningBands": "candidate",
+      "automaticTransferToDwelling": false
+    }
+  },
+  "evidenceBoundary": {
+    "referenceCalibrated": [
+      "independent roof units",
+      "multiple ridge and eave height bands",
+      "controlled gray tile color family",
+      "wall finish, base, repair and weathering display layers"
+    ],
+    "visualCalibrationOnly": [
+      "0.16 m combined visible roof build-up",
+      "2.8 percent sparse repair-tile appearance",
+      "repair patch opacity",
+      "unmeasured eave and ridge curvature"
+    ],
+    "unresolved": [
+      "measured tile lap",
+      "course spacing",
+      "mud bedding and fastening",
+      "ordinary dwelling ridge and eave closure",
+      "wall material recipe and lift height",
+      "repair chronology",
+      "Dali and Wulong real scale and orientation"
+    ]
+  },
+  "rollback": {
+    "baselineFactory": "threejs/YunnanCourtyardProduction.js",
+    "disposeFunction": "disposeReferenceCalibratedYunnanCourtyardPrototype",
+    "dataMigrationRequired": false,
+    "originalMeasuredAndTypologyDataModified": false
+  },
+  "qa": {
+    "scripts": [
+      "tools/three_reference_quicklook.py",
+      "tools/three_reference_study_smoke.py",
+      "tools/reference_calibration_browser_test.py"
+    ],
+    "requiredChecks": [
+      "all three reference GLBs load",
+      "camera presets produce different images",
+      "auto rotation advances with requestAnimationFrame timestamps",
+      "calibrated roof-unit count is recorded",
+      "calibrated wall count is recorded",
+      "evidence boundary appears in runtime metadata",
+      "mobile study page is usable",
+      "existing reference model lab remains functional"
+    ]
+  }
+}
