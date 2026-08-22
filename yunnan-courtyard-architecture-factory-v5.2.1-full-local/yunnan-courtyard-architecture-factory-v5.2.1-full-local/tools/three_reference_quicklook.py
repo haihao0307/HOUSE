@@ -92,8 +92,10 @@ try:
 
         for profile in PROFILES:
             page.locator(profile["button"]).click()
+            expected_source = profile["source"]
             page.wait_for_function(
-                f"window.__TUANJIE_TEST__.stats().loaded === true && /{profile['source'].replace('.', r'\\.')}$/.test(window.__TUANJIE_TEST__.stats().source || '')",
+                "expected => { const state = window.__TUANJIE_TEST__.stats(); return state.loaded === true && String(state.source || '').endsWith(expected); }",
+                arg=expected_source,
                 timeout=240000,
             )
             page.wait_for_timeout(1200)
