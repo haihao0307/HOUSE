@@ -12,3 +12,8 @@
 # The high-resolution Tuanjie source is kept locally; the public Pages build
 # ships the browser-standard GLB instead.
 yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/assets/models/YN_TUANJIE_001_EDITABLE_HIGH.glb
+
+# New source scans remain local-only; the public Pages site uses the
+# texture-optimized reference copies inside the nested production project.
+/yunnan_dali_1.glb
+/yunnan_house1_wl.glb

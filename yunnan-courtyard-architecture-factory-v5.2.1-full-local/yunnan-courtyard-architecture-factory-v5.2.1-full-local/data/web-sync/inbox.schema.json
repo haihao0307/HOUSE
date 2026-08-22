@@ -5,7 +5,7 @@
   "type": "object",
   "required": ["schemaVersion", "bundleType", "repository", "branch", "generatedAt", "entries"],
   "properties": {
-    "schemaVersion": { "const": "5.4.1" },
+    "schemaVersion": { "const": "5.4.2" },
     "bundleType": { "const": "yunnan-production-web-sync" },
     "repository": { "const": "haihao0307/HOUSE" },
     "branch": { "const": "main" },

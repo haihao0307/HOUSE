@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "5.4.2",
+  "title": "云南新增参考 GLB 发布前验证",
+  "scope": "网页公开档由原始 GLB 仅做嵌入贴图降采样，几何、节点、材质分配和坐标不改。",
+  "checks": [
+    {
+      "id": "DALI-SOURCE-LOCAL",
+      "asset": "yunnan_dali_1.glb",
+      "status": "pass",
+      "detail": "源文件 168788024 bytes，保留在本地，不进入 GitHub 单文件发布。"
+    },
+    {
+      "id": "DALI-WEB-UNDER-100MB",
+      "asset": "assets/models/YN_DALI_001_REFERENCE_WEB.glb",
+      "status": "pass",
+      "detail": "66299108 bytes；1 mesh；809883 vertices；997659 triangles；8192px diffuse 降为 4096px。"
+    },
+    {
+      "id": "WULONG-SOURCE-LOCAL",
+      "asset": "yunnan_house1_wl.glb",
+      "status": "pass",
+      "detail": "源文件 107887520 bytes，保留在本地，不进入 GitHub 单文件发布。"
+    },
+    {
+      "id": "WULONG-WEB-UNDER-100MB",
+      "asset": "assets/models/YN_HAOSI1_WULONG_WL_001_REFERENCE_WEB.glb",
+      "status": "pass",
+      "detail": "54811052 bytes；1 mesh；357794 vertices；300084 triangles；diffuse 7000→4096px，normal 3000→2048px。"
+    },
+    {
+      "id": "VIEWER-ROUTE",
+      "asset": "index.html",
+      "status": "pass",
+      "detail": "#reference 页面提供大理与浩思一·乌龙 WL 独立按钮、下载链接和本地原始 GLB 选择入口，共用 TuanjieGLBViewer。"
+    }
+  ],
+  "acceptance": {
+    "publicSingleFileLimitBytes": 100000000,
+    "geometryChanged": false,
+    "sourceFilesPublished": false,
+    "runtimeViewer": "TuanjieGLBViewer"
+  }
+}

@@ -148,7 +148,7 @@
     entries.push(item); entries = entries.slice(-100); saveEntries(); refs.text.value = ''; renderQueue(); setMessage('已加入本地队列。需要真正写入 GitHub 时，再点击“提交为 GitHub Issue”。');
   }
   function bundle() {
-    return { schemaVersion: '5.4.1', bundleType: 'yunnan-production-web-sync', repository: CONFIG.owner + '/' + CONFIG.repo, branch: CONFIG.branch, generatedAt: new Date().toISOString(), sourcePage: global.location.href, entries: entries.slice() };
+    return { schemaVersion: '5.4.2', bundleType: 'yunnan-production-web-sync', repository: CONFIG.owner + '/' + CONFIG.repo, branch: CONFIG.branch, generatedAt: new Date().toISOString(), sourcePage: global.location.href, entries: entries.slice() };
   }
   function exportBundle() {
     var blob = new Blob([JSON.stringify(bundle(), null, 2) + '\n'], { type: 'application/json;charset=utf-8' });
@@ -189,6 +189,6 @@
     fetch(apiUrl('/issues'), { method: 'POST', headers: { Accept: 'application/vnd.github+json', 'Content-Type': 'application/json', Authorization: 'Bearer ' + token }, body: JSON.stringify({ title: title, body: body }) }).then(function (response) { return response.json().then(function (payload) { if (!response.ok) throw new Error(payload.message || ('HTTP ' + response.status)); return payload; }); }).then(function (issue) { item.issueUrl = issue.html_url; item.issueNumber = issue.number; item.syncedAt = new Date().toISOString(); saveEntries(); refs.token.value = ''; renderQueue(); remote.issues.unshift(issue); renderRemote(); setMessage('已提交 GitHub Issue #' + issue.number + '。令牌未保存，刷新页面后仍可从公开 Issue 读取。'); }).catch(function (error) { setMessage('提交失败：' + error.message, true); });
   }
   function init() { ensureStyles(); createLauncher(); createPanel(); refresh(false); }
-  global.__GITHUB_SYNC__ = { config: CONFIG, open: open, close: close, refresh: refresh, add: addFromForm, exportBundle: exportBundle, stats: function () { return { schemaVersion: '5.4.1', queued: entries.length, synced: entries.filter(function (item) { return !!item.issueUrl; }).length, files: remote.files.length, issues: remote.issues.length, checkedAt: remote.checkedAt, error: remote.error }; } };
+  global.__GITHUB_SYNC__ = { config: CONFIG, open: open, close: close, refresh: refresh, add: addFromForm, exportBundle: exportBundle, stats: function () { return { schemaVersion: '5.4.2', queued: entries.length, synced: entries.filter(function (item) { return !!item.issueUrl; }).length, files: remote.files.length, issues: remote.issues.length, checkedAt: remote.checkedAt, error: remote.error }; } };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 })(window);

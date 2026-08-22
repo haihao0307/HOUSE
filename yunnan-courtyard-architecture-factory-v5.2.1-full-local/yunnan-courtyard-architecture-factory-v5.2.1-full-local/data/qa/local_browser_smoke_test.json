@@ -1,10 +1,10 @@
 {
-  "version": "5.4.1",
+  "version": "5.4.2",
   "results": [
     {
       "name": "title",
       "ok": true,
-      "detail": "云南院落历史建筑生产线 V5.4.1"
+      "detail": "云南院落历史建筑生产线 V5.4.2"
     },
     {
       "name": "canvas",
@@ -513,6 +513,201 @@
       }
     },
     {
+      "name": "Dali reference button",
+      "ok": true,
+      "detail": {
+        "loaded": true,
+        "url": "assets/models/YN_DALI_001_REFERENCE_WEB.glb",
+        "source": "assets/models/YN_DALI_001_REFERENCE_WEB.glb",
+        "nodes": 1,
+        "meshes": 1,
+        "primitives": 1,
+        "vertices": 809883,
+        "triangles": 997659,
+        "animations": 0,
+        "skins": 0,
+        "cameras": 0,
+        "textures": {
+          "base": {
+            "width": 4096,
+            "height": 4096,
+            "mimeType": "image/png",
+            "source": 0,
+            "label": "底色"
+          }
+        },
+        "normalMapActive": false,
+        "maxTextureSize": 8192,
+        "dpr": 1.0000000298023224,
+        "groups": {
+          "site": true,
+          "details": true,
+          "level1": true,
+          "level2": true,
+          "roof": true
+        },
+        "auto": false
+      }
+    },
+    {
+      "name": "Dali reference geometry",
+      "ok": true,
+      "detail": {
+        "loaded": true,
+        "url": "assets/models/YN_DALI_001_REFERENCE_WEB.glb",
+        "source": "assets/models/YN_DALI_001_REFERENCE_WEB.glb",
+        "nodes": 1,
+        "meshes": 1,
+        "primitives": 1,
+        "vertices": 809883,
+        "triangles": 997659,
+        "animations": 0,
+        "skins": 0,
+        "cameras": 0,
+        "textures": {
+          "base": {
+            "width": 4096,
+            "height": 4096,
+            "mimeType": "image/png",
+            "source": 0,
+            "label": "底色"
+          }
+        },
+        "normalMapActive": false,
+        "maxTextureSize": 8192,
+        "dpr": 1.0000000298023224,
+        "groups": {
+          "site": true,
+          "details": true,
+          "level1": true,
+          "level2": true,
+          "roof": true
+        },
+        "auto": false
+      }
+    },
+    {
+      "name": "Dali reference texture profile",
+      "ok": true,
+      "detail": {
+        "base": {
+          "width": 4096,
+          "height": 4096,
+          "mimeType": "image/png",
+          "source": 0,
+          "label": "底色"
+        }
+      }
+    },
+    {
+      "name": "Wulong reference button",
+      "ok": true,
+      "detail": {
+        "loaded": true,
+        "url": "assets/models/YN_HAOSI1_WULONG_WL_001_REFERENCE_WEB.glb",
+        "source": "assets/models/YN_HAOSI1_WULONG_WL_001_REFERENCE_WEB.glb",
+        "nodes": 1,
+        "meshes": 1,
+        "primitives": 1,
+        "vertices": 357794,
+        "triangles": 300084,
+        "animations": 0,
+        "skins": 0,
+        "cameras": 0,
+        "textures": {
+          "base": {
+            "width": 4096,
+            "height": 4096,
+            "mimeType": "image/png",
+            "source": 1,
+            "label": "底色"
+          },
+          "normal": {
+            "width": 2048,
+            "height": 2048,
+            "mimeType": "image/png",
+            "source": 0,
+            "label": "法线"
+          }
+        },
+        "normalMapActive": true,
+        "maxTextureSize": 8192,
+        "dpr": 1.0000000298023224,
+        "groups": {
+          "site": true,
+          "details": true,
+          "level1": true,
+          "level2": true,
+          "roof": true
+        },
+        "auto": false
+      }
+    },
+    {
+      "name": "Wulong reference geometry",
+      "ok": true,
+      "detail": {
+        "loaded": true,
+        "url": "assets/models/YN_HAOSI1_WULONG_WL_001_REFERENCE_WEB.glb",
+        "source": "assets/models/YN_HAOSI1_WULONG_WL_001_REFERENCE_WEB.glb",
+        "nodes": 1,
+        "meshes": 1,
+        "primitives": 1,
+        "vertices": 357794,
+        "triangles": 300084,
+        "animations": 0,
+        "skins": 0,
+        "cameras": 0,
+        "textures": {
+          "base": {
+            "width": 4096,
+            "height": 4096,
+            "mimeType": "image/png",
+            "source": 1,
+            "label": "底色"
+          },
+          "normal": {
+            "width": 2048,
+            "height": 2048,
+            "mimeType": "image/png",
+            "source": 0,
+            "label": "法线"
+          }
+        },
+        "normalMapActive": true,
+        "maxTextureSize": 8192,
+        "dpr": 1.0000000298023224,
+        "groups": {
+          "site": true,
+          "details": true,
+          "level1": true,
+          "level2": true,
+          "roof": true
+        },
+        "auto": false
+      }
+    },
+    {
+      "name": "Wulong reference texture profile",
+      "ok": true,
+      "detail": {
+        "base": {
+          "width": 4096,
+          "height": 4096,
+          "mimeType": "image/png",
+          "source": 1,
+          "label": "底色"
+        },
+        "normal": {
+          "width": 2048,
+          "height": 2048,
+          "mimeType": "image/png",
+          "source": 0,
+          "label": "法线"
+        }
+      }
+    },
+    {
       "name": "GitHub sync bridge",
       "ok": true
     },
@@ -524,20 +719,20 @@
       "name": "GitHub sync public read contract",
       "ok": true,
       "detail": {
-        "schemaVersion": "5.4.1",
+        "schemaVersion": "5.4.2",
         "queued": 0,
         "synced": 0,
         "files": 3,
         "issues": 0,
-        "checkedAt": 1787371326586,
+        "checkedAt": 1787407883085,
         "error": "commits HTTP 403；issues HTTP 403"
       }
     }
   ],
   "errors": [],
   "summary": {
-    "passed": 36,
+    "passed": 42,
     "failed": 0,
-    "total": 36
+    "total": 42
   }
 }

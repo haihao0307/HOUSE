@@ -1,6 +1,6 @@
 {
-  "schemaVersion": "5.4.1",
-  "title": "云南院落历史建筑生产线 V5.4.1",
+  "schemaVersion": "5.4.2",
+  "title": "云南院落历史建筑生产线 V5.4.2",
   "periodFocus": "1940—1945；早期测绘个案仅用于类型与构造校准",
   "systemHierarchy": {
     "root": {
@@ -53,6 +53,36 @@
           "highFidelity": "assets/models/YN_TUANJIE_001_EDITABLE_HIGH.glb",
           "webStandard": "assets/models/YN_TUANJIE_001_EDITABLE.glb",
           "geometryIdentity": "same 48 meshes and 464288 triangles"
+        }
+      },
+      {
+        "id": "REFERENCE-DALI-001",
+        "name": "云南大理参考 GLB",
+        "canonicalType": null,
+        "relationshipToRoot": "作为大理地域建筑的可切换扫描参考，供屋面、墙体风化、木门洞和院落构架对照；不改变当前生产线母体或既有测绘个案。",
+        "status": "editableGLBReferenceTextureOptimized",
+        "asset": "assets/models/YN_DALI_001_REFERENCE_WEB.glb",
+        "sourceFile": "yunnan_dali_1.glb",
+        "sourceStatus": "localOnly",
+        "assetProfiles": {
+          "webReference": "assets/models/YN_DALI_001_REFERENCE_WEB.glb",
+          "geometryIdentity": "same 1 mesh, 809883 vertices and 997659 triangles",
+          "texturePolicy": "embedded diffuse texture downsampled to 4096px; geometry and material assignment preserved"
+        }
+      },
+      {
+        "id": "REFERENCE-HAOSI1-WULONG-001",
+        "name": "云南浩思一·乌龙 WL 参考 GLB",
+        "canonicalType": null,
+        "relationshipToRoot": "作为浩思一乌龙案例的可切换扫描参考，供云南瓦面、墙体、木构和门窗细节对照；不作为独立生产线分支。",
+        "status": "editableGLBReferenceTextureOptimized",
+        "asset": "assets/models/YN_HAOSI1_WULONG_WL_001_REFERENCE_WEB.glb",
+        "sourceFile": "yunnan_house1_wl.glb",
+        "sourceStatus": "localOnly",
+        "assetProfiles": {
+          "webReference": "assets/models/YN_HAOSI1_WULONG_WL_001_REFERENCE_WEB.glb",
+          "geometryIdentity": "same 1 mesh, 357794 vertices and 300084 triangles",
+          "texturePolicy": "embedded diffuse texture downsampled to 4096px and normal texture to 2048px; geometry and material assignment preserved"
         }
       }
     ],

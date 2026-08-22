@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>云南院落历史建筑生产线 V5.4.1</title>
+<title>云南院落历史建筑生产线 V5.4.2</title>
 <link rel="icon" href="data:,">
 <style>
 :root{
@@ -63,13 +63,13 @@ svg .outerWall{fill:none;stroke:#313833;stroke-width:12;stroke-linejoin:round}.w
 .modelHud .renderState.warn{border-color:#8f7040;color:#f1d39c;background:#352b1c}
 .modelControls button.demoActive{box-shadow:0 0 0 2px #d6a64b55 inset}
 .referenceHub{padding:18px;display:grid;gap:14px;color:var(--ink)}.referenceIntro{display:grid;grid-template-columns:1.3fr .7fr;gap:12px}.referenceCard{border:1px solid #d6cab2;background:#faf6ed;border-radius:9px;padding:14px}.referenceCard h2,.referenceCard h3{margin:0 0 7px;color:#805c32}.referenceCard h2{font-size:18px}.referenceCard h3{font-size:12px}.referenceCard p,.referenceCard li{font-size:10px;line-height:1.7;color:#555c56}.referenceCard ul{margin:6px 0 0;padding-left:18px}.referenceMeta{display:grid;grid-template-columns:110px 1fr;gap:6px;font-size:10px}.referenceMeta dt{color:#82745e}.referenceMeta dd{margin:0;color:#343b37}.referenceActions{display:flex;gap:7px;flex-wrap:wrap;margin-top:11px}.referenceActions button,.referenceActions a,.referenceActions label{border:1px solid #8d6d42;border-radius:6px;background:#32281a;color:#f5deb2;padding:8px 11px;text-decoration:none;font-size:10px;cursor:pointer}.referenceActions a,.referenceActions label{background:#f0e5cf;color:#6e4d27}.referenceActions input{display:none}.referenceLocalHint{margin:9px 0 0!important;padding:7px 9px;border-left:3px solid #9a7646;background:#f5ecd9;color:#654c2f!important}.referenceViewer{position:relative;height:560px;border-radius:9px;overflow:hidden;background:#101714;border:1px solid #35463e}.referenceViewer[hidden]{display:none}.referenceViewer.dragging{outline:3px solid #d4a85f;outline-offset:-3px}.referenceViewer canvas{width:100%;height:100%;display:block;touch-action:none;cursor:grab}.referenceViewer canvas:active{cursor:grabbing}.referenceViewerHud{position:absolute;left:12px;top:12px;max-width:410px;padding:9px 11px;border:1px solid #46564e;border-radius:7px;background:#101a17e8;color:#e9eee9;font-size:9px;line-height:1.55;pointer-events:none}.referenceViewerHud b{display:block;color:#edcb91;font-size:11px}.referenceViewerDrop{position:absolute;inset:92px 12% 86px;display:grid;place-items:center;text-align:center;border:1px dashed #8d9b92;border-radius:10px;background:#13201bd9;color:#d7ded8;font-size:12px;line-height:1.8;pointer-events:none}.referenceViewer[data-state="ready"] .referenceViewerDrop,.referenceViewer[data-state="loading"] .referenceViewerDrop{display:none}.referenceViewerDrop b{display:block;color:#edcb91;font-size:15px}.referenceViewerControls{position:absolute;left:12px;right:12px;bottom:12px;display:flex;gap:5px;flex-wrap:wrap;padding:7px;border:1px solid #405048;border-radius:8px;background:#101a17df}.referenceViewerControls button{border:1px solid #47564f;border-radius:5px;background:#19231f;color:#dce5de;padding:6px 8px;font-size:9px;cursor:pointer}.referenceViewerControls button.active{border-color:#b08246;background:#342a1c;color:#f3d69f}.referenceEvidence{display:grid;grid-template-columns:1fr 1fr;gap:12px}.referenceFlag{display:inline-block;border:1px solid #9a7646;border-radius:99px;padding:3px 7px;color:#7a542d;background:#f2e5ca;font-size:9px}@media(max-width:900px){.referenceIntro,.referenceEvidence{grid-template-columns:1fr}.referenceViewer{height:480px}.referenceViewerDrop{inset:100px 7% 105px}}
-
+.referenceModelGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.referenceModelGrid p{margin:4px 0}
 </style>
 </head>
 <body>
 <div class="app">
 <header class="topbar">
-  <div class="brand"><div class="seal">院</div><div><h1>云南院落历史建筑生产线 V5.4.1</h1><p>母体体系 → 地方支系/测绘个案 → 平面布局 → 立面等级 → 构架屋面 → 瓦作门窗 → 年代状态</p></div></div>
+  <div class="brand"><div class="seal">院</div><div><h1>云南院落历史建筑生产线 V5.4.2</h1><p>母体体系 → 地方支系/测绘个案 → 平面布局 → 立面等级 → 构架屋面 → 瓦作门窗 → 年代状态</p></div></div>
   <div class="badges"><span class="badge ok">WebGL遮挡已修正</span><span class="badge ok">三开间前廊个案已接入</span><span class="badge ok">11.53×7.92米尺寸链闭合</span><span class="badge ok">混合梁架已分榀</span><span class="badge warn">地点与族属待核</span><span class="badge ok">单片筒板瓦已按实测收分</span></div>
 </header>
 <div class="shell">
@@ -703,28 +703,33 @@ function referenceView(){return `<div class="scrollPaper"><div class="referenceH
 async function initTuanjieReference(){
  const open=document.getElementById('openTuanjieReference'),standard=document.getElementById('openTuanjieStandard'),input=document.getElementById('tuanjieFileInput'),host=document.getElementById('tuanjieViewer'),stateEl=document.getElementById('tuanjieLoadState'),hint=document.getElementById('tuanjieLocalHint');if(!open||!standard||!input||!host)return;
  const isFile=location.protocol==='file:';
- if(isFile){open.textContent='选择高精度 GLB';standard.textContent='选择网页标准 GLB';if(hint)hint.textContent='当前是本地直接打开模式：浏览器禁止网页自动读取旁边文件。高精度请选择 YN_TUANJIE_001_EDITABLE_HIGH.glb；配置较低的电脑可选择 YN_TUANJIE_001_EDITABLE.glb。'}
- const bindControls=()=>{document.querySelectorAll('[data-tj-group]').forEach(b=>b.onclick=()=>{if(!TUANJIE.viewer?.loaded)return;b.classList.toggle('active');TUANJIE.viewer.setGroup(b.dataset.tjGroup,b.classList.contains('active'))});document.getElementById('tuanjieAuto').onclick=e=>{if(!TUANJIE.viewer?.loaded)return;e.currentTarget.classList.toggle('active');TUANJIE.viewer.setAuto(e.currentTarget.classList.contains('active'))};document.getElementById('tuanjieFit').onclick=()=>TUANJIE.viewer?.fit()};
- const load=async(source,profile='local')=>{if(TUANJIE.loading)return;TUANJIE.loading=true;host.dataset.state='loading';open.disabled=true;standard.disabled=true;const label=profile==='high'?'高精度 113.8 MB':profile==='standard'?'网页标准 45.5 MB':source?.name||'本地';if(stateEl)stateEl.textContent=`正在载入${label} GLB…`;if(TUANJIE.viewer)TUANJIE.viewer.destroy();TUANJIE.viewer=null;
-  try{TUANJIE.viewer=TuanjieGLBViewer.create(document.getElementById('tuanjieCanvas'),{onState:s=>{if(stateEl)stateEl.textContent=s.text}});if(source instanceof File)await TUANJIE.viewer.loadFile(source);else await TUANJIE.viewer.load(source);host.dataset.state='ready';open.textContent=profile==='high'?'高精度档已打开':isFile?'选择高精度 GLB':'打开高精度 GLB';standard.textContent=profile==='standard'?'网页标准档已打开':isFile?'选择网页标准 GLB':'打开网页标准档';bindControls()}
-  catch(error){
-   if(!isFile&&profile==='high'&&/HTTP 404|HTTP 403|读取失败/.test(String(error?.message||error))){
-    if(stateEl)stateEl.textContent='公开网页未发布高精度主档，已自动切换网页标准档…';
-    TUANJIE.loading=false;
-    return load('assets/models/YN_TUANJIE_001_EDITABLE.glb','standard');
-   }
-   host.dataset.state='error';if(stateEl)stateEl.textContent=`载入失败：${error.message}`;open.textContent=isFile?'选择高精度 GLB':'重新载入高精度档';standard.textContent=isFile?'选择网页标准 GLB':'重新载入网页标准档';if(TUANJIE.viewer)TUANJIE.viewer.destroy();TUANJIE.viewer=null
-  }
-  finally{TUANJIE.loading=false;open.disabled=false;standard.disabled=false}
+ const profiles={
+  high:{label:'团结乡高精度',url:'assets/models/YN_TUANJIE_001_EDITABLE_HIGH.glb',button:open},
+  standard:{label:'团结乡网页标准',url:'assets/models/YN_TUANJIE_001_EDITABLE.glb',button:standard},
+  dali:{label:'云南大理参考',url:'assets/models/YN_DALI_001_REFERENCE_WEB.glb',button:null},
+  wulong:{label:'浩思一·乌龙 WL',url:'assets/models/YN_HAOSI1_WULONG_WL_001_REFERENCE_WEB.glb',button:null}
  };
- open.onclick=()=>isFile?input.click():load('assets/models/YN_TUANJIE_001_EDITABLE_HIGH.glb','high');
- standard.onclick=()=>isFile?input.click():load('assets/models/YN_TUANJIE_001_EDITABLE.glb','standard');
- input.onchange=()=>{const file=input.files?.[0];if(file)load(file,/HIGH/i.test(file.name)?'high':/EDITABLE\.glb$/i.test(file.name)?'standard':'local');input.value=''};
- host.ondragenter=host.ondragover=e=>{e.preventDefault();host.classList.add('dragging')};
- host.ondragleave=e=>{if(!host.contains(e.relatedTarget))host.classList.remove('dragging')};
- host.ondrop=e=>{e.preventDefault();host.classList.remove('dragging');const file=[...(e.dataTransfer?.files||[])].find(f=>/\.glb$/i.test(f.name));if(file)load(file);else if(stateEl)stateEl.textContent='拖入的文件不是 .glb，请重新选择'};
+ const picker=document.createElement('section');picker.className='referenceCard';picker.id='referenceModelPicker';picker.innerHTML='<h3>新增云南参考 GLB</h3><p>公开按钮加载 GitHub Pages 优化档；本地直接打开时，请分别选择电脑中的原始 GLB。几何不改，只对网页公开档的贴图做降采样。</p><div class="referenceModelGrid"><div><div class="referenceActions"><button id="openDaliReference">打开云南大理 GLB</button><label for="daliFileInput">选择大理本地 GLB<input id="daliFileInput" type="file" accept=".glb,model/gltf-binary"></label><a href="assets/models/YN_DALI_001_REFERENCE_WEB.glb" download="YN_DALI_001_REFERENCE_WEB.glb">下载大理网页档</a></div><p class="referenceLocalHint">原始文件：yunnan_dali_1.glb（本地保留，约 161 MB）</p></div><div><div class="referenceActions"><button id="openWulongReference">打开浩思一·乌龙 WL</button><label for="wulongFileInput">选择乌龙本地 GLB<input id="wulongFileInput" type="file" accept=".glb,model/gltf-binary"></label><a href="assets/models/YN_HAOSI1_WULONG_WL_001_REFERENCE_WEB.glb" download="YN_HAOSI1_WULONG_WL_001_REFERENCE_WEB.glb">下载乌龙网页档</a></div><p class="referenceLocalHint">原始文件：yunnan_house1_wl.glb（本地保留，约 103 MB）</p></div></div><p class="referenceLocalHint" id="referenceModelHint">当前仍显示团结乡样本；点击上方任一按钮即可切换，查看器、旋转、分组和复位视角共用。</p>';
+ host.parentNode.insertBefore(picker,host);
+ profiles.dali.button=document.getElementById('openDaliReference');profiles.wulong.button=document.getElementById('openWulongReference');
+ const daliInput=document.getElementById('daliFileInput'),wulongInput=document.getElementById('wulongFileInput'),modelHint=document.getElementById('referenceModelHint');
+ const actionButtons=[open,standard,profiles.dali.button,profiles.wulong.button];
+ if(isFile){open.textContent='选择高精度 GLB';standard.textContent='选择网页标准 GLB';if(hint)hint.textContent='当前是本地直接打开模式：浏览器不会自动读取 G:\\HOUSE 旁边的文件。请使用对应的“选择本地 GLB”按钮加载原始档。'}
+ const detectProfile=name=>{const n=String(name||'').toLowerCase();if(/dali|大理/.test(n))return 'dali';if(/wulong|wl|浩思|乌龙/.test(n))return 'wulong';if(/high/.test(n))return 'high';if(/editable\.glb$/.test(n))return 'standard';return 'local'};
+ const bindControls=()=>{document.querySelectorAll('[data-tj-group]').forEach(b=>b.onclick=()=>{if(!TUANJIE.viewer?.loaded)return;b.classList.toggle('active');TUANJIE.viewer.setGroup(b.dataset.tjGroup,b.classList.contains('active'))});document.getElementById('tuanjieAuto').onclick=e=>{if(!TUANJIE.viewer?.loaded)return;e.currentTarget.classList.toggle('active');TUANJIE.viewer.setAuto(e.currentTarget.classList.contains('active'))};document.getElementById('tuanjieFit').onclick=()=>TUANJIE.viewer?.fit()};
+ const load=async(source,profile='local')=>{if(TUANJIE.loading)return;TUANJIE.loading=true;host.dataset.state='loading';actionButtons.forEach(b=>{if(b)b.disabled=true});const p=profiles[profile]||{label:source?.name||'本地 GLB'};const label=p.label||source?.name||'本地';if(stateEl)stateEl.textContent=`正在载入${label}…`;if(modelHint)modelHint.textContent=`正在载入：${label}；保持当前生产线查看器和可编辑分组。`;if(TUANJIE.viewer)TUANJIE.viewer.destroy();TUANJIE.viewer=null;
+  try{TUANJIE.viewer=TuanjieGLBViewer.create(document.getElementById('tuanjieCanvas'),{onState:s=>{if(stateEl)stateEl.textContent=s.text}});if(source instanceof File)await TUANJIE.viewer.loadFile(source);else await TUANJIE.viewer.load(source);host.dataset.state='ready';actionButtons.forEach(b=>{if(b)b.textContent=b===p.button?`${label}已打开`:b.id==='openDaliReference'?'打开云南大理 GLB':b.id==='openWulongReference'?'打开浩思一·乌龙 WL':b===open?(isFile?'选择高精度 GLB':'打开高精度 GLB'):isFile?'选择网页标准 GLB':'打开网页标准档'});if(modelHint)modelHint.textContent=`当前模型：${label}。可继续使用屋顶/一层/二层分组、自动旋转和复位视角。`;bindControls()}
+  catch(error){
+   if(!isFile&&profile==='high'&&/HTTP 404|HTTP 403|读取失败/.test(String(error?.message||error))){if(stateEl)stateEl.textContent='公开网页未发布高精度主档，已自动切换网页标准档…';TUANJIE.loading=false;return load('assets/models/YN_TUANJIE_001_EDITABLE.glb','standard')}
+   host.dataset.state='error';if(stateEl)stateEl.textContent=`载入失败：${error.message}`;if(modelHint)modelHint.textContent=`载入失败：${error.message}`;if(TUANJIE.viewer)TUANJIE.viewer.destroy();TUANJIE.viewer=null
+  }
+  finally{TUANJIE.loading=false;actionButtons.forEach(b=>{if(b)b.disabled=false})}
+ };
+ open.onclick=()=>isFile?input.click():load(profiles.high.url,'high');standard.onclick=()=>isFile?input.click():load(profiles.standard.url,'standard');profiles.dali.button.onclick=()=>isFile?daliInput.click():load(profiles.dali.url,'dali');profiles.wulong.button.onclick=()=>isFile?wulongInput.click():load(profiles.wulong.url,'wulong');
+ input.onchange=()=>{const file=input.files?.[0];if(file)load(file,detectProfile(file.name));input.value=''};daliInput.onchange=()=>{const file=daliInput.files?.[0];if(file)load(file,'dali');daliInput.value=''};wulongInput.onchange=()=>{const file=wulongInput.files?.[0];if(file)load(file,'wulong');wulongInput.value=''};
+ host.ondragenter=host.ondragover=e=>{e.preventDefault();host.classList.add('dragging')};host.ondragleave=e=>{if(!host.contains(e.relatedTarget))host.classList.remove('dragging')};host.ondrop=e=>{e.preventDefault();host.classList.remove('dragging');const file=[...(e.dataTransfer?.files||[])].find(f=>/\.glb$/i.test(f.name));if(file)load(file,detectProfile(file.name));else if(stateEl)stateEl.textContent='拖入的文件不是 .glb，请重新选择'};
  bindControls();
-}
+ }
 
 function render(){
   cleanupBuilding3D();
@@ -836,8 +841,8 @@ $('#focusModel').onclick=()=>{document.querySelector('.app').classList.toggle('m
 $$('[data-layer]').forEach(i=>i.onchange=()=>{state.layers[i.dataset.layer]=i.checked;if(['plan','roof','building'].includes(state.view))render()});
 $('#stage').oninput=e=>{state.stage=+e.target.value;renderLogicList();updateStatus();if(state.view==='construction')render();if(state.view==='building')m3Draw()};
 /* ===== V5.2.1 visibility, openings and visitor-route upgrade ===== */
-DATA.schemaVersion='5.4.1';
-DATA.title='云南院落历史建筑生产线 V5.4.1';
+DATA.schemaVersion='5.4.2';
+DATA.title='云南院落历史建筑生产线 V5.4.2';
 DATA.visitSequence=[
  {id:'V01',name:'门外识别入口',detail:'人物从院落主轴南端接近中央大门。'},
  {id:'V02',name:'门扇自动开启',detail:'到达门前触发双扇大门，门扇绕各自门轴转动。'},
@@ -1142,7 +1147,7 @@ const V521_oldStatus=updateStatus;
 updateStatus=function(){V521_oldStatus();if(state.view==='building'){const rs=document.getElementById('renderStatus');if(rs)rs.textContent=M3D.fallback?'Canvas 回退渲染':'WebGL 深度缓冲 · 遮挡修正已启用'}if(state.view==='reference'){const rs=document.getElementById('renderStatus');if(rs)rs.textContent='可编辑 GLB 主档 · 48 网格 · 无 FBX 运行依赖'}};
 
 window.__V521_TEST__={
- version:'5.4.1',
+ version:'5.4.2',
  startTour:v521StartTour,
  resetTour:v521ResetTour,
  startOpenings:v521StartOpeningsDemo,

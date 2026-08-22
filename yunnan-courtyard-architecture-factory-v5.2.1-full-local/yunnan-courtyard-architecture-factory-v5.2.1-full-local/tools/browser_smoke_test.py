@@ -72,7 +72,7 @@ try:
     page.wait_for_timeout(1000)
 
     title = page.title()
-    results.append({"name": "title", "ok": "V5.4.1" in title, "detail": title})
+    results.append({"name": "title", "ok": "V5.4.2" in title, "detail": title})
     results.append({"name": "canvas", "ok": page.locator("#buildingCanvas").count() == 1})
     for selector, name in [("#m3OpenDemo", "openings button"), ("#m3Tour", "visitor button"), ("#m3Cut", "cutaway button")]:
         results.append({"name": name, "ok": page.locator(selector).count() == 1})
@@ -197,6 +197,22 @@ try:
     page.wait_for_timeout(300)
     page.screenshot(path=str(REFERENCE_FILE_SCREEN), full_page=False)
 
+    # Newly catalogued public reference GLBs share the same editable viewer.
+    # Verify their public paths, preserved triangle counts and optimized texture profiles.
+    page.locator("#openDaliReference").click()
+    page.wait_for_function("window.__TUANJIE_TEST__.stats().loaded === true && /YN_DALI_001_REFERENCE_WEB\\.glb$/.test(window.__TUANJIE_TEST__.stats().source || '')", timeout=180000)
+    dali_reference = page.evaluate("window.__TUANJIE_TEST__.stats()")
+    results.append({"name": "Dali reference button", "ok": page.locator("#openDaliReference").count() == 1 and dali_reference.get("source", "").endswith("YN_DALI_001_REFERENCE_WEB.glb"), "detail": dali_reference})
+    results.append({"name": "Dali reference geometry", "ok": dali_reference.get("meshes") == 1 and dali_reference.get("triangles") == 997659 and dali_reference.get("vertices") == 809883, "detail": dali_reference})
+    results.append({"name": "Dali reference texture profile", "ok": dali_reference.get("textures", {}).get("base", {}).get("width") == 4096 and dali_reference.get("textures", {}).get("base", {}).get("height") == 4096, "detail": dali_reference.get("textures")})
+
+    page.locator("#openWulongReference").click()
+    page.wait_for_function("window.__TUANJIE_TEST__.stats().loaded === true && /YN_HAOSI1_WULONG_WL_001_REFERENCE_WEB\\.glb$/.test(window.__TUANJIE_TEST__.stats().source || '')", timeout=180000)
+    wulong_reference = page.evaluate("window.__TUANJIE_TEST__.stats()")
+    results.append({"name": "Wulong reference button", "ok": page.locator("#openWulongReference").count() == 1 and wulong_reference.get("source", "").endswith("YN_HAOSI1_WULONG_WL_001_REFERENCE_WEB.glb"), "detail": wulong_reference})
+    results.append({"name": "Wulong reference geometry", "ok": wulong_reference.get("meshes") == 1 and wulong_reference.get("triangles") == 300084 and wulong_reference.get("vertices") == 357794, "detail": wulong_reference})
+    results.append({"name": "Wulong reference texture profile", "ok": wulong_reference.get("textures", {}).get("base", {}).get("width") == 4096 and wulong_reference.get("textures", {}).get("base", {}).get("height") == 4096 and wulong_reference.get("textures", {}).get("normal", {}).get("width") == 2048 and wulong_reference.get("textures", {}).get("normal", {}).get("height") == 2048, "detail": wulong_reference.get("textures")})
+
     # GitHub synchronization bridge: the public page must expose a read-only
     # repository connection without requiring a token.
     results.append({"name": "GitHub sync bridge", "ok": page.evaluate("!!window.__GITHUB_SYNC__")})
@@ -204,7 +220,7 @@ try:
     page.wait_for_timeout(250)
     results.append({"name": "GitHub sync panel", "ok": page.locator("#githubSyncOverlay").is_visible() and page.locator("#githubSyncAdd").count() == 1})
     sync_stats = page.evaluate("window.__GITHUB_SYNC__.stats()")
-    results.append({"name": "GitHub sync public read contract", "ok": sync_stats.get("schemaVersion") == "5.4.1" and sync_stats.get("queued", -1) >= 0, "detail": sync_stats})
+    results.append({"name": "GitHub sync public read contract", "ok": sync_stats.get("schemaVersion") == "5.4.2" and sync_stats.get("queued", -1) >= 0, "detail": sync_stats})
     browser.close()
 finally:
     server.shutdown()
@@ -212,7 +228,7 @@ finally:
 
 passed = sum(1 for item in results if item.get("ok"))
 report = {
-    "version": "5.4.1",
+    "version": "5.4.2",
     "results": results,
     "errors": errors,
     "summary": {"passed": passed, "failed": len(results) - passed, "total": len(results)},
