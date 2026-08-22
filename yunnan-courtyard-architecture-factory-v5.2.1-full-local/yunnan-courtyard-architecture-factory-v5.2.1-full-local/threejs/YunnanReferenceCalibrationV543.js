@@ -9,9 +9,8 @@ import {
 } from './YunnanMaterialFactory.js';
 
 /**
- * Reference-calibrated visual layer derived from the Dali, Wulong and Tuanjie
- * GLB studies.  It intentionally does not promote scan appearance to measured
- * construction data.  The layer is optional, deterministic and reversible.
+ * Optional visual calibration derived from the Dali, Wulong and Tuanjie GLBs.
+ * It keeps every scan-derived adjustment reversible and evidence-gated.
  */
 export const YUNNAN_REFERENCE_CALIBRATION_V543 = Object.freeze({
   schemaVersion: '5.4.3',
@@ -78,21 +77,16 @@ function stableUnit(value, seed = 543) {
 }
 
 function roofUnitGroups(root) {
-  const groups = [];
+  const result = [];
   root.traverse((object) => {
     if (!object.isGroup) return;
-    let hasPan = false;
-    let hasCover = false;
-    object.children.forEach((child) => {
-      if (child.userData?.type === '板瓦-pan-tile') hasPan = true;
-      if (child.userData?.type === '筒瓦-cover-tile') hasCover = true;
-    });
-    if (hasPan && hasCover) groups.push(object);
+    const directTypes = new Set(object.children.map((child) => child.userData?.type));
+    if (directTypes.has('板瓦-pan-tile') && directTypes.has('筒瓦-cover-tile')) result.push(object);
   });
-  return groups;
+  return result;
 }
 
-function collectCourseRange(group) {
+function courseRange(group) {
   let min = Infinity;
   let max = -Infinity;
   group.traverse((object) => {
@@ -107,49 +101,56 @@ function collectCourseRange(group) {
   };
 }
 
-function createRoofPalette(unitId, unitIndex, calibration, registry) {
-  const family = calibration.roof.colorFamilies[unitIndex % calibration.roof.colorFamilies.length];
-  const seed = calibration.wall.seed + 37 + unitIndex * 31;
-  const pan = createWeatheredTileMaterial({
-    seed,
-    color: family.color,
+function registerMaterial(material, registry, metadata) {
+  material.userData = { ...(material.userData || {}), ...metadata };
+  registry.add(material);
+  return material;
+}
+
+function createRoofPalette(unitId, index, calibration, registry) {
+  const families = calibration.roof.colorFamilies;
+  const seed = calibration.wall.seed + 37 + index * 31;
+  const common = {
     weathering: calibration.roof.tileWeathering,
     exposure: calibration.roof.tileExposure,
-  });
-  const cover = createWeatheredTileMaterial({
-    seed: seed + 13,
-    color: calibration.roof.colorFamilies[(unitIndex + 1) % calibration.roof.colorFamilies.length].color,
-    weathering: calibration.roof.tileWeathering + 0.035,
-    exposure: calibration.roof.tileExposure - 0.04,
-  });
-  const repair = createWeatheredTileMaterial({
-    seed: seed + 71,
-    color: calibration.roof.colorFamilies[(unitIndex + 2) % calibration.roof.colorFamilies.length].color,
-    weathering: Math.min(1, calibration.roof.tileWeathering + 0.18),
-    exposure: Math.max(0.25, calibration.roof.tileExposure - 0.16),
-  });
-  [pan, cover, repair].forEach((material, index) => {
-    material.userData = {
-      ...(material.userData || {}),
-      calibrationId: calibration.id,
-      roofUnitId: unitId,
-      materialRole: ['pan-tile', 'cover-tile', 'repair-tile'][index],
-      evidenceStatus: 'reference-calibrated',
-    };
-    registry.add(material);
-  });
-  return { pan, cover, repair, familyId: family.id };
+  };
+  const pan = registerMaterial(
+    createWeatheredTileMaterial({ seed, color: families[index % families.length].color, ...common }),
+    registry,
+    { calibrationId: calibration.id, roofUnitId: unitId, materialRole: 'pan-tile', evidenceStatus: 'reference-calibrated' },
+  );
+  const cover = registerMaterial(
+    createWeatheredTileMaterial({
+      seed: seed + 13,
+      color: families[(index + 1) % families.length].color,
+      weathering: common.weathering + 0.035,
+      exposure: common.exposure - 0.04,
+    }),
+    registry,
+    { calibrationId: calibration.id, roofUnitId: unitId, materialRole: 'cover-tile', evidenceStatus: 'reference-calibrated' },
+  );
+  const repair = registerMaterial(
+    createWeatheredTileMaterial({
+      seed: seed + 71,
+      color: families[(index + 2) % families.length].color,
+      weathering: Math.min(1, common.weathering + 0.18),
+      exposure: Math.max(0.25, common.exposure - 0.16),
+    }),
+    registry,
+    { calibrationId: calibration.id, roofUnitId: unitId, materialRole: 'repair-tile', evidenceStatus: 'visual-calibration-only' },
+  );
+  return { pan, cover, repair, familyId: families[index % families.length].id };
 }
 
 function applyRoofCalibration(root, calibration, registry) {
   const groups = roofUnitGroups(root);
-  groups.forEach((group, unitIndex) => {
-    const roofType = group.userData?.type || `roof-unit-${unitIndex + 1}`;
-    const unitId = `V543-ROOF-${String(unitIndex + 1).padStart(2, '0')}-${roofType}`;
+  groups.forEach((group, index) => {
+    const roofType = group.userData?.type || `roof-unit-${index + 1}`;
+    const unitId = `V543-ROOF-${String(index + 1).padStart(2, '0')}-${roofType}`;
     const offset = calibration.roof.heightOffsetsMeters[roofType] ?? 0;
+    const range = courseRange(group);
+    const palette = createRoofPalette(unitId, index, calibration, registry);
     group.position.y += offset;
-    const palette = createRoofPalette(unitId, unitIndex, calibration, registry);
-    const courseRange = collectCourseRange(group);
     group.userData = {
       ...(group.userData || {}),
       roofUnitId: unitId,
@@ -177,8 +178,8 @@ function applyRoofCalibration(root, calibration, registry) {
         ...(object.userData || {}),
         roofUnitId: unitId,
         calibrationId: calibration.id,
-        evidenceStatus: repair ? 'reference-calibrated-repair-appearance' : 'reference-calibrated',
-        weatheringZone: course === courseRange.min ? 'eave' : course === courseRange.max ? 'ridge' : 'slope',
+        evidenceStatus: repair ? 'visual-calibration-only' : 'reference-calibrated',
+        weatheringZone: course === range.min ? 'eave' : course === range.max ? 'ridge' : 'slope',
         colorFieldSeed: stableHash(key, calibration.wall.seed),
         repairAppearance: repair,
       };
@@ -187,7 +188,7 @@ function applyRoofCalibration(root, calibration, registry) {
   return groups;
 }
 
-function exteriorFaceForWall(type) {
+function exteriorFace(type) {
   if (/west/.test(type)) return { axis: 'x', sign: -1 };
   if (/east/.test(type)) return { axis: 'x', sign: 1 };
   if (/south|front/.test(type)) return { axis: 'z', sign: -1 };
@@ -195,35 +196,32 @@ function exteriorFaceForWall(type) {
 }
 
 function createRepairPatch(wall, type, index, calibration, registry) {
-  const geometry = wall.geometry;
-  if (!geometry?.boundingBox) geometry?.computeBoundingBox?.();
-  const box = geometry?.boundingBox;
-  if (!box) return null;
+  wall.geometry?.computeBoundingBox?.();
+  const bounds = wall.geometry?.boundingBox;
+  if (!bounds) return null;
   const size = new THREE.Vector3();
-  box.getSize(size);
-  const face = exteriorFaceForWall(type);
+  bounds.getSize(size);
+  const face = exteriorFace(type);
   const horizontal = face.axis === 'x' ? size.z : size.x;
-  const patchWidth = Math.max(0.25, horizontal * (0.18 + stableUnit(type, 601) * 0.14));
-  const patchHeight = Math.max(0.22, size.y * (0.10 + stableUnit(type, 607) * 0.12));
-  const material = new THREE.MeshStandardMaterial({
-    color: stableUnit(type, 613) > 0.5 ? '#c2b7a3' : '#6e5545',
-    roughness: 0.98,
-    metalness: 0,
-    transparent: true,
-    opacity: calibration.wall.repairOpacity,
-    depthWrite: false,
-    polygonOffset: true,
-    polygonOffsetFactor: -2,
-  });
-  material.userData = {
-    calibrationId: calibration.id,
-    layer: 'repair-surface',
-    evidenceStatus: 'visual-calibration-only',
-  };
-  registry.add(material);
-  const patch = new THREE.Mesh(new THREE.PlaneGeometry(patchWidth, patchHeight), material);
-  const vertical = Math.max(patchHeight * 0.65, size.y * (0.18 + stableUnit(type, 619) * 0.45));
-  const along = (stableUnit(type, 631) - 0.5) * Math.max(0, horizontal - patchWidth) * 0.68;
+  const width = Math.max(0.25, horizontal * (0.18 + stableUnit(type, 601) * 0.14));
+  const height = Math.max(0.22, size.y * (0.10 + stableUnit(type, 607) * 0.12));
+  const material = registerMaterial(
+    new THREE.MeshStandardMaterial({
+      color: stableUnit(type, 613) > 0.5 ? '#c2b7a3' : '#6e5545',
+      roughness: 0.98,
+      metalness: 0,
+      transparent: true,
+      opacity: calibration.wall.repairOpacity,
+      depthWrite: false,
+      polygonOffset: true,
+      polygonOffsetFactor: -2,
+    }),
+    registry,
+    { calibrationId: calibration.id, layer: 'repair-surface', evidenceStatus: 'visual-calibration-only' },
+  );
+  const patch = new THREE.Mesh(new THREE.PlaneGeometry(width, height), material);
+  const vertical = Math.max(height * 0.65, size.y * (0.18 + stableUnit(type, 619) * 0.45));
+  const along = (stableUnit(type, 631) - 0.5) * Math.max(0, horizontal - width) * 0.68;
   if (face.axis === 'z') {
     patch.position.set(along, vertical, face.sign * (size.z / 2 + 0.006));
     if (face.sign < 0) patch.rotation.y = Math.PI;
@@ -232,7 +230,7 @@ function createRepairPatch(wall, type, index, calibration, registry) {
     patch.position.set(face.sign * (size.x / 2 + 0.006), vertical, along);
   }
   patch.userData = {
-    type: 'reference-calibrated-wall-repair-patch',
+    type: 'reference-calibrated-repair-patch',
     wallType: type,
     patchIndex: index,
     calibrationId: calibration.id,
@@ -243,31 +241,33 @@ function createRepairPatch(wall, type, index, calibration, registry) {
 }
 
 function applyWallCalibration(root, calibration, registry) {
-  let wallIndex = 0;
-  const wallRecords = [];
+  const walls = [];
   root.traverse((object) => {
     if (!object.isMesh) return;
     const type = String(object.userData?.type || '');
-    if (!/(wall|gable)/.test(type) || type.includes('opening')) return;
-    const family = calibration.wall.colorFamilies[wallIndex % calibration.wall.colorFamilies.length];
-    const material = createWeatheredEarthWallMaterial({
-      seed: calibration.wall.seed + wallIndex * 23,
-      color: family.color,
-      roughness: calibration.wall.roughness,
-      weathering: calibration.wall.weathering,
-      exposure: calibration.wall.exposure,
-      heightMeters: Math.max(2.4, root.userData?.options?.wallHeight || 4.7),
-    });
-    material.userData = {
-      ...(material.userData || {}),
-      calibrationId: calibration.id,
-      colorFamilyId: family.id,
-      evidenceStatus: 'reference-calibrated',
-    };
-    registry.add(material);
+    if (!/(wall|gable)/.test(type) || type.includes('opening') || type.includes('repair-patch')) return;
+    walls.push({ object, type });
+  });
+  return walls.map(({ object, type }, index) => {
+    const family = calibration.wall.colorFamilies[index % calibration.wall.colorFamilies.length];
+    const material = registerMaterial(
+      createWeatheredEarthWallMaterial({
+        seed: calibration.wall.seed + index * 23,
+        color: family.color,
+        roughness: calibration.wall.roughness,
+        weathering: calibration.wall.weathering,
+        exposure: calibration.wall.exposure,
+        heightMeters: Math.max(2.4, root.userData?.options?.wallHeight || 4.7),
+      }),
+      registry,
+      { calibrationId: calibration.id, colorFamilyId: family.id, evidenceStatus: 'reference-calibrated' },
+    );
     object.material = material;
     object.userData = {
       ...(object.userData || {}),
+      calibrationId: calibration.id,
+      colorFieldSeed: calibration.wall.seed + index * 23,
+      evidenceStatus: 'reference-calibrated',
       wallAssemblyLayers: [
         { layer: 'core-mass', status: 'typology-or-measured-rule' },
         { layer: 'visible-finish', status: 'reference-calibrated' },
@@ -276,15 +276,10 @@ function applyWallCalibration(root, calibration, registry) {
         { layer: 'repair', status: 'visual-calibration-only' },
         { layer: 'weathering', status: 'reference-calibrated' },
       ],
-      calibrationId: calibration.id,
-      colorFieldSeed: calibration.wall.seed + wallIndex * 23,
-      evidenceStatus: 'reference-calibrated',
     };
-    const patch = createRepairPatch(object, type, wallIndex, calibration, registry);
-    wallRecords.push({ type, colorFamilyId: family.id, repairPatch: !!patch });
-    wallIndex += 1;
+    const patch = createRepairPatch(object, type, index, calibration, registry);
+    return { type, colorFamilyId: family.id, repairPatch: !!patch };
   });
-  return wallRecords;
 }
 
 export function applyYunnanReferenceCalibrationV543(root, options = {}) {
@@ -314,30 +309,39 @@ export function applyYunnanReferenceCalibrationV543(root, options = {}) {
 }
 
 export function createReferenceCalibratedYunnanCourtyardPrototype(userOptions = {}) {
-  const calibration = userOptions.referenceCalibration || {};
+  const {
+    referenceCalibration = {},
+    materials: userMaterials = {},
+    ...prototypeOptions
+  } = userOptions;
   const model = createYunnanCourtyardPrototype({
-    seed: YUNNAN_REFERENCE_CALIBRATION_V543.wall.seed,
-    roofEave: YUNNAN_REFERENCE_CALIBRATION_V543.roof.eaveProjectionMeters,
-    roofThickness: YUNNAN_REFERENCE_CALIBRATION_V543.roof.visibleBuildUpMeters,
+    ...prototypeOptions,
+    seed: prototypeOptions.seed ?? YUNNAN_REFERENCE_CALIBRATION_V543.wall.seed,
+    roofEave: prototypeOptions.roofEave ?? YUNNAN_REFERENCE_CALIBRATION_V543.roof.eaveProjectionMeters,
+    roofThickness: prototypeOptions.roofThickness ?? YUNNAN_REFERENCE_CALIBRATION_V543.roof.visibleBuildUpMeters,
     materials: {
       wall: {
         color: YUNNAN_REFERENCE_CALIBRATION_V543.wall.colorFamilies[0].color,
         weathering: YUNNAN_REFERENCE_CALIBRATION_V543.wall.weathering,
         exposure: YUNNAN_REFERENCE_CALIBRATION_V543.wall.exposure,
+        ...(userMaterials.wall || {}),
       },
       tilePan: {
         weathering: YUNNAN_REFERENCE_CALIBRATION_V543.roof.tileWeathering,
         exposure: YUNNAN_REFERENCE_CALIBRATION_V543.roof.tileExposure,
+        ...(userMaterials.tilePan || {}),
       },
       tileCover: {
         weathering: YUNNAN_REFERENCE_CALIBRATION_V543.roof.tileWeathering + 0.035,
         exposure: YUNNAN_REFERENCE_CALIBRATION_V543.roof.tileExposure - 0.04,
+        ...(userMaterials.tileCover || {}),
       },
-      ...(userOptions.materials || {}),
+      timber: userMaterials.timber || {},
+      stone: userMaterials.stone || {},
+      opening: userMaterials.opening || {},
     },
-    ...userOptions,
   });
-  return applyYunnanReferenceCalibrationV543(model, calibration);
+  return applyYunnanReferenceCalibrationV543(model, referenceCalibration);
 }
 
 export function disposeReferenceCalibratedYunnanCourtyardPrototype(root) {
