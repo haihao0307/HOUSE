@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://haihao0307.github.io/HOUSE/data/web-sync/inbox.schema.json",
+  "title": "云南民居生产线网页同步资料包",
+  "type": "object",
+  "required": ["schemaVersion", "bundleType", "repository", "branch", "generatedAt", "entries"],
+  "properties": {
+    "schemaVersion": { "const": "5.4.1" },
+    "bundleType": { "const": "yunnan-production-web-sync" },
+    "repository": { "const": "haihao0307/HOUSE" },
+    "branch": { "const": "main" },
+    "generatedAt": { "type": "string", "format": "date-time" },
+    "sourcePage": { "type": "string", "format": "uri" },
+    "entries": {
+      "type": "array",
+      "maxItems": 100,
+      "items": {
+        "type": "object",
+        "required": ["id", "kind", "buildingId", "text", "createdAt"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^WEB-" },
+          "kind": { "enum": ["command", "observation", "correction", "evidence"] },
+          "buildingId": { "type": "string", "minLength": 1 },
+          "text": { "type": "string", "minLength": 1 },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "context": { "type": "object" },
+          "issueUrl": { "type": "string", "format": "uri" },
+          "issueNumber": { "type": "integer" },
+          "syncedAt": { "type": "string", "format": "date-time" }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}

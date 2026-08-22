@@ -1,10 +1,10 @@
 {
-  "version": "5.4.0",
+  "version": "5.4.1",
   "results": [
     {
       "name": "title",
       "ok": true,
-      "detail": "云南院落历史建筑生产线 V5.4.0"
+      "detail": "云南院落历史建筑生产线 V5.4.1"
     },
     {
       "name": "canvas",
@@ -511,12 +511,33 @@
         },
         "auto": false
       }
+    },
+    {
+      "name": "GitHub sync bridge",
+      "ok": true
+    },
+    {
+      "name": "GitHub sync panel",
+      "ok": true
+    },
+    {
+      "name": "GitHub sync public read contract",
+      "ok": true,
+      "detail": {
+        "schemaVersion": "5.4.1",
+        "queued": 0,
+        "synced": 0,
+        "files": 3,
+        "issues": 0,
+        "checkedAt": 1787371326586,
+        "error": "commits HTTP 403；issues HTTP 403"
+      }
     }
   ],
   "errors": [],
   "summary": {
-    "passed": 33,
+    "passed": 36,
     "failed": 0,
-    "total": 33
+    "total": 36
   }
 }

@@ -1,5 +1,12 @@
 # 更新记录
 
+## 5.4.1
+
+1. 公开生产线新增 GitHub 同步中枢：读取仓库中的母系统、Three.js 生产合同、团结乡材料证据和最新提交。
+2. 网页命令、现场观察、纠错复核和新增证据可进入本地可审计队列，并导出 `yunnan-production-web-sync-*.json`。
+3. 新增可选 GitHub Issues 回传：Fine-grained token 只在当前页面内存中使用，不写入源码、localStorage 或导出文件；回传记录统一使用 `[Web Sync]` 标题，便于生产线和后续资料整理同步。
+4. 404 入口与主页面统一为 V5.4.1，并保留无令牌只读访问。
+
 ## 5.4.0
 
 1. 新增 `threejs/YunnanMaterialFactory.js`，把团结乡样本确认的风化土墙、旧木、云南板瓦—筒瓦和石基外观拆成可复用的 Three.js PBR/程序化风化材质层。

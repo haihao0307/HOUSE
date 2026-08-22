@@ -1,4 +1,4 @@
-# 云南院落历史建筑生产线 V5.4.0
+# 云南院落历史建筑生产线 V5.4.1
 
 这是当前稳定的全量本地工程。默认页面直接显示完整的一颗印建筑，使用 WebGL 深度缓冲处理旋转遮挡，并包含门窗自动开合、人物入户、穿过倒座、进入天井、沿小厦到楼梯巷、登上二层大厦的演示。
 
@@ -32,7 +32,7 @@ macOS 或 Linux 运行 `./start_local_mac_linux.sh`。
 ./push_to_github.sh "你的仓库地址"
 ```
 
-仓库推送到 `main` 后，内置 GitHub Pages 工作流会先执行静态验证，再发布 `index.html`。第一次部署前需要在仓库 Settings 的 Pages 页面把 Source 设为 GitHub Actions。
+仓库推送到 `main` 后，内置 GitHub Pages 工作流会先执行静态验证，再发布 `index.html`。第一次部署前需要在仓库 Settings 的 Pages 页面把 Source 设为 GitHub Actions。公开生产线中的“GitHub同步”入口会读取仓库最新数据、提交和 `[Web Sync]` Issue；网页端命令与现场记录可先留在本地队列，也可由用户主动用 Fine-grained token 提交为 Issue，形成可审计的回传链路。
 
 ## 当前稳定能力
 
