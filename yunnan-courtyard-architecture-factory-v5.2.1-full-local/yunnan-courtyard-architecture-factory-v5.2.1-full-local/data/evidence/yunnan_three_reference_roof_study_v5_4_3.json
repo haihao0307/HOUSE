@@ -1,0 +1,235 @@
+{
+  "schemaVersion": "5.4.3",
+  "recordId": "YN-THREE-REFERENCE-ROOF-STUDY-001",
+  "status": "reference-calibrated",
+  "sourceCases": ["REFERENCE-DALI-001", "REFERENCE-HAOSI1-WULONG-001", "YN_TUANJIE_001"],
+  "method": {
+    "inputs": [
+      "repository GLB geometry",
+      "embedded base-color textures",
+      "embedded normal textures where present",
+      "consistent WebGL quicklook screenshots",
+      "existing measured Yikeyin roof evidence"
+    ],
+    "evidenceRule": "Visible roof form and surface appearance may calibrate the renderer. Hidden layers, exact dimensions and construction joints remain unresolved until measured evidence is available.",
+    "coordinateStatus": "display-space comparison only"
+  },
+  "caseStudies": [
+    {
+      "caseId": "REFERENCE-DALI-001",
+      "buildingClassCandidate": "high-grade tower-or-gate-pavilion",
+      "evidenceClass": "scanned-surface-evidence",
+      "roofSystem": {
+        "visibleIndependentTiers": 2,
+        "lowerTier": {
+          "formCandidate": "four-sided surrounding hip roof",
+          "relation": "encircles lower masonry volume",
+          "cornerRidges": "strongly visible",
+          "eaveCorners": "strongly upturned",
+          "centralProjectionCandidate": "small front ridge or canopy element"
+        },
+        "upperTier": {
+          "formCandidate": "pyramidal or hipped pavilion roof",
+          "centralFinial": "visible",
+          "verticalAndDiagonalRidges": "visible",
+          "eaveCorners": "strongly upturned",
+          "ridgeDecoration": "high-grade decorative candidate"
+        },
+        "tileRows": {
+          "visibility": "high",
+          "direction": "ridge-to-eave",
+          "semanticTileIdentity": "unresolved-single-scan-mesh"
+        },
+        "visibleThickness": {
+          "status": "high-confidence-visual-calibration",
+          "observation": "Eave edges show a layered depth significantly greater than a single flat roof plate."
+        }
+      },
+      "productionUse": {
+        "allowed": [
+          "multi-tier roof hierarchy",
+          "independent ridge and eave elevations",
+          "high-grade eave curvature reference",
+          "visible eave build-up reference",
+          "ridge and finial vocabulary for high-grade building classes"
+        ],
+        "prohibited": [
+          "automatic use on ordinary courtyard dwellings",
+          "copying decorative ridge pieces into Yikeyin houses",
+          "deriving exact tile or timber dimensions"
+        ]
+      }
+    },
+    {
+      "caseId": "REFERENCE-HAOSI1-WULONG-001",
+      "buildingClassCandidate": "compact enclosed rural dwelling",
+      "evidenceClass": "scanned-surface-evidence",
+      "roofSystem": {
+        "visibleIndependentBands": "at-least-two",
+        "mainRoof": {
+          "formCandidate": "large pitched compound roof",
+          "ridge": "long ridge with visible end lift and local curvature",
+          "eaves": "broad and slightly irregular",
+          "surface": "dense continuous tile-row rhythm"
+        },
+        "secondaryRoofs": {
+          "countCandidate": "one-or-more",
+          "relation": "lower side or rear roof masses attach or overlap below the main eave band",
+          "junctionStatus": "visible topology only, hidden flashing and valleys unresolved"
+        },
+        "verticalProjection": {
+          "candidate": "chimney or later service element",
+          "historicRuleStatus": "excluded-until-dated"
+        },
+        "tileAppearance": {
+          "colorFamily": ["blue-gray", "warm-gray", "brown-gray", "pale-weathered-gray"],
+          "normalMapRole": "significant small-scale relief",
+          "surfaceVariation": "high",
+          "damageAndRepair": "local irregularity visible but chronology unresolved"
+        },
+        "visibleThickness": {
+          "status": "medium-high visual calibration",
+          "observation": "Eave edges, ridge caps and overlapping roof masses show separate depth bands."
+        }
+      },
+      "productionUse": {
+        "allowed": [
+          "ordinary-dwelling roof color calibration",
+          "main-and-secondary roof hierarchy",
+          "small irregular eave and ridge curvature",
+          "controlled weathering and tile-row variation"
+        ],
+        "prohibited": [
+          "treating scan ground shards as roof fragments",
+          "treating the visible chimney candidate as a regional historical rule",
+          "inferring hidden valley, bedding or fastening details"
+        ]
+      }
+    },
+    {
+      "caseId": "YN_TUANJIE_001",
+      "buildingClassCandidate": "compact inward-facing courtyard compound",
+      "evidenceClass": "semantic-component-evidence",
+      "roofSystem": {
+        "independentRoofMasses": "multiple",
+        "courtyardRelation": "roof masses enclose a central open void",
+        "ridgeBands": "multiple height bands",
+        "eaveBands": "multiple height bands",
+        "junctionTypes": ["detached", "overlapped", "front-back occlusion", "corner adjacency"],
+        "tileRelationship": {
+          "userConfirmed": "Yunnan pan-tile and cover-tile visible relationship",
+          "exactDimensions": "unresolved",
+          "courseSpacing": "unresolved",
+          "lap": "unresolved"
+        },
+        "surfaceAppearance": {
+          "colorFamily": ["cool-gray", "warm-gray", "brown-gray"],
+          "weatheringByZone": ["ridge", "eave", "open-sky slope", "sheltered slope", "repair patch"],
+          "edgeCondition": "locally irregular and damaged"
+        }
+      },
+      "productionUse": {
+        "allowed": [
+          "courtyard roof graph",
+          "multiple ridge and eave bands",
+          "independent roof-unit IDs",
+          "visible pan-and-cover rhythm without dimensional claims",
+          "position-dependent aging"
+        ],
+        "prohibited": [
+          "using scan display scale as measured roof dimensions",
+          "treating 48 scan fragments as verified roofing components",
+          "copying exact laps or ridge closures from another case"
+        ]
+      }
+    }
+  ],
+  "crossCaseFindings": {
+    "roofHierarchy": {
+      "finding": "Yunnan reference buildings use several independent roof units and elevation bands. A single uniform roof shell loses the observed spatial hierarchy.",
+      "confidence": "high",
+      "generatorStatus": "reference-calibrated"
+    },
+    "visibleRoofBuildUp": {
+      "finding": "Eave and ridge silhouettes require a layered visible thickness. The renderer must separate structural support, underlay placeholder, tile layer and edge closure.",
+      "confidence": "medium-high",
+      "generatorStatus": "visual-calibration-only"
+    },
+    "roofColor": {
+      "finding": "Old gray tiles form a controlled cool-gray, warm-gray and brown-gray field with local highlights, stains and repairs. Uniform neutral gray is insufficient.",
+      "confidence": "high",
+      "generatorStatus": "reference-calibrated"
+    },
+    "curvature": {
+      "finding": "Ridges and eaves show building-class-dependent curvature. High-grade Dali roof corners are strongly lifted, while dwelling roofs use subtler sag and lift.",
+      "confidence": "high",
+      "generatorStatus": "class-dependent-reference-calibration"
+    },
+    "damageAndRepair": {
+      "finding": "Missing edges, uneven rows, weathering and repair zones should be spatially controlled and sparse. Scan holes must remain excluded from authored damage.",
+      "confidence": "medium-high",
+      "generatorStatus": "reference-calibrated"
+    }
+  },
+  "generatorContract": {
+    "roofUnitRequiredFields": [
+      "roofUnitId",
+      "hostBuildingId",
+      "roofClass",
+      "ridgeElevation",
+      "eaveElevation",
+      "pitch",
+      "eaveProjection",
+      "curvatureProfile",
+      "visibleLayerBuildUp",
+      "tileProfileId",
+      "colorFieldSeed",
+      "weatheringProfileId",
+      "repairProfileId",
+      "evidenceStatus"
+    ],
+    "visibleLayerBuildUp": [
+      {"layer": "rafters-or-structural-support", "status": "geometry-when-visible"},
+      {"layer": "wood-deck-or-underlay", "status": "case-dependent-unresolved"},
+      {"layer": "mud-or-bedding", "status": "placeholder-only-until-measured"},
+      {"layer": "pan-and-cover-tile-layer", "status": "semantic-topology-with-case-profile"},
+      {"layer": "eave-and-ridge-closure", "status": "case-dependent"}
+    ],
+    "colorFieldRules": [
+      "Use deterministic seed per roof unit.",
+      "Keep one material-age family per roof unit.",
+      "Vary lightness, temperature and roughness within restrained ranges.",
+      "Apply distinct masks for ridge, eave, drainage, sheltered and repair zones.",
+      "Share the same color field across high, standard and distant quality levels."
+    ],
+    "roofGraphRules": [
+      "Main house, side house, entrance block, gallery and auxiliary space retain independent roof-unit identities.",
+      "Roof intersections require an explicit junction type and evidence status.",
+      "Do not create automatic valleys where reference or measured evidence does not support them.",
+      "Do not merge staggered roofs into one continuous mesh for convenience."
+    ]
+  },
+  "qualityLevels": {
+    "researchHigh": "individual pan and cover tiles, explicit eave and ridge pieces, full color field",
+    "webStandard": "instanced tile courses with preserved IDs and full roof hierarchy",
+    "distantSimplified": "reduced geometry with the same roof graph, elevation bands and color field"
+  },
+  "unresolved": [
+    "measured pan-tile and cover-tile longitudinal lap",
+    "course center spacing",
+    "tile bedding and fastening",
+    "ordinary dwelling eave and ridge closure details",
+    "measured curvature values",
+    "measured ridge and eave elevations for Dali and Wulong cases",
+    "chronology and causes of visible repairs"
+  ],
+  "qaRequirements": [
+    "roof units remain independently selectable",
+    "ridge and eave elevation bands are visible in top and oblique views",
+    "visible roof thickness contains more than one authored layer",
+    "tile color field is reproducible from seed",
+    "damage masks exclude scan-boundary artifacts",
+    "high and standard quality levels retain stable roof-unit and drainage IDs",
+    "large-angle rotation keeps correct depth occlusion"
+  ]
+}
