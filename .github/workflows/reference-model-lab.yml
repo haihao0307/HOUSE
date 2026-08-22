@@ -21,7 +21,7 @@ env:
 jobs:
   validate:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 50
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -38,6 +38,15 @@ jobs:
       - name: Test dual local GLB import
         working-directory: ${{ env.PROJECT_DIR }}
         run: xvfb-run -a python tools/reference_model_lab_smoke.py
+      - name: Render Dali, Wulong and Tuanjie quicklooks
+        working-directory: ${{ env.PROJECT_DIR }}
+        run: xvfb-run -a python tools/three_reference_quicklook.py
+      - name: Test synchronized three-model study page
+        working-directory: ${{ env.PROJECT_DIR }}
+        run: xvfb-run -a python tools/three_reference_study_smoke.py
+      - name: Test baseline versus calibrated building
+        working-directory: ${{ env.PROJECT_DIR }}
+        run: xvfb-run -a python tools/reference_calibration_browser_test.py
       - name: Upload model-lab QA
         if: always()
         uses: actions/upload-artifact@v4
@@ -45,5 +54,11 @@ jobs:
           name: yunnan-reference-model-lab-qa
           path: |
             ${{ env.PROJECT_DIR }}/data/qa/reference_model_lab_smoke.json
+            ${{ env.PROJECT_DIR }}/data/qa/three_reference_quicklook_v5_4_3.json
+            ${{ env.PROJECT_DIR }}/data/qa/three_reference_study_browser_v5_4_3.json
+            ${{ env.PROJECT_DIR }}/data/qa/reference_calibration_browser_v5_4_3.json
             ${{ env.PROJECT_DIR }}/qa/screenshots/reference_model_lab_smoke.png
+            ${{ env.PROJECT_DIR }}/qa/screenshots/v543-reference-study/quicklook/*.png
+            ${{ env.PROJECT_DIR }}/qa/screenshots/v543-reference-study/study-page/*.png
+            ${{ env.PROJECT_DIR }}/qa/screenshots/v543-reference-study/calibrated_building_comparison.png
           if-no-files-found: warn

@@ -1,0 +1,244 @@
+{
+  "schemaVersion": "5.4.3",
+  "recordId": "YN-THREE-REFERENCE-VISUAL-SEED-001",
+  "status": "preliminary-reviewed",
+  "reviewDate": "2026-08-23",
+  "sources": {
+    "catalog": "data/evidence/yunnan_reference_glb_catalog_v5_4_2.json",
+    "quicklookReport": "data/qa/three_reference_quicklook_v5_4_3.json",
+    "quicklookArtifact": {
+      "workflowRun": 32603271498,
+      "artifactId": 9483491462,
+      "artifactSha256": "776a0f6574bd0622f174187be076f4a6eeded10daf5b60d79b9ed88ecd4a1f1c"
+    }
+  },
+  "evidenceClasses": [
+    "semantic-component-evidence",
+    "scanned-surface-evidence",
+    "texture-only-evidence",
+    "visual-calibration-only",
+    "unresolved"
+  ],
+  "cases": [
+    {
+      "caseId": "REFERENCE-DALI-001",
+      "asset": "assets/models/YN_DALI_001_REFERENCE_WEB.glb",
+      "evidenceClass": "scanned-surface-evidence",
+      "assetStructure": {
+        "meshes": 1,
+        "primitives": 1,
+        "vertices": 809883,
+        "triangles": 997659,
+        "baseColorTexture": "4096x4096",
+        "normalMap": null
+      },
+      "formObservations": [
+        {
+          "claim": "模型表现为竖向显著的塔楼或门楼类个案，上下至少两层独立屋面形成明确高差。",
+          "confidence": "high",
+          "basis": "完整斜视截图和扫描轮廓",
+          "scope": "个案体量与视觉层级"
+        },
+        {
+          "claim": "下层环檐与上层亭阁屋顶拥有独立檐口、脊线和转角起翘，屋面组合不能简化为一张统一坡面。",
+          "confidence": "high",
+          "basis": "屋面轮廓和角部扫描几何",
+          "scope": "个案可见屋面"
+        }
+      ],
+      "roofObservations": [
+        {
+          "claim": "檐口可见厚度由多层视觉构造共同形成，明显厚于当前单层灰板式表达。",
+          "confidence": "medium-high",
+          "basis": "低层环檐、上层檐口和转角轮廓",
+          "evidenceStatus": "visual-calibration-only"
+        },
+        {
+          "claim": "瓦面呈青灰至暖灰综合色，脊部、檐端和坡面受光区域存在明暗与冷暖差。",
+          "confidence": "medium",
+          "basis": "4096 底色贴图与扫描截图",
+          "evidenceStatus": "texture-only-evidence"
+        }
+      ],
+      "wallMasonryObservations": [
+        {
+          "claim": "主体墙面呈暖土色，角部、洞口和下部存在蓝灰色石砖包边或结构带候选。",
+          "confidence": "medium-high",
+          "basis": "正面和角部可见颜色与几何分区",
+          "evidenceStatus": "scanned-surface-evidence"
+        },
+        {
+          "claim": "墙面存在斑驳、侵蚀和修补色差，可用于表层老化校准。",
+          "confidence": "medium",
+          "basis": "底色贴图与扫描表面",
+          "evidenceStatus": "texture-only-evidence"
+        }
+      ],
+      "prohibitedInferences": [
+        "不得把该塔楼或门楼个案直接当作普通一颗印住宅总体原型",
+        "不得从单一扫描网格推定墙体内部材料、屋架节点、瓦片搭接和精确尺寸"
+      ]
+    },
+    {
+      "caseId": "REFERENCE-HAOSI1-WULONG-001",
+      "asset": "assets/models/YN_HAOSI1_WULONG_WL_001_REFERENCE_WEB.glb",
+      "evidenceClass": "scanned-surface-evidence",
+      "assetStructure": {
+        "meshes": 1,
+        "primitives": 1,
+        "vertices": 357794,
+        "triangles": 300084,
+        "baseColorTexture": "4096x4096",
+        "normalMap": "2048x2048"
+      },
+      "formObservations": [
+        {
+          "claim": "主体大屋面与较低附属屋面形成清楚的高低错落，至少存在两个屋面高程带。",
+          "confidence": "high",
+          "basis": "完整斜视截图和屋面轮廓",
+          "scope": "个案可见体量"
+        },
+        {
+          "claim": "外部围护整体封闭厚重，开口数量少且多为小型高位开口。",
+          "confidence": "medium-high",
+          "basis": "两侧外墙扫描轮廓",
+          "scope": "个案外部立面"
+        }
+      ],
+      "roofObservations": [
+        {
+          "claim": "主脊、转折脊和附属屋面边界具有独立轮廓，屋顶组合存在压接、脱开和转角关系。",
+          "confidence": "medium-high",
+          "basis": "扫描几何轮廓",
+          "evidenceStatus": "scanned-surface-evidence"
+        },
+        {
+          "claim": "灰瓦综合色包含青灰、暖灰、褐灰与局部高亮，单一均匀灰色不足以表达该屋面。",
+          "confidence": "high",
+          "basis": "4096 底色贴图和 2048 法线贴图",
+          "evidenceStatus": "texture-only-evidence"
+        },
+        {
+          "claim": "屋面表面具有连续瓦行节奏和局部不规则变化，法线贴图承担较多细部凹凸。",
+          "confidence": "medium",
+          "basis": "法线贴图启用状态与截图",
+          "evidenceStatus": "texture-only-evidence"
+        }
+      ],
+      "wallMasonryObservations": [
+        {
+          "claim": "墙体为暖黄褐至灰褐综合色，存在水迹、修补、表层褪色和墙脚潮变候选。",
+          "confidence": "medium-high",
+          "basis": "外墙底色和阴影变化",
+          "evidenceStatus": "texture-only-evidence"
+        },
+        {
+          "claim": "墙脚局部可见石基、地形和植物附着，生成器应将墙体核心、勒脚、表层和环境附着分开。",
+          "confidence": "medium",
+          "basis": "墙脚扫描几何与贴图",
+          "evidenceStatus": "scanned-surface-evidence"
+        }
+      ],
+      "prohibitedInferences": [
+        "扫描底部三角破片和地形缺口不得当作建筑构件",
+        "不得仅凭贴图确认夯土配比、砖尺寸、修补年代和屋面基层"
+      ]
+    },
+    {
+      "caseId": "YN_TUANJIE_001",
+      "asset": "assets/models/YN_TUANJIE_001_EDITABLE.glb",
+      "evidenceClass": "semantic-component-evidence",
+      "assetStructure": {
+        "nodes": 54,
+        "meshes": 48,
+        "primitives": 48,
+        "vertices": 608634,
+        "triangles": 464288,
+        "baseColorTexture": "3072x3072",
+        "normalMap": "1024x1024"
+      },
+      "formObservations": [
+        {
+          "claim": "多座独立屋面围绕中央空腔或院落组合，屋脊与檐口分布在多个高程带。",
+          "confidence": "high",
+          "basis": "48 网格分组和完整斜视截图",
+          "scope": "可见院落组合"
+        },
+        {
+          "claim": "屋面之间存在脱开、压接、前后遮挡和局部转角，统一大屋顶会破坏真实层级。",
+          "confidence": "high",
+          "basis": "可见屋面边界和分组",
+          "scope": "可见屋面组合"
+        }
+      ],
+      "roofObservations": [
+        {
+          "claim": "瓦面综合色、明暗、粗糙度与破损程度随坡面位置变化，檐口和脊部需要独立老化逻辑。",
+          "confidence": "medium-high",
+          "basis": "底色、法线与多屋面扫描",
+          "evidenceStatus": "visual-calibration-only"
+        }
+      ],
+      "wallMasonryObservations": [
+        {
+          "claim": "暖红褐土墙与浅灰、白色修补层并存，并可见长期风化、雨痕和墙脚过渡。",
+          "confidence": "high",
+          "basis": "用户确认资料、分组扫描和贴图",
+          "evidenceStatus": "semantic-component-evidence"
+        }
+      ],
+      "prohibitedInferences": [
+        "扫描显示尺度不得当作测绘尺寸",
+        "浅色斑块成因、修缮年代、墙体厚度和瓦片搭接保持未解"
+      ]
+    }
+  ],
+  "crossCaseCandidates": {
+    "roof": [
+      {
+        "ruleCandidate": "屋面按主房、侧房、门楼、廊厦和附属空间建立独立单元。",
+        "confidence": "high",
+        "status": "reference-calibrated"
+      },
+      {
+        "ruleCandidate": "同一院落至少允许多个屋脊和檐口高程带，并分别控制出檐、坡度、曲率和厚度。",
+        "confidence": "high",
+        "status": "reference-calibrated"
+      },
+      {
+        "ruleCandidate": "屋面视觉厚度需要分解为椽基层、铺垫层候选、板筒瓦层和檐口收边。",
+        "confidence": "medium-high",
+        "status": "visual-calibration-only"
+      },
+      {
+        "ruleCandidate": "瓦色采用确定种子的青灰、暖灰、褐灰综合色场，并区分坡面、檐口、脊部、积水区和修补区。",
+        "confidence": "high",
+        "status": "reference-calibrated"
+      }
+    ],
+    "wallAndMasonry": [
+      {
+        "ruleCandidate": "墙体显示分为墙体核心、表层、石基或勒脚、包角或洞口收边、修补层和风化层。",
+        "confidence": "high",
+        "status": "reference-calibrated"
+      },
+      {
+        "ruleCandidate": "墙面综合色同时包含大尺度色差、细颗粒、雨痕、墙脚潮变和局部修补，避免均匀单色材质。",
+        "confidence": "high",
+        "status": "reference-calibrated"
+      }
+    ]
+  },
+  "unresolved": [
+    "各模型真实尺度与朝向",
+    "板瓦与筒瓦精确搭接和列中心距",
+    "泥背、望板或其他基层厚度与固定方式",
+    "普通住宅脊部和檐口节点",
+    "墙体内部材料、夯筑层次和修补年代",
+    "屋面精确曲率和各高程带的测绘尺寸"
+  ],
+  "qaNotes": [
+    "快速观察的旋转截图与斜视截图哈希相同，已定位查看器 requestAnimationFrame 时间戳未传递，V5.4.3 必须修复并增加图像差异测试。",
+    "后续十二视角和同步相机研究应继续使用相同曝光、背景和图像尺寸。"
+  ]
+}

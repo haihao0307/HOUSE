@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>云南三模型建筑研究 V5.4.3</title>
+<link rel="icon" href="data:,">
+<style>
+:root{--bg:#0b1210;--panel:#111c18;--line:#30433a;--text:#f4efe4;--muted:#aebbb4;--gold:#d4aa69;--green:#87b392;--warn:#d3a06f}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:Inter,"PingFang SC","Microsoft YaHei",sans-serif}button,a{font:inherit}button{cursor:pointer}
+header{position:sticky;top:0;z-index:10;display:flex;gap:14px;align-items:center;justify-content:space-between;padding:13px 18px;background:#0c1512ee;border-bottom:1px solid var(--line);backdrop-filter:blur(12px)}
+header h1{font-size:17px;margin:0}header p{font-size:10px;color:var(--muted);margin:4px 0 0}.actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+button,.actions a{border:1px solid var(--line);border-radius:7px;background:#15231e;color:var(--text);padding:8px 10px;font-size:10px;text-decoration:none}.actions button:hover,.actions a:hover,.actions button.active{border-color:#8b6d40;color:#f1d39c;background:#292116}
+main{padding:14px}.intro{display:grid;grid-template-columns:minmax(0,1.8fr) minmax(260px,.8fr);gap:10px;margin-bottom:12px}.card{border:1px solid var(--line);border-radius:10px;background:var(--panel);padding:13px}.card h2,.card h3{margin:0 0 7px;color:#efcf99}.card p,.card li{font-size:10px;line-height:1.65;color:var(--muted)}.card ul{margin:7px 0 0;padding-left:18px}
+.presets{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}.presets button{padding:7px 9px}.badge{display:inline-block;border:1px solid #4e634f;border-radius:99px;padding:4px 8px;font-size:9px;color:#a8d0b3;margin-right:5px}.badge.scan{border-color:#66543a;color:#e2bd80}.badge.semantic{border-color:#3f6250;color:#a9d3b8}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.model{min-width:0;border:1px solid var(--line);border-radius:10px;background:var(--panel);overflow:hidden}.modelHead{padding:10px 12px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:8px}.modelHead b{font-size:12px;color:#efcf99}.modelHead span{font-size:9px;color:var(--muted)}.viewer{position:relative;height:58vh;min-height:440px;background:#0f1714}.viewer canvas{display:block;width:100%;height:100%;touch-action:none}.state{position:absolute;left:10px;top:10px;max-width:76%;padding:7px 9px;border:1px solid #42564d;border-radius:7px;background:#0e1815dd;font-size:9px;line-height:1.45;color:#d9e1dc}.modelTools{position:absolute;left:10px;bottom:10px;display:flex;gap:5px;flex-wrap:wrap}.modelTools button{padding:6px 8px;background:#101b17dd}.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px;padding:9px}.stat{border:1px solid #2b3d35;border-radius:6px;padding:7px;background:#0d1713}.stat b{display:block;font-size:10px;color:#e0c18c}.stat span{font-size:8px;color:var(--muted);overflow-wrap:anywhere}.notes{padding:0 10px 10px}.notes p{font-size:9px;line-height:1.55;color:var(--muted);margin:0}.footer{margin-top:12px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.statusline{font-size:10px;color:var(--muted)}
+@media(max-width:1050px){.grid{grid-template-columns:1fr}.viewer{height:62vh}.intro,.footer{grid-template-columns:1fr}header{align-items:flex-start;flex-direction:column}.actions{justify-content:flex-start}}
+</style>
+</head>
+<body>
+<header>
+ <div><h1>云南三模型建筑研究 · V5.4.3</h1><p>大理、乌龙村、团结乡同屏观察。模型从 HOUSE 仓库读取，原始本地源档保持私有。</p></div>
+ <div class="actions"><button id="loadAll">重新载入三模型</button><button id="toggleAuto">同步旋转</button><button id="downloadShot">导出三模型截图</button><button id="downloadJson">导出研究 JSON</button><a href="index.html">返回云南建筑生产线</a></div>
+</header>
+<main>
+ <section class="intro">
+  <div class="card"><h2>统一观察方法</h2><p>三份模型采用同一背景、曝光和相机预设。大理与乌龙村为单一扫描网格，能够支持体量、屋面轮廓、色彩、风化和可见细节研究。团结乡具有 48 个分组网格，可提供更强的空间分组证据。墙体内部构造、瓦片隐蔽搭接、精确尺寸和年代继续保持锁定。</p>
+   <div class="presets" id="presets"><button data-preset="oblique" class="active">完整斜视</button><button data-preset="front">正面</button><button data-preset="back">背面</button><button data-preset="left">左侧</button><button data-preset="right">右侧</button><button data-preset="top">屋顶俯视</button><button data-preset="eave">低位檐口</button><button data-preset="ridge">屋脊近景</button></div>
+  </div>
+  <div class="card"><h3>当前研究边界</h3><ul><li>重点比较屋面高低错落、檐口厚度、瓦色、墙体层次和长期风化。</li><li>扫描地面破片、现代电箱、管线、临时修补和植物附着单独标记。</li><li>模型观察先作为参考校准，取得测绘或节点图后再升级营造规则。</li></ul><p class="statusline" id="globalState">等待加载</p></div>
+ </section>
+ <section class="grid">
+  <article class="model" data-case="dali"><div class="modelHead"><div><b>大理参考</b><br><span>REFERENCE-DALI-001</span></div><span class="badge scan">扫描表面证据</span></div><div class="viewer"><canvas id="canvasDali"></canvas><div class="state" id="stateDali">等待加载</div><div class="modelTools"><button data-fit="dali">复位</button><button data-auto="dali">单独旋转</button></div></div><div class="stats" id="statsDali"></div><div class="notes"><p>高等级塔楼或门楼类个案。两层独立屋面、强转角起翘、厚檐口和石砖包边具有较高观察价值。</p></div></article>
+  <article class="model" data-case="wulong"><div class="modelHead"><div><b>乌龙村参考</b><br><span>REFERENCE-HAOSI1-WULONG-001</span></div><span class="badge scan">扫描表面证据</span></div><div class="viewer"><canvas id="canvasWulong"></canvas><div class="state" id="stateWulong">等待加载</div><div class="modelTools"><button data-fit="wulong">复位</button><button data-auto="wulong">单独旋转</button></div></div><div class="stats" id="statsWulong"></div><div class="notes"><p>封闭厚重住宅个案。主体与附属屋面错落、灰瓦综合色、夯土表面、修补层和小型高窗可用于生产线校准。</p></div></article>
+  <article class="model" data-case="tuanjie"><div class="modelHead"><div><b>团结乡参考</b><br><span>YN_TUANJIE_001</span></div><span class="badge semantic">分组构件证据</span></div><div class="viewer"><canvas id="canvasTuanjie"></canvas><div class="state" id="stateTuanjie">等待加载</div><div class="modelTools"><button data-fit="tuanjie">复位</button><button data-auto="tuanjie">单独旋转</button></div></div><div class="stats" id="statsTuanjie"></div><div class="notes"><p>完整院落扫描。多座独立屋面、多个屋脊和檐口高程带、暖红褐土墙及浅色修补层可直接进入参考校准层。</p></div></article>
+ </section>
+ <section class="footer">
+  <div class="card"><h3>屋顶共性候选</h3><ul><li>主体、侧房、门楼、廊厦和附属空间分别建立屋面单元。</li><li>同一院落允许多个屋脊与檐口高程带。</li><li>可见厚度拆分为椽基层、铺垫层候选、板筒瓦层和檐口收边。</li><li>瓦色采用青灰、暖灰、褐灰综合色，并区分脊部、檐口、积水和修补区域。</li></ul></div>
+  <div class="card"><h3>墙体与砖石共性候选</h3><ul><li>墙体核心、表层、石基或勒脚、包角、洞口收边、修补层和风化层分别控制。</li><li>综合色包含大尺度色差、细颗粒、雨痕、墙脚潮变和局部修补。</li><li>现代附着物和扫描破边保留在个案观察层，不进入历史生成规则。</li></ul></div>
+ </section>
+</main>
+<script src="assets/js/tuanjie-glb-viewer.js"></script>
+<script>
+(()=>{
+ const models={
+  dali:{canvas:'canvasDali',state:'stateDali',stats:'statsDali',url:'assets/models/YN_DALI_001_REFERENCE_WEB.glb',label:'大理',caseId:'REFERENCE-DALI-001'},
+  wulong:{canvas:'canvasWulong',state:'stateWulong',stats:'statsWulong',url:'assets/models/YN_HAOSI1_WULONG_WL_001_REFERENCE_WEB.glb',label:'乌龙村',caseId:'REFERENCE-HAOSI1-WULONG-001'},
+  tuanjie:{canvas:'canvasTuanjie',state:'stateTuanjie',stats:'statsTuanjie',url:'assets/models/YN_TUANJIE_001_EDITABLE.glb',label:'团结乡',caseId:'YN_TUANJIE_001'}
+ };
+ let globalAuto=false,currentPreset='oblique';
+ const fmt=n=>Number(n||0).toLocaleString();
+ const statsHtml=s=>`<div class="stat"><b>${fmt(s.meshes)} / ${fmt(s.primitives)}</b><span>网格 / primitive</span></div><div class="stat"><b>${fmt(s.triangles)}</b><span>三角面</span></div><div class="stat"><b>${s.textures?.base?`${s.textures.base.width}×${s.textures.base.height}`:'无'}</b><span>底色贴图</span></div><div class="stat"><b>${s.textures?.normal?`${s.textures.normal.width}×${s.textures.normal.height}`:'未提供'}</b><span>法线贴图</span></div>`;
+ function destroy(item){if(item.viewer)item.viewer.destroy();item.viewer=null;item.baseCamera=null}
+ async function loadOne(key){const item=models[key],state=document.getElementById(item.state);destroy(item);state.textContent='正在读取仓库 GLB…';const canvas=document.getElementById(item.canvas);item.viewer=TuanjieGLBViewer.create(canvas,{onState:s=>state.textContent=s.text});await item.viewer.load(item.url);item.baseCamera={yaw:item.viewer.camera.yaw,pitch:item.viewer.camera.pitch,distance:item.viewer.camera.distance,target:[...item.viewer.camera.target]};document.getElementById(item.stats).innerHTML=statsHtml(item.viewer.stats());state.textContent=`已打开 ${item.label} · ${fmt(item.viewer.stats().triangles)} 三角面`;applyPreset(currentPreset,[key]);}
+ async function loadAll(){document.getElementById('globalState').textContent='正在并行加载三个模型…';const settled=await Promise.allSettled(Object.keys(models).map(loadOne));const failed=settled.filter(x=>x.status==='rejected');document.getElementById('globalState').textContent=failed.length?`${failed.length} 个模型载入失败，查看各卡片状态`:'三个模型均已载入，可同步切换视角';}
+ const presets={oblique:{yaw:-.76,pitch:.28,dist:1},front:{yaw:0,pitch:.08,dist:1},back:{yaw:Math.PI,pitch:.08,dist:1},left:{yaw:-Math.PI/2,pitch:.08,dist:1},right:{yaw:Math.PI/2,pitch:.08,dist:1},top:{yaw:-.76,pitch:1.24,dist:1.12},eave:{yaw:-.76,pitch:-.02,dist:.68},ridge:{yaw:-.76,pitch:.58,dist:.75}};
+ function applyPreset(name,only){currentPreset=name;document.querySelectorAll('[data-preset]').forEach(b=>b.classList.toggle('active',b.dataset.preset===name));const p=presets[name]||presets.oblique;(only||Object.keys(models)).forEach(key=>{const item=models[key];if(!item.viewer?.loaded||!item.baseCamera)return;item.viewer.camera.yaw=p.yaw;item.viewer.camera.pitch=p.pitch;item.viewer.camera.distance=item.baseCamera.distance*p.dist;item.viewer.camera.target=[...item.baseCamera.target]})}
+ function toggleAuto(keys){const selected=keys||Object.keys(models);const next=keys?!(models[selected[0]].viewer?.auto):!globalAuto;if(!keys)globalAuto=next;selected.forEach(key=>models[key].viewer?.setAuto(next));if(!keys)document.getElementById('toggleAuto').classList.toggle('active',next)}
+ async function downloadShot(){const entries=Object.values(models).filter(x=>x.viewer?.loaded);if(!entries.length)return;const canvases=entries.map(x=>document.getElementById(x.canvas));const w=canvases[0].width,h=canvases[0].height,out=document.createElement('canvas');out.width=w*canvases.length;out.height=h;const ctx=out.getContext('2d');canvases.forEach((c,i)=>ctx.drawImage(c,i*w,0,w,h));const a=document.createElement('a');a.download=`yunnan-three-reference-${currentPreset}.png`;a.href=out.toDataURL('image/png');a.click()}
+ function researchJson(){return{schemaVersion:'5.4.3',generatedAt:new Date().toISOString(),preset:currentPreset,models:Object.fromEntries(Object.entries(models).map(([key,item])=>[key,{caseId:item.caseId,label:item.label,url:item.url,stats:item.viewer?.stats()||null,evidenceClass:key==='tuanjie'?'semantic-component-evidence':'scanned-surface-evidence'}])),privacy:{rawLocalFilesIncluded:false,localPathsIncluded:false},knowledgeBoundary:{locked:['精确尺寸','隐蔽构造','瓦片实测搭接','修补年代']}}}
+ function downloadJson(){const a=document.createElement('a');a.download='yunnan-three-reference-study-v5.4.3.json';a.href=URL.createObjectURL(new Blob([JSON.stringify(researchJson(),null,2)],{type:'application/json'}));a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+ document.getElementById('loadAll').onclick=loadAll;document.getElementById('toggleAuto').onclick=()=>toggleAuto();document.getElementById('downloadShot').onclick=downloadShot;document.getElementById('downloadJson').onclick=downloadJson;document.querySelectorAll('[data-preset]').forEach(b=>b.onclick=()=>applyPreset(b.dataset.preset));document.querySelectorAll('[data-fit]').forEach(b=>b.onclick=()=>applyPreset('oblique',[b.dataset.fit]));document.querySelectorAll('[data-auto]').forEach(b=>b.onclick=()=>toggleAuto([b.dataset.auto]));
+ window.__THREE_REFERENCE_STUDY__={models,loadAll,applyPreset,researchJson,stats:()=>Object.fromEntries(Object.entries(models).map(([k,v])=>[k,v.viewer?.stats()||null]))};
+ loadAll();
+})();
+</script>
+</body>
+</html>

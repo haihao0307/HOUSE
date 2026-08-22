@@ -62,9 +62,10 @@
       this.extAnisotropy=this.gl.getExtension('EXT_texture_filter_anisotropic')||this.gl.getExtension('WEBKIT_EXT_texture_filter_anisotropic')||this.gl.getExtension('MOZ_EXT_texture_filter_anisotropic');
       this.maxTextureSize=this.gl.getParameter(this.gl.MAX_TEXTURE_SIZE);
       this.camera={yaw:-.76,pitch:.28,distance:6.6,target:[0,0.7,0]};
+      this.fitCamera={yaw:-.76,pitch:.28,distance:6.6,target:[0,0.7,0]};
       this.visible={site:true,details:true,level1:true,level2:true,roof:true};
       this.draws=[];this.loaded=false;this.auto=false;this.raf=0;this.last=0;this.drag=false;this.resources=[];this.modelStats={};this.textureStats={};
-      this._initGL();this._bind();this.resize();this._loop=()=>this.loop();this.raf=requestAnimationFrame(this._loop);
+      this._initGL();this._bind();this.resize();this._loop=(timestamp)=>this.loop(timestamp);this.raf=requestAnimationFrame(this._loop);
     }
     _initGL(){
       const gl=this.gl;this.program=program(gl,!!this.extDerivatives);gl.useProgram(this.program);
@@ -77,8 +78,8 @@
     _bind(){
       const c=this.canvas;
       this.onDown=e=>{this.drag=true;this.px=e.clientX;this.py=e.clientY;c.setPointerCapture(e.pointerId)};
-      this.onMove=e=>{if(!this.drag)return;this.camera.yaw+=(e.clientX-this.px)*.007;this.camera.pitch=clamp(this.camera.pitch+(e.clientY-this.py)*.006,-1.35,.12);this.px=e.clientX;this.py=e.clientY};
-      this.onUp=()=>this.drag=false;this.onWheel=e=>{e.preventDefault();this.camera.distance=clamp(this.camera.distance*Math.exp(e.deltaY*.001),2.7,16)};
+      this.onMove=e=>{if(!this.drag)return;this.camera.yaw+=(e.clientX-this.px)*.007;this.camera.pitch=clamp(this.camera.pitch+(e.clientY-this.py)*.006,-1.35,1.35);this.px=e.clientX;this.py=e.clientY};
+      this.onUp=()=>this.drag=false;this.onWheel=e=>{e.preventDefault();this.camera.distance=clamp(this.camera.distance*Math.exp(e.deltaY*.001),2.7,160)};
       c.addEventListener('pointerdown',this.onDown);c.addEventListener('pointermove',this.onMove);c.addEventListener('pointerup',this.onUp);c.addEventListener('pointercancel',this.onUp);c.addEventListener('wheel',this.onWheel,{passive:false});
       this.observer=new ResizeObserver(()=>this.resize());this.observer.observe(c);
     }
@@ -116,8 +117,14 @@
         this.draws.push(draw);triangles+=ia.count/3;vertices+=attrs.POSITION?.count||0;primitives++;
         const pa=json.accessors[primitive.attributes.POSITION];if(pa&&pa.min&&pa.max)for(let i=0;i<3;i++){boundsMin[i]=Math.min(boundsMin[i],pa.min[i]);boundsMax[i]=Math.max(boundsMax[i],pa.max[i])}
       }));
-      if(Number.isFinite(boundsMin[0])){this.camera.target=boundsMin.map((v,i)=>(v+boundsMax[i])/2);this.camera.distance=Math.max(...boundsMax.map((v,i)=>v-boundsMin[i]))*1.75;}
-      this.modelStats={loaded:true,url:source,source,nodes:(json.nodes||[]).length,meshes:(json.meshes||[]).length,primitives,vertices,triangles:Math.round(triangles),animations:(json.animations||[]).length,skins:(json.skins||[]).length,cameras:(json.cameras||[]).length,textures:{...this.textureStats},normalMapActive:!!(this.textureStats.normal&&this.extDerivatives),maxTextureSize:this.maxTextureSize,dpr:Math.min(devicePixelRatio||1,2.5)};
+      const displaySize=boundsMax.map((value,index)=>Number.isFinite(value)?value-boundsMin[index]:0);
+      if(Number.isFinite(boundsMin[0])){
+        const target=boundsMin.map((v,i)=>(v+boundsMax[i])/2);
+        const distance=Math.max(...displaySize)*1.75;
+        this.fitCamera={yaw:-.76,pitch:.28,distance,target};
+        this.camera={yaw:this.fitCamera.yaw,pitch:this.fitCamera.pitch,distance:this.fitCamera.distance,target:[...this.fitCamera.target]};
+      }
+      this.modelStats={loaded:true,url:source,source,nodes:(json.nodes||[]).length,meshes:(json.meshes||[]).length,primitives,vertices,triangles:Math.round(triangles),animations:(json.animations||[]).length,skins:(json.skins||[]).length,cameras:(json.cameras||[]).length,textures:{...this.textureStats},normalMapActive:!!(this.textureStats.normal&&this.extDerivatives),maxTextureSize:this.maxTextureSize,dpr:Math.min(devicePixelRatio||1,2.5),bounds:{min:boundsMin,max:boundsMax,size:displaySize}};
       const base=this.textureStats.base,textureLabel=base?` · ${base.width.toLocaleString()}×${base.height.toLocaleString()} 底色`:'';
       this.loaded=true;this._state('ready',`已载入 ${primitives} 个可选网格 · ${Math.round(triangles).toLocaleString()} 三角面${textureLabel}${this.modelStats.normalMapActive?' · 法线贴图已启用':''}`);return this.modelStats;
     }
@@ -136,17 +143,17 @@
     }
     _state(kind,text){if(this.options.onState)this.options.onState({kind,text,stats:this.modelStats})}
     setGroup(group,value){if(group in this.visible)this.visible[group]=!!value}
-    setAuto(value){this.auto=!!value}
-    fit(){this.camera.yaw=-.76;this.camera.pitch=.28;this.camera.distance=6.6;this.camera.target=[0,.7,0]}
+    setAuto(value){this.auto=!!value;if(this.auto)this.last=performance.now()}
+    fit(){this.camera={yaw:this.fitCamera.yaw,pitch:this.fitCamera.pitch,distance:this.fitCamera.distance,target:[...this.fitCamera.target]}}
     resize(){const d=Math.min(devicePixelRatio||1,2.5),w=Math.max(1,Math.floor(this.canvas.clientWidth*d)),h=Math.max(1,Math.floor(this.canvas.clientHeight*d));if(this.canvas.width!==w||this.canvas.height!==h){this.canvas.width=w;this.canvas.height=h}this.gl.viewport(0,0,w,h)}
     draw(){
       const gl=this.gl;this.resize();gl.clearColor(.09,.12,.105,1);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);if(!this.loaded)return;
-      const c=this.camera,cp=Math.cos(c.pitch),eye=[c.target[0]+Math.sin(c.yaw)*cp*c.distance,c.target[1]+Math.sin(c.pitch)*c.distance,c.target[2]+Math.cos(c.yaw)*cp*c.distance],mvp=mul(perspective(Math.PI/4,this.canvas.width/this.canvas.height,.02,100),lookAt(eye,c.target,[0,1,0]));
+      const c=this.camera,cp=Math.cos(c.pitch),eye=[c.target[0]+Math.sin(c.yaw)*cp*c.distance,c.target[1]+Math.sin(c.pitch)*c.distance,c.target[2]+Math.cos(c.yaw)*cp*c.distance],mvp=mul(perspective(Math.PI/4,this.canvas.width/this.canvas.height,.02,Math.max(100,c.distance*8)),lookAt(eye,c.target,[0,1,0]));
       gl.useProgram(this.program);gl.uniformMatrix4fv(this.loc.mvp,false,mvp);gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,this.baseTexture);if(this.loc.base)gl.uniform1i(this.loc.base,0);gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,this.normalTexture);if(this.loc.normalMap)gl.uniform1i(this.loc.normalMap,1);if(this.loc.normalEnabled)gl.uniform1f(this.loc.normalEnabled,this.modelStats.normalMapActive?1:0);gl.uniform4f(this.loc.factor,1,1,1,1);gl.uniform1f(this.loc.alphaCut,.025);
       for(const d of this.draws){if(!this.visible[d.group])continue;const bind=(key,loc,fallback)=>{const a=d.attrs[key];if(!a){gl.disableVertexAttribArray(loc);gl.vertexAttrib3f(loc,...fallback);return}gl.bindBuffer(gl.ARRAY_BUFFER,a.buffer);gl.enableVertexAttribArray(loc);gl.vertexAttribPointer(loc,a.size,a.type,a.normalized,a.stride,a.offset)};bind('POSITION',this.loc.position,[0,0,0]);bind('NORMAL',this.loc.normal,[0,1,0]);const uv=d.attrs.TEXCOORD_0;if(uv){gl.bindBuffer(gl.ARRAY_BUFFER,uv.buffer);gl.enableVertexAttribArray(this.loc.uv);gl.vertexAttribPointer(this.loc.uv,uv.size,uv.type,uv.normalized,uv.stride,uv.offset)}else{gl.disableVertexAttribArray(this.loc.uv);gl.vertexAttrib2f(this.loc.uv,0,0)}gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,d.index.buffer);gl.drawElements(gl.TRIANGLES,d.index.count,d.index.type,d.index.offset)}
     }
-    loop(t=0){const dt=Math.min(.05,(t-this.last)/1000||0);this.last=t;if(this.auto&&!this.drag)this.camera.yaw+=dt*.18;this.draw();this.raf=requestAnimationFrame(this._loop)}
-    stats(){return {...this.modelStats,groups:{...this.visible},auto:this.auto}}
+    loop(t=0){const dt=Math.min(.05,Math.max(0,(t-this.last)/1000)||0);this.last=t;if(this.auto&&!this.drag)this.camera.yaw+=dt*.18;this.draw();this.raf=requestAnimationFrame(this._loop)}
+    stats(){return {...this.modelStats,groups:{...this.visible},auto:this.auto,camera:{yaw:this.camera.yaw,pitch:this.camera.pitch,distance:this.camera.distance,target:[...this.camera.target]}}}
     destroy(){cancelAnimationFrame(this.raf);if(this.observer)this.observer.disconnect();const c=this.canvas;c.removeEventListener('pointerdown',this.onDown);c.removeEventListener('pointermove',this.onMove);c.removeEventListener('pointerup',this.onUp);c.removeEventListener('pointercancel',this.onUp);c.removeEventListener('wheel',this.onWheel);for(const [type,obj] of this.resources){if(type==='buffer')this.gl.deleteBuffer(obj);if(type==='texture')this.gl.deleteTexture(obj)}if(this.program)this.gl.deleteProgram(this.program);this.draws=[];this.loaded=false}
   }
 

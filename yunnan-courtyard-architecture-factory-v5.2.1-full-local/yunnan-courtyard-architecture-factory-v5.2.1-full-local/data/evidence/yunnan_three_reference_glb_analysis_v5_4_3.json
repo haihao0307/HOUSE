@@ -1,0 +1,165 @@
+{
+  "schemaVersion": "5.4.3",
+  "recordId": "YN-THREE-REFERENCE-GLB-ANALYSIS-001",
+  "status": "validated-public-assets",
+  "generatedAt": "2026-08-23T00:00:00Z",
+  "analysisPolicy": {
+    "sourceAssetsRemainIndependent": true,
+    "sourceGeometryPreservedInWebCopies": true,
+    "publicModelsAreReferenceEvidence": true,
+    "automaticRulePromotion": false,
+    "requiredEvidenceFields": ["caseId", "evidenceClass", "confidence", "evidenceBasis"]
+  },
+  "models": [
+    {
+      "caseId": "REFERENCE-DALI-001",
+      "displayName": "云南大理参考",
+      "sourceFile": "yunnan_dali_1.glb",
+      "sourceStatus": "local-only",
+      "sourceBytes": 168788024,
+      "sourceSha256": "7123644AD58751B07EB0E0206C8EB69C260C487FF8484C5FFF5D06E8C405A01C",
+      "publicAsset": "assets/models/YN_DALI_001_REFERENCE_WEB.glb",
+      "publicBytes": 66299108,
+      "publicSha256": "9DF7739B30004E3C4079390E6E00FACBD51D3F8F938FC268A85E6414D8FBE7E3",
+      "gltf": {
+        "version": "2.0",
+        "nodes": 1,
+        "meshes": 1,
+        "primitives": 1,
+        "vertices": 809883,
+        "triangles": 997659,
+        "animations": 0,
+        "skins": 0,
+        "cameras": 0,
+        "materials": 1,
+        "indexedStatus": "validated-by-existing-viewer"
+      },
+      "textures": {
+        "baseColorSource": [8192, 8192],
+        "baseColorPublic": [4096, 4096],
+        "normalMap": null,
+        "geometryChanged": false,
+        "materialAssignmentChanged": false
+      },
+      "semanticState": {
+        "evidenceClass": "scanned-surface-evidence",
+        "componentSeparation": "single-combined-scan-mesh",
+        "componentIdentityConfidence": "low",
+        "massingAndSurfaceConfidence": "high",
+        "hiddenConstructionConfidence": "unresolved"
+      },
+      "bounds": {
+        "status": "viewer-computed-not-yet-survey-calibrated",
+        "physicalScale": "unresolved",
+        "upAxis": "viewer-normalized"
+      }
+    },
+    {
+      "caseId": "REFERENCE-HAOSI1-WULONG-001",
+      "displayName": "浩思一·乌龙村参考",
+      "sourceFile": "yunnan_house1_wl.glb",
+      "sourceStatus": "local-only",
+      "sourceBytes": 107887520,
+      "sourceSha256": "B6D6A630391CA1708289FBE8956C1CC9CBB5B215F7838579111B8D49B51ED03E",
+      "publicAsset": "assets/models/YN_HAOSI1_WULONG_WL_001_REFERENCE_WEB.glb",
+      "publicBytes": 54811052,
+      "publicSha256": "EA06D99FF2E4C1DF645A4F5A32537DD628C085E5243CD9F9C155A5B6E34AB935",
+      "gltf": {
+        "version": "2.0",
+        "nodes": 1,
+        "meshes": 1,
+        "primitives": 1,
+        "vertices": 357794,
+        "triangles": 300084,
+        "animations": 0,
+        "skins": 0,
+        "cameras": 0,
+        "materials": 1,
+        "indexedStatus": "validated-by-existing-viewer"
+      },
+      "textures": {
+        "baseColorSource": [7000, 7000],
+        "baseColorPublic": [4096, 4096],
+        "normalSource": [3000, 3000],
+        "normalPublic": [2048, 2048],
+        "geometryChanged": false,
+        "materialAssignmentChanged": false
+      },
+      "semanticState": {
+        "evidenceClass": "scanned-surface-evidence",
+        "componentSeparation": "single-combined-scan-mesh",
+        "componentIdentityConfidence": "low",
+        "massingAndSurfaceConfidence": "high",
+        "hiddenConstructionConfidence": "unresolved"
+      },
+      "bounds": {
+        "status": "viewer-computed-not-yet-survey-calibrated",
+        "physicalScale": "unresolved",
+        "upAxis": "viewer-normalized"
+      }
+    },
+    {
+      "caseId": "YN_TUANJIE_001",
+      "displayName": "团结乡样本 01",
+      "sourceStatus": "user-supplied-scan-with-private-source-chain",
+      "publicAsset": "assets/models/YN_TUANJIE_001_EDITABLE.glb",
+      "publicBytes": 45457960,
+      "publicSha256": "3a54374b9dcc06a478eb76e2c659b3f56141ea20ad05e5097ffa8f03558d1a07",
+      "gltf": {
+        "version": "2.0",
+        "nodes": 54,
+        "meshes": 48,
+        "primitives": 48,
+        "vertices": 608634,
+        "triangles": 464288,
+        "animations": 0,
+        "skins": 0,
+        "morphTargets": 0,
+        "cameras": 0,
+        "materials": 1,
+        "embeddedImages": 2
+      },
+      "textures": {
+        "baseColorPublic": [3072, 3072],
+        "normalPublic": [1024, 1024],
+        "geometryChangedFromEditableHigh": false,
+        "editableGroups": ["site", "unresolved-details", "level-01", "level-02", "roof"]
+      },
+      "semanticState": {
+        "evidenceClass": "semantic-component-evidence",
+        "componentSeparation": "48-spatial-scan-partitions",
+        "componentIdentityConfidence": "medium-at-group-level",
+        "bimIdentityConfidence": "unresolved",
+        "massingAndSurfaceConfidence": "high",
+        "hiddenConstructionConfidence": "unresolved"
+      },
+      "bounds": {
+        "displayBoundsMeters": [3.81322, 2.33144, 1.39608],
+        "displayBoundsOnly": true,
+        "physicalScale": "unverified-no-survey-control",
+        "sourceUpAxis": "Z-up",
+        "runtimeUpAxis": "Y-up"
+      }
+    }
+  ],
+  "runtimeValidation": {
+    "workflowRun": 32603271498,
+    "artifactId": 9483491462,
+    "artifactSha256": "776a0f6574bd0622f174187be076f4a6eeded10daf5b60d79b9ed88ecd4a1f1c",
+    "status": "pass",
+    "checks": [
+      "all-three-public-assets-load",
+      "triangle-counts-match-catalog",
+      "embedded-base-color-textures-load",
+      "Wulong-and-Tuanjie-normal-maps-active",
+      "WebGL-depth-test-active",
+      "quicklook-screenshots-produced"
+    ]
+  },
+  "prohibitedUses": [
+    "do not treat a single scan mesh as verified BIM components",
+    "do not use display bounds as measured building dimensions",
+    "do not infer repair dates, hidden wall buildup or tile bedding from texture alone",
+    "do not merge regional case data into a universal Yunnan rule without corroboration"
+  ]
+}
