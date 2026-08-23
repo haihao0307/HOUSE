@@ -21,7 +21,7 @@ env:
 jobs:
   validate:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -38,6 +38,9 @@ jobs:
       - name: Test dual local GLB import
         working-directory: ${{ env.PROJECT_DIR }}
         run: xvfb-run -a python tools/reference_model_lab_smoke.py
+      - name: Test public three-model showcase with real repository GLBs
+        working-directory: ${{ env.PROJECT_DIR }}
+        run: xvfb-run -a python tools/reference_model_showcase_smoke.py
       - name: Upload model-lab QA
         if: always()
         uses: actions/upload-artifact@v4
@@ -45,5 +48,7 @@ jobs:
           name: yunnan-reference-model-lab-qa
           path: |
             ${{ env.PROJECT_DIR }}/data/qa/reference_model_lab_smoke.json
+            ${{ env.PROJECT_DIR }}/data/qa/reference_model_showcase_smoke.json
             ${{ env.PROJECT_DIR }}/qa/screenshots/reference_model_lab_smoke.png
+            ${{ env.PROJECT_DIR }}/qa/screenshots/yunnan_reference_showcase_*.png
           if-no-files-found: warn
