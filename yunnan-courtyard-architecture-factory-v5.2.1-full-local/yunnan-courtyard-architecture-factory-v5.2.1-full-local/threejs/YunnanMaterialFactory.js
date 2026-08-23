@@ -105,19 +105,28 @@ function seedValue(seed) {
 function injectWeathering(material, mode, options = {}) {
   const seed = seedValue(options.seed ?? material.userData?.yunnanSeed ?? 17);
   const profile = options.profile || YUNNAN_MATERIAL_PROFILES[mode] || YUNNAN_MATERIAL_PROFILES.agedTimber;
+  const channels = options.surfaceChannels || {};
+  if (mode === 'tile') material.vertexColors = true;
   material.userData = {
     ...(material.userData || {}),
     yunnanProfile: profile.id,
     yunnanMode: mode,
     yunnanSeed: seed,
     yunnanEvidenceStatus: 'userConfirmedAppearance_only',
-    yunnanExactDimensionsLocked: mode === 'tile'
+    yunnanExactDimensionsLocked: false,
+    yunnanSurfaceChannels: { ...channels },
+    yunnanSurfaceFingerprint: JSON.stringify(Object.keys(channels).sort().map((key) => [key, channels[key]])),
   };
   material.onBeforeCompile = (shader) => {
     shader.uniforms.uYunnanSeed = { value: seed };
     shader.uniforms.uYunnanWeathering = { value: Number(options.weathering ?? profile.weathering) };
     shader.uniforms.uYunnanExposure = { value: Number(options.exposure ?? profile.exposure) };
     shader.uniforms.uYunnanHeight = { value: Number(options.heightMeters ?? profile.heightMeters) };
+    shader.uniforms.uYunnanFiring = { value: Number(channels.baseFiringTone ?? 0.46) };
+    shader.uniforms.uYunnanDust = { value: Number(channels.dust ?? 0.34) };
+    shader.uniforms.uYunnanMoss = { value: Number(channels.moss ?? 0.12) };
+    shader.uniforms.uYunnanRain = { value: Number(channels.rainWash ?? 0.28) };
+    shader.uniforms.uYunnanEdgeWear = { value: Number(channels.edgeWear ?? 0.32) };
     shader.vertexShader = shader.vertexShader.replace(
       '#include <common>',
       '#include <common>\nvarying vec3 vYunnanWorldPosition;'
@@ -128,7 +137,7 @@ function injectWeathering(material, mode, options = {}) {
     );
     shader.fragmentShader = shader.fragmentShader.replace(
       '#include <common>',
-      `#include <common>\nvarying vec3 vYunnanWorldPosition;\nuniform float uYunnanSeed;\nuniform float uYunnanWeathering;\nuniform float uYunnanExposure;\nuniform float uYunnanHeight;\n${WALL_FRAGMENT}`
+      `#include <common>\nvarying vec3 vYunnanWorldPosition;\nuniform float uYunnanSeed;\nuniform float uYunnanWeathering;\nuniform float uYunnanExposure;\nuniform float uYunnanHeight;\nuniform float uYunnanFiring;\nuniform float uYunnanDust;\nuniform float uYunnanMoss;\nuniform float uYunnanRain;\nuniform float uYunnanEdgeWear;\n${WALL_FRAGMENT}`
     );
     const replacement = mode === 'wall' ? `
       #include <color_fragment>
@@ -160,13 +169,24 @@ function injectWeathering(material, mode, options = {}) {
       diffuseColor.rgb*=1.0-0.08*uYunnanWeathering;
     ` : mode === 'tile' ? `
       #include <color_fragment>
+      vec3 instanceBase=diffuseColor.rgb;
       vec3 yp=vYunnanWorldPosition*1.8+vec3(uYunnanSeed*0.017);
       float tone=yunnanNoise(yp*0.5);
       float wear=yunnanNoise(yp*3.0+vec3(4.0,8.0,2.0));
+      float sun=clamp(vYunnanWorldPosition.x*0.035+0.5,0.0,1.0);
+      float rain=abs(sin(vYunnanWorldPosition.z*0.72))*uYunnanRain;
+      float dust=yunnanFbm(yp*0.22+vec3(7.0))*uYunnanDust;
+      float moss=smoothstep(0.58,0.9,dust)*(1.0-sun)*uYunnanMoss;
       vec3 coolGrey=vec3(0.39,0.40,0.38);
       vec3 warmGrey=vec3(0.50,0.47,0.41);
-      diffuseColor.rgb=mix(coolGrey,warmGrey,tone*0.45);
-      diffuseColor.rgb*=1.0-(0.11*wear*uYunnanWeathering);
+      vec3 brownGrey=vec3(0.43,0.38,0.33);
+      vec3 blueGrey=vec3(0.34,0.39,0.39);
+      diffuseColor.rgb=mix(coolGrey,warmGrey,clamp(tone*0.30+uYunnanFiring*0.36,0.0,1.0));
+      diffuseColor.rgb=mix(diffuseColor.rgb,instanceBase,0.55);
+      diffuseColor.rgb=mix(diffuseColor.rgb,brownGrey,dust*0.18);
+      diffuseColor.rgb=mix(diffuseColor.rgb,blueGrey,moss*0.32);
+      diffuseColor.rgb*=1.0-(0.11*wear*uYunnanEdgeWear);
+      diffuseColor.rgb+=rain*0.035+sun*0.025;
     ` : `
       #include <color_fragment>
     `;
@@ -245,4 +265,3 @@ export function disposeYunnanMaterialSet(set) {
   if (!set) return;
   Object.values(set).forEach((material) => material?.dispose?.());
 }
-

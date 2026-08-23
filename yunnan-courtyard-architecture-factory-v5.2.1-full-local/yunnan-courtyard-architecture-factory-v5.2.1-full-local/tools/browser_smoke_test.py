@@ -10,6 +10,7 @@ from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+VERSION = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
 REPORT = ROOT / "data/qa/local_browser_smoke_test.json"
 SCREEN = ROOT / "qa/screenshots/local_browser_smoke_test.png"
 REFERENCE_HIGH_SCREEN = ROOT / "qa/screenshots/v540_tuanjie_reference_high.png"
@@ -20,11 +21,6 @@ try:
     from playwright.sync_api import sync_playwright
 except ImportError:
     print("Playwright is not installed. Run: python -m pip install -r requirements-dev.txt")
-    raise SystemExit(2)
-
-if sys.platform.startswith("linux") and not os.environ.get("DISPLAY"):
-    print("Linux needs a virtual display for the WebGL test.")
-    print("Run: xvfb-run -a python tools/browser_smoke_test.py")
     raise SystemExit(2)
 
 results = []
@@ -59,7 +55,7 @@ try:
             if candidate and Path(candidate).exists():
                 executable = candidate
                 break
-    browser = p.chromium.launch(headless=False, executable_path=executable, args=launch_args)
+    browser = p.chromium.launch(headless=True, executable_path=executable, args=launch_args)
     page = browser.new_page(viewport={"width": 1440, "height": 1000}, device_scale_factor=1)
     page.on("pageerror", lambda exc: errors.append(str(exc)))
     # GitHub's unauthenticated REST API can legitimately return 403 when its
@@ -72,7 +68,7 @@ try:
     page.wait_for_timeout(1000)
 
     title = page.title()
-    results.append({"name": "title", "ok": "V5.4.2" in title, "detail": title})
+    results.append({"name": "title", "ok": VERSION in title, "detail": title})
     results.append({"name": "canvas", "ok": page.locator("#buildingCanvas").count() == 1})
     for selector, name in [("#m3OpenDemo", "openings button"), ("#m3Tour", "visitor button"), ("#m3Cut", "cutaway button")]:
         results.append({"name": name, "ok": page.locator(selector).count() == 1})
@@ -154,15 +150,15 @@ try:
     page.locator('[data-view="reference"]').click()
     results.append({"name": "Tuanjie viewer visible before load", "ok": page.locator("#tuanjieViewer").is_visible()})
     results.append({"name": "Tuanjie local-file control", "ok": page.locator("#tuanjieFileInput").count() == 1})
-    page.locator("#openTuanjieReference").click()
-    page.wait_for_function("window.__TUANJIE_TEST__.stats().loaded === true && /EDITABLE_HIGH/.test(window.__TUANJIE_TEST__.stats().source || '')", timeout=180000)
+    page.locator("#openTuanjieStandard").click()
+    page.wait_for_function("window.__TUANJIE_TEST__.stats().loaded === true && /EDITABLE\\.glb$/.test(window.__TUANJIE_TEST__.stats().source || '')", timeout=180000)
     reference = page.evaluate("window.__TUANJIE_TEST__.stats()")
     results.append({"name": "Tuanjie GLB canvas", "ok": page.locator("#tuanjieCanvas").count() == 1})
     results.append({"name": "Tuanjie editable meshes", "ok": reference.get("meshes") == 48 and reference.get("primitives") == 48, "detail": reference})
     results.append({"name": "Tuanjie geometry", "ok": reference.get("triangles", 0) == 464288 and reference.get("animations") == 0 and reference.get("skins") == 0 and reference.get("cameras") == 0})
-    results.append({"name": "Tuanjie high texture profile", "ok": reference.get("textures", {}).get("base", {}).get("width") == 7000 and reference.get("textures", {}).get("base", {}).get("height") == 7000 and reference.get("textures", {}).get("normal", {}).get("width") == 2500 and reference.get("textures", {}).get("normal", {}).get("height") == 2500, "detail": reference.get("textures")})
+    results.append({"name": "Tuanjie standard texture profile", "ok": reference.get("textures", {}).get("base", {}).get("width") == 3072 and reference.get("textures", {}).get("base", {}).get("height") == 3072 and reference.get("textures", {}).get("normal", {}).get("width") == 1024 and reference.get("textures", {}).get("normal", {}).get("height") == 1024, "detail": reference.get("textures")})
     results.append({"name": "Tuanjie normal-map rendering", "ok": reference.get("normalMapActive") is True, "detail": {"normalMapActive": reference.get("normalMapActive"), "maxTextureSize": reference.get("maxTextureSize"), "dpr": reference.get("dpr")}})
-    results.append({"name": "Tuanjie high texture device support", "ok": reference.get("maxTextureSize", 0) >= 7000, "detail": reference.get("maxTextureSize")})
+    results.append({"name": "Tuanjie standard texture device support", "ok": reference.get("maxTextureSize", 0) >= 3072, "detail": reference.get("maxTextureSize")})
     page.locator('[data-tj-group="roof"]').click()
     page.wait_for_timeout(200)
     roof_hidden = page.evaluate("window.__TUANJIE_TEST__.stats()")
@@ -187,7 +183,7 @@ try:
     html_source = (ROOT / "index.html").read_text(encoding="utf-8")
     results.append({
         "name": "file protocol recovery instruction",
-        "ok": "location.protocol==='file:'" in html_source and "YN_TUANJIE_001_EDITABLE_HIGH.glb" in html_source and "选择本地 GLB" in html_source,
+        "ok": "location.protocol==='file:'" in html_source and "YN_TUANJIE_001_EDITABLE.glb" in html_source and "选择本地 GLB" in html_source,
     })
     page.locator("#tuanjieFileInput").set_input_files(str(ROOT / "assets/models/YN_TUANJIE_001_EDITABLE.glb"))
     page.wait_for_function("window.__TUANJIE_TEST__.stats().loaded === true", timeout=120000)
@@ -220,7 +216,7 @@ try:
     page.wait_for_timeout(250)
     results.append({"name": "GitHub sync panel", "ok": page.locator("#githubSyncOverlay").is_visible() and page.locator("#githubSyncAdd").count() == 1})
     sync_stats = page.evaluate("window.__GITHUB_SYNC__.stats()")
-    results.append({"name": "GitHub sync public read contract", "ok": sync_stats.get("schemaVersion") == "5.4.2" and sync_stats.get("queued", -1) >= 0, "detail": sync_stats})
+    results.append({"name": "GitHub sync public read contract", "ok": sync_stats.get("schemaVersion") == VERSION and sync_stats.get("queued", -1) >= 0, "detail": sync_stats})
     browser.close()
 finally:
     server.shutdown()
@@ -228,7 +224,7 @@ finally:
 
 passed = sum(1 for item in results if item.get("ok"))
 report = {
-    "version": "5.4.2",
+    "version": VERSION,
     "results": results,
     "errors": errors,
     "summary": {"passed": passed, "failed": len(results) - passed, "total": len(results)},

@@ -1,4 +1,4 @@
-# 云南院落历史建筑生产线 V5.4.2
+# 云南院落历史建筑生产线 V5.5.0
 
 这是当前稳定的全量本地工程。默认页面直接显示完整的一颗印建筑，使用 WebGL 深度缓冲处理旋转遮挡，并包含门窗自动开合、人物入户、穿过倒座、进入天井、沿小厦到楼梯巷、登上二层大厦的演示。
 
@@ -15,6 +15,8 @@ Windows PowerShell 运行 `./START_LOCAL_WINDOWS.ps1`。
 macOS 或 Linux 运行 `./start_local_mac_linux.sh`。
 
 也可以直接打开 `index.html`。部分浏览器对本地文件的权限策略较严格，遇到加载或交互限制时使用本地服务器。
+
+V5.5.0 墙面与瓦顶生产验收页为 `surface-production-lab.html`。它使用仓库内的 Three.js 与 OrbitControls，左右画面共享建筑种子、相机和光照，不依赖 CDN。页面可切换三套旧化预设、六个验收镜头、屋面爆炸分层、墙面历史层、门窗开合和人物入户上楼。
 
 ## GitHub 上传
 
@@ -54,6 +56,10 @@ macOS 或 Linux 运行 `./start_local_mac_linux.sh`。
 16. 团结乡查看器现读取并应用内嵌法线贴图，启用各向异性纹理过滤和最高 2.5 倍设备像素比；界面明确显示当前实际载入档位、贴图分辨率和扫描源固有破边边界。
 17. “团结乡样本”页新增“云南大理参考”和“浩思一·乌龙 WL”两个公开 GLB 按钮；网页端直接加载 `assets/models/YN_DALI_001_REFERENCE_WEB.glb` 与 `assets/models/YN_HAOSI1_WULONG_WL_001_REFERENCE_WEB.glb`，本地模式可分别选取 `yunnan_dali_1.glb` 与 `yunnan_house1_wl.glb` 原档。
 18. 大理与乌龙公开档只降采样嵌入贴图以满足 GitHub Pages 体量限制，顶点、索引、网格数量和三角面保持不变；源文件哈希、几何审计和网页加载验收见 `data/evidence/` 与 `data/qa/`。
+19. V5.5.0 程序化一颗印生成七个有真实几何的独立屋面单元，屋面包含檩条、椽列、基层、板瓦、筒瓦、檐端与脊部七层。板瓦与筒瓦使用独立闭合曲面和实例批次，筒瓦列数按相邻板瓦缝推导，滴水与勾头分别对应板瓦列与筒瓦列。
+20. 瓦顶使用稳定低频场生成日晒、灰尘、雨蚀、苔藓、磨损、缺瓦、破损与连续修补片区；墙面具有土体、抹灰、裸土、草纤维、石勒脚、砖包角、返潮、雨痕、剥落、裂缝、污渍和修补实体层。
+21. 活动门窗采用真实铰轴父组；人物路线穿过南门并使用一座 8+8 双跑楼梯，楼梯含下跑、中间平台、反向上跑、上下落脚平台与连续扶手。
+22. 根目录 Actions 工作流运行静态验证、V5.5.0 Playwright 冒烟和完整生产线浏览器回归，并输出完整建筑、同镜头 A/B、檐口近景、屋面爆炸、墙面近景、人物楼梯及移动端截图。
 
 ## 工程目录
 
@@ -82,6 +88,7 @@ python tools/validate.py
 ```bash
 python -m pip install -r requirements-dev.txt
 python -m playwright install chromium
+python tools/surface_production_smoke.py
 python tools/browser_smoke_test.py
 ```
 

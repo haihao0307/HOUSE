@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>云南院落历史建筑生产线 V5.4.2</title>
+<title>云南院落历史建筑生产线 V5.5.0</title>
 <link rel="icon" href="data:,">
 <style>
 :root{
@@ -69,7 +69,7 @@ svg .outerWall{fill:none;stroke:#313833;stroke-width:12;stroke-linejoin:round}.w
 <body>
 <div class="app">
 <header class="topbar">
-  <div class="brand"><div class="seal">院</div><div><h1>云南院落历史建筑生产线 V5.4.2</h1><p>母体体系 → 地方支系/测绘个案 → 平面布局 → 立面等级 → 构架屋面 → 瓦作门窗 → 年代状态</p></div></div>
+  <div class="brand"><div class="seal">院</div><div><h1>云南院落历史建筑生产线 V5.5.0</h1><p>母体体系 → 地方支系/测绘个案 → 平面布局 → 立面等级 → 构架屋面 → 瓦作门窗 → 年代状态</p></div></div>
   <div class="badges"><span class="badge ok">WebGL遮挡已修正</span><span class="badge ok">三开间前廊个案已接入</span><span class="badge ok">11.53×7.92米尺寸链闭合</span><span class="badge ok">混合梁架已分榀</span><span class="badge warn">地点与族属待核</span><span class="badge ok">单片筒板瓦已按实测收分</span></div>
 </header>
 <div class="shell">
@@ -108,6 +108,7 @@ svg .outerWall{fill:none;stroke:#313833;stroke-width:12;stroke-linejoin:round}.w
       <button class="tab" data-view="evidence">证据对照</button>
       <button class="tab" data-view="reference">团结乡样本</button>
       <button class="tab" data-view="data">完整数据</button>
+      <a class="tab" href="surface-production-lab.html">V5.5.0 表面 A/B</a>
     </div>
     <div class="tools">
       <button class="tool active" id="floor1">一层</button>
@@ -186,7 +187,7 @@ function branch(){return DATA.branches[state.branch]}
 function types(){return branch().typeFamily}
 function selectedType(){return types().find(x=>x.id===state.typeId)||types()[0]}
 function selectedForm(){return DATA.branches.naxi.buildingForms.find(x=>x.id===state.formId)}
-function setView(v){state.view=v;history.replaceState(null,'',`#${v}`);$$('.tab').forEach(b=>b.classList.toggle('active',b.dataset.view===v));render()}
+function setView(v){state.view=v;history.replaceState(null,'',`#${v}`);$$('.tab[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===v));render()}
 function shell(content,scroll=false){return `<div class="${scroll?'scrollPaper':'paper'}">${content}</div>`}
 function defs(){return `<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#4d8e9a"/></marker><pattern id="stone" width="18" height="12" patternUnits="userSpaceOnUse"><rect width="18" height="12" fill="#aaa18c"/><path d="M0 6h18M7 0v6M13 6v6" stroke="#777164" stroke-width="1"/></pattern><pattern id="tileRows" width="14" height="12" patternUnits="userSpaceOnUse"><rect width="14" height="12" fill="#c5c8c3"/><path d="M2 12 Q7 2 12 12" fill="none" stroke="#676d69" stroke-width="2"/></pattern></defs>`}
 function svgWrap(inner,title,subtitle=''){return `<svg viewBox="0 0 1000 900" role="img">${defs()}<rect width="1000" height="900" fill="#f5f0e6"/><text x="50" y="42" font-size="18" fill="#715433">${esc(title)}</text><text x="50" y="62" font-size="10" fill="#777b75">${esc(subtitle)}</text>${inner}</svg>`}
@@ -831,18 +832,18 @@ function updateStatus(){
  $('#stageValue').textContent=state.stage+1;
  $('#renderStatus').textContent=state.view==='building'?'完整建筑已自动入镜 · Canvas 3D 自包含':state.view==='reference'?'本地 GLB · 无 FBX 运行依赖':'离线自包含 · 无外部依赖';
 }
-$$('.tab').forEach(b=>b.onclick=()=>setView(b.dataset.view));
+$$('.tab[data-view]').forEach(b=>b.onclick=()=>setView(b.dataset.view));
 $('#floor1').onclick=()=>{state.floor=1;$('#floor1').classList.add('active');$('#floor2').classList.remove('active');renderCurrentInfo();if(state.view==='plan')render()};
 $('#floor2').onclick=()=>{state.floor=2;$('#floor2').classList.add('active');$('#floor1').classList.remove('active');renderCurrentInfo();if(state.view==='plan')render()};
 $('#toggleDoors').onclick=()=>{state.doorsOpen=!state.doorsOpen;state.doorStates={};$('#toggleDoors').classList.toggle('active',state.doorsOpen);if(['plan','building'].includes(state.view))render()};
 $('#toggleWindows').onclick=()=>{state.windowsOpen=!state.windowsOpen;$('#toggleWindows').classList.toggle('active',state.windowsOpen);if(['plan','building'].includes(state.view))render()};
-$('#reset').onclick=()=>{Object.assign(state,{branch:'yikeyin',typeId:'YKY-T07',formId:'NF-07',view:'building',floor:1,stage:13,doorsOpen:false,windowsOpen:false,doorStates:{}});history.replaceState(null,'','#building');$$('.tab').forEach(b=>b.classList.toggle('active',b.dataset.view==='building'));$('#floor1').classList.add('active');$('#floor2').classList.remove('active');$('#toggleDoors').classList.remove('active');$('#toggleWindows').classList.remove('active');$('#stage').value=13;renderAll()};
+$('#reset').onclick=()=>{Object.assign(state,{branch:'yikeyin',typeId:'YKY-T07',formId:'NF-07',view:'building',floor:1,stage:13,doorsOpen:false,windowsOpen:false,doorStates:{}});history.replaceState(null,'','#building');$$('.tab[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view==='building'));$('#floor1').classList.add('active');$('#floor2').classList.remove('active');$('#toggleDoors').classList.remove('active');$('#toggleWindows').classList.remove('active');$('#stage').value=13;renderAll()};
 $('#focusModel').onclick=()=>{document.querySelector('.app').classList.toggle('modelFocus');setTimeout(()=>{if(state.view==='building')m3Resize();if(state.view==='reference'&&TUANJIE.viewer)TUANJIE.viewer.resize()},30)};
 $$('[data-layer]').forEach(i=>i.onchange=()=>{state.layers[i.dataset.layer]=i.checked;if(['plan','roof','building'].includes(state.view))render()});
 $('#stage').oninput=e=>{state.stage=+e.target.value;renderLogicList();updateStatus();if(state.view==='construction')render();if(state.view==='building')m3Draw()};
 /* ===== V5.2.1 visibility, openings and visitor-route upgrade ===== */
-DATA.schemaVersion='5.4.2';
-DATA.title='云南院落历史建筑生产线 V5.4.2';
+DATA.schemaVersion='5.5.0';
+DATA.title='云南院落历史建筑生产线 V5.5.0';
 DATA.visitSequence=[
  {id:'V01',name:'门外识别入口',detail:'人物从院落主轴南端接近中央大门。'},
  {id:'V02',name:'门扇自动开启',detail:'到达门前触发双扇大门，门扇绕各自门轴转动。'},
@@ -1147,7 +1148,7 @@ const V521_oldStatus=updateStatus;
 updateStatus=function(){V521_oldStatus();if(state.view==='building'){const rs=document.getElementById('renderStatus');if(rs)rs.textContent=M3D.fallback?'Canvas 回退渲染':'WebGL 深度缓冲 · 遮挡修正已启用'}if(state.view==='reference'){const rs=document.getElementById('renderStatus');if(rs)rs.textContent='可编辑 GLB 主档 · 48 网格 · 无 FBX 运行依赖'}};
 
 window.__V521_TEST__={
- version:'5.4.2',
+ version:'5.5.0',
  startTour:v521StartTour,
  resetTour:v521ResetTour,
  startOpenings:v521StartOpeningsDemo,
@@ -1164,7 +1165,7 @@ window.__TUANJIE_TEST__={open:()=>document.getElementById('openTuanjieReference'
 window.__PRODUCTION_CONTEXT__=()=>({view:state.view,branch:state.branch,typeId:state.typeId,formId:state.formId,floor:state.floor,stage:state.stage,doorsOpen:state.doorsOpen,windowsOpen:state.windowsOpen});
 
 
-$$('.tab').forEach(b=>b.classList.toggle('active',b.dataset.view===state.view));
+$$('.tab[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===state.view));
 renderAll();
 window.__APP_READY__=true;
 window.__QA_RESULTS__=qaResults();
