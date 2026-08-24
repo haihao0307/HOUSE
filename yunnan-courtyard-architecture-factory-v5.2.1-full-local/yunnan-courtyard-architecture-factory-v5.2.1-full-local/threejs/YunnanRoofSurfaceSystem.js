@@ -10,6 +10,19 @@ export const ROOF_UNITS = Object.freeze([
   'gatehouseSmallRoof',
 ]);
 
+export const ROOF_SLOPE_COUNTS = Object.freeze({
+  mainHouseDoublePitch: 2,
+  leftEarAsymmetricDoublePitch: 2,
+  rightEarAsymmetricDoublePitch: 2,
+  entranceBlockDoublePitch: 2,
+  mainGalleryLeanTo: 1,
+  sideGalleryLeanTo: 3,
+  gatehouseSmallRoof: 2,
+});
+
+const EXPECTED_TOTAL_SLOPE_COUNT = Object.values(ROOF_SLOPE_COUNTS)
+  .reduce((sum, count) => sum + count, 0);
+
 export const ROOF_BUILD_UP = Object.freeze([
   'purlins',
   'rafters',
@@ -136,7 +149,9 @@ function appendRidgeTransformAudit(audit, object, semantic, expectedSpanDirectio
     && triangleCount > 0
     && object.geometry.boundingBox
     && !object.geometry.boundingBox.isEmpty();
-  const isHorizontalRun = semantic === 'principalRidge' || semantic === 'wallAbutment';
+  const isHorizontalRun = semantic === 'principalRidge'
+    || semantic === 'wallAbutment'
+    || semantic === 'highEdgeClosure';
   const isSlopedRun = semantic === 'vergeClosure'
     || semantic === 'verticalRidge'
     || semantic === 'verticalRidgeEndClosure';
@@ -186,6 +201,7 @@ function inspectActualRidgeGeometry(roof) {
   const ridgeCounts = {
     principalRidge: 0,
     wallAbutment: 0,
+    highEdgeClosure: 0,
     vergeClosure: 0,
     endClosure: 0,
     verticalRidge: 0,
@@ -211,6 +227,7 @@ function inspectActualRidgeGeometry(roof) {
         counts: {
           principalRidge: 0,
           wallAbutment: 0,
+          highEdgeClosure: 0,
           vergeClosure: 0,
           endClosure: 0,
           verticalRidge: 0,
@@ -279,6 +296,9 @@ function validateComputedSlope(slope, roof, strictTopology) {
   failUnless(audit?.evidenceSource === 'actual-instance-matrices-buffer-geometry-and-world-bounds', 'missing-computed-geometry-audit');
   if (!topology || !audit) return { passed: false, failures, audit: audit || null };
 
+  const requiredArcSegments = Math.max(5, Math.round(Number(roof.userData?.tileArcSegments) || 6));
+  const minimumClosedShellTriangles = requiredArcSegments * 8 + 4;
+
   const expectedPitch = Math.abs(topology.drainageVectorLocal?.[1] || 0)
     / Math.max(1e-12, Math.hypot(topology.drainageVectorLocal?.[0] || 0, topology.drainageVectorLocal?.[2] || 0));
   const expectedVerticalComponent = Math.sin(Math.atan(expectedPitch));
@@ -288,8 +308,10 @@ function validateComputedSlope(slope, roof, strictTopology) {
   failUnless(worldBounds?.volumeM3 > 0 && worldBounds.sizeM?.every((value) => value > 0), 'invalid-world-bounds');
   failUnless(audit.panGeometryClosedShell === true, 'pan-geometry-not-closed');
   failUnless(audit.coverGeometryClosedShell === true, 'cover-geometry-not-closed');
-  failUnless(audit.panTransverseArcSegments >= 6 && audit.coverTransverseArcSegments >= 6, 'tile-arc-under-segmented');
-  failUnless(audit.panGeometryTriangleCount >= 52 && audit.coverGeometryTriangleCount >= 52, 'tile-shell-triangle-count-too-low');
+  failUnless(audit.panTransverseArcSegments === requiredArcSegments
+    && audit.coverTransverseArcSegments === requiredArcSegments, 'tile-arc-segment-profile-mismatch');
+  failUnless(audit.panGeometryTriangleCount >= minimumClosedShellTriangles
+    && audit.coverGeometryTriangleCount >= minimumClosedShellTriangles, 'tile-shell-triangle-count-too-low');
   failUnless(audit.panCrossSectionCurvatureM < 0, 'pan-not-concave');
   failUnless(audit.coverCrossSectionCurvatureM > 0, 'cover-not-convex');
   failUnless(Number.isFinite(audit.panCrossSectionRiseM)
@@ -356,6 +378,8 @@ function validateComputedSlope(slope, roof, strictTopology) {
     coverUnderlayClearanceM: audit.coverUnderlayClearanceM,
     normalProjectionEvidence: audit.normalProjectionEvidence,
     tileGeometry: {
+      requiredArcSegments,
+      minimumClosedShellTriangles,
       panVertices: audit.panGeometryVertexCount,
       panTriangles: audit.panGeometryTriangleCount,
       panArcSegments: audit.panTransverseArcSegments,
@@ -434,9 +458,30 @@ export function registerYunnanRoofSurfaces(root, profile = {}) {
           'verge-long-axis-not-directed-ridge-to-eave');
         failUnless(actual.counts.vergeClosure >= 2, 'missing-verge-closures');
         failUnless(actual.counts.endClosure === 2, 'ridge-end-closure-count-mismatch');
-        failUnless(contract.roofForm === 'gable'
-          ? actual.counts.principalRidge === 1 && actual.counts.wallAbutment === 0
-          : actual.counts.wallAbutment === 1 && actual.counts.principalRidge === 0, 'roof-form-ridge-mismatch');
+        failUnless(
+          actual.counts.principalRidge === contract.principalRidgeCount
+          && actual.counts.wallAbutment === contract.wallAbutmentCount
+          && actual.counts.highEdgeClosure === contract.highEdgeClosureCount
+          && actual.counts.principalRidge + actual.counts.wallAbutment + actual.counts.highEdgeClosure === 1,
+          'roof-form-ridge-mismatch',
+        );
+        failUnless(
+          contract.roofForm === 'gable'
+            ? actual.counts.principalRidge === 1
+              && actual.counts.wallAbutment === 0
+              && actual.counts.highEdgeClosure === 0
+            : actual.counts.principalRidge === 0
+              && actual.counts.wallAbutment + actual.counts.highEdgeClosure === 1,
+          'ridge-semantic-does-not-match-independent-roof-form',
+        );
+        failUnless(
+          contract.wallAbutmentCount === 0 || Boolean(contract.abutmentHostComponentId),
+          'wall-abutment-missing-explicit-host',
+        );
+        failUnless(
+          contract.highEdgeClosureCount === 0 || !contract.abutmentHostComponentId,
+          'unhosted-high-edge-closure-declares-wall-host',
+        );
         failUnless(contract.verticalRidgeApplicable === true, 'vertical-ridge-applicability-not-derived');
         failUnless(actual.counts.verticalRidge > 0, 'missing-vertical-ridge-geometry');
         failUnless(actual.verticalRidgeRunCount === contract.verticalRidgeRunCount, 'vertical-ridge-run-count-mismatch');
@@ -462,7 +507,9 @@ export function registerYunnanRoofSurfaces(root, profile = {}) {
     const check = {
       roofUnitId: roof.userData.roofUnitId,
       sectionCount: roof.userData.sectionCount,
+      expectedSlopeCount: ROOF_SLOPE_COUNTS[roof.userData.roofUnitId],
       slopeCount: slopes.length,
+      slopeCountMatchesExpected: slopes.length === ROOF_SLOPE_COUNTS[roof.userData.roofUnitId],
       missingLayers,
       topologyValid,
       ridgeValid,
@@ -484,7 +531,7 @@ export function registerYunnanRoofSurfaces(root, profile = {}) {
     };
     check.passed = missingLayers.length === 0
       && allLayersHaveOwnGeometryIds
-      && check.slopeCount > 0
+      && check.slopeCountMatchesExpected
       && check.hasRealGeometry
       && topologyValid
       && patchTotalsValid
@@ -492,9 +539,11 @@ export function registerYunnanRoofSurfaces(root, profile = {}) {
     roof.userData.validation = check;
     return check;
   });
+  const actualTotalSlopeCount = unitChecks.reduce((sum, check) => sum + check.slopeCount, 0);
   const complete = missingRoofUnitIds.length === 0
     && duplicateRoofUnitIds.length === 0
     && roofs.length === ROOF_UNITS.length
+    && actualTotalSlopeCount === EXPECTED_TOTAL_SLOPE_COUNT
     && unitChecks.every((check) => check.passed);
   const viewBounds = {
     roof: new THREE.Box3(),
@@ -540,6 +589,9 @@ export function registerYunnanRoofSurfaces(root, profile = {}) {
     evidenceSource: 'actual-geometry-instance-matrices-and-world-bounds',
     rotationComposition: 'Qy*Qx',
     expectedRoofUnitIds: [...ROOF_UNITS],
+    expectedSlopeCounts: { ...ROOF_SLOPE_COUNTS },
+    expectedTotalSlopeCount: EXPECTED_TOTAL_SLOPE_COUNT,
+    actualTotalSlopeCount,
     actualRoofUnitIds: roofs.map((roof) => roof.userData.roofUnitId),
     roofUnitCount: roofs.length,
     missingRoofUnitIds,
@@ -556,12 +608,18 @@ export function registerYunnanRoofSurfaces(root, profile = {}) {
     evidenceSource: 'actual-geometry-instance-matrices-and-world-bounds',
     rotationComposition: 'Qy*Qx',
     roofUnitCount: roofs.length,
+    expectedSlopeCounts: { ...ROOF_SLOPE_COUNTS },
+    expectedTotalSlopeCount: EXPECTED_TOTAL_SLOPE_COUNT,
+    actualTotalSlopeCount,
     allRoofUnitsPassed: complete,
     viewTargets,
     units: unitChecks.map((check) => ({
       roofUnitId: check.roofUnitId,
       rotationComposition: check.rotationComposition,
       layerCounts: { ...check.layerCounts },
+      expectedSlopeCount: check.expectedSlopeCount,
+      slopeCount: check.slopeCount,
+      slopeCountMatchesExpected: check.slopeCountMatchesExpected,
       patchTotals: { ...check.patchTotals },
       patchTotalsValid: check.patchTotalsValid,
       slopeAudits: check.slopeAudits.map((audit) => ({ ...audit })),

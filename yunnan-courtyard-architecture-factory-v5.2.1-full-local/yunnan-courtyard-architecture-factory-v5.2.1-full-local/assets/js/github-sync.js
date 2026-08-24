@@ -55,13 +55,22 @@
   function applyDeployment(metadata, source) {
     var sha = metadata && typeof metadata.sha === 'string' ? metadata.sha.trim() : '';
     var branch = metadata && typeof (metadata.ref || metadata.branch) === 'string' ? String(metadata.ref || metadata.branch).trim() : '';
-    if (sha && !/^[0-9a-f]{40}$/i.test(sha)) throw new Error('build.json sha is not a full commit SHA');
-    if (branch && !validRef(branch)) throw new Error('build.json ref is invalid');
-    if (!sha && !branch) throw new Error('deployment metadata has neither sha nor ref');
-    CONFIG.branch = branch || CONFIG.branch;
-    CONFIG.headSha = sha || null;
-    CONFIG.ref = sha || branch;
+    if (!/^[0-9a-f]{40}$/i.test(sha)) throw new Error('deployment sha is not a full commit SHA');
+    if (!validRef(branch)) throw new Error('deployment ref is missing or invalid');
+    CONFIG.branch = branch;
+    CONFIG.headSha = sha;
+    // Required source files are pinned to the immutable SHA.  The branch is
+    // retained only as auditable deployment metadata and is never used as a
+    // fallback when build.json is unavailable or malformed.
+    CONFIG.ref = sha;
     CONFIG.deploymentSource = source;
+    remote.deploymentError = null;
+  }
+  function failDeployment(error) {
+    remote.deploymentError = error && error.message ? error.message : String(error);
+    remote.error = remote.deploymentError;
+    remote.refreshState = 'failed';
+    return remote;
   }
   function resolveDeployment() {
     var injected = global.__GITHUB_SYNC_DEPLOYMENT__;
@@ -69,7 +78,8 @@
       try {
         applyDeployment(injected, 'runtime-injected');
       } catch (error) {
-        remote.deploymentError = error.message;
+        failDeployment(error);
+        return Promise.reject(error);
       }
       return Promise.resolve();
     }
@@ -82,7 +92,8 @@
     }).then(function (metadata) {
       applyDeployment(metadata, 'pages-build-json');
     }).catch(function (error) {
-      remote.deploymentError = error.message;
+      failDeployment(error);
+      throw error;
     });
   }
   function requestJson(spec) {
@@ -231,7 +242,14 @@
     entries.push(item); entries = entries.slice(-100); saveEntries(); refs.text.value = ''; renderQueue(); setMessage('已加入本地队列。需要真正写入 GitHub 时，再点击“提交为 GitHub Issue”。');
   }
   function bundle() {
-    return { schemaVersion: '5.5.0', bundleType: 'yunnan-production-web-sync', repository: CONFIG.owner + '/' + CONFIG.repo, branch: CONFIG.branch, generatedAt: new Date().toISOString(), sourcePage: global.location.href, entries: entries.slice() };
+    return {
+      schemaVersion: '5.5.0', bundleType: 'yunnan-production-web-sync',
+      repository: CONFIG.owner + '/' + CONFIG.repo, branch: CONFIG.branch,
+      ref: CONFIG.ref, headSha: CONFIG.headSha, revision: CONFIG.headSha,
+      deploymentSource: CONFIG.deploymentSource,
+      generatedAt: new Date().toISOString(), sourcePage: global.location.href,
+      entries: entries.slice()
+    };
   }
   function exportBundle() {
     var blob = new Blob([JSON.stringify(bundle(), null, 2) + '\n'], { type: 'application/json;charset=utf-8' });
@@ -295,7 +313,20 @@
     return refreshPromise;
   }
   function refresh(force) {
-    return deploymentReady.then(function () { return refreshResolved(force); });
+    return deploymentReady.then(function () { return refreshResolved(force); }).catch(function (error) {
+      // A Pages build must never silently read main when build.json cannot pin
+      // the deployed commit.  Resolve with an explicit failed state so callers
+      // can inspect the reason without creating an unhandled rejection.
+      failDeployment(error);
+      if (refs.status) refs.status.textContent = 'GitHub 同步已阻止 · ' + remote.deploymentError;
+      if (refs.dot) refs.dot.classList.add('warn');
+      if (refs.launcher) {
+        refs.launcher.textContent = 'GitHub同步失败';
+        refs.launcher.classList.remove('ok');
+        refs.launcher.classList.add('warn');
+      }
+      return remote;
+    });
   }
   function pushLatest() {
     var token = (refs.token.value || '').trim();
@@ -317,7 +348,11 @@
         files: remote.files.length, issues: remote.issues.length, checkedAt: remote.checkedAt,
         error: remote.error, refreshState: remote.refreshState, refreshGeneration: remote.refreshGeneration,
         deploymentError: remote.deploymentError,
-        deployment: { branch: CONFIG.branch, ref: CONFIG.ref, headSha: CONFIG.headSha, source: CONFIG.deploymentSource },
+        deployment: {
+          branch: CONFIG.branch, ref: CONFIG.ref, headSha: CONFIG.headSha,
+          revision: CONFIG.headSha, source: CONFIG.deploymentSource,
+          ready: !remote.deploymentError && CONFIG.deploymentSource !== 'default-main'
+        },
         requests: remote.requests.map(function (item) { return Object.assign({}, item); }),
         requestHistory: remote.requestHistory.map(function (item) { return Object.assign({}, item); }),
         optionalDiagnostics: remote.optionalDiagnostics.slice()

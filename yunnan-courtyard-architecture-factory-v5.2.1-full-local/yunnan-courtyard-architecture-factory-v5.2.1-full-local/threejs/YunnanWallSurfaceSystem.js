@@ -30,10 +30,10 @@ function makeMaterial(color, roughness = 0.92, opacity = 1, vertexColors = false
     polygonOffsetFactor: -1,
     polygonOffsetUnits: -1,
   });
-  // Transparent DoubleSide materials otherwise render back and front faces in
-  // two passes.  These layers are zero-thickness mapped patches, so the second
-  // pass cannot reveal additional volume and only duplicates ~210 draw calls.
-  if (opacity < 1) material.forceSinglePass = true;
+  // These weathering overlays are geometrically thin and intentionally visible
+  // from either side.  A transparent DoubleSide material otherwise renders two
+  // passes in three.js, doubling their draw cost without changing the evidence.
+  material.forceSinglePass = material.transparent && material.side === THREE.DoubleSide;
   return material;
 }
 
@@ -58,6 +58,279 @@ function addTagged(layer, item, type, data = {}) {
   item.userData = { ...(item.userData || {}), type, wallLayerId: layer.userData.wallLayerId, ...data };
   layer.add(item);
   return item;
+}
+
+const STATIC_BATCH_LAYER_IDS = Object.freeze([
+  'structure', 'plaster', 'exposedEarth', 'stonePlinth', 'risingDamp',
+  'verticalRainStreak', 'surfaceLoss', 'repairPatch', 'sootAndDirt',
+]);
+
+function enableBatchedVertexAlpha(material) {
+  material.customProgramCacheKey = () => 'yunnan-wall-static-rgb-plus-alpha-batch-v2';
+  material.onBeforeCompile = (shader) => {
+    shader.vertexShader = shader.vertexShader
+      .replace(
+        '#include <color_pars_vertex>',
+        '#include <color_pars_vertex>\nattribute float wallBatchAlpha;\nvarying float vWallBatchAlpha;',
+      )
+      .replace(
+        '#include <color_vertex>',
+        '#include <color_vertex>\nvWallBatchAlpha=wallBatchAlpha;',
+      );
+    shader.fragmentShader = shader.fragmentShader
+      .replace(
+        '#include <color_pars_fragment>',
+        '#include <color_pars_fragment>\nvarying float vWallBatchAlpha;',
+      )
+      .replace(
+        '#include <color_fragment>',
+        '#include <color_fragment>\ndiffuseColor.a*=vWallBatchAlpha;',
+      );
+    material.userData.wallBatchCompiledShaderEvidence = {
+      revision: 'yunnan-wall-static-rgb-plus-alpha-batch-v2',
+      vertexAlphaAttribute: shader.vertexShader.includes('attribute float wallBatchAlpha'),
+      fragmentAlphaApplied: shader.fragmentShader.includes('diffuseColor.a*=vWallBatchAlpha'),
+      vertexColorAlphaSeparated: true,
+      evidenceSource: 'actual-onBeforeCompile-transformed-shader-source',
+    };
+  };
+  material.userData = {
+    ...(material.userData || {}),
+    wallBatchShaderRevision: 'yunnan-wall-static-rgb-plus-alpha-batch-v2',
+  };
+  material.needsUpdate = true;
+  return material;
+}
+
+function batchedWallMaterial(system, layerId, sources) {
+  const sourceMaterials = sources.flatMap((source) => (
+    Array.isArray(source.material) ? source.material : [source.material]
+  )).filter(Boolean);
+  const transparent = sourceMaterials.some((material) => material.transparent || Number(material.opacity) < 1);
+  const roughness = average(sourceMaterials.map((material) => Number(material.roughness)).filter(Number.isFinite));
+  let material;
+  if (layerId === 'structure') {
+    material = new THREE.MeshBasicMaterial({
+      color: 0xffffff,
+      wireframe: true,
+      transparent: true,
+      opacity: 1,
+      vertexColors: true,
+      side: THREE.DoubleSide,
+      depthWrite: false,
+    });
+  } else {
+    material = makeMaterial(0xffffff, roughness || 0.96, 1, true);
+    material.transparent = transparent;
+    material.depthWrite = !transparent;
+  }
+  material.forceSinglePass = material.transparent && material.side === THREE.DoubleSide;
+  return ownMaterial(system, enableBatchedVertexAlpha(material));
+}
+
+function batchStaticWallLayer(system, group, layerId) {
+  const sources = group.children.filter((child) => child.isMesh && child.geometry);
+  if (!sources.length) return null;
+  const positions = [];
+  const normals = [];
+  const uvs = [];
+  const colors = [];
+  const alphas = [];
+  const indices = [];
+  const logicalPatches = [];
+  let vertexOffset = 0;
+  let triangleCount = 0;
+  let sourceVertexCount = 0;
+  const sourceLocalBounds = new THREE.Box3();
+
+  sources.forEach((source) => {
+    if (source.matrixAutoUpdate) source.updateMatrix();
+    const geometry = source.geometry;
+    const position = geometry.getAttribute('position');
+    const normal = geometry.getAttribute('normal');
+    const uv = geometry.getAttribute('uv');
+    const matrix = source.matrix;
+    const normalMatrix = new THREE.Matrix3().getNormalMatrix(matrix);
+    const point = new THREE.Vector3();
+    const direction = new THREE.Vector3();
+    const material = Array.isArray(source.material) ? source.material[0] : source.material;
+    const color = material?.color || new THREE.Color(0xffffff);
+    const alpha = THREE.MathUtils.clamp(Number(material?.opacity ?? 1), 0, 1);
+    const vertexStart = vertexOffset;
+    const indexStart = indices.length;
+    const sourceBounds = new THREE.Box3();
+    const transformedPoints = [];
+    sourceVertexCount += position.count;
+    for (let index = 0; index < position.count; index += 1) {
+      point.fromBufferAttribute(position, index).applyMatrix4(matrix);
+      transformedPoints.push(point.clone());
+      sourceBounds.expandByPoint(point);
+      // Accumulate the exact transformed source vertices. Transforming a
+      // source AABB would conservatively enlarge rotated crack cylinders and
+      // would not be comparable with the merged geometry's tight bounds.
+      sourceLocalBounds.expandByPoint(point);
+      positions.push(point.x, point.y, point.z);
+      if (normal) {
+        direction.fromBufferAttribute(normal, index).applyMatrix3(normalMatrix).normalize();
+        normals.push(direction.x, direction.y, direction.z);
+      } else {
+        normals.push(0, 1, 0);
+      }
+      if (uv) uvs.push(uv.getX(index), uv.getY(index));
+      else uvs.push(0, 0);
+      // Keep RGB in Three's built-in vertex-color path and opacity in the
+      // dedicated scalar attribute below. An RGBA color attribute would make
+      // color_fragment multiply alpha once before the custom shader multiplies
+      // wallBatchAlpha again, incorrectly squaring every source opacity.
+      colors.push(color.r, color.g, color.b);
+      alphas.push(alpha);
+    }
+    if (geometry.index) {
+      for (let index = 0; index < geometry.index.count; index += 1) {
+        indices.push(vertexOffset + geometry.index.getX(index));
+      }
+      triangleCount += geometry.index.count / 3;
+    } else {
+      for (let index = 0; index < position.count; index += 1) indices.push(vertexOffset + index);
+      triangleCount += position.count / 3;
+    }
+    let sourceAreaM2 = 0;
+    const triangle = new THREE.Triangle();
+    const triangleCountForSource = geometry.index
+      ? geometry.index.count / 3 : position.count / 3;
+    for (let triangleIndex = 0; triangleIndex < triangleCountForSource; triangleIndex += 1) {
+      const ia = geometry.index ? geometry.index.getX(triangleIndex * 3) : triangleIndex * 3;
+      const ib = geometry.index ? geometry.index.getX(triangleIndex * 3 + 1) : triangleIndex * 3 + 1;
+      const ic = geometry.index ? geometry.index.getX(triangleIndex * 3 + 2) : triangleIndex * 3 + 2;
+      sourceAreaM2 += triangle.set(
+        transformedPoints[ia], transformedPoints[ib], transformedPoints[ic],
+      ).getArea();
+    }
+    const minY = Math.min(...transformedPoints.map((entry) => entry.y));
+    const maxY = Math.max(...transformedPoints.map((entry) => entry.y));
+    const tolerance = Math.max(1e-5, (maxY - minY) * 0.03);
+    const averageAt = (target) => {
+      const selected = transformedPoints.filter((entry) => Math.abs(entry.y - target) <= tolerance);
+      return selected.reduce((sum, entry) => sum.add(entry), new THREE.Vector3())
+        .multiplyScalar(1 / Math.max(1, selected.length));
+    };
+    const downward = averageAt(minY).sub(averageAt(maxY));
+    logicalPatches.push({
+      logicalIndex: logicalPatches.length,
+      ...source.userData,
+      materialColor: color.toArray(),
+      materialOpacity: alpha,
+      localBounds: sourceBounds.isEmpty()
+        ? null : [...sourceBounds.min.toArray(), ...sourceBounds.max.toArray()],
+      transformedAreaM2: sourceAreaM2,
+      localDownwardDirection: downward.lengthSq() ? downward.normalize().toArray() : null,
+      vertexStart,
+      vertexCount: position.count,
+      indexStart,
+      indexCount: indices.length - indexStart,
+    });
+    vertexOffset += position.count;
+  });
+
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+  geometry.setAttribute('normal', new THREE.Float32BufferAttribute(normals, 3));
+  geometry.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
+  geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+  geometry.setAttribute('wallBatchAlpha', new THREE.Float32BufferAttribute(alphas, 1));
+  geometry.setIndex(indices);
+  geometry.computeBoundingBox();
+  geometry.computeBoundingSphere();
+  const sourceLocalBoundsArray = sourceLocalBounds.isEmpty()
+    ? null : [...sourceLocalBounds.min.toArray(), ...sourceLocalBounds.max.toArray()];
+  const batchLocalBoundsArray = geometry.boundingBox
+    ? [...geometry.boundingBox.min.toArray(), ...geometry.boundingBox.max.toArray()] : null;
+  const localBoundsMaxDeltaM = sourceLocalBoundsArray && batchLocalBoundsArray
+    ? Math.max(...sourceLocalBoundsArray.map((value, index) => Math.abs(value - batchLocalBoundsArray[index])))
+    : null;
+  const batchTriangleCount = geometry.index
+    ? geometry.index.count / 3 : geometry.getAttribute('position').count / 3;
+  const material = batchedWallMaterial(system, layerId, sources);
+  const batch = new THREE.Mesh(geometry, material);
+  batch.name = `wallStaticBatch_${layerId}`;
+  batch.matrixAutoUpdate = false;
+  batch.userData = {
+    type: 'wall-static-indexed-geometry-batch',
+    wallLayerId: layerId,
+    wallLayerCategory: group.userData.wallLayerCategory,
+    batched: true,
+    indexed: true,
+    vertexColorChannels: 3,
+    logicalPatchCount: logicalPatches.length,
+    logicalPatches,
+    triangleCount: batchTriangleCount,
+    sourceTriangleCount: triangleCount,
+    batchTriangleCount,
+    sourceVertexCount,
+    batchPositionCount: geometry.getAttribute('position').count,
+    batchColorCount: geometry.getAttribute('color').count,
+    batchColorItemSize: geometry.getAttribute('color').itemSize,
+    batchAlphaCount: geometry.getAttribute('wallBatchAlpha').count,
+    batchAlphaItemSize: geometry.getAttribute('wallBatchAlpha').itemSize,
+    sourceLocalBounds: sourceLocalBoundsArray,
+    batchLocalBounds: batchLocalBoundsArray,
+    localBoundsMaxDeltaM,
+  };
+  sources.forEach((source) => {
+    source.removeFromParent();
+    source.geometry.dispose();
+  });
+  group.add(batch);
+  return batch;
+}
+
+function batchStaticWallLayers(system, categoryGroups) {
+  const sourceMaterials = new Set();
+  STATIC_BATCH_LAYER_IDS.forEach((layerId) => {
+    categoryGroups[layerId].traverse((object) => {
+      if (Array.isArray(object.material)) object.material.forEach((material) => sourceMaterials.add(material));
+      else if (object.material) sourceMaterials.add(object.material);
+    });
+  });
+  const batches = STATIC_BATCH_LAYER_IDS.map((layerId) => (
+    batchStaticWallLayer(system, categoryGroups[layerId], layerId)
+  )).filter(Boolean);
+  const retainedMaterials = new Set();
+  system.traverse((object) => {
+    if (Array.isArray(object.material)) object.material.forEach((material) => retainedMaterials.add(material));
+    else if (object.material) retainedMaterials.add(object.material);
+  });
+  sourceMaterials.forEach((material) => {
+    if (!retainedMaterials.has(material)) material.dispose?.();
+  });
+  system.userData.ownedMaterials = system.userData.ownedMaterials.filter((material) => (
+    !sourceMaterials.has(material) || retainedMaterials.has(material)
+  ));
+  system.userData.staticBatching = {
+    enabled: true,
+    layerIds: [...STATIC_BATCH_LAYER_IDS],
+    batchCount: batches.length,
+    logicalPatchCount: batches.reduce((sum, batch) => sum + batch.userData.logicalPatchCount, 0),
+    batches: batches.map((batch) => ({
+      layerId: batch.userData.wallLayerId,
+      logicalPatchCount: batch.userData.logicalPatchCount,
+      triangleCount: batch.userData.triangleCount,
+      sourceTriangleCount: batch.userData.sourceTriangleCount,
+      batchTriangleCount: batch.userData.batchTriangleCount,
+      sourceVertexCount: batch.userData.sourceVertexCount,
+      batchPositionCount: batch.userData.batchPositionCount,
+      batchColorCount: batch.userData.batchColorCount,
+      batchColorItemSize: batch.userData.batchColorItemSize,
+      batchAlphaCount: batch.userData.batchAlphaCount,
+      batchAlphaItemSize: batch.userData.batchAlphaItemSize,
+      sourceLocalBounds: batch.userData.sourceLocalBounds,
+      batchLocalBounds: batch.userData.batchLocalBounds,
+      localBoundsMaxDeltaM: batch.userData.localBoundsMaxDeltaM,
+      indexed: batch.userData.indexed,
+      vertexColorChannels: batch.userData.vertexColorChannels,
+    })),
+  };
+  return batches;
 }
 
 function disposeSystem(system) {
@@ -310,7 +583,12 @@ function measureWallSystem(system) {
     if (layerId in layerCounts) {
       layerCounts[layerId] += object.isInstancedMesh
         ? object.count
-        : Math.max(1, Number(object.userData?.semanticElementCount) || 1);
+        : Math.max(
+          1,
+          Number(object.userData?.logicalPatchCount)
+            || Number(object.userData?.semanticElementCount)
+            || 1,
+        );
     }
     if (layerId === 'plaster') plasterLuminance.push(materialLuminance(object.material));
     if (layerId === 'risingDamp') {
@@ -448,6 +726,7 @@ export function applyYunnanWallSurfaces(
     fibre: ownMaterial(system, makeMaterial(0xc3a46b, 0.92, 1)),
     crack: ownMaterial(system, makeMaterial(0x352f29, 1, 1)),
   };
+  shared.structure.forceSinglePass = true;
   const hosts = [];
   root.updateMatrixWorld(true);
   root.traverse((object) => {
@@ -720,7 +999,9 @@ export function applyYunnanWallSurfaces(
   });
   if (fibreBatch) addTagged(categoryGroups.strawFibre, fibreBatch, 'visible-straw-fibres-static-batch');
 
-  Object.assign(system.userData, measureWallSystem(system), {
+  const measuredBeforeStaticBatching = measureWallSystem(system);
+  batchStaticWallLayers(system, categoryGroups);
+  Object.assign(system.userData, measuredBeforeStaticBatching, {
     hostCount: hosts.length,
     groundHostCount,
     excludedGroundLayerHostIds,
@@ -769,5 +1050,10 @@ export function getYunnanWallSurfaceSnapshot(root) {
     dampSamples: { ...measured.dampSamples },
     plinthThicknessM: measured.plinthThicknessM,
     cornerProtectionThicknessM: measured.cornerProtectionThicknessM,
+    staticBatching: system.userData.staticBatching ? {
+      ...system.userData.staticBatching,
+      layerIds: [...system.userData.staticBatching.layerIds],
+      batches: system.userData.staticBatching.batches.map((batch) => ({ ...batch })),
+    } : null,
   };
 }

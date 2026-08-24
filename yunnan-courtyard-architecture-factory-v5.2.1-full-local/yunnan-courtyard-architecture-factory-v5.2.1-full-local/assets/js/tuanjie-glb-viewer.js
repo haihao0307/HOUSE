@@ -11,6 +11,51 @@
     for(let c=0;c<4;c++)for(let r=0;r<4;r++)o[c*4+r]=a[r]*b[c*4]+a[4+r]*b[c*4+1]+a[8+r]*b[c*4+2]+a[12+r]*b[c*4+3];
     return o;
   }
+  function identity(){return new Float32Array([1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1])}
+  function finiteVector(value,length,label,fallback){
+    if(value===undefined)return fallback.slice();
+    if(!Array.isArray(value)||value.length!==length||value.some(v=>!Number.isFinite(v)))throw new Error(`GLB ${label} 无效`);
+    return value.slice();
+  }
+  function nodeMatrix(node){
+    if(node.matrix!==undefined){
+      if(node.translation!==undefined||node.rotation!==undefined||node.scale!==undefined)throw new Error('GLB 节点不能同时声明 matrix 与 TRS');
+      return new Float32Array(finiteVector(node.matrix,16,'节点 matrix',[]));
+    }
+    const t=finiteVector(node.translation,3,'节点 translation',[0,0,0]);
+    const q=finiteVector(node.rotation,4,'节点 rotation',[0,0,0,1]);
+    const s=finiteVector(node.scale,3,'节点 scale',[1,1,1]);
+    const length=Math.hypot(q[0],q[1],q[2],q[3]);
+    if(length<1e-12)throw new Error('GLB 节点 rotation 四元数长度为零');
+    const x=q[0]/length,y=q[1]/length,z=q[2]/length,w=q[3]/length;
+    const xx=x*x,xy=x*y,xz=x*z,xw=x*w,yy=y*y,yz=y*z,yw=y*w,zz=z*z,zw=z*w;
+    return new Float32Array([
+      (1-2*(yy+zz))*s[0],(2*(xy+zw))*s[0],(2*(xz-yw))*s[0],0,
+      (2*(xy-zw))*s[1],(1-2*(xx+zz))*s[1],(2*(yz+xw))*s[1],0,
+      (2*(xz+yw))*s[2],(2*(yz-xw))*s[2],(1-2*(xx+yy))*s[2],0,
+      t[0],t[1],t[2],1
+    ]);
+  }
+  function normalMatrix(matrix){
+    const a00=matrix[0],a01=matrix[4],a02=matrix[8];
+    const a10=matrix[1],a11=matrix[5],a12=matrix[9];
+    const a20=matrix[2],a21=matrix[6],a22=matrix[10];
+    const c00=a11*a22-a12*a21,c01=a12*a20-a10*a22,c02=a10*a21-a11*a20;
+    const c10=a02*a21-a01*a22,c11=a00*a22-a02*a20,c12=a01*a20-a00*a21;
+    const c20=a01*a12-a02*a11,c21=a02*a10-a00*a12,c22=a00*a11-a01*a10;
+    const determinant=a00*c00+a01*c01+a02*c02;
+    if(!Number.isFinite(determinant)||Math.abs(determinant)<1e-12)throw new Error('GLB 节点 world matrix 不可逆');
+    const inv=1/determinant;
+    return new Float32Array([c00*inv,c10*inv,c20*inv,c01*inv,c11*inv,c21*inv,c02*inv,c12*inv,c22*inv]);
+  }
+  function transformPoint(matrix,point){
+    return [
+      matrix[0]*point[0]+matrix[4]*point[1]+matrix[8]*point[2]+matrix[12],
+      matrix[1]*point[0]+matrix[5]*point[1]+matrix[9]*point[2]+matrix[13],
+      matrix[2]*point[0]+matrix[6]*point[1]+matrix[10]*point[2]+matrix[14]
+    ];
+  }
+  function matrixSnapshot(matrix){return Array.from(matrix,value=>Number(value.toFixed(7)))}
   function perspective(fov,aspect,near,far){
     const f=1/Math.tan(fov/2),nf=1/(near-far);
     return new Float32Array([f/aspect,0,0,0,0,f,0,0,0,0,(far+near)*nf,-1,0,0,2*far*near*nf,0]);
@@ -29,7 +74,7 @@
     return s;
   }
   function program(gl,useDerivatives){
-    const vs=shader(gl,gl.VERTEX_SHADER,`attribute vec3 aPosition;attribute vec3 aNormal;attribute vec2 aUV;uniform mat4 uMVP;varying vec3 vPosition;varying vec3 vNormal;varying vec2 vUV;void main(){gl_Position=uMVP*vec4(aPosition,1.0);vPosition=aPosition;vNormal=aNormal;vUV=aUV;}`);
+    const vs=shader(gl,gl.VERTEX_SHADER,`attribute vec3 aPosition;attribute vec3 aNormal;attribute vec2 aUV;uniform mat4 uMVP;uniform mat4 uModel;uniform mat3 uNormalMatrix;varying vec3 vPosition;varying vec3 vNormal;varying vec2 vUV;void main(){vec4 worldPosition=uModel*vec4(aPosition,1.0);gl_Position=uMVP*vec4(aPosition,1.0);vPosition=worldPosition.xyz;vNormal=uNormalMatrix*aNormal;vUV=aUV;}`);
     const normalCode=useDerivatives?`mat3 cotangentFrame(vec3 N,vec3 p,vec2 uv){vec3 dp1=dFdx(p),dp2=dFdy(p),dp2perp=cross(dp2,N),dp1perp=cross(N,dp1);vec2 duv1=dFdx(uv),duv2=dFdy(uv);vec3 T=dp2perp*duv1.x+dp1perp*duv2.x;vec3 B=dp2perp*duv1.y+dp1perp*duv2.y;float invmax=inversesqrt(max(max(dot(T,T),dot(B,B)),1e-6));return mat3(T*invmax,B*invmax,N);}vec3 mappedNormal(vec3 N){vec3 map=texture2D(uNormal,vUV).xyz*2.0-1.0;return normalize(cotangentFrame(N,vPosition,vUV)*map);}`:`vec3 mappedNormal(vec3 N){return N;}`;
     const extension=useDerivatives?'#extension GL_OES_standard_derivatives : enable\n':'';
     const fs=shader(gl,gl.FRAGMENT_SHADER,`${extension}precision mediump float;uniform sampler2D uBase;uniform sampler2D uNormal;uniform float uNormalEnabled;uniform vec4 uFactor;uniform float uAlphaCut;varying vec3 vPosition;varying vec3 vNormal;varying vec2 vUV;${normalCode}void main(){vec4 tex=texture2D(uBase,vUV)*uFactor;if(tex.a<uAlphaCut)discard;vec3 n=normalize(vNormal);if(uNormalEnabled>.5)n=mappedNormal(n);float d=abs(dot(n,normalize(vec3(.35,.82,.44))));float light=.72+.28*d;vec3 albedo=pow(max(tex.rgb,vec3(.035)),vec3(.62));vec3 c=albedo*light+vec3(.025,.022,.018);gl_FragColor=vec4(c,tex.a);}`);
@@ -64,22 +109,22 @@
       this.maxTextureSize=this.gl.getParameter(this.gl.MAX_TEXTURE_SIZE);
       this.camera={yaw:-.76,pitch:.28,distance:6.6,target:[0,0.7,0]};
       this.visible={site:true,details:true,level1:true,level2:true,roof:true};
-      this.draws=[];this.loaded=false;this.auto=false;this.raf=0;this.last=0;this.drag=false;this.resources=[];this.modelStats={};this.textureStats={};
+      this.draws=[];this.loaded=false;this.auto=false;this.raf=0;this.last=0;this.drag=false;this.resources=[];this.modelStats={};this.textureStats={};this.worldBounds=null;
       this._initGL();this._bind();this.resize();this._loop=()=>this.loop();this.raf=requestAnimationFrame(this._loop);
     }
     _initGL(){
       const gl=this.gl;this.program=program(gl,!!this.extDerivatives);gl.useProgram(this.program);
-      this.loc={position:gl.getAttribLocation(this.program,'aPosition'),normal:gl.getAttribLocation(this.program,'aNormal'),uv:gl.getAttribLocation(this.program,'aUV'),mvp:gl.getUniformLocation(this.program,'uMVP'),base:gl.getUniformLocation(this.program,'uBase'),normalMap:gl.getUniformLocation(this.program,'uNormal'),normalEnabled:gl.getUniformLocation(this.program,'uNormalEnabled'),factor:gl.getUniformLocation(this.program,'uFactor'),alphaCut:gl.getUniformLocation(this.program,'uAlphaCut')};
+      this.loc={position:gl.getAttribLocation(this.program,'aPosition'),normal:gl.getAttribLocation(this.program,'aNormal'),uv:gl.getAttribLocation(this.program,'aUV'),mvp:gl.getUniformLocation(this.program,'uMVP'),model:gl.getUniformLocation(this.program,'uModel'),normalMatrix:gl.getUniformLocation(this.program,'uNormalMatrix'),base:gl.getUniformLocation(this.program,'uBase'),normalMap:gl.getUniformLocation(this.program,'uNormal'),normalEnabled:gl.getUniformLocation(this.program,'uNormalEnabled'),factor:gl.getUniformLocation(this.program,'uFactor'),alphaCut:gl.getUniformLocation(this.program,'uAlphaCut')};
       gl.enable(gl.DEPTH_TEST);gl.depthFunc(gl.LEQUAL);gl.disable(gl.CULL_FACE);gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);
       this.baseTexture=this._makeTexture([185,171,147,255]);this.normalTexture=this._makeTexture([128,128,255,255]);
     }
     _makeTexture(pixel){const gl=this.gl,t=gl.createTexture();this.resources.push(['texture',t]);gl.bindTexture(gl.TEXTURE_2D,t);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,1,1,0,gl.RGBA,gl.UNSIGNED_BYTE,new Uint8Array(pixel));gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);return t}
-    _clearDrawBuffers(){const gl=this.gl;for(const [type,obj] of this.resources)if(type==='buffer')gl.deleteBuffer(obj);this.resources=this.resources.filter(([type])=>type!=='buffer');this.draws=[];this.loaded=false}
+    _clearDrawBuffers(){const gl=this.gl;for(const [type,obj] of this.resources)if(type==='buffer')gl.deleteBuffer(obj);this.resources=this.resources.filter(([type])=>type!=='buffer');this.draws=[];this.worldBounds=null;this.loaded=false}
     _bind(){
       const c=this.canvas;
       this.onDown=e=>{this.drag=true;this.px=e.clientX;this.py=e.clientY;c.setPointerCapture(e.pointerId)};
       this.onMove=e=>{if(!this.drag)return;this.camera.yaw+=(e.clientX-this.px)*.007;this.camera.pitch=clamp(this.camera.pitch+(e.clientY-this.py)*.006,-1.35,.12);this.px=e.clientX;this.py=e.clientY};
-      this.onUp=()=>this.drag=false;this.onWheel=e=>{e.preventDefault();this.camera.distance=clamp(this.camera.distance*Math.exp(e.deltaY*.001),2.7,16)};
+      this.onUp=()=>this.drag=false;this.onWheel=e=>{e.preventDefault();const fitDistance=this.modelStats.fitDistance||6.6;this.camera.distance=clamp(this.camera.distance*Math.exp(e.deltaY*.001),Math.max(.1,fitDistance*.25),Math.max(16,fitDistance*4))};
       c.addEventListener('pointerdown',this.onDown);c.addEventListener('pointermove',this.onMove);c.addEventListener('pointerup',this.onUp);c.addEventListener('pointercancel',this.onUp);c.addEventListener('wheel',this.onWheel,{passive:false});
       this.observer=new ResizeObserver(()=>this.resize());this.observer.observe(c);
     }
@@ -108,21 +153,118 @@
       this._clearDrawBuffers();
       const {json,bin}=parseGLB(buffer);
       if((json.animations||[]).length||(json.skins||[]).length||(json.cameras||[]).length)throw new Error('主档包含不应存在的动画、骨骼或相机');
+      if((json.materials||[]).length>1)throw new Error('当前查看器不允许忽略多材质 GLB');
       await this._loadTextures(json,bin);
-      const gl=this.gl,bufferCache=new Map();
-      const getBuffer=viewIndex=>{if(bufferCache.has(viewIndex))return bufferCache.get(viewIndex);const bv=json.bufferViews[viewIndex],bytes=new Uint8Array(bin,bv.byteOffset||0,bv.byteLength),buf=gl.createBuffer(),target=bv.target===34963?gl.ELEMENT_ARRAY_BUFFER:gl.ARRAY_BUFFER;gl.bindBuffer(target,buf);gl.bufferData(target,bytes,gl.STATIC_DRAW);bufferCache.set(viewIndex,buf);this.resources.push(['buffer',buf]);return buf};
-      let triangles=0,vertices=0,primitives=0,boundsMin=[Infinity,Infinity,Infinity],boundsMax=[-Infinity,-Infinity,-Infinity];
-      (json.meshes||[]).forEach((mesh,meshIndex)=>(mesh.primitives||[]).forEach(primitive=>{
-        if(primitive.mode!==undefined&&primitive.mode!==4)return;
-        const name=mesh.name||`MESH_${meshIndex}`,attrs={};
-        for(const [semantic,index] of Object.entries(primitive.attributes||{})){const a=json.accessors[index],bv=json.bufferViews[a.bufferView];attrs[semantic]={buffer:getBuffer(a.bufferView),size:TYPE_SIZE[a.type],type:a.componentType,stride:bv.byteStride||0,offset:a.byteOffset||0,normalized:!!a.normalized,count:a.count};}
-        const ia=json.accessors[primitive.indices],ibv=json.bufferViews[ia.bufferView];if(ia.componentType===5125&&!this.extUint)throw new Error('当前 WebGL 不支持 32 位索引');
-        const draw={name,group:groupFor(name),attrs,index:{buffer:getBuffer(ia.bufferView),type:ia.componentType,count:ia.count,offset:ia.byteOffset||0}};
-        this.draws.push(draw);triangles+=ia.count/3;vertices+=attrs.POSITION?.count||0;primitives++;
-        const pa=json.accessors[primitive.attributes.POSITION];if(pa&&pa.min&&pa.max)for(let i=0;i<3;i++){boundsMin[i]=Math.min(boundsMin[i],pa.min[i]);boundsMax[i]=Math.max(boundsMax[i],pa.max[i])}
-      }));
-      if(Number.isFinite(boundsMin[0])){this.camera.target=boundsMin.map((v,i)=>(v+boundsMax[i])/2);this.camera.distance=Math.max(...boundsMax.map((v,i)=>v-boundsMin[i]))*1.75;}
-      this.modelStats={loaded:true,url:source,source,nodes:(json.nodes||[]).length,meshes:(json.meshes||[]).length,primitives,vertices,triangles:Math.round(triangles),animations:(json.animations||[]).length,skins:(json.skins||[]).length,cameras:(json.cameras||[]).length,textures:{...this.textureStats},normalMapActive:!!(this.textureStats.normal&&this.extDerivatives),maxTextureSize:this.maxTextureSize,dpr:Math.min(devicePixelRatio||1,2.5)};
+      const gl=this.gl,bufferCache=new Map(),accessors=json.accessors||[],bufferViews=json.bufferViews||[];
+      const meshes=json.meshes||[],nodes=json.nodes||[],scenes=json.scenes||[];
+      const getBuffer=viewIndex=>{
+        if(!Number.isInteger(viewIndex)||!bufferViews[viewIndex])throw new Error(`GLB bufferView ${viewIndex} 不存在`);
+        if(bufferCache.has(viewIndex))return bufferCache.get(viewIndex);
+        const bv=bufferViews[viewIndex],bytes=new Uint8Array(bin,bv.byteOffset||0,bv.byteLength),buf=gl.createBuffer(),target=bv.target===34963?gl.ELEMENT_ARRAY_BUFFER:gl.ARRAY_BUFFER;
+        gl.bindBuffer(target,buf);gl.bufferData(target,bytes,gl.STATIC_DRAW);bufferCache.set(viewIndex,buf);this.resources.push(['buffer',buf]);return buf;
+      };
+      if(json.scene!==undefined&&!Number.isInteger(json.scene))throw new Error('GLB 默认 scene 索引无效');
+      if(!scenes.length)throw new Error('GLB 缺少可审计的 scene');
+      if(json.scene===undefined&&scenes.length!==1)throw new Error('GLB 有多个 scene 但没有声明默认 scene');
+      const activeScene=json.scene!==undefined?json.scene:0;
+      let sceneRoots,sceneSelection;
+      const scene=scenes[activeScene];
+      if(!scene)throw new Error(`GLB 默认 scene ${activeScene} 不存在`);
+      if(scene.nodes!==undefined&&!Array.isArray(scene.nodes))throw new Error('GLB scene.nodes 无效');
+      sceneRoots=(scene.nodes||[]).slice();
+      sceneSelection=json.scene!==undefined?'declared-active-scene':'single-scene-default';
+      if(!sceneRoots.length)throw new Error('GLB 活动 scene 没有根节点');
+
+      let triangles=0,vertices=0,primitives=0;
+      const boundsMin=[Infinity,Infinity,Infinity],boundsMax=[-Infinity,-Infinity,-Infinity];
+      const visited=new Set(),activePath=new Set(),renderedMeshDefinitions=new Set();
+      const sceneNodeWorldMatrices=[],appliedWorldMatrices=[],drawInstanceManifest=[];
+      const expandWorldBounds=(accessor,world)=>{
+        const min=accessor&&accessor.min,max=accessor&&accessor.max;
+        if(!Array.isArray(min)||min.length!==3||!Array.isArray(max)||max.length!==3||[...min,...max].some(value=>!Number.isFinite(value)))throw new Error('GLB POSITION accessor 缺少有效 min/max');
+        for(let mask=0;mask<8;mask++){
+          const point=transformPoint(world,[mask&1?max[0]:min[0],mask&2?max[1]:min[1],mask&4?max[2]:min[2]]);
+          for(let axis=0;axis<3;axis++){boundsMin[axis]=Math.min(boundsMin[axis],point[axis]);boundsMax[axis]=Math.max(boundsMax[axis],point[axis])}
+        }
+      };
+      const addMeshInstance=(nodeIndex,node,world)=>{
+        const meshIndex=node.mesh;
+        if(!Number.isInteger(meshIndex)||!meshes[meshIndex])throw new Error(`GLB 节点 ${nodeIndex} 的 mesh 索引无效`);
+        const mesh=meshes[meshIndex],name=mesh.name||`MESH_${meshIndex}`,worldNormal=normalMatrix(world);
+        let instancePrimitives=0;
+        (mesh.primitives||[]).forEach((primitive,primitiveIndex)=>{
+          if(primitive.mode!==undefined&&primitive.mode!==4)throw new Error(`GLB mesh ${meshIndex} primitive ${primitiveIndex} 不是 TRIANGLES`);
+          if((primitive.targets||[]).length)throw new Error(`GLB mesh ${meshIndex} primitive ${primitiveIndex} 含未支持的 morph target`);
+          if((json.materials||[]).length===1&&primitive.material!==0)throw new Error(`GLB mesh ${meshIndex} primitive ${primitiveIndex} 没有使用唯一材质 0`);
+          if(!(json.materials||[]).length&&primitive.material!==undefined)throw new Error(`GLB mesh ${meshIndex} primitive ${primitiveIndex} 材质索引无效`);
+          const positionIndex=(primitive.attributes||{}).POSITION;
+          if(!Number.isInteger(positionIndex)||!accessors[positionIndex])throw new Error(`GLB mesh ${meshIndex} primitive ${primitiveIndex} 缺少 POSITION`);
+          if(!Number.isInteger(primitive.indices)||!accessors[primitive.indices])throw new Error(`GLB mesh ${meshIndex} primitive ${primitiveIndex} 缺少 indices`);
+          const attrs={};
+          for(const [semantic,index] of Object.entries(primitive.attributes||{})){
+            const accessor=accessors[index];
+            if(!accessor||accessor.bufferView===undefined||accessor.sparse||!TYPE_SIZE[accessor.type])throw new Error(`GLB ${semantic} accessor ${index} 不受支持`);
+            const bv=bufferViews[accessor.bufferView];
+            if(!bv)throw new Error(`GLB ${semantic} bufferView 不存在`);
+            attrs[semantic]={buffer:getBuffer(accessor.bufferView),size:TYPE_SIZE[accessor.type],type:accessor.componentType,stride:bv.byteStride||0,offset:accessor.byteOffset||0,normalized:!!accessor.normalized,count:accessor.count};
+          }
+          const indexAccessor=accessors[primitive.indices];
+          if(indexAccessor.bufferView===undefined||indexAccessor.sparse)throw new Error(`GLB indices accessor ${primitive.indices} 不受支持`);
+          if(indexAccessor.componentType===5125&&!this.extUint)throw new Error('当前 WebGL 不支持 32 位索引');
+          this.draws.push({
+            name,group:groupFor(name),attrs,nodeIndex,meshIndex,primitiveIndex,
+            worldMatrix:world,normalMatrix:worldNormal,
+            index:{buffer:getBuffer(indexAccessor.bufferView),type:indexAccessor.componentType,count:indexAccessor.count,offset:indexAccessor.byteOffset||0}
+          });
+          triangles+=indexAccessor.count/3;vertices+=attrs.POSITION.count;primitives++;instancePrimitives++;
+          expandWorldBounds(accessors[positionIndex],world);
+          drawInstanceManifest.push({
+            nodeIndex,meshIndex,primitiveIndex,mode:primitive.mode===undefined?4:primitive.mode,
+            positionAccessor:positionIndex,indexAccessor:primitive.indices,
+            vertexCount:attrs.POSITION.count,indexCount:indexAccessor.count,
+            worldMatrix:matrixSnapshot(world)
+          });
+        });
+        if(instancePrimitives){
+          renderedMeshDefinitions.add(meshIndex);
+          appliedWorldMatrices.push({
+            nodeIndex,meshIndex,nodeName:node.name||null,meshName:mesh.name||null,
+            primitiveCount:instancePrimitives,worldMatrix:matrixSnapshot(world)
+          });
+        }
+      };
+      const visitNode=(nodeIndex,parentWorld,parentNodeIndex)=>{
+        if(!Number.isInteger(nodeIndex)||!nodes[nodeIndex])throw new Error(`GLB scene 节点 ${nodeIndex} 不存在`);
+        if(activePath.has(nodeIndex))throw new Error(`GLB scene graph 在节点 ${nodeIndex} 形成循环`);
+        if(visited.has(nodeIndex))throw new Error(`GLB scene graph 重复引用节点 ${nodeIndex}`);
+        visited.add(nodeIndex);activePath.add(nodeIndex);
+        const node=nodes[nodeIndex];
+        if(node.children!==undefined&&!Array.isArray(node.children))throw new Error(`GLB 节点 ${nodeIndex} children 无效`);
+        const world=mul(parentWorld,nodeMatrix(node));
+        if(Array.from(world).some(value=>!Number.isFinite(value)))throw new Error(`GLB 节点 ${nodeIndex} world matrix 无效`);
+        sceneNodeWorldMatrices.push({
+          nodeIndex,parentNodeIndex,nodeName:node.name||null,meshIndex:Number.isInteger(node.mesh)?node.mesh:null,
+          children:(node.children||[]).slice(),worldMatrix:matrixSnapshot(world)
+        });
+        if(node.mesh!==undefined)addMeshInstance(nodeIndex,node,world);
+        for(const child of node.children||[])visitNode(child,world,nodeIndex);
+        activePath.delete(nodeIndex);
+      };
+      for(const root of sceneRoots)visitNode(root,identity(),null);
+      if(!this.draws.length||!Number.isFinite(boundsMin[0]))throw new Error('GLB 活动 scene 没有可渲染三角形');
+      this.worldBounds={min:boundsMin.slice(),max:boundsMax.slice()};
+      this.fit();
+      this.modelStats={
+        loaded:true,url:source,source,nodes:nodes.length,meshes:meshes.length,primitives,vertices,triangles:Math.round(triangles),
+        activeScene,sceneSelection,sceneRoots:sceneRoots.slice(),visitedNodeCount:visited.size,
+        renderedMeshDefinitionCount:renderedMeshDefinitions.size,meshInstanceCount:appliedWorldMatrices.length,
+        primitiveInstanceCount:primitives,sceneNodeWorldMatrices,appliedWorldMatrices,drawInstanceManifest,
+        worldBounds:{min:boundsMin.slice(),max:boundsMax.slice()},fitDistance:this.camera.distance,
+        worldBoundsPolicy:'transformed-position-accessor-minmax-corners-conservative',
+        runtimeStructureManifestContract:'active-gltf-scene-draw-instances-world-matrix-v1',
+        animations:(json.animations||[]).length,skins:(json.skins||[]).length,cameras:(json.cameras||[]).length,
+        textures:{...this.textureStats},normalMapActive:!!(this.textureStats.normal&&this.extDerivatives),maxTextureSize:this.maxTextureSize,dpr:Math.min(devicePixelRatio||1,2.5)
+      };
       const base=this.textureStats.base,textureLabel=base?` · ${base.width.toLocaleString()}×${base.height.toLocaleString()} 底色`:'';
       this.loaded=true;this.draw();this._state('ready',`已载入 ${primitives} 个可选网格 · ${Math.round(triangles).toLocaleString()} 三角面${textureLabel}${this.modelStats.normalMapActive?' · 法线贴图已启用':''}`);return this.modelStats;
     }
@@ -142,13 +284,32 @@
     _state(kind,text){if(this.options.onState)this.options.onState({kind,text,stats:this.modelStats})}
     setGroup(group,value){if(group in this.visible)this.visible[group]=!!value}
     setAuto(value){this.auto=!!value}
-    fit(){this.camera.yaw=-.76;this.camera.pitch=.28;this.camera.distance=6.6;this.camera.target=[0,.7,0]}
+    fit(){
+      this.camera.yaw=-.76;this.camera.pitch=.28;
+      if(this.worldBounds){
+        const min=this.worldBounds.min,max=this.worldBounds.max;
+        this.camera.target=min.map((value,index)=>(value+max[index])/2);
+        this.camera.distance=Math.max(.1,Math.max(...max.map((value,index)=>value-min[index]))*1.75);
+      }else{
+        this.camera.distance=6.6;this.camera.target=[0,.7,0];
+      }
+    }
     resize(){const d=Math.min(devicePixelRatio||1,2.5),w=Math.max(1,Math.floor(this.canvas.clientWidth*d)),h=Math.max(1,Math.floor(this.canvas.clientHeight*d));if(this.canvas.width!==w||this.canvas.height!==h){this.canvas.width=w;this.canvas.height=h}this.gl.viewport(0,0,w,h)}
     draw(){
       const gl=this.gl;this.resize();gl.clearColor(.09,.12,.105,1);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);if(!this.loaded)return;
-      const c=this.camera,cp=Math.cos(c.pitch),eye=[c.target[0]+Math.sin(c.yaw)*cp*c.distance,c.target[1]+Math.sin(c.pitch)*c.distance,c.target[2]+Math.cos(c.yaw)*cp*c.distance],mvp=mul(perspective(Math.PI/4,this.canvas.width/this.canvas.height,.02,100),lookAt(eye,c.target,[0,1,0]));
-      gl.useProgram(this.program);gl.uniformMatrix4fv(this.loc.mvp,false,mvp);gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,this.baseTexture);if(this.loc.base)gl.uniform1i(this.loc.base,0);gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,this.normalTexture);if(this.loc.normalMap)gl.uniform1i(this.loc.normalMap,1);if(this.loc.normalEnabled)gl.uniform1f(this.loc.normalEnabled,this.modelStats.normalMapActive?1:0);gl.uniform4f(this.loc.factor,1,1,1,1);gl.uniform1f(this.loc.alphaCut,.025);
-      for(const d of this.draws){if(!this.visible[d.group])continue;const bind=(key,loc,fallback)=>{const a=d.attrs[key];if(!a){gl.disableVertexAttribArray(loc);gl.vertexAttrib3f(loc,...fallback);return}gl.bindBuffer(gl.ARRAY_BUFFER,a.buffer);gl.enableVertexAttribArray(loc);gl.vertexAttribPointer(loc,a.size,a.type,a.normalized,a.stride,a.offset)};bind('POSITION',this.loc.position,[0,0,0]);bind('NORMAL',this.loc.normal,[0,1,0]);const uv=d.attrs.TEXCOORD_0;if(uv){gl.bindBuffer(gl.ARRAY_BUFFER,uv.buffer);gl.enableVertexAttribArray(this.loc.uv);gl.vertexAttribPointer(this.loc.uv,uv.size,uv.type,uv.normalized,uv.stride,uv.offset)}else{gl.disableVertexAttribArray(this.loc.uv);gl.vertexAttrib2f(this.loc.uv,0,0)}gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,d.index.buffer);gl.drawElements(gl.TRIANGLES,d.index.count,d.index.type,d.index.offset)}
+      const c=this.camera,cp=Math.cos(c.pitch),eye=[c.target[0]+Math.sin(c.yaw)*cp*c.distance,c.target[1]+Math.sin(c.pitch)*c.distance,c.target[2]+Math.cos(c.yaw)*cp*c.distance];
+      const viewProjection=mul(perspective(Math.PI/4,this.canvas.width/this.canvas.height,.02,Math.max(100,c.distance*4)),lookAt(eye,c.target,[0,1,0]));
+      gl.useProgram(this.program);gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,this.baseTexture);if(this.loc.base!==null)gl.uniform1i(this.loc.base,0);gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,this.normalTexture);if(this.loc.normalMap!==null)gl.uniform1i(this.loc.normalMap,1);if(this.loc.normalEnabled!==null)gl.uniform1f(this.loc.normalEnabled,this.modelStats.normalMapActive?1:0);gl.uniform4f(this.loc.factor,1,1,1,1);gl.uniform1f(this.loc.alphaCut,.025);
+      for(const d of this.draws){
+        if(!this.visible[d.group])continue;
+        gl.uniformMatrix4fv(this.loc.mvp,false,mul(viewProjection,d.worldMatrix));
+        if(this.loc.model!==null)gl.uniformMatrix4fv(this.loc.model,false,d.worldMatrix);
+        gl.uniformMatrix3fv(this.loc.normalMatrix,false,d.normalMatrix);
+        const bind=(key,loc,fallback)=>{const a=d.attrs[key];if(!a){gl.disableVertexAttribArray(loc);gl.vertexAttrib3f(loc,...fallback);return}gl.bindBuffer(gl.ARRAY_BUFFER,a.buffer);gl.enableVertexAttribArray(loc);gl.vertexAttribPointer(loc,a.size,a.type,a.normalized,a.stride,a.offset)};
+        bind('POSITION',this.loc.position,[0,0,0]);bind('NORMAL',this.loc.normal,[0,1,0]);
+        const uv=d.attrs.TEXCOORD_0;if(uv){gl.bindBuffer(gl.ARRAY_BUFFER,uv.buffer);gl.enableVertexAttribArray(this.loc.uv);gl.vertexAttribPointer(this.loc.uv,uv.size,uv.type,uv.normalized,uv.stride,uv.offset)}else{gl.disableVertexAttribArray(this.loc.uv);gl.vertexAttrib2f(this.loc.uv,0,0)}
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,d.index.buffer);gl.drawElements(gl.TRIANGLES,d.index.count,d.index.type,d.index.offset);
+      }
     }
     loop(t=0){const dt=Math.min(.05,(t-this.last)/1000||0);this.last=t;if(this.auto&&!this.drag)this.camera.yaw+=dt*.18;this.draw();this.raf=requestAnimationFrame(this._loop)}
     _runtimeFingerprint(){
@@ -158,7 +319,23 @@
       let canvasChecksum=2166136261;
       for(let i=0;i<pixels.length;i++){canvasChecksum^=pixels[i];canvasChecksum=Math.imul(canvasChecksum,16777619)}
       canvasChecksum>>>=0;
-      const structuralInputs={source:this.modelStats.source||null,meshes:this.modelStats.meshes||0,vertices:this.modelStats.vertices||0,triangles:this.modelStats.triangles||0};
+      const structuralInputs={
+        contract:this.modelStats.runtimeStructureManifestContract||null,
+        activeScene:this.modelStats.activeScene,
+        sceneSelection:this.modelStats.sceneSelection||null,
+        sceneRoots:(this.modelStats.sceneRoots||[]).slice(),
+        visitedNodeCount:this.modelStats.visitedNodeCount||0,
+        meshes:this.modelStats.meshes||0,
+        renderedMeshDefinitionCount:this.modelStats.renderedMeshDefinitionCount||0,
+        meshInstanceCount:this.modelStats.meshInstanceCount||0,
+        primitiveInstanceCount:this.modelStats.primitiveInstanceCount||0,
+        vertices:this.modelStats.vertices||0,
+        triangles:this.modelStats.triangles||0,
+        worldBounds:this.modelStats.worldBounds||null,
+        worldBoundsPolicy:this.modelStats.worldBoundsPolicy||null,
+        appliedWorldMatrices:this.modelStats.appliedWorldMatrices||[],
+        drawInstanceManifest:this.modelStats.drawInstanceManifest||[]
+      };
       const fingerprintInputs={...structuralInputs,canvasChecksum};
       return {
         canvasChecksum,

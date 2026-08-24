@@ -58,9 +58,10 @@ V5.5.0 墙面与瓦顶生产验收页为 `surface-production-lab.html`。它使�
 18. 大理与乌龙公开档只降采样嵌入贴图以满足 GitHub Pages 体量限制，顶点、索引、网格数量和三角面保持不变；源文件哈希、几何审计和网页加载验收见 `data/evidence/` 与 `data/qa/`。
 19. V5.5.0 程序化一颗印生成七个有真实几何的独立屋面单元，屋面包含檩条、椽列、基层、板瓦、筒瓦、檐端与脊部七层。板瓦与筒瓦使用独立闭合曲面和实例批次，筒瓦列数按相邻板瓦缝推导，滴水与勾头分别对应板瓦列与筒瓦列。
 20. 瓦顶使用稳定低频场生成日晒、灰尘、雨蚀、苔藓、磨损、缺瓦、破损与连续修补片区；墙面具有土体、抹灰、裸土、草纤维、石勒脚、砖包角、返潮、雨痕、剥落、裂缝、污渍和修补实体层。
-21. 活动门窗采用真实铰轴父组；人物路线穿过南门并使用一座 8+8 双跑楼梯，楼梯含下跑、中间平台、反向上跑、上下落脚平台与连续扶手。Surface QA 在 33 个真实渲染帧中读取人物世界坐标，同时保留 0.08 m 或更密的碰撞和支撑审计。
-22. 根目录 Actions 工作流运行静态验证、V5.5.0 Playwright 冒烟和完整生产线浏览器回归，并输出完整建筑、同结构同镜头 A/B、檐口和脊部近景、屋面爆炸、墙瓦风化、门窗、人物路线、8+8 楼梯及移动端截图。团结乡、大理、乌龙村分别真实加载、渲染并保存独立画面。
-23. 檩条、椽列、板瓦、筒瓦和脊部收边使用共享 Geometry 与逐坡实例批次。当前静态场景审计为 944 个估算网格/绘制、669696 三角面；桌面和 390×844 移动端的 SwiftShader FPS 必须在浏览器工作流中达到 5。
+21. 活动门窗采用真实铰轴父组；人物路线穿过南门并使用一座 8+8 双跑楼梯，楼梯含下跑、中间平台、反向上跑、上下落脚平台与连续扶手。Surface QA 请求至少 36 个渲染完成帧并硬性要求至少 30 帧、25 个唯一世界位置；本轮一次隔离本地验收取得 57 帧/57 个唯一位置。路线另以 300 个真实落脚/支撑样本及 335 个加密胶囊扫掠点保持最大 0.079874 m 的碰撞采样间距。
+22. 根目录 Actions 工作流运行静态验证、V5.5.0 Playwright 冒烟和完整生产线浏览器回归，并输出覆盖 11 类检查的 16 张 Surface 截图：完整建筑、同结构同镜头 A/B、檐口、七层爆炸、脊部和靠墙收口、墙瓦风化、门窗、人物路线、8+8 楼梯及移动端。团结乡、大理、乌龙村分别真实加载、渲染并保存独立画面。
+23. 檩条、椽列、板瓦、筒瓦和脊部收边使用共享 Geometry 与逐坡实例批次；墙体结构与八类表面语义合并为 9 个保留 RGB 顶点色和独立 alpha 的静态索引批次，裂缝使用单一 InstancedMesh，草纤维使用单一静态顶点批次。渲染 Mesh 的静态局部矩阵被冻结，门窗铰轴、人物和爆炸层父组保持活动。当前完整场景审计为 574612 个 renderer 三角面、574820 个场景三角面、13061 个实例、407 个 draw calls 和 407 个 mesh；本轮一次单次无重试 SwiftShader 样本为桌面 7.48 FPS、390×844 移动端 8.23 FPS，工作流门槛均为 5 FPS。
+24. 同结构 A/B 的左侧实际执行冻结的 `threejs/v544/YunnanMaterialFactory.js`，右侧执行当前 V5.5.0 材质与风化工厂；QA 从真实编译后的 shader 读取两侧运行时证据。七屋面坡数严格固定为 `2+2+2+2+1+3+2=14`，16 张截图逐张解码并要求非空像素与颜色变化。
 
 ## 工程目录
 
@@ -78,20 +79,22 @@ AGENTS.md                          Codex 与后续开发窗口的强制规则
 PROJECT_STATE.md                   当前项目状态与下一步
 ```
 
-## 先运行验证
+## 提交前强制验证
 
 ```bash
 python tools/validate.py
-```
-
-可选浏览器测试：
-
-```bash
-python -m pip install -r requirements-dev.txt
-python -m playwright install chromium
+node --check assets/js/surface-production-lab.js
+node --check threejs/YunnanCourtyardProduction.js
+node --check threejs/YunnanMaterialFactory.js
+node --check threejs/YunnanRoofSurfaceSystem.js
+node --check threejs/YunnanWallSurfaceSystem.js
 python tools/surface_production_smoke.py
 python tools/browser_smoke_test.py
+python tools/make_release.py
+git diff --check origin/main...HEAD
 ```
+
+浏览器命令需要先安装 `requirements-dev.txt` 和 Playwright Chromium。任一命令、Surface QA、完整生产线回归、Pages 部署或公开验证失败/跳过时，工作流保持失败。
 
 ## 当前资料边界
 

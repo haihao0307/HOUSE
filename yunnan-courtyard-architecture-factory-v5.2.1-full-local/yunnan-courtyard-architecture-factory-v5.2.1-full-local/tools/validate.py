@@ -161,7 +161,7 @@ if surface_script.is_file():
         "live-instance-matrices-buffer-geometry-and-world-bounds",
         "live-wall-mesh-world-bounds",
         "live-actor-position-route-polyline-wall-aabbs-and-walkable-aabbs",
-        "live-geometry-v1",
+        "live-geometry-v2-position-index",
     ]:
         if token not in surface_source:
             errors.append(f"surface runtime evidence contract missing: {token}")

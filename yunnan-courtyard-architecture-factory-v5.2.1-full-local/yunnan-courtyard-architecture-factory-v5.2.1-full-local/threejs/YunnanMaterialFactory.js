@@ -77,7 +77,9 @@ export const YUNNAN_MATERIAL_PROFILES = Object.freeze({
 
 const WALL_FRAGMENT = `
 float yunnanHash(vec3 p){
-  return fract(sin(dot(p, vec3(127.1, 311.7, 74.7))) * 43758.5453123);
+  vec3 p3=fract(p*0.1031);
+  p3+=dot(p3,p3.yzx+33.33);
+  return fract((p3.x+p3.y)*p3.z);
 }
 float yunnanNoise(vec3 p){
   vec3 i=floor(p); vec3 f=fract(p); f=f*f*(3.0-2.0*f);
@@ -95,14 +97,12 @@ float yunnanNoise(vec3 p){
 }
 float yunnanFbm(vec3 p){
   float v=0.0; float a=0.5;
-  for(int i=0;i<3;i++){ v += a*yunnanNoise(p); p=p*2.03+vec3(17.0,5.0,11.0); a*=0.5; }
-  // Preserve the former four-octave amplitude range while dropping only the
-  // sub-pixel 0.0625 octave. Wall/tile fine detail still comes from the
-  // separate meso/fine noise channels below, so every production weathering
-  // semantic remains active with eight fewer sine hashes per FBM sample.
-  return v*1.0714285714285714;
+  for(int i=0;i<2;i++){ v += a*yunnanNoise(p); p=p*2.03+vec3(17.0,5.0,11.0); a*=0.5; }
+  return v;
 }
 `;
+
+const YUNNAN_SHADER_REVISION = 'v550-r5-sine-free-hash-two-octave-fbm-mode-key-and-instance-world-position';
 
 function color(value, fallback) {
   return new THREE.Color(value || fallback);
@@ -130,14 +130,13 @@ function injectWeathering(material, mode, options = {}) {
     yunnanExactDimensionsLocked: false,
     yunnanSurfaceChannels: { ...channels },
     yunnanSurfaceFingerprint: JSON.stringify(Object.keys(channels).sort().map((key) => [key, channels[key]])),
-    yunnanShaderRuntime: {
-      fbmOctaves: 3,
-      formerFbmOctaves: 4,
-      amplitudeNormalization: 1.0714285714285714,
-      preservedFineNoiseChannels: true,
-      productionPath: true,
-    },
+    yunnanShaderRevision: YUNNAN_SHADER_REVISION,
+    yunnanProgramCacheKey: `${YUNNAN_SHADER_REVISION}:${mode}`,
   };
+  // Three.js otherwise keys all of these closures by the identical
+  // onBeforeCompile function source and may reuse the first compiled branch
+  // (wall/timber/tile/openingTimber) for every later material.
+  material.customProgramCacheKey = () => `${YUNNAN_SHADER_REVISION}:${mode}`;
   material.onBeforeCompile = (shader) => {
     shader.uniforms.uYunnanSeed = { value: seed };
     shader.uniforms.uYunnanWeathering = { value: Number(options.weathering ?? profile.weathering) };
@@ -159,7 +158,15 @@ function injectWeathering(material, mode, options = {}) {
     );
     shader.vertexShader = shader.vertexShader.replace(
       '#include <begin_vertex>',
-      '#include <begin_vertex>\nvYunnanWorldPosition=(modelMatrix*vec4(transformed,1.0)).xyz;'
+      `#include <begin_vertex>
+       vec4 yunnanWorldPosition=vec4(transformed,1.0);
+       #ifdef USE_BATCHING
+         yunnanWorldPosition=batchingMatrix*yunnanWorldPosition;
+       #endif
+       #ifdef USE_INSTANCING
+         yunnanWorldPosition=instanceMatrix*yunnanWorldPosition;
+       #endif
+       vYunnanWorldPosition=(modelMatrix*yunnanWorldPosition).xyz;`
     );
     shader.fragmentShader = shader.fragmentShader.replace(
       '#include <common>',
@@ -193,17 +200,39 @@ function injectWeathering(material, mode, options = {}) {
       float dampMask=(1.0-localHeight)*(0.35+0.65*macro)*uYunnanRisingDamp;
       float patinaMask=smoothstep(0.42,0.88,fine)*uYunnanPatina;
       float edgeMask=smoothstep(0.62,0.94,abs(fine-0.5)*2.0)*uYunnanEdgeWear;
+      float grainLine=0.5+0.5*sin(
+        vYunnanWorldPosition.x*48.0+vYunnanWorldPosition.y*9.0
+        +vYunnanWorldPosition.z*37.0+uYunnanSeed*0.071
+        +yunnanNoise(yp*9.0)*3.2
+      );
+      float rainStreak=smoothstep(0.64,0.91,
+        yunnanNoise(vec3(vYunnanWorldPosition.x*18.0+uYunnanSeed*0.01,
+          vYunnanWorldPosition.y*2.1,vYunnanWorldPosition.z*18.0))
+      )*uYunnanRainExposure;
+      float runoffColumn=smoothstep(0.58,0.84,
+        yunnanNoise(vec3(vYunnanWorldPosition.x*24.0,
+          uYunnanSeed*0.037,vYunnanWorldPosition.z*24.0))
+      )*(0.35+0.65*(1.0-localHeight))*uYunnanRainExposure;
+      float grainGroove=smoothstep(0.66,0.91,grainLine)*uYunnanWeathering;
+      float patinaFleck=smoothstep(0.68,0.90,
+        yunnanNoise(yp*19.0+vec3(2.0,17.0,7.0))
+      )*uYunnanPatina*uYunnanWeathering;
       vec3 sunBleached=vec3(0.48,0.39,0.31);
       vec3 rainDark=vec3(0.20,0.145,0.11);
       vec3 handPatina=vec3(0.16,0.105,0.075);
       vec3 dampBrown=vec3(0.22,0.18,0.14);
       vec3 replacementWarm=vec3(0.43,0.30,0.21);
-      diffuseColor.rgb=mix(diffuseColor.rgb,sunBleached,sunMask*0.24);
-      diffuseColor.rgb=mix(diffuseColor.rgb,rainDark,rainMask*0.20);
-      diffuseColor.rgb=mix(diffuseColor.rgb,handPatina,patinaMask*0.22);
-      diffuseColor.rgb=mix(diffuseColor.rgb,dampBrown,dampMask*0.36);
-      diffuseColor.rgb=mix(diffuseColor.rgb,replacementWarm,uYunnanReplacementAge*0.34);
-      diffuseColor.rgb*=1.0-edgeMask*0.16;
+      diffuseColor.rgb=mix(diffuseColor.rgb,sunBleached,sunMask*0.34);
+      diffuseColor.rgb=mix(diffuseColor.rgb,rainDark,rainMask*0.32);
+      diffuseColor.rgb=mix(diffuseColor.rgb,handPatina,patinaMask*0.34);
+      diffuseColor.rgb=mix(diffuseColor.rgb,dampBrown,dampMask*0.48);
+      diffuseColor.rgb=mix(diffuseColor.rgb,replacementWarm,uYunnanReplacementAge*0.52);
+      diffuseColor.rgb*=1.0+(grainLine-0.5)*0.54*uYunnanWeathering;
+      diffuseColor.rgb=mix(diffuseColor.rgb,rainDark,rainStreak*0.16*uYunnanWeathering);
+      diffuseColor.rgb=mix(diffuseColor.rgb,rainDark,grainGroove*(0.12+0.28*uYunnanRainExposure));
+      diffuseColor.rgb=mix(diffuseColor.rgb,dampBrown,runoffColumn*0.24*uYunnanWeathering);
+      diffuseColor.rgb=mix(diffuseColor.rgb,handPatina,patinaFleck*0.22);
+      diffuseColor.rgb*=1.0-edgeMask*0.22;
     ` : mode === 'timber' ? `
       #include <color_fragment>
       vec3 yp=vYunnanWorldPosition*0.42+vec3(uYunnanSeed*0.02);
@@ -239,6 +268,28 @@ function injectWeathering(material, mode, options = {}) {
       #include <color_fragment>
     `;
     shader.fragmentShader = shader.fragmentShader.replace('#include <color_fragment>', replacement);
+    const expectedModeToken = {
+      wall: 'vec3 warmPatch',
+      timber: 'float sheltered',
+      tile: 'vec3 instanceBase',
+      openingTimber: 'float grainGroove',
+    }[mode] || '#include <color_fragment>';
+    material.userData.yunnanCompiledShaderEvidence = {
+      revision: YUNNAN_SHADER_REVISION,
+      mode,
+      programCacheKey: material.customProgramCacheKey(),
+      fragmentHasExpectedModeBranch: shader.fragmentShader.includes(expectedModeToken),
+      fragmentHasOpeningGrainGroove: shader.fragmentShader.includes('float grainGroove'),
+      fragmentHasOpeningRunoffColumn: shader.fragmentShader.includes('float runoffColumn'),
+      fragmentHasTileBranch: shader.fragmentShader.includes('vec3 instanceBase'),
+      fragmentUsesSineFreeHash: shader.fragmentShader.includes('p3=fract(p*0.1031)')
+        && !shader.fragmentShader.includes('sin(dot(p'),
+      fragmentFbmOctaveCount: shader.fragmentShader.includes('for(int i=0;i<2;i++)') ? 2 : null,
+      vertexHasInstanceWorldTransform: shader.vertexShader.includes(
+        'yunnanWorldPosition=instanceMatrix*yunnanWorldPosition',
+      ),
+      evidenceSource: 'actual-onBeforeCompile-transformed-shader-source',
+    };
     material.userData.yunnanShader = shader;
   };
   material.needsUpdate = true;
@@ -320,9 +371,10 @@ export function createDoorOpeningMaterial(options = {}) {
 export function createYunnanMaterialSet(options = {}) {
   const seed = seedValue(options.seed ?? 17);
   const openingEnabled = options.openingWeathering?.enabled !== false;
-  const makeOpening = (role, offset, defaults) => createWeatheredOpeningTimberMaterial({
+  const makeOpening = (role, offset, colorValue, defaults) => createWeatheredOpeningTimberMaterial({
     seed: seed + offset,
     openingRole: role,
+    color: openingEnabled ? colorValue : '#604637',
     weathering: openingEnabled ? 0.72 : 0,
     exposure: openingEnabled ? 0.62 : 0,
     surfaceChannels: openingEnabled
@@ -332,11 +384,11 @@ export function createYunnanMaterialSet(options = {}) {
   return {
     wall: createWeatheredEarthWallMaterial({ seed, ...(options.wall || {}) }),
     timber: createAgedTimberMaterial({ seed: seed + 19, ...(options.timber || {}) }),
-    doorLeaf: makeOpening('doorLeaf', 71, { sunExposure: 0.62, rainExposure: 0.44, patina: 0.58, risingDamp: 0.24, edgeWear: 0.46, replacementAge: 0 }),
-    windowLeaf: makeOpening('windowLeaf', 73, { sunExposure: 0.68, rainExposure: 0.52, patina: 0.34, risingDamp: 0.08, edgeWear: 0.42, replacementAge: 0 }),
-    openingFrame: makeOpening('openingFrame', 79, { sunExposure: 0.48, rainExposure: 0.40, patina: 0.46, risingDamp: 0.18, edgeWear: 0.38, replacementAge: 0 }),
-    openingSill: makeOpening('openingSill', 83, { sunExposure: 0.52, rainExposure: 0.76, patina: 0.38, risingDamp: 0.28, edgeWear: 0.56, replacementAge: 0 }),
-    replacementTimber: makeOpening('replacementPart', 89, { sunExposure: 0.28, rainExposure: 0.30, patina: 0.12, risingDamp: 0.08, edgeWear: 0.18, replacementAge: 0.86 }),
+    doorLeaf: makeOpening('doorLeaf', 71, '#5b3d2e', { sunExposure: 0.62, rainExposure: 0.44, patina: 0.58, risingDamp: 0.24, edgeWear: 0.46, replacementAge: 0 }),
+    windowLeaf: makeOpening('windowLeaf', 73, '#735441', { sunExposure: 0.68, rainExposure: 0.52, patina: 0.34, risingDamp: 0.08, edgeWear: 0.42, replacementAge: 0 }),
+    openingFrame: makeOpening('openingFrame', 79, '#49382f', { sunExposure: 0.48, rainExposure: 0.40, patina: 0.46, risingDamp: 0.18, edgeWear: 0.38, replacementAge: 0 }),
+    openingSill: makeOpening('openingSill', 83, '#332b27', { sunExposure: 0.52, rainExposure: 0.76, patina: 0.38, risingDamp: 0.28, edgeWear: 0.56, replacementAge: 0 }),
+    replacementTimber: makeOpening('replacementPart', 89, '#9a6844', { sunExposure: 0.28, rainExposure: 0.30, patina: 0.12, risingDamp: 0.08, edgeWear: 0.18, replacementAge: 0.86 }),
     // Keep the open pan channels cool/lighter than the timber underlay and the
     // cover caps slightly warmer.  Instance weathering still supplies all
     // seeded variation; this base separation makes the real concave/convex
