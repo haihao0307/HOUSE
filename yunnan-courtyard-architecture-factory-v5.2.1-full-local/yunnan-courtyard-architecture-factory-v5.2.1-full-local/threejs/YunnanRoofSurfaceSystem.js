@@ -292,6 +292,16 @@ function validateComputedSlope(slope, roof, strictTopology) {
   failUnless(audit.panGeometryTriangleCount >= 52 && audit.coverGeometryTriangleCount >= 52, 'tile-shell-triangle-count-too-low');
   failUnless(audit.panCrossSectionCurvatureM < 0, 'pan-not-concave');
   failUnless(audit.coverCrossSectionCurvatureM > 0, 'cover-not-convex');
+  failUnless(Number.isFinite(audit.panCrossSectionRiseM)
+    && Math.abs(audit.panCrossSectionCurvatureM + audit.panCrossSectionRiseM) <= 1e-6,
+  'pan-rise-not-backed-by-geometry');
+  failUnless(Number.isFinite(audit.coverCrossSectionRiseM)
+    && Math.abs(audit.coverCrossSectionCurvatureM - audit.coverCrossSectionRiseM) <= 1e-6,
+  'cover-rise-not-backed-by-geometry');
+  failUnless(Number.isFinite(audit.panUnderlayClearanceM) && audit.panUnderlayClearanceM > 0.002,
+    'pan-shell-buried-in-underlay');
+  failUnless(Number.isFinite(audit.coverUnderlayClearanceM) && audit.coverUnderlayClearanceM > 0.002,
+    'cover-shell-buried-in-underlay');
   failUnless(audit.hookHeadFrontPlate === true && audit.hookHeadVertexCount >= 20, 'hook-head-not-physical-front-plate');
   failUnless(Number.isFinite(audit.measuredPitch) && Math.abs(audit.measuredPitch - expectedPitch) <= 1e-6, 'instance-pitch-mismatch');
   failUnless(audit.drainageDirectionDot >= 0.999999, 'instance-drainage-direction-mismatch');
@@ -342,6 +352,9 @@ function validateComputedSlope(slope, roof, strictTopology) {
     verticalRidgeTileInstanceCount: audit.verticalRidgeTileInstanceCount,
     hookHeadDimensionsM: audit.hookHeadDimensionsM,
     hookHeadVertexCount: audit.hookHeadVertexCount,
+    panUnderlayClearanceM: audit.panUnderlayClearanceM,
+    coverUnderlayClearanceM: audit.coverUnderlayClearanceM,
+    normalProjectionEvidence: audit.normalProjectionEvidence,
     tileGeometry: {
       panVertices: audit.panGeometryVertexCount,
       panTriangles: audit.panGeometryTriangleCount,
@@ -509,13 +522,18 @@ export function registerYunnanRoofSurfaces(root, profile = {}) {
     framingRadiusM: Math.max(...audit.sizeM) * 0.5,
   } : null;
   const primaryRoof = unitChecks.find((check) => check.roofUnitId === 'mainHouseDoublePitch');
+  const galleryLeanToRoof = unitChecks.find((check) => check.roofUnitId === 'mainGalleryLeanTo');
   viewTargets.primaryEaveCloseup = framingTarget(
-    primaryRoof?.slopeAudits?.[0]?.worldBounds?.eave,
-    'actual-main-roof-eave-instance-matrices-and-world-bounds',
+    primaryRoof?.slopeAudits?.[0]?.worldBounds?.eaveDetail,
+    'actual-main-roof-central-five-columns-last-three-courses-and-eave-instances',
   );
   viewTargets.primaryRidgeCloseup = framingTarget(
     primaryRoof?.sectionRidgeAudits?.[0]?.semanticBounds?.principalRidge,
     'actual-main-roof-principal-ridge-instance-matrices-and-world-bounds',
+  );
+  viewTargets.leanToWallAbutmentCloseup = framingTarget(
+    galleryLeanToRoof?.sectionRidgeAudits?.find((audit) => audit.semanticBounds?.wallAbutment)?.semanticBounds?.wallAbutment,
+    'actual-main-gallery-lean-to-wall-abutment-instance-matrices-and-world-bounds',
   );
   root.userData.roofSurfaceSystem = {
     version: '5.5.0',
@@ -581,7 +599,7 @@ export function setYunnanRoofLayerVisibility(root, layerId, visible) {
 }
 
 export function setYunnanRoofExploded(root, enabledOrDistance = true) {
-  const distance = typeof enabledOrDistance === 'number' ? Math.max(0, enabledOrDistance) : enabledOrDistance ? 0.16 : 0;
+  const distance = typeof enabledOrDistance === 'number' ? Math.max(0, enabledOrDistance) : enabledOrDistance ? 0.42 : 0;
   let changed = 0;
   root.traverse((object) => {
     const layerId = object.userData?.roofLayerId;

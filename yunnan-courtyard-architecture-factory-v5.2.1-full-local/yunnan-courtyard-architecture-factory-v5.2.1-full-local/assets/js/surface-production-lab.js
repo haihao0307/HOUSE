@@ -53,6 +53,8 @@ let frameCount = 0;
 let productionRenderSerial = 0;
 let fpsWindowStarted = performance.now();
 let sampledFps = 0;
+const FPS_SAMPLE_WINDOW_MS = 1500;
+const fpsSamples = [];
 let activePreset = 'museum1940sBalanced';
 let tourTimer = null;
 let visitorAnimationFrame = null;
@@ -61,6 +63,8 @@ let frozenV544RuntimeCache = null;
 let activeCameraId = 'overview';
 let activeCameraEvidence = null;
 let qaRouteOverlay = null;
+let qaDisplayTransaction = null;
+let qaDisplaySummary = { mode: 'none', active: false };
 
 function buildEnvironment(scene) {
   scene.background = new THREE.Color(LIGHT_CONTRACT.background);
@@ -83,7 +87,10 @@ function createView(element, baseline) {
     alpha: false,
     powerPreference: 'high-performance',
   });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.25));
+  // Keep the two full-building canvases legible while bounding fill-rate cost
+  // on software WebGL. Geometry, materials and interaction sampling remain at
+  // full fidelity; only the internal drawing buffer is scaled.
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 0.8));
   renderer.shadowMap.enabled = false;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -199,8 +206,15 @@ function renderFrame(now) {
   }
   if (renderedProduction) frameCount += 1;
   const elapsed = now - fpsWindowStarted;
-  if (elapsed >= 1500) {
+  if (elapsed >= FPS_SAMPLE_WINDOW_MS) {
     sampledFps = frameCount * 1000 / elapsed;
+    fpsSamples.push({
+      fps: Number(sampledFps.toFixed(4)),
+      renderedFrames: frameCount,
+      elapsedMs: Number(elapsed.toFixed(3)),
+      pixelRatio: productionView.renderer.getPixelRatio(),
+    });
+    if (fpsSamples.length > 12) fpsSamples.shift();
     frameCount = 0;
     fpsWindowStarted = now;
     updateQuality();
@@ -242,6 +256,25 @@ function updateMetrics(view, element) {
 function updateQuality() {
   const stats = productionView.model().userData.stats;
   document.querySelector('#quality').textContent = `FPS ${sampledFps.toFixed(1)} · ${compactNumber(stats.triangleCount)} triangles · ${stats.instanceCount} instances · ${stats.drawCallEstimate} draw calls`;
+}
+
+function performanceEvidence() {
+  // The first window includes shader compilation and scene warm-up. Require
+  // two subsequent complete windows so acceptance reflects stable rendering.
+  const steadySamples = fpsSamples.slice(1);
+  const recentSteadySamples = steadySamples.slice(-2);
+  const recentSteadyFps = recentSteadySamples.map((sample) => sample.fps);
+  return {
+    sampleWindowMs: FPS_SAMPLE_WINDOW_MS,
+    sampleCount: fpsSamples.length,
+    steadySampleCount: steadySamples.length,
+    samples: fpsSamples.map((sample) => ({ ...sample })),
+    recentSteadyFps,
+    stableFps: recentSteadyFps.length === 2 ? Math.min(...recentSteadyFps) : 0,
+    averageSteadyFps: recentSteadyFps.length
+      ? recentSteadyFps.reduce((sum, value) => sum + value, 0) / recentSteadyFps.length
+      : 0,
+  };
 }
 
 function updateStatus() {
@@ -323,8 +356,10 @@ function resolveEaveQACamera() {
   const downhill = eaveCenter.clone().sub(detailCenter).setY(0);
   if (downhill.lengthSq() < 1e-8) downhill.set(0, 0, -1);
   downhill.normalize();
-  const direction = downhill.clone().add(new THREE.Vector3(0, 0.34, 0)).normalize();
-  const camera = fitCameraToBounds(detailBounds, direction, 1.15, new THREE.Vector3(0, 0.02, 0));
+  const across = new THREE.Vector3(-downhill.z, 0, downhill.x);
+  const direction = downhill.clone().multiplyScalar(0.72)
+    .addScaledVector(across, 0.38).add(new THREE.Vector3(0, 0.78, 0)).normalize();
+  const camera = fitCameraToBounds(detailBounds, direction, 1.02, downhill.clone().multiplyScalar(-0.16).add(new THREE.Vector3(0, 0.03, 0)));
   return {
     ...camera,
     evidence: {
@@ -343,14 +378,15 @@ function resolveRidgeQACamera() {
     if (!object.isMesh || ancestorValue(object, 'roofUnitId', model) !== 'mainHouseDoublePitch') return;
     if (object.userData?.ridgeSemantic) features.push(object);
   });
-  const principal = features.filter((object) => object.userData.ridgeSemantic === 'principalRidge')
+  const principal = features.filter((object) => object.userData.ridgeSemantic === 'principalRidge'
+    && ancestorValue(object, 'roofUnitId', model) === 'mainHouseDoublePitch')
     .sort((a, b) => new THREE.Box3().setFromObject(b).getSize(new THREE.Vector3()).lengthSq()
       - new THREE.Box3().setFromObject(a).getSize(new THREE.Vector3()).lengthSq())[0];
   const ridgeBounds = principal ? new THREE.Box3().setFromObject(principal) : new THREE.Box3().setFromObject(model);
   const size = ridgeBounds.getSize(new THREE.Vector3());
   const axis = size.x >= size.z ? new THREE.Vector3(1, 0, 0) : new THREE.Vector3(0, 0, 1);
   const endpoint = ridgeBounds.getCenter(new THREE.Vector3()).addScaledVector(axis, -Math.max(size.x, size.z) * 0.5);
-  const nearbyBounds = new THREE.Box3().setFromCenterAndSize(endpoint, new THREE.Vector3(2.2, 2.2, 2.2));
+  const nearbyBounds = new THREE.Box3().setFromCenterAndSize(endpoint, new THREE.Vector3(4.0, 3.5, 4.0));
   const featureBounds = new THREE.Box3();
   const semantics = new Set();
   features.forEach((object) => {
@@ -364,7 +400,7 @@ function resolveRidgeQACamera() {
   const outward = axis.clone().negate();
   const side = new THREE.Vector3(-outward.z, 0, outward.x);
   const direction = outward.multiplyScalar(0.78).addScaledVector(side, 0.42).add(new THREE.Vector3(0, 0.72, 0));
-  const camera = fitCameraToBounds(featureBounds, direction, 1.35);
+  const camera = fitCameraToBounds(featureBounds, direction, 1.08);
   return {
     ...camera,
     evidence: {
@@ -375,11 +411,34 @@ function resolveRidgeQACamera() {
   };
 }
 
+function resolveWallAbutmentQACamera() {
+  const model = productionView.model();
+  model.updateMatrixWorld(true);
+  const abutments = [];
+  model.traverse((object) => {
+    if (object.isMesh && object.userData?.ridgeSemantic === 'wallAbutment') abutments.push(object);
+  });
+  const target = abutments.sort((a, b) => new THREE.Box3().setFromObject(a).getSize(new THREE.Vector3()).lengthSq()
+    - new THREE.Box3().setFromObject(b).getSize(new THREE.Vector3()).lengthSq())[0];
+  const bounds = target ? new THREE.Box3().setFromObject(target) : new THREE.Box3().setFromObject(model);
+  const size = bounds.getSize(new THREE.Vector3());
+  const along = size.x >= size.z ? new THREE.Vector3(0, 0, 1) : new THREE.Vector3(1, 0, 0);
+  const camera = fitCameraToBounds(bounds, along.add(new THREE.Vector3(0, 0.62, 0)), 0.95);
+  return {
+    ...camera,
+    evidence: {
+      source: 'live-wall-abutment-world-bounds', featureSemantics: ['wallAbutment'],
+      roofUnitId: target ? ancestorValue(target, 'roofUnitId', model) : null,
+      bounds: cameraBoundsEvidence(bounds),
+    },
+  };
+}
+
 function resolveStairQACamera() {
   const stair = productionView.model().getObjectByName('stair_STAIR-WEST-01');
   const bounds = stair ? new THREE.Box3().setFromObject(stair) : new THREE.Box3().setFromObject(productionView.model());
-  const direction = new THREE.Vector3(1, 0.34, -0.9);
-  const camera = fitCameraToBounds(bounds, direction, 1.18, new THREE.Vector3(0, 0.18, 0));
+  const direction = new THREE.Vector3(1, 0.48, -0.82);
+  const camera = fitCameraToBounds(bounds, direction, 0.96, new THREE.Vector3(0, 0.12, 0));
   return {
     ...camera,
     evidence: { source: 'live-stair-STair-west-01-world-bounds', stairId: 'STAIR-WEST-01', bounds: cameraBoundsEvidence(bounds) },
@@ -427,7 +486,8 @@ function resolveOpeningsQACamera() {
   const modelCenter = new THREE.Box3().setFromObject(model).getCenter(new THREE.Vector3());
   const outward = bounds.getCenter(new THREE.Vector3()).sub(modelCenter).setY(0);
   if (outward.lengthSq() < 1e-8) outward.set(0, 0, -1);
-  const camera = fitCameraToBounds(bounds, outward.add(new THREE.Vector3(0, 0.16, 0)), 1.3);
+  const side = new THREE.Vector3(-outward.z, 0, outward.x).normalize();
+  const camera = fitCameraToBounds(bounds, outward.normalize().multiplyScalar(0.9).addScaledVector(side, 0.24).add(new THREE.Vector3(0, 0.22, 0)), 0.92);
   return {
     ...camera,
     evidence: {
@@ -441,9 +501,16 @@ function resolveOpeningsQACamera() {
 function resolveCamera(id) {
   if (id === 'qaEave' || id === 'eave') return resolveEaveQACamera();
   if (id === 'qaRidge') return resolveRidgeQACamera();
+  if (id === 'qaWallAbutment') return resolveWallAbutmentQACamera();
   if (id === 'qaStair' || id === 'stair') return resolveStairQACamera();
   if (id === 'qaRoute') return resolveRouteQACamera();
   if (id === 'qaOpenings') return resolveOpeningsQACamera();
+  if (id === 'qaExploded') {
+    const roof = productionView.model().children.find((child) => child.userData?.layer === 'roof-production');
+    const bounds = roof ? new THREE.Box3().setFromObject(roof) : new THREE.Box3().setFromObject(productionView.model());
+    const camera = fitCameraToBounds(bounds, new THREE.Vector3(0.88, 0.72, 1), 1.05);
+    return { ...camera, evidence: { source: 'live-separated-roof-layer-world-bounds', bounds: cameraBoundsEvidence(bounds) } };
+  }
   const preset = CAMERA_PRESETS[id];
   if (!preset) throw new Error(`Unknown camera preset: ${id}`);
   return {
@@ -451,6 +518,83 @@ function resolveCamera(id) {
     target: new THREE.Vector3().fromArray(preset.target),
     evidence: { source: 'declared-camera-preset', presetId: id },
   };
+}
+
+function restoreQADisplayState() {
+  if (!qaDisplayTransaction) return { mode: 'none', active: false, restored: true, restoredObjectCount: 0 };
+  qaDisplayTransaction.entries.forEach(({ object, visible, position }) => {
+    object.visible = visible;
+    object.position.copy(position);
+  });
+  const restoredObjectCount = qaDisplayTransaction.entries.length;
+  qaDisplayTransaction = null;
+  qaDisplaySummary = { mode: 'none', active: false, restored: true, restoredObjectCount };
+  productionView.model().updateMatrixWorld(true);
+  productionView.needsRender = true;
+  return { ...qaDisplaySummary };
+}
+
+function setQADisplayState(mode = 'none') {
+  restoreQADisplayState();
+  if (mode === 'none') return { ...qaDisplaySummary };
+  const model = productionView.model();
+  const entries = [];
+  const remember = (object) => {
+    if (!entries.some((entry) => entry.object === object)) entries.push({ object, visible: object.visible, position: object.position.clone() });
+  };
+  if (mode === 'ridge') {
+    model.traverse((object) => {
+      if (!object.isGroup) return;
+      const roofLayerId = object.userData?.roofLayerId;
+      if (roofLayerId && roofLayerId !== 'ridgeAndClosures') {
+        remember(object);
+        object.visible = false;
+      }
+    });
+  } else if (mode === 'stair') {
+    const roof = model.children.find((child) => child.userData?.layer === 'roof-production');
+    if (roof) { remember(roof); roof.visible = false; }
+  } else if (mode === 'exploded') {
+    const layerIndex = new Map(ROOF_LAYER_IDS.map((id, index) => [id, index]));
+    model.traverse((object) => {
+      if (!object.isGroup) return;
+      const index = layerIndex.get(object.userData?.roofLayerId);
+      if (index === undefined) return;
+      remember(object);
+      object.position.x += (index - 3) * 0.80;
+      object.position.y += index * 2.00;
+    });
+  } else {
+    throw new Error(`Unknown QA display state: ${mode}`);
+  }
+  qaDisplayTransaction = { mode, entries };
+  model.updateMatrixWorld(true);
+  const layerCenters = {};
+  ROOF_LAYER_IDS.forEach((id) => {
+    const bounds = new THREE.Box3();
+    model.traverse((object) => { if (object.userData?.roofLayerId === id && object.visible) bounds.union(new THREE.Box3().setFromObject(object)); });
+    if (!bounds.isEmpty()) layerCenters[id] = bounds.getCenter(new THREE.Vector3()).toArray().map((value) => rounded(value, 5));
+  });
+  const centers = Object.values(layerCenters).map((point) => new THREE.Vector3().fromArray(point));
+  const visibleRidgeSemanticCounts = {};
+  model.traverse((object) => {
+    const semantic = object.userData?.ridgeSemantic;
+    if (!semantic || !object.isMesh || !visibleInTree(object, model)) return;
+    visibleRidgeSemanticCounts[semantic] = (visibleRidgeSemanticCounts[semantic] || 0) + (object.isInstancedMesh ? object.count : 1);
+  });
+  let minimumLayerCenterSeparationM = Infinity;
+  for (let left = 0; left < centers.length; left += 1) for (let right = left + 1; right < centers.length; right += 1) {
+    minimumLayerCenterSeparationM = Math.min(minimumLayerCenterSeparationM, centers[left].distanceTo(centers[right]));
+  }
+  qaDisplaySummary = {
+    mode, active: true, affectedObjectCount: entries.length, hiddenObjectCount: entries.filter(({ object }) => !object.visible).length,
+    visibleRoofLayerCount: Object.keys(layerCenters).length, layerCenters,
+    visibleRidgeSemanticCounts,
+    minimumLayerCenterSeparationM: rounded(minimumLayerCenterSeparationM, 5),
+    geometryMutation: false, materialMutation: false,
+  };
+  productionView.needsRender = true;
+  return { ...qaDisplaySummary };
 }
 
 function setCamera(id) {
@@ -530,6 +674,7 @@ function setQARouteEvidence(visible) {
 
 function setPreset(id) {
   disposeQARouteOverlay();
+  restoreQADisplayState();
   activePreset = id;
   productionView.load(id);
   productionView.needsRender = true;
@@ -707,13 +852,28 @@ async function playVisitorRoute(durationMs = 5600) {
     stages: [...evidence.stages],
     frameFailures: evidence.frameFailures,
     frames: evidence.frames,
-    destination: finalVisitor,
+    destination: null,
     completed: finalSnapshot?.complete === true
       && finalVisitor?.complete === true
       && finalVisitor?.reachedUpperFloor === true
       && evidence.frameFailures.length === 0
       && evidence.renderedFrameCount === requestedFrameCount,
   };
+  current.destination = finalVisitor ? {
+    ...finalVisitor,
+    browserPlayback: {
+      evidenceSource: current.evidenceSource,
+      durationRequestedMs: current.durationRequestedMs,
+      elapsedMs: current.elapsedMs,
+      requestedFrameCount: current.requestedFrameCount,
+      frameCount: current.frameCount,
+      renderedFrameCount: current.renderedFrameCount,
+      uniquePositionCount: current.uniquePositionCount,
+      stages: [...current.stages],
+      frameFailures: [...current.frameFailures],
+      completed: current.completed,
+    },
+  } : null;
   views.forEach((view) => {
     view.model().userData.runtimeState ||= {};
     view.model().userData.runtimeState.browserPlayback = { ...current };
@@ -732,6 +892,7 @@ function stopTour() {
 
 function reset() {
   stopTour();
+  restoreQADisplayState();
   setCamera('overview');
   setRoofExploded(false);
   setOpenings(0);
@@ -866,6 +1027,7 @@ function renderableTokens(root, include, includeMaterials = true) {
       object.userData?.type || object.type,
       geometryToken(object.geometry),
       object.visible ? 1 : 0,
+      visibleInTree(object, root) ? 1 : 0,
     ];
     if (object.isInstancedMesh) {
       for (let index = 0; index < object.count; index += 1) {
@@ -1218,7 +1380,9 @@ function deriveWallEvidence(model) {
       if (!object.isMesh || !object.geometry) return;
       const layerId = ancestorValue(object, 'wallLayerId', system);
       if (!layerId) return;
-      layerCounts[layerId] = (layerCounts[layerId] || 0) + (object.isInstancedMesh ? object.count : 1);
+      layerCounts[layerId] = (layerCounts[layerId] || 0) + (object.isInstancedMesh
+        ? object.count
+        : Math.max(1, Number(object.userData?.semanticElementCount) || 1));
       if (!layerObjects.has(layerId)) layerObjects.set(layerId, []);
       layerObjects.get(layerId).push(object);
     });
@@ -1507,7 +1671,7 @@ function deriveVisitorEvidence(model) {
     if (object.userData?.walkable === true) supportBoxes.push(new THREE.Box3().setFromObject(object));
   });
   const routeLengthM = points.slice(1).reduce((total, point, index) => total + point.distanceTo(points[index]), 0);
-  const auditSampleCount = Math.max(193, Math.ceil(routeLengthM / 0.08) + 1);
+  const auditSampleCount = Math.max(300, Math.ceil(routeLengthM / 0.08) + 1);
   const samples = Array.from({ length: auditSampleCount }, (_, index) => interpolatePolyline(points, index / (auditSampleCount - 1)));
   const collides = (point) => wallBoxes.some((box) => {
     const radius = 0.14;
@@ -1653,7 +1817,16 @@ function inspect(viewName = 'production') {
     duplicateComponentIds: interactionGeometry?.duplicateComponentIds || [],
   };
   const visitor = deriveVisitorEvidence(model);
-  const cameraFingerprint = JSON.stringify({ position: view.camera.position.toArray().map((value) => value.toFixed(4)), target: view.controls.target.toArray().map((value) => value.toFixed(4)), fov: view.camera.fov });
+  const camera = {
+    position: view.camera.position.toArray().map((value) => rounded(value, 5)),
+    target: view.controls.target.toArray().map((value) => rounded(value, 5)),
+    fov: rounded(view.camera.fov, 5),
+  };
+  const cameraFingerprint = JSON.stringify({
+    position: camera.position.map((value) => value.toFixed(4)),
+    target: camera.target.map((value) => value.toFixed(4)),
+    fov: camera.fov,
+  });
   const drawingBuffer = view.renderer.getDrawingBufferSize(new THREE.Vector2());
   const canvasFingerprint = JSON.stringify({
     cssWidth: view.element.clientWidth,
@@ -1700,9 +1873,11 @@ function inspect(viewName = 'production') {
     fullGeometryFingerprint,
     displayedRuntimeFingerprint,
     comparisonInputFingerprint,
+    camera,
     cameraFingerprint,
     cameraPresetId: activeCameraId,
     cameraEvidence: activeCameraEvidence ? { ...activeCameraEvidence } : null,
+    qaDisplayState: { ...qaDisplaySummary },
     canvasFingerprint,
     lightFingerprint: sceneLightFingerprint(view.scene),
     comparisonContract: { ...(model.userData.comparisonContract || {}) },
@@ -1729,6 +1904,7 @@ function inspect(viewName = 'production') {
     stats: sceneStats,
     timings: { loadMs: performance.now() - bootStarted, firstFrameMs },
     fps: sampledFps,
+    performanceEvidence: performanceEvidence(),
     runtimeState: { ...(model.userData.runtimeState || {}) },
   };
 }
@@ -1752,5 +1928,8 @@ window.__SURFACE_QA__ = {
   setVisitorProgress: setVisitor,
   playVisitorRoute,
   setQARouteEvidence,
+  setQADisplayState,
+  restoreQADisplayState,
+  performanceEvidence,
   reset,
 };

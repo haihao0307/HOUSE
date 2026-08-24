@@ -326,8 +326,12 @@ export function createYunnanMaterialSet(options = {}) {
     openingFrame: makeOpening('openingFrame', 79, { sunExposure: 0.48, rainExposure: 0.40, patina: 0.46, risingDamp: 0.18, edgeWear: 0.38, replacementAge: 0 }),
     openingSill: makeOpening('openingSill', 83, { sunExposure: 0.52, rainExposure: 0.76, patina: 0.38, risingDamp: 0.28, edgeWear: 0.56, replacementAge: 0 }),
     replacementTimber: makeOpening('replacementPart', 89, { sunExposure: 0.28, rainExposure: 0.30, patina: 0.12, risingDamp: 0.08, edgeWear: 0.18, replacementAge: 0.86 }),
-    tilePan: createWeatheredTileMaterial({ seed: seed + 37, ...(options.tilePan || {}) }),
-    tileCover: createWeatheredTileMaterial({ seed: seed + 53, color: '#858076', ...(options.tileCover || {}) }),
+    // Keep the open pan channels cool/lighter than the timber underlay and the
+    // cover caps slightly warmer.  Instance weathering still supplies all
+    // seeded variation; this base separation makes the real concave/convex
+    // silhouettes legible instead of reading as one orange deck.
+    tilePan: createWeatheredTileMaterial({ seed: seed + 37, color: '#707a79', ...(options.tilePan || {}) }),
+    tileCover: createWeatheredTileMaterial({ seed: seed + 53, color: '#8a8175', ...(options.tileCover || {}) }),
     stone: createStoneBaseMaterial(options.stone || {}),
     opening: createDoorOpeningMaterial(options.opening || {})
   };

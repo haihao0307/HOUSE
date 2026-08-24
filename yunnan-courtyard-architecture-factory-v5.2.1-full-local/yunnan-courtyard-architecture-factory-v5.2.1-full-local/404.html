@@ -51,7 +51,35 @@ svg .outerWall{fill:none;stroke:#313833;stroke-width:12;stroke-linejoin:round}.w
 @media(max-width:860px){.modelControls{right:10px;left:10px;bottom:10px}.modelLegend{display:none}.modelHud{max-width:250px}}
 
 @media(max-width:1250px){.shell{grid-template-columns:270px 1fr}.inspector{display:none}.logicGrid,.explainGrid,.evidenceGrid{grid-template-columns:1fr}}
-@media(max-width:860px){.app{height:auto;min-height:100%}.shell{grid-template-columns:1fr}.sidebar{display:none}.workspace{min-height:860px}.paper,.scrollPaper{inset:8px}.status{grid-template-columns:1fr}.badges{display:none}.familyMap{grid-template-columns:1fr}.branchArrow{transform:rotate(90deg)}}
+@media(max-width:860px){
+  .app{height:auto;min-height:100%;width:100%;min-width:0}
+  .topbar{min-width:0;padding:0 10px;gap:8px}
+  .brand{width:100%;min-width:0;gap:8px}
+  .brand>div:last-child{min-width:0}
+  .brand h1{font-size:clamp(13px,4vw,15px);line-height:1.2;white-space:normal;overflow-wrap:anywhere}
+  .brand p{max-width:100%}
+  .seal{width:36px;height:36px;font-size:20px}
+  .shell{grid-template-columns:minmax(0,1fr);width:100%;min-width:0}
+  .sidebar{display:none}
+  .workspace{width:100%;min-width:0;min-height:calc(100vh - 68px);min-height:calc(100svh - 68px)}
+  .toolbar,.tabs,.tools,.viewport,.status{min-width:0;max-width:100%}
+  .toolbar{align-items:flex-start}
+  .tabs,.tools{width:100%}
+  .tab,.tool{max-width:100%}
+  .paper,.scrollPaper{inset:8px;min-width:0;max-width:calc(100% - 16px)}
+  .status{grid-template-columns:minmax(0,1fr)}
+  .stageCtl{grid-template-columns:minmax(0,105px) minmax(0,1fr) 30px;min-width:0}
+  .badges{display:none}
+  .familyMap{grid-template-columns:minmax(0,1fr)}
+  .familyNode,.logicCard,.explainCard,.evidence,.referenceCard{min-width:0;overflow-wrap:anywhere}
+  .branchArrow{transform:rotate(90deg)}
+  .modelHud{left:8px;right:8px;max-width:none}
+  .modelControls{left:8px;right:8px;max-width:none}
+  .referenceModelGrid{grid-template-columns:minmax(0,1fr)}
+  .referenceMeta{grid-template-columns:minmax(0,90px) minmax(0,1fr)}
+  .referenceMeta dd{min-width:0;overflow-wrap:anywhere}
+}
+@media(max-width:480px){.brand p{display:none}}
 /* V5.2.1 WebGL and tour interface */
 .modelTourPanel{position:absolute;right:14px;top:78px;width:270px;max-height:58%;overflow:auto;padding:10px 11px;border:1px solid #46584f;border-radius:9px;background:#101a17e8;color:#dce5de;box-shadow:0 12px 32px #0004;font-size:9px;line-height:1.45}
 .modelTourPanel>b{display:block;color:#f0d29b;font-size:11px;margin-bottom:5px}.modelTourPanel strong{display:block;color:#fff0c8;font-size:10px}.modelTourPanel p{margin:4px 0 8px;color:#bfcac3}.modelTourPanel ol{list-style:none;margin:7px 0 0;padding:0;display:grid;gap:3px}.modelTourPanel li{display:grid;grid-template-columns:18px 1fr;gap:5px;align-items:center;padding:4px 5px;border-radius:5px;color:#85928b}.modelTourPanel li b{width:17px;height:17px;border-radius:50%;display:grid;place-items:center;background:#28342f;color:#b9c5be;font:8px ui-monospace,monospace}.modelTourPanel li.active{background:#332a1b;color:#f1d9a8}.modelTourPanel li.active b{background:#b48645;color:#15130f}.tourMeter{height:4px;border-radius:10px;background:#2c3933;overflow:hidden}.tourMeter i{display:block;width:0;height:100%;background:#e0ab4f;transition:width .12s linear}.modelControls{max-width:calc(100% - 250px)}.modelControls .tourPrimary{border-color:#9d7947;background:#47361e;color:#ffe0a4}.modelNorth{right:298px}.modelLegend span:nth-of-type(5){margin-left:0}.model3dWrap canvas{image-rendering:auto}
@@ -64,6 +92,7 @@ svg .outerWall{fill:none;stroke:#313833;stroke-width:12;stroke-linejoin:round}.w
 .modelControls button.demoActive{box-shadow:0 0 0 2px #d6a64b55 inset}
 .referenceHub{padding:18px;display:grid;gap:14px;color:var(--ink)}.referenceIntro{display:grid;grid-template-columns:1.3fr .7fr;gap:12px}.referenceCard{border:1px solid #d6cab2;background:#faf6ed;border-radius:9px;padding:14px}.referenceCard h2,.referenceCard h3{margin:0 0 7px;color:#805c32}.referenceCard h2{font-size:18px}.referenceCard h3{font-size:12px}.referenceCard p,.referenceCard li{font-size:10px;line-height:1.7;color:#555c56}.referenceCard ul{margin:6px 0 0;padding-left:18px}.referenceMeta{display:grid;grid-template-columns:110px 1fr;gap:6px;font-size:10px}.referenceMeta dt{color:#82745e}.referenceMeta dd{margin:0;color:#343b37}.referenceActions{display:flex;gap:7px;flex-wrap:wrap;margin-top:11px}.referenceActions button,.referenceActions a,.referenceActions label{border:1px solid #8d6d42;border-radius:6px;background:#32281a;color:#f5deb2;padding:8px 11px;text-decoration:none;font-size:10px;cursor:pointer}.referenceActions a,.referenceActions label{background:#f0e5cf;color:#6e4d27}.referenceActions input{display:none}.referenceLocalHint{margin:9px 0 0!important;padding:7px 9px;border-left:3px solid #9a7646;background:#f5ecd9;color:#654c2f!important}.referenceViewer{position:relative;height:560px;border-radius:9px;overflow:hidden;background:#101714;border:1px solid #35463e}.referenceViewer[hidden]{display:none}.referenceViewer.dragging{outline:3px solid #d4a85f;outline-offset:-3px}.referenceViewer canvas{width:100%;height:100%;display:block;touch-action:none;cursor:grab}.referenceViewer canvas:active{cursor:grabbing}.referenceViewerHud{position:absolute;left:12px;top:12px;max-width:410px;padding:9px 11px;border:1px solid #46564e;border-radius:7px;background:#101a17e8;color:#e9eee9;font-size:9px;line-height:1.55;pointer-events:none}.referenceViewerHud b{display:block;color:#edcb91;font-size:11px}.referenceViewerDrop{position:absolute;inset:92px 12% 86px;display:grid;place-items:center;text-align:center;border:1px dashed #8d9b92;border-radius:10px;background:#13201bd9;color:#d7ded8;font-size:12px;line-height:1.8;pointer-events:none}.referenceViewer[data-state="ready"] .referenceViewerDrop,.referenceViewer[data-state="loading"] .referenceViewerDrop{display:none}.referenceViewerDrop b{display:block;color:#edcb91;font-size:15px}.referenceViewerControls{position:absolute;left:12px;right:12px;bottom:12px;display:flex;gap:5px;flex-wrap:wrap;padding:7px;border:1px solid #405048;border-radius:8px;background:#101a17df}.referenceViewerControls button{border:1px solid #47564f;border-radius:5px;background:#19231f;color:#dce5de;padding:6px 8px;font-size:9px;cursor:pointer}.referenceViewerControls button.active{border-color:#b08246;background:#342a1c;color:#f3d69f}.referenceEvidence{display:grid;grid-template-columns:1fr 1fr;gap:12px}.referenceFlag{display:inline-block;border:1px solid #9a7646;border-radius:99px;padding:3px 7px;color:#7a542d;background:#f2e5ca;font-size:9px}@media(max-width:900px){.referenceIntro,.referenceEvidence{grid-template-columns:1fr}.referenceViewer{height:480px}.referenceViewerDrop{inset:100px 7% 105px}}
 .referenceModelGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.referenceModelGrid p{margin:4px 0}
+@media(max-width:860px){.referenceModelGrid{grid-template-columns:minmax(0,1fr)}.referenceMeta{grid-template-columns:minmax(0,90px) minmax(0,1fr)}.referenceMeta dd{min-width:0;overflow-wrap:anywhere}.referenceViewerHud{right:12px;max-width:none}}
 </style>
 </head>
 <body>

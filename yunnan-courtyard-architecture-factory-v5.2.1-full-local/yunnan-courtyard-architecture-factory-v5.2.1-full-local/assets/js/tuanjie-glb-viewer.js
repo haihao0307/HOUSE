@@ -5,6 +5,7 @@
   const TYPE_SIZE={SCALAR:1,VEC2:2,VEC3:3,VEC4:4};
 
   function clamp(v,a,b){return Math.max(a,Math.min(b,v))}
+  function fnv1a(value){let hash=2166136261;for(let i=0;i<value.length;i++){hash^=value.charCodeAt(i);hash=Math.imul(hash,16777619)}return(hash>>>0).toString(16).padStart(8,'0')}
   function mul(a,b){
     const o=new Float32Array(16);
     for(let c=0;c<4;c++)for(let r=0;r<4;r++)o[c*4+r]=a[r]*b[c*4]+a[4+r]*b[c*4+1]+a[8+r]*b[c*4+2]+a[12+r]*b[c*4+3];
@@ -83,6 +84,8 @@
       this.observer=new ResizeObserver(()=>this.resize());this.observer.observe(c);
     }
     async load(url){
+      this.loaded=false;
+      this.modelStats={loaded:false,url,source:url};
       this._state('loading','正在读取可编辑 GLB…');
       let response;
       try{response=await fetch(url)}catch(error){
@@ -95,6 +98,8 @@
     async loadFile(file){
       if(!file)throw new Error('没有选择 GLB 文件');
       if(!/\.glb$/i.test(file.name||''))throw new Error('请选择扩展名为 .glb 的文件');
+      this.loaded=false;
+      this.modelStats={loaded:false,url:file.name,source:file.name};
       this._state('loading',`正在读取本地文件 ${file.name}…`);
       return this.loadArrayBuffer(await file.arrayBuffer(),file.name);
     }
@@ -119,7 +124,7 @@
       if(Number.isFinite(boundsMin[0])){this.camera.target=boundsMin.map((v,i)=>(v+boundsMax[i])/2);this.camera.distance=Math.max(...boundsMax.map((v,i)=>v-boundsMin[i]))*1.75;}
       this.modelStats={loaded:true,url:source,source,nodes:(json.nodes||[]).length,meshes:(json.meshes||[]).length,primitives,vertices,triangles:Math.round(triangles),animations:(json.animations||[]).length,skins:(json.skins||[]).length,cameras:(json.cameras||[]).length,textures:{...this.textureStats},normalMapActive:!!(this.textureStats.normal&&this.extDerivatives),maxTextureSize:this.maxTextureSize,dpr:Math.min(devicePixelRatio||1,2.5)};
       const base=this.textureStats.base,textureLabel=base?` · ${base.width.toLocaleString()}×${base.height.toLocaleString()} 底色`:'';
-      this.loaded=true;this._state('ready',`已载入 ${primitives} 个可选网格 · ${Math.round(triangles).toLocaleString()} 三角面${textureLabel}${this.modelStats.normalMapActive?' · 法线贴图已启用':''}`);return this.modelStats;
+      this.loaded=true;this.draw();this._state('ready',`已载入 ${primitives} 个可选网格 · ${Math.round(triangles).toLocaleString()} 三角面${textureLabel}${this.modelStats.normalMapActive?' · 法线贴图已启用':''}`);return this.modelStats;
     }
     _textureSource(json,textureIndex){if(textureIndex===undefined||textureIndex===null)return undefined;const texture=json.textures?.[textureIndex];return texture?.source??texture?.extensions?.KHR_texture_basisu?.source}
     async _loadTextures(json,bin){
@@ -146,7 +151,23 @@
       for(const d of this.draws){if(!this.visible[d.group])continue;const bind=(key,loc,fallback)=>{const a=d.attrs[key];if(!a){gl.disableVertexAttribArray(loc);gl.vertexAttrib3f(loc,...fallback);return}gl.bindBuffer(gl.ARRAY_BUFFER,a.buffer);gl.enableVertexAttribArray(loc);gl.vertexAttribPointer(loc,a.size,a.type,a.normalized,a.stride,a.offset)};bind('POSITION',this.loc.position,[0,0,0]);bind('NORMAL',this.loc.normal,[0,1,0]);const uv=d.attrs.TEXCOORD_0;if(uv){gl.bindBuffer(gl.ARRAY_BUFFER,uv.buffer);gl.enableVertexAttribArray(this.loc.uv);gl.vertexAttribPointer(this.loc.uv,uv.size,uv.type,uv.normalized,uv.stride,uv.offset)}else{gl.disableVertexAttribArray(this.loc.uv);gl.vertexAttrib2f(this.loc.uv,0,0)}gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,d.index.buffer);gl.drawElements(gl.TRIANGLES,d.index.count,d.index.type,d.index.offset)}
     }
     loop(t=0){const dt=Math.min(.05,(t-this.last)/1000||0);this.last=t;if(this.auto&&!this.drag)this.camera.yaw+=dt*.18;this.draw();this.raf=requestAnimationFrame(this._loop)}
-    stats(){return {...this.modelStats,groups:{...this.visible},auto:this.auto}}
+    _runtimeFingerprint(){
+      if(!this.loaded)return {canvasChecksum:null,structuralFingerprint:null,structuralRenderFingerprint:null,fingerprintInputs:null};
+      const gl=this.gl,width=this.canvas.width,height=this.canvas.height,pixels=new Uint8Array(width*height*4);
+      gl.finish();gl.readPixels(0,0,width,height,gl.RGBA,gl.UNSIGNED_BYTE,pixels);
+      let canvasChecksum=2166136261;
+      for(let i=0;i<pixels.length;i++){canvasChecksum^=pixels[i];canvasChecksum=Math.imul(canvasChecksum,16777619)}
+      canvasChecksum>>>=0;
+      const structuralInputs={source:this.modelStats.source||null,meshes:this.modelStats.meshes||0,vertices:this.modelStats.vertices||0,triangles:this.modelStats.triangles||0};
+      const fingerprintInputs={...structuralInputs,canvasChecksum};
+      return {
+        canvasChecksum,
+        structuralFingerprint:`fnv1a32:${fnv1a(JSON.stringify(structuralInputs))}`,
+        structuralRenderFingerprint:`fnv1a32:${fnv1a(JSON.stringify(fingerprintInputs))}`,
+        fingerprintInputs
+      };
+    }
+    stats(){const fingerprint=this._runtimeFingerprint();return {...this.modelStats,loaded:this.loaded,camera:{yaw:this.camera.yaw,pitch:this.camera.pitch,distance:this.camera.distance,target:this.camera.target.slice()},...fingerprint,groups:{...this.visible},auto:this.auto}}
     destroy(){cancelAnimationFrame(this.raf);if(this.observer)this.observer.disconnect();const c=this.canvas;c.removeEventListener('pointerdown',this.onDown);c.removeEventListener('pointermove',this.onMove);c.removeEventListener('pointerup',this.onUp);c.removeEventListener('pointercancel',this.onUp);c.removeEventListener('wheel',this.onWheel);for(const [type,obj] of this.resources){if(type==='buffer')this.gl.deleteBuffer(obj);if(type==='texture')this.gl.deleteTexture(obj)}if(this.program)this.gl.deleteProgram(this.program);this.draws=[];this.loaded=false}
   }
 

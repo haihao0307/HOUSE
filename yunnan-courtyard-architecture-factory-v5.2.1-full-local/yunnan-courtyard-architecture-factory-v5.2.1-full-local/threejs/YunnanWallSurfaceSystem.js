@@ -17,7 +17,7 @@ function seeded01(a, b, c = 0) {
 }
 
 function makeMaterial(color, roughness = 0.92, opacity = 1, vertexColors = false) {
-  return new THREE.MeshStandardMaterial({
+  const material = new THREE.MeshStandardMaterial({
     color,
     roughness,
     metalness: 0,
@@ -30,6 +30,11 @@ function makeMaterial(color, roughness = 0.92, opacity = 1, vertexColors = false
     polygonOffsetFactor: -1,
     polygonOffsetUnits: -1,
   });
+  // Transparent DoubleSide materials otherwise render back and front faces in
+  // two passes.  These layers are zero-thickness mapped patches, so the second
+  // pass cannot reveal additional volume and only duplicates ~210 draw calls.
+  if (opacity < 1) material.forceSinglePass = true;
+  return material;
 }
 
 function ownMaterial(system, item) {
@@ -156,12 +161,71 @@ function placeOnHost(item, hostRelativeMatrix, localPosition = null, localQuater
   return item;
 }
 
-function lineCylinder(start, end, radius, mat) {
-  const delta = end.clone().sub(start);
-  const item = new THREE.Mesh(new THREE.CylinderGeometry(radius, radius, delta.length(), 8), mat);
-  item.position.copy(start).add(end).multiplyScalar(0.5);
-  item.quaternion.setFromUnitVectors(UP, delta.clone().normalize());
-  return item;
+function instanceTransformRecord(hostRelativeMatrix, position, quaternion, scale, semantic = {}) {
+  const local = new THREE.Matrix4().compose(position, quaternion, scale);
+  return { matrix: hostRelativeMatrix.clone().multiply(local), semantic };
+}
+
+function createInstanceBatch(records, geometry, material, data = {}) {
+  if (!records.length) return null;
+  const batch = new THREE.InstancedMesh(geometry, material, records.length);
+  records.forEach((record, index) => batch.setMatrixAt(index, record.matrix));
+  batch.instanceMatrix.setUsage(THREE.StaticDrawUsage);
+  batch.instanceMatrix.needsUpdate = true;
+  batch.computeBoundingBox();
+  batch.computeBoundingSphere();
+  batch.userData = {
+    ...data,
+    instanceCount: records.length,
+    instanceMap: records.map((record) => ({ ...record.semantic })),
+    geometryEvidence: 'shared-buffer-geometry-with-actual-instance-matrices',
+  };
+  return batch;
+}
+
+/** Merge exact mapped fibre polygons after their host transforms. */
+function createStaticPatchBatch(records, material, data = {}) {
+  if (!records.length) return null;
+  const positions = [];
+  const normals = [];
+  const uvs = [];
+  const geometryMap = [];
+  records.forEach((record, recordIndex) => {
+    const mapped = record.geometry.clone().applyMatrix4(record.matrix);
+    const transformed = mapped.index ? mapped.toNonIndexed() : mapped;
+    const position = transformed.getAttribute('position');
+    const normal = transformed.getAttribute('normal');
+    const uv = transformed.getAttribute('uv');
+    const vertexStart = positions.length / 3;
+    for (let index = 0; index < position.count; index += 1) {
+      positions.push(position.getX(index), position.getY(index), position.getZ(index));
+      if (normal) normals.push(normal.getX(index), normal.getY(index), normal.getZ(index));
+      if (uv) uvs.push(uv.getX(index), uv.getY(index));
+    }
+    geometryMap.push({
+      elementIndex: recordIndex,
+      vertexStart,
+      vertexCount: position.count,
+      ...record.semantic,
+    });
+    if (transformed !== mapped) mapped.dispose();
+    transformed.dispose();
+    record.geometry.dispose();
+  });
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+  if (normals.length) geometry.setAttribute('normal', new THREE.Float32BufferAttribute(normals, 3));
+  if (uvs.length) geometry.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
+  geometry.computeBoundingBox();
+  geometry.computeBoundingSphere();
+  const batch = new THREE.Mesh(geometry, material);
+  batch.userData = {
+    ...data,
+    semanticElementCount: records.length,
+    geometryMap,
+    geometryEvidence: 'exact-host-mapped-polygons-statically-merged-by-vertex-range',
+  };
+  return batch;
 }
 
 function polygonArea(geometry) {
@@ -243,7 +307,11 @@ function measureWallSystem(system) {
   system.traverse((object) => {
     if (!object.isMesh && !object.isLine) return;
     const layerId = object.userData?.wallLayerId;
-    if (layerId in layerCounts) layerCounts[layerId] += 1;
+    if (layerId in layerCounts) {
+      layerCounts[layerId] += object.isInstancedMesh
+        ? object.count
+        : Math.max(1, Number(object.userData?.semanticElementCount) || 1);
+    }
     if (layerId === 'plaster') plasterLuminance.push(materialLuminance(object.material));
     if (layerId === 'risingDamp') {
       const level = object.userData?.dampSampleLevel;
@@ -269,6 +337,11 @@ function measureWallSystem(system) {
       if (Number.isFinite(normalSize)) plinthOutsets.push(Math.max(0, normalSize - Number(object.userData.hostDepthM || 0)));
     }
     if (layerId === 'brickCorner') {
+      const explicitOutset = Number(object.userData?.normalOutsetM);
+      if (Number.isFinite(explicitOutset)) {
+        cornerOutsets.push(explicitOutset);
+        return;
+      }
       object.geometry?.computeBoundingBox?.();
       const size = object.geometry?.boundingBox?.getSize(new THREE.Vector3());
       const normalSize = object.userData?.normalAxis === 'z' ? size?.z : size?.x;
@@ -385,6 +458,10 @@ export function applyYunnanWallSurfaces(
   const rootInverse = new THREE.Matrix4().copy(root.matrixWorld).invert();
   const excludedGroundLayerHostIds = [];
   let groundHostCount = 0;
+  const unitBrickGeometry = new THREE.BoxGeometry(1, 1, 1);
+  const unitCrackGeometry = new THREE.CylinderGeometry(1, 1, 1, 8);
+  const crackRecords = [];
+  const fibreRecords = [];
 
   hosts.forEach((host, hostIndex) => {
     const spec = hostSpec(host);
@@ -411,23 +488,34 @@ export function applyYunnanWallSurfaces(
         hostId, normalAxis: spec.orientation === 'x' ? 'z' : 'x', hostDepthM: spec.wallDepth, groundConnected,
       });
       const brickWidth = 0.24;
+      const brickRecords = [];
       for (const endpoint of [-1, 1]) {
         for (let course = 0; course < 5; course += 1) {
           const depth = spec.wallDepth + 0.12;
-          const geometry = spec.orientation === 'x'
-            ? new THREE.BoxGeometry(brickWidth, 0.15, depth)
-            : new THREE.BoxGeometry(depth, 0.15, brickWidth);
-          const brick = new THREE.Mesh(geometry, shared.brick);
           const along = endpoint * (spec.span / 2 - brickWidth / 2);
           const position = spec.orientation === 'x'
             ? new THREE.Vector3(along, 0.16 + course * 0.16, 0)
             : new THREE.Vector3(0, 0.16 + course * 0.16, along);
-          placeOnHost(brick, hostRelative, position);
-          addTagged(categoryGroups.brickCorner, brick, 'brick-corner-protection', {
-            hostId, endpoint, course, normalAxis: spec.orientation === 'x' ? 'z' : 'x', hostDepthM: spec.wallDepth,
-          });
+          const scale = spec.orientation === 'x'
+            ? new THREE.Vector3(brickWidth, 0.15, depth)
+            : new THREE.Vector3(depth, 0.15, brickWidth);
+          brickRecords.push(instanceTransformRecord(
+            hostRelative,
+            position,
+            new THREE.Quaternion(),
+            scale,
+            { hostId, endpoint, course },
+          ));
         }
       }
+      const brickBatch = createInstanceBatch(brickRecords, unitBrickGeometry, shared.brick, {
+        hostId,
+        normalAxis: spec.orientation === 'x' ? 'z' : 'x',
+        hostDepthM: spec.wallDepth,
+        normalOutsetM: 0.12,
+        correspondence: 'one-instance-per-endpoint-and-masonry-course',
+      });
+      addTagged(categoryGroups.brickCorner, brickBatch, 'brick-corner-protection-instanced');
     }
 
     for (const sign of [-1, 1]) {
@@ -589,12 +677,20 @@ export function applyYunnanWallSurfaces(
         const endV = Math.max(0.08, startV - (0.11 + crackAmount * 0.18));
         const start = facePoint(spec, sign, u, startV, 0.034);
         const end = facePoint(spec, sign, u + 0.012 * sign, endV, 0.034);
-        const crack = lineCylinder(start, end, 0.010 + crackAmount * 0.005, shared.crack);
-        placeOnHost(crack, hostRelative);
-        addTagged(categoryGroups.crackNetwork, crack, 'crack-network-segment', {
-          ...faceData, actualLengthM: start.distanceTo(end),
-          gravityDot: Math.abs(start.y - end.y) / start.distanceTo(end),
-        });
+        const delta = end.clone().sub(start);
+        const length = delta.length();
+        const radius = 0.010 + crackAmount * 0.005;
+        crackRecords.push(instanceTransformRecord(
+          hostRelative,
+          start.clone().add(end).multiplyScalar(0.5),
+          new THREE.Quaternion().setFromUnitVectors(UP, delta.clone().normalize()),
+          new THREE.Vector3(radius, length, radius),
+          {
+            ...faceData,
+            actualLengthM: length,
+            gravityDot: Math.abs(start.y - end.y) / length,
+          },
+        ));
       }
 
       const fibreCount = Math.max(2, Math.round(earthExposure * 9));
@@ -606,12 +702,23 @@ export function applyYunnanWallSurfaces(
           patchSeed: faceSeed + 20 + index, offset: 0.038,
         }, shared.fibre);
         placeOnHost(fibre, hostRelative);
-        addTagged(categoryGroups.strawFibre, fibre, 'visible-straw-fibre', {
-          ...faceData, actualAreaM2: polygonArea(fibre.geometry),
+        fibreRecords.push({
+          geometry: fibre.geometry,
+          matrix: fibre.matrix.clone(),
+          semantic: { ...faceData, actualAreaM2: polygonArea(fibre.geometry) },
         });
       }
     }
   });
+
+  const crackBatch = createInstanceBatch(crackRecords, unitCrackGeometry, shared.crack, {
+    correspondence: 'one-instance-per-deterministic-crack-segment',
+  });
+  if (crackBatch) addTagged(categoryGroups.crackNetwork, crackBatch, 'crack-network-segments-instanced');
+  const fibreBatch = createStaticPatchBatch(fibreRecords, shared.fibre, {
+    correspondence: 'one-explicit-vertex-range-per-deterministic-straw-fibre',
+  });
+  if (fibreBatch) addTagged(categoryGroups.strawFibre, fibreBatch, 'visible-straw-fibres-static-batch');
 
   Object.assign(system.userData, measureWallSystem(system), {
     hostCount: hosts.length,

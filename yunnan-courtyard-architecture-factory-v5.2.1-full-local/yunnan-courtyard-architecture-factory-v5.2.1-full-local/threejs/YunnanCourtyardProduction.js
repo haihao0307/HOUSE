@@ -123,13 +123,23 @@ function createTileGeometry(width, length, kind = 'pan', thickness = 0.022) {
   // triangles per instance, most of them below the rendered tile width.
   const segments = 6;
   const row = segments + 1;
-  const radius = Math.max(width * (kind === 'cover' ? 0.62 : 0.82), 0.055);
+  // Define the section from a measured chord and sagitta.  The previous
+  // radius-based expression referenced an arbitrary quarter-radius datum;
+  // for a production pan it put the channel bottom 0.148 m below its rims,
+  // so the real ceramic shell was buried inside the roof underlay.  These
+  // rises keep the documented four-centimetre pan channel and a readable,
+  // but not pipe-like, cover cap at every profile width.
+  const halfWidth = width / 2;
+  const crossSectionRiseM = kind === 'cover'
+    ? Math.min(width * 0.42, 0.052)
+    : Math.min(width * 0.165, 0.045);
+  const radius = (halfWidth ** 2 + crossSectionRiseM ** 2) / (2 * crossSectionRiseM);
+  const chordDatum = Math.sqrt(Math.max(0, radius ** 2 - halfWidth ** 2));
   const positions = [];
   const indices = [];
   const curveY = (x) => {
-    const normalized = Math.min(0.985, Math.abs(x) / radius);
-    const arc = Math.sqrt(Math.max(0.0001, radius ** 2 - (normalized * radius) ** 2));
-    return kind === 'cover' ? arc - radius * 0.25 : radius * 0.25 - arc;
+    const arcAboveChord = Math.sqrt(Math.max(0, radius ** 2 - x ** 2)) - chordDatum;
+    return kind === 'cover' ? arcAboveChord : -arcAboveChord;
   };
   for (const offset of [0, -thickness]) {
     for (const z of [-length / 2, length / 2]) {
@@ -178,6 +188,10 @@ function createTileGeometry(width, length, kind = 'pan', thickness = 0.022) {
     tileKind: kind,
     closedShell: true,
     transverseArcSegments: segments,
+    crossSectionRiseM,
+    rimY: 0,
+    centerY: kind === 'cover' ? crossSectionRiseM : -crossSectionRiseM,
+    sectionDefinition: 'circular-arc-from-chord-and-sagitta',
     dimensionsM: { width, length, thickness },
   };
   return geometry;
@@ -871,9 +885,14 @@ function sampleInstanceBatches(batches) {
     batch.geometry.computeBoundingBox();
     const localLength = batch.geometry.boundingBox.max.z - batch.geometry.boundingBox.min.z;
     const semantics = batch.userData.instanceMap || [];
-    for (let index = 0; index < batch.count; index += 1) {
-      batch.getMatrixAt(index, localMatrix);
-      worldMatrix.multiplyMatrices(batch.matrixWorld, localMatrix);
+    const count = batch.isInstancedMesh ? batch.count : 1;
+    for (let index = 0; index < count; index += 1) {
+      if (batch.isInstancedMesh) {
+        batch.getMatrixAt(index, localMatrix);
+        worldMatrix.multiplyMatrices(batch.matrixWorld, localMatrix);
+      } else {
+        worldMatrix.copy(batch.matrixWorld);
+      }
       const across = new THREE.Vector3().setFromMatrixColumn(worldMatrix, 0);
       const course = new THREE.Vector3().setFromMatrixColumn(worldMatrix, 2);
       const courseScale = course.length();
@@ -888,11 +907,43 @@ function sampleInstanceBatches(batches) {
         effectiveLengthM: localLength * courseScale,
         geometry: batch.geometry,
         bounds,
+        worldMatrix: worldMatrix.clone(),
         matrixFinite: worldMatrix.elements.every(Number.isFinite),
       });
     }
   }
   return samples;
+}
+
+/** Project every actual geometry vertex after its real instance transform. */
+function projectedGeometryRange(samples, axis) {
+  const direction = axis.clone().normalize();
+  const vertex = new THREE.Vector3();
+  let min = Infinity;
+  let max = -Infinity;
+  let vertexCount = 0;
+  for (const sample of samples) {
+    const positions = sample.geometry?.getAttribute?.('position');
+    if (!positions || !sample.worldMatrix) continue;
+    for (let index = 0; index < positions.count; index += 1) {
+      vertex.fromBufferAttribute(positions, index).applyMatrix4(sample.worldMatrix);
+      const projection = vertex.dot(direction);
+      min = Math.min(min, projection);
+      max = Math.max(max, projection);
+      vertexCount += 1;
+    }
+  }
+  return vertexCount ? { min, max, sizeM: max - min, vertexCount } : null;
+}
+
+function centralSampleColumns(samples, requestedCount) {
+  const columns = [...new Set(samples.map((sample) => sample.columnIndex).filter(Number.isFinite))]
+    .sort((a, b) => a - b);
+  if (!columns.length) return new Set();
+  const center = (columns[0] + columns.at(-1)) / 2;
+  return new Set(columns
+    .sort((a, b) => Math.abs(a - center) - Math.abs(b - center) || a - b)
+    .slice(0, requestedCount));
 }
 
 function unionSampleBounds(samples) {
@@ -903,13 +954,15 @@ function unionSampleBounds(samples) {
 
 function auditSlopeGeometry({
   panBatches, coverBatches, dripBatches, hookBatches, verticalRidgeBatches,
-  expectedDownhillWorld, expectedPitch, expectedTileVerticalComponent,
+  underlayObjects, expectedDownhillWorld, expectedRoofNormalWorld,
+  expectedPitch, expectedTileVerticalComponent,
 }) {
   const pans = sampleInstanceBatches(panBatches);
   const covers = sampleInstanceBatches(coverBatches);
   const drips = sampleInstanceBatches(dripBatches);
   const hooks = sampleInstanceBatches(hookBatches);
   const verticalRidges = sampleInstanceBatches(verticalRidgeBatches);
+  const underlays = sampleInstanceBatches(underlayObjects || []);
   const stablePans = pans.filter((sample) => sample.state !== 'broken');
   const stableCovers = covers.filter((sample) => sample.state !== 'broken');
 
@@ -960,7 +1013,10 @@ function auditSlopeGeometry({
     const midpoint = left.position.clone().add(right.position).multiplyScalar(0.5);
     const delta = cover.position.clone().sub(midpoint);
     seamErrors.push(Math.abs(delta.dot(left.acrossAxis)));
-    courseOffsets.push(Math.abs(delta.dot(downhillHorizontal)));
+    // A cover deliberately sits above the pan rims along the roof normal.
+    // Measure unwanted course shift on the sloped drainage tangent, not its
+    // horizontal projection (which would misclassify normal clearance).
+    courseOffsets.push(Math.abs(delta.dot(expectedDirection)));
   }
 
   const dripByColumn = new Map(drips.map((sample) => [sample.columnIndex, sample]));
@@ -988,6 +1044,24 @@ function auditSlopeGeometry({
   const actualOverlapM = courseSpacingM === null || effectiveTileLengthM === null
     ? null
     : effectiveTileLengthM - courseSpacingM;
+  const panNormalRange = projectedGeometryRange(stablePans, expectedRoofNormalWorld);
+  const coverNormalRange = projectedGeometryRange(stableCovers, expectedRoofNormalWorld);
+  const underlayNormalRange = projectedGeometryRange(underlays, expectedRoofNormalWorld);
+  const panUnderlayClearanceM = panNormalRange && underlayNormalRange
+    ? panNormalRange.min - underlayNormalRange.max
+    : null;
+  const coverUnderlayClearanceM = coverNormalRange && underlayNormalRange
+    ? coverNormalRange.min - underlayNormalRange.max
+    : null;
+  const lastCourse = Math.max(...pans.map((sample) => sample.courseIndex).filter(Number.isFinite));
+  const panDetailColumns = centralSampleColumns(pans, 5);
+  const coverDetailColumns = centralSampleColumns(covers, 4);
+  const eaveDetailSamples = [
+    ...pans.filter((sample) => sample.courseIndex >= lastCourse - 2 && panDetailColumns.has(sample.columnIndex)),
+    ...covers.filter((sample) => sample.courseIndex >= lastCourse - 2 && coverDetailColumns.has(sample.columnIndex)),
+    ...drips.filter((sample) => panDetailColumns.has(sample.columnIndex)),
+    ...hooks.filter((sample) => coverDetailColumns.has(sample.columnIndex)),
+  ];
   const allSamples = [...pans, ...covers, ...drips, ...hooks, ...verticalRidges];
   return {
     evidenceSource: 'actual-instance-matrices-buffer-geometry-and-world-bounds',
@@ -1009,6 +1083,16 @@ function auditSlopeGeometry({
     coverTransverseArcSegments: coverGeometry?.userData?.transverseArcSegments || 0,
     panCrossSectionCurvatureM: tileCrossSectionCurvature(panGeometry),
     coverCrossSectionCurvatureM: tileCrossSectionCurvature(coverGeometry),
+    panCrossSectionRiseM: panGeometry?.userData?.crossSectionRiseM ?? null,
+    coverCrossSectionRiseM: coverGeometry?.userData?.crossSectionRiseM ?? null,
+    panUnderlayClearanceM,
+    coverUnderlayClearanceM,
+    normalProjectionEvidence: {
+      axisWorld: expectedRoofNormalWorld.toArray(),
+      pan: panNormalRange,
+      cover: coverNormalRange,
+      underlay: underlayNormalRange,
+    },
     hookHeadVertexCount: hookVertexCount,
     hookHeadDimensionsM: hookSize.toArray(),
     hookHeadFrontPlate: hookVertexCount >= 20
@@ -1038,6 +1122,8 @@ function auditSlopeGeometry({
       pan: unionSampleBounds(pans),
       cover: unionSampleBounds(covers),
       eave: unionSampleBounds([...drips, ...hooks]),
+      eaveDetail: unionSampleBounds(eaveDetailSamples),
+      underlay: unionSampleBounds(underlays),
       verticalRidge: unionSampleBounds(verticalRidges),
       all: unionSampleBounds(allSamples),
     },
@@ -1106,6 +1192,16 @@ function addRoofUnit(parent, spec, options, materials, profile, baseline, roofIn
     unitCylinderGeometry,
     unitRidgeCapGeometry,
   } = roofGeometries;
+  const panRiseM = Number(panGeometry.userData.crossSectionRiseM);
+  const coverRiseM = Number(coverGeometry.userData.crossSectionRiseM);
+  const dripRiseM = Number(dripGeometry.userData.crossSectionRiseM);
+  const hookNeckRiseM = Number(hookNeckGeometry.userData.crossSectionRiseM);
+  // Lift the complete closed shell, not merely its rim, clear of the timber
+  // deck.  Pan centres are lower than their rims by panRiseM.
+  const panNormalLiftM = panRiseM + tileThickness * 1.35;
+  const coverNormalLiftM = panNormalLiftM + tileThickness * 0.55;
+  const dripNormalLiftM = dripRiseM + tileThickness * 1.45;
+  const hookNormalLiftM = Math.max(coverNormalLiftM, hookNeckRiseM + tileThickness * 1.55);
   const slopes = [];
   const slopeGeometryAudits = [];
   const ridgeElevations = [];
@@ -1174,11 +1270,16 @@ function addRoofUnit(parent, spec, options, materials, profile, baseline, roofIn
         .applyAxisAngle(UP, sectionRotationY)
         .normalize();
       const expectedTileVerticalComponent = Math.sin(angle);
+      const baseSlopeQuaternion = composeSlopeQuaternion(sectionRotationY, plane.side * angle);
+      const roofNormalWorld = new THREE.Vector3(0, 1, 0).applyQuaternion(baseSlopeQuaternion).normalize();
+      const tilePoint = (x, distance, normalLiftM) => sectionPoint(
+        x,
+        plane.ridgeY - plane.pitch * distance,
+        plane.centerZ + plane.side * distance,
+      ).addScaledVector(roofNormalWorld, normalLiftM);
 
       for (let course = 0; course < courseCount; course += 1) {
         const distance = (course + 0.5) * courseStep;
-        const panZ = plane.centerZ + plane.side * distance;
-        const panY = plane.ridgeY - plane.pitch * distance + 0.055;
         for (let column = 0; column < panColumns; column += 1) {
           const state = baseline ? { missing: false, broken: false, repaired: false } : classifyTile(profile.roof || profile, roofIndex + sectionIndex, plane.side, course, column, courseCount, panColumns);
           const id = `${spec.id}:${section.id}:S${plane.side}:PAN:${course}:${column}`;
@@ -1193,7 +1294,7 @@ function addRoofUnit(parent, spec, options, materials, profile, baseline, roofIn
           const yawJitter = stateName === 'broken' ? (seeded01(course, column, 3) - 0.5) * 0.12 : 0;
           const roll = stateName === 'broken' ? plane.side * 0.05 : 0;
           const record = {
-            position: sectionPoint(panX(column), panY, panZ).toArray(),
+            position: tilePoint(panX(column), distance, panNormalLiftM).toArray(),
             quaternion: composeSlopeQuaternion(sectionRotationY, plane.side * angle, yawJitter, roll).toArray(),
             scale: stateName === 'broken' ? [0.68, 0.72, 0.62] : [1, 1, 1],
             color: tileColor(profile.roof || profile, roofIndex, column, course, plane.side, stateName),
@@ -1206,8 +1307,6 @@ function addRoofUnit(parent, spec, options, materials, profile, baseline, roofIn
         }
         for (let column = 0; column < coverColumns; column += 1) {
           const coverDistance = baseline ? distance + courseStep * 0.23 : distance;
-          const coverZ = plane.centerZ + plane.side * coverDistance;
-          const coverY = plane.ridgeY - plane.pitch * coverDistance + 0.105;
           const state = baseline ? { missing: false, broken: false, repaired: false } : classifyTile(profile.roof || profile, roofIndex + sectionIndex, plane.side, course, column, courseCount, coverColumns);
           const id = `${spec.id}:${section.id}:S${plane.side}:COVER:${course}:${column}`;
           damagePatchDefinition ||= state.damagePatch || null;
@@ -1220,7 +1319,7 @@ function addRoofUnit(parent, spec, options, materials, profile, baseline, roofIn
           const stateName = state.repaired ? 'repair' : state.broken ? 'broken' : 'aged';
           const yawJitter = stateName === 'broken' ? (seeded01(column, course, 7) - 0.5) * 0.10 : 0;
           const record = {
-            position: sectionPoint(coverX(column), coverY, coverZ).toArray(),
+            position: tilePoint(coverX(column), coverDistance, coverNormalLiftM).toArray(),
             quaternion: composeSlopeQuaternion(sectionRotationY, plane.side * angle, yawJitter).toArray(),
             scale: stateName === 'broken' ? [0.74, 0.76, 0.58] : [1, 1, 1],
             color: tileColor(profile.roof || profile, roofIndex, column + 0.5, course, plane.side, stateName),
@@ -1302,20 +1401,18 @@ function addRoofUnit(parent, spec, options, materials, profile, baseline, roofIn
         dimensionsM: [section.span, options.roofThickness, slopeLength],
       });
       deck.scale.set(section.span, options.roofThickness, slopeLength);
-      deck.quaternion.copy(composeSlopeQuaternion(sectionRotationY, plane.side * angle));
-      deck.position.copy(sectionPoint(0, plane.ridgeY - plane.pitch * plane.run / 2 - 0.06, plane.centerZ + plane.side * plane.run / 2));
+      deck.quaternion.copy(baseSlopeQuaternion);
+      deck.position.copy(tilePoint(0, plane.run / 2, -options.roofThickness * 0.60));
       underlay.add(deck);
 
       const dripRecords = [];
       const hookNeckRecords = [];
       const hookHeadRecords = [];
       const eaveDistance = plane.run + tileLength * 0.10;
-      const eaveZ = plane.centerZ + plane.side * eaveDistance;
-      const eaveY = plane.ridgeY - plane.pitch * eaveDistance + 0.04;
-      const slopeQuaternion = composeSlopeQuaternion(sectionRotationY, plane.side * angle).toArray();
+      const slopeQuaternion = baseSlopeQuaternion.toArray();
       for (let column = 0; column < panColumns; column += 1) {
         dripRecords.push({
-          position: sectionPoint(panX(column), eaveY, eaveZ).toArray(),
+          position: tilePoint(panX(column), eaveDistance, dripNormalLiftM).toArray(),
           quaternion: slopeQuaternion,
           color: tileColor(profile.roof || profile, roofIndex, column, courseCount, plane.side),
           semantic: { kind: 'drip', state: 'aged', slopeId, sectionId: section.id, courseIndex: courseCount, columnIndex: column },
@@ -1325,13 +1422,13 @@ function addRoofUnit(parent, spec, options, materials, profile, baseline, roofIn
         const color = tileColor(profile.roof || profile, roofIndex, column + 0.5, courseCount, plane.side);
         const semantic = { kind: 'hook', state: 'aged', slopeId, sectionId: section.id, courseIndex: courseCount, columnIndex: column };
         hookNeckRecords.push({
-          position: sectionPoint(coverX(column), eaveY + 0.07, eaveZ - plane.side * tileLength * 0.10).toArray(),
+          position: tilePoint(coverX(column), eaveDistance - tileLength * 0.10, hookNormalLiftM).toArray(),
           quaternion: slopeQuaternion,
           color,
           semantic,
         });
         hookHeadRecords.push({
-          position: sectionPoint(coverX(column), eaveY + 0.065, eaveZ + plane.side * tileThickness * 0.75).toArray(),
+          position: tilePoint(coverX(column), eaveDistance + tileThickness * 0.75, hookNormalLiftM).toArray(),
           quaternion: slopeQuaternion,
           color,
           semantic,
@@ -1372,7 +1469,11 @@ function addRoofUnit(parent, spec, options, materials, profile, baseline, roofIn
         correspondence: 'two-discrete-sloping-ridge-courses-per-roof-plane',
       })];
       const verticalRidgeEndRecords = [-1, 1].map((edge) => ({
-        position: sectionPoint(edge * section.span / 2, eaveY + 0.09, eaveZ + plane.side * tileThickness * 0.75).toArray(),
+        position: tilePoint(
+          edge * section.span / 2,
+          eaveDistance + tileThickness * 0.75,
+          hookNormalLiftM + tileThickness,
+        ).toArray(),
         quaternion: slopeQuaternion,
         color: tileColor(profile.roof || profile, roofIndex, edge < 0 ? 0 : panColumns - 1, courseCount, plane.side),
         semantic: { kind: 'vertical-ridge-end-closure', state: 'aged', slopeId, sectionId: section.id, edge, courseIndex: courseCount, columnIndex: edge < 0 ? -1 : panColumns },
@@ -1391,7 +1492,9 @@ function addRoofUnit(parent, spec, options, materials, profile, baseline, roofIn
         dripBatches,
         hookBatches,
         verticalRidgeBatches,
+        underlayObjects: [deck],
         expectedDownhillWorld,
+        expectedRoofNormalWorld: roofNormalWorld,
         expectedPitch: plane.pitch,
         expectedTileVerticalComponent,
       });

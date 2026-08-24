@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 import os
 import re
 import sys
@@ -68,11 +69,13 @@ forbidden_high_requests: list[dict[str, Any]] = []
 allowed_optional_http: list[dict[str, Any]] = []
 allowed_network_console: list[dict[str, Any]] = []
 model_runtime: dict[str, dict[str, Any]] = {}
+screenshot_contracts: dict[Path, dict[str, Any]] = {}
 sync_stats: dict[str, Any] = {}
 mobile_sync_stats: dict[str, Any] = {}
 state = None
 measured_state = None
 upper = None
+mobile_state = None
 
 
 def add_result(name: str, ok: bool, detail: Any = None) -> None:
@@ -84,6 +87,106 @@ def add_result(name: str, ok: bool, detail: Any = None) -> None:
 
 def add_process_failure(kind: str, detail: Any, *, failure_type: str | None = None) -> None:
     process_failures.append({"kind": kind, "type": failure_type or kind, "detail": detail})
+
+
+def canonical_fingerprint(payload: dict[str, Any]) -> str:
+    encoded = json.dumps(payload, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    return f"sha256:{hashlib.sha256(encoded).hexdigest()}"
+
+
+def viewport_snapshot(page: Any) -> dict[str, Any]:
+    return page.evaluate("""() => ({
+      width: window.innerWidth,
+      height: window.innerHeight,
+      devicePixelRatio: window.devicePixelRatio
+    })""")
+
+
+def camera_snapshot(stats: dict[str, Any]) -> dict[str, Any] | None:
+    camera = stats.get("camera")
+    if not isinstance(camera, dict):
+        return None
+    distance = camera.get("distance", camera.get("dist"))
+    target = camera.get("target")
+    if not isinstance(target, list) or len(target) != 3:
+        return None
+    return {
+        "yaw": camera.get("yaw"),
+        "pitch": camera.get("pitch"),
+        "distance": distance,
+        "target": list(target),
+    }
+
+
+def valid_camera(camera: Any) -> bool:
+    if not isinstance(camera, dict):
+        return False
+    values = [camera.get("yaw"), camera.get("pitch"), camera.get("distance")]
+    target = camera.get("target")
+    if not isinstance(target, list) or len(target) != 3:
+        return False
+    values.extend(target)
+    return all(isinstance(value, (int, float)) and not isinstance(value, bool) and math.isfinite(value) for value in values)
+
+
+def production_capture_contract(page: Any, stats: dict[str, Any], check: str) -> dict[str, Any]:
+    options = stats.get("options") if isinstance(stats.get("options"), dict) else {}
+    tuanjie_layer = stats.get("tuanjieLayer") if isinstance(stats.get("tuanjieLayer"), dict) else {}
+    structural_inputs = {
+        "fallback": stats.get("fallback"),
+        "triangles": stats.get("triangles"),
+        "lines": stats.get("lines"),
+        "options": options,
+        "tuanjieLayer": tuanjie_layer,
+    }
+    runtime_seed = stats.get("seed") if "seed" in stats else None
+    runtime_surface_fingerprint = stats.get("surfaceFingerprint") if "surfaceFingerprint" in stats else None
+    return {
+        "check": check,
+        "captureContract": {
+            "schemaVersion": "house-regression-screenshot-v1",
+            "runtimeSource": "window.__V521_TEST__.stats()",
+            "run": {"sha": ARGS.run_sha, "ref": ARGS.run_ref},
+            "fingerprintBasis": structural_inputs,
+        },
+        "viewport": viewport_snapshot(page),
+        "camera": camera_snapshot(stats),
+        "seed": runtime_seed,
+        "structuralFingerprint": canonical_fingerprint(structural_inputs),
+        "surfaceFingerprint": runtime_surface_fingerprint,
+        "evidenceLimit": {
+            "seed": None if runtime_seed is not None else "N/A: __V521_TEST__.stats() exposes no weathering seed.",
+            "surfaceFingerprint": None if runtime_surface_fingerprint is not None else "N/A: the production-line runtime exposes no deterministic surface-material fingerprint.",
+            "structuralFingerprint": "Derived only from live aggregate geometry/options/Tuanjie-layer stats; the runtime exposes no stable per-object IDs or world bounds.",
+        },
+    }
+
+
+def reference_capture_contract(page: Any, stats: dict[str, Any], check: str) -> dict[str, Any]:
+    return {
+        "check": check,
+        "captureContract": {
+            "schemaVersion": "house-regression-screenshot-v1",
+            "runtimeSource": "window.__TUANJIE_TEST__.stats()",
+            "run": {"sha": ARGS.run_sha, "ref": ARGS.run_ref},
+            "structuralRenderFingerprint": stats.get("structuralRenderFingerprint"),
+            "fingerprintBasis": stats.get("fingerprintInputs"),
+        },
+        "viewport": viewport_snapshot(page),
+        "camera": camera_snapshot(stats),
+        "seed": None,
+        "structuralFingerprint": stats.get("structuralFingerprint"),
+        "surfaceFingerprint": None,
+        "evidenceLimit": {
+            "seed": "N/A: reference GLB models have no weathering seed contract.",
+            "surfaceFingerprint": "N/A: the reference viewer renders source textures but has no semantic weathering/surface-system fingerprint.",
+            "structuralFingerprint": "Source and aggregate mesh/vertex/triangle counts identify structure; structuralRenderFingerprint additionally binds the current framebuffer checksum and is not a GLB byte hash.",
+        },
+    }
+
+
+def register_screenshot_contract(path: Path, contract: dict[str, Any]) -> None:
+    screenshot_contracts[path] = contract
 
 
 def capture_console(message: Any) -> None:
@@ -146,21 +249,30 @@ def canvas_probe(page: Any) -> dict[str, Any]:
     }""")
 
 
-def capture_model(page: Any, model_id: str, path: Path, stats: dict[str, Any]) -> dict[str, Any]:
+def capture_model(page: Any, model_id: str, path: Path, expected_stats: dict[str, Any], check: str) -> dict[str, Any]:
     page.locator("#tuanjieViewer").scroll_into_view_if_needed()
     page.wait_for_timeout(450)
+    stats = page.evaluate("window.__TUANJIE_TEST__.stats()")
     probe = canvas_probe(page)
     page.locator("#tuanjieCanvas").screenshot(path=str(path), timeout=180_000)
     payload = path.read_bytes() if path.is_file() else b""
+    contract = reference_capture_contract(page, stats, check)
+    register_screenshot_contract(path, contract)
     evidence = {
         "modelId": model_id,
+        "expectedSource": expected_stats.get("source"),
         "source": stats.get("source"),
         "loaded": stats.get("loaded"),
         "meshes": stats.get("meshes"),
         "vertices": stats.get("vertices"),
         "triangles": stats.get("triangles"),
         "textures": stats.get("textures"),
+        "camera": stats.get("camera"),
         "canvas": probe,
+        "structuralFingerprint": stats.get("structuralFingerprint"),
+        "structuralRenderFingerprint": stats.get("structuralRenderFingerprint"),
+        "fingerprintInputs": stats.get("fingerprintInputs"),
+        "captureContract": contract,
         "screenshot": {
             "path": str(path),
             "bytes": len(payload),
@@ -171,11 +283,18 @@ def capture_model(page: Any, model_id: str, path: Path, stats: dict[str, Any]) -
     add_result(
         f"{model_id} real WebGL frame",
         stats.get("loaded") is True
+        and stats.get("source") == expected_stats.get("source")
         and probe.get("webgl") is True
         and probe.get("width", 0) > 100
         and probe.get("height", 0) > 100
         and probe.get("opaqueSamples", 0) > 0
         and probe.get("uniqueColorSamples", 0) > 4
+        and stats.get("canvasChecksum") == probe.get("checksum")
+        and valid_camera(camera_snapshot(stats))
+        and isinstance(stats.get("structuralFingerprint"), str)
+        and isinstance(stats.get("structuralRenderFingerprint"), str)
+        and isinstance(stats.get("fingerprintInputs"), dict)
+        and stats.get("fingerprintInputs", {}).get("canvasChecksum") == probe.get("checksum")
         and len(payload) > 1_000,
         evidence,
     )
@@ -399,6 +518,20 @@ try:
                 add_result("visitor reaches second floor", abs(upper.get("personFloor", 0) - 2.73) < 0.03, upper.get("personFloor"))
                 add_result("tour keeps cutaway disabled", upper["options"]["cut"] is False)
                 page.screenshot(path=str(SCREEN), full_page=False)
+                production_contract = production_capture_contract(
+                    page,
+                    upper,
+                    "Main production line after openings and visitor reaches the second floor",
+                )
+                register_screenshot_contract(SCREEN, production_contract)
+                add_result(
+                    "main production screenshot capture contract",
+                    valid_camera(production_contract.get("camera"))
+                    and isinstance(production_contract.get("structuralFingerprint"), str)
+                    and production_contract.get("seed") is None
+                    and production_contract.get("surfaceFingerprint") is None,
+                    production_contract,
+                )
 
                 page.locator('[data-view="reference"]').click()
                 add_result("Tuanjie viewer visible before load", page.locator("#tuanjieViewer").is_visible())
@@ -466,7 +599,13 @@ try:
                 roof_hidden = page.evaluate("window.__TUANJIE_TEST__.stats()")
                 add_result("Tuanjie editable roof group", roof_hidden.get("groups", {}).get("roof") is False, roof_hidden.get("groups"))
                 page.locator('[data-tj-group="roof"]').click()
-                capture_model(page, "Tuanjie", TUANJIE_SCREEN, page.evaluate("window.__TUANJIE_TEST__.stats()"))
+                capture_model(
+                    page,
+                    "Tuanjie",
+                    TUANJIE_SCREEN,
+                    page.evaluate("window.__TUANJIE_TEST__.stats()"),
+                    "Tuanjie public standard GLB renders a real WebGL frame",
+                )
 
                 add_result(
                     "file protocol recovery instruction",
@@ -486,9 +625,13 @@ try:
                     and local_reference.get("normalMapActive") is True,
                     local_reference,
                 )
-                page.locator("#tuanjieViewer").scroll_into_view_if_needed()
-                page.wait_for_timeout(300)
-                page.locator("#tuanjieCanvas").screenshot(path=str(TUANJIE_LOCAL_SCREEN), timeout=180_000)
+                capture_model(
+                    page,
+                    "TuanjieLocal",
+                    TUANJIE_LOCAL_SCREEN,
+                    local_reference,
+                    "Tuanjie local GLB re-import renders a real WebGL frame",
+                )
 
                 page.locator("#openDaliReference").click()
                 page.wait_for_function(
@@ -510,7 +653,13 @@ try:
                     and dali_reference.get("textures", {}).get("base", {}).get("height") == 4_096,
                     dali_reference.get("textures"),
                 )
-                capture_model(page, "Dali", DALI_SCREEN, dali_reference)
+                capture_model(
+                    page,
+                    "Dali",
+                    DALI_SCREEN,
+                    dali_reference,
+                    "Dali reference GLB renders a real WebGL frame",
+                )
 
                 page.locator("#openWulongReference").click()
                 page.wait_for_function(
@@ -534,7 +683,13 @@ try:
                     and wulong_reference.get("textures", {}).get("normal", {}).get("height") == 2_048,
                     wulong_reference.get("textures"),
                 )
-                capture_model(page, "Wulong", WULONG_SCREEN, wulong_reference)
+                capture_model(
+                    page,
+                    "Wulong",
+                    WULONG_SCREEN,
+                    wulong_reference,
+                    "Wulong reference GLB renders a real WebGL frame",
+                )
 
                 runtime_hashes = [model_runtime[name]["screenshot"]["sha256"] for name in ("Tuanjie", "Dali", "Wulong")]
                 runtime_checksums = [model_runtime[name]["canvas"]["checksum"] for name in ("Tuanjie", "Dali", "Wulong")]
@@ -636,6 +791,7 @@ try:
                     timeout=120_000,
                 )
                 mobile_sync_stats = mobile_page.evaluate("window.__GITHUB_SYNC__.stats()")
+                mobile_state = mobile_page.evaluate("window.__V521_TEST__.stats()")
                 mobile_required = [
                     request for request in mobile_sync_stats.get("requests", []) if request.get("required")
                 ]
@@ -654,14 +810,52 @@ try:
                   const canvas = document.querySelector('#buildingCanvas')?.getBoundingClientRect();
                   const controls = ['#m3OpenDemo', '#m3Tour', '#m3Cut'].map(selector => {
                     const rect = document.querySelector(selector)?.getBoundingClientRect();
-                    return {selector, width: rect?.width || 0, height: rect?.height || 0};
+                    return {
+                      selector,
+                      left: rect?.left ?? null,
+                      right: rect?.right ?? null,
+                      width: rect?.width || 0,
+                      height: rect?.height || 0
+                    };
                   });
+                  const layoutSelectors = [
+                    '.app', '.topbar', '.shell', '.workspace', '.toolbar',
+                    '.tabs', '.tools', '.viewport', '.model3dWrap',
+                    '.modelHud', '.modelControls', '.status', '.stageCtl'
+                  ];
+                  const layoutBoxes = layoutSelectors.map(selector => {
+                    const rect = document.querySelector(selector)?.getBoundingClientRect();
+                    return {
+                      selector,
+                      left: rect?.left ?? null,
+                      right: rect?.right ?? null,
+                      width: rect?.width || 0,
+                      height: rect?.height || 0
+                    };
+                  });
+                  const overflowingElements = [...document.body.querySelectorAll('*')]
+                    .map(element => {
+                      const rect = element.getBoundingClientRect();
+                      return {
+                        tag: element.tagName.toLowerCase(),
+                        id: element.id || null,
+                        className: typeof element.className === 'string' ? element.className : null,
+                        left: rect.left,
+                        right: rect.right,
+                        width: rect.width,
+                        height: rect.height
+                      };
+                    })
+                    .filter(item => item.width > 0 && item.height > 0 && (item.left < -1 || item.right > window.innerWidth + 1))
+                    .slice(0, 40);
                   return {
                     innerWidth: window.innerWidth,
                     innerHeight: window.innerHeight,
                     scrollWidth: Math.max(root.scrollWidth, body.scrollWidth),
                     canvas: canvas ? {left: canvas.left, right: canvas.right, width: canvas.width, height: canvas.height} : null,
-                    controls
+                    controls,
+                    layoutBoxes,
+                    overflowingElements
                   };
                 }""")
                 add_result(
@@ -672,10 +866,44 @@ try:
                     and mobile_metrics.get("canvas") is not None
                     and mobile_metrics["canvas"].get("left", -1) >= 0
                     and mobile_metrics["canvas"].get("right", 9999) <= 391
-                    and all(control.get("width", 0) > 0 and control.get("height", 0) > 0 for control in mobile_metrics.get("controls", [])),
+                    and mobile_metrics["canvas"].get("width", 0) > 0
+                    and mobile_metrics["canvas"].get("height", 0) > 0
+                    and all(
+                        control.get("width", 0) > 0
+                        and control.get("height", 0) > 0
+                        and control.get("left") is not None
+                        and control.get("left", -1) >= -1
+                        and control.get("right", 9999) <= 391
+                        for control in mobile_metrics.get("controls", [])
+                    )
+                    and all(
+                        box.get("width", 0) > 0
+                        and box.get("height", 0) > 0
+                        and box.get("left") is not None
+                        and box.get("left", -1) >= -1
+                        and box.get("right", 9999) <= 391
+                        for box in mobile_metrics.get("layoutBoxes", [])
+                    )
+                    and not mobile_metrics.get("overflowingElements"),
                     mobile_metrics,
                 )
                 mobile_page.screenshot(path=str(MOBILE_SCREEN), full_page=False)
+                mobile_contract = production_capture_contract(
+                    mobile_page,
+                    mobile_state,
+                    "Complete production line at the strict 390x844 mobile viewport",
+                )
+                register_screenshot_contract(MOBILE_SCREEN, mobile_contract)
+                add_result(
+                    "mobile screenshot capture contract",
+                    mobile_contract.get("viewport", {}).get("width") == 390
+                    and mobile_contract.get("viewport", {}).get("height") == 844
+                    and valid_camera(mobile_contract.get("camera"))
+                    and isinstance(mobile_contract.get("structuralFingerprint"), str)
+                    and mobile_contract.get("seed") is None
+                    and mobile_contract.get("surfaceFingerprint") is None,
+                    mobile_contract,
+                )
                 mobile_page.close()
             finally:
                 if browser is not None:
@@ -708,18 +936,64 @@ finally:
 
 classify_browser_diagnostics([sync_stats, mobile_sync_stats])
 
+expected_screenshots = [SCREEN, TUANJIE_SCREEN, TUANJIE_LOCAL_SCREEN, DALI_SCREEN, WULONG_SCREEN, MOBILE_SCREEN]
+required_contract_keys = {
+    "check",
+    "captureContract",
+    "viewport",
+    "camera",
+    "seed",
+    "structuralFingerprint",
+    "surfaceFingerprint",
+    "evidenceLimit",
+}
+if not process_failures:
+    for path in expected_screenshots:
+        if not path.is_file():
+            add_process_failure(
+                "missing-regression-screenshot",
+                {"filename": path.name},
+                failure_type="evidence",
+            )
+for path in expected_screenshots:
+    if not path.is_file():
+        continue
+    contract = screenshot_contracts.get(path)
+    if (
+        not isinstance(contract, dict)
+        or not required_contract_keys.issubset(contract)
+        or not isinstance(contract.get("check"), str)
+        or not isinstance(contract.get("captureContract"), dict)
+        or not isinstance(contract.get("viewport"), dict)
+        or not valid_camera(contract.get("camera"))
+        or not isinstance(contract.get("structuralFingerprint"), str)
+        or not isinstance(contract.get("evidenceLimit"), dict)
+        or (contract.get("seed") is None and not contract.get("evidenceLimit", {}).get("seed"))
+        or (
+            contract.get("surfaceFingerprint") is None
+            and not contract.get("evidenceLimit", {}).get("surfaceFingerprint")
+        )
+    ):
+        add_process_failure(
+            "invalid-regression-screenshot-contract",
+            {"filename": path.name, "contract": contract},
+            failure_type="evidence",
+        )
+
 assertion_passed = sum(1 for item in results if item.get("ok"))
 assertion_failed = len(results) - assertion_passed
 process_failure_count = len(process_failures)
 screenshots = []
-for path in [SCREEN, TUANJIE_SCREEN, TUANJIE_LOCAL_SCREEN, DALI_SCREEN, WULONG_SCREEN, MOBILE_SCREEN]:
+for path in expected_screenshots:
     if not path.is_file():
         continue
     payload = path.read_bytes()
     screenshots.append({
         "name": path.name,
+        "filename": path.name,
         "bytes": len(payload),
         "sha256": hashlib.sha256(payload).hexdigest(),
+        **screenshot_contracts.get(path, {}),
     })
 
 summary = {
@@ -740,6 +1014,7 @@ report = {
         "initial": state,
         "measuredBranch": measured_state,
         "upperFloorRegression": upper,
+        "mobile": mobile_state,
     },
     "modelRuntime": model_runtime,
     "githubSync": sync_stats,
