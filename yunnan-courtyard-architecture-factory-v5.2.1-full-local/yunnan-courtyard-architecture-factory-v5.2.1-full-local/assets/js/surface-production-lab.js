@@ -6,8 +6,8 @@ import {
   disposeYunnanCourtyardPrototype,
 } from '../../threejs/YunnanCourtyardProduction.js';
 import {
-  createYunnanCourtyardPrototype as createFrozenV544Courtyard,
-  disposeYunnanCourtyardPrototype as disposeFrozenV544Courtyard,
+  createYunnanCourtyardPrototype as createFrozenV544Runtime,
+  disposeYunnanCourtyardPrototype as disposeFrozenV544Runtime,
 } from '../../threejs/v544/YunnanCourtyardProduction.js';
 import { V544_FROZEN_BASELINE } from '../../threejs/YunnanBaselineV544.js';
 import { resolveSurfaceProfile } from '../../threejs/YunnanSurfaceProfiles.js';
@@ -38,10 +38,6 @@ const SHARED_COMPARISON_OPTIONS = Object.freeze({
   seed: V544_FROZEN_BASELINE.comparisonSeed,
   ...V544_FROZEN_BASELINE.buildingParameters,
 });
-const V544_COMPARISON_OPTIONS = Object.freeze({
-  ...SHARED_COMPARISON_OPTIONS,
-  ...V544_FROZEN_BASELINE.tileProfile,
-});
 const V550_TILE_PROFILE = Object.freeze({
   tileProfileId: YUNNAN_COURTYARD_DEFAULTS.tileProfileId,
   tileWidth: YUNNAN_COURTYARD_DEFAULTS.tileWidth,
@@ -54,6 +50,7 @@ const views = [];
 let syncingControls = false;
 let firstFrameMs = null;
 let frameCount = 0;
+let productionRenderSerial = 0;
 let fpsWindowStarted = performance.now();
 let sampledFps = 0;
 let activePreset = 'museum1940sBalanced';
@@ -61,6 +58,9 @@ let tourTimer = null;
 let visitorAnimationFrame = null;
 let mode = 'complete';
 let frozenV544RuntimeCache = null;
+let activeCameraId = 'overview';
+let activeCameraEvidence = null;
+let qaRouteOverlay = null;
 
 function buildEnvironment(scene) {
   scene.background = new THREE.Color(LIGHT_CONTRACT.background);
@@ -101,14 +101,17 @@ function createView(element, baseline) {
   function load(profileId = activePreset) {
     if (model) {
       scene.remove(model);
-      if (baseline) disposeFrozenV544Courtyard(model);
-      else disposeYunnanCourtyardPrototype(model);
+      disposeYunnanCourtyardPrototype(model);
     }
     profile = baseline
       ? { ...resolveSurfaceProfile(seed, 'baselineV544'), provenance: V544_FROZEN_BASELINE }
       : resolveSurfaceProfile(seed, profileId);
     model = baseline
-      ? createFrozenV544Courtyard(V544_COMPARISON_OPTIONS)
+      ? createYunnanCourtyardPrototype({
+        ...SHARED_COMPARISON_OPTIONS,
+        baselineV544: true,
+        surfaceProfile: profile,
+      })
       : createYunnanCourtyardPrototype({ ...SHARED_COMPARISON_OPTIONS, surfaceProfile: profile });
     model.userData.comparisonContract = {
       ...(model.userData.comparisonContract || {}),
@@ -120,6 +123,8 @@ function createView(element, baseline) {
       sharedCamera: true,
       sharedCanvasSize: true,
       sharedLighting: true,
+      displayedBaselineRuntime: 'current-generator-baselineV544-branch',
+      frozenRuntimeRole: 'provenance-evidence-only',
       baselineTileProfile: { ...V544_FROZEN_BASELINE.tileProfile },
       productionTileProfile: { ...V550_TILE_PROFILE },
     };
@@ -181,7 +186,10 @@ function renderFrame(now) {
     if (!view.baseline || view.needsRender) {
       view.renderer.render(view.scene, view.camera);
       view.needsRender = false;
-      if (!view.baseline) renderedProduction = true;
+      if (!view.baseline) {
+        renderedProduction = true;
+        productionRenderSerial += 1;
+      }
     }
   });
   if (firstFrameMs === null) {
@@ -246,18 +254,282 @@ function updateStatus() {
   updateQuality();
 }
 
-function setCamera(id) {
+function cameraBoundsEvidence(bounds) {
+  return bounds?.isEmpty?.() === false
+    ? [...bounds.min.toArray(), ...bounds.max.toArray()].map((value) => rounded(value, 5)) : null;
+}
+
+function fitCameraToBounds(bounds, direction, padding = 1.25, targetOffset = new THREE.Vector3()) {
+  const target = bounds.getCenter(new THREE.Vector3()).add(targetOffset);
+  const size = bounds.getSize(new THREE.Vector3());
+  const radius = Math.max(0.45, size.length() * 0.5);
+  const halfFov = THREE.MathUtils.degToRad(productionView.camera.fov * 0.5);
+  const distance = Math.max(1.4, radius * padding / Math.tan(halfFov));
+  const normalized = direction.clone().normalize();
+  return { position: target.clone().addScaledVector(normalized, distance), target, distance, bounds: bounds.clone() };
+}
+
+function instanceWorldBounds(batch, indices = null) {
+  const bounds = new THREE.Box3();
+  const local = new THREE.Matrix4();
+  const world = new THREE.Matrix4();
+  if (!batch.geometry?.boundingBox) batch.geometry?.computeBoundingBox?.();
+  const geometryBounds = batch.geometry?.boundingBox;
+  if (!geometryBounds) return bounds;
+  const selected = indices || Array.from({ length: batch.count }, (_, index) => index);
+  selected.forEach((index) => {
+    batch.getMatrixAt(index, local);
+    world.multiplyMatrices(batch.matrixWorld, local);
+    bounds.union(geometryBounds.clone().applyMatrix4(world));
+  });
+  return bounds;
+}
+
+function resolveEaveQACamera() {
+  const model = productionView.model();
+  model.updateMatrixWorld(true);
+  const batches = [];
+  model.traverse((object) => {
+    if (!object.isInstancedMesh || ancestorValue(object, 'roofUnitId', model) !== 'mainHouseDoublePitch') return;
+    const kind = object.userData?.instanceMap?.[0]?.kind;
+    if (['pan', 'cover', 'drip', 'hook'].includes(kind)) batches.push(object);
+  });
+  const eaveGroups = new Map();
+  batches.filter((batch) => ['drip', 'hook'].includes(batch.userData?.instanceMap?.[0]?.kind)).forEach((batch) => {
+    const slopeId = batch.userData?.slopeId;
+    if (!eaveGroups.has(slopeId)) eaveGroups.set(slopeId, new THREE.Box3());
+    eaveGroups.get(slopeId).union(instanceWorldBounds(batch));
+  });
+  const selectedSlope = [...eaveGroups.entries()].sort((left, right) => (
+    left[1].getCenter(new THREE.Vector3()).z - right[1].getCenter(new THREE.Vector3()).z
+  ))[0]?.[0];
+  const slopeBatches = batches.filter((batch) => batch.userData?.slopeId === selectedSlope);
+  const columns = slopeBatches.flatMap((batch) => (batch.userData?.instanceMap || []).map((item) => item.columnIndex)).filter(Number.isInteger);
+  const courses = slopeBatches.flatMap((batch) => (batch.userData?.instanceMap || []).map((item) => item.courseIndex)).filter(Number.isInteger);
+  const middleColumn = columns.length ? (Math.min(...columns) + Math.max(...columns)) / 2 : 0;
+  const eaveCourse = courses.length ? Math.max(...courses) : 0;
+  const detailBounds = new THREE.Box3();
+  slopeBatches.forEach((batch) => {
+    const semantic = batch.userData?.instanceMap || [];
+    const indices = semantic.map((item, index) => ({ item, index })).filter(({ item }) => (
+      Math.abs(Number(item.columnIndex) - middleColumn) <= 2.1
+      && Number(item.courseIndex) >= eaveCourse - 4
+    )).map(({ index }) => index);
+    if (indices.length) detailBounds.union(instanceWorldBounds(batch, indices));
+  });
+  const eaveBounds = eaveGroups.get(selectedSlope) || detailBounds;
+  const eaveCenter = eaveBounds.getCenter(new THREE.Vector3());
+  const detailCenter = detailBounds.getCenter(new THREE.Vector3());
+  const downhill = eaveCenter.clone().sub(detailCenter).setY(0);
+  if (downhill.lengthSq() < 1e-8) downhill.set(0, 0, -1);
+  downhill.normalize();
+  const direction = downhill.clone().add(new THREE.Vector3(0, 0.34, 0)).normalize();
+  const camera = fitCameraToBounds(detailBounds, direction, 1.15, new THREE.Vector3(0, 0.02, 0));
+  return {
+    ...camera,
+    evidence: {
+      source: 'live-main-house-eave-instance-world-bounds', slopeId: selectedSlope,
+      selectedColumnCenter: rounded(middleColumn, 3), selectedCourseRange: [Math.max(0, eaveCourse - 4), eaveCourse],
+      featureKinds: ['pan', 'cover', 'drip', 'hook'], bounds: cameraBoundsEvidence(detailBounds),
+    },
+  };
+}
+
+function resolveRidgeQACamera() {
+  const model = productionView.model();
+  model.updateMatrixWorld(true);
+  const features = [];
+  model.traverse((object) => {
+    if (!object.isMesh || ancestorValue(object, 'roofUnitId', model) !== 'mainHouseDoublePitch') return;
+    if (object.userData?.ridgeSemantic) features.push(object);
+  });
+  const principal = features.filter((object) => object.userData.ridgeSemantic === 'principalRidge')
+    .sort((a, b) => new THREE.Box3().setFromObject(b).getSize(new THREE.Vector3()).lengthSq()
+      - new THREE.Box3().setFromObject(a).getSize(new THREE.Vector3()).lengthSq())[0];
+  const ridgeBounds = principal ? new THREE.Box3().setFromObject(principal) : new THREE.Box3().setFromObject(model);
+  const size = ridgeBounds.getSize(new THREE.Vector3());
+  const axis = size.x >= size.z ? new THREE.Vector3(1, 0, 0) : new THREE.Vector3(0, 0, 1);
+  const endpoint = ridgeBounds.getCenter(new THREE.Vector3()).addScaledVector(axis, -Math.max(size.x, size.z) * 0.5);
+  const nearbyBounds = new THREE.Box3().setFromCenterAndSize(endpoint, new THREE.Vector3(2.2, 2.2, 2.2));
+  const featureBounds = new THREE.Box3();
+  const semantics = new Set();
+  features.forEach((object) => {
+    const bounds = new THREE.Box3().setFromObject(object);
+    if (bounds.intersectsBox(nearbyBounds)) {
+      featureBounds.union(bounds.intersect(nearbyBounds));
+      semantics.add(object.userData.ridgeSemantic);
+    }
+  });
+  if (featureBounds.isEmpty()) featureBounds.copy(nearbyBounds);
+  const outward = axis.clone().negate();
+  const side = new THREE.Vector3(-outward.z, 0, outward.x);
+  const direction = outward.multiplyScalar(0.78).addScaledVector(side, 0.42).add(new THREE.Vector3(0, 0.72, 0));
+  const camera = fitCameraToBounds(featureBounds, direction, 1.35);
+  return {
+    ...camera,
+    evidence: {
+      source: 'live-main-house-ridge-semantic-world-bounds',
+      featureSemantics: [...semantics].sort(), endpoint: endpoint.toArray().map((value) => rounded(value, 5)),
+      bounds: cameraBoundsEvidence(featureBounds),
+    },
+  };
+}
+
+function resolveStairQACamera() {
+  const stair = productionView.model().getObjectByName('stair_STAIR-WEST-01');
+  const bounds = stair ? new THREE.Box3().setFromObject(stair) : new THREE.Box3().setFromObject(productionView.model());
+  const direction = new THREE.Vector3(1, 0.34, -0.9);
+  const camera = fitCameraToBounds(bounds, direction, 1.18, new THREE.Vector3(0, 0.18, 0));
+  return {
+    ...camera,
+    evidence: { source: 'live-stair-STair-west-01-world-bounds', stairId: 'STAIR-WEST-01', bounds: cameraBoundsEvidence(bounds) },
+  };
+}
+
+function routeWorldPoints() {
+  const model = productionView.model();
+  model.updateMatrixWorld(true);
+  return (model.userData?.visitorRoute?.points || []).map((point) => (
+    (point.isVector3 ? point.clone() : new THREE.Vector3().fromArray(point)).applyMatrix4(model.matrixWorld)
+  ));
+}
+
+function resolveRouteQACamera() {
+  const points = routeWorldPoints();
+  const bounds = new THREE.Box3().setFromPoints(points);
+  const camera = fitCameraToBounds(bounds, new THREE.Vector3(0.72, 1.35, -0.76), 1.12, new THREE.Vector3(0, 0.4, 0));
+  return {
+    ...camera,
+    evidence: {
+      source: 'actual-visitor-route-point-world-bounds', pointCount: points.length,
+      routeFingerprint: fnv1a(points.map((point) => point.toArray().map((value) => rounded(value, 5)).join(','))),
+      bounds: cameraBoundsEvidence(bounds),
+    },
+  };
+}
+
+function resolveOpeningsQACamera() {
+  const model = productionView.model();
+  model.updateMatrixWorld(true);
+  const assemblies = [];
+  model.traverse((object) => { if (object.userData?.openingKind) assemblies.push(object); });
+  const doors = assemblies.filter((object) => object.userData.openingKind === 'door');
+  const windows = assemblies.filter((object) => object.userData.openingKind === 'window');
+  const door = doors[0];
+  const doorCenter = door ? new THREE.Box3().setFromObject(door).getCenter(new THREE.Vector3()) : new THREE.Vector3();
+  const windowObject = windows.sort((a, b) => (
+    new THREE.Box3().setFromObject(a).getCenter(new THREE.Vector3()).distanceToSquared(doorCenter)
+      - new THREE.Box3().setFromObject(b).getCenter(new THREE.Vector3()).distanceToSquared(doorCenter)
+  ))[0];
+  const bounds = new THREE.Box3();
+  [door, windowObject].filter(Boolean).forEach((object) => bounds.union(new THREE.Box3().setFromObject(object)));
+  if (bounds.isEmpty()) bounds.setFromObject(model);
+  const modelCenter = new THREE.Box3().setFromObject(model).getCenter(new THREE.Vector3());
+  const outward = bounds.getCenter(new THREE.Vector3()).sub(modelCenter).setY(0);
+  if (outward.lengthSq() < 1e-8) outward.set(0, 0, -1);
+  const camera = fitCameraToBounds(bounds, outward.add(new THREE.Vector3(0, 0.16, 0)), 1.3);
+  return {
+    ...camera,
+    evidence: {
+      source: 'live-nearest-door-window-assembly-world-bounds',
+      componentIds: [door, windowObject].filter(Boolean).map((object) => object.userData.componentId),
+      bounds: cameraBoundsEvidence(bounds),
+    },
+  };
+}
+
+function resolveCamera(id) {
+  if (id === 'qaEave' || id === 'eave') return resolveEaveQACamera();
+  if (id === 'qaRidge') return resolveRidgeQACamera();
+  if (id === 'qaStair' || id === 'stair') return resolveStairQACamera();
+  if (id === 'qaRoute') return resolveRouteQACamera();
+  if (id === 'qaOpenings') return resolveOpeningsQACamera();
   const preset = CAMERA_PRESETS[id];
   if (!preset) throw new Error(`Unknown camera preset: ${id}`);
+  return {
+    position: new THREE.Vector3().fromArray(preset.position),
+    target: new THREE.Vector3().fromArray(preset.target),
+    evidence: { source: 'declared-camera-preset', presetId: id },
+  };
+}
+
+function setCamera(id) {
+  if (id !== 'qaRoute' && qaRouteOverlay) disposeQARouteOverlay();
+  const preset = resolveCamera(id);
   views.forEach((view) => {
-    view.camera.position.fromArray(preset.position);
-    view.controls.target.fromArray(preset.target);
+    view.camera.position.copy(preset.position);
+    view.controls.target.copy(preset.target);
     view.controls.update();
+    view.needsRender = true;
   });
+  activeCameraId = id;
+  activeCameraEvidence = {
+    id, ...preset.evidence,
+    position: preset.position.toArray().map((value) => rounded(value, 5)),
+    target: preset.target.toArray().map((value) => rounded(value, 5)),
+  };
   return id;
 }
 
+function disposeQARouteOverlay() {
+  if (!qaRouteOverlay) return;
+  productionView.scene.remove(qaRouteOverlay);
+  (qaRouteOverlay.userData.ownedGeometries || []).forEach((geometry) => geometry.dispose());
+  (qaRouteOverlay.userData.ownedMaterials || []).forEach((material) => material.dispose());
+  qaRouteOverlay = null;
+  productionView.needsRender = true;
+}
+
+function setQARouteEvidence(visible) {
+  disposeQARouteOverlay();
+  if (!visible) return { visible: false };
+  const points = routeWorldPoints();
+  const segmentGeometry = new THREE.CylinderGeometry(1, 1, 1, 8);
+  const markerGeometry = new THREE.SphereGeometry(1, 10, 8);
+  const routeMaterial = new THREE.MeshBasicMaterial({ color: 0xffd12e, depthTest: false, depthWrite: false });
+  const markerMaterial = new THREE.MeshBasicMaterial({ color: 0xff5a2e, depthTest: false, depthWrite: false });
+  const group = new THREE.Group();
+  group.name = 'V550_qa_actual_visitor_route_overlay';
+  group.userData = {
+    qaEvidenceOnly: true, source: 'actual-visitor-route-points',
+    ownedGeometries: [segmentGeometry, markerGeometry], ownedMaterials: [routeMaterial, markerMaterial],
+  };
+  const segments = new THREE.InstancedMesh(segmentGeometry, routeMaterial, Math.max(0, points.length - 1));
+  const markers = new THREE.InstancedMesh(markerGeometry, markerMaterial, points.length);
+  const matrix = new THREE.Matrix4();
+  const quaternion = new THREE.Quaternion();
+  for (let index = 1; index < points.length; index += 1) {
+    const start = points[index - 1];
+    const end = points[index];
+    const delta = end.clone().sub(start);
+    quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), delta.clone().normalize());
+    matrix.compose(start.clone().add(end).multiplyScalar(0.5).add(new THREE.Vector3(0, 0.05, 0)), quaternion, new THREE.Vector3(0.035, delta.length(), 0.035));
+    segments.setMatrixAt(index - 1, matrix);
+  }
+  points.forEach((point, index) => {
+    const scale = index === points.length - 1 ? 0.18 : 0.095;
+    matrix.compose(point.clone().add(new THREE.Vector3(0, 0.07, 0)), new THREE.Quaternion(), new THREE.Vector3(scale, scale, scale));
+    markers.setMatrixAt(index, matrix);
+  });
+  segments.instanceMatrix.needsUpdate = true;
+  markers.instanceMatrix.needsUpdate = true;
+  segments.renderOrder = 1000;
+  markers.renderOrder = 1001;
+  segments.frustumCulled = false;
+  markers.frustumCulled = false;
+  group.add(segments, markers);
+  productionView.scene.add(group);
+  productionView.needsRender = true;
+  qaRouteOverlay = group;
+  return {
+    visible: true, evidenceSource: group.userData.source, pointCount: points.length, segmentCount: Math.max(0, points.length - 1),
+    routeFingerprint: fnv1a(points.map((point) => point.toArray().map((value) => rounded(value, 5)).join(','))),
+    worldBounds: cameraBoundsEvidence(new THREE.Box3().setFromPoints(points)),
+  };
+}
+
 function setPreset(id) {
+  disposeQARouteOverlay();
   activePreset = id;
   productionView.load(id);
   productionView.needsRender = true;
@@ -329,60 +601,126 @@ function setVisitor(value) {
   return applyVisitorProgress(value);
 }
 
-function playVisitorRoute(durationMs = 5600) {
+function waitForProductionRender(afterSerial, timeoutMs = 15000) {
+  return new Promise((resolve, reject) => {
+    const startedAt = performance.now();
+    const probe = (now) => {
+      if (productionRenderSerial > afterSerial) {
+        resolve({ renderSerial: productionRenderSerial, renderedAtMs: now });
+        return;
+      }
+      if (now - startedAt >= timeoutMs) {
+        reject(new Error(`Production frame did not render within ${timeoutMs} ms after serial ${afterSerial}`));
+        return;
+      }
+      requestAnimationFrame(probe);
+    };
+    requestAnimationFrame(probe);
+  });
+}
+
+async function playVisitorRoute(durationMs = 5600) {
   stopVisitorAnimation();
   setOpenings(1);
   applyVisitorProgress(0);
   const duration = Math.max(1200, Number(durationMs) || 5600);
   const startedAt = performance.now();
+  const requestedFrameCount = 33;
   const evidence = {
-    evidenceSource: 'browser-requestAnimationFrame-plus-generator-raycast',
+    evidenceSource: 'browser-render-serial-plus-generator-raycast',
     durationRequestedMs: duration,
+    requestedFrameCount,
     frameCount: 0,
+    renderedFrameCount: 0,
     uniquePositions: new Set(),
     stages: new Set(),
+    frameFailures: [],
+    frames: [],
     completed: false,
   };
   views.forEach((view) => {
     view.model().userData.runtimeState ||= {};
     view.model().userData.runtimeState.browserPlayback = {
       evidenceSource: evidence.evidenceSource, durationRequestedMs: duration,
-      frameCount: 0, uniquePositionCount: 0, stages: [], completed: false,
+      requestedFrameCount, frameCount: 0, renderedFrameCount: 0,
+      uniquePositionCount: 0, stages: [], frameFailures: [], completed: false,
     };
   });
-  return new Promise((resolve) => {
-    const tick = (now) => {
-      const progress = THREE.MathUtils.clamp((now - startedAt) / duration, 0, 1);
-      const snapshots = applyVisitorProgress(progress);
-      const productionSnapshot = snapshots[1] || snapshots[0];
-      evidence.frameCount += 1;
-      if (productionSnapshot?.position) {
-        evidence.uniquePositions.add(productionSnapshot.position.map((value) => rounded(value, 4)).join(','));
-      }
-      if (productionSnapshot?.stage) evidence.stages.add(productionSnapshot.stage);
-      const current = {
-        evidenceSource: evidence.evidenceSource,
-        durationRequestedMs: duration,
-        elapsedMs: now - startedAt,
-        frameCount: evidence.frameCount,
-        uniquePositionCount: evidence.uniquePositions.size,
-        stages: [...evidence.stages],
-        completed: progress >= 1 && productionSnapshot?.complete === true,
-      };
-      views.forEach((view) => {
-        view.model().userData.runtimeState ||= {};
-        view.model().userData.runtimeState.browserPlayback = { ...current };
-      });
-      if (progress >= 1) {
-        visitorAnimationFrame = null;
-        setPressed('#visitor', true);
-        resolve(current);
-        return;
-      }
-      visitorAnimationFrame = requestAnimationFrame(tick);
-    };
-    visitorAnimationFrame = requestAnimationFrame(tick);
+  for (let index = 0; index < requestedFrameCount; index += 1) {
+    if (index > 0) {
+      const scheduledAt = startedAt + duration * index / (requestedFrameCount - 1);
+      const delayMs = scheduledAt - performance.now();
+      if (delayMs > 0) await new Promise((resolve) => setTimeout(resolve, delayMs));
+    }
+    const progress = index / (requestedFrameCount - 1);
+    const renderSerialBefore = productionRenderSerial;
+    const snapshots = applyVisitorProgress(progress);
+    const productionSnapshot = snapshots[1] || snapshots[0];
+    let renderEvidence = null;
+    try {
+      renderEvidence = await waitForProductionRender(renderSerialBefore);
+      evidence.renderedFrameCount += 1;
+    } catch (error) {
+      evidence.frameFailures.push({ index, progress, type: error?.name || 'Error', message: String(error?.message || error) });
+    }
+    evidence.frameCount += 1;
+    const productionModel = productionView.model();
+    productionModel.updateMatrixWorld(true);
+    const actor = productionModel.getObjectByName('visitor_route_actor');
+    const position = actor?.getWorldPosition(new THREE.Vector3()).toArray() || null;
+    if (Array.isArray(position) && position.length === 3 && position.every(Number.isFinite)) {
+      evidence.uniquePositions.add(position.map((value) => rounded(value, 5)).join(','));
+    } else {
+      evidence.frameFailures.push({ index, progress, type: 'InvalidVisitorPosition', position });
+    }
+    if (productionSnapshot?.stage) evidence.stages.add(productionSnapshot.stage);
+    const collisionCount = ['wallIntersectionCount', 'openingCollisionCount', 'railCollisionCount']
+      .reduce((sum, key) => sum + Number(productionSnapshot?.[key] || 0), 0);
+    if (collisionCount > 0) evidence.frameFailures.push({ index, progress, type: 'Collision', collisionIds: productionSnapshot?.collisionIds || [] });
+    if (Number(productionSnapshot?.suspendedFrameCount || 0) > 0 || productionSnapshot?.supportId == null) {
+      evidence.frameFailures.push({ index, progress, type: 'Unsupported', supportId: productionSnapshot?.supportId || null });
+    }
+    if (Number(productionSnapshot?.stuckFrameCount || 0) > 0) evidence.frameFailures.push({ index, progress, type: 'Stalled' });
+    evidence.frames.push({
+      index, progress: rounded(progress, 6), renderSerialBefore,
+      renderSerialAfter: renderEvidence?.renderSerial ?? null,
+      position: Array.isArray(position) ? position.map((value) => rounded(value, 6)) : null,
+      reportedPosition: Array.isArray(productionSnapshot?.position)
+        ? productionSnapshot.position.map((value) => rounded(value, 6)) : null,
+      stage: productionSnapshot?.stage || null,
+      supportId: productionSnapshot?.supportId || null,
+    });
+  }
+  const finalSnapshot = views[1].model().userData.runtimeState?.visitorSnapshot;
+  const finalVisitor = deriveVisitorEvidence(productionView.model());
+  if (finalSnapshot?.complete !== true || finalVisitor?.complete !== true || finalVisitor?.reachedUpperFloor !== true) {
+    evidence.frameFailures.push({ type: 'DestinationNotReached', finalSnapshot, finalVisitor });
+  }
+  const current = {
+    evidenceSource: evidence.evidenceSource,
+    durationRequestedMs: duration,
+    elapsedMs: performance.now() - startedAt,
+    requestedFrameCount,
+    frameCount: evidence.frameCount,
+    renderedFrameCount: evidence.renderedFrameCount,
+    uniquePositionCount: evidence.uniquePositions.size,
+    stages: [...evidence.stages],
+    frameFailures: evidence.frameFailures,
+    frames: evidence.frames,
+    destination: finalVisitor,
+    completed: finalSnapshot?.complete === true
+      && finalVisitor?.complete === true
+      && finalVisitor?.reachedUpperFloor === true
+      && evidence.frameFailures.length === 0
+      && evidence.renderedFrameCount === requestedFrameCount,
+  };
+  views.forEach((view) => {
+    view.model().userData.runtimeState ||= {};
+    view.model().userData.runtimeState.browserPlayback = { ...current };
   });
+  visitorAnimationFrame = null;
+  setPressed('#visitor', true);
+  return current;
 }
 
 function stopTour() {
@@ -542,7 +880,7 @@ function renderableTokens(root, include, includeMaterials = true) {
         ]));
       }
       const colors = object.instanceColor?.array;
-      if (colors) tokens.push(`colors:${Array.from(colors, (value) => rounded(value, 4)).join(',')}`);
+      if (includeMaterials && colors) tokens.push(`colors:${Array.from(colors, (value) => rounded(value, 4)).join(',')}`);
     } else {
       const worldBounds = new THREE.Box3().setFromObject(object);
       tokens.push(JSON.stringify([
@@ -802,9 +1140,14 @@ function deriveRoofEvidence(model) {
       const semantic = child.userData?.ridgeSemantic;
       if (!child.isMesh || !semantic) return;
       ridgeMeshes.push(child);
-      ridgeSemanticCounts[semantic] = (ridgeSemanticCounts[semantic] || 0) + 1;
+      ridgeSemanticCounts[semantic] = (ridgeSemanticCounts[semantic] || 0)
+        + (child.isInstancedMesh ? child.count : 1);
       ridgeBounds.union(new THREE.Box3().setFromObject(child));
     });
+    const ridgeGeometryCount = ridgeMeshes.reduce(
+      (sum, child) => sum + (child.isInstancedMesh ? child.count : 1),
+      0,
+    );
     const ridgeSize = ridgeBounds.isEmpty() ? new THREE.Vector3() : ridgeBounds.getSize(new THREE.Vector3());
     roofUnits.push({
       roofUnitId: roof.userData.roofUnitId,
@@ -831,7 +1174,8 @@ function deriveRoofEvidence(model) {
       ridgeTopology: (roof.userData.ridgeTopology || []).map((item) => ({ ...item })),
       ridgeAudit: {
         evidenceSource: 'live-ridge-mesh-world-bounds-and-semantics',
-        geometryCount: ridgeMeshes.length,
+        geometryCount: ridgeGeometryCount,
+        batchCount: ridgeMeshes.length,
         semanticCounts: ridgeSemanticCounts,
         worldBounds: ridgeBounds.isEmpty() ? null : [...ridgeBounds.min.toArray(), ...ridgeBounds.max.toArray()].map((value) => rounded(value, 5)),
         boundsSizeM: ridgeSize.toArray().map((value) => rounded(value, 5)),
@@ -1162,7 +1506,9 @@ function deriveVisitorEvidence(model) {
     if (object.userData?.semanticRole === 'wall-core') wallBoxes.push(new THREE.Box3().setFromObject(object));
     if (object.userData?.walkable === true) supportBoxes.push(new THREE.Box3().setFromObject(object));
   });
-  const samples = Array.from({ length: 193 }, (_, index) => interpolatePolyline(points, index / 192));
+  const routeLengthM = points.slice(1).reduce((total, point, index) => total + point.distanceTo(points[index]), 0);
+  const auditSampleCount = Math.max(193, Math.ceil(routeLengthM / 0.08) + 1);
+  const samples = Array.from({ length: auditSampleCount }, (_, index) => interpolatePolyline(points, index / (auditSampleCount - 1)));
   const collides = (point) => wallBoxes.some((box) => {
     const radius = 0.14;
     return point.x >= box.min.x - radius && point.x <= box.max.x + radius
@@ -1181,10 +1527,11 @@ function deriveVisitorEvidence(model) {
   const relativeUpperFloor = deriveStairEvidence(model)?.totalRiseM;
   let runtimeRouteAudit = model.userData?.runtimeState?.visitorRouteAudit || null;
   if (!runtimeRouteAudit && typeof model.userData?.actions?.auditVisitorRoute === 'function') {
-    runtimeRouteAudit = model.userData.actions.auditVisitorRoute(193);
+    runtimeRouteAudit = model.userData.actions.auditVisitorRoute(auditSampleCount);
   }
   return {
     evidenceSource: runtimeRouteAudit?.evidenceSource || 'live-actor-position-route-polyline-wall-aabbs-and-walkable-aabbs',
+    worldPosition: actorPosition.toArray().map((value) => rounded(value, 6)),
     progress: rounded(nearest.progress, 6),
     routeDeviationM: rounded(nearest.distance, 6),
     complete: nearest.progress >= 0.995 && nearest.distance <= 0.02,
@@ -1192,6 +1539,8 @@ function deriveVisitorEvidence(model) {
     relativeUpperFloorM: rounded(relativeUpperFloor, 5),
     reachedUpperFloor: nearest.progress >= 0.995 && Math.abs(actorPosition.y - points.at(-1).y) <= 0.02,
     routeSampleCount: runtimeRouteAudit?.sampleCount ?? samples.length,
+    routeLengthM: rounded(routeLengthM, 6),
+    maximumRouteSampleSpacingM: rounded(routeLengthM / Math.max(1, (runtimeRouteAudit?.sampleCount ?? samples.length) - 1), 6),
     wallIntersectionCount: runtimeRouteAudit?.wallIntersectionCount ?? wallIntersectionCount,
     openingCollisionCount: runtimeRouteAudit?.openingCollisionCount ?? null,
     railCollisionCount: runtimeRouteAudit?.railCollisionCount ?? null,
@@ -1244,7 +1593,7 @@ function sceneLightFingerprint(scene) {
 
 function frozenV544RuntimeEvidence() {
   if (frozenV544RuntimeCache) return frozenV544RuntimeCache;
-  const frozen = createFrozenV544Courtyard({
+  const frozen = createFrozenV544Runtime({
     seed: 401,
     siteWidth: 12.6,
     siteDepth: 15.3,
@@ -1264,18 +1613,20 @@ function frozenV544RuntimeEvidence() {
   const bounds = new THREE.Box3().setFromObject(frozen);
   const stats = deriveSceneStats(frozen);
   frozenV544RuntimeCache = Object.freeze({
-    evidenceSource: 'executed-exact-v544-git-blob-modules',
+    evidenceSource: 'executed-v544-runtime-with-whitespace-normalized-material',
     executable: true,
     sourceCommit: '323a893a791b1d064a1591dcbd2063f2f6a172c1',
     generatorBlobSha: '7b254beeffde1325329101b50784e694249081bd',
-    materialBlobSha: 'd16baad4ff18c5a9e97f7796f9e68d45cd6f9ff9',
+    sourceMaterialBlobSha: 'd16baad4ff18c5a9e97f7796f9e68d45cd6f9ff9',
+    materialBlobSha: '0bcf25b39ebf65047b2f4628ce4ee9306395aa45',
+    materialNormalization: 'removed-one-trailing-blank-line-for-repository-whitespace-gate',
     structuralFingerprint: fnv1a(renderableTokens(frozen, () => true, false)),
     surfaceFingerprint: fnv1a(renderableTokens(frozen, () => true, true)),
     worldBounds: [...bounds.min.toArray(), ...bounds.max.toArray()].map((value) => rounded(value, 5)),
     stats,
     options: Object.fromEntries(Object.entries(frozen.userData?.options || {}).filter(([, value]) => typeof value !== 'object')),
   });
-  disposeFrozenV544Courtyard(frozen);
+  disposeFrozenV544Runtime(frozen);
   return frozenV544RuntimeCache;
 }
 
@@ -1318,10 +1669,12 @@ function inspect(viewName = 'production') {
     if (['stone-and-ground', 'walls', 'timber-frame', 'doors-windows'].includes(rootLayer)) return true;
     return rootLayer === 'roof-production' && ['purlins', 'rafters', 'roofUnderlay'].includes(roofLayer);
   }, false));
-  const surfaceFingerprint = fnv1a(renderableTokens(model, (object) => view.baseline
-    ? ancestorValue(object, 'layer', model) === 'roof-tiles' || ancestorValue(object, 'layer', model) === 'walls'
-    : hasNamedAncestor(object, 'V550_wall_surface_system')
-      || ['panTileCourses', 'coverTileCourses', 'eaveCapsAndDrips', 'ridgeAndClosures'].includes(ancestorValue(object, 'roofLayerId', model))));
+  const surfaceFingerprint = fnv1a(renderableTokens(model, (object) => (
+    (view.baseline && ancestorValue(object, 'layer', model) === 'walls')
+    || (!view.baseline && hasNamedAncestor(object, 'V550_wall_surface_system'))
+    || ['panTileCourses', 'coverTileCourses', 'eaveCapsAndDrips', 'ridgeAndClosures']
+      .includes(ancestorValue(object, 'roofLayerId', model))
+  )));
   const fullGeometryFingerprint = fnv1a(renderableTokens(model, () => true, false));
   const displayedRuntimeFingerprint = fnv1a(renderableTokens(model, () => true, true));
   const comparisonInputFingerprint = fnv1a([
@@ -1331,12 +1684,8 @@ function inspect(viewName = 'production') {
     sceneLightFingerprint(view.scene),
   ]);
   const rootLayers = Object.fromEntries(model.children.filter((child) => child.userData?.layer).map((child) => [child.userData.layer, child]));
-  const completeBuilding = view.baseline
-    ? ['stone-and-ground', 'walls', 'timber-frame', 'roof-tiles', 'doors-windows']
-      .every((id) => rootLayers[id] && countRenderable(rootLayers[id]) > 0)
-      && deriveSceneStats(model).meshCount > 100
-    : ROOT_LAYER_IDS.every((id) => rootLayers[id] && countRenderable(rootLayers[id]) > 0)
-      && roofSystem.complete && walls.hostCount > 0 && stair?.totalRisers === 16;
+  const completeBuilding = ROOT_LAYER_IDS.every((id) => rootLayers[id] && countRenderable(rootLayers[id]) > 0)
+    && roofSystem.complete && walls.hostCount > 0 && stair?.totalRisers === 16;
   const cutaway = ROOT_LAYER_IDS.some((id) => rootLayers[id] && !rootLayers[id].visible);
   const sceneStats = deriveSceneStats(model);
   return {
@@ -1352,6 +1701,8 @@ function inspect(viewName = 'production') {
     displayedRuntimeFingerprint,
     comparisonInputFingerprint,
     cameraFingerprint,
+    cameraPresetId: activeCameraId,
+    cameraEvidence: activeCameraEvidence ? { ...activeCameraEvidence } : null,
     canvasFingerprint,
     lightFingerprint: sceneLightFingerprint(view.scene),
     comparisonContract: { ...(model.userData.comparisonContract || {}) },
@@ -1400,5 +1751,6 @@ window.__SURFACE_QA__ = {
   setOpeningsProgress: setOpenings,
   setVisitorProgress: setVisitor,
   playVisitorRoute,
+  setQARouteEvidence,
   reset,
 };

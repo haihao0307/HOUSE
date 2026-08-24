@@ -83,15 +83,103 @@ function appendObjectWorldBounds(target, object) {
   }
 }
 
+function forEachActualInstance(object, callback) {
+  const count = object.isInstancedMesh ? object.count : 1;
+  const local = new THREE.Matrix4();
+  const world = new THREE.Matrix4();
+  for (let index = 0; index < count; index += 1) {
+    if (object.isInstancedMesh) object.getMatrixAt(index, local);
+    else local.identity();
+    world.multiplyMatrices(object.matrixWorld, local);
+    callback(world, index);
+  }
+}
+
 function boundsAudit(bounds) {
   if (bounds.isEmpty()) return null;
   const size = bounds.getSize(new THREE.Vector3());
   return {
     min: bounds.min.toArray(),
     max: bounds.max.toArray(),
+    centerM: bounds.getCenter(new THREE.Vector3()).toArray(),
     sizeM: size.toArray(),
     volumeM3: size.x * size.y * size.z,
   };
+}
+
+function newRidgeTransformAudit() {
+  return {
+    instanceCount: 0,
+    finiteMatrixCount: 0,
+    geometryBackedCount: 0,
+    nonEmptyWorldBoundsCount: 0,
+    horizontalRunCount: 0,
+    horizontalRunDirectionCount: 0,
+    horizontalRunSpanAlignedCount: 0,
+    slopedRunCount: 0,
+    slopedRunDirectionCount: 0,
+    slopedRunAcrossSpanCount: 0,
+    vergeRunCount: 0,
+    vergeRunDownhillCount: 0,
+    slopedVerticalComponentMin: null,
+    slopedVerticalComponentMax: null,
+  };
+}
+
+function appendRidgeTransformAudit(audit, object, semantic, expectedSpanDirection) {
+  if (!object.geometry.boundingBox) object.geometry.computeBoundingBox();
+  const position = object.geometry.getAttribute('position');
+  const triangleCount = object.geometry.index
+    ? object.geometry.index.count / 3
+    : (position?.count || 0) / 3;
+  const hasGeometry = (position?.count || 0) > 0
+    && triangleCount > 0
+    && object.geometry.boundingBox
+    && !object.geometry.boundingBox.isEmpty();
+  const isHorizontalRun = semantic === 'principalRidge' || semantic === 'wallAbutment';
+  const isSlopedRun = semantic === 'vergeClosure'
+    || semantic === 'verticalRidge'
+    || semantic === 'verticalRidgeEndClosure';
+  const axisIndex = semantic === 'vergeClosure' || isHorizontalRun ? 1 : 2;
+  forEachActualInstance(object, (world) => {
+    audit.instanceCount += 1;
+    const finite = world.elements.every(Number.isFinite);
+    if (finite) audit.finiteMatrixCount += 1;
+    if (hasGeometry) audit.geometryBackedCount += 1;
+    if (!finite || !object.geometry.boundingBox) return;
+    const instanceBounds = object.geometry.boundingBox.clone().applyMatrix4(world);
+    const size = instanceBounds.getSize(new THREE.Vector3());
+    if (size.x > 0 && size.y > 0 && size.z > 0) audit.nonEmptyWorldBoundsCount += 1;
+    if (!isHorizontalRun && !isSlopedRun) return;
+    const axis = new THREE.Vector3().setFromMatrixColumn(world, axisIndex);
+    if (!(axis.lengthSq() > 0)) return;
+    axis.normalize();
+    const verticalComponent = Math.abs(axis.y);
+    if (isHorizontalRun) {
+      audit.horizontalRunCount += 1;
+      if (verticalComponent <= 1e-6) audit.horizontalRunDirectionCount += 1;
+      if (Math.abs(axis.dot(expectedSpanDirection)) >= 0.999999) audit.horizontalRunSpanAlignedCount += 1;
+    }
+    if (isSlopedRun) {
+      audit.slopedRunCount += 1;
+      if (verticalComponent > 0.05 && verticalComponent < 0.95) audit.slopedRunDirectionCount += 1;
+      const horizontal = axis.clone().setY(0);
+      if (horizontal.lengthSq() > 0
+        && Math.abs(horizontal.normalize().dot(expectedSpanDirection)) <= 1e-6) {
+        audit.slopedRunAcrossSpanCount += 1;
+      }
+      if (semantic === 'vergeClosure') {
+        audit.vergeRunCount += 1;
+        if (axis.y < -0.05) audit.vergeRunDownhillCount += 1;
+      }
+      audit.slopedVerticalComponentMin = audit.slopedVerticalComponentMin == null
+        ? verticalComponent
+        : Math.min(audit.slopedVerticalComponentMin, verticalComponent);
+      audit.slopedVerticalComponentMax = audit.slopedVerticalComponentMax == null
+        ? verticalComponent
+        : Math.max(audit.slopedVerticalComponentMax, verticalComponent);
+    }
+  });
 }
 
 function inspectActualRidgeGeometry(roof) {
@@ -105,6 +193,15 @@ function inspectActualRidgeGeometry(roof) {
   };
   const ridgeBounds = new THREE.Box3();
   const sections = new Map();
+  const sectionSpanDirections = new Map();
+  roof.traverse((object) => {
+    if (object.userData?.type !== 'roof-section') return;
+    const rotationY = Number(object.userData?.sectionTransform?.rotationY || 0);
+    sectionSpanDirections.set(
+      object.userData.sectionId,
+      new THREE.Vector3(1, 0, 0).applyAxisAngle(new THREE.Vector3(0, 1, 0), rotationY).normalize(),
+    );
+  });
   let ridgeDrawCount = 0;
   let ridgeGeometryCount = 0;
   const sectionFor = (id) => {
@@ -121,6 +218,9 @@ function inspectActualRidgeGeometry(roof) {
         },
         verticalRidgeRuns: new Set(),
         bounds: new THREE.Box3(),
+        semanticBounds: Object.fromEntries(Object.keys(ridgeCounts).map((semantic) => [semantic, new THREE.Box3()])),
+        transformAudit: newRidgeTransformAudit(),
+        expectedSpanDirection: sectionSpanDirections.get(id) || new THREE.Vector3(1, 0, 0),
       });
     }
     return sections.get(id);
@@ -136,6 +236,8 @@ function inspectActualRidgeGeometry(roof) {
     section.counts[semantic] = (section.counts[semantic] || 0) + multiplier;
     appendObjectWorldBounds(ridgeBounds, object);
     appendObjectWorldBounds(section.bounds, object);
+    appendObjectWorldBounds(section.semanticBounds[semantic], object);
+    appendRidgeTransformAudit(section.transformAudit, object, semantic, section.expectedSpanDirection);
     if (semantic === 'verticalRidge') {
       const instances = object.userData.instanceMap || [];
       if (instances.length) {
@@ -156,6 +258,12 @@ function inspectActualRidgeGeometry(roof) {
       counts: section.counts,
       verticalRidgeRunCount: section.verticalRidgeRuns.size,
       bounds: boundsAudit(section.bounds),
+      semanticBounds: Object.fromEntries(Object.entries(section.semanticBounds)
+        .map(([semantic, bounds]) => [semantic, boundsAudit(bounds)])),
+      transformAudit: {
+        ...section.transformAudit,
+        expectedSpanDirectionWorld: section.expectedSpanDirection.toArray(),
+      },
     })),
   };
 }
@@ -291,6 +399,26 @@ export function registerYunnanRoofSurfaces(root, profile = {}) {
       failUnless(Boolean(contract), 'missing-ridge-section-contract');
       if (contract) {
         failUnless(actual.bounds?.volumeM3 > 0 && actual.bounds.sizeM?.every((value) => value > 0), 'ridge-section-has-no-world-bounds');
+        failUnless(actual.transformAudit.instanceCount > 0
+          && actual.transformAudit.finiteMatrixCount === actual.transformAudit.instanceCount,
+          'ridge-instance-matrix-invalid');
+        failUnless(actual.transformAudit.geometryBackedCount === actual.transformAudit.instanceCount,
+          'ridge-instance-missing-buffer-geometry');
+        failUnless(actual.transformAudit.nonEmptyWorldBoundsCount === actual.transformAudit.instanceCount,
+          'ridge-instance-has-empty-world-bounds');
+        failUnless(actual.transformAudit.horizontalRunCount > 0
+          && actual.transformAudit.horizontalRunDirectionCount === actual.transformAudit.horizontalRunCount,
+          'ridge-or-abutment-long-axis-not-horizontal');
+        failUnless(actual.transformAudit.horizontalRunSpanAlignedCount === actual.transformAudit.horizontalRunCount,
+          'ridge-or-abutment-not-aligned-to-section-span');
+        failUnless(actual.transformAudit.slopedRunCount > 0
+          && actual.transformAudit.slopedRunDirectionCount === actual.transformAudit.slopedRunCount,
+          'verge-or-vertical-ridge-long-axis-not-sloped');
+        failUnless(actual.transformAudit.slopedRunAcrossSpanCount === actual.transformAudit.slopedRunCount,
+          'verge-or-vertical-ridge-not-across-section-span');
+        failUnless(actual.transformAudit.vergeRunCount > 0
+          && actual.transformAudit.vergeRunDownhillCount === actual.transformAudit.vergeRunCount,
+          'verge-long-axis-not-directed-ridge-to-eave');
         failUnless(actual.counts.vergeClosure >= 2, 'missing-verge-closures');
         failUnless(actual.counts.endClosure === 2, 'ridge-end-closure-count-mismatch');
         failUnless(contract.roofForm === 'gable'
@@ -355,6 +483,40 @@ export function registerYunnanRoofSurfaces(root, profile = {}) {
     && duplicateRoofUnitIds.length === 0
     && roofs.length === ROOF_UNITS.length
     && unitChecks.every((check) => check.passed);
+  const viewBounds = {
+    roof: new THREE.Box3(),
+    eave: new THREE.Box3(),
+    ridge: new THREE.Box3(),
+  };
+  roofs.forEach((roof) => roof.traverse((object) => {
+    if (!object.isMesh || !object.geometry) return;
+    appendObjectWorldBounds(viewBounds.roof, object);
+    if (object.userData?.roofLayerId === 'eaveCapsAndDrips') appendObjectWorldBounds(viewBounds.eave, object);
+    if (object.userData?.ridgeSemantic) appendObjectWorldBounds(viewBounds.ridge, object);
+  }));
+  const viewTargets = Object.fromEntries(Object.entries(viewBounds).map(([name, bounds]) => {
+    const audit = boundsAudit(bounds);
+    return [name, audit ? {
+      evidenceSource: 'actual-buffer-geometry-instance-matrices-and-world-bounds',
+      ...audit,
+      framingRadiusM: Math.max(...audit.sizeM) * 0.5,
+    } : null];
+  }));
+  const framingTarget = (audit, evidenceSource) => audit ? {
+    evidenceSource,
+    ...audit,
+    centerM: audit.centerM || audit.min.map((value, index) => (value + audit.max[index]) * 0.5),
+    framingRadiusM: Math.max(...audit.sizeM) * 0.5,
+  } : null;
+  const primaryRoof = unitChecks.find((check) => check.roofUnitId === 'mainHouseDoublePitch');
+  viewTargets.primaryEaveCloseup = framingTarget(
+    primaryRoof?.slopeAudits?.[0]?.worldBounds?.eave,
+    'actual-main-roof-eave-instance-matrices-and-world-bounds',
+  );
+  viewTargets.primaryRidgeCloseup = framingTarget(
+    primaryRoof?.sectionRidgeAudits?.[0]?.semanticBounds?.principalRidge,
+    'actual-main-roof-principal-ridge-instance-matrices-and-world-bounds',
+  );
   root.userData.roofSurfaceSystem = {
     version: '5.5.0',
     evidenceSource: 'actual-geometry-instance-matrices-and-world-bounds',
@@ -368,6 +530,7 @@ export function registerYunnanRoofSurfaces(root, profile = {}) {
     profileId: profile.id || 'museum1940sBalanced',
     strictTopology,
     complete,
+    viewTargets,
     unitChecks,
   };
   root.userData.roofGeometryDiagnostics = {
@@ -376,6 +539,7 @@ export function registerYunnanRoofSurfaces(root, profile = {}) {
     rotationComposition: 'Qy*Qx',
     roofUnitCount: roofs.length,
     allRoofUnitsPassed: complete,
+    viewTargets,
     units: unitChecks.map((check) => ({
       roofUnitId: check.roofUnitId,
       rotationComposition: check.rotationComposition,

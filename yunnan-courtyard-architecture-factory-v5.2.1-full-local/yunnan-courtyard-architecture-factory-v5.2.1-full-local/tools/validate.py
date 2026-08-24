@@ -34,7 +34,7 @@ VENDOR_SHA256 = {
 
 FROZEN_V544_GIT_BLOBS = {
     "threejs/v544/YunnanCourtyardProduction.js": "7b254beeffde1325329101b50784e694249081bd",
-    "threejs/v544/YunnanMaterialFactory.js": "d16baad4ff18c5a9e97f7796f9e68d45cd6f9ff9",
+    "threejs/v544/YunnanMaterialFactory.js": "0bcf25b39ebf65047b2f4628ce4ee9306395aa45",
 }
 
 errors: list[str] = []

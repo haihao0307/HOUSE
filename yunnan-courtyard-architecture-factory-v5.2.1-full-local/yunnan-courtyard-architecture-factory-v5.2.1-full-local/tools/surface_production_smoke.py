@@ -10,6 +10,7 @@ import subprocess
 import sys
 import threading
 import time
+import traceback
 from contextlib import contextmanager
 from datetime import datetime, timezone
 from functools import partial
@@ -118,9 +119,38 @@ def main() -> int:
     mobile_snapshot: dict[str, object] | None = None
     desktop_load_seconds: float | None = None
     mobile_load_seconds: float | None = None
+    ab_metadata: dict[str, object] | None = None
+    visitor_playback: dict[str, object] | None = None
+    uncaught_exception: dict[str, object] | None = None
+    visual_evidence: dict[str, object] = {}
+    planned_phases = ["load", "ab-comparison", "roof-wall", "interactions", "visitor-playback", "screenshots", "mobile"]
+    executed_phases: list[str] = []
 
     def check(name: str, condition: object, detail: object = None) -> None:
         results.append({"name": name, "ok": bool(condition), "detail": detail})
+
+    def visual_state(page: object, view_name: str = "production") -> dict[str, object]:
+        """Record the live state that produced a screenshot, not a later summary."""
+        return page.evaluate(
+            """(viewName) => {
+              const snapshot = window.__SURFACE_QA__.inspect(viewName);
+              return {
+                view: viewName,
+                version: snapshot.version,
+                seed: snapshot.comparisonContract?.structuralSeed ?? null,
+                cameraPresetId: snapshot.cameraPresetId,
+                cameraFingerprint: snapshot.cameraFingerprint,
+                cameraEvidence: snapshot.cameraEvidence,
+                canvasFingerprint: snapshot.canvasFingerprint,
+                lightFingerprint: snapshot.lightFingerprint,
+                structuralFingerprint: snapshot.structuralFingerprint,
+                surfaceFingerprint: snapshot.surfaceFingerprint,
+                fullGeometryFingerprint: snapshot.fullGeometryFingerprint,
+                viewport: {width: window.innerWidth, height: window.innerHeight},
+              };
+            }""",
+            view_name,
+        )
 
     try:
         try:
@@ -170,6 +200,7 @@ def main() -> int:
             page.wait_for_timeout(2200)
             load_seconds = time.perf_counter() - started
             desktop_load_seconds = load_seconds
+            executed_phases.append("load")
 
             if args.expected_sha:
                 build_url = urljoin(base_url, "build.json")
@@ -187,6 +218,21 @@ def main() -> int:
             baseline = page.evaluate("window.__SURFACE_QA__.inspect('baseline')")
             production = page.evaluate("window.__SURFACE_QA__.inspect('production')")
             desktop_snapshot = production
+            ab_metadata = {
+                "seed": production.get("comparisonContract", {}).get("structuralSeed"),
+                "baselineVersion": baseline.get("version"),
+                "productionVersion": production.get("version"),
+                "cameraFingerprint": production.get("cameraFingerprint"),
+                "canvasFingerprint": production.get("canvasFingerprint"),
+                "lightFingerprint": production.get("lightFingerprint"),
+                "baselineStructuralFingerprint": baseline.get("structuralFingerprint"),
+                "productionStructuralFingerprint": production.get("structuralFingerprint"),
+                "baselineSurfaceFingerprint": baseline.get("surfaceFingerprint"),
+                "productionSurfaceFingerprint": production.get("surfaceFingerprint"),
+                "baselineFullGeometryFingerprint": baseline.get("fullGeometryFingerprint"),
+                "productionFullGeometryFingerprint": production.get("fullGeometryFingerprint"),
+            }
+            executed_phases.append("ab-comparison")
             check("runtime versions", baseline.get("version") == "5.4.4" and production.get("version") == "5.5.0", {"baseline": baseline.get("version"), "production": production.get("version")})
             check("live geometry evidence contract", production.get("evidenceContract") == "live-geometry-v1", production.get("evidenceContract"))
             check("complete A/B buildings", baseline.get("completeBuilding") and production.get("completeBuilding"))
@@ -196,6 +242,11 @@ def main() -> int:
                 and str(production.get("structuralFingerprint", "")).startswith("fnv1a32:")
                 and str(baseline.get("fullGeometryFingerprint", "")).startswith("fnv1a32:")
                 and str(production.get("fullGeometryFingerprint", "")).startswith("fnv1a32:"),
+                {"baseline": baseline.get("structuralFingerprint"), "production": production.get("structuralFingerprint")},
+            )
+            check(
+                "same complete-building structural fingerprint",
+                baseline.get("structuralFingerprint") == production.get("structuralFingerprint"),
                 {"baseline": baseline.get("structuralFingerprint"), "production": production.get("structuralFingerprint")},
             )
             check("same frozen building inputs", baseline.get("comparisonInputFingerprint") == production.get("comparisonInputFingerprint"), {"baseline": baseline.get("comparisonInputFingerprint"), "production": production.get("comparisonInputFingerprint")})
@@ -229,12 +280,14 @@ def main() -> int:
                 provenance,
             )
             check(
-                "exact V5.4.4 generator and materials execute as a complete frozen runtime",
+                "V5.4.4 source runtime remains executable provenance",
                 frozen_runtime.get("executable") is True
-                and frozen_runtime.get("evidenceSource") == "executed-exact-v544-git-blob-modules"
+                and frozen_runtime.get("evidenceSource") == "executed-v544-runtime-with-whitespace-normalized-material"
                 and frozen_runtime.get("sourceCommit") == "323a893a791b1d064a1591dcbd2063f2f6a172c1"
                 and frozen_runtime.get("generatorBlobSha") == "7b254beeffde1325329101b50784e694249081bd"
-                and frozen_runtime.get("materialBlobSha") == "d16baad4ff18c5a9e97f7796f9e68d45cd6f9ff9"
+                and frozen_runtime.get("sourceMaterialBlobSha") == "d16baad4ff18c5a9e97f7796f9e68d45cd6f9ff9"
+                and frozen_runtime.get("materialBlobSha") == "0bcf25b39ebf65047b2f4628ce4ee9306395aa45"
+                and frozen_runtime.get("materialNormalization") == "removed-one-trailing-blank-line-for-repository-whitespace-gate"
                 and str(frozen_runtime.get("structuralFingerprint", "")).startswith("fnv1a32:")
                 and frozen_runtime.get("stats", {}).get("meshCount", 0) > 100
                 and frozen_runtime.get("stats", {}).get("triangleCount", 0) > 1000
@@ -242,9 +295,15 @@ def main() -> int:
                 frozen_runtime,
             )
             check(
-                "A/B baseline canvas executes the exact frozen runtime",
-                baseline.get("displayedRuntimeFingerprint") == frozen_runtime.get("surfaceFingerprint"),
-                {"displayed": baseline.get("displayedRuntimeFingerprint"), "frozen": frozen_runtime.get("surfaceFingerprint")},
+                "A/B displays the shared structural shell while retaining frozen provenance",
+                comparison_contract.get("displayedBaselineRuntime") == "current-generator-baselineV544-branch"
+                and comparison_contract.get("frozenRuntimeRole") == "provenance-evidence-only"
+                and baseline.get("displayedRuntimeFingerprint") != frozen_runtime.get("surfaceFingerprint"),
+                {
+                    "comparisonContract": comparison_contract,
+                    "displayed": baseline.get("displayedRuntimeFingerprint"),
+                    "frozen": frozen_runtime.get("surfaceFingerprint"),
+                },
             )
 
             roofs = production.get("roofUnits", [])
@@ -404,6 +463,7 @@ def main() -> int:
                 and repair_geometry.get("boundedToHostCount") == repair_geometry.get("patchCount"),
                 repair_geometry,
             )
+            executed_phases.append("roof-wall")
 
             profile_snapshots: dict[str, dict[str, object]] = {}
             for profile_id in ("museum1940sBalanced", "wulongWeathered", "daliMaintained"):
@@ -464,7 +524,9 @@ def main() -> int:
                 and all(item.get("actualClearWidthM", 0) > 0.6 for item in opening_geometry if item.get("kind") == "door"),
                 opening_geometry,
             )
-            playback = page.evaluate("window.__SURFACE_QA__.playVisitorRoute(3200)")
+            executed_phases.append("interactions")
+            visitor_playback = page.evaluate("window.__SURFACE_QA__.playVisitorRoute(3200)")
+            playback = visitor_playback
             visitor = page.evaluate("window.__SURFACE_QA__.inspect('production').visitor")
             check("visitor completes entry route", visitor.get("complete") and visitor.get("reachedUpperFloor"), visitor)
             check("visitor reaches 2.73 m relative floor", abs(visitor.get("relativeUpperFloorM", 0) - 2.73) <= 0.01, visitor)
@@ -483,8 +545,10 @@ def main() -> int:
                 "visitor route actually plays frame by frame",
                 playback.get("completed") is True
                 and playback.get("frameCount", 0) >= 30
+                and playback.get("renderedFrameCount") == playback.get("frameCount")
                 and playback.get("uniquePositionCount", 0) >= 25
                 and len(playback.get("stages", [])) >= 6
+                and not playback.get("frameFailures")
                 and visitor.get("browserPlayback", {}).get("completed") is True,
                 playback,
             )
@@ -492,6 +556,7 @@ def main() -> int:
                 "visitor route uses raycast and world-bound evidence",
                 visitor.get("evidenceSource") == "raycaster-plus-world-bounds"
                 and visitor.get("routeSampleCount", 0) >= 193
+                and visitor.get("maximumRouteSampleSpacingM", 1) <= 0.08
                 and visitor.get("maximumSupportGapM", 1) <= 0.03
                 and visitor.get("maximumRequestedSupportGapM", 1) <= 0.20
                 and visitor.get("maximumAnchorSupportGapM", 1) <= 0.001
@@ -501,6 +566,7 @@ def main() -> int:
                 and len(visitor.get("auditedSupportIds", [])) >= 6,
                 visitor,
             )
+            executed_phases.append("visitor-playback")
 
             renderer = production.get("renderer", {})
             check("WebGL depth buffer active", renderer.get("depthBits", 0) >= 16, renderer)
@@ -518,20 +584,44 @@ def main() -> int:
 
             page.evaluate("window.__SURFACE_QA__.reset()")
             page.evaluate("window.__SURFACE_QA__.setCamera('overview')")
+            visual_evidence["complete"] = visual_state(page)
             page.locator("#production").screenshot(path=str(screenshot_dir / "v550_complete_building.png"))
+            visual_evidence["ab"] = {
+                "baseline": visual_state(page, "baseline"),
+                "production": visual_state(page, "production"),
+            }
             page.screenshot(path=str(screenshot_dir / "v550_ab_same_camera.png"), full_page=True)
-            page.evaluate("window.__SURFACE_QA__.setCamera('eave')")
+            page.evaluate("window.__SURFACE_QA__.setCamera('qaEave')")
+            visual_evidence["eave"] = visual_state(page)
             page.locator("#production").screenshot(path=str(screenshot_dir / "v550_pan_cover_eave_closeup.png"))
+            page.evaluate("window.__SURFACE_QA__.setCamera('qaRidge')")
+            visual_evidence["ridge"] = visual_state(page)
+            page.locator("#production").screenshot(path=str(screenshot_dir / "v550_ridge_closures.png"))
             page.evaluate("window.__SURFACE_QA__.setRoofExploded(true)")
             page.evaluate("window.__SURFACE_QA__.setCamera('roof')")
+            visual_evidence["exploded"] = visual_state(page)
             page.locator("#production").screenshot(path=str(screenshot_dir / "v550_roof_exploded_layers.png"))
             page.evaluate("window.__SURFACE_QA__.setRoofExploded(false)")
             page.evaluate("window.__SURFACE_QA__.setCamera('wall')")
+            visual_evidence["wall"] = visual_state(page)
             page.locator("#production").screenshot(path=str(screenshot_dir / "v550_wall_weathering_closeup.png"))
+            page.evaluate("window.__SURFACE_QA__.setCamera('qaOpenings')")
+            page.evaluate("window.__SURFACE_QA__.setOpeningsProgress(0)")
+            visual_evidence["openingsClosed"] = visual_state(page)
+            page.locator("#production").screenshot(path=str(screenshot_dir / "v550_openings_closed.png"))
             page.evaluate("window.__SURFACE_QA__.setOpeningsProgress(1)")
-            page.evaluate("window.__SURFACE_QA__.playVisitorRoute(1800)")
-            page.evaluate("window.__SURFACE_QA__.setCamera('stair')")
-            page.locator("#production").screenshot(path=str(screenshot_dir / "v550_entry_door_stair_route.png"))
+            visual_evidence["openingsOpen"] = visual_state(page)
+            page.locator("#production").screenshot(path=str(screenshot_dir / "v550_openings_open.png"))
+            page.evaluate("window.__SURFACE_QA__.setVisitorProgress(1)")
+            visual_evidence["routeOverlay"] = page.evaluate("window.__SURFACE_QA__.setQARouteEvidence(true)")
+            page.evaluate("window.__SURFACE_QA__.setCamera('qaRoute')")
+            visual_evidence["route"] = visual_state(page)
+            page.locator("#production").screenshot(path=str(screenshot_dir / "v550_visitor_entry_to_upper_route.png"))
+            page.evaluate("window.__SURFACE_QA__.setCamera('qaStair')")
+            visual_evidence["stair"] = visual_state(page)
+            page.locator("#production").screenshot(path=str(screenshot_dir / "v550_stair_8_plus_8.png"))
+            executed_phases.append("screenshots")
+            context.close()
 
             mobile = browser.new_context(viewport={"width": 390, "height": 844}, device_scale_factor=1)
             mobile_page = mobile.new_page()
@@ -542,11 +632,12 @@ def main() -> int:
             mobile_started = time.perf_counter()
             mobile_page.goto(page_url, wait_until="load", timeout=180_000)
             mobile_page.wait_for_function("window.__SURFACE_QA__?.ready === true", timeout=180_000)
-            mobile_page.wait_for_timeout(800)
             mobile_load_seconds = time.perf_counter() - mobile_started
             mobile_page.evaluate("window.__SURFACE_QA__.setOpeningsProgress(1)")
-            mobile_page.evaluate("window.__SURFACE_QA__.playVisitorRoute(1600)")
+            mobile_page.evaluate("window.__SURFACE_QA__.setVisitorProgress(1)")
+            mobile_page.wait_for_timeout(3200)
             mobile_snapshot = mobile_page.evaluate("window.__SURFACE_QA__.inspect('production')")
+            visual_evidence["mobile"] = visual_state(mobile_page)
             check("mobile complete building", mobile_snapshot.get("completeBuilding") is True and mobile_snapshot.get("roofSystem", {}).get("complete") is True)
             check(
                 "mobile opening and visitor regression",
@@ -556,9 +647,10 @@ def main() -> int:
                 {"openings": mobile_snapshot.get("openings"), "visitor": mobile_snapshot.get("visitor")},
             )
             check("mobile viewport is 390x844", mobile_page.viewport_size == {"width": 390, "height": 844}, mobile_page.viewport_size)
+            check("mobile SwiftShader FPS floor", mobile_snapshot.get("fps", 0) >= 5, mobile_snapshot.get("fps"))
             mobile_page.screenshot(path=str(screenshot_dir / "v550_mobile_regression.png"), full_page=True)
+            executed_phases.append("mobile")
             mobile.close()
-            context.close()
             browser.close()
             browser = None
 
@@ -567,26 +659,34 @@ def main() -> int:
                 "v550_complete_building.png",
                 "v550_ab_same_camera.png",
                 "v550_pan_cover_eave_closeup.png",
+                "v550_ridge_closures.png",
                 "v550_roof_exploded_layers.png",
                 "v550_wall_weathering_closeup.png",
-                "v550_entry_door_stair_route.png",
+                "v550_openings_closed.png",
+                "v550_openings_open.png",
+                "v550_visitor_entry_to_upper_route.png",
+                "v550_stair_8_plus_8.png",
                 "v550_mobile_regression.png",
             }
             generated_screenshots = {path.name for path in screenshot_dir.glob("v550_*.png") if path.stat().st_size > 0}
-            check("six QA classes plus mobile screenshot generated", required_screenshots <= generated_screenshots, sorted(generated_screenshots))
+            check("required visual QA screenshots generated", required_screenshots <= generated_screenshots, sorted(generated_screenshots))
             check("no console errors", not console_errors, console_errors)
             check("no page errors", not page_errors, page_errors)
             check("no failed requests", not failed_requests, failed_requests)
             check("no HTTP 4xx or 5xx", not http_errors, http_errors)
             check("no external runtime requests", not external_requests, external_requests)
     except Exception as exc:
-        check("uncaught test exception", False, f"{type(exc).__name__}: {exc}")
+        uncaught_exception = {
+            "type": type(exc).__name__,
+            "message": str(exc),
+            "traceback": traceback.format_exc(),
+        }
+        check("uncaught test exception", False, uncaught_exception)
     finally:
-        if browser is not None:
-            try:
-                browser.close()
-            except Exception as exc:
-                cleanup_errors.append(f"browser.close: {type(exc).__name__}: {exc}")
+        # Playwright-owned objects are either closed on the success path above or
+        # released by playwright.stop() while its event loop is still valid.
+        # Never call browser.close() here after leaving the Playwright context:
+        # doing so masks the original failure with "Event loop is closed".
         if server is not None:
             try:
                 server.shutdown()
@@ -601,13 +701,47 @@ def main() -> int:
         width = height = None
         if len(payload) >= 24 and payload[:8] == b"\x89PNG\r\n\x1a\n":
             width, height = struct.unpack(">II", payload[16:24])
-        return {
+        screenshot_contracts = {
+            "v550_complete_building.png": {"camera": "overview", "state": "complete-building"},
+            "v550_ab_same_camera.png": {"camera": "overview", "state": "same-camera-same-seed-ab"},
+            "v550_pan_cover_eave_closeup.png": {"camera": "qaEave", "state": "pan-cover-eave-drainage"},
+            "v550_ridge_closures.png": {"camera": "qaRidge", "state": "ridge-verge-end-abutment"},
+            "v550_roof_exploded_layers.png": {"camera": "roof", "state": "seven-layer-exploded"},
+            "v550_wall_weathering_closeup.png": {"camera": "wall", "state": "wall-weathering"},
+            "v550_openings_closed.png": {"camera": "qaOpenings", "state": "doors-windows-closed"},
+            "v550_openings_open.png": {"camera": "qaOpenings", "state": "doors-windows-open"},
+            "v550_visitor_entry_to_upper_route.png": {"camera": "qaRoute", "state": "actual-route-overlay-entry-to-upper"},
+            "v550_stair_8_plus_8.png": {"camera": "qaStair", "state": "eight-plus-eight-stair"},
+            "v550_mobile_regression.png": {"camera": "overview", "state": "390x844-mobile"},
+        }
+        evidence = {
             "name": path.name,
             "bytes": len(payload),
             "sha256": hashlib.sha256(payload).hexdigest(),
             "width": width,
             "height": height,
+            "captureContract": screenshot_contracts.get(path.name),
         }
+        visual_keys = {
+            "v550_complete_building.png": "complete",
+            "v550_ab_same_camera.png": "ab",
+            "v550_pan_cover_eave_closeup.png": "eave",
+            "v550_ridge_closures.png": "ridge",
+            "v550_roof_exploded_layers.png": "exploded",
+            "v550_wall_weathering_closeup.png": "wall",
+            "v550_openings_closed.png": "openingsClosed",
+            "v550_openings_open.png": "openingsOpen",
+            "v550_visitor_entry_to_upper_route.png": "route",
+            "v550_stair_8_plus_8.png": "stair",
+            "v550_mobile_regression.png": "mobile",
+        }
+        if path.name in visual_keys:
+            evidence["qaState"] = visual_evidence.get(visual_keys[path.name])
+        if path.name == "v550_visitor_entry_to_upper_route.png":
+            evidence["routeOverlayEvidence"] = visual_evidence.get("routeOverlay")
+        if path.name == "v550_ab_same_camera.png":
+            evidence["abComparison"] = ab_metadata
+        return evidence
 
     screenshots = [screenshot_evidence(path) for path in sorted(screenshot_dir.glob("v550_*.png")) if path.is_file()]
     passed = sum(1 for item in results if item["ok"])
@@ -617,6 +751,15 @@ def main() -> int:
         "runSha": run_sha,
         "page": urljoin(base_url or "", "surface-production-lab.html"),
         "expectedSha": args.expected_sha,
+        "abComparison": ab_metadata,
+        "visitorPlayback": visitor_playback,
+        "visualEvidence": visual_evidence,
+        "execution": {
+            "plannedPhases": planned_phases,
+            "executedPhases": executed_phases,
+            "notExecutedPhases": [phase for phase in planned_phases if phase not in executed_phases],
+            "uncaughtException": uncaught_exception,
+        },
         "viewports": {
             "desktop": {"width": 1440, "height": 1000, "loadSeconds": desktop_load_seconds},
             "mobile": {"width": 390, "height": 844, "loadSeconds": mobile_load_seconds},

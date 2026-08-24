@@ -20,7 +20,9 @@ export const V544_FROZEN_BASELINE = Object.freeze({
     materials: Object.freeze({
       path: 'threejs/YunnanMaterialFactory.js',
       frozenRuntimePath: 'threejs/v544/YunnanMaterialFactory.js',
-      gitBlobSha: 'd16baad4ff18c5a9e97f7796f9e68d45cd6f9ff9',
+      sourceGitBlobSha: 'd16baad4ff18c5a9e97f7796f9e68d45cd6f9ff9',
+      gitBlobSha: '0bcf25b39ebf65047b2f4628ce4ee9306395aa45',
+      normalization: 'removed-one-trailing-blank-line-for-repository-whitespace-gate',
     }),
   }),
   comparisonSeed: 401,

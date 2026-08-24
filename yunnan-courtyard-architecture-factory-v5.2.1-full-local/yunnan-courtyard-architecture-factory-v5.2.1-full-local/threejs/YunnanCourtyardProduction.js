@@ -61,6 +61,16 @@ function cylinderBetween(start, end, radius, material, data = {}, radialSegments
   return item;
 }
 
+function cylinderTransformRecord(start, end, radius, semantic = {}) {
+  const delta = end.clone().sub(start);
+  return {
+    position: start.clone().add(end).multiplyScalar(0.5).toArray(),
+    quaternion: new THREE.Quaternion().setFromUnitVectors(UP, delta.clone().normalize()).toArray(),
+    scale: [radius, delta.length(), radius],
+    semantic,
+  };
+}
+
 function seeded01(a, b, c = 0) {
   const value = Math.sin(a * 127.1 + b * 311.7 + c * 74.7) * 43758.5453123;
   return value - Math.floor(value);
@@ -186,11 +196,11 @@ function createHookHeadGeometry(width, height, depth) {
   const geometry = new THREE.ExtrudeGeometry(shape, {
     depth,
     steps: 1,
-    curveSegments: 4,
-    bevelEnabled: true,
-    bevelSegments: 1,
-    bevelSize: depth * 0.16,
-    bevelThickness: depth * 0.14,
+    // Three curve subdivisions keep the silhouette round at this small scale.
+    // Removing the sub-pixel bevel cuts this repeated plate from 140 to 52
+    // triangles without replacing the physical front plate with a decal.
+    curveSegments: 3,
+    bevelEnabled: false,
   });
   geometry.translate(0, 0, -depth / 2);
   geometry.computeVertexNormals();
@@ -201,6 +211,23 @@ function createHookHeadGeometry(width, height, depth) {
     dimensionsM: { width, height, depth },
   };
   return geometry;
+}
+
+function createSharedRoofGeometries(options, baseline) {
+  const tileWidth = options.tileWidth;
+  const tileLength = options.tileLength;
+  const tileThickness = options.tileThickness;
+  const coverWidth = baseline ? tileWidth * 0.92 : tileWidth * 0.48;
+  return {
+    panGeometry: createTileGeometry(tileWidth, tileLength, 'pan', tileThickness),
+    coverGeometry: createTileGeometry(coverWidth, tileLength * (baseline ? 0.94 : 0.98), 'cover', tileThickness),
+    dripGeometry: createTileGeometry(tileWidth * 0.92, tileLength * 0.52, 'pan', tileThickness * 1.1),
+    hookNeckGeometry: createTileGeometry(coverWidth * 1.08, tileLength * 0.48, 'cover', tileThickness * 1.15),
+    hookHeadGeometry: createHookHeadGeometry(coverWidth * 1.18, coverWidth * 1.12, tileThickness * 2.8),
+    unitBoxGeometry: new THREE.BoxGeometry(1, 1, 1),
+    unitCylinderGeometry: new THREE.CylinderGeometry(1, 1, 1, 12),
+    unitRidgeCapGeometry: new THREE.SphereGeometry(1, 10, 8),
+  };
 }
 
 function addWall(group, x, y, z, width, depth, height, materials, data = {}) {
@@ -1025,19 +1052,22 @@ function makeInstanceBatch(records, geometry, material, data = {}) {
     dummy.position.fromArray(record.position);
     dummy.quaternion.identity();
     if (record.quaternion) dummy.quaternion.fromArray(record.quaternion);
-    else dummy.rotation.set(...record.rotation);
+    else if (record.rotation) dummy.rotation.set(...record.rotation);
     dummy.scale.fromArray(record.scale || [1, 1, 1]);
     dummy.updateMatrix();
     batch.setMatrixAt(index, dummy.matrix);
-    batch.setColorAt(index, record.color);
+    if (record.color) batch.setColorAt(index, record.color);
   });
   batch.userData.instanceMap = records.map((record) => ({ ...(record.semantic || {}) }));
+  batch.instanceMatrix.setUsage(THREE.StaticDrawUsage);
   batch.instanceMatrix.needsUpdate = true;
   if (batch.instanceColor) batch.instanceColor.needsUpdate = true;
+  batch.computeBoundingBox();
+  batch.computeBoundingSphere();
   return batch;
 }
 
-function addRoofUnit(parent, spec, options, materials, profile, baseline, roofIndex) {
+function addRoofUnit(parent, spec, options, materials, profile, baseline, roofIndex, roofGeometries) {
   const roof = tag(new THREE.Group(), {
     type: 'independent-yunnan-tile-roof',
     isRoofUnit: true,
@@ -1066,11 +1096,16 @@ function addRoofUnit(parent, spec, options, materials, profile, baseline, roofIn
   const tileCourse = options.tileCourse;
   const tileThickness = options.tileThickness;
   const coverWidth = baseline ? tileWidth * 0.92 : tileWidth * 0.48;
-  const panGeometry = createTileGeometry(tileWidth, tileLength, 'pan', tileThickness);
-  const coverGeometry = createTileGeometry(coverWidth, tileLength * (baseline ? 0.94 : 0.98), 'cover', tileThickness);
-  const dripGeometry = createTileGeometry(tileWidth * 0.92, tileLength * 0.52, 'pan', tileThickness * 1.1);
-  const hookNeckGeometry = createTileGeometry(coverWidth * 1.08, tileLength * 0.48, 'cover', tileThickness * 1.15);
-  const hookHeadGeometry = createHookHeadGeometry(coverWidth * 1.18, coverWidth * 1.12, tileThickness * 2.8);
+  const {
+    panGeometry,
+    coverGeometry,
+    dripGeometry,
+    hookNeckGeometry,
+    hookHeadGeometry,
+    unitBoxGeometry,
+    unitCylinderGeometry,
+    unitRidgeCapGeometry,
+  } = roofGeometries;
   const slopes = [];
   const slopeGeometryAudits = [];
   const ridgeElevations = [];
@@ -1092,6 +1127,16 @@ function addRoofUnit(parent, spec, options, materials, profile, baseline, roofIn
     roof.add(sectionRoot);
     const sectionRidge = roofLayer('ridgeAndClosures', 6);
     sectionRoot.add(sectionRidge);
+    const addSectionRidgeBatch = (records, geometry, data) => {
+      const batch = makeInstanceBatch(records, geometry, materials.tileCover, {
+        roofLayerId: 'ridgeAndClosures',
+        roofUnitId: spec.id,
+        sectionId: section.id,
+        ...data,
+      });
+      if (batch) sectionRidge.add(batch);
+      return batch;
+    };
     let sectionVerticalRidgeTileCount = 0;
     let sectionVerticalRidgeRunCount = 0;
     let sectionVerticalRidgeEndClosureCount = 0;
@@ -1198,29 +1243,65 @@ function addRoofUnit(parent, spec, options, materials, profile, baseline, roofIn
         if (batch) layer.add(batch);
         return batch;
       };
-      const panBatches = [];
-      const coverBatches = [];
-      for (const stateName of ['aged', 'repair', 'broken']) {
-        panBatches.push(addBatch(pans, panRecords[stateName], panGeometry, materials.tilePan, { type: `板瓦-pan-${stateName}`, tileKind: 'pan', state: stateName, slopeId }));
-        coverBatches.push(addBatch(covers, coverRecords[stateName], coverGeometry, materials.tileCover, { type: `筒瓦-cover-${stateName}`, tileKind: 'cover', state: stateName, slopeId }));
-      }
+      const stateCounts = (records) => Object.fromEntries(
+        Object.entries(records).map(([state, values]) => [state, values.length]),
+      );
+      const panBatches = [addBatch(
+        pans,
+        [...panRecords.aged, ...panRecords.repair, ...panRecords.broken],
+        panGeometry,
+        materials.tilePan,
+        {
+          type: '板瓦-pan-instanced', tileKind: 'pan', state: 'per-instance',
+          stateCounts: stateCounts(panRecords), slopeId,
+        },
+      )];
+      const coverBatches = [addBatch(
+        covers,
+        [...coverRecords.aged, ...coverRecords.repair, ...coverRecords.broken],
+        coverGeometry,
+        materials.tileCover,
+        {
+          type: '筒瓦-cover-instanced', tileKind: 'cover', state: 'per-instance',
+          stateCounts: stateCounts(coverRecords), slopeId,
+        },
+      )];
 
       const rafterCount = Math.max(5, Math.ceil(section.span / 0.48));
+      const rafterRecords = [];
       for (let index = 0; index < rafterCount; index += 1) {
-        const rafter = box(0.055, 0.075, slopeLength, materials.timber, { type: 'roof-rafter', roofLayerId: 'rafters', slopeId: slope.userData.slopeId });
-        rafter.quaternion.copy(composeSlopeQuaternion(sectionRotationY, plane.side * angle));
-        rafter.position.copy(sectionPoint(-section.span / 2 + section.span * index / Math.max(1, rafterCount - 1), plane.ridgeY - plane.pitch * plane.run / 2 - 0.17, plane.centerZ + plane.side * plane.run / 2));
-        rafters.add(rafter);
+        rafterRecords.push({
+          position: sectionPoint(
+            -section.span / 2 + section.span * index / Math.max(1, rafterCount - 1),
+            plane.ridgeY - plane.pitch * plane.run / 2 - 0.17,
+            plane.centerZ + plane.side * plane.run / 2,
+          ).toArray(),
+          quaternion: composeSlopeQuaternion(sectionRotationY, plane.side * angle).toArray(),
+          scale: [0.055, 0.075, slopeLength],
+          semantic: { slopeId, sectionId: section.id, rafterIndex: index },
+        });
       }
+      addBatch(rafters, rafterRecords, unitBoxGeometry, materials.timber, {
+        type: 'roof-rafter', slopeId, correspondence: 'one-instance-per-rafter-line',
+      });
+      const purlinRecords = [];
       for (let index = 1; index <= 4; index += 1) {
         const distance = plane.run * index / 5;
-        purlins.add(cylinderBetween(
+        purlinRecords.push(cylinderTransformRecord(
           sectionPoint(-section.span / 2, plane.ridgeY - plane.pitch * distance - 0.23, plane.centerZ + plane.side * distance),
           sectionPoint(section.span / 2, plane.ridgeY - plane.pitch * distance - 0.23, plane.centerZ + plane.side * distance),
-          0.065, materials.timber, { type: 'roof-purlin', roofLayerId: 'purlins', slopeId: slope.userData.slopeId },
+          0.065,
+          { slopeId, sectionId: section.id, purlinIndex: index - 1 },
         ));
       }
-      const deck = box(section.span, options.roofThickness, slopeLength, materials.timber, { type: 'roof-deck-underlay', roofLayerId: 'roofUnderlay', slopeId: slope.userData.slopeId });
+      addBatch(purlins, purlinRecords, unitCylinderGeometry, materials.timber, {
+        type: 'roof-purlin', slopeId, correspondence: 'four-instances-per-slope',
+      });
+      const deck = mesh(unitBoxGeometry, materials.timber, {
+        type: 'roof-deck-underlay', roofLayerId: 'roofUnderlay', slopeId,
+        dimensionsM: [section.span, options.roofThickness, slopeLength],
+      });
+      deck.scale.set(section.span, options.roofThickness, slopeLength);
       deck.quaternion.copy(composeSlopeQuaternion(sectionRotationY, plane.side * angle));
       deck.position.copy(sectionPoint(0, plane.ridgeY - plane.pitch * plane.run / 2 - 0.06, plane.centerZ + plane.side * plane.run / 2));
       underlay.add(deck);
@@ -1265,7 +1346,11 @@ function addRoofUnit(parent, spec, options, materials, profile, baseline, roofIn
       const hookBatches = [addBatch(eaves, hookHeadRecords, hookHeadGeometry, materials.tileCover, {
         type: '勾头-cover-eave-hook-heads', slopeId, correspondence: 'one-independent-front-plate-per-cover-column',
       })];
-      const fascia = box(section.span, 0.16, 0.09, materials.timber, { type: 'eave-fascia', roofLayerId: 'eaveCapsAndDrips', slopeId: slope.userData.slopeId });
+      const fascia = mesh(unitBoxGeometry, materials.timber, {
+        type: 'eave-fascia', roofLayerId: 'eaveCapsAndDrips', slopeId,
+        dimensionsM: [section.span, 0.16, 0.09],
+      });
+      fascia.scale.set(section.span, 0.16, 0.09);
       fascia.rotation.y = sectionRotationY;
       fascia.position.copy(sectionPoint(0, plane.ridgeY - plane.pitch * plane.run - 0.12, plane.centerZ + plane.side * plane.run));
       eaves.add(fascia);
@@ -1378,42 +1463,43 @@ function addRoofUnit(parent, spec, options, materials, profile, baseline, roofIn
 
     const firstPlane = section.planes[0];
     const isLeanTo = section.planes.length === 1;
-    const closure = cylinderBetween(
+    const closureRecord = cylinderTransformRecord(
       sectionPoint(-section.span / 2, firstPlane.ridgeY + 0.10, firstPlane.centerZ),
       sectionPoint(section.span / 2, firstPlane.ridgeY + 0.10, firstPlane.centerZ),
-      tileWidth * 0.25, materials.tileCover,
-      {
-        type: isLeanTo ? '靠墙收口-wall-abutment' : '正脊-ridge-cover',
-        ridgeSemantic: isLeanTo ? 'wallAbutment' : 'principalRidge',
-        roofLayerId: 'ridgeAndClosures', roofUnitId: spec.id, sectionId: section.id,
-      },
+      tileWidth * 0.25,
+      { kind: isLeanTo ? 'wall-abutment' : 'principal-ridge', sectionId: section.id },
     );
-    sectionRidge.add(closure);
-    for (const x of [-section.span / 2, section.span / 2]) {
-      const cap = mesh(new THREE.SphereGeometry(tileWidth * 0.29, 10, 8), materials.tileCover, {
-        type: 'ridge-end-closure', ridgeSemantic: 'endClosure', roofLayerId: 'ridgeAndClosures',
-        roofUnitId: spec.id, sectionId: section.id,
-      });
-      cap.position.copy(sectionPoint(x, firstPlane.ridgeY + 0.10, firstPlane.centerZ));
-      sectionRidge.add(cap);
-    }
-    let vergeClosureCount = 0;
+    addSectionRidgeBatch([closureRecord], unitCylinderGeometry, {
+      type: isLeanTo ? '靠墙收口-wall-abutment' : '正脊-ridge-cover',
+      ridgeSemantic: isLeanTo ? 'wallAbutment' : 'principalRidge',
+      correspondence: 'one-ridge-or-wall-abutment-run-per-section',
+    });
+    const ridgeEndRecords = [-1, 1].map((edge) => ({
+      position: sectionPoint(edge * section.span / 2, firstPlane.ridgeY + 0.10, firstPlane.centerZ).toArray(),
+      scale: [tileWidth * 0.29, tileWidth * 0.29, tileWidth * 0.29],
+      semantic: { kind: 'ridge-end-closure', sectionId: section.id, edge },
+    }));
+    addSectionRidgeBatch(ridgeEndRecords, unitRidgeCapGeometry, {
+      type: 'ridge-end-closure', ridgeSemantic: 'endClosure',
+      correspondence: 'two-independent-end-closures-per-section',
+    });
+    const vergeRecords = [];
     for (const plane of section.planes) {
       const eaveDistance = plane.run + tileLength * 0.10;
       for (const x of [-section.span / 2, section.span / 2]) {
-        const verge = cylinderBetween(
+        vergeRecords.push(cylinderTransformRecord(
           sectionPoint(x, plane.ridgeY + 0.075, plane.centerZ),
           sectionPoint(x, plane.ridgeY - plane.pitch * eaveDistance + 0.045, plane.centerZ + plane.side * eaveDistance),
-          tileWidth * 0.115, materials.tileCover,
-          {
-            type: '山面斜向收边-verge-closure', ridgeSemantic: 'vergeClosure',
-            roofLayerId: 'ridgeAndClosures', roofUnitId: spec.id, sectionId: section.id,
-          },
-        );
-        sectionRidge.add(verge);
-        vergeClosureCount += 1;
+          tileWidth * 0.115,
+          { kind: 'verge-closure', sectionId: section.id, roofSide: plane.side, edge: Math.sign(x) || 1 },
+        ));
       }
     }
+    addSectionRidgeBatch(vergeRecords, unitCylinderGeometry, {
+      type: '山面斜向收边-verge-closure', ridgeSemantic: 'vergeClosure',
+      correspondence: 'two-sloping-verge-runs-per-roof-plane',
+    });
+    const vergeClosureCount = vergeRecords.length;
     const roofForm = isLeanTo ? 'lean-to' : 'gable';
     const verticalRidgeRequirement = isLeanTo
       ? 'lean-to-side-closing-ridge'
@@ -2176,7 +2262,10 @@ export function createYunnanCourtyardPrototype(userOptions = {}) {
       ] }],
     },
   ];
-  specs.forEach((spec, index) => addRoofUnit(roofs, spec, options, materials, surfaceProfile, baseline, index));
+  const roofGeometries = createSharedRoofGeometries(options, baseline);
+  specs.forEach((spec, index) => addRoofUnit(
+    roofs, spec, options, materials, surfaceProfile, baseline, index, roofGeometries,
+  ));
 
   const visitor = createVisitor();
   actors.add(visitor);

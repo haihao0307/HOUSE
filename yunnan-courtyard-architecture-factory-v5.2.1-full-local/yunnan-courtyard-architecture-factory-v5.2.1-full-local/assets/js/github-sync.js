@@ -9,20 +9,29 @@
     owner: 'haihao0307',
     repo: 'HOUSE',
     branch: 'main',
+    ref: 'main',
+    headSha: null,
+    deploymentSource: 'default-main',
     pagesUrl: 'https://haihao0307.github.io/HOUSE/',
     sourceRoot: 'yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local',
     dataFiles: [
-      { id: 'system', label: '母系统数据', path: 'data/system_v5_2_1.json' },
-      { id: 'production', label: 'Three.js 生产合同', path: 'data/production/yunnan_threejs_production_system_v5_4_0.json' },
-      { id: 'surface-v550', label: 'V5.5.0 表面生产种子', path: 'data/production/yunnan_surface_weathering_seed_v5_5_0.json' },
-      { id: 'evidence', label: '团结乡材料证据', path: 'data/evidence/tuanjie_township_001_material_weathering_reference_v5_3_6.json' }
+      { id: 'system', label: '母系统数据', path: 'data/system_v5_2_1.json', required: true },
+      { id: 'production', label: 'Three.js 生产合同', path: 'data/production/yunnan_threejs_production_system_v5_4_0.json', required: true },
+      { id: 'surface-v550', label: 'V5.5.0 表面生产种子', path: 'data/production/yunnan_surface_weathering_seed_v5_5_0.json', required: true },
+      { id: 'evidence', label: '团结乡材料证据', path: 'data/evidence/tuanjie_township_001_material_weathering_reference_v5_3_6.json', required: true }
     ]
   };
   var STORAGE_KEY = 'yunnan-production-web-sync-v1';
   var entries = readEntries();
-  var remote = { files: [], commit: null, issues: [], checkedAt: null, error: null };
+  var remote = {
+    files: [], commit: null, issues: [], checkedAt: null, error: null,
+    refreshState: 'idle', refreshGeneration: 0, requests: [], requestHistory: [],
+    optionalDiagnostics: [], deploymentError: null
+  };
   var overlay;
   var refs = {};
+  var deploymentReady = Promise.resolve();
+  var refreshPromise = null;
 
   function esc(value) {
     return String(value == null ? '' : value)
@@ -30,13 +39,86 @@
       .replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
   }
   function repoUrl(path) {
-    return 'https://github.com/' + CONFIG.owner + '/' + CONFIG.repo + '/blob/' + CONFIG.branch + '/' + path;
+    return 'https://github.com/' + CONFIG.owner + '/' + CONFIG.repo + '/blob/' + CONFIG.ref + '/' + path;
   }
   function rawUrl(path) {
-    return 'https://raw.githubusercontent.com/' + CONFIG.owner + '/' + CONFIG.repo + '/' + CONFIG.branch + '/' + path;
+    return 'https://raw.githubusercontent.com/' + CONFIG.owner + '/' + CONFIG.repo + '/' + CONFIG.ref + '/' + path;
   }
   function apiUrl(path) {
     return 'https://api.github.com/repos/' + CONFIG.owner + '/' + CONFIG.repo + path;
+  }
+  function validRef(value) {
+    return typeof value === 'string' && value.length > 0 && value.length <= 160 &&
+      !value.startsWith('/') && !value.endsWith('/') && !value.includes('..') &&
+      /^[0-9A-Za-z._/-]+$/.test(value);
+  }
+  function applyDeployment(metadata, source) {
+    var sha = metadata && typeof metadata.sha === 'string' ? metadata.sha.trim() : '';
+    var branch = metadata && typeof (metadata.ref || metadata.branch) === 'string' ? String(metadata.ref || metadata.branch).trim() : '';
+    if (sha && !/^[0-9a-f]{40}$/i.test(sha)) throw new Error('build.json sha is not a full commit SHA');
+    if (branch && !validRef(branch)) throw new Error('build.json ref is invalid');
+    if (!sha && !branch) throw new Error('deployment metadata has neither sha nor ref');
+    CONFIG.branch = branch || CONFIG.branch;
+    CONFIG.headSha = sha || null;
+    CONFIG.ref = sha || branch;
+    CONFIG.deploymentSource = source;
+  }
+  function resolveDeployment() {
+    var injected = global.__GITHUB_SYNC_DEPLOYMENT__;
+    if (injected) {
+      try {
+        applyDeployment(injected, 'runtime-injected');
+      } catch (error) {
+        remote.deploymentError = error.message;
+      }
+      return Promise.resolve();
+    }
+    var pagesHost = new URL(CONFIG.pagesUrl).hostname;
+    if (global.location.hostname !== pagesHost) return Promise.resolve();
+    var buildUrl = new URL('build.json', CONFIG.pagesUrl).href;
+    return fetch(buildUrl, { cache: 'no-store' }).then(function (response) {
+      if (!response.ok) throw new Error('build.json HTTP ' + response.status);
+      return response.json();
+    }).then(function (metadata) {
+      applyDeployment(metadata, 'pages-build-json');
+    }).catch(function (error) {
+      remote.deploymentError = error.message;
+    });
+  }
+  function requestJson(spec) {
+    var record = {
+      id: spec.id,
+      url: spec.url,
+      required: spec.required !== false,
+      allowedStatuses: (spec.allowedStatuses || []).slice(),
+      optionalReason: spec.optionalReason || null,
+      generation: remote.refreshGeneration,
+      status: null,
+      outcome: 'pending',
+      error: null
+    };
+    remote.requests.push(record);
+    remote.requestHistory.push(record);
+    if (remote.requestHistory.length > 100) remote.requestHistory.shift();
+    return fetch(spec.url, spec.options || {}).then(function (response) {
+      record.status = response.status;
+      if (!response.ok) {
+        record.outcome = !record.required && record.allowedStatuses.includes(response.status) ? 'allowed-optional-http' : 'failed-http';
+        throw new Error(spec.id + ' HTTP ' + response.status);
+      }
+      return response.json().then(function (payload) {
+        record.outcome = 'fulfilled';
+        return payload;
+      });
+    }).catch(function (error) {
+      record.error = error.message || String(error);
+      if (record.outcome === 'allowed-optional-http') {
+        remote.optionalDiagnostics.push({ id: record.id, status: record.status, url: record.url, reason: record.optionalReason });
+        return null;
+      }
+      if (record.outcome === 'pending') record.outcome = 'failed-request';
+      throw error;
+    });
   }
   function readEntries() {
     try {
@@ -156,28 +238,64 @@
     var url = URL.createObjectURL(blob); var a = document.createElement('a'); a.href = url; a.download = 'yunnan-production-web-sync-' + new Date().toISOString().slice(0, 10) + '.json'; a.click(); setTimeout(function () { URL.revokeObjectURL(url); }, 1000); setMessage('已下载同步 JSON，可作为生产线资料包归档。');
   }
   function formatCommit(item) { return item && item.commit ? (item.commit.message || '').split('\n')[0] + ' · ' + (item.sha || '').slice(0, 7) : '未读取提交信息'; }
-  function refresh(force) {
+  function refreshResolved(force) {
     createPanel();
-    if (remote.checkedAt && !force && Date.now() - remote.checkedAt < 45000) { renderQueue(); renderRemote(); return; }
-    remote.checkedAt = Date.now(); remote.error = null;
+    // A launcher click and a forced QA refresh can arrive in the same event turn.
+    // Keep exactly one request set in flight so its audit records cannot be
+    // overwritten or interleaved with another refresh.
+    if (remote.refreshState === 'loading' && refreshPromise) return refreshPromise;
+    if (remote.checkedAt && !force && Date.now() - remote.checkedAt < 45000) {
+      renderQueue(); renderRemote(); return Promise.resolve(remote);
+    }
+    remote.checkedAt = Date.now(); remote.error = remote.deploymentError; remote.refreshState = 'loading';
+    remote.refreshGeneration += 1;
+    remote.requests = []; remote.optionalDiagnostics = [];
     if (refs.status) refs.status.textContent = '正在读取 GitHub…';
     if (refs.dot) refs.dot.classList.add('warn');
-    var fileRequests = CONFIG.dataFiles.map(function (file) { return fetch(rawUrl(CONFIG.sourceRoot + '/' + file.path), { cache: 'no-store' }).then(function (response) { if (!response.ok) throw new Error(file.path + ' HTTP ' + response.status); return response.json(); }).then(function (json) { return { id: file.id, label: file.label, path: file.path, schemaVersion: json.schemaVersion || '未声明', title: json.title || '' }; }); });
-    var commitRequest = fetch(apiUrl('/commits?path=' + encodeURIComponent(CONFIG.sourceRoot + '/data/system_v5_2_1.json') + '&per_page=1'), { headers: { Accept: 'application/vnd.github+json' }, cache: 'no-store' }).then(function (response) { if (!response.ok) throw new Error('commits HTTP ' + response.status); return response.json(); }).then(function (list) { return Array.isArray(list) ? list[0] : null; });
-    var issueRequest = fetch(apiUrl('/issues?state=all&per_page=30&sort=updated&direction=desc'), { headers: { Accept: 'application/vnd.github+json' }, cache: 'no-store' }).then(function (response) { if (!response.ok) throw new Error('issues HTTP ' + response.status); return response.json(); }).then(function (list) { return (Array.isArray(list) ? list : []).filter(function (item) { return /^\[Web Sync\]/i.test(item.title || '') && !item.pull_request; }).slice(0, 20); });
-    Promise.allSettled([Promise.all(fileRequests), commitRequest, issueRequest]).then(function (results) {
-      if (results[0].status === 'fulfilled') remote.files = results[0].value;
+    var fileRequests = CONFIG.dataFiles.map(function (file) {
+      var url = rawUrl(CONFIG.sourceRoot + '/' + file.path);
+      return requestJson({ id: 'data:' + file.id, url: url, required: file.required !== false, options: { cache: 'no-store' } }).then(function (json) {
+        if (!json) return null;
+        return { id: file.id, label: file.label, path: file.path, schemaVersion: json.schemaVersion || '未声明', title: json.title || '', url: url };
+      });
+    });
+    var commitUrl = apiUrl('/commits?sha=' + encodeURIComponent(CONFIG.ref) + '&path=' + encodeURIComponent(CONFIG.sourceRoot + '/data/system_v5_2_1.json') + '&per_page=1');
+    var commitRequest = requestJson({
+      id: 'api:commits', url: commitUrl, required: false, allowedStatuses: [403, 429],
+      optionalReason: 'Unauthenticated GitHub REST rate limit; source data reads remain authoritative.',
+      options: { headers: { Accept: 'application/vnd.github+json' }, cache: 'no-store' }
+    }).then(function (list) { return Array.isArray(list) ? list[0] : null; });
+    var issueUrl = apiUrl('/issues?state=all&per_page=30&sort=updated&direction=desc');
+    var issueRequest = requestJson({
+      id: 'api:issues', url: issueUrl, required: false, allowedStatuses: [403, 429],
+      optionalReason: 'Unauthenticated GitHub REST rate limit; the local audit queue remains available.',
+      options: { headers: { Accept: 'application/vnd.github+json' }, cache: 'no-store' }
+    }).then(function (list) { return (Array.isArray(list) ? list : []).filter(function (item) { return /^\[Web Sync\]/i.test(item.title || '') && !item.pull_request; }).slice(0, 20); });
+    var activeRefresh = Promise.allSettled([Promise.all(fileRequests), commitRequest, issueRequest]).then(function (results) {
+      if (results[0].status === 'fulfilled') remote.files = results[0].value.filter(Boolean);
       if (results[1].status === 'fulfilled') remote.commit = results[1].value;
       if (results[2].status === 'fulfilled') remote.issues = results[2].value;
       var failures = results.filter(function (item) { return item.status === 'rejected'; }).map(function (item) { return item.reason.message; });
+      if (remote.deploymentError) failures.unshift(remote.deploymentError);
       remote.error = failures.length ? failures.join('；') : null;
+      remote.refreshState = 'complete';
       if (refs.files) refs.files.innerHTML = remote.files.length ? remote.files.map(function (file) { return '<li>' + esc(file.label) + ' · schema ' + esc(file.schemaVersion) + '</li>'; }).join('') : '<li>读取失败，请点击刷新。</li>';
       if (refs.commit) refs.commit.textContent = remote.commit ? '最新数据提交：' + formatCommit(remote.commit) : '提交信息暂不可用。';
-      if (refs.status) refs.status.textContent = remote.error ? 'GitHub 部分可读 · ' + remote.error : 'GitHub 已连接 · ' + CONFIG.owner + '/' + CONFIG.repo + '@' + CONFIG.branch;
+      if (refs.status) refs.status.textContent = remote.error ? 'GitHub 部分可读 · ' + remote.error : 'GitHub 已连接 · ' + CONFIG.owner + '/' + CONFIG.repo + '@' + CONFIG.ref.slice(0, 12);
       if (refs.dot) refs.dot.classList.toggle('warn', !!remote.error);
       if (refs.launcher) { refs.launcher.textContent = remote.error ? 'GitHub同步部分可读' : 'GitHub已同步'; refs.launcher.classList.toggle('ok', !remote.error); refs.launcher.classList.toggle('warn', !!remote.error); }
       renderQueue(); renderRemote();
+      return remote;
+    }).finally(function () {
+      // Do not let an older completion clear a newer refresh started by a
+      // promise continuation in the same microtask drain.
+      if (refreshPromise === activeRefresh) refreshPromise = null;
     });
+    refreshPromise = activeRefresh;
+    return refreshPromise;
+  }
+  function refresh(force) {
+    return deploymentReady.then(function () { return refreshResolved(force); });
   }
   function pushLatest() {
     var token = (refs.token.value || '').trim();
@@ -189,7 +307,22 @@
     setMessage('正在提交到 GitHub Issues…');
     fetch(apiUrl('/issues'), { method: 'POST', headers: { Accept: 'application/vnd.github+json', 'Content-Type': 'application/json', Authorization: 'Bearer ' + token }, body: JSON.stringify({ title: title, body: body }) }).then(function (response) { return response.json().then(function (payload) { if (!response.ok) throw new Error(payload.message || ('HTTP ' + response.status)); return payload; }); }).then(function (issue) { item.issueUrl = issue.html_url; item.issueNumber = issue.number; item.syncedAt = new Date().toISOString(); saveEntries(); refs.token.value = ''; renderQueue(); remote.issues.unshift(issue); renderRemote(); setMessage('已提交 GitHub Issue #' + issue.number + '。令牌未保存，刷新页面后仍可从公开 Issue 读取。'); }).catch(function (error) { setMessage('提交失败：' + error.message, true); });
   }
-  function init() { ensureStyles(); createLauncher(); createPanel(); refresh(false); }
-  global.__GITHUB_SYNC__ = { config: CONFIG, open: open, close: close, refresh: refresh, add: addFromForm, exportBundle: exportBundle, stats: function () { return { schemaVersion: '5.5.0', queued: entries.length, synced: entries.filter(function (item) { return !!item.issueUrl; }).length, files: remote.files.length, issues: remote.issues.length, checkedAt: remote.checkedAt, error: remote.error }; } };
+  function init() { ensureStyles(); createLauncher(); createPanel(); deploymentReady = resolveDeployment(); refresh(false); }
+  global.__GITHUB_SYNC__ = {
+    config: CONFIG, open: open, close: close, refresh: refresh, add: addFromForm, exportBundle: exportBundle,
+    stats: function () {
+      return {
+        schemaVersion: '5.5.0', queued: entries.length,
+        synced: entries.filter(function (item) { return !!item.issueUrl; }).length,
+        files: remote.files.length, issues: remote.issues.length, checkedAt: remote.checkedAt,
+        error: remote.error, refreshState: remote.refreshState, refreshGeneration: remote.refreshGeneration,
+        deploymentError: remote.deploymentError,
+        deployment: { branch: CONFIG.branch, ref: CONFIG.ref, headSha: CONFIG.headSha, source: CONFIG.deploymentSource },
+        requests: remote.requests.map(function (item) { return Object.assign({}, item); }),
+        requestHistory: remote.requestHistory.map(function (item) { return Object.assign({}, item); }),
+        optionalDiagnostics: remote.optionalDiagnostics.slice()
+      };
+    }
+  };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 })(window);

@@ -245,4 +245,3 @@ export function disposeYunnanMaterialSet(set) {
   if (!set) return;
   Object.values(set).forEach((material) => material?.dispose?.());
 }
-

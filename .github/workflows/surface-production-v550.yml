@@ -63,13 +63,11 @@ jobs:
           node --check vendor/three/controls/OrbitControls.js
           python tools/validate.py
 
-      - name: Check changed-file whitespace outside pristine vendor and frozen baseline
+      - name: Check complete changed-file whitespace
         shell: bash
         run: |
           set -euo pipefail
-          git diff --check origin/main...HEAD -- . \
-            ":(exclude)$PROJECT_DIR/vendor/three/**" \
-            ":(exclude)$PROJECT_DIR/threejs/v544/**"
+          git diff --check origin/main...HEAD
 
       - name: Install Playwright Chromium
         id: playwright
