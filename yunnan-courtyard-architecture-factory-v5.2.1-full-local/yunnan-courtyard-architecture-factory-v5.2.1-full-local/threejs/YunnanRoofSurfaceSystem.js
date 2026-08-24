@@ -1,3 +1,5 @@
+import * as THREE from 'three';
+
 export const ROOF_UNITS = Object.freeze([
   'mainHouseDoublePitch',
   'leftEarAsymmetricDoublePitch',
@@ -55,6 +57,7 @@ function roofStats(roof) {
 }
 
 export function registerYunnanRoofSurfaces(root, profile = {}) {
+  root.updateMatrixWorld(true);
   const candidates = [];
   root.traverse((object) => {
     if (object.isGroup && object.userData?.isRoofUnit === true) candidates.push(object);
@@ -91,6 +94,27 @@ export function registerYunnanRoofSurfaces(root, profile = {}) {
         && topology.drainagePathsEndAtEave === true
         && topology.tileBatchesAreInstanced === true;
     });
+    const ridgeMeshes = [];
+    const ridgeCounts = { principalRidge: 0, wallAbutment: 0, vergeClosure: 0, endClosure: 0, verticalRidge: 0 };
+    const ridgeBounds = new THREE.Box3();
+    roof.traverse((object) => {
+      const semantic = object.userData?.ridgeSemantic;
+      if (!object.isMesh || !semantic) return;
+      ridgeMeshes.push(object);
+      ridgeCounts[semantic] = (ridgeCounts[semantic] || 0) + 1;
+      if (!object.geometry.boundingBox) object.geometry.computeBoundingBox();
+      if (object.geometry.boundingBox) ridgeBounds.union(object.geometry.boundingBox.clone().applyMatrix4(object.matrixWorld));
+    });
+    const ridgeSize = ridgeBounds.isEmpty() ? new THREE.Vector3() : ridgeBounds.getSize(new THREE.Vector3());
+    const ridgeTopology = roof.userData.ridgeTopology || [];
+    const ridgeValid = ridgeMeshes.length > 0 && ridgeSize.x * ridgeSize.y * ridgeSize.z > 0
+      && ridgeTopology.length === roof.userData.sectionCount
+      && ridgeTopology.every((section) =>
+        section.vergeClosureCount >= 2
+        && section.endClosureCount === 2
+        && (section.roofForm === 'gable' ? section.principalRidgeCount === 1 : section.wallAbutmentCount === 1)
+        && (section.verticalRidgeApplicable ? section.verticalRidgeCount > 0 : Boolean(section.verticalRidgeReason))
+      );
     const stats = roofStats(roof);
     const check = {
       roofUnitId: roof.userData.roofUnitId,
@@ -98,10 +122,15 @@ export function registerYunnanRoofSurfaces(root, profile = {}) {
       slopeCount: slopes.length,
       missingLayers,
       topologyValid,
+      ridgeValid,
+      ridgeCounts,
+      ridgeGeometryCount: ridgeMeshes.length,
+      ridgeBoundsM: ridgeSize.toArray(),
+      ridgeTopology: ridgeTopology.map((section) => ({ ...section })),
       hasRealGeometry: stats.meshCount > 0 && stats.instanceCount > 0,
       stats,
     };
-    check.passed = missingLayers.length === 0 && check.slopeCount > 0 && check.hasRealGeometry && topologyValid;
+    check.passed = missingLayers.length === 0 && check.slopeCount > 0 && check.hasRealGeometry && topologyValid && ridgeValid;
     roof.userData.validation = check;
     return check;
   });

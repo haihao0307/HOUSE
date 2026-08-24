@@ -221,24 +221,31 @@ function addDoor(group, x, y, z, width, height, materials, data = {}) {
   for (const side of [-1, 1]) {
     const pivot = tag(new THREE.Group(), { type: 'door-leaf-pivot', side });
     pivot.position.set(side * width / 2, 0, -0.12);
-    const leaf = box(leafWidth, height - 0.12, 0.08, materials.timber, { type: '板门-door-leaf', side });
+    const leaf = box(leafWidth, height - 0.12, 0.08, materials.doorLeaf, { type: '板门-door-leaf', side, openingSurfaceRole: 'doorLeaf' });
     leaf.position.set(-side * leafWidth / 2, height / 2, 0);
     pivot.add(leaf);
     for (let rowIndex = 0; rowIndex < 3; rowIndex += 1) {
-      const panel = box(leafWidth * 0.72, height * 0.19, 0.026, materials.timber, { type: 'door-panel-inset' });
+      const panel = box(leafWidth * 0.72, height * 0.19, 0.026, materials.doorLeaf, { type: 'door-panel-inset', openingSurfaceRole: 'doorLeaf' });
       panel.position.set(-side * leafWidth / 2, 0.38 + rowIndex * 0.57, -0.052);
       pivot.add(panel);
+    }
+    if (side === 1) {
+      const replacement = box(leafWidth * 0.14, height * 0.36, 0.035, materials.replacementTimber, {
+        type: 'door-replacement-cleat', openingSurfaceRole: 'replacementPart', repairChronology: 'later-replacement',
+      });
+      replacement.position.set(-side * leafWidth * 0.28, height * 0.62, -0.065);
+      pivot.add(replacement);
     }
     assembly.add(pivot);
     pivots.push(pivot);
   }
   assembly.userData.pivots = pivots;
-  const jambL = box(0.12, height + 0.18, 0.16, materials.timber, { type: 'door-jamb' });
+  const jambL = box(0.12, height + 0.18, 0.16, materials.openingFrame, { type: 'door-jamb', openingSurfaceRole: 'openingFrame' });
   const jambR = jambL.clone();
   jambR.userData = { ...jambL.userData };
   jambL.position.set(-width / 2 - 0.04, height / 2, -0.16);
   jambR.position.set(width / 2 + 0.04, height / 2, -0.16);
-  const lintel = box(width + 0.28, 0.16, 0.18, materials.timber, { type: 'door-lintel' });
+  const lintel = box(width + 0.28, 0.16, 0.18, materials.openingFrame, { type: 'door-lintel', openingSurfaceRole: 'openingFrame' });
   lintel.position.set(0, height + 0.04, -0.16);
   assembly.add(jambL, jambR, lintel);
   group.add(assembly);
@@ -260,13 +267,16 @@ function addHighWindow(group, x, y, z, width, height, materials, data = {}) {
     [-width / 2, height / 2, frame, height + frame], [width / 2, height / 2, frame, height + frame],
     [0, 0, width + frame, frame], [0, height, width + frame, frame],
   ]) {
-    const bar = box(pw, ph, 0.14, materials.timber, { type: 'small-window-frame' });
+    const surfaceRole = py === 0 ? 'openingSill' : 'openingFrame';
+    const bar = box(pw, ph, 0.14, surfaceRole === 'openingSill' ? materials.openingSill : materials.openingFrame, {
+      type: surfaceRole === 'openingSill' ? 'weathered-window-sill' : 'small-window-frame', openingSurfaceRole: surfaceRole,
+    });
     bar.position.set(px, py, -0.08);
     assembly.add(bar);
   }
   const pivot = tag(new THREE.Group(), { type: 'window-leaf-pivot', side: -1 });
   pivot.position.set(-width / 2, 0, -0.12);
-  const shutter = box(width - 0.08, height - 0.08, 0.045, materials.timber, { type: 'operable-window-shutter' });
+  const shutter = box(width - 0.08, height - 0.08, 0.045, materials.windowLeaf, { type: 'operable-window-shutter', openingSurfaceRole: 'windowLeaf' });
   shutter.position.set((width - 0.08) / 2, height / 2, 0);
   pivot.add(shutter);
   assembly.add(pivot);
@@ -447,6 +457,7 @@ function addRoofUnit(parent, spec, options, materials, profile, baseline, roofIn
   const slopes = [];
   const ridgeElevations = [];
   const eaveElevations = [];
+  const ridgeTopology = [];
   const instanceMap = [];
   let totalMissing = 0;
   let totalBroken = 0;
@@ -615,18 +626,50 @@ function addRoofUnit(parent, spec, options, materials, profile, baseline, roofIn
     });
 
     const firstPlane = section.planes[0];
+    const isLeanTo = section.planes.length === 1;
     const closure = cylinderBetween(
       sectionPoint(-section.span / 2, firstPlane.ridgeY + 0.10, firstPlane.centerZ),
       sectionPoint(section.span / 2, firstPlane.ridgeY + 0.10, firstPlane.centerZ),
       tileWidth * 0.25, materials.tileCover,
-      { type: section.planes.length === 1 ? 'lean-to-top-closure' : '正脊-ridge-cover', roofLayerId: 'ridgeAndClosures', sectionId: section.id },
+      {
+        type: isLeanTo ? '靠墙收口-wall-abutment' : '正脊-ridge-cover',
+        ridgeSemantic: isLeanTo ? 'wallAbutment' : 'principalRidge',
+        roofLayerId: 'ridgeAndClosures', sectionId: section.id,
+      },
     );
     sectionRidge.add(closure);
     for (const x of [-section.span / 2, section.span / 2]) {
-      const cap = mesh(new THREE.SphereGeometry(tileWidth * 0.29, 10, 8), materials.tileCover, { type: 'ridge-end-closure', roofLayerId: 'ridgeAndClosures' });
+      const cap = mesh(new THREE.SphereGeometry(tileWidth * 0.29, 10, 8), materials.tileCover, { type: 'ridge-end-closure', ridgeSemantic: 'endClosure', roofLayerId: 'ridgeAndClosures', sectionId: section.id });
       cap.position.copy(sectionPoint(x, firstPlane.ridgeY + 0.10, firstPlane.centerZ));
       sectionRidge.add(cap);
     }
+    let vergeClosureCount = 0;
+    for (const plane of section.planes) {
+      const eaveDistance = plane.run + tileLength * 0.10;
+      for (const x of [-section.span / 2, section.span / 2]) {
+        const verge = cylinderBetween(
+          sectionPoint(x, plane.ridgeY + 0.075, plane.centerZ),
+          sectionPoint(x, plane.ridgeY - plane.pitch * eaveDistance + 0.045, plane.centerZ + plane.side * eaveDistance),
+          tileWidth * 0.115, materials.tileCover,
+          { type: '山面斜向收边-verge-closure', ridgeSemantic: 'vergeClosure', roofLayerId: 'ridgeAndClosures', sectionId: section.id },
+        );
+        sectionRidge.add(verge);
+        vergeClosureCount += 1;
+      }
+    }
+    ridgeTopology.push({
+      sectionId: section.id,
+      roofForm: isLeanTo ? 'lean-to' : 'gable',
+      principalRidgeCount: isLeanTo ? 0 : 1,
+      wallAbutmentCount: isLeanTo ? 1 : 0,
+      vergeClosureCount,
+      endClosureCount: 2,
+      verticalRidgeApplicable: false,
+      verticalRidgeCount: 0,
+      verticalRidgeReason: isLeanTo
+        ? 'Lean-to section terminates at a wall abutment and has no hipped corner.'
+        : 'Gable section uses a principal ridge and verge closures; no hipped corner exists.',
+    });
   });
 
   roof.userData.buildUp = ['purlins', 'rafters', 'roofUnderlay', 'panTileCourses', 'coverTileCourses', 'eaveCapsAndDrips', 'ridgeAndClosures'];
@@ -640,6 +683,7 @@ function addRoofUnit(parent, spec, options, materials, profile, baseline, roofIn
   roof.userData.repairs = { tiles: totalRepair, boundedPatches: true };
   roof.userData.instanceMap = instanceMap;
   roof.userData.slopes = slopes;
+  roof.userData.ridgeTopology = ridgeTopology;
   parent.add(roof);
   return roof;
 }
@@ -677,6 +721,61 @@ function interpolateRoute(points, progress) {
   return points.at(-1).clone();
 }
 
+function sampleVisitorRoute(points, spacingM = 0.08) {
+  const samples = [];
+  for (let segmentIndex = 0; segmentIndex < points.length - 1; segmentIndex += 1) {
+    const start = points[segmentIndex];
+    const end = points[segmentIndex + 1];
+    const steps = Math.max(1, Math.ceil(start.distanceTo(end) / spacingM));
+    for (let step = segmentIndex === 0 ? 0 : 1; step <= steps; step += 1) {
+      samples.push(start.clone().lerp(end, step / steps));
+    }
+  }
+  return samples;
+}
+
+function buildVisitorRouteDiagnostics(root, points) {
+  root.updateMatrixWorld(true);
+  const wallBounds = [];
+  const walkableBounds = [];
+  root.traverse((object) => {
+    if (!object.isMesh || !object.geometry) return;
+    if (object.userData?.semanticRole === 'wall-core') wallBounds.push(new THREE.Box3().setFromObject(object));
+    if (object.userData?.walkable === true) walkableBounds.push(new THREE.Box3().setFromObject(object));
+  });
+  const samples = sampleVisitorRoute(points);
+  let wallIntersectionCount = 0;
+  let suspendedFrameCount = 0;
+  let stuckFrameCount = 0;
+  let maxGroundClearanceM = 0;
+  let previous = null;
+  samples.forEach((point) => {
+    const body = new THREE.Box3(
+      new THREE.Vector3(point.x - 0.16, point.y + 0.04, point.z - 0.16),
+      new THREE.Vector3(point.x + 0.16, point.y + 1.20, point.z + 0.16),
+    );
+    if (wallBounds.some((bounds) => bounds.intersectsBox(body))) wallIntersectionCount += 1;
+    const supports = walkableBounds.map((bounds) => ({
+      bounds, clearance: point.y - bounds.max.y,
+    })).filter(({ bounds, clearance }) =>
+      point.x >= bounds.min.x - 0.10 && point.x <= bounds.max.x + 0.10
+      && point.z >= bounds.min.z - 0.10 && point.z <= bounds.max.z + 0.10
+      && clearance >= -0.18 && clearance <= 0.30
+    );
+    if (!supports.length) suspendedFrameCount += 1;
+    else maxGroundClearanceM = Math.max(maxGroundClearanceM, Math.max(0, Math.min(...supports.map((item) => Math.abs(item.clearance)))));
+    if (previous && point.distanceTo(previous) < 0.005) stuckFrameCount += 1;
+    previous = point;
+  });
+  return {
+    method: 'rendered-wall-aabb-and-walkable-support-sampling',
+    sampleSpacingM: 0.08, sampleCount: samples.length, visitorRadiusM: 0.16, visitorHeightM: 1.20,
+    wallVolumeCount: wallBounds.length, walkableVolumeCount: walkableBounds.length,
+    wallIntersectionCount, suspendedFrameCount, stuckFrameCount, maxGroundClearanceM,
+    passed: wallIntersectionCount === 0 && suspendedFrameCount === 0 && stuckFrameCount === 0,
+  };
+}
+
 function setOpeningProgress(root, progress) {
   const value = THREE.MathUtils.clamp(progress, 0, 1);
   let doors = 0;
@@ -705,6 +804,7 @@ function setVisitorProgress(root, progress) {
   visitor.userData.routeProgress = value;
   visitor.userData.routeComplete = value >= 0.999;
   visitor.userData.floorElevationM = position.y;
+  visitor.userData.routeDiagnostics = { ...root.userData.visitorRoute.diagnostics };
   root.userData.runtimeState.visitorProgress = value;
   root.userData.runtimeState.visitorPosition = position.toArray();
   return { progress: value, position: position.toArray(), complete: visitor.userData.routeComplete };
@@ -741,6 +841,7 @@ export function createYunnanCourtyardPrototype(userOptions = {}) {
     tilePan: { surfaceChannels: surfaceProfile.roof || {}, ...(userOptions.materials?.tilePan || {}) },
     tileCover: { surfaceChannels: surfaceProfile.roof || {}, ...(userOptions.materials?.tileCover || {}) },
     timber: userOptions.materials?.timber || {},
+    openingWeathering: { enabled: !baseline, ...(surfaceProfile.opening || {}), ...(userOptions.materials?.openingWeathering || {}) },
     stone: userOptions.materials?.stone || {},
     opening: userOptions.materials?.opening || {},
   });
@@ -786,6 +887,9 @@ export function createYunnanCourtyardPrototype(userOptions = {}) {
   const frontStep = box(2.2, 0.14, 0.55, materials.stone, { type: 'front-stone-step', walkable: true });
   frontStep.position.set(0, 0.18, -D / 2 - 0.3);
   ground.add(frontStep);
+  const entryApproach = box(1.6, 0.08, 2.8, materials.stone, { type: 'entry-approach-walkway', walkable: true });
+  entryApproach.position.set(0, 0.05, -D / 2 - 1.40);
+  ground.add(entryApproach);
 
   addWall(walls, 0, p, D / 2 - t / 2, W, t, H, materials, { type: 'north-main-wall', componentId: 'WALL-NORTH-MAIN', taper: options.wallTaper });
   addWall(walls, -W / 2 + t / 2, p, 0.15, t, sideDepth, H * 0.9, materials, { type: 'west-side-wall', componentId: 'WALL-WEST-SIDE', taper: options.wallTaper });
@@ -818,6 +922,11 @@ export function createYunnanCourtyardPrototype(userOptions = {}) {
   const stair = addDoubleFlightStairs(frame, -courtyardW / 2 - 1.25, p, galleryZ - 0.20, materials, {
     width: 0.84, gap: 0.18, run: 2.05, landingDepth: 0.82, totalRise: options.floorHeight,
   }, { type: 'west-daily-stair', stairId: 'STAIR-WEST-01' });
+  const upperStairConnector = box(1.30, 0.12, 1.90, materials.timber, {
+    type: 'upper-stair-gallery-connector', walkable: true, stairId: 'STAIR-WEST-01',
+  });
+  upperStairConnector.position.set(-3.0, p + options.floorHeight - 0.06, 1.65);
+  frame.add(upperStairConnector);
 
   const specs = [
     {
@@ -893,6 +1002,7 @@ export function createYunnanCourtyardPrototype(userOptions = {}) {
     upperFloorElevationM: p + options.floorHeight,
     relativeUpperFloorM: options.floorHeight,
   };
+  root.userData.visitorRoute.diagnostics = buildVisitorRouteDiagnostics(root, route);
   setVisitorProgress(root, 0);
   setOpeningProgress(root, 0);
 

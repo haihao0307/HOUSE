@@ -57,7 +57,7 @@ jobs:
     outputs:
       page_url: ${{ steps.deployment.outputs.page_url }}
     environment:
-      name: github-pages
+      name: ${{ github.ref_name == 'main' && 'github-pages' || 'github-pages-preview' }}
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     needs: build

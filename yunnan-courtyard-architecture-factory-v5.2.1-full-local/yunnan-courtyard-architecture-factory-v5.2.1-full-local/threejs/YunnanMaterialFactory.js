@@ -33,6 +33,16 @@ export const YUNNAN_MATERIAL_PROFILES = Object.freeze({
     exposure: 0.58,
     note: 'low-saturation grey-brown to dark brown; matte sheltered variation'
   },
+  weatheredOpeningTimber: {
+    id: 'YKY-MAT-OPENING-TIMBER-WEATHERED',
+    color: '#604637',
+    roughness: 0.89,
+    metalness: 0,
+    weathering: 0.72,
+    heightMeters: 2.5,
+    exposure: 0.62,
+    note: 'role-specific doors and windows with deterministic sun, rain, patina, damp, edge wear and replacement age'
+  },
   weatheredTile: {
     id: 'TJ001-ROOF-YUNNAN-PAN-COVER-TILE-AGED',
     color: '#77736b',
@@ -127,6 +137,11 @@ function injectWeathering(material, mode, options = {}) {
     shader.uniforms.uYunnanMoss = { value: Number(channels.moss ?? 0.12) };
     shader.uniforms.uYunnanRain = { value: Number(channels.rainWash ?? 0.28) };
     shader.uniforms.uYunnanEdgeWear = { value: Number(channels.edgeWear ?? 0.32) };
+    shader.uniforms.uYunnanSunExposure = { value: Number(channels.sunExposure ?? channels.orientationExposure ?? 0.42) };
+    shader.uniforms.uYunnanRainExposure = { value: Number(channels.rainExposure ?? channels.rainWash ?? 0.28) };
+    shader.uniforms.uYunnanPatina = { value: Number(channels.patina ?? 0.36) };
+    shader.uniforms.uYunnanRisingDamp = { value: Number(channels.risingDamp ?? 0.18) };
+    shader.uniforms.uYunnanReplacementAge = { value: Number(channels.replacementAge ?? 0.74) };
     shader.vertexShader = shader.vertexShader.replace(
       '#include <common>',
       '#include <common>\nvarying vec3 vYunnanWorldPosition;'
@@ -137,7 +152,7 @@ function injectWeathering(material, mode, options = {}) {
     );
     shader.fragmentShader = shader.fragmentShader.replace(
       '#include <common>',
-      `#include <common>\nvarying vec3 vYunnanWorldPosition;\nuniform float uYunnanSeed;\nuniform float uYunnanWeathering;\nuniform float uYunnanExposure;\nuniform float uYunnanHeight;\nuniform float uYunnanFiring;\nuniform float uYunnanDust;\nuniform float uYunnanMoss;\nuniform float uYunnanRain;\nuniform float uYunnanEdgeWear;\n${WALL_FRAGMENT}`
+      `#include <common>\nvarying vec3 vYunnanWorldPosition;\nuniform float uYunnanSeed;\nuniform float uYunnanWeathering;\nuniform float uYunnanExposure;\nuniform float uYunnanHeight;\nuniform float uYunnanFiring;\nuniform float uYunnanDust;\nuniform float uYunnanMoss;\nuniform float uYunnanRain;\nuniform float uYunnanEdgeWear;\nuniform float uYunnanSunExposure;\nuniform float uYunnanRainExposure;\nuniform float uYunnanPatina;\nuniform float uYunnanRisingDamp;\nuniform float uYunnanReplacementAge;\n${WALL_FRAGMENT}`
     );
     const replacement = mode === 'wall' ? `
       #include <color_fragment>
@@ -156,6 +171,28 @@ function injectWeathering(material, mode, options = {}) {
       diffuseColor.rgb=mix(diffuseColor.rgb,palePatch,pale*0.34);
       diffuseColor.rgb=mix(diffuseColor.rgb,darkPatch,dark*0.24);
       diffuseColor.rgb+=grain;
+    ` : mode === 'openingTimber' ? `
+      #include <color_fragment>
+      vec3 yp=vYunnanWorldPosition*0.58+vec3(uYunnanSeed*0.019);
+      float macro=yunnanFbm(yp*0.62);
+      float fine=yunnanNoise(yp*4.1+vec3(5.0,13.0,2.0));
+      float localHeight=clamp(vYunnanWorldPosition.y/max(uYunnanHeight,0.01),0.0,1.0);
+      float sunMask=clamp(0.35+0.65*abs(normalize(vNormal).x),0.0,1.0)*uYunnanSunExposure;
+      float rainMask=(0.25+0.75*smoothstep(0.44,0.92,macro))*uYunnanRainExposure;
+      float dampMask=(1.0-localHeight)*(0.35+0.65*macro)*uYunnanRisingDamp;
+      float patinaMask=smoothstep(0.42,0.88,fine)*uYunnanPatina;
+      float edgeMask=smoothstep(0.62,0.94,abs(fine-0.5)*2.0)*uYunnanEdgeWear;
+      vec3 sunBleached=vec3(0.48,0.39,0.31);
+      vec3 rainDark=vec3(0.20,0.145,0.11);
+      vec3 handPatina=vec3(0.16,0.105,0.075);
+      vec3 dampBrown=vec3(0.22,0.18,0.14);
+      vec3 replacementWarm=vec3(0.43,0.30,0.21);
+      diffuseColor.rgb=mix(diffuseColor.rgb,sunBleached,sunMask*0.24);
+      diffuseColor.rgb=mix(diffuseColor.rgb,rainDark,rainMask*0.20);
+      diffuseColor.rgb=mix(diffuseColor.rgb,handPatina,patinaMask*0.22);
+      diffuseColor.rgb=mix(diffuseColor.rgb,dampBrown,dampMask*0.36);
+      diffuseColor.rgb=mix(diffuseColor.rgb,replacementWarm,uYunnanReplacementAge*0.34);
+      diffuseColor.rgb*=1.0-edgeMask*0.16;
     ` : mode === 'timber' ? `
       #include <color_fragment>
       vec3 yp=vYunnanWorldPosition*0.42+vec3(uYunnanSeed*0.02);
@@ -230,6 +267,26 @@ export function createWeatheredTileMaterial(options = {}) {
   return injectWeathering(material, 'tile', { ...profile, profile });
 }
 
+export function createWeatheredOpeningTimberMaterial(options = {}) {
+  const profile = { ...YUNNAN_MATERIAL_PROFILES.weatheredOpeningTimber, ...options };
+  const channels = {
+    sunExposure: 0.52, rainExposure: 0.38, patina: 0.42, risingDamp: 0.16,
+    edgeWear: 0.34, replacementAge: 0, ...(options.surfaceChannels || {}),
+  };
+  const material = new THREE.MeshStandardMaterial({
+    color: color(profile.color, '#604637'),
+    roughness: profile.roughness,
+    metalness: profile.metalness,
+    flatShading: false,
+  });
+  injectWeathering(material, 'openingTimber', { ...profile, profile, surfaceChannels: channels });
+  material.userData.yunnanOpeningRole = options.openingRole || 'openingFrame';
+  material.userData.yunnanDeterministicChannels = [
+    'sunExposure', 'rainExposure', 'patina', 'risingDamp', 'edgeWear', 'replacementAge',
+  ];
+  return material;
+}
+
 export function createStoneBaseMaterial(options = {}) {
   const profile = { ...YUNNAN_MATERIAL_PROFILES.stoneBase, ...options };
   return new THREE.MeshStandardMaterial({
@@ -251,9 +308,24 @@ export function createDoorOpeningMaterial(options = {}) {
 
 export function createYunnanMaterialSet(options = {}) {
   const seed = seedValue(options.seed ?? 17);
+  const openingEnabled = options.openingWeathering?.enabled !== false;
+  const makeOpening = (role, offset, defaults) => createWeatheredOpeningTimberMaterial({
+    seed: seed + offset,
+    openingRole: role,
+    weathering: openingEnabled ? 0.72 : 0,
+    exposure: openingEnabled ? 0.62 : 0,
+    surfaceChannels: openingEnabled
+      ? { ...defaults, ...(options.openingWeathering?.[role] || {}) }
+      : { sunExposure: 0, rainExposure: 0, patina: 0, risingDamp: 0, edgeWear: 0, replacementAge: 0 },
+  });
   return {
     wall: createWeatheredEarthWallMaterial({ seed, ...(options.wall || {}) }),
     timber: createAgedTimberMaterial({ seed: seed + 19, ...(options.timber || {}) }),
+    doorLeaf: makeOpening('doorLeaf', 71, { sunExposure: 0.62, rainExposure: 0.44, patina: 0.58, risingDamp: 0.24, edgeWear: 0.46, replacementAge: 0 }),
+    windowLeaf: makeOpening('windowLeaf', 73, { sunExposure: 0.68, rainExposure: 0.52, patina: 0.34, risingDamp: 0.08, edgeWear: 0.42, replacementAge: 0 }),
+    openingFrame: makeOpening('openingFrame', 79, { sunExposure: 0.48, rainExposure: 0.40, patina: 0.46, risingDamp: 0.18, edgeWear: 0.38, replacementAge: 0 }),
+    openingSill: makeOpening('openingSill', 83, { sunExposure: 0.52, rainExposure: 0.76, patina: 0.38, risingDamp: 0.28, edgeWear: 0.56, replacementAge: 0 }),
+    replacementTimber: makeOpening('replacementPart', 89, { sunExposure: 0.28, rainExposure: 0.30, patina: 0.12, risingDamp: 0.08, edgeWear: 0.18, replacementAge: 0.86 }),
     tilePan: createWeatheredTileMaterial({ seed: seed + 37, ...(options.tilePan || {}) }),
     tileCover: createWeatheredTileMaterial({ seed: seed + 53, color: '#858076', ...(options.tileCover || {}) }),
     stone: createStoneBaseMaterial(options.stone || {}),

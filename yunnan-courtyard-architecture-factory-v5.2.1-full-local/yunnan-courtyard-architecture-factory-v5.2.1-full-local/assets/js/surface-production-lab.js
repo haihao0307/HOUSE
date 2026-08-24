@@ -323,10 +323,11 @@ function inspect(viewName = 'production') {
       slopes,
       damage: { ...object.userData.damage },
       repairs: { ...object.userData.repairs },
+      ridgeTopology: object.userData.ridgeTopology.map((item) => ({ ...item })),
     });
   });
   let stair = null;
-  const openings = { doorLeafCount: 0, windowLeafCount: 0, assemblyCount: 0, pivotCount: 0, progress: [] };
+  const openings = { doorLeafCount: 0, windowLeafCount: 0, assemblyCount: 0, pivotCount: 0, progress: [], surfaceRoles: {}, deterministicSeeds: [] };
   let visitor = null;
   model.traverse((object) => {
     if (object.userData?.semanticRole === 'daily-use-dogleg-stair') {
@@ -338,6 +339,12 @@ function inspect(viewName = 'production') {
         continuousHandrails: object.userData.continuousHandrails,
         totalRiseM: object.userData.totalRiseM,
       };
+    }
+    if (object.userData?.openingSurfaceRole) {
+      const role = object.userData.openingSurfaceRole;
+      openings.surfaceRoles[role] = (openings.surfaceRoles[role] || 0) + 1;
+      const material = object.material;
+      if (material?.userData?.yunnanSeed !== undefined) openings.deterministicSeeds.push(material.userData.yunnanSeed);
     }
     if (object.userData?.openingKind) {
       openings.assemblyCount += 1;
@@ -353,9 +360,14 @@ function inspect(viewName = 'production') {
         absoluteElevationM: object.userData.floorElevationM,
         relativeUpperFloorM: model.userData.visitorRoute.relativeUpperFloorM,
         reachedUpperFloor: object.userData.routeComplete && Math.abs(object.userData.floorElevationM - model.userData.visitorRoute.upperFloorElevationM) < 0.02,
-        wallIntersectionCount: 0,
-        suspendedFrameCount: 0,
-        stuckFrameCount: 0,
+        diagnosticsMethod: object.userData.routeDiagnostics?.method,
+        sampleCount: object.userData.routeDiagnostics?.sampleCount,
+        wallVolumeCount: object.userData.routeDiagnostics?.wallVolumeCount,
+        walkableVolumeCount: object.userData.routeDiagnostics?.walkableVolumeCount,
+        maxGroundClearanceM: object.userData.routeDiagnostics?.maxGroundClearanceM,
+        wallIntersectionCount: object.userData.routeDiagnostics?.wallIntersectionCount,
+        suspendedFrameCount: object.userData.routeDiagnostics?.suspendedFrameCount,
+        stuckFrameCount: object.userData.routeDiagnostics?.stuckFrameCount,
       };
     }
   });

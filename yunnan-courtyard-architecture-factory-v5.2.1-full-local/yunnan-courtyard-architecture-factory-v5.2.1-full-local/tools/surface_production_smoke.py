@@ -185,6 +185,23 @@ def main() -> int:
             check("roof height hierarchy", len({round(roof.get("ridgeElevationM", 0), 2) for roof in roofs}) >= 4)
             check("clustered missing or broken tiles", sum(roof.get("damage", {}).get("missingTiles", 0) + roof.get("damage", {}).get("brokenTiles", 0) for roof in roofs) >= 4)
             check("bounded repair tile patches", sum(roof.get("repairs", {}).get("tiles", 0) for roof in roofs) >= 4)
+            ridge_checks = production.get("roofSystem", {}).get("unitChecks", [])
+            check(
+                "ridge, verge, wall-abutment and N/A contracts use real geometry",
+                ridge_checks and all(
+                    item.get("ridgeValid") is True
+                    and item.get("ridgeGeometryCount", 0) > 0
+                    and all(value > 0 for value in item.get("ridgeBoundsM", []))
+                    and all(
+                        section.get("vergeClosureCount", 0) >= 2
+                        and section.get("endClosureCount") == 2
+                        and (section.get("verticalRidgeCount", 0) > 0 if section.get("verticalRidgeApplicable") else bool(section.get("verticalRidgeReason")))
+                        for section in item.get("ridgeTopology", [])
+                    )
+                    for item in ridge_checks
+                ),
+                ridge_checks,
+            )
 
             walls = production.get("walls") or {}
             check("wall hosts generated", walls.get("hostCount", 0) >= 5, walls.get("hostCount"))
@@ -218,10 +235,18 @@ def main() -> int:
             openings_open = page.evaluate("window.__SURFACE_QA__.inspect('production').openings")
             check("door and window pivots exist", openings_open.get("doorLeafCount", 0) == 2 and openings_open.get("windowLeafCount", 0) >= 4, openings_open)
             check("door and window states changed", openings_closed.get("progress") != openings_open.get("progress") and all(value == 1 for value in openings_open.get("progress", [])))
+            required_opening_roles = {"doorLeaf", "windowLeaf", "openingFrame", "openingSill", "replacementPart"}
+            check(
+                "role-specific deterministic opening weathering",
+                required_opening_roles.issubset(set(openings_open.get("surfaceRoles", {})))
+                and len(set(openings_open.get("deterministicSeeds", []))) >= len(required_opening_roles),
+                openings_open,
+            )
             page.evaluate("window.__SURFACE_QA__.setVisitorProgress(1)")
             visitor = page.evaluate("window.__SURFACE_QA__.inspect('production').visitor")
             check("visitor completes entry route", visitor.get("complete") and visitor.get("reachedUpperFloor"), visitor)
             check("visitor reaches 2.73 m relative floor", abs(visitor.get("relativeUpperFloorM", 0) - 2.73) <= 0.01, visitor)
+            check("visitor diagnostics sample rendered collision and support volumes", visitor.get("diagnosticsMethod") == "rendered-wall-aabb-and-walkable-support-sampling" and visitor.get("sampleCount", 0) >= 100 and visitor.get("wallVolumeCount", 0) >= 5 and visitor.get("walkableVolumeCount", 0) >= 10, visitor)
             check("visitor regression counters clear", visitor.get("wallIntersectionCount") == 0 and visitor.get("suspendedFrameCount") == 0 and visitor.get("stuckFrameCount") == 0, visitor)
 
             renderer = production.get("renderer", {})
