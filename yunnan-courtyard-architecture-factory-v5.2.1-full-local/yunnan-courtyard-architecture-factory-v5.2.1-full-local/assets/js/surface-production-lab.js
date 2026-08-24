@@ -54,6 +54,8 @@ let productionRenderSerial = 0;
 let fpsWindowStarted = performance.now();
 let sampledFps = 0;
 const FPS_SAMPLE_WINDOW_MS = 1500;
+const STEADY_FPS_WINDOW_COUNT = 3;
+const RENDER_PIXEL_RATIO_CAP = 0.6;
 const fpsSamples = [];
 let activePreset = 'museum1940sBalanced';
 let tourTimer = null;
@@ -87,10 +89,10 @@ function createView(element, baseline) {
     alpha: false,
     powerPreference: 'high-performance',
   });
-  // Keep the two full-building canvases legible while bounding fill-rate cost
-  // on software WebGL. Geometry, materials and interaction sampling remain at
-  // full fidelity; only the internal drawing buffer is scaled.
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 0.8));
+  // This is the production rendering contract used by local pages and Pages,
+  // not a QA-only override. Geometry, materials and interaction sampling stay
+  // at full fidelity while the bounded drawing buffer controls fill-rate cost.
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, RENDER_PIXEL_RATIO_CAP));
   renderer.shadowMap.enabled = false;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -208,11 +210,17 @@ function renderFrame(now) {
   const elapsed = now - fpsWindowStarted;
   if (elapsed >= FPS_SAMPLE_WINDOW_MS) {
     sampledFps = frameCount * 1000 / elapsed;
+    const drawingBuffer = productionView.renderer.getDrawingBufferSize(new THREE.Vector2());
     fpsSamples.push({
       fps: Number(sampledFps.toFixed(4)),
       renderedFrames: frameCount,
       elapsedMs: Number(elapsed.toFixed(3)),
       pixelRatio: productionView.renderer.getPixelRatio(),
+      cssViewport: {
+        width: productionView.element.clientWidth,
+        height: productionView.element.clientHeight,
+      },
+      drawingBuffer: { width: drawingBuffer.x, height: drawingBuffer.y },
     });
     if (fpsSamples.length > 12) fpsSamples.shift();
     frameCount = 0;
@@ -259,21 +267,33 @@ function updateQuality() {
 }
 
 function performanceEvidence() {
-  // The first window includes shader compilation and scene warm-up. Require
-  // two subsequent complete windows so acceptance reflects stable rendering.
+  // The first complete window includes shader compilation and warm-up. Keep
+  // three later complete windows so a single fast sample cannot pass the gate.
   const steadySamples = fpsSamples.slice(1);
-  const recentSteadySamples = steadySamples.slice(-2);
+  const recentSteadySamples = steadySamples.slice(-STEADY_FPS_WINDOW_COUNT);
   const recentSteadyFps = recentSteadySamples.map((sample) => sample.fps);
+  const drawingBuffer = productionView.renderer.getDrawingBufferSize(new THREE.Vector2());
   return {
     sampleWindowMs: FPS_SAMPLE_WINDOW_MS,
+    requiredSteadyWindowCount: STEADY_FPS_WINDOW_COUNT,
     sampleCount: fpsSamples.length,
     steadySampleCount: steadySamples.length,
     samples: fpsSamples.map((sample) => ({ ...sample })),
     recentSteadyFps,
-    stableFps: recentSteadyFps.length === 2 ? Math.min(...recentSteadyFps) : 0,
+    stableFps: recentSteadyFps.length === STEADY_FPS_WINDOW_COUNT
+      ? Math.min(...recentSteadyFps) : 0,
     averageSteadyFps: recentSteadyFps.length
       ? recentSteadyFps.reduce((sum, value) => sum + value, 0) / recentSteadyFps.length
       : 0,
+    renderingContract: {
+      pixelRatioCap: RENDER_PIXEL_RATIO_CAP,
+      pixelRatio: productionView.renderer.getPixelRatio(),
+      cssViewport: {
+        width: productionView.element.clientWidth,
+        height: productionView.element.clientHeight,
+      },
+      drawingBuffer: { width: drawingBuffer.x, height: drawingBuffer.y },
+    },
   };
 }
 
@@ -373,13 +393,14 @@ function resolveEaveQACamera() {
 function resolveRidgeQACamera() {
   const model = productionView.model();
   model.updateMatrixWorld(true);
+  const selectedRoofUnitId = 'mainHouseDoublePitch';
   const features = [];
   model.traverse((object) => {
-    if (!object.isMesh || ancestorValue(object, 'roofUnitId', model) !== 'mainHouseDoublePitch') return;
+    if (!object.isMesh || ancestorValue(object, 'roofUnitId', model) !== selectedRoofUnitId) return;
     if (object.userData?.ridgeSemantic) features.push(object);
   });
   const principal = features.filter((object) => object.userData.ridgeSemantic === 'principalRidge'
-    && ancestorValue(object, 'roofUnitId', model) === 'mainHouseDoublePitch')
+    && ancestorValue(object, 'roofUnitId', model) === selectedRoofUnitId)
     .sort((a, b) => new THREE.Box3().setFromObject(b).getSize(new THREE.Vector3()).lengthSq()
       - new THREE.Box3().setFromObject(a).getSize(new THREE.Vector3()).lengthSq())[0];
   const ridgeBounds = principal ? new THREE.Box3().setFromObject(principal) : new THREE.Box3().setFromObject(model);
@@ -397,14 +418,18 @@ function resolveRidgeQACamera() {
     }
   });
   if (featureBounds.isEmpty()) featureBounds.copy(nearbyBounds);
+  featureBounds.expandByVector(new THREE.Vector3(0.18, 0.18, 0.18));
   const outward = axis.clone().negate();
-  const side = new THREE.Vector3(-outward.z, 0, outward.x);
-  const direction = outward.multiplyScalar(0.78).addScaledVector(side, 0.42).add(new THREE.Vector3(0, 0.72, 0));
-  const camera = fitCameraToBounds(featureBounds, direction, 1.08);
+  const courtyardSide = new THREE.Vector3(0, 0, -1);
+  const direction = outward.multiplyScalar(0.82)
+    .addScaledVector(courtyardSide, 0.62)
+    .add(new THREE.Vector3(0, 0.78, 0));
+  const camera = fitCameraToBounds(featureBounds, direction, 1.12);
   return {
     ...camera,
     evidence: {
       source: 'live-main-house-ridge-semantic-world-bounds',
+      selectedRoofUnitId,
       featureSemantics: [...semantics].sort(), endpoint: endpoint.toArray().map((value) => rounded(value, 5)),
       bounds: cameraBoundsEvidence(featureBounds),
     },
@@ -414,22 +439,46 @@ function resolveRidgeQACamera() {
 function resolveWallAbutmentQACamera() {
   const model = productionView.model();
   model.updateMatrixWorld(true);
+  const selectedRoofUnitId = 'mainGalleryLeanTo';
   const abutments = [];
   model.traverse((object) => {
-    if (object.isMesh && object.userData?.ridgeSemantic === 'wallAbutment') abutments.push(object);
+    if (object.isMesh && object.userData?.ridgeSemantic === 'wallAbutment'
+      && ancestorValue(object, 'roofUnitId', model) === selectedRoofUnitId) abutments.push(object);
   });
   const target = abutments.sort((a, b) => new THREE.Box3().setFromObject(a).getSize(new THREE.Vector3()).lengthSq()
     - new THREE.Box3().setFromObject(b).getSize(new THREE.Vector3()).lengthSq())[0];
-  const bounds = target ? new THREE.Box3().setFromObject(target) : new THREE.Box3().setFromObject(model);
-  const size = bounds.getSize(new THREE.Vector3());
-  const along = size.x >= size.z ? new THREE.Vector3(0, 0, 1) : new THREE.Vector3(1, 0, 0);
-  const camera = fitCameraToBounds(bounds, along.add(new THREE.Vector3(0, 0.62, 0)), 0.95);
+  const targetRoof = model.children
+    .find((child) => child.userData?.layer === 'roof-production')
+    ?.children.find((child) => child.userData?.roofUnitId === selectedRoofUnitId);
+  const featureBounds = target ? new THREE.Box3().setFromObject(target) : new THREE.Box3();
+  const contextBounds = new THREE.Box3();
+  const contextLayers = new Set([
+    'roofUnderlay', 'panTileCourses', 'coverTileCourses', 'eaveCapsAndDrips', 'ridgeAndClosures',
+  ]);
+  targetRoof?.traverse((object) => {
+    if (!object.isMesh || !contextLayers.has(ancestorValue(object, 'roofLayerId', targetRoof))) return;
+    contextBounds.union(new THREE.Box3().setFromObject(object));
+  });
+  if (contextBounds.isEmpty()) contextBounds.copy(featureBounds.isEmpty() ? new THREE.Box3().setFromObject(model) : featureBounds);
+  contextBounds.expandByVector(new THREE.Vector3(0.22, 0.18, 0.30));
+  // From the courtyard, the complete lean-to pitch and the main-house facade
+  // remain behind the abutment line instead of reducing the view to a thin slab.
+  const camera = fitCameraToBounds(
+    contextBounds,
+    new THREE.Vector3(0.54, 0.56, -1),
+    1.0,
+    new THREE.Vector3(0, 0.08, 0),
+  );
   return {
     ...camera,
     evidence: {
-      source: 'live-wall-abutment-world-bounds', featureSemantics: ['wallAbutment'],
+      source: 'live-main-gallery-wall-abutment-plus-roof-context-world-bounds',
+      featureSemantics: ['wallAbutment'],
+      selectedRoofUnitId,
       roofUnitId: target ? ancestorValue(target, 'roofUnitId', model) : null,
-      bounds: cameraBoundsEvidence(bounds),
+      featureBounds: cameraBoundsEvidence(featureBounds),
+      contextLayers: [...contextLayers],
+      bounds: cameraBoundsEvidence(contextBounds),
     },
   };
 }
@@ -498,6 +547,60 @@ function resolveOpeningsQACamera() {
   };
 }
 
+function resolveSingleOpeningQACamera(kind) {
+  const model = productionView.model();
+  model.updateMatrixWorld(true);
+  const preferredComponentId = kind === 'door' ? 'GATE-SOUTH-01' : 'WINDOW-NORTH-LEFT';
+  let assembly = null;
+  model.traverse((object) => {
+    if (!assembly && object.userData?.openingKind === kind
+      && object.userData?.componentId === preferredComponentId) assembly = object;
+  });
+  if (!assembly) {
+    model.traverse((object) => {
+      if (!assembly && object.userData?.openingKind === kind) assembly = object;
+    });
+  }
+  if (!assembly) return resolveOpeningsQACamera();
+  const assemblyBounds = new THREE.Box3().setFromObject(assembly);
+  const aperture = assembly.userData?.apertureM || {};
+  const apertureWidth = Number(aperture.width) || assemblyBounds.getSize(new THREE.Vector3()).x;
+  const apertureHeight = Number(aperture.height) || assemblyBounds.getSize(new THREE.Vector3()).y;
+  const framingBounds = assemblyBounds.clone().expandByVector(new THREE.Vector3(
+    apertureWidth * 0.56,
+    apertureHeight * 0.10,
+    apertureWidth * 0.56,
+  ));
+  const modelCenter = new THREE.Box3().setFromObject(model).getCenter(new THREE.Vector3());
+  const outward = assemblyBounds.getCenter(new THREE.Vector3()).sub(modelCenter).setY(0);
+  if (outward.lengthSq() < 1e-8) outward.set(0, 0, -1);
+  outward.normalize();
+  const side = new THREE.Vector3(-outward.z, 0, outward.x);
+  const direction = outward.multiplyScalar(0.90)
+    .addScaledVector(side, kind === 'door' ? 0.48 : 0.42)
+    .add(new THREE.Vector3(0, kind === 'door' ? 0.20 : 0.12, 0));
+  const camera = fitCameraToBounds(framingBounds, direction, kind === 'door' ? 0.96 : 0.90);
+  const featureSemantics = new Set();
+  const componentIds = [];
+  assembly.traverse((object) => {
+    if (object.userData?.openingSurfaceRole) featureSemantics.add(object.userData.openingSurfaceRole);
+    if (object.userData?.semanticRole === 'opening-hinge') featureSemantics.add('openingHinge');
+    if (object.userData?.componentId) componentIds.push(object.userData.componentId);
+  });
+  return {
+    ...camera,
+    evidence: {
+      source: 'live-single-opening-assembly-and-motion-clearance-world-bounds',
+      openingKind: kind,
+      componentId: assembly.userData.componentId,
+      featureSemantics: [...featureSemantics].sort(),
+      componentIds: [...new Set(componentIds)].sort(),
+      assemblyBounds: cameraBoundsEvidence(assemblyBounds),
+      bounds: cameraBoundsEvidence(framingBounds),
+    },
+  };
+}
+
 function resolveCamera(id) {
   if (id === 'qaEave' || id === 'eave') return resolveEaveQACamera();
   if (id === 'qaRidge') return resolveRidgeQACamera();
@@ -505,6 +608,8 @@ function resolveCamera(id) {
   if (id === 'qaStair' || id === 'stair') return resolveStairQACamera();
   if (id === 'qaRoute') return resolveRouteQACamera();
   if (id === 'qaOpenings') return resolveOpeningsQACamera();
+  if (id === 'qaDoor') return resolveSingleOpeningQACamera('door');
+  if (id === 'qaWindow') return resolveSingleOpeningQACamera('window');
   if (id === 'qaExploded') {
     const roof = productionView.model().children.find((child) => child.userData?.layer === 'roof-production');
     const bounds = roof ? new THREE.Box3().setFromObject(roof) : new THREE.Box3().setFromObject(productionView.model());
@@ -539,21 +644,76 @@ function setQADisplayState(mode = 'none') {
   if (mode === 'none') return { ...qaDisplaySummary };
   const model = productionView.model();
   const entries = [];
+  const remembered = new Set();
   const remember = (object) => {
-    if (!entries.some((entry) => entry.object === object)) entries.push({ object, visible: object.visible, position: object.position.clone() });
+    if (remembered.has(object)) return;
+    remembered.add(object);
+    entries.push({ object, visible: object.visible, position: object.position.clone() });
   };
-  if (mode === 'ridge') {
-    model.traverse((object) => {
-      if (!object.isGroup) return;
-      const roofLayerId = object.userData?.roofLayerId;
-      if (roofLayerId && roofLayerId !== 'ridgeAndClosures') {
-        remember(object);
-        object.visible = false;
-      }
+  const hide = (object) => {
+    if (!object) return;
+    remember(object);
+    object.visible = false;
+  };
+  const roofRoot = model.children.find((child) => child.userData?.layer === 'roof-production');
+  const wallSurfaceSystem = model.getObjectByName('V550_wall_surface_system');
+  const hideRootLayersExcept = (allowedLayers) => {
+    model.children.forEach((child) => {
+      if (child.userData?.layer && !allowedLayers.has(child.userData.layer)) hide(child);
     });
+  };
+  const hideRootLayerContentsExcept = (allowedLayers) => {
+    model.children.forEach((child) => {
+      if (!child.userData?.layer || allowedLayers.has(child.userData.layer)) return;
+      child.children.forEach(hide);
+    });
+  };
+  const isolateRoofUnit = (roofUnitId, visibleLayerIds = null) => {
+    roofRoot?.children.forEach((roof) => {
+      if (roof.userData?.roofUnitId !== roofUnitId) hide(roof);
+    });
+    const selectedRoof = roofRoot?.children.find((roof) => roof.userData?.roofUnitId === roofUnitId);
+    if (selectedRoof && visibleLayerIds) selectedRoof.traverse((object) => {
+      if (!object.isGroup) return;
+      const layerId = object.userData?.roofLayerId;
+      if (layerId && !visibleLayerIds.has(layerId)) hide(object);
+    });
+    return selectedRoof;
+  };
+  const isolateOpening = (openingKind, componentId) => {
+    const openingsRoot = model.children.find((child) => child.userData?.layer === 'doors-windows');
+    let selected = null;
+    openingsRoot?.children.forEach((assembly) => {
+      if (assembly.userData?.openingKind === openingKind
+        && (!componentId || assembly.userData?.componentId === componentId) && !selected) {
+        selected = assembly;
+      } else if (assembly.userData?.openingKind) hide(assembly);
+    });
+    return selected;
+  };
+  let selectedRoofUnitId = null;
+  let selectedOpeningId = null;
+  if (mode === 'ridge') {
+    selectedRoofUnitId = 'mainHouseDoublePitch';
+    hideRootLayersExcept(new Set(['roof-production']));
+    hide(wallSurfaceSystem);
+    isolateRoofUnit(selectedRoofUnitId, new Set(['ridgeAndClosures']));
+  } else if (mode === 'wallAbutment') {
+    selectedRoofUnitId = 'mainGalleryLeanTo';
+    hideRootLayersExcept(new Set(['walls', 'timber-frame', 'roof-production']));
+    isolateRoofUnit(selectedRoofUnitId, new Set([
+      'roofUnderlay', 'panTileCourses', 'coverTileCourses', 'eaveCapsAndDrips', 'ridgeAndClosures',
+    ]));
+  } else if (mode === 'door') {
+    hideRootLayerContentsExcept(new Set(['stone-and-ground', 'walls', 'doors-windows']));
+    const selected = isolateOpening('door', 'GATE-SOUTH-01');
+    selectedOpeningId = selected?.userData?.componentId || null;
+  } else if (mode === 'window') {
+    hideRootLayerContentsExcept(new Set(['walls', 'doors-windows']));
+    const selected = isolateOpening('window', 'WINDOW-NORTH-LEFT');
+    selectedOpeningId = selected?.userData?.componentId || null;
   } else if (mode === 'stair') {
-    const roof = model.children.find((child) => child.userData?.layer === 'roof-production');
-    if (roof) { remember(roof); roof.visible = false; }
+    if (roofRoot) hide(roofRoot);
   } else if (mode === 'exploded') {
     const layerIndex = new Map(ROOF_LAYER_IDS.map((id, index) => [id, index]));
     model.traverse((object) => {
@@ -572,7 +732,11 @@ function setQADisplayState(mode = 'none') {
   const layerCenters = {};
   ROOF_LAYER_IDS.forEach((id) => {
     const bounds = new THREE.Box3();
-    model.traverse((object) => { if (object.userData?.roofLayerId === id && object.visible) bounds.union(new THREE.Box3().setFromObject(object)); });
+    model.traverse((object) => {
+      if (!object.isMesh || ancestorValue(object, 'roofLayerId', model) !== id
+        || !visibleInTree(object, model)) return;
+      bounds.union(new THREE.Box3().setFromObject(object));
+    });
     if (!bounds.isEmpty()) layerCenters[id] = bounds.getCenter(new THREE.Vector3()).toArray().map((value) => rounded(value, 5));
   });
   const centers = Object.values(layerCenters).map((point) => new THREE.Vector3().fromArray(point));
@@ -588,6 +752,8 @@ function setQADisplayState(mode = 'none') {
   }
   qaDisplaySummary = {
     mode, active: true, affectedObjectCount: entries.length, hiddenObjectCount: entries.filter(({ object }) => !object.visible).length,
+    selectedRoofUnitId,
+    selectedOpeningId,
     visibleRoofLayerCount: Object.keys(layerCenters).length, layerCenters,
     visibleRidgeSemanticCounts,
     minimumLayerCenterSeparationM: rounded(minimumLayerCenterSeparationM, 5),
@@ -718,7 +884,9 @@ function applyMode(nextMode = 'complete') {
 function setOpenings(value) {
   const result = views.map((view) => {
     const action = view.model().userData.actions?.setOpenings;
-    return typeof action === 'function' ? action(value) : { baselineStatic: true, progress: 0 };
+    const next = typeof action === 'function' ? action(value) : { baselineStatic: true, progress: 0 };
+    view.needsRender = true;
+    return next;
   });
   setPressed('#openings', value > 0.5);
   return result;
@@ -730,7 +898,9 @@ function applyVisitorProgress(value) {
   }
   const result = views.map((view) => {
     const action = view.model().userData.actions?.setVisitor;
-    return typeof action === 'function' ? action(value) : { baselineStatic: true, progress: 0 };
+    const next = typeof action === 'function' ? action(value) : { baselineStatic: true, progress: 0 };
+    view.needsRender = true;
+    return next;
   });
   setPressed('#visitor', value > 0.5);
   return result;
@@ -1080,14 +1250,25 @@ function renderableTokens(root, include, includeMaterials = true) {
 
 function geometryClosedShell(geometry) {
   const position = geometry?.getAttribute?.('position');
-  if (!position || !geometry.index) return false;
-  const edges = new Map();
+  if (!position || position.count < 3) return false;
   const index = geometry.index;
-  for (let offset = 0; offset < index.count; offset += 3) {
-    const triangle = [index.getX(offset), index.getX(offset + 1), index.getX(offset + 2)];
+  const elementCount = index?.count || position.count;
+  if (elementCount % 3 !== 0) return false;
+  // Weld duplicate cap/side vertices by position before counting edges. This
+  // keeps the test geometric for both indexed tile shells and the legitimate
+  // non-indexed output produced by ExtrudeGeometry hook-head solids.
+  const vertexKey = (vertexIndex) => [
+    position.getX(vertexIndex), position.getY(vertexIndex), position.getZ(vertexIndex),
+  ].map((value) => Math.round(value * 1e6)).join(':');
+  const edges = new Map();
+  for (let offset = 0; offset < elementCount; offset += 3) {
+    const triangle = [0, 1, 2].map((corner) => (
+      index ? index.getX(offset + corner) : offset + corner
+    )).map(vertexKey);
     for (let edgeIndex = 0; edgeIndex < 3; edgeIndex += 1) {
       const a = triangle[edgeIndex];
       const b = triangle[(edgeIndex + 1) % 3];
+      if (a === b) return false;
       const key = a < b ? `${a}:${b}` : `${b}:${a}`;
       edges.set(key, (edges.get(key) || 0) + 1);
     }
@@ -1119,6 +1300,7 @@ function samplesFromBatch(batch) {
       ...(semantic[index] || {}),
       index,
       state: semantic[index]?.state || batch.userData?.state || 'aged',
+      matrixFinite: world.elements.every(Number.isFinite),
       position: new THREE.Vector3().setFromMatrixPosition(world),
       acrossAxis: across.normalize(),
       courseAxis: course.normalize(),
@@ -1138,7 +1320,9 @@ function median(values) {
 
 function auditSlope(roof, slopeId) {
   const batches = [];
+  let slopeNode = null;
   roof.traverse((object) => {
+    if (object.userData?.type === 'roof-slope' && object.userData?.slopeId === slopeId) slopeNode = object;
     if (object.isInstancedMesh && object.userData?.slopeId === slopeId) batches.push(object);
   });
   const batchesOf = (prefix) => batches.filter((batch) => String(batch.userData?.type || '').startsWith(prefix));
@@ -1169,8 +1353,6 @@ function auditSlope(roof, slopeId) {
   const downhill = longestPath.length > 1
     ? longestPath.at(-1).position.clone().sub(longestPath[0].position).normalize()
     : new THREE.Vector3();
-  const downhillHorizontal = downhill.clone().setY(0);
-  if (downhillHorizontal.lengthSq()) downhillHorizontal.normalize();
   let monotonicPathCount = 0;
   const spacings = [];
   const falls = [];
@@ -1188,6 +1370,21 @@ function auditSlope(roof, slopeId) {
     if (monotonic) monotonicPathCount += 1;
   });
 
+  const byCourse = new Map();
+  stablePans.forEach((sample) => {
+    if (!Number.isInteger(sample.columnIndex) || !Number.isInteger(sample.courseIndex)) return;
+    if (!byCourse.has(sample.courseIndex)) byCourse.set(sample.courseIndex, []);
+    byCourse.get(sample.courseIndex).push(sample);
+  });
+  const columnSpacings = [];
+  byCourse.forEach((course) => {
+    course.sort((a, b) => a.columnIndex - b.columnIndex);
+    for (let index = 1; index < course.length; index += 1) {
+      const gap = Math.max(1, course[index].columnIndex - course[index - 1].columnIndex);
+      columnSpacings.push(course[index].position.distanceTo(course[index - 1].position) / gap);
+    }
+  });
+
   const panLookup = new Map(stablePans.map((sample) => [`${sample.courseIndex}:${sample.columnIndex}`, sample]));
   const seamErrors = [];
   const courseOffsets = [];
@@ -1198,7 +1395,10 @@ function auditSlope(roof, slopeId) {
     const midpoint = left.position.clone().add(right.position).multiplyScalar(0.5);
     const delta = cover.position.clone().sub(midpoint);
     seamErrors.push(Math.abs(delta.dot(left.acrossAxis)));
-    courseOffsets.push(Math.abs(delta.dot(downhillHorizontal)));
+    // The cover is deliberately lifted along the sloped roof normal. Project
+    // onto the pan-derived three-dimensional downhill tangent so that normal
+    // clearance is not misreported as longitudinal course displacement.
+    courseOffsets.push(Math.abs(delta.dot(downhill)));
   });
 
   const dripByColumn = new Map(drips.filter((sample) => Number.isInteger(sample.columnIndex)).map((sample) => [sample.columnIndex, sample]));
@@ -1211,6 +1411,8 @@ function auditSlope(roof, slopeId) {
   });
   const panGeometry = stablePans[0]?.geometry || pans[0]?.geometry;
   const coverGeometry = stableCovers[0]?.geometry || covers[0]?.geometry;
+  const dripGeometry = drips[0]?.geometry;
+  const hookGeometry = hooks[0]?.geometry;
   if (panGeometry && !panGeometry.boundingBox) panGeometry.computeBoundingBox();
   const effectiveLength = panGeometry
     ? (panGeometry.boundingBox.max.z - panGeometry.boundingBox.min.z) * median(stablePans.map((sample) => sample.courseScale))
@@ -1225,9 +1427,98 @@ function auditSlope(roof, slopeId) {
   const panCurve = tileCurvature(panGeometry);
   const coverCurve = tileCurvature(coverGeometry);
   const horizontalRun = Math.hypot(downhill.x, downhill.z);
+  const boundsForBatches = (selected) => {
+    const bounds = new THREE.Box3();
+    selected.forEach((batch) => bounds.union(instanceWorldBounds(batch)));
+    return bounds;
+  };
+  const panBounds = boundsForBatches(panBatches);
+  const coverBounds = boundsForBatches(coverBatches);
+  const eaveBounds = boundsForBatches([...dripBatches, ...fallbackHookBatches]);
+  const dripBounds = boundsForBatches(dripBatches);
+  const hookBounds = boundsForBatches(fallbackHookBatches);
+  const allBounds = boundsForBatches(batches);
+  const declaredTopology = slopeNode?.userData?.tileTopology || {};
+  const boundsAreNonDegenerate = (bounds) => {
+    if (!bounds || bounds.isEmpty()) return false;
+    const size = bounds.getSize(new THREE.Vector3());
+    return size.x > 1e-6 && size.y > 1e-6 && size.z > 1e-6;
+  };
+  const geometryEvidence = (geometry) => {
+    const position = geometry?.getAttribute?.('position');
+    const indexCount = geometry?.index?.count || 0;
+    return {
+      isBufferGeometry: Boolean(geometry?.isBufferGeometry),
+      positionCount: position?.count || 0,
+      indexCount,
+      triangleCount: indexCount ? indexCount / 3 : (position?.count || 0) / 3,
+      closedShell: geometryClosedShell(geometry),
+    };
+  };
+  const bufferGeometry = {
+    pan: geometryEvidence(panGeometry),
+    cover: geometryEvidence(coverGeometry),
+    drip: geometryEvidence(dripGeometry),
+    hook: geometryEvidence(hookGeometry),
+  };
+  const geometryIsNonDegenerate = (geometry) => {
+    if (!geometry) return false;
+    if (!geometry.boundingBox) geometry.computeBoundingBox();
+    const size = geometry.boundingBox?.getSize(new THREE.Vector3());
+    return Boolean(size && size.x > 1e-6 && size.y > 1e-6 && size.z > 1e-6);
+  };
+  const auditedInstances = [...pans, ...covers, ...drips, ...hooks];
+  const allInstanceMatricesFinite = auditedInstances.length > 0
+    && auditedInstances.every((sample) => sample.matrixFinite);
+  const boundsEvidence = {
+    slopeWorldBounds: cameraBoundsEvidence(allBounds),
+    panWorldBounds: cameraBoundsEvidence(panBounds),
+    coverWorldBounds: cameraBoundsEvidence(coverBounds),
+    dripWorldBounds: cameraBoundsEvidence(dripBounds),
+    hookWorldBounds: cameraBoundsEvidence(hookBounds),
+    nonDegenerate: {
+      slope: boundsAreNonDegenerate(allBounds),
+      pan: boundsAreNonDegenerate(panBounds),
+      cover: boundsAreNonDegenerate(coverBounds),
+      drip: boundsAreNonDegenerate(dripBounds),
+      hook: boundsAreNonDegenerate(hookBounds),
+    },
+  };
+  const bufferGeometryPassed = ['pan', 'cover', 'drip'].every((kind) => (
+    bufferGeometry[kind].isBufferGeometry
+    && bufferGeometry[kind].positionCount > 0
+    && bufferGeometry[kind].indexCount > 0
+    && bufferGeometry[kind].triangleCount > 0
+    && bufferGeometry[kind].closedShell
+    && geometryIsNonDegenerate({
+      pan: panGeometry, cover: coverGeometry, drip: dripGeometry,
+    }[kind])
+  )) && bufferGeometry.hook.isBufferGeometry
+    && bufferGeometry.hook.positionCount > 0
+    && bufferGeometry.hook.triangleCount > 0
+    && bufferGeometry.hook.closedShell
+    && geometryIsNonDegenerate(hookGeometry);
+  const boundsPassed = Object.values(boundsEvidence.nonDegenerate).every(Boolean);
+  const topologyPassed = panColumns > 1
+    && coverColumns === panColumns - 1
+    && seamErrors.length > 0 && seamError <= 0.004
+    && courseOffsets.length > 0 && courseOffset <= 0.004
+    && drips.length === panColumns && hooks.length === coverColumns
+    && panCurve < 0 && coverCurve > 0
+    && byColumn.size > 0 && monotonicPathCount === byColumn.size
+    && eaveTerminationCount === byColumn.size
+    && falls.length > 0 && Math.min(...falls) > 0
+    && effectiveLength !== null && spacing !== null && effectiveLength - spacing > 0
+    && batches.length > 0
+    && [...panBatches, ...coverBatches, ...dripBatches, ...fallbackHookBatches]
+      .every((batch) => batch.isInstancedMesh)
+    && allInstanceMatricesFinite && bufferGeometryPassed && boundsPassed;
   return {
     slopeId,
     evidenceSource: 'live-instance-matrices-buffer-geometry-and-world-bounds',
+    courseOffsetReference: 'three-dimensional-pan-route-downhill-tangent',
+    instanceMatrixCount: auditedInstances.length,
+    allInstanceMatricesFinite,
     panColumns,
     coverColumns,
     courseCount,
@@ -1237,6 +1528,12 @@ function auditSlope(roof, slopeId) {
     hookCount: hooks.length,
     panGeometryClosedShell: geometryClosedShell(panGeometry),
     coverGeometryClosedShell: geometryClosedShell(coverGeometry),
+    panGeometryNonDegenerate: geometryIsNonDegenerate(panGeometry),
+    coverGeometryNonDegenerate: geometryIsNonDegenerate(coverGeometry),
+    panGeometryVertexCount: bufferGeometry.pan.positionCount,
+    coverGeometryVertexCount: bufferGeometry.cover.positionCount,
+    panGeometryTriangleCount: bufferGeometry.pan.triangleCount,
+    coverGeometryTriangleCount: bufferGeometry.cover.triangleCount,
     panCrossSectionCurvatureM: panCurve,
     coverCrossSectionCurvatureM: coverCurve,
     panConcavity: panCurve < 0 ? 'up' : 'not-concave-up',
@@ -1245,6 +1542,7 @@ function auditSlope(roof, slopeId) {
     seamSampleCount: seamErrors.length,
     seamAlignmentMaxErrorM: rounded(seamError, 7),
     coverCourseOffsetM: rounded(courseOffset, 7),
+    independentTopologyPassed: topologyPassed,
     drainagePathCount: byColumn.size,
     monotonicDrainagePathCount: monotonicPathCount,
     drainagePathsMonotonic: byColumn.size > 0 && monotonicPathCount === byColumn.size,
@@ -1252,8 +1550,31 @@ function auditSlope(roof, slopeId) {
     drainagePathsEndAtEave: byColumn.size > 0 && eaveTerminationCount === byColumn.size,
     minimumCourseFallM: rounded(falls.length ? Math.min(...falls) : null, 6),
     downhillVector: downhill.toArray().map((value) => rounded(value, 6)),
+    drainageTargetId: declaredTopology.drainageTargetId || null,
     measuredPitch: horizontalRun > 1e-8 ? rounded(Math.abs(downhill.y) / horizontalRun, 5) : null,
+    columnPitchM: rounded(median(columnSpacings), 6),
+    courseSpacingM: rounded(spacing, 6),
     longitudinalOverlapM: effectiveLength === null || spacing === null ? null : rounded(effectiveLength - spacing, 6),
+    slopeWorldBounds: boundsEvidence.slopeWorldBounds,
+    panWorldBounds: boundsEvidence.panWorldBounds,
+    coverWorldBounds: boundsEvidence.coverWorldBounds,
+    dripWorldBounds: boundsEvidence.dripWorldBounds,
+    hookWorldBounds: boundsEvidence.hookWorldBounds,
+    worldBounds: {
+      all: cameraBoundsEvidence(allBounds),
+      pan: cameraBoundsEvidence(panBounds),
+      cover: cameraBoundsEvidence(coverBounds),
+      eave: cameraBoundsEvidence(eaveBounds),
+      panTiles: cameraBoundsEvidence(panBounds),
+      coverTiles: cameraBoundsEvidence(coverBounds),
+      eaveDripsAndHooks: cameraBoundsEvidence(eaveBounds),
+      drips: cameraBoundsEvidence(dripBounds),
+      hooks: cameraBoundsEvidence(hookBounds),
+    },
+    boundsEvidence,
+    bufferGeometry,
+    bufferGeometryPassed,
+    boundsPassed,
     tileBatchesAreInstanced: batches.length > 0 && [...panBatches, ...coverBatches, ...dripBatches, ...fallbackHookBatches].every((batch) => batch.isInstancedMesh),
     damage: { missingTiles, brokenTiles },
     repairs: { tiles: repairTiles },
@@ -1328,6 +1649,7 @@ function deriveRoofEvidence(model) {
         box.isEmpty() ? null : [...box.min.toArray(), ...box.max.toArray()].map((value) => rounded(value, 4)),
       ])),
       slopes,
+      topologyPassed: slopes.length > 0 && slopes.every((slope) => slope.independentTopologyPassed === true),
       damage: {
         missingTiles: slopes.reduce((sum, slope) => sum + slope.damage.missingTiles, 0),
         brokenTiles: slopes.reduce((sum, slope) => sum + slope.damage.brokenTiles, 0),
@@ -1347,14 +1669,24 @@ function deriveRoofEvidence(model) {
   });
   roofUnits.sort((a, b) => String(a.roofUnitId).localeCompare(String(b.roofUnitId)));
   const actualIds = roofUnits.map((roof) => roof.roofUnitId);
+  const requireIndependentV550Topology = model.userData?.comparisonContract?.activeVersion === '5.5.0';
   const complete = ROOF_UNIT_IDS.every((id) => actualIds.filter((actual) => actual === id).length === 1)
-    && roofUnits.every((roof) => ROOF_LAYER_IDS.every((id) => roof.layerCounts[id] > 0));
+    && roofUnits.every((roof) => ROOF_LAYER_IDS.every((id) => roof.layerCounts[id] > 0))
+    && (!requireIndependentV550Topology || roofUnits.every((roof) => roof.topologyPassed === true));
+  const topologySlopeCount = roofUnits.reduce((sum, roof) => sum + roof.slopes.length, 0);
+  const topologyPassedSlopeCount = roofUnits.reduce((sum, roof) => (
+    sum + roof.slopes.filter((slope) => slope.independentTopologyPassed === true).length
+  ), 0);
   return {
     evidenceSource: 'live-scene-graph-parent-layers-and-world-bounds',
     roofUnitCount: roofUnits.length,
     actualRoofUnitIds: actualIds,
     missingRoofUnitIds: ROOF_UNIT_IDS.filter((id) => !actualIds.includes(id)),
     buildUp: [...ROOF_LAYER_IDS],
+    topologySlopeCount,
+    topologyPassedSlopeCount,
+    allSlopeTopologyPassed: topologySlopeCount === 14 && topologyPassedSlopeCount === 14,
+    topologyRequiredForComplete: requireIndependentV550Topology,
     complete,
     unitChecks: roofUnits.map((roof) => ({
       roofUnitId: roof.roofUnitId,
@@ -1896,6 +2228,7 @@ function inspect(viewName = 'production') {
       antialias: Boolean(view.renderer.getContext().getContextAttributes()?.antialias),
       shadowsEnabled: Boolean(view.renderer.shadowMap.enabled),
       pixelRatio: view.renderer.getPixelRatio(),
+      renderSerial: productionRenderSerial,
       triangles: view.renderer.info.render.triangles,
       drawCalls: view.renderer.info.render.calls,
       instanceCount: sceneStats.instanceCount,

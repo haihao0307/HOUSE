@@ -95,8 +95,12 @@ float yunnanNoise(vec3 p){
 }
 float yunnanFbm(vec3 p){
   float v=0.0; float a=0.5;
-  for(int i=0;i<4;i++){ v += a*yunnanNoise(p); p=p*2.03+vec3(17.0,5.0,11.0); a*=0.5; }
-  return v;
+  for(int i=0;i<3;i++){ v += a*yunnanNoise(p); p=p*2.03+vec3(17.0,5.0,11.0); a*=0.5; }
+  // Preserve the former four-octave amplitude range while dropping only the
+  // sub-pixel 0.0625 octave. Wall/tile fine detail still comes from the
+  // separate meso/fine noise channels below, so every production weathering
+  // semantic remains active with eight fewer sine hashes per FBM sample.
+  return v*1.0714285714285714;
 }
 `;
 
@@ -126,6 +130,13 @@ function injectWeathering(material, mode, options = {}) {
     yunnanExactDimensionsLocked: false,
     yunnanSurfaceChannels: { ...channels },
     yunnanSurfaceFingerprint: JSON.stringify(Object.keys(channels).sort().map((key) => [key, channels[key]])),
+    yunnanShaderRuntime: {
+      fbmOctaves: 3,
+      formerFbmOctaves: 4,
+      amplitudeNormalization: 1.0714285714285714,
+      preservedFineNoiseChannels: true,
+      productionPath: true,
+    },
   };
   material.onBeforeCompile = (shader) => {
     shader.uniforms.uYunnanSeed = { value: seed };

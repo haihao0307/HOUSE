@@ -41,6 +41,41 @@ function tag(object, data = {}) {
   return object;
 }
 
+/**
+ * Freeze local matrices for rendered geometry after assembly.
+ *
+ * Opening leaves and the visitor move through their parent pivot/group, and
+ * roof explosion moves layer groups. Their child Mesh transforms themselves
+ * remain constant. Disabling per-frame local matrix composition on those
+ * static Mesh nodes therefore preserves every interaction while avoiding
+ * hundreds of redundant position/quaternion/scale compositions in the
+ * continuously rendered production page. Parent world transforms still
+ * propagate normally whenever an interactive group moves.
+ */
+function freezeStaticMeshLocalMatrices(root) {
+  let frozenMeshCount = 0;
+  let alreadyFrozenMeshCount = 0;
+  root.traverse((object) => {
+    if (!object.isMesh || object.isSkinnedMesh) return;
+    if (object.matrixAutoUpdate === false) {
+      alreadyFrozenMeshCount += 1;
+      return;
+    }
+    object.updateMatrix();
+    object.matrixAutoUpdate = false;
+    object.matrixWorldNeedsUpdate = true;
+    frozenMeshCount += 1;
+  });
+  root.updateMatrixWorld(true);
+  return {
+    productionPath: true,
+    strategy: 'freeze-static-mesh-local-matrices-keep-interactive-parent-groups-live',
+    frozenMeshCount,
+    alreadyFrozenMeshCount,
+    dynamicParentContracts: ['opening-hinge-pivots', 'visitor-route-actor', 'roof-layer-explosion-groups'],
+  };
+}
+
 function mesh(geometry, material, data = {}) {
   return tag(new THREE.Mesh(geometry, material), data);
 }
@@ -2428,6 +2463,7 @@ export function createYunnanCourtyardPrototype(userOptions = {}) {
 
   applyYunnanWallSurfaces(root, surfaceProfile, { seed: options.seed });
   registerYunnanRoofSurfaces(root, surfaceProfile);
+  root.userData.runtimeOptimization = freezeStaticMeshLocalMatrices(root);
   root.traverse((object) => {
     if (object.isMesh) {
       object.castShadow = true;
