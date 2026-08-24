@@ -14,6 +14,7 @@
     dataFiles: [
       { id: 'system', label: '母系统数据', path: 'data/system_v5_2_1.json' },
       { id: 'production', label: 'Three.js 生产合同', path: 'data/production/yunnan_threejs_production_system_v5_4_0.json' },
+      { id: 'surface-v550', label: 'V5.5.0 表面生产种子', path: 'data/production/yunnan_surface_weathering_seed_v5_5_0.json' },
       { id: 'evidence', label: '团结乡材料证据', path: 'data/evidence/tuanjie_township_001_material_weathering_reference_v5_3_6.json' }
     ]
   };
@@ -148,7 +149,7 @@
     entries.push(item); entries = entries.slice(-100); saveEntries(); refs.text.value = ''; renderQueue(); setMessage('已加入本地队列。需要真正写入 GitHub 时，再点击“提交为 GitHub Issue”。');
   }
   function bundle() {
-    return { schemaVersion: '5.4.2', bundleType: 'yunnan-production-web-sync', repository: CONFIG.owner + '/' + CONFIG.repo, branch: CONFIG.branch, generatedAt: new Date().toISOString(), sourcePage: global.location.href, entries: entries.slice() };
+    return { schemaVersion: '5.5.0', bundleType: 'yunnan-production-web-sync', repository: CONFIG.owner + '/' + CONFIG.repo, branch: CONFIG.branch, generatedAt: new Date().toISOString(), sourcePage: global.location.href, entries: entries.slice() };
   }
   function exportBundle() {
     var blob = new Blob([JSON.stringify(bundle(), null, 2) + '\n'], { type: 'application/json;charset=utf-8' });
@@ -189,6 +190,6 @@
     fetch(apiUrl('/issues'), { method: 'POST', headers: { Accept: 'application/vnd.github+json', 'Content-Type': 'application/json', Authorization: 'Bearer ' + token }, body: JSON.stringify({ title: title, body: body }) }).then(function (response) { return response.json().then(function (payload) { if (!response.ok) throw new Error(payload.message || ('HTTP ' + response.status)); return payload; }); }).then(function (issue) { item.issueUrl = issue.html_url; item.issueNumber = issue.number; item.syncedAt = new Date().toISOString(); saveEntries(); refs.token.value = ''; renderQueue(); remote.issues.unshift(issue); renderRemote(); setMessage('已提交 GitHub Issue #' + issue.number + '。令牌未保存，刷新页面后仍可从公开 Issue 读取。'); }).catch(function (error) { setMessage('提交失败：' + error.message, true); });
   }
   function init() { ensureStyles(); createLauncher(); createPanel(); refresh(false); }
-  global.__GITHUB_SYNC__ = { config: CONFIG, open: open, close: close, refresh: refresh, add: addFromForm, exportBundle: exportBundle, stats: function () { return { schemaVersion: '5.4.2', queued: entries.length, synced: entries.filter(function (item) { return !!item.issueUrl; }).length, files: remote.files.length, issues: remote.issues.length, checkedAt: remote.checkedAt, error: remote.error }; } };
+  global.__GITHUB_SYNC__ = { config: CONFIG, open: open, close: close, refresh: refresh, add: addFromForm, exportBundle: exportBundle, stats: function () { return { schemaVersion: '5.5.0', queued: entries.length, synced: entries.filter(function (item) { return !!item.issueUrl; }).length, files: remote.files.length, issues: remote.issues.length, checkedAt: remote.checkedAt, error: remote.error }; } };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 })(window);

@@ -28,6 +28,8 @@ export const YUNNAN_COURTYARD_DEFAULTS = Object.freeze({
 
 const BRANCH = 'BRANCH-CENTRAL-YUNNAN-YIKEYIN';
 const UP = new THREE.Vector3(0, 1, 0);
+const X_AXIS = new THREE.Vector3(1, 0, 0);
+const Z_AXIS = new THREE.Vector3(0, 0, 1);
 
 function tag(object, data = {}) {
   object.userData = {
@@ -106,7 +108,10 @@ function createGableGeometry(width, depth, height) {
 
 /** Closed ceramic shell. A pan is concave and a cover is convex. */
 function createTileGeometry(width, length, kind = 'pan', thickness = 0.022) {
-  const segments = 10;
+  // Six transverse arc spans preserve a readable pan/cover silhouette while
+  // keeping every tile a closed shell. The former ten-span shell spent 84
+  // triangles per instance, most of them below the rendered tile width.
+  const segments = 6;
   const row = segments + 1;
   const radius = Math.max(width * (kind === 'cover' ? 0.62 : 0.82), 0.055);
   const positions = [];
@@ -159,7 +164,42 @@ function createTileGeometry(width, length, kind = 'pan', thickness = 0.022) {
   geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
   geometry.setIndex(indices);
   geometry.computeVertexNormals();
-  geometry.userData = { tileKind: kind, closedShell: true, dimensionsM: { width, length, thickness } };
+  geometry.userData = {
+    tileKind: kind,
+    closedShell: true,
+    transverseArcSegments: segments,
+    dimensionsM: { width, length, thickness },
+  };
+  return geometry;
+}
+
+/** A separate ceramic face plate at the exposed end of a cover-tile neck. */
+function createHookHeadGeometry(width, height, depth) {
+  const shape = new THREE.Shape();
+  shape.moveTo(-width * 0.50, -height * 0.12);
+  shape.lineTo(-width * 0.50, height * 0.10);
+  shape.quadraticCurveTo(-width * 0.42, height * 0.50, 0, height * 0.54);
+  shape.quadraticCurveTo(width * 0.42, height * 0.50, width * 0.50, height * 0.10);
+  shape.lineTo(width * 0.50, -height * 0.12);
+  shape.quadraticCurveTo(width * 0.24, -height * 0.48, 0, -height * 0.54);
+  shape.quadraticCurveTo(-width * 0.24, -height * 0.48, -width * 0.50, -height * 0.12);
+  const geometry = new THREE.ExtrudeGeometry(shape, {
+    depth,
+    steps: 1,
+    curveSegments: 4,
+    bevelEnabled: true,
+    bevelSegments: 1,
+    bevelSize: depth * 0.16,
+    bevelThickness: depth * 0.14,
+  });
+  geometry.translate(0, 0, -depth / 2);
+  geometry.computeVertexNormals();
+  geometry.computeBoundingBox();
+  geometry.userData = {
+    geometryRole: 'cover-tile-hook-head',
+    frontPlate: true,
+    dimensionsM: { width, height, depth },
+  };
   return geometry;
 }
 
@@ -167,6 +207,8 @@ function addWall(group, x, y, z, width, depth, height, materials, data = {}) {
   const wall = mesh(createBatteredWallGeometry(width, depth, height, data.taper ?? 0.12), materials.wall, {
     type: 'weathered-earth-wall',
     semanticRole: 'wall-core',
+    surfaceHostKind: data.surfaceHostKind || 'battered-wall',
+    foundationBearing: data.foundationBearing !== false,
     componentId: data.componentId || data.type,
     dimensionsM: { width, depth, height, taper: data.taper ?? 0.12 },
     evidenceRule: 'TJ001-MAT-EARTH-WALL-WEATHERED',
@@ -177,10 +219,84 @@ function addWall(group, x, y, z, width, depth, height, materials, data = {}) {
   return wall;
 }
 
+function mergeIntervals(intervals) {
+  const sorted = intervals
+    .map(([start, end]) => [Math.min(start, end), Math.max(start, end)])
+    .sort((left, right) => left[0] - right[0]);
+  const merged = [];
+  sorted.forEach(([start, end]) => {
+    const last = merged.at(-1);
+    if (!last || start > last[1] + 1e-6) merged.push([start, end]);
+    else last[1] = Math.max(last[1], end);
+  });
+  return merged;
+}
+
+/** Produce real wall solids around rectangular door or window apertures. */
+function addWallWithOpenings(group, spec, materials, data = {}) {
+  const {
+    orientation = 'x', centerAlong = 0, fixed = 0, baseY = 0,
+    span, thickness, height, taper = 0.12, openings = [],
+  } = spec;
+  const cuts = [...new Set([
+    0, height,
+    ...openings.flatMap((opening) => [opening.bottomOffset, opening.bottomOffset + opening.height]),
+  ].map((value) => THREE.MathUtils.clamp(value, 0, height)))].sort((a, b) => a - b);
+  const facadeId = data.componentId || 'WALL';
+  const facade = tag(new THREE.Group(), {
+    type: `${data.type || 'wall'}-opening-host`, semanticRole: 'opening-host',
+    componentId: facadeId, openingIds: openings.map((opening) => opening.id),
+  });
+  facade.name = `openingHost_${facadeId}`;
+  for (let bandIndex = 0; bandIndex < cuts.length - 1; bandIndex += 1) {
+    const y0 = cuts[bandIndex];
+    const y1 = cuts[bandIndex + 1];
+    const bandHeight = y1 - y0;
+    if (bandHeight <= 1e-5) continue;
+    const bandMid = (y0 + y1) / 2;
+    const blocked = mergeIntervals(openings
+      .filter((opening) => bandMid > opening.bottomOffset + 1e-6
+        && bandMid < opening.bottomOffset + opening.height - 1e-6)
+      .map((opening) => [opening.along - opening.width / 2, opening.along + opening.width / 2]));
+    const solids = [];
+    let cursor = -span / 2;
+    blocked.forEach(([start, end]) => {
+      if (start > cursor + 0.035) solids.push([cursor, start]);
+      cursor = Math.max(cursor, end);
+    });
+    if (cursor < span / 2 - 0.035) solids.push([cursor, span / 2]);
+    const midScale = Math.max(0.1, (span - taper * 2 * bandMid / height) / span);
+    solids.forEach(([rawStart, rawEnd], intervalIndex) => {
+      const start = rawStart * midScale;
+      const end = rawEnd * midScale;
+      const segmentSpan = end - start;
+      if (segmentSpan <= 0.05) return;
+      const along = centerAlong + (start + end) / 2;
+      const componentId = `${facadeId}-B${bandIndex + 1}-S${intervalIndex + 1}`;
+      const segmentData = {
+        ...data,
+        type: `${data.type || 'wall'}-opening-segment`, componentId, facadeId,
+        surfaceHostKind: 'facade-segment', foundationBearing: y0 <= 1e-6,
+        openingIds: openings.map((opening) => opening.id),
+        taper: Math.min(segmentSpan * 0.18, taper * bandHeight / height),
+      };
+      if (orientation === 'x') {
+        addWall(facade, along, baseY + y0, fixed, segmentSpan, thickness, bandHeight, materials, segmentData);
+      } else {
+        addWall(facade, fixed, baseY + y0, along, thickness, segmentSpan, bandHeight, materials, segmentData);
+      }
+    });
+  }
+  group.add(facade);
+  return facade;
+}
+
 function addGable(group, x, y, z, width, depth, height, materials, data = {}) {
   const gable = mesh(createGableGeometry(width, depth, height), materials.wall, {
     type: 'weathered-earth-gable',
     semanticRole: 'wall-core',
+    surfaceHostKind: 'gable',
+    foundationBearing: false,
     componentId: data.componentId || data.type,
     dimensionsM: { width, depth, height, taper: 0 },
     evidenceRule: 'TJ001-MAT-EARTH-WALL-WEATHERED',
@@ -207,31 +323,57 @@ function addBeam(group, x, y, z, width, height, depth, rotationY, materials, dat
 }
 
 function addDoor(group, x, y, z, width, height, materials, data = {}) {
+  const componentId = data.componentId || data.type || 'DOOR';
+  const hostId = data.hostId || 'WALL-SOUTH-GATE';
+  const maxAngleRad = Math.PI * 0.47;
   const assembly = tag(new THREE.Group(), {
     type: 'timber-door-assembly', openingKind: 'door', openingProgress: 0,
-    maxAngleRad: Math.PI * 0.47, componentId: data.componentId || data.type, ...data,
+    maxAngleRad, componentId, hostId, openingState: 'closed', apertureM: { width, height },
+    openingEnvelopeLocal: { min: [-width / 2, 0, -0.30], max: [width / 2, height, 0.30] },
+    ...data,
   });
   assembly.name = `door_${data.type || 'assembly'}`;
   assembly.position.set(x, y, z);
-  const recess = box(width + 0.18, height + 0.18, 0.12, materials.opening, { type: 'deep-door-opening' });
+  const recess = box(width + 0.18, height + 0.18, 0.12, materials.opening, {
+    type: 'deep-door-opening', componentId: `${componentId}-RECESS`, openingId: componentId, hostId,
+  });
   recess.position.set(0, height / 2, -0.05);
   assembly.add(recess);
   const leafWidth = width / 2 - 0.035;
   const pivots = [];
   for (const side of [-1, 1]) {
-    const pivot = tag(new THREE.Group(), { type: 'door-leaf-pivot', side });
+    const sideName = side < 0 ? 'LEFT' : 'RIGHT';
+    const leafId = `${componentId}-${sideName}-LEAF`;
+    const openAngleRad = -side * maxAngleRad;
+    const pivot = tag(new THREE.Group(), {
+      type: 'door-leaf-pivot', semanticRole: 'opening-hinge', side,
+      componentId: `${leafId}-PIVOT`, openingId: componentId, hostId,
+      axisLocal: [0, 1, 0], closedAngleRad: 0, openAngleRad, currentAngleRad: 0,
+      angleRangeRad: [Math.min(0, openAngleRad), Math.max(0, openAngleRad)], state: 'closed',
+    });
     pivot.position.set(side * width / 2, 0, -0.12);
-    const leaf = box(leafWidth, height - 0.12, 0.08, materials.doorLeaf, { type: '板门-door-leaf', side, openingSurfaceRole: 'doorLeaf' });
+    const leaf = box(leafWidth, height - 0.12, 0.08, materials.doorLeaf, {
+      type: '板门-door-leaf', semanticRole: 'opening-leaf', collisionRole: 'opening-leaf',
+      componentId: leafId, openingId: componentId, hostId, side, openingSurfaceRole: 'doorLeaf',
+      collisionEnvelopeLocal: {
+        min: [side < 0 ? 0 : -leafWidth, 0.06, -0.04],
+        max: [side < 0 ? leafWidth : 0, height - 0.06, 0.04],
+      },
+    });
     leaf.position.set(-side * leafWidth / 2, height / 2, 0);
     pivot.add(leaf);
     for (let rowIndex = 0; rowIndex < 3; rowIndex += 1) {
-      const panel = box(leafWidth * 0.72, height * 0.19, 0.026, materials.doorLeaf, { type: 'door-panel-inset', openingSurfaceRole: 'doorLeaf' });
+      const panel = box(leafWidth * 0.72, height * 0.19, 0.026, materials.doorLeaf, {
+        type: 'door-panel-inset', componentId: `${leafId}-PANEL-${rowIndex + 1}`,
+        openingId: componentId, hostId, openingSurfaceRole: 'doorLeaf',
+      });
       panel.position.set(-side * leafWidth / 2, 0.38 + rowIndex * 0.57, -0.052);
       pivot.add(panel);
     }
     if (side === 1) {
       const replacement = box(leafWidth * 0.14, height * 0.36, 0.035, materials.replacementTimber, {
-        type: 'door-replacement-cleat', openingSurfaceRole: 'replacementPart', repairChronology: 'later-replacement',
+        type: 'door-replacement-cleat', componentId: `${leafId}-REPLACEMENT-CLEAT`,
+        openingId: componentId, hostId, openingSurfaceRole: 'replacementPart', repairChronology: 'later-replacement',
       });
       replacement.position.set(-side * leafWidth * 0.28, height * 0.62, -0.065);
       pivot.add(replacement);
@@ -240,12 +382,18 @@ function addDoor(group, x, y, z, width, height, materials, data = {}) {
     pivots.push(pivot);
   }
   assembly.userData.pivots = pivots;
-  const jambL = box(0.12, height + 0.18, 0.16, materials.openingFrame, { type: 'door-jamb', openingSurfaceRole: 'openingFrame' });
+  const jambL = box(0.12, height + 0.18, 0.16, materials.openingFrame, {
+    type: 'door-jamb', componentId: `${componentId}-JAMB-LEFT`, openingId: componentId, hostId,
+    openingSurfaceRole: 'openingFrame',
+  });
   const jambR = jambL.clone();
-  jambR.userData = { ...jambL.userData };
+  jambR.userData = { ...jambL.userData, componentId: `${componentId}-JAMB-RIGHT` };
   jambL.position.set(-width / 2 - 0.04, height / 2, -0.16);
   jambR.position.set(width / 2 + 0.04, height / 2, -0.16);
-  const lintel = box(width + 0.28, 0.16, 0.18, materials.openingFrame, { type: 'door-lintel', openingSurfaceRole: 'openingFrame' });
+  const lintel = box(width + 0.28, 0.16, 0.18, materials.openingFrame, {
+    type: 'door-lintel', componentId: `${componentId}-LINTEL`, openingId: componentId, hostId,
+    openingSurfaceRole: 'openingFrame',
+  });
   lintel.position.set(0, height + 0.04, -0.16);
   assembly.add(jambL, jambR, lintel);
   group.add(assembly);
@@ -253,30 +401,48 @@ function addDoor(group, x, y, z, width, height, materials, data = {}) {
 }
 
 function addHighWindow(group, x, y, z, width, height, materials, data = {}) {
+  const componentId = data.componentId || data.type || 'WINDOW';
+  const hostId = data.hostId || null;
+  const maxAngleRad = Math.PI * 0.38;
   const assembly = tag(new THREE.Group(), {
     type: 'small-high-window', openingKind: 'window', openingProgress: 0,
-    maxAngleRad: Math.PI * 0.38, componentId: data.componentId || data.type, ...data,
+    maxAngleRad, componentId, hostId, openingState: 'closed', apertureM: { width, height },
+    openingEnvelopeLocal: { min: [-width / 2, 0, -0.24], max: [width / 2, height, 0.24] },
+    ...data,
   });
   assembly.name = `window_${data.type || 'assembly'}`;
   assembly.position.set(x, y, z);
-  const recess = box(width, height, 0.10, materials.opening, { type: 'window-recess' });
+  const recess = box(width, height, 0.10, materials.opening, {
+    type: 'window-recess', componentId: `${componentId}-RECESS`, openingId: componentId, hostId,
+  });
   recess.position.set(0, height / 2, 0);
   assembly.add(recess);
   const frame = 0.07;
-  for (const [px, py, pw, ph] of [
-    [-width / 2, height / 2, frame, height + frame], [width / 2, height / 2, frame, height + frame],
-    [0, 0, width + frame, frame], [0, height, width + frame, frame],
+  for (const [px, py, pw, ph, frameId] of [
+    [-width / 2, height / 2, frame, height + frame, 'JAMB-LEFT'],
+    [width / 2, height / 2, frame, height + frame, 'JAMB-RIGHT'],
+    [0, 0, width + frame, frame, 'SILL'], [0, height, width + frame, frame, 'LINTEL'],
   ]) {
     const surfaceRole = py === 0 ? 'openingSill' : 'openingFrame';
     const bar = box(pw, ph, 0.14, surfaceRole === 'openingSill' ? materials.openingSill : materials.openingFrame, {
-      type: surfaceRole === 'openingSill' ? 'weathered-window-sill' : 'small-window-frame', openingSurfaceRole: surfaceRole,
+      type: surfaceRole === 'openingSill' ? 'weathered-window-sill' : 'small-window-frame',
+      componentId: `${componentId}-${frameId}`, openingId: componentId, hostId, openingSurfaceRole: surfaceRole,
     });
     bar.position.set(px, py, -0.08);
     assembly.add(bar);
   }
-  const pivot = tag(new THREE.Group(), { type: 'window-leaf-pivot', side: -1 });
+  const pivot = tag(new THREE.Group(), {
+    type: 'window-leaf-pivot', semanticRole: 'opening-hinge', side: -1,
+    componentId: `${componentId}-LEAF-PIVOT`, openingId: componentId, hostId,
+    axisLocal: [0, 1, 0], closedAngleRad: 0, openAngleRad: maxAngleRad,
+    currentAngleRad: 0, angleRangeRad: [0, maxAngleRad], state: 'closed',
+  });
   pivot.position.set(-width / 2, 0, -0.12);
-  const shutter = box(width - 0.08, height - 0.08, 0.045, materials.windowLeaf, { type: 'operable-window-shutter', openingSurfaceRole: 'windowLeaf' });
+  const shutter = box(width - 0.08, height - 0.08, 0.045, materials.windowLeaf, {
+    type: 'operable-window-shutter', semanticRole: 'opening-leaf', collisionRole: 'opening-leaf',
+    componentId: `${componentId}-LEAF`, openingId: componentId, hostId, openingSurfaceRole: 'windowLeaf',
+    collisionEnvelopeLocal: { min: [0, 0.04, -0.023], max: [width - 0.08, height - 0.04, 0.023] },
+  });
   shutter.position.set((width - 0.08) / 2, height / 2, 0);
   pivot.add(shutter);
   assembly.add(pivot);
@@ -298,58 +464,270 @@ function addDoubleFlightStairs(group, x, y, z, materials, options = {}, data = {
   const run = options.run || 2.05;
   const landingDepth = options.landingDepth || 0.84;
   const totalRise = options.totalRise || 2.73;
+  const treadThickness = 0.10;
+  const landingThickness = 0.12;
+  const handrailHeight = options.handrailHeight || 0.86;
   const stepRise = totalRise / 16;
   const stepRun = run / 8;
+  const middleElevation = totalRise / 2;
   const separation = width + gap;
   const firstX = -separation / 2;
   const secondX = separation / 2;
+  const componentId = data.stairId || 'STAIR-WEST-01';
   const stairs = tag(new THREE.Group(), {
     type: '8+8-double-flight-daily-timber-stair', semanticRole: 'daily-use-dogleg-stair',
-    componentId: data.stairId || 'STAIR-WEST-01', flightStepCounts: [8, 8], totalRisers: 16,
+    componentId, stairId: componentId, flightStepCounts: [8, 8], totalRisers: 16,
     riserHeightM: stepRise, treadDepthM: stepRun, totalRiseM: totalRise,
-    landingIds: ['LOWER', 'MIDDLE', 'UPPER'], continuousHandrails: true, ...data,
+    elevationsM: { lower: 0, middle: middleElevation, upper: totalRise },
+    landingIds: [`${componentId}-LOWER`, `${componentId}-MIDDLE`, `${componentId}-UPPER`],
+    handrailHeightM: handrailHeight, ...data,
   });
-  stairs.name = `stair_${data.stairId || 'west-main-8x8'}`;
+  stairs.name = `stair_${componentId}`;
   stairs.position.set(x, y, z);
+  const routeAnchors = [];
   for (let i = 0; i < flightCount; i += 1) {
-    const first = box(width, 0.10, stepRun + 0.045, materials.timber, { type: 'stair-tread', flight: 1, step: i + 1, walkable: true });
-    first.position.set(firstX, stepRise * (i + 0.5), -run / 2 + stepRun * (i + 0.5));
+    const firstTop = stepRise * (i + 1);
+    const firstZ = -run / 2 + stepRun * (i + 0.5);
+    const firstId = `${componentId}-F1-T${String(i + 1).padStart(2, '0')}`;
+    const first = box(width, treadThickness, stepRun + 0.045, materials.timber, {
+      type: 'stair-tread', semanticRole: 'walkable-stair-tread', componentId: firstId,
+      supportId: firstId, flight: 1, step: i + 1, walkable: true, topElevationLocalM: firstTop,
+    });
+    first.position.set(firstX, firstTop - treadThickness / 2, firstZ);
     stairs.add(first);
-    const second = box(width, 0.10, stepRun + 0.045, materials.timber, { type: 'stair-tread', flight: 2, step: i + 1, walkable: true });
-    second.position.set(secondX, totalRise / 2 + stepRise * (i + 0.5), run / 2 - stepRun * (i + 0.5));
+    routeAnchors.push({
+      id: `${firstId}-ROUTE`, position: [firstX, firstTop, firstZ], supportId: firstId,
+      stage: 'lower-flight', flight: 1, step: i + 1,
+    });
+    const secondTop = middleElevation + stepRise * (i + 1);
+    const secondZ = run / 2 - stepRun * (i + 0.5);
+    const secondId = `${componentId}-F2-T${String(i + 1).padStart(2, '0')}`;
+    const second = box(width, treadThickness, stepRun + 0.045, materials.timber, {
+      type: 'stair-tread', semanticRole: 'walkable-stair-tread', componentId: secondId,
+      supportId: secondId, flight: 2, step: i + 1, walkable: true, topElevationLocalM: secondTop,
+    });
+    second.position.set(secondX, secondTop - treadThickness / 2, secondZ);
     stairs.add(second);
   }
-  const lower = box(width, 0.12, landingDepth, materials.timber, { type: 'stair-lower-landing', walkable: true });
-  lower.position.set(firstX, 0.02, -run / 2 - landingDepth / 2);
-  const middle = box(width * 2 + gap, 0.12, landingDepth, materials.timber, { type: 'stair-intermediate-landing', walkable: true });
-  middle.position.set(0, totalRise / 2, run / 2 + landingDepth / 2);
-  const upper = box(width, 0.12, landingDepth, materials.timber, { type: 'stair-upper-landing', walkable: true });
-  upper.position.set(secondX, totalRise, -run / 2 - landingDepth / 2);
+  const lowerId = `${componentId}-LOWER`;
+  const middleId = `${componentId}-MIDDLE`;
+  const upperId = `${componentId}-UPPER`;
+  const lower = box(width, landingThickness, landingDepth, materials.timber, {
+    type: 'stair-lower-landing', semanticRole: 'walkable-stair-landing', componentId: lowerId,
+    supportId: lowerId, landing: 'lower', walkable: true, topElevationLocalM: 0,
+  });
+  lower.position.set(firstX, -landingThickness / 2, -run / 2 - landingDepth / 2);
+  const middle = box(width * 2 + gap, landingThickness, landingDepth, materials.timber, {
+    type: 'stair-intermediate-landing', semanticRole: 'walkable-stair-landing', componentId: middleId,
+    supportId: middleId, landing: 'middle', walkable: true, topElevationLocalM: middleElevation,
+  });
+  middle.position.set(0, middleElevation - landingThickness / 2, run / 2 + landingDepth / 2);
+  const upper = box(width, landingThickness, landingDepth, materials.timber, {
+    type: 'stair-upper-landing', semanticRole: 'walkable-stair-landing', componentId: upperId,
+    supportId: upperId, landing: 'upper', walkable: true, topElevationLocalM: totalRise,
+  });
+  upper.position.set(secondX, totalRise - landingThickness / 2, -run / 2 - landingDepth / 2);
   stairs.add(lower, middle, upper);
+
+  routeAnchors.unshift({
+    id: `${lowerId}-ROUTE`, position: [firstX, 0, -run / 2 - landingDepth / 2],
+    supportId: lowerId, stage: 'lower-landing',
+  });
+  routeAnchors.push({
+    id: `${middleId}-IN`, position: [firstX, middleElevation, run / 2 + landingDepth / 2],
+    supportId: middleId, stage: 'middle-landing',
+  });
+  routeAnchors.push({
+    id: `${middleId}-OUT`, position: [secondX, middleElevation, run / 2 + landingDepth / 2],
+    supportId: middleId, stage: 'middle-landing',
+  });
+  for (let i = 0; i < flightCount; i += 1) {
+    const secondTop = middleElevation + stepRise * (i + 1);
+    const secondZ = run / 2 - stepRun * (i + 0.5);
+    const secondId = `${componentId}-F2-T${String(i + 1).padStart(2, '0')}`;
+    routeAnchors.push({
+      id: `${secondId}-ROUTE`, position: [secondX, secondTop, secondZ], supportId: secondId,
+      stage: 'upper-flight', flight: 2, step: i + 1,
+    });
+  }
+  routeAnchors.push({
+    id: `${upperId}-ROUTE`, position: [secondX, totalRise, -run / 2 - landingDepth / 2],
+    supportId: upperId, stage: 'upper-landing',
+  });
+
+  for (const xOffset of [-width * 0.30, width * 0.30]) {
+    const firstStringer = cylinderBetween(
+      new THREE.Vector3(firstX + xOffset, stepRise - 0.16, -run / 2),
+      new THREE.Vector3(firstX + xOffset, middleElevation - 0.16, run / 2),
+      0.065, materials.timber, {
+        type: 'stair-stringer-support', semanticRole: 'stair-structure',
+        componentId: `${componentId}-F1-STRINGER-${xOffset < 0 ? 'L' : 'R'}`, flight: 1,
+      }, 10,
+    );
+    const secondStringer = cylinderBetween(
+      new THREE.Vector3(secondX + xOffset, middleElevation + stepRise - 0.16, run / 2),
+      new THREE.Vector3(secondX + xOffset, totalRise - 0.16, -run / 2),
+      0.065, materials.timber, {
+        type: 'stair-stringer-support', semanticRole: 'stair-structure',
+        componentId: `${componentId}-F2-STRINGER-${xOffset < 0 ? 'L' : 'R'}`, flight: 2,
+      }, 10,
+    );
+    stairs.add(firstStringer, secondStringer);
+  }
+
+  const handrailSegments = [];
+  const addHandrail = (start, end, id, role = 'flight') => {
+    addRail(stairs, start, end, materials, {
+      type: 'stair-handrail-segment', semanticRole: 'stair-handrail', collisionRole: 'stair-rail',
+      componentId: id, handrailRole: role, startLocal: start.toArray(), endLocal: end.toArray(),
+    });
+    handrailSegments.push({ componentId: id, start: start.toArray(), end: end.toArray(), role });
+  };
+  const addPost = (position, supportY, id) => {
+    const post = cylinder(0.035, handrailHeight, materials.timber, {
+      type: 'stair-handrail-post', semanticRole: 'stair-handrail-support', collisionRole: 'stair-rail',
+      componentId: id, baseLocal: [position.x, supportY, position.z],
+      topLocal: [position.x, supportY + handrailHeight, position.z],
+    }, 10);
+    post.position.set(position.x, supportY + handrailHeight / 2, position.z);
+    stairs.add(post);
+  };
+
+  for (const edge of [-1, 1]) {
+    const railX = firstX + edge * width / 2;
+    addHandrail(
+      new THREE.Vector3(railX, handrailHeight, -run / 2),
+      new THREE.Vector3(railX, middleElevation + handrailHeight, run / 2),
+      `${componentId}-F1-RAIL-${edge < 0 ? 'L' : 'R'}`,
+    );
+    const secondRailX = secondX + edge * width / 2;
+    addHandrail(
+      new THREE.Vector3(secondRailX, middleElevation + handrailHeight, run / 2),
+      new THREE.Vector3(secondRailX, totalRise + handrailHeight, -run / 2),
+      `${componentId}-F2-RAIL-${edge < 0 ? 'L' : 'R'}`,
+    );
+    for (let i = 0; i <= flightCount; i += 2) {
+      addPost(
+        new THREE.Vector3(railX, 0, -run / 2 + stepRun * i),
+        stepRise * i,
+        `${componentId}-F1-POST-${edge}-${i}`,
+      );
+      addPost(
+        new THREE.Vector3(secondRailX, 0, run / 2 - stepRun * i),
+        middleElevation + stepRise * i,
+        `${componentId}-F2-POST-${edge}-${i}`,
+      );
+    }
+  }
+
+  const firstInner = firstX + width / 2;
+  const secondInner = secondX - width / 2;
+  addHandrail(
+    new THREE.Vector3(firstInner, middleElevation + handrailHeight, run / 2),
+    new THREE.Vector3(secondInner, middleElevation + handrailHeight, run / 2),
+    `${componentId}-MIDDLE-INNER-CONNECTOR`, 'middle-connector',
+  );
+  const backZ = run / 2 + landingDepth;
+  const firstOuter = firstX - width / 2;
+  const secondOuter = secondX + width / 2;
+  addHandrail(
+    new THREE.Vector3(firstOuter, middleElevation + handrailHeight, run / 2),
+    new THREE.Vector3(firstOuter, middleElevation + handrailHeight, backZ),
+    `${componentId}-MIDDLE-OUTER-L`, 'middle-connector',
+  );
+  addHandrail(
+    new THREE.Vector3(firstOuter, middleElevation + handrailHeight, backZ),
+    new THREE.Vector3(secondOuter, middleElevation + handrailHeight, backZ),
+    `${componentId}-MIDDLE-OUTER-BACK`, 'middle-connector',
+  );
+  addHandrail(
+    new THREE.Vector3(secondOuter, middleElevation + handrailHeight, backZ),
+    new THREE.Vector3(secondOuter, middleElevation + handrailHeight, run / 2),
+    `${componentId}-MIDDLE-OUTER-R`, 'middle-connector',
+  );
   for (const railX of [firstX - width / 2, firstX + width / 2]) {
-    addRail(stairs, new THREE.Vector3(railX, 0.75, -run / 2), new THREE.Vector3(railX, totalRise / 2 + 0.75, run / 2), materials, { flight: 1 });
+    addHandrail(
+      new THREE.Vector3(railX, handrailHeight, -run / 2 - landingDepth),
+      new THREE.Vector3(railX, handrailHeight, -run / 2),
+      `${componentId}-LOWER-RAIL-${railX < firstX ? 'L' : 'R'}`, 'lower-landing',
+    );
+    addPost(new THREE.Vector3(railX, 0, -run / 2 - landingDepth), 0, `${componentId}-LOWER-POST-${railX}`);
   }
-  for (const railX of [secondX - width / 2, secondX + width / 2]) {
-    addRail(stairs, new THREE.Vector3(railX, totalRise / 2 + 0.75, run / 2), new THREE.Vector3(railX, totalRise + 0.75, -run / 2), materials, { flight: 2 });
+  const upperLeftRailX = secondX - width / 2;
+  const upperRightRailX = secondX + width / 2;
+  const upperConnectorOuterX = upperRightRailX + 0.94;
+  const upperSouthZ = -run / 2 - landingDepth;
+  const upperNorthZ = -run / 2 + 0.85;
+  addHandrail(
+    new THREE.Vector3(upperLeftRailX, totalRise + handrailHeight, upperSouthZ),
+    new THREE.Vector3(upperLeftRailX, totalRise + handrailHeight, -run / 2),
+    `${componentId}-UPPER-RAIL-L`, 'upper-landing',
+  );
+  addHandrail(
+    new THREE.Vector3(upperConnectorOuterX, totalRise + handrailHeight, upperSouthZ),
+    new THREE.Vector3(upperConnectorOuterX, totalRise + handrailHeight, upperNorthZ),
+    `${componentId}-UPPER-OUTER-RAIL`, 'upper-connector',
+  );
+  addHandrail(
+    new THREE.Vector3(upperLeftRailX, totalRise + handrailHeight, upperSouthZ),
+    new THREE.Vector3(upperConnectorOuterX, totalRise + handrailHeight, upperSouthZ),
+    `${componentId}-UPPER-SOUTH-RAIL`, 'upper-connector',
+  );
+  for (const [postX, postZ, postId] of [
+    [upperLeftRailX, upperSouthZ, 'UPPER-L'],
+    [upperConnectorOuterX, upperSouthZ, 'UPPER-OUTER-S'],
+    [upperConnectorOuterX, upperNorthZ, 'UPPER-OUTER-N'],
+  ]) {
+    addPost(new THREE.Vector3(postX, 0, postZ), totalRise, `${componentId}-${postId}-POST`);
   }
-  stairs.userData.routeLocal = [
-    [firstX, 0, -run / 2 - landingDepth], [firstX, totalRise / 2, run / 2],
-    [secondX, totalRise / 2, run / 2 + landingDepth * 0.5], [secondX, totalRise, -run / 2],
-    [secondX, totalRise, -run / 2 - landingDepth],
-  ];
+
+  for (const [postX, postZ, topY, id] of [
+    [firstX - width / 2, backZ, middleElevation, 'MIDDLE-L'],
+    [secondX + width / 2, backZ, middleElevation, 'MIDDLE-R'],
+    [secondX - width / 2, -run / 2 - landingDepth, totalRise, 'UPPER-L'],
+    [secondX + width / 2, -run / 2 - landingDepth, totalRise, 'UPPER-R'],
+  ]) {
+    const supportHeight = Math.max(0.15, topY - 0.08);
+    const support = box(0.11, supportHeight, 0.11, materials.timber, {
+      type: 'stair-support-post', semanticRole: 'stair-structure', componentId: `${componentId}-${id}-SUPPORT`,
+    });
+    support.position.set(postX, supportHeight / 2, postZ);
+    stairs.add(support);
+  }
+
+  stairs.userData.routeAnchors = routeAnchors;
+  stairs.userData.routeLocal = routeAnchors.map((anchor) => anchor.position);
+  stairs.userData.handrailSegments = handrailSegments;
+  stairs.userData.handrailSegmentCount = handrailSegments.length;
+  stairs.userData.railContinuityContract = {
+    source: 'actual-segment-endpoints', toleranceM: 0.015,
+    requiredJunctions: ['lower-to-flight1', 'flight1-to-middle', 'middle-to-flight2', 'flight2-to-upper'],
+  };
   group.add(stairs);
   return stairs;
 }
 
 function addStoneFloor(group, width, depth, materials, data = {}) {
   const floor = tag(new THREE.Group(), { type: 'irregular-stone-slab-courtyard', ...data });
+  const supportId = data.componentId || 'COURTYARD-STONE-FLOOR';
+  const mortarBed = box(width, 0.06, depth, materials.stone, {
+    type: 'courtyard-stone-support-bed', semanticRole: 'walkable-courtyard-bed',
+    componentId: `${supportId}-SUPPORT-BED`, supportId, walkable: true,
+  });
+  mortarBed.position.y = 0.04;
+  floor.add(mortarBed);
   const step = 0.68;
+  let slabIndex = 0;
   for (let x = -width / 2 + step / 2; x < width / 2; x += step) {
     for (let z = -depth / 2 + step / 2; z < depth / 2; z += step) {
-      const slab = box(step * 0.93, 0.07, step * 0.93, materials.stone, { type: 'stone-slab', walkable: true });
+      const slab = box(step * 0.93, 0.07, step * 0.93, materials.stone, {
+        type: 'stone-slab', semanticRole: 'walkable-floor', componentId: `${supportId}-SLAB-${slabIndex + 1}`,
+        supportId, walkable: true,
+      });
       slab.position.set(x + ((Math.floor((z + depth) * 7) % 3) - 1) * 0.025, 0.035, z);
       slab.rotation.y = ((Math.floor((x + width) * 5) + Math.floor((z + depth) * 4)) % 5) * 0.025;
       floor.add(slab);
+      slabIndex += 1;
     }
   }
   group.add(floor);
@@ -404,18 +782,256 @@ function classifyTile(profile, roofIndex, side, course, column, courses, columns
   };
 }
 
+/** Compose the roof rotation as Qy x Qx so a rotated section keeps its local pitch. */
+function composeSlopeQuaternion(sectionRotationY, slopeAngle, yawJitter = 0, roll = 0) {
+  const section = new THREE.Quaternion().setFromAxisAngle(UP, sectionRotationY + yawJitter);
+  const slope = new THREE.Quaternion().setFromAxisAngle(X_AXIS, slopeAngle);
+  const result = section.multiply(slope);
+  if (roll) result.multiply(new THREE.Quaternion().setFromAxisAngle(Z_AXIS, roll));
+  return result.normalize();
+}
+
+function median(values) {
+  if (!values.length) return null;
+  const sorted = [...values].sort((a, b) => a - b);
+  const middle = Math.floor(sorted.length / 2);
+  return sorted.length % 2 ? sorted[middle] : (sorted[middle - 1] + sorted[middle]) / 2;
+}
+
+function tileCrossSectionCurvature(geometry) {
+  const position = geometry?.getAttribute?.('position');
+  if (!position || !geometry.userData?.tileKind || position.count < 12) return null;
+  const row = Math.floor(position.count / 4);
+  const center = Math.floor(row / 2);
+  return position.getY(center) - (position.getY(0) + position.getY(row - 1)) / 2;
+}
+
+function geometryHasClosedTriangleShell(geometry) {
+  const index = geometry?.index;
+  if (!index || index.count % 3 !== 0) return false;
+  const edges = new Map();
+  const addEdge = (a, b) => {
+    const key = a < b ? `${a}:${b}` : `${b}:${a}`;
+    edges.set(key, (edges.get(key) || 0) + 1);
+  };
+  for (let offset = 0; offset < index.count; offset += 3) {
+    const a = index.getX(offset);
+    const b = index.getX(offset + 1);
+    const c = index.getX(offset + 2);
+    addEdge(a, b); addEdge(b, c); addEdge(c, a);
+  }
+  return edges.size > 0 && [...edges.values()].every((count) => count === 2);
+}
+
+function boxAudit(box3) {
+  if (!box3 || box3.isEmpty()) return null;
+  const size = box3.getSize(new THREE.Vector3());
+  return {
+    min: box3.min.toArray(),
+    max: box3.max.toArray(),
+    sizeM: size.toArray(),
+    volumeM3: size.x * size.y * size.z,
+  };
+}
+
+/** Read the actual InstancedMesh matrices and transformed geometry bounds. */
+function sampleInstanceBatches(batches) {
+  const samples = [];
+  const localMatrix = new THREE.Matrix4();
+  const worldMatrix = new THREE.Matrix4();
+  for (const batch of batches.filter(Boolean)) {
+    batch.updateWorldMatrix(true, false);
+    batch.geometry.computeBoundingBox();
+    const localLength = batch.geometry.boundingBox.max.z - batch.geometry.boundingBox.min.z;
+    const semantics = batch.userData.instanceMap || [];
+    for (let index = 0; index < batch.count; index += 1) {
+      batch.getMatrixAt(index, localMatrix);
+      worldMatrix.multiplyMatrices(batch.matrixWorld, localMatrix);
+      const across = new THREE.Vector3().setFromMatrixColumn(worldMatrix, 0);
+      const course = new THREE.Vector3().setFromMatrixColumn(worldMatrix, 2);
+      const courseScale = course.length();
+      const bounds = batch.geometry.boundingBox.clone().applyMatrix4(worldMatrix);
+      samples.push({
+        ...(semantics[index] || {}),
+        batchType: batch.userData.type,
+        matrixIndex: index,
+        position: new THREE.Vector3().setFromMatrixPosition(worldMatrix),
+        acrossAxis: across.normalize(),
+        courseAxis: course.normalize(),
+        effectiveLengthM: localLength * courseScale,
+        geometry: batch.geometry,
+        bounds,
+        matrixFinite: worldMatrix.elements.every(Number.isFinite),
+      });
+    }
+  }
+  return samples;
+}
+
+function unionSampleBounds(samples) {
+  const bounds = new THREE.Box3();
+  for (const sample of samples) bounds.union(sample.bounds);
+  return boxAudit(bounds);
+}
+
+function auditSlopeGeometry({
+  panBatches, coverBatches, dripBatches, hookBatches, verticalRidgeBatches,
+  expectedDownhillWorld, expectedPitch, expectedTileVerticalComponent,
+}) {
+  const pans = sampleInstanceBatches(panBatches);
+  const covers = sampleInstanceBatches(coverBatches);
+  const drips = sampleInstanceBatches(dripBatches);
+  const hooks = sampleInstanceBatches(hookBatches);
+  const verticalRidges = sampleInstanceBatches(verticalRidgeBatches);
+  const stablePans = pans.filter((sample) => sample.state !== 'broken');
+  const stableCovers = covers.filter((sample) => sample.state !== 'broken');
+
+  const panByColumn = new Map();
+  for (const sample of pans) {
+    if (!panByColumn.has(sample.columnIndex)) panByColumn.set(sample.columnIndex, []);
+    panByColumn.get(sample.columnIndex).push(sample);
+  }
+  for (const path of panByColumn.values()) path.sort((a, b) => a.courseIndex - b.courseIndex);
+  const longestPath = [...panByColumn.values()].sort((a, b) => b.length - a.length)[0] || [];
+  const downhillVector = longestPath.length > 1
+    ? longestPath[longestPath.length - 1].position.clone().sub(longestPath[0].position).normalize()
+    : new THREE.Vector3();
+  const downhillHorizontal = downhillVector.clone().setY(0).normalize();
+  const horizontalRun = Math.hypot(downhillVector.x, downhillVector.z);
+  const measuredPitch = horizontalRun > 1e-9 ? Math.abs(downhillVector.y) / horizontalRun : null;
+  const expectedDirection = expectedDownhillWorld.clone().normalize();
+
+  const courseSpacings = [];
+  const drainageFalls = [];
+  let monotonicPathCount = 0;
+  for (const path of panByColumn.values()) {
+    let monotonic = path.length > 1;
+    for (let index = 1; index < path.length; index += 1) {
+      const previous = path[index - 1];
+      const current = path[index];
+      const delta = current.position.clone().sub(previous.position);
+      const courseGap = Math.max(1, current.courseIndex - previous.courseIndex);
+      courseSpacings.push(delta.length() / courseGap);
+      drainageFalls.push((previous.position.y - current.position.y) / courseGap);
+      if (current.position.y >= previous.position.y || delta.dot(expectedDirection) <= 0) monotonic = false;
+    }
+    if (monotonic) monotonicPathCount += 1;
+  }
+
+  const stableTiles = [...stablePans, ...stableCovers];
+  const tangentAlignments = stableTiles
+    .map((sample) => Math.abs(sample.courseAxis.dot(expectedDirection)))
+    .filter(Number.isFinite);
+  const verticalComponents = stableTiles.map((sample) => Math.abs(sample.courseAxis.y)).filter(Number.isFinite);
+  const panLookup = new Map(stablePans.map((sample) => [`${sample.courseIndex}:${sample.columnIndex}`, sample]));
+  const seamErrors = [];
+  const courseOffsets = [];
+  for (const cover of stableCovers) {
+    const left = panLookup.get(`${cover.courseIndex}:${cover.columnIndex}`);
+    const right = panLookup.get(`${cover.courseIndex}:${cover.columnIndex + 1}`);
+    if (!left || !right) continue;
+    const midpoint = left.position.clone().add(right.position).multiplyScalar(0.5);
+    const delta = cover.position.clone().sub(midpoint);
+    seamErrors.push(Math.abs(delta.dot(left.acrossAxis)));
+    courseOffsets.push(Math.abs(delta.dot(downhillHorizontal)));
+  }
+
+  const dripByColumn = new Map(drips.map((sample) => [sample.columnIndex, sample]));
+  let eaveTerminationCount = 0;
+  const eaveCrossErrors = [];
+  for (const [column, path] of panByColumn.entries()) {
+    if (!path.length || !dripByColumn.has(column)) continue;
+    const last = path[path.length - 1];
+    const drip = dripByColumn.get(column);
+    const delta = drip.position.clone().sub(last.position);
+    if (delta.dot(expectedDirection) > 0 && drip.position.y < last.position.y) eaveTerminationCount += 1;
+    eaveCrossErrors.push(Math.abs(delta.dot(last.acrossAxis)));
+  }
+
+  const panGeometry = stablePans[0]?.geometry || pans[0]?.geometry;
+  const coverGeometry = stableCovers[0]?.geometry || covers[0]?.geometry;
+  const hookGeometry = hooks[0]?.geometry;
+  if (hookGeometry) hookGeometry.computeBoundingBox();
+  const hookSize = hookGeometry
+    ? hookGeometry.boundingBox.getSize(new THREE.Vector3())
+    : new THREE.Vector3();
+  const hookVertexCount = hookGeometry?.getAttribute?.('position')?.count || 0;
+  const courseSpacingM = median(courseSpacings);
+  const effectiveTileLengthM = median(stablePans.map((sample) => sample.effectiveLengthM));
+  const actualOverlapM = courseSpacingM === null || effectiveTileLengthM === null
+    ? null
+    : effectiveTileLengthM - courseSpacingM;
+  const allSamples = [...pans, ...covers, ...drips, ...hooks, ...verticalRidges];
+  return {
+    evidenceSource: 'actual-instance-matrices-buffer-geometry-and-world-bounds',
+    rotationComposition: 'Qy*Qx',
+    panInstanceCount: pans.length,
+    coverInstanceCount: covers.length,
+    dripInstanceCount: drips.length,
+    hookHeadInstanceCount: hooks.length,
+    verticalRidgeTileInstanceCount: verticalRidges.length,
+    instanceMatrixCount: allSamples.length,
+    allInstanceMatricesFinite: allSamples.length > 0 && allSamples.every((sample) => sample.matrixFinite),
+    panGeometryClosedShell: geometryHasClosedTriangleShell(panGeometry),
+    coverGeometryClosedShell: geometryHasClosedTriangleShell(coverGeometry),
+    panGeometryVertexCount: panGeometry?.getAttribute?.('position')?.count || 0,
+    coverGeometryVertexCount: coverGeometry?.getAttribute?.('position')?.count || 0,
+    panGeometryTriangleCount: panGeometry?.index?.count ? panGeometry.index.count / 3 : 0,
+    coverGeometryTriangleCount: coverGeometry?.index?.count ? coverGeometry.index.count / 3 : 0,
+    panTransverseArcSegments: panGeometry?.userData?.transverseArcSegments || 0,
+    coverTransverseArcSegments: coverGeometry?.userData?.transverseArcSegments || 0,
+    panCrossSectionCurvatureM: tileCrossSectionCurvature(panGeometry),
+    coverCrossSectionCurvatureM: tileCrossSectionCurvature(coverGeometry),
+    hookHeadVertexCount: hookVertexCount,
+    hookHeadDimensionsM: hookSize.toArray(),
+    hookHeadFrontPlate: hookVertexCount >= 20
+      && hookSize.x > hookSize.z * 1.75
+      && hookSize.y > hookSize.z * 1.75,
+    expectedPitch,
+    measuredPitch,
+    expectedDownhillVectorWorld: expectedDirection.toArray(),
+    downhillVectorWorld: downhillVector.toArray(),
+    drainageDirectionDot: downhillVector.dot(expectedDirection),
+    expectedTileVerticalComponent,
+    minTileVerticalComponent: verticalComponents.length ? Math.min(...verticalComponents) : null,
+    minTileSlopeAlignment: tangentAlignments.length ? Math.min(...tangentAlignments) : null,
+    courseSpacingSampleCount: courseSpacings.length,
+    medianCourseSpacingM: courseSpacingM,
+    effectiveTileLengthM,
+    longitudinalOverlapM: actualOverlapM,
+    seamSampleCount: seamErrors.length,
+    seamAlignmentMaxErrorM: seamErrors.length ? Math.max(...seamErrors) : null,
+    coverCourseOffsetMaxM: courseOffsets.length ? Math.max(...courseOffsets) : null,
+    drainagePathCount: panByColumn.size,
+    monotonicDrainagePathCount: monotonicPathCount,
+    minimumCourseFallM: drainageFalls.length ? Math.min(...drainageFalls) : null,
+    eaveTerminationCount,
+    eaveCrossAlignmentMaxErrorM: eaveCrossErrors.length ? Math.max(...eaveCrossErrors) : null,
+    worldBounds: {
+      pan: unionSampleBounds(pans),
+      cover: unionSampleBounds(covers),
+      eave: unionSampleBounds([...drips, ...hooks]),
+      verticalRidge: unionSampleBounds(verticalRidges),
+      all: unionSampleBounds(allSamples),
+    },
+  };
+}
+
 function makeInstanceBatch(records, geometry, material, data = {}) {
   if (!records.length) return null;
   const batch = tag(new THREE.InstancedMesh(geometry, material, records.length), { ...data, instanceCount: records.length });
   const dummy = new THREE.Object3D();
   records.forEach((record, index) => {
     dummy.position.fromArray(record.position);
-    dummy.rotation.set(...record.rotation);
+    dummy.quaternion.identity();
+    if (record.quaternion) dummy.quaternion.fromArray(record.quaternion);
+    else dummy.rotation.set(...record.rotation);
     dummy.scale.fromArray(record.scale || [1, 1, 1]);
     dummy.updateMatrix();
     batch.setMatrixAt(index, dummy.matrix);
     batch.setColorAt(index, record.color);
   });
+  batch.userData.instanceMap = records.map((record) => ({ ...(record.semantic || {}) }));
   batch.instanceMatrix.needsUpdate = true;
   if (batch.instanceColor) batch.instanceColor.needsUpdate = true;
   return batch;
@@ -453,8 +1069,10 @@ function addRoofUnit(parent, spec, options, materials, profile, baseline, roofIn
   const panGeometry = createTileGeometry(tileWidth, tileLength, 'pan', tileThickness);
   const coverGeometry = createTileGeometry(coverWidth, tileLength * (baseline ? 0.94 : 0.98), 'cover', tileThickness);
   const dripGeometry = createTileGeometry(tileWidth * 0.92, tileLength * 0.52, 'pan', tileThickness * 1.1);
-  const hookGeometry = createTileGeometry(coverWidth * 1.08, tileLength * 0.48, 'cover', tileThickness * 1.15);
+  const hookNeckGeometry = createTileGeometry(coverWidth * 1.08, tileLength * 0.48, 'cover', tileThickness * 1.15);
+  const hookHeadGeometry = createHookHeadGeometry(coverWidth * 1.18, coverWidth * 1.12, tileThickness * 2.8);
   const slopes = [];
+  const slopeGeometryAudits = [];
   const ridgeElevations = [];
   const eaveElevations = [];
   const ridgeTopology = [];
@@ -474,10 +1092,14 @@ function addRoofUnit(parent, spec, options, materials, profile, baseline, roofIn
     roof.add(sectionRoot);
     const sectionRidge = roofLayer('ridgeAndClosures', 6);
     sectionRoot.add(sectionRidge);
+    let sectionVerticalRidgeTileCount = 0;
+    let sectionVerticalRidgeRunCount = 0;
+    let sectionVerticalRidgeEndClosureCount = 0;
     section.planes.forEach((plane, planeIndex) => {
       const slope = tag(new THREE.Group(), {
         type: 'roof-slope', slopeId: `${spec.id}:${section.id}:S${plane.side}`,
         sectionId: section.id, roofUnitId: spec.id, roofSide: plane.side,
+        sectionRotationY, rotationComposition: 'Qy*Qx',
       });
       sectionRoot.add(slope);
       const angle = Math.atan(plane.pitch);
@@ -497,6 +1119,16 @@ function addRoofUnit(parent, spec, options, materials, profile, baseline, roofIn
       const missingIds = [];
       const damagePatchIds = new Set();
       const repairPatchIds = new Set();
+      let damagePatchDefinition = null;
+      let repairPatchDefinition = null;
+      let slopeMissing = 0;
+      let slopeBroken = 0;
+      let slopeRepair = 0;
+      const slopeId = slope.userData.slopeId;
+      const expectedDownhillWorld = new THREE.Vector3(0, -plane.pitch, plane.side)
+        .applyAxisAngle(UP, sectionRotationY)
+        .normalize();
+      const expectedTileVerticalComponent = Math.sin(angle);
 
       for (let course = 0; course < courseCount; course += 1) {
         const distance = (course + 0.5) * courseStep;
@@ -505,22 +1137,27 @@ function addRoofUnit(parent, spec, options, materials, profile, baseline, roofIn
         for (let column = 0; column < panColumns; column += 1) {
           const state = baseline ? { missing: false, broken: false, repaired: false } : classifyTile(profile.roof || profile, roofIndex + sectionIndex, plane.side, course, column, courseCount, panColumns);
           const id = `${spec.id}:${section.id}:S${plane.side}:PAN:${course}:${column}`;
+          damagePatchDefinition ||= state.damagePatch || null;
+          repairPatchDefinition ||= state.repairPatch || null;
           if (state.missing) {
-            missingIds.push(id); totalMissing += 1;
-            instanceMap.push({ tileId: id, kind: 'pan', state: 'missing', courseIndex: course, columnIndex: column });
+            missingIds.push(id); damagePatchIds.add(id); slopeMissing += 1; totalMissing += 1;
+            instanceMap.push({ tileId: id, kind: 'pan', state: 'missing', slopeId, sectionId: section.id, courseIndex: course, columnIndex: column });
             continue;
           }
           const stateName = state.repaired ? 'repair' : state.broken ? 'broken' : 'aged';
+          const yawJitter = stateName === 'broken' ? (seeded01(course, column, 3) - 0.5) * 0.12 : 0;
+          const roll = stateName === 'broken' ? plane.side * 0.05 : 0;
           const record = {
             position: sectionPoint(panX(column), panY, panZ).toArray(),
-            rotation: [plane.side * angle, sectionRotationY + (state.broken ? (seeded01(course, column, 3) - 0.5) * 0.12 : 0), state.broken ? plane.side * 0.05 : 0],
-            scale: state.broken ? [0.68, 0.72, 0.62] : [1, 1, 1],
+            quaternion: composeSlopeQuaternion(sectionRotationY, plane.side * angle, yawJitter, roll).toArray(),
+            scale: stateName === 'broken' ? [0.68, 0.72, 0.62] : [1, 1, 1],
             color: tileColor(profile.roof || profile, roofIndex, column, course, plane.side, stateName),
+            semantic: { tileId: id, kind: 'pan', state: stateName, slopeId, sectionId: section.id, courseIndex: course, columnIndex: column },
           };
           panRecords[stateName].push(record);
-          if (state.broken) totalBroken += 1;
-          if (state.repaired) totalRepair += 1;
-          instanceMap.push({ tileId: id, kind: 'pan', state: stateName, courseIndex: course, columnIndex: column });
+          if (stateName === 'broken') { damagePatchIds.add(id); slopeBroken += 1; totalBroken += 1; }
+          if (stateName === 'repair') { repairPatchIds.add(id); slopeRepair += 1; totalRepair += 1; }
+          instanceMap.push({ tileId: id, kind: 'pan', state: stateName, slopeId, sectionId: section.id, courseIndex: course, columnIndex: column });
         }
         for (let column = 0; column < coverColumns; column += 1) {
           const coverDistance = baseline ? distance + courseStep * 0.23 : distance;
@@ -528,39 +1165,50 @@ function addRoofUnit(parent, spec, options, materials, profile, baseline, roofIn
           const coverY = plane.ridgeY - plane.pitch * coverDistance + 0.105;
           const state = baseline ? { missing: false, broken: false, repaired: false } : classifyTile(profile.roof || profile, roofIndex + sectionIndex, plane.side, course, column, courseCount, coverColumns);
           const id = `${spec.id}:${section.id}:S${plane.side}:COVER:${course}:${column}`;
+          damagePatchDefinition ||= state.damagePatch || null;
+          repairPatchDefinition ||= state.repairPatch || null;
           if (state.missing) {
-            missingIds.push(id); totalMissing += 1;
-            instanceMap.push({ tileId: id, kind: 'cover', state: 'missing', courseIndex: course, columnIndex: column });
+            missingIds.push(id); damagePatchIds.add(id); slopeMissing += 1; totalMissing += 1;
+            instanceMap.push({ tileId: id, kind: 'cover', state: 'missing', slopeId, sectionId: section.id, courseIndex: course, columnIndex: column });
             continue;
           }
           const stateName = state.repaired ? 'repair' : state.broken ? 'broken' : 'aged';
+          const yawJitter = stateName === 'broken' ? (seeded01(column, course, 7) - 0.5) * 0.10 : 0;
           const record = {
             position: sectionPoint(coverX(column), coverY, coverZ).toArray(),
-            rotation: [plane.side * angle, sectionRotationY + (state.broken ? (seeded01(column, course, 7) - 0.5) * 0.10 : 0), 0],
-            scale: state.broken ? [0.74, 0.76, 0.58] : [1, 1, 1],
+            quaternion: composeSlopeQuaternion(sectionRotationY, plane.side * angle, yawJitter).toArray(),
+            scale: stateName === 'broken' ? [0.74, 0.76, 0.58] : [1, 1, 1],
             color: tileColor(profile.roof || profile, roofIndex, column + 0.5, course, plane.side, stateName),
+            semantic: { tileId: id, kind: 'cover', state: stateName, slopeId, sectionId: section.id, courseIndex: course, columnIndex: column },
           };
           coverRecords[stateName].push(record);
-          if (state.broken) totalBroken += 1;
-          if (state.repaired) totalRepair += 1;
-          instanceMap.push({ tileId: id, kind: 'cover', state: stateName, courseIndex: course, columnIndex: column });
+          if (stateName === 'broken') { damagePatchIds.add(id); slopeBroken += 1; totalBroken += 1; }
+          if (stateName === 'repair') { repairPatchIds.add(id); slopeRepair += 1; totalRepair += 1; }
+          instanceMap.push({ tileId: id, kind: 'cover', state: stateName, slopeId, sectionId: section.id, courseIndex: course, columnIndex: column });
         }
       }
 
       const addBatch = (layer, records, geometry, material, data) => {
-        const batch = makeInstanceBatch(records, geometry, material, data);
+        const batch = makeInstanceBatch(records, geometry, material, {
+          roofLayerId: layer.userData.roofLayerId,
+          roofUnitId: spec.id,
+          sectionId: section.id,
+          ...data,
+        });
         if (batch) layer.add(batch);
+        return batch;
       };
+      const panBatches = [];
+      const coverBatches = [];
       for (const stateName of ['aged', 'repair', 'broken']) {
-        addBatch(pans, panRecords[stateName], panGeometry, materials.tilePan, { type: `板瓦-pan-${stateName}`, state: stateName, slopeId: slope.userData.slopeId });
-        addBatch(covers, coverRecords[stateName], coverGeometry, materials.tileCover, { type: `筒瓦-cover-${stateName}`, state: stateName, slopeId: slope.userData.slopeId });
+        panBatches.push(addBatch(pans, panRecords[stateName], panGeometry, materials.tilePan, { type: `板瓦-pan-${stateName}`, tileKind: 'pan', state: stateName, slopeId }));
+        coverBatches.push(addBatch(covers, coverRecords[stateName], coverGeometry, materials.tileCover, { type: `筒瓦-cover-${stateName}`, tileKind: 'cover', state: stateName, slopeId }));
       }
 
       const rafterCount = Math.max(5, Math.ceil(section.span / 0.48));
       for (let index = 0; index < rafterCount; index += 1) {
         const rafter = box(0.055, 0.075, slopeLength, materials.timber, { type: 'roof-rafter', roofLayerId: 'rafters', slopeId: slope.userData.slopeId });
-        rafter.rotation.x = plane.side * angle;
-        rafter.rotation.y = sectionRotationY;
+        rafter.quaternion.copy(composeSlopeQuaternion(sectionRotationY, plane.side * angle));
         rafter.position.copy(sectionPoint(-section.span / 2 + section.span * index / Math.max(1, rafterCount - 1), plane.ridgeY - plane.pitch * plane.run / 2 - 0.17, plane.centerZ + plane.side * plane.run / 2));
         rafters.add(rafter);
       }
@@ -573,53 +1221,156 @@ function addRoofUnit(parent, spec, options, materials, profile, baseline, roofIn
         ));
       }
       const deck = box(section.span, options.roofThickness, slopeLength, materials.timber, { type: 'roof-deck-underlay', roofLayerId: 'roofUnderlay', slopeId: slope.userData.slopeId });
-      deck.rotation.x = plane.side * angle;
-      deck.rotation.y = sectionRotationY;
+      deck.quaternion.copy(composeSlopeQuaternion(sectionRotationY, plane.side * angle));
       deck.position.copy(sectionPoint(0, plane.ridgeY - plane.pitch * plane.run / 2 - 0.06, plane.centerZ + plane.side * plane.run / 2));
       underlay.add(deck);
 
       const dripRecords = [];
-      const hookRecords = [];
+      const hookNeckRecords = [];
+      const hookHeadRecords = [];
       const eaveDistance = plane.run + tileLength * 0.10;
       const eaveZ = plane.centerZ + plane.side * eaveDistance;
       const eaveY = plane.ridgeY - plane.pitch * eaveDistance + 0.04;
+      const slopeQuaternion = composeSlopeQuaternion(sectionRotationY, plane.side * angle).toArray();
       for (let column = 0; column < panColumns; column += 1) {
-        dripRecords.push({ position: sectionPoint(panX(column), eaveY, eaveZ).toArray(), rotation: [plane.side * angle, sectionRotationY, 0], color: tileColor(profile.roof || profile, roofIndex, column, courseCount, plane.side) });
+        dripRecords.push({
+          position: sectionPoint(panX(column), eaveY, eaveZ).toArray(),
+          quaternion: slopeQuaternion,
+          color: tileColor(profile.roof || profile, roofIndex, column, courseCount, plane.side),
+          semantic: { kind: 'drip', state: 'aged', slopeId, sectionId: section.id, courseIndex: courseCount, columnIndex: column },
+        });
       }
       for (let column = 0; column < coverColumns; column += 1) {
-        hookRecords.push({ position: sectionPoint(coverX(column), eaveY + 0.07, eaveZ).toArray(), rotation: [plane.side * angle, sectionRotationY, 0], color: tileColor(profile.roof || profile, roofIndex, column + 0.5, courseCount, plane.side) });
+        const color = tileColor(profile.roof || profile, roofIndex, column + 0.5, courseCount, plane.side);
+        const semantic = { kind: 'hook', state: 'aged', slopeId, sectionId: section.id, courseIndex: courseCount, columnIndex: column };
+        hookNeckRecords.push({
+          position: sectionPoint(coverX(column), eaveY + 0.07, eaveZ - plane.side * tileLength * 0.10).toArray(),
+          quaternion: slopeQuaternion,
+          color,
+          semantic,
+        });
+        hookHeadRecords.push({
+          position: sectionPoint(coverX(column), eaveY + 0.065, eaveZ + plane.side * tileThickness * 0.75).toArray(),
+          quaternion: slopeQuaternion,
+          color,
+          semantic,
+        });
       }
-      addBatch(eaves, dripRecords, dripGeometry, materials.tilePan, { type: '滴水-pan-eave-drips', slopeId: slope.userData.slopeId, correspondence: 'one-per-pan-column' });
-      addBatch(eaves, hookRecords, hookGeometry, materials.tileCover, { type: '勾头-cover-eave-hooks', slopeId: slope.userData.slopeId, correspondence: 'one-per-cover-column' });
+      const dripBatches = [addBatch(eaves, dripRecords, dripGeometry, materials.tilePan, {
+        type: '滴水-pan-eave-drips', slopeId, correspondence: 'one-per-pan-column',
+      })];
+      addBatch(eaves, hookNeckRecords, hookNeckGeometry, materials.tileCover, {
+        type: '筒瓦-eave-hook-necks', slopeId, correspondence: 'one-neck-per-cover-column',
+      });
+      const hookBatches = [addBatch(eaves, hookHeadRecords, hookHeadGeometry, materials.tileCover, {
+        type: '勾头-cover-eave-hook-heads', slopeId, correspondence: 'one-independent-front-plate-per-cover-column',
+      })];
       const fascia = box(section.span, 0.16, 0.09, materials.timber, { type: 'eave-fascia', roofLayerId: 'eaveCapsAndDrips', slopeId: slope.userData.slopeId });
       fascia.rotation.y = sectionRotationY;
       fascia.position.copy(sectionPoint(0, plane.ridgeY - plane.pitch * plane.run - 0.12, plane.centerZ + plane.side * plane.run));
       eaves.add(fascia);
 
-      const panInstanceCount = Object.values(panRecords).reduce((sum, list) => sum + list.length, 0);
-      const coverInstanceCount = Object.values(coverRecords).reduce((sum, list) => sum + list.length, 0);
+      const verticalRidgeRecords = [];
+      for (const edge of [-1, 1]) {
+        for (let course = 0; course < courseCount; course += 1) {
+          const distance = (course + 0.5) * courseStep;
+          verticalRidgeRecords.push({
+            position: sectionPoint(edge * section.span / 2, plane.ridgeY - plane.pitch * distance + 0.13, plane.centerZ + plane.side * distance).toArray(),
+            quaternion: slopeQuaternion,
+            color: tileColor(profile.roof || profile, roofIndex, edge < 0 ? 0 : panColumns - 1, course, plane.side),
+            semantic: { kind: 'vertical-ridge', state: 'aged', slopeId, sectionId: section.id, edge, courseIndex: course, columnIndex: edge < 0 ? -1 : panColumns },
+          });
+        }
+      }
+      const verticalRidgeBatches = [addBatch(sectionRidge, verticalRidgeRecords, coverGeometry, materials.tileCover, {
+        type: '垂脊-vertical-ridge-tile-courses', ridgeSemantic: 'verticalRidge', slopeId,
+        correspondence: 'two-discrete-sloping-ridge-courses-per-roof-plane',
+      })];
+      const verticalRidgeEndRecords = [-1, 1].map((edge) => ({
+        position: sectionPoint(edge * section.span / 2, eaveY + 0.09, eaveZ + plane.side * tileThickness * 0.75).toArray(),
+        quaternion: slopeQuaternion,
+        color: tileColor(profile.roof || profile, roofIndex, edge < 0 ? 0 : panColumns - 1, courseCount, plane.side),
+        semantic: { kind: 'vertical-ridge-end-closure', state: 'aged', slopeId, sectionId: section.id, edge, courseIndex: courseCount, columnIndex: edge < 0 ? -1 : panColumns },
+      }));
+      const verticalRidgeEnds = addBatch(sectionRidge, verticalRidgeEndRecords, hookHeadGeometry, materials.tileCover, {
+        type: '垂脊-eave-end-closures', ridgeSemantic: 'verticalRidgeEndClosure', slopeId,
+        correspondence: 'one-physical-end-closure-per-vertical-ridge-course',
+      });
+      sectionVerticalRidgeTileCount += verticalRidgeBatches.reduce((sum, batch) => sum + (batch?.count || 0), 0);
+      sectionVerticalRidgeRunCount += 2;
+      sectionVerticalRidgeEndClosureCount += verticalRidgeEnds?.count || 0;
+
+      const geometryAudit = auditSlopeGeometry({
+        panBatches,
+        coverBatches,
+        dripBatches,
+        hookBatches,
+        verticalRidgeBatches,
+        expectedDownhillWorld,
+        expectedPitch: plane.pitch,
+        expectedTileVerticalComponent,
+      });
+      const drainagePathsMonotonic = geometryAudit.drainagePathCount > 0
+        && geometryAudit.monotonicDrainagePathCount === geometryAudit.drainagePathCount
+        && geometryAudit.minimumCourseFallM > 0
+        && geometryAudit.drainageDirectionDot >= 0.999999;
+      const drainagePathsEndAtEave = geometryAudit.drainagePathCount > 0
+        && geometryAudit.eaveTerminationCount === geometryAudit.drainagePathCount
+        && geometryAudit.eaveCrossAlignmentMaxErrorM <= 1e-6;
+      const coverBridgesPanSeams = coverColumns === panColumns - 1
+        && geometryAudit.seamSampleCount > 0
+        && geometryAudit.seamAlignmentMaxErrorM <= 1e-6;
       slope.userData.tileTopology = {
         panColumns, coverColumns,
-        coverBridgesPanSeams: !baseline,
+        coverBridgesPanSeams,
         courseCount, courseStepM: courseStep,
-        longitudinalOverlapM: overlap,
-        coverCourseOffsetM: baseline ? courseStep * 0.23 : 0,
-        seamAlignmentMaxErrorM: baseline ? columnPitch * 0.23 : 0,
+        designLongitudinalOverlapM: overlap,
+        longitudinalOverlapM: geometryAudit.longitudinalOverlapM,
+        coverCourseOffsetM: geometryAudit.coverCourseOffsetMaxM,
+        seamAlignmentMaxErrorM: geometryAudit.seamAlignmentMaxErrorM,
         panColumnX: Array.from({ length: panColumns }, (_, index) => panX(index)),
         coverColumnX: Array.from({ length: coverColumns }, (_, index) => coverX(index)),
-        panInstanceCount, coverInstanceCount,
-        dripCount: panColumns, hookCount: coverColumns,
-        drainagePathCount: panColumns,
-        drainagePathsMonotonic: true,
-        drainagePathsEndAtEave: true,
+        panInstanceCount: geometryAudit.panInstanceCount,
+        coverInstanceCount: geometryAudit.coverInstanceCount,
+        dripCount: geometryAudit.dripInstanceCount,
+        hookCount: geometryAudit.hookHeadInstanceCount,
+        verticalRidgeTileCount: geometryAudit.verticalRidgeTileInstanceCount,
+        drainagePathCount: geometryAudit.drainagePathCount,
+        drainagePathsMonotonic,
+        drainagePathsEndAtEave,
         drainageVectorLocal: [0, -plane.pitch, plane.side],
+        drainageVectorWorld: geometryAudit.downhillVectorWorld,
         drainageTargetId: plane.drainageTargetId,
         missingTileIds: missingIds,
-        tileBatchesAreInstanced: true,
-        panConcavity: 'up', coverConvexity: 'up',
+        tileBatchesAreInstanced: [...panBatches, ...coverBatches, ...dripBatches, ...hookBatches, ...verticalRidgeBatches]
+          .filter(Boolean)
+          .every((batch) => batch.isInstancedMesh),
+        panConcavity: geometryAudit.panCrossSectionCurvatureM < 0 ? 'up' : 'invalid',
+        coverConvexity: geometryAudit.coverCrossSectionCurvatureM > 0 ? 'up' : 'invalid',
       };
-      slope.userData.damagePatch = { correlation: 'continuous-ellipse', tileCount: instanceMap.filter((entry) => entry.state === 'missing' || entry.state === 'broken').length };
-      slope.userData.repairPatch = { correlation: 'bounded-continuous-ellipse', tileCount: instanceMap.filter((entry) => entry.state === 'repair').length };
+      slope.userData.geometryAudit = geometryAudit;
+      slope.userData.damagePatch = {
+        ...(damagePatchDefinition || {}),
+        correlation: 'continuous-ellipse',
+        tileCount: damagePatchIds.size,
+        missingTileCount: slopeMissing,
+        brokenTileCount: slopeBroken,
+        tileIds: [...damagePatchIds],
+      };
+      slope.userData.repairPatch = {
+        ...(repairPatchDefinition || {}),
+        correlation: 'bounded-continuous-ellipse',
+        tileCount: repairPatchIds.size,
+        repairTileCount: slopeRepair,
+        tileIds: [...repairPatchIds],
+      };
+      slopeGeometryAudits.push({
+        slopeId,
+        sectionId: section.id,
+        geometryAudit,
+        damagePatch: { ...slope.userData.damagePatch },
+        repairPatch: { ...slope.userData.repairPatch },
+      });
       slopes.push(slope.userData.tileTopology);
       ridgeElevations.push(plane.ridgeY);
       eaveElevations.push(plane.ridgeY - plane.pitch * plane.run);
@@ -634,12 +1385,15 @@ function addRoofUnit(parent, spec, options, materials, profile, baseline, roofIn
       {
         type: isLeanTo ? '靠墙收口-wall-abutment' : '正脊-ridge-cover',
         ridgeSemantic: isLeanTo ? 'wallAbutment' : 'principalRidge',
-        roofLayerId: 'ridgeAndClosures', sectionId: section.id,
+        roofLayerId: 'ridgeAndClosures', roofUnitId: spec.id, sectionId: section.id,
       },
     );
     sectionRidge.add(closure);
     for (const x of [-section.span / 2, section.span / 2]) {
-      const cap = mesh(new THREE.SphereGeometry(tileWidth * 0.29, 10, 8), materials.tileCover, { type: 'ridge-end-closure', ridgeSemantic: 'endClosure', roofLayerId: 'ridgeAndClosures', sectionId: section.id });
+      const cap = mesh(new THREE.SphereGeometry(tileWidth * 0.29, 10, 8), materials.tileCover, {
+        type: 'ridge-end-closure', ridgeSemantic: 'endClosure', roofLayerId: 'ridgeAndClosures',
+        roofUnitId: spec.id, sectionId: section.id,
+      });
       cap.position.copy(sectionPoint(x, firstPlane.ridgeY + 0.10, firstPlane.centerZ));
       sectionRidge.add(cap);
     }
@@ -651,24 +1405,44 @@ function addRoofUnit(parent, spec, options, materials, profile, baseline, roofIn
           sectionPoint(x, plane.ridgeY + 0.075, plane.centerZ),
           sectionPoint(x, plane.ridgeY - plane.pitch * eaveDistance + 0.045, plane.centerZ + plane.side * eaveDistance),
           tileWidth * 0.115, materials.tileCover,
-          { type: '山面斜向收边-verge-closure', ridgeSemantic: 'vergeClosure', roofLayerId: 'ridgeAndClosures', sectionId: section.id },
+          {
+            type: '山面斜向收边-verge-closure', ridgeSemantic: 'vergeClosure',
+            roofLayerId: 'ridgeAndClosures', roofUnitId: spec.id, sectionId: section.id,
+          },
         );
         sectionRidge.add(verge);
         vergeClosureCount += 1;
       }
     }
+    const roofForm = isLeanTo ? 'lean-to' : 'gable';
+    const verticalRidgeRequirement = isLeanTo
+      ? 'lean-to-side-closing-ridge'
+      : 'gable-end-sloping-ridge';
+    const verticalRidgeApplicable = section.planes.length > 0 && section.planes.every((plane) => plane.run > 0);
+    const sectionRidgeBounds = new THREE.Box3().setFromObject(sectionRidge);
+    const sectionRidgeAudit = {
+      evidenceSource: 'actual-ridge-geometry-instance-matrices-and-world-bounds',
+      roofForm,
+      verticalRidgeRequirement,
+      verticalRidgeRunCount: sectionVerticalRidgeRunCount,
+      verticalRidgeTileCount: sectionVerticalRidgeTileCount,
+      verticalRidgeEndClosureCount: sectionVerticalRidgeEndClosureCount,
+      worldBounds: boxAudit(sectionRidgeBounds),
+    };
+    sectionRoot.userData.ridgeGeometryAudit = sectionRidgeAudit;
     ridgeTopology.push({
       sectionId: section.id,
-      roofForm: isLeanTo ? 'lean-to' : 'gable',
+      roofForm,
       principalRidgeCount: isLeanTo ? 0 : 1,
       wallAbutmentCount: isLeanTo ? 1 : 0,
       vergeClosureCount,
       endClosureCount: 2,
-      verticalRidgeApplicable: false,
-      verticalRidgeCount: 0,
-      verticalRidgeReason: isLeanTo
-        ? 'Lean-to section terminates at a wall abutment and has no hipped corner.'
-        : 'Gable section uses a principal ridge and verge closures; no hipped corner exists.',
+      verticalRidgeApplicable,
+      verticalRidgeCount: sectionVerticalRidgeTileCount,
+      verticalRidgeRunCount: sectionVerticalRidgeRunCount,
+      verticalRidgeEndClosureCount: sectionVerticalRidgeEndClosureCount,
+      verticalRidgeReason: verticalRidgeRequirement,
+      geometryAudit: sectionRidgeAudit,
     });
   });
 
@@ -683,6 +1457,8 @@ function addRoofUnit(parent, spec, options, materials, profile, baseline, roofIn
   roof.userData.repairs = { tiles: totalRepair, boundedPatches: true };
   roof.userData.instanceMap = instanceMap;
   roof.userData.slopes = slopes;
+  roof.userData.rotationComposition = 'Qy*Qx';
+  roof.userData.slopeGeometryAudits = slopeGeometryAudits;
   roof.userData.ridgeTopology = ridgeTopology;
   parent.add(roof);
   return roof;
@@ -702,7 +1478,7 @@ function createVisitor() {
   return visitor;
 }
 
-function interpolateRoute(points, progress) {
+function interpolateRouteDetailed(points, progress) {
   const value = THREE.MathUtils.clamp(progress, 0, 1);
   const lengths = [];
   let total = 0;
@@ -714,65 +1490,77 @@ function interpolateRoute(points, progress) {
   let remaining = total * value;
   for (let index = 0; index < lengths.length; index += 1) {
     if (remaining <= lengths[index] || index === lengths.length - 1) {
-      return points[index].clone().lerp(points[index + 1], lengths[index] ? remaining / lengths[index] : 0);
+      return {
+        position: points[index].clone().lerp(points[index + 1], lengths[index] ? remaining / lengths[index] : 0),
+        segmentIndex: index, routeDistanceM: total * value, totalDistanceM: total,
+      };
     }
     remaining -= lengths[index];
   }
-  return points.at(-1).clone();
+  return {
+    position: points.at(-1).clone(), segmentIndex: Math.max(0, points.length - 2),
+    routeDistanceM: total, totalDistanceM: total,
+  };
 }
 
-function sampleVisitorRoute(points, spacingM = 0.08) {
-  const samples = [];
-  for (let segmentIndex = 0; segmentIndex < points.length - 1; segmentIndex += 1) {
-    const start = points[segmentIndex];
-    const end = points[segmentIndex + 1];
-    const steps = Math.max(1, Math.ceil(start.distanceTo(end) / spacingM));
-    for (let step = segmentIndex === 0 ? 0 : 1; step <= steps; step += 1) {
-      samples.push(start.clone().lerp(end, step / steps));
-    }
-  }
-  return samples;
-}
-
-function buildVisitorRouteDiagnostics(root, points) {
+function findWalkableSupport(root, target) {
   root.updateMatrixWorld(true);
-  const wallBounds = [];
-  const walkableBounds = [];
+  const walkables = [];
   root.traverse((object) => {
-    if (!object.isMesh || !object.geometry) return;
-    if (object.userData?.semanticRole === 'wall-core') wallBounds.push(new THREE.Box3().setFromObject(object));
-    if (object.userData?.walkable === true) walkableBounds.push(new THREE.Box3().setFromObject(object));
+    if (object.isMesh && object.userData?.walkable === true) walkables.push(object);
   });
-  const samples = sampleVisitorRoute(points);
-  let wallIntersectionCount = 0;
-  let suspendedFrameCount = 0;
-  let stuckFrameCount = 0;
-  let maxGroundClearanceM = 0;
-  let previous = null;
-  samples.forEach((point) => {
-    const body = new THREE.Box3(
-      new THREE.Vector3(point.x - 0.16, point.y + 0.04, point.z - 0.16),
-      new THREE.Vector3(point.x + 0.16, point.y + 1.20, point.z + 0.16),
-    );
-    if (wallBounds.some((bounds) => bounds.intersectsBox(body))) wallIntersectionCount += 1;
-    const supports = walkableBounds.map((bounds) => ({
-      bounds, clearance: point.y - bounds.max.y,
-    })).filter(({ bounds, clearance }) =>
-      point.x >= bounds.min.x - 0.10 && point.x <= bounds.max.x + 0.10
-      && point.z >= bounds.min.z - 0.10 && point.z <= bounds.max.z + 0.10
-      && clearance >= -0.18 && clearance <= 0.30
-    );
-    if (!supports.length) suspendedFrameCount += 1;
-    else maxGroundClearanceM = Math.max(maxGroundClearanceM, Math.max(0, Math.min(...supports.map((item) => Math.abs(item.clearance)))));
-    if (previous && point.distanceTo(previous) < 0.005) stuckFrameCount += 1;
-    previous = point;
+  const raycaster = new THREE.Raycaster(
+    new THREE.Vector3(target.x, target.y + 5, target.z),
+    new THREE.Vector3(0, -1, 0), 0, 9,
+  );
+  const candidates = raycaster.intersectObjects(walkables, false).filter((candidate) => (
+    candidate.point.y <= target.y + 0.24 && candidate.point.y >= target.y - 0.26
+  ));
+  candidates.sort((left, right) => {
+    const elevationDelta = right.point.y - left.point.y;
+    if (Math.abs(elevationDelta) > 1e-5) return elevationDelta;
+    const priority = (candidate) => {
+      const componentId = candidate.object.userData?.componentId || '';
+      if (componentId.startsWith('STAIR-WEST-01')) return 2;
+      if (candidate.object.userData?.semanticRole === 'walkable-stair-landing') return 2;
+      return 0;
+    };
+    return priority(right) - priority(left);
+  });
+  const hit = candidates[0];
+  if (!hit) return null;
+  return {
+    point: hit.point.clone(), object: hit.object,
+    supportId: hit.object.userData.supportId || hit.object.userData.componentId || hit.object.userData.type,
+  };
+}
+
+function visitorCollisionSnapshot(root, footPosition) {
+  root.updateMatrixWorld(true);
+  const visitorRadius = 0.18;
+  const visitorHeight = 1.26;
+  const capsuleBox = new THREE.Box3(
+    new THREE.Vector3(footPosition.x - visitorRadius, footPosition.y + 0.025, footPosition.z - visitorRadius),
+    new THREE.Vector3(footPosition.x + visitorRadius, footPosition.y + visitorHeight, footPosition.z + visitorRadius),
+  );
+  const collisions = [];
+  root.traverse((object) => {
+    if (!object.isMesh || object.userData?.walkable === true) return;
+    const isWall = object.userData?.semanticRole === 'wall-core';
+    const role = object.userData?.collisionRole;
+    if (!isWall && role !== 'opening-leaf' && role !== 'stair-rail') return;
+    const objectBox = new THREE.Box3().setFromObject(object);
+    if (!capsuleBox.intersectsBox(objectBox)) return;
+    collisions.push({
+      componentId: object.userData.componentId || object.name || object.userData.type,
+      kind: isWall ? 'wall' : role,
+    });
   });
   return {
-    method: 'rendered-wall-aabb-and-walkable-support-sampling',
-    sampleSpacingM: 0.08, sampleCount: samples.length, visitorRadiusM: 0.16, visitorHeightM: 1.20,
-    wallVolumeCount: wallBounds.length, walkableVolumeCount: walkableBounds.length,
-    wallIntersectionCount, suspendedFrameCount, stuckFrameCount, maxGroundClearanceM,
-    passed: wallIntersectionCount === 0 && suspendedFrameCount === 0 && stuckFrameCount === 0,
+    collisions,
+    wallIntersectionCount: collisions.filter((item) => item.kind === 'wall').length,
+    openingCollisionCount: collisions.filter((item) => item.kind === 'opening-leaf').length,
+    railCollisionCount: collisions.filter((item) => item.kind === 'stair-rail').length,
   };
 }
 
@@ -780,34 +1568,363 @@ function setOpeningProgress(root, progress) {
   const value = THREE.MathUtils.clamp(progress, 0, 1);
   let doors = 0;
   let windows = 0;
+  const leaves = [];
   root.traverse((object) => {
     if (!object.userData?.openingKind) return;
     (object.userData.pivots || []).forEach((pivot) => {
-      pivot.rotation.y = object.userData.openingKind === 'door'
-        ? -pivot.userData.side * object.userData.maxAngleRad * value
-        : object.userData.maxAngleRad * value;
+      const angle = THREE.MathUtils.lerp(
+        Number(pivot.userData.closedAngleRad || 0), Number(pivot.userData.openAngleRad || 0), value,
+      );
+      pivot.rotation.y = angle;
+      pivot.userData.currentAngleRad = angle;
+      pivot.userData.state = value <= 1e-4 ? 'closed' : value >= 0.9999 ? 'open' : 'moving';
+      leaves.push({
+        componentId: pivot.userData.componentId,
+        openingId: pivot.userData.openingId,
+        angleRad: angle,
+        hingeLocal: pivot.position.toArray(),
+        pivot,
+      });
     });
     object.userData.openingProgress = value;
+    object.userData.openingState = value <= 1e-4 ? 'closed' : value >= 0.9999 ? 'open' : 'moving';
     if (object.userData.openingKind === 'door') doors += 1;
     else windows += 1;
   });
+  root.updateMatrixWorld(true);
+  leaves.forEach((leaf) => {
+    leaf.hingeWorld = leaf.pivot.getWorldPosition(new THREE.Vector3()).toArray();
+    delete leaf.pivot;
+  });
   root.userData.runtimeState.openingProgress = value;
-  return { progress: value, doors, windows };
+  root.userData.runtimeState.openingLeaves = leaves;
+  return { progress: value, doors, windows, leaves };
 }
 
 function setVisitorProgress(root, progress) {
   const value = THREE.MathUtils.clamp(progress, 0, 1);
   const visitor = root.getObjectByName('visitor_route_actor');
   if (!visitor) return null;
-  const position = interpolateRoute(root.userData.visitorRoute.points, value);
+  const previousProgress = Number(visitor.userData.routeProgress || 0);
+  const previousPosition = visitor.userData.lastFootPosition
+    ? new THREE.Vector3().fromArray(visitor.userData.lastFootPosition) : null;
+  const route = interpolateRouteDetailed(root.userData.visitorRoute.points, value);
+  const position = route.position;
+  const requestedElevationM = position.y;
+  const support = findWalkableSupport(root, position);
+  const requestedSupportGapM = support ? Math.abs(requestedElevationM - support.point.y) : null;
+  if (support) position.y = support.point.y;
   visitor.position.copy(position);
+  root.updateMatrixWorld(true);
+  const collision = visitorCollisionSnapshot(root, position);
+  const supportGapM = support ? Math.abs(position.y - support.point.y) : null;
+  const routeAnchor = root.userData.visitorRoute.anchors[Math.min(
+    route.segmentIndex + 1, root.userData.visitorRoute.anchors.length - 1,
+  )];
+  const stuckFrameCount = previousPosition && value > previousProgress + 1e-7
+    && position.distanceTo(previousPosition) < 1e-5 ? 1 : 0;
   visitor.userData.routeProgress = value;
   visitor.userData.routeComplete = value >= 0.999;
   visitor.userData.floorElevationM = position.y;
-  visitor.userData.routeDiagnostics = { ...root.userData.visitorRoute.diagnostics };
+  visitor.userData.supportId = support?.supportId || null;
+  visitor.userData.supportGapM = supportGapM;
+  visitor.userData.requestedSupportGapM = requestedSupportGapM;
+  visitor.userData.stage = routeAnchor?.stage || 'route';
+  visitor.userData.routeDistanceM = route.routeDistanceM;
+  visitor.userData.wallIntersectionCount = collision.wallIntersectionCount;
+  visitor.userData.openingCollisionCount = collision.openingCollisionCount;
+  visitor.userData.railCollisionCount = collision.railCollisionCount;
+  visitor.userData.collisionIds = collision.collisions.map((item) => item.componentId);
+  visitor.userData.suspendedFrameCount = !support || supportGapM > 0.03 ? 1 : 0;
+  visitor.userData.stuckFrameCount = stuckFrameCount;
+  visitor.userData.lastFootPosition = position.toArray();
   root.userData.runtimeState.visitorProgress = value;
   root.userData.runtimeState.visitorPosition = position.toArray();
-  return { progress: value, position: position.toArray(), complete: visitor.userData.routeComplete };
+  const snapshot = {
+    progress: value,
+    position: position.toArray(),
+    complete: visitor.userData.routeComplete,
+    stage: visitor.userData.stage,
+    routeDistanceM: route.routeDistanceM,
+    totalDistanceM: route.totalDistanceM,
+    supportId: visitor.userData.supportId,
+    supportGapM,
+    requestedElevationM,
+    requestedSupportGapM,
+    wallIntersectionCount: collision.wallIntersectionCount,
+    openingCollisionCount: collision.openingCollisionCount,
+    railCollisionCount: collision.railCollisionCount,
+    collisionIds: [...visitor.userData.collisionIds],
+    suspendedFrameCount: visitor.userData.suspendedFrameCount,
+    stuckFrameCount,
+  };
+  root.userData.runtimeState.visitorSnapshot = snapshot;
+  return snapshot;
+}
+
+function sampleVisitorRoute(root, sampleCount = 101) {
+  const count = Math.max(17, Math.floor(sampleCount));
+  const previousProgress = Number(root.userData.runtimeState.visitorProgress || 0);
+  const previousOpening = Number(root.userData.runtimeState.openingProgress || 0);
+  setOpeningProgress(root, 1);
+  const samples = [];
+  let previousPosition = null;
+  let stuckFrameCount = 0;
+  for (let index = 0; index < count; index += 1) {
+    const sample = setVisitorProgress(root, index / (count - 1));
+    const position = new THREE.Vector3().fromArray(sample.position);
+    if (previousPosition && position.distanceTo(previousPosition) < 1e-5) stuckFrameCount += 1;
+    previousPosition = position;
+    samples.push(sample);
+  }
+  const final = samples.at(-1);
+  const anchorSupportAudits = root.userData.visitorRoute.anchors.map((anchor) => {
+    const target = new THREE.Vector3().fromArray(anchor.position);
+    const support = findWalkableSupport(root, target);
+    return {
+      anchorId: anchor.id,
+      expectedSupportId: anchor.supportId,
+      actualSupportId: support?.supportId || null,
+      supportGapM: support ? Math.abs(target.y - support.point.y) : null,
+    };
+  });
+  const result = {
+    evidenceSource: 'raycaster-plus-world-bounds',
+    sampleCount: samples.length,
+    maxSupportGapM: Math.max(...samples.map((sample) => sample.supportGapM ?? Number.POSITIVE_INFINITY)),
+    maxRequestedSupportGapM: Math.max(...samples.map((sample) => sample.requestedSupportGapM ?? Number.POSITIVE_INFINITY)),
+    maxAnchorSupportGapM: Math.max(...anchorSupportAudits.map((item) => item.supportGapM ?? Number.POSITIVE_INFINITY)),
+    unsupportedAnchorCount: anchorSupportAudits.filter((item) => item.supportGapM === null).length,
+    mismatchedAnchorSupportCount: anchorSupportAudits.filter((item) => (
+      item.actualSupportId !== item.expectedSupportId
+      && !(item.expectedSupportId === 'COURTYARD-FLOOR' && item.actualSupportId === 'SITE-BASE')
+    )).length,
+    suspendedFrameCount: samples.filter((sample) => sample.suspendedFrameCount > 0).length,
+    stuckFrameCount,
+    wallIntersectionCount: samples.reduce((sum, sample) => sum + sample.wallIntersectionCount, 0),
+    openingCollisionCount: samples.reduce((sum, sample) => sum + sample.openingCollisionCount, 0),
+    railCollisionCount: samples.reduce((sum, sample) => sum + sample.railCollisionCount, 0),
+    reachedUpperFloor: Boolean(final?.complete)
+      && Math.abs((final?.position?.[1] || 0) - root.userData.visitorRoute.upperFloorElevationM) <= 0.02,
+    finalElevationM: final?.position?.[1] || 0,
+    relativeUpperFloorM: root.userData.visitorRoute.relativeUpperFloorM,
+    stages: [...new Set(samples.map((sample) => sample.stage))],
+    supportIds: [...new Set(samples.map((sample) => sample.supportId).filter(Boolean))],
+    anchorSupportAudits,
+  };
+  setVisitorProgress(root, previousProgress);
+  setOpeningProgress(root, previousOpening);
+  root.userData.runtimeState.visitorRouteAudit = result;
+  return result;
+}
+
+function projectedLeafInterval(leaf, assembly) {
+  leaf.geometry.computeBoundingBox();
+  leaf.updateMatrixWorld(true);
+  assembly.updateMatrixWorld(true);
+  const bounds = leaf.geometry.boundingBox;
+  const inverseAssembly = assembly.matrixWorld.clone().invert();
+  const xs = [];
+  for (const x of [bounds.min.x, bounds.max.x]) {
+    for (const y of [bounds.min.y, bounds.max.y]) {
+      for (const z of [bounds.min.z, bounds.max.z]) {
+        xs.push(new THREE.Vector3(x, y, z).applyMatrix4(leaf.matrixWorld).applyMatrix4(inverseAssembly).x);
+      }
+    }
+  }
+  return { min: Math.min(...xs), max: Math.max(...xs) };
+}
+
+function railWorldEndpoints(item) {
+  const height = Number(item.geometry?.parameters?.height || 0);
+  item.updateMatrixWorld(true);
+  return [
+    new THREE.Vector3(0, -height / 2, 0).applyMatrix4(item.matrixWorld),
+    new THREE.Vector3(0, height / 2, 0).applyMatrix4(item.matrixWorld),
+  ];
+}
+
+function connectedRailComponents(segments, toleranceM = 0.015) {
+  const adjacency = segments.map(() => []);
+  for (let left = 0; left < segments.length; left += 1) {
+    for (let right = left + 1; right < segments.length; right += 1) {
+      const connected = segments[left].endpoints.some((a) => (
+        segments[right].endpoints.some((b) => a.distanceTo(b) <= toleranceM)
+      ));
+      if (connected) {
+        adjacency[left].push(right);
+        adjacency[right].push(left);
+      }
+    }
+  }
+  const visited = new Set();
+  const components = [];
+  adjacency.forEach((_, start) => {
+    if (visited.has(start)) return;
+    const stack = [start];
+    const component = [];
+    while (stack.length) {
+      const current = stack.pop();
+      if (visited.has(current)) continue;
+      visited.add(current);
+      component.push(current);
+      adjacency[current].forEach((next) => stack.push(next));
+    }
+    components.push(component);
+  });
+  return components;
+}
+
+function collisionEnvelopeAudit(pivot, leaf) {
+  const declared = leaf.userData?.collisionEnvelopeLocal;
+  if (!declared?.min || !declared?.max) return null;
+  pivot.updateWorldMatrix(true, false);
+  const declaredWorld = new THREE.Box3();
+  for (const x of [declared.min[0], declared.max[0]]) {
+    for (const y of [declared.min[1], declared.max[1]]) {
+      for (const z of [declared.min[2], declared.max[2]]) {
+        declaredWorld.expandByPoint(new THREE.Vector3(x, y, z).applyMatrix4(pivot.matrixWorld));
+      }
+    }
+  }
+  const geometryWorld = new THREE.Box3().setFromObject(leaf);
+  const tolerance = 1e-5;
+  const expanded = declaredWorld.clone().expandByScalar(tolerance);
+  return {
+    declaredLocal: { min: [...declared.min], max: [...declared.max] },
+    declaredWorld: { min: declaredWorld.min.toArray(), max: declaredWorld.max.toArray() },
+    geometryWorld: { min: geometryWorld.min.toArray(), max: geometryWorld.max.toArray() },
+    containsGeometry: expanded.containsPoint(geometryWorld.min) && expanded.containsPoint(geometryWorld.max),
+  };
+}
+
+function inspectInteractionGeometry(root) {
+  const previousOpening = Number(root.userData.runtimeState.openingProgress || 0);
+  const assemblies = [];
+  const interactionIds = [];
+  const allComponentIds = new Set();
+  root.traverse((object) => {
+    if (object.userData?.componentId) allComponentIds.add(object.userData.componentId);
+    if (object.userData?.openingKind) assemblies.push(object);
+    if (object.userData?.openingKind || object.userData?.semanticRole === 'opening-hinge'
+      || object.userData?.semanticRole === 'opening-leaf'
+      || object.userData?.componentId?.startsWith?.('STAIR-WEST-01')) {
+      if (object.userData.componentId) interactionIds.push(object.userData.componentId);
+    }
+  });
+  const duplicateComponentIds = [...new Set(interactionIds.filter((id, index) => interactionIds.indexOf(id) !== index))];
+  setOpeningProgress(root, 0);
+  root.updateMatrixWorld(true);
+  const closedHinges = new Map();
+  assemblies.forEach((assembly) => (assembly.userData.pivots || []).forEach((pivot) => {
+    closedHinges.set(pivot.userData.componentId, pivot.getWorldPosition(new THREE.Vector3()));
+  }));
+  setOpeningProgress(root, 1);
+  root.updateMatrixWorld(true);
+  const openingChecks = assemblies.map((assembly) => {
+    const leaves = (assembly.userData.pivots || []).map((pivot) => (
+      pivot.children.find((child) => child.userData?.semanticRole === 'opening-leaf')
+    )).filter(Boolean);
+    const intervals = leaves.map((leaf) => projectedLeafInterval(leaf, assembly)).sort((a, b) => a.min - b.min);
+    const clearWidthM = assembly.userData.openingKind === 'door' && intervals.length === 2
+      ? Math.max(0, intervals[1].min - intervals[0].max) : null;
+    const pivots = (assembly.userData.pivots || []).map((pivot) => {
+      const hingeWorld = pivot.getWorldPosition(new THREE.Vector3());
+      const closedWorld = closedHinges.get(pivot.userData.componentId);
+      const leaf = pivot.children.find((child) => child.userData?.semanticRole === 'opening-leaf');
+      return {
+        componentId: pivot.userData.componentId,
+        leafId: leaf?.userData?.componentId,
+        actualAngleRad: pivot.rotation.y,
+        expectedOpenAngleRad: pivot.userData.openAngleRad,
+        hingeDriftM: closedWorld ? hingeWorld.distanceTo(closedWorld) : null,
+        hingeWorld: hingeWorld.toArray(),
+        collisionEnvelope: leaf ? collisionEnvelopeAudit(pivot, leaf) : null,
+      };
+    });
+    return {
+      componentId: assembly.userData.componentId,
+      kind: assembly.userData.openingKind,
+      hostId: assembly.userData.hostId,
+      hostExists: allComponentIds.has(assembly.userData.hostId),
+      apertureM: { ...assembly.userData.apertureM },
+      actualClearWidthM: clearWidthM,
+      leafWorldBoundsM: leaves.map((leaf) => new THREE.Box3().setFromObject(leaf).getSize(new THREE.Vector3()).toArray()),
+      pivots,
+    };
+  });
+  setOpeningProgress(root, previousOpening);
+
+  const stair = root.getObjectByName('stair_STAIR-WEST-01');
+  const treads = [];
+  const landings = [];
+  const rails = [];
+  let stringerCount = 0;
+  let supportCount = 0;
+  let handrailPostCount = 0;
+  stair?.traverse((object) => {
+    if (!object.isMesh) return;
+    const boxWorld = new THREE.Box3().setFromObject(object);
+    if (object.userData?.type === 'stair-tread') {
+      treads.push({
+        componentId: object.userData.componentId, flight: object.userData.flight,
+        step: object.userData.step, topElevationM: boxWorld.max.y,
+      });
+    }
+    if (object.userData?.walkable && object.userData?.landing) {
+      landings.push({ componentId: object.userData.componentId, landing: object.userData.landing, topElevationM: boxWorld.max.y });
+    }
+    if (object.userData?.semanticRole === 'stair-handrail') {
+      rails.push({ componentId: object.userData.componentId, endpoints: railWorldEndpoints(object) });
+    }
+    if (object.userData?.type === 'stair-stringer-support') stringerCount += 1;
+    if (object.userData?.type === 'stair-support-post') supportCount += 1;
+    if (object.userData?.type === 'stair-handrail-post') handrailPostCount += 1;
+  });
+  treads.sort((a, b) => a.flight - b.flight || a.step - b.step);
+  const expectedRise = Number(stair?.userData?.riserHeightM || 0);
+  const lowerElevation = landings.find((item) => item.landing === 'lower')?.topElevationM ?? 0;
+  const riseErrorsM = treads.map((item) => {
+    const expected = lowerElevation + expectedRise * (item.flight === 1 ? item.step : 8 + item.step);
+    return Math.abs(item.topElevationM - expected);
+  });
+  const railComponents = connectedRailComponents(rails, 0.015);
+  const railComponentSpans = railComponents.map((component) => {
+    const endpoints = component.flatMap((index) => rails[index].endpoints);
+    return {
+      segmentIds: component.map((index) => rails[index].componentId),
+      minElevationM: Math.min(...endpoints.map((point) => point.y)),
+      maxElevationM: Math.max(...endpoints.map((point) => point.y)),
+    };
+  });
+  const handrailHeight = Number(stair?.userData?.handrailHeightM || 0);
+  const upperElevation = landings.find((item) => item.landing === 'upper')?.topElevationM ?? 0;
+  const continuousHandrails = railComponentSpans.length === 2 && railComponentSpans.every((component) => (
+    Math.abs(component.minElevationM - (lowerElevation + handrailHeight)) <= 0.015
+    && Math.abs(component.maxElevationM - (upperElevation + handrailHeight)) <= 0.015
+  ));
+  return {
+    evidenceSource: 'world-matrices-buffer-bounds-and-cylinder-endpoints',
+    duplicateComponentIds,
+    openings: openingChecks,
+    stair: {
+      componentId: stair?.userData?.componentId,
+      flightStepCounts: [1, 2].map((flight) => treads.filter((item) => item.flight === flight).length),
+      treadTopElevationsM: treads.map((item) => item.topElevationM),
+      landingTopElevationsM: Object.fromEntries(landings.map((item) => [item.landing, item.topElevationM])),
+      firstRiserHeightM: treads[0] ? treads[0].topElevationM - lowerElevation : null,
+      expectedRiserHeightM: expectedRise,
+      maxRiserErrorM: riseErrorsM.length ? Math.max(...riseErrorsM) : null,
+      stringerCount, supportCount, handrailPostCount,
+      handrailSegmentCount: rails.length,
+      handrailConnectedComponentCount: railComponents.length,
+      handrailComponentSpans: railComponentSpans,
+      continuousHandrails,
+      handrailEndpoints: rails.map((item) => ({
+        componentId: item.componentId, endpoints: item.endpoints.map((point) => point.toArray()),
+      })),
+    },
+  };
 }
 
 function computeStats(root) {
@@ -880,23 +1997,76 @@ export function createYunnanCourtyardPrototype(userOptions = {}) {
   const mainZ = D / 2 - 2.45;
   const sideDepth = D - 4.2;
 
-  const base = box(W + 0.5, 0.16, D + 0.5, materials.stone, { type: 'stone-foundation-plinth', walkable: true });
+  const base = box(W + 0.5, 0.16, D + 0.5, materials.stone, {
+    type: 'stone-foundation-plinth', semanticRole: 'walkable-site-base',
+    componentId: 'SITE-BASE', supportId: 'SITE-BASE', walkable: true,
+  });
   base.position.y = 0.08;
   ground.add(base);
-  addStoneFloor(ground, courtyardW, courtyardD, materials, { type: 'courtyard-stone-paving' });
-  const frontStep = box(2.2, 0.14, 0.55, materials.stone, { type: 'front-stone-step', walkable: true });
+  const courtyardFloor = addStoneFloor(ground, courtyardW, courtyardD, materials, {
+    type: 'courtyard-stone-paving', componentId: 'COURTYARD-FLOOR',
+  });
+  courtyardFloor.position.y = p - 0.07;
+  const approach = box(2.2, 0.12, 2.2, materials.stone, {
+    type: 'front-approach', semanticRole: 'walkable-entry',
+    componentId: 'ENTRY-APPROACH', supportId: 'ENTRY-APPROACH', walkable: true,
+  });
+  approach.position.set(0, 0.10, -D / 2 - 1.25);
+  const frontStep = box(2.2, 0.14, 0.55, materials.stone, {
+    type: 'front-stone-step', semanticRole: 'walkable-entry',
+    componentId: 'ENTRY-STEP-01', supportId: 'ENTRY-STEP-01', walkable: true,
+  });
   frontStep.position.set(0, 0.18, -D / 2 - 0.3);
-  ground.add(frontStep);
-  const entryApproach = box(1.6, 0.08, 2.8, materials.stone, { type: 'entry-approach-walkway', walkable: true });
-  entryApproach.position.set(0, 0.05, -D / 2 - 1.40);
-  ground.add(entryApproach);
+  const secondStep = box(1.85, 0.20, 0.48, materials.stone, {
+    type: 'front-stone-step', semanticRole: 'walkable-entry',
+    componentId: 'ENTRY-STEP-02', supportId: 'ENTRY-STEP-02', walkable: true,
+  });
+  secondStep.position.set(0, 0.25, -D / 2 - 0.02);
+  const threshold = box(1.55, 0.20, 0.48, materials.stone, {
+    type: 'door-threshold', semanticRole: 'walkable-entry',
+    componentId: 'ENTRY-THRESHOLD', supportId: 'ENTRY-THRESHOLD', walkable: true,
+  });
+  threshold.position.set(0, p - 0.10, -D / 2 + 0.24);
+  const entryWalkway = box(2.0, 0.12, 5.1, materials.stone, {
+    type: 'entry-gallery-floor', semanticRole: 'walkable-floor',
+    componentId: 'ENTRY-GALLERY-FLOOR', supportId: 'ENTRY-GALLERY-FLOOR', walkable: true,
+  });
+  entryWalkway.position.set(0, p - 0.06, -D / 2 + 2.80);
+  const westGalleryFloor = box(3.0, 0.12, courtyardD + 1.2, materials.timber, {
+    type: 'west-lower-gallery-floor', semanticRole: 'walkable-floor',
+    componentId: 'WEST-LOWER-GALLERY-FLOOR', supportId: 'WEST-LOWER-GALLERY-FLOOR', walkable: true,
+  });
+  westGalleryFloor.position.set(-4.05, p - 0.06, 0.15);
+  ground.add(approach, frontStep, secondStep, threshold, entryWalkway, westGalleryFloor);
 
-  addWall(walls, 0, p, D / 2 - t / 2, W, t, H, materials, { type: 'north-main-wall', componentId: 'WALL-NORTH-MAIN', taper: options.wallTaper });
-  addWall(walls, -W / 2 + t / 2, p, 0.15, t, sideDepth, H * 0.9, materials, { type: 'west-side-wall', componentId: 'WALL-WEST-SIDE', taper: options.wallTaper });
-  addWall(walls, W / 2 - t / 2, p, 0.15, t, sideDepth, H * 0.9, materials, { type: 'east-side-wall', componentId: 'WALL-EAST-SIDE', taper: options.wallTaper });
+  addWallWithOpenings(walls, {
+    orientation: 'x', centerAlong: 0, fixed: D / 2 - t / 2, baseY: p,
+    span: W, thickness: t, height: H, taper: options.wallTaper,
+    openings: [
+      { id: 'WINDOW-NORTH-LEFT', along: -W * 0.28, width: 0.44, bottomOffset: 2.68, height: 0.38 },
+      { id: 'WINDOW-NORTH-RIGHT', along: W * 0.28, width: 0.44, bottomOffset: 2.68, height: 0.38 },
+    ],
+  }, materials, { type: 'north-main-wall', componentId: 'WALL-NORTH-MAIN', taper: options.wallTaper });
+  for (const [side, fixed, openingId] of [
+    ['west', -W / 2 + t / 2, 'WINDOW-WEST-HIGH'],
+    ['east', W / 2 - t / 2, 'WINDOW-EAST-HIGH'],
+  ]) {
+    addWallWithOpenings(walls, {
+      orientation: 'z', centerAlong: 0.15, fixed, baseY: p,
+      span: sideDepth, thickness: t, height: H * 0.9, taper: options.wallTaper,
+      openings: [{ id: openingId, along: 0.40, width: 0.32, bottomOffset: 2.52, height: 0.42 }],
+    }, materials, { type: `${side}-side-wall`, componentId: `WALL-${side.toUpperCase()}-SIDE`, taper: options.wallTaper });
+  }
   const southSpan = W / 2 - 2.0;
   addWall(walls, -southSpan / 2 - 1.0, p, -D / 2 + t / 2, southSpan, t, H * 0.72, materials, { type: 'south-left-wall', componentId: 'WALL-SOUTH-LEFT', taper: options.wallTaper * 0.85 });
   addWall(walls, southSpan / 2 + 1.0, p, -D / 2 + t / 2, southSpan, t, H * 0.72, materials, { type: 'south-right-wall', componentId: 'WALL-SOUTH-RIGHT', taper: options.wallTaper * 0.85 });
+  addWall(
+    walls, 0, p + 2.15, -D / 2 + t / 2, 2.0, t, H * 0.72 - 2.15,
+    materials, {
+      type: 'south-gate-lintel-wall', componentId: 'WALL-SOUTH-GATE',
+      taper: options.wallTaper * 0.35, foundationBearing: false,
+    },
+  );
   addGable(walls, 0, p + H, D / 2 - t / 2, W, t, H * 0.72, materials, { type: 'north-gable-wall', componentId: 'WALL-NORTH-GABLE' });
 
   for (const x of [-W / 2 + 1.0, -courtyardW / 2, courtyardW / 2, W / 2 - 1.0]) {
@@ -907,26 +2077,53 @@ export function createYunnanCourtyardPrototype(userOptions = {}) {
     addBeam(frame, x, p + options.floorHeight, galleryZ, 0.18, 0.16, courtyardW + 0.35, 0, materials, { type: 'gallery-floor-beam' });
   }
   addBeam(frame, 0, p + H * 0.52, galleryZ, courtyardW + 1.0, 0.16, 0.18, 0, materials, { type: 'gallery-lintel' });
-  const upperGallery = box(courtyardW + 2.2, 0.12, 1.05, materials.timber, { type: 'upper-gallery-walkway', walkable: true });
-  upperGallery.position.set(-0.45, p + options.floorHeight, galleryZ + 0.15);
+  const upperGallery = box(courtyardW + 2.2, 0.12, 1.05, materials.timber, {
+    type: 'upper-gallery-walkway', semanticRole: 'walkable-floor',
+    componentId: 'UPPER-GALLERY-FLOOR', supportId: 'UPPER-GALLERY-FLOOR', walkable: true,
+  });
+  upperGallery.position.set(-0.45, p + options.floorHeight - 0.06, galleryZ + 0.15);
   frame.add(upperGallery);
 
-  addDoor(openings, 0, p, -D / 2 - 0.01, 1.25, 2.15, materials, { type: 'central-front-door', componentId: 'GATE-SOUTH-01' });
-  addHighWindow(openings, -W * 0.28, p + 2.68, D / 2 - t - 0.02, 0.44, 0.38, materials, { type: 'sparse-high-window-left', componentId: 'WINDOW-NORTH-LEFT' });
-  addHighWindow(openings, W * 0.28, p + 2.68, D / 2 - t - 0.02, 0.44, 0.38, materials, { type: 'sparse-high-window-right', componentId: 'WINDOW-NORTH-RIGHT' });
-  const westWindow = addHighWindow(openings, -W / 2 - 0.02, p + 2.52, 0.55, 0.32, 0.42, materials, { type: 'side-high-window-west', componentId: 'WINDOW-WEST-HIGH' });
+  addDoor(openings, 0, p, -D / 2 - 0.01, 1.25, 2.15, materials, {
+    type: 'central-front-door', componentId: 'GATE-SOUTH-01', hostId: 'WALL-SOUTH-GATE',
+  });
+  addHighWindow(openings, -W * 0.28, p + 2.68, D / 2 - t - 0.02, 0.44, 0.38, materials, {
+    type: 'sparse-high-window-left', componentId: 'WINDOW-NORTH-LEFT', hostId: 'WALL-NORTH-MAIN',
+  });
+  addHighWindow(openings, W * 0.28, p + 2.68, D / 2 - t - 0.02, 0.44, 0.38, materials, {
+    type: 'sparse-high-window-right', componentId: 'WINDOW-NORTH-RIGHT', hostId: 'WALL-NORTH-MAIN',
+  });
+  const westWindow = addHighWindow(openings, -W / 2 - 0.02, p + 2.52, 0.55, 0.32, 0.42, materials, {
+    type: 'side-high-window-west', componentId: 'WINDOW-WEST-HIGH', hostId: 'WALL-WEST-SIDE',
+  });
   westWindow.rotation.y = Math.PI / 2;
-  const eastWindow = addHighWindow(openings, W / 2 + 0.02, p + 2.52, 0.55, 0.32, 0.42, materials, { type: 'side-high-window-east', componentId: 'WINDOW-EAST-HIGH' });
+  const eastWindow = addHighWindow(openings, W / 2 + 0.02, p + 2.52, 0.55, 0.32, 0.42, materials, {
+    type: 'side-high-window-east', componentId: 'WINDOW-EAST-HIGH', hostId: 'WALL-EAST-SIDE',
+  });
   eastWindow.rotation.y = -Math.PI / 2;
 
   const stair = addDoubleFlightStairs(frame, -courtyardW / 2 - 1.25, p, galleryZ - 0.20, materials, {
     width: 0.84, gap: 0.18, run: 2.05, landingDepth: 0.82, totalRise: options.floorHeight,
   }, { type: 'west-daily-stair', stairId: 'STAIR-WEST-01' });
-  const upperStairConnector = box(1.30, 0.12, 1.90, materials.timber, {
-    type: 'upper-stair-gallery-connector', walkable: true, stairId: 'STAIR-WEST-01',
+  const upperLandingExtension = box(2.80, 0.12, 0.82, materials.timber, {
+    type: 'stair-upper-landing-extension', semanticRole: 'walkable-floor',
+    componentId: 'STAIR-WEST-01-UPPER-TURN', supportId: 'STAIR-WEST-01-UPPER-TURN',
+    walkable: true, topElevationM: p + options.floorHeight,
   });
-  upperStairConnector.position.set(-3.0, p + options.floorHeight - 0.06, 1.65);
-  frame.add(upperStairConnector);
+  upperLandingExtension.position.set(
+    stair.position.x + 0.47, p + options.floorHeight - 0.06,
+    stair.position.z - 1.435,
+  );
+  const upperStairConnector = box(0.84, 0.12, 0.85, materials.timber, {
+    type: 'stair-upper-gallery-connector', semanticRole: 'walkable-floor',
+    componentId: 'STAIR-WEST-01-UPPER-CONNECTOR', supportId: 'STAIR-WEST-01-UPPER-CONNECTOR',
+    walkable: true, topElevationM: p + options.floorHeight,
+  });
+  upperStairConnector.position.set(
+    stair.position.x + 1.45, p + options.floorHeight - 0.06,
+    stair.position.z - 0.60,
+  );
+  frame.add(upperLandingExtension, upperStairConnector);
 
   const specs = [
     {
@@ -983,16 +2180,48 @@ export function createYunnanCourtyardPrototype(userOptions = {}) {
 
   const visitor = createVisitor();
   actors.add(visitor);
-  const stairRoute = stair.userData.routeLocal.map(([x, y, z]) => new THREE.Vector3(stair.position.x + x, stair.position.y + y, stair.position.z + z));
-  const route = [
-    new THREE.Vector3(0, 0.10, -D / 2 - 2.0),
-    new THREE.Vector3(0, 0.10, -D / 2 - 0.25),
-    new THREE.Vector3(0, 0.10, -D / 2 + 1.0),
-    new THREE.Vector3(-1.1, 0.10, -2.4),
-    ...stairRoute,
-    new THREE.Vector3(-courtyardW / 2, p + options.floorHeight, galleryZ + 0.55),
+  const routeAnchors = [
+    { id: 'ROUTE-APPROACH', position: [0, 0.16, -D / 2 - 1.72], supportId: 'ENTRY-APPROACH', stage: 'approach' },
+    { id: 'ROUTE-STEP-01', position: [0, 0.25, -D / 2 - 0.44], supportId: 'ENTRY-STEP-01', stage: 'entry-steps' },
+    { id: 'ROUTE-STEP-02', position: [0, 0.35, -D / 2 - 0.08], supportId: 'ENTRY-STEP-02', stage: 'entry-steps' },
+    { id: 'ROUTE-THRESHOLD', position: [0, p, -D / 2 + 0.24], supportId: 'ENTRY-THRESHOLD', stage: 'door-threshold' },
+    { id: 'ROUTE-ENTRY-GALLERY', position: [0, p, -D / 2 + 1.35], supportId: 'ENTRY-GALLERY-FLOOR', stage: 'inside-entry' },
+    { id: 'ROUTE-COURTYARD-SOUTH', position: [0, p, -2.45], supportId: 'COURTYARD-FLOOR', stage: 'courtyard' },
+    { id: 'ROUTE-COURTYARD-WEST', position: [-2.42, p, 0.15], supportId: 'COURTYARD-FLOOR', stage: 'courtyard' },
+    { id: 'ROUTE-WEST-GALLERY', position: [-3.50, p, 0.15], supportId: 'WEST-LOWER-GALLERY-FLOOR', stage: 'lower-gallery' },
+    { id: 'ROUTE-STAIR-APPROACH', position: [-4.36, p, 0.35], supportId: 'WEST-LOWER-GALLERY-FLOOR', stage: 'stair-approach' },
+    ...stair.userData.routeAnchors.map((anchor) => ({
+      ...anchor,
+      position: [
+        stair.position.x + anchor.position[0],
+        stair.position.y + anchor.position[1],
+        stair.position.z + anchor.position[2],
+      ],
+    })),
+    {
+      id: 'ROUTE-UPPER-TURN',
+      position: [upperStairConnector.position.x, p + options.floorHeight, upperLandingExtension.position.z],
+      supportId: 'STAIR-WEST-01-UPPER-TURN', stage: 'upper-turn',
+    },
+    {
+      id: 'ROUTE-UPPER-CONNECTOR',
+      position: [upperStairConnector.position.x, p + options.floorHeight, upperStairConnector.position.z + 0.30],
+      supportId: 'STAIR-WEST-01-UPPER-CONNECTOR', stage: 'upper-connector',
+    },
+    {
+      id: 'ROUTE-UPPER-GALLERY',
+      position: [upperStairConnector.position.x, p + options.floorHeight, galleryZ + 0.15],
+      supportId: 'UPPER-GALLERY-FLOOR', stage: 'upper-gallery',
+    },
+    {
+      id: 'ROUTE-UPPER-DESTINATION',
+      position: [upperStairConnector.position.x, p + options.floorHeight, galleryZ + 0.44],
+      supportId: 'UPPER-GALLERY-FLOOR', stage: 'destination',
+    },
   ];
+  const route = routeAnchors.map((anchor) => new THREE.Vector3(...anchor.position));
   root.userData.visitorRoute = {
+    anchors: routeAnchors,
     points: route,
     pointArrays: route.map((point) => point.toArray()),
     entersThroughDoor: true,
@@ -1002,7 +2231,6 @@ export function createYunnanCourtyardPrototype(userOptions = {}) {
     upperFloorElevationM: p + options.floorHeight,
     relativeUpperFloorM: options.floorHeight,
   };
-  root.userData.visitorRoute.diagnostics = buildVisitorRouteDiagnostics(root, route);
   setVisitorProgress(root, 0);
   setOpeningProgress(root, 0);
 
@@ -1015,6 +2243,7 @@ export function createYunnanCourtyardPrototype(userOptions = {}) {
     }
   });
   root.userData.stats = computeStats(root);
+  root.userData.interactionGeometry = inspectInteractionGeometry(root);
   root.userData.surfaceProduction = {
     version: '5.5.0', baselineVersion: '5.4.4', baselineAvailable: true,
     baselineActive: baseline, profileId: surfaceProfile.id,
@@ -1029,6 +2258,13 @@ export function createYunnanCourtyardPrototype(userOptions = {}) {
   root.userData.actions = {
     setOpenings: (value) => setOpeningProgress(root, value),
     setVisitor: (value) => setVisitorProgress(root, value),
+    sampleVisitorRoute: (count = 193) => sampleVisitorRoute(root, count),
+    auditVisitorRoute: (count = 193) => sampleVisitorRoute(root, count),
+    inspectInteractions: () => {
+      const result = inspectInteractionGeometry(root);
+      root.userData.interactionGeometry = result;
+      return result;
+    },
     setRoofExploded: (value) => {
       const result = setYunnanRoofExploded(root, value);
       root.userData.runtimeState.roofExploded = Boolean(value);

@@ -18,6 +18,7 @@ concurrency:
 
 env:
   PROJECT_DIR: yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local
+  QA_OUTPUT_DIR: ${{ github.workspace }}/.qa-output/surface-${{ github.sha }}-attempt-${{ github.run_attempt }}
 
 jobs:
   browser-qa:
@@ -29,6 +30,17 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Initialize clean evidence directory for this commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected="$GITHUB_WORKSPACE/.qa-output/surface-$GITHUB_SHA-attempt-$GITHUB_RUN_ATTEMPT"
+          test "$QA_OUTPUT_DIR" = "$expected"
+          rm -rf -- "$QA_OUTPUT_DIR"
+          mkdir -p "$QA_OUTPUT_DIR/screenshots/surface" "$QA_OUTPUT_DIR/screenshots/regression"
+          printf '{"schemaVersion":"5.5.0","sha":"%s","ref":"%s","runId":"%s","runAttempt":"%s"}\n' \
+            "$GITHUB_SHA" "$GITHUB_REF" "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" > "$QA_OUTPUT_DIR/run-metadata.json"
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -39,15 +51,28 @@ jobs:
         run: |
           python -m py_compile tools/validate.py tools/surface_production_smoke.py tools/browser_smoke_test.py
           node --check assets/js/surface-production-lab.js
+          node --check threejs/YunnanBaselineV544.js
+          node --check threejs/v544/YunnanCourtyardProduction.js
+          node --check threejs/v544/YunnanMaterialFactory.js
           node --check threejs/YunnanSurfaceProfiles.js
           node --check threejs/YunnanWallSurfaceSystem.js
           node --check threejs/YunnanRoofSurfaceSystem.js
           node --check threejs/YunnanCourtyardProduction.js
           node --check threejs/YunnanMaterialFactory.js
+          node --check vendor/three/three.module.js
+          node --check vendor/three/controls/OrbitControls.js
           python tools/validate.py
-          git diff --check origin/main...HEAD
+
+      - name: Check changed-file whitespace outside pristine vendor and frozen baseline
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --check origin/main...HEAD -- . \
+            ":(exclude)$PROJECT_DIR/vendor/three/**" \
+            ":(exclude)$PROJECT_DIR/threejs/v544/**"
 
       - name: Install Playwright Chromium
+        id: playwright
         working-directory: ${{ env.PROJECT_DIR }}
         run: |
           python -m pip install -r requirements-dev.txt
@@ -55,22 +80,26 @@ jobs:
 
       - name: Run V5.5.0 surface browser QA
         working-directory: ${{ env.PROJECT_DIR }}
-        run: python tools/surface_production_smoke.py
+        run: |
+          python tools/surface_production_smoke.py \
+            --run-sha "$GITHUB_SHA" \
+            --report "$QA_OUTPUT_DIR/surface-production-smoke.json" \
+            --screenshots "$QA_OUTPUT_DIR/screenshots/surface"
 
       - name: Run complete production-line regression
+        if: always() && steps.playwright.outcome == 'success'
         working-directory: ${{ env.PROJECT_DIR }}
-        run: python tools/browser_smoke_test.py
+        run: |
+          python tools/browser_smoke_test.py \
+            --run-sha "$GITHUB_SHA" \
+            --report "$QA_OUTPUT_DIR/production-line-regression.json" \
+            --screenshots "$QA_OUTPUT_DIR/screenshots/regression"
 
       - name: Upload browser QA evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: surface-production-v550-${{ github.sha }}
-          path: |
-            ${{ env.PROJECT_DIR }}/data/qa/yunnan_surface_production_smoke_v5_5_0.json
-            ${{ env.PROJECT_DIR }}/data/qa/local_browser_smoke_test.json
-            ${{ env.PROJECT_DIR }}/qa/screenshots/v550_*.png
-            ${{ env.PROJECT_DIR }}/qa/screenshots/local_browser_smoke_test.png
-            ${{ env.PROJECT_DIR }}/qa/screenshots/v540_tuanjie_*.png
-          if-no-files-found: warn
+          name: surface-production-v550-${{ github.sha }}-attempt-${{ github.run_attempt }}
+          path: ${{ env.QA_OUTPUT_DIR }}/**
+          if-no-files-found: error
           retention-days: 30

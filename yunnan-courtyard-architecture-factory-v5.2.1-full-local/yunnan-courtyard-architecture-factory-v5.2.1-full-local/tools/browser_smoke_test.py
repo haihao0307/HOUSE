@@ -1,21 +1,43 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
+import argparse
+import hashlib
 import json
 import os
 import sys
 import threading
+from datetime import datetime, timezone
 from functools import partial
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 VERSION = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
-REPORT = ROOT / "data/qa/local_browser_smoke_test.json"
-SCREEN = ROOT / "qa/screenshots/local_browser_smoke_test.png"
-REFERENCE_HIGH_SCREEN = ROOT / "qa/screenshots/v540_tuanjie_reference_high.png"
-REFERENCE_STANDARD_SCREEN = ROOT / "qa/screenshots/v540_tuanjie_reference_standard.png"
-REFERENCE_FILE_SCREEN = ROOT / "qa/screenshots/v540_tuanjie_file_loader.png"
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Complete production-line browser regression")
+    parser.add_argument("--report", type=Path, default=ROOT / "data/qa/local_browser_smoke_test.json")
+    parser.add_argument("--screenshots", type=Path, default=ROOT / "qa/screenshots")
+    parser.add_argument("--run-sha", default=os.environ.get("GITHUB_SHA"), help="Commit under test (recorded in the report).")
+    return parser.parse_args()
+
+
+ARGS = parse_args()
+REPORT = ARGS.report if ARGS.report.is_absolute() else ROOT / ARGS.report
+SCREENSHOT_DIR = ARGS.screenshots if ARGS.screenshots.is_absolute() else ROOT / ARGS.screenshots
+SCREEN = SCREENSHOT_DIR / "local_browser_smoke_test.png"
+REFERENCE_HIGH_SCREEN = SCREENSHOT_DIR / "v550_regression_tuanjie_reference_high.png"
+REFERENCE_STANDARD_SCREEN = SCREENSHOT_DIR / "v550_regression_tuanjie_reference_standard.png"
+REFERENCE_FILE_SCREEN = SCREENSHOT_DIR / "v550_regression_tuanjie_file_loader.png"
+REPORT.parent.mkdir(parents=True, exist_ok=True)
+SCREENSHOT_DIR.mkdir(parents=True, exist_ok=True)
+if REPORT.is_file():
+    REPORT.unlink()
+for previous in [SCREEN, REFERENCE_HIGH_SCREEN, REFERENCE_STANDARD_SCREEN, REFERENCE_FILE_SCREEN]:
+    if previous.is_file():
+        previous.unlink()
 
 try:
     from playwright.sync_api import sync_playwright
@@ -25,6 +47,10 @@ except ImportError:
 
 results = []
 errors = []
+browser = None
+state = None
+measured_state = None
+upper = None
 class QuietHandler(SimpleHTTPRequestHandler):
     def log_message(self, _format, *args):
         pass
@@ -218,13 +244,49 @@ try:
     sync_stats = page.evaluate("window.__GITHUB_SYNC__.stats()")
     results.append({"name": "GitHub sync public read contract", "ok": sync_stats.get("schemaVersion") == VERSION and sync_stats.get("queued", -1) >= 0, "detail": sync_stats})
     browser.close()
+    browser = None
+except BaseException as exc:
+    results.append({
+        "name": "uncaught test exception",
+        "ok": False,
+        "detail": f"{type(exc).__name__}: {exc}",
+    })
 finally:
+    if browser is not None:
+        try:
+            browser.close()
+        except BaseException as exc:
+            results.append({
+                "name": "browser cleanup",
+                "ok": False,
+                "detail": f"{type(exc).__name__}: {exc}",
+            })
     server.shutdown()
     server.server_close()
 
 passed = sum(1 for item in results if item.get("ok"))
+screenshots = []
+for path in [SCREEN, REFERENCE_HIGH_SCREEN, REFERENCE_STANDARD_SCREEN, REFERENCE_FILE_SCREEN]:
+    if not path.is_file():
+        continue
+    payload = path.read_bytes()
+    screenshots.append({
+        "name": path.name,
+        "bytes": len(payload),
+        "sha256": hashlib.sha256(payload).hexdigest(),
+    })
 report = {
+    "schemaVersion": VERSION,
     "version": VERSION,
+    "generatedAt": datetime.now(timezone.utc).isoformat(),
+    "runSha": ARGS.run_sha,
+    "viewport": {"width": 1440, "height": 1000},
+    "performance": {
+        "initial": state,
+        "measuredBranch": measured_state,
+        "upperFloorRegression": upper,
+    },
+    "screenshots": screenshots,
     "results": results,
     "errors": errors,
     "summary": {"passed": passed, "failed": len(results) - passed, "total": len(results)},
