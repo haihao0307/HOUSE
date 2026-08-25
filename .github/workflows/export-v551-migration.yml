@@ -6,14 +6,23 @@ on:
       - codex/yunnan-surface-production-v5.5.0
     paths:
       - '.github/workflows/export-v551-migration.yml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/export-v551-migration.yml'
   workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: export-v551-migration-${{ github.ref }}
+  group: export-v551-migration-${{ github.event.pull_request.head.sha || github.sha }}
   cancel-in-progress: true
+
+env:
+  SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+  SOURCE_REF: ${{ github.event.pull_request.head.ref || github.ref_name }}
 
 jobs:
   export:
@@ -23,7 +32,7 @@ jobs:
       - name: Checkout complete history
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.ref_name }}
+          ref: ${{ env.SOURCE_SHA }}
           fetch-depth: 0
 
       - name: Build migration archive
@@ -39,12 +48,12 @@ jobs:
 
           git fetch origin main --force
           git branch -f archive-main origin/main
-          git branch -f archive-v551 HEAD
+          git branch -f archive-v551 "$SOURCE_SHA"
 
-          git archive --format=zip --output="$OUT/HOUSE-v5.5.1-current-source.zip" HEAD
+          git archive --format=zip --output="$OUT/HOUSE-v5.5.1-current-source.zip" "$SOURCE_SHA"
           git bundle create "$OUT/HOUSE-v5.5.1-history.bundle" archive-main archive-v551
-          git format-patch --stdout --binary origin/main..HEAD > "$OUT/HOUSE-v5.5.1-changes.patch"
-          git diff --binary origin/main...HEAD > "$OUT/HOUSE-v5.5.1-changes.diff"
+          git format-patch --stdout --binary origin/main.."$SOURCE_SHA" > "$OUT/HOUSE-v5.5.1-changes.patch"
+          git diff --binary origin/main..."$SOURCE_SHA" > "$OUT/HOUSE-v5.5.1-changes.diff"
 
           cat > "$OUT/CONTINUE_HERE.md" <<EOF
           # 云南民间建筑生产线 V5.5.1 迁移说明
@@ -52,8 +61,8 @@ jobs:
           ## 固定快照
 
           - 仓库：haihao0307/HOUSE
-          - 工作分支：codex/yunnan-surface-production-v5.5.0
-          - 快照提交：${GITHUB_SHA}
+          - 工作分支：${SOURCE_REF}
+          - 快照提交：${SOURCE_SHA}
           - 基线分支：main
           - PR：${PR_URL}
           - 项目目录：${PROJECT_DIR}
@@ -105,8 +114,8 @@ jobs:
           state = {
               'schemaVersion': '5.5.1-migration-1',
               'repository': 'haihao0307/HOUSE',
-              'branch': os.environ['GITHUB_REF_NAME'],
-              'headSha': os.environ['GITHUB_SHA'],
+              'branch': os.environ['SOURCE_REF'],
+              'headSha': os.environ['SOURCE_SHA'],
               'baseBranch': 'main',
               'pullRequest': 11,
               'pullRequestUrl': 'https://github.com/haihao0307/HOUSE/pull/11',
@@ -150,7 +159,7 @@ jobs:
       - name: Upload migration package
         uses: actions/upload-artifact@v4
         with:
-          name: HOUSE-yunnan-production-v5.5.1-migration-${{ github.sha }}
+          name: HOUSE-yunnan-production-v5.5.1-migration-${{ env.SOURCE_SHA }}
           path: |
             HOUSE-yunnan-production-v5.5.1-migration.zip
             export-v551/CHECKSUMS.sha256
