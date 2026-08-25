@@ -1,0 +1,160 @@
+name: Export V5.5.1 Migration Archive
+
+on:
+  push:
+    branches:
+      - codex/yunnan-surface-production-v5.5.0
+    paths:
+      - '.github/workflows/export-v551-migration.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: export-v551-migration-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout complete history
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+          fetch-depth: 0
+
+      - name: Build migration archive
+        shell: bash
+        env:
+          PR_URL: https://github.com/haihao0307/HOUSE/pull/11
+          PROJECT_DIR: yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local
+        run: |
+          set -euo pipefail
+          OUT="$GITHUB_WORKSPACE/export-v551"
+          rm -rf "$OUT"
+          mkdir -p "$OUT"
+
+          git fetch origin main --force
+          git branch -f archive-main origin/main
+          git branch -f archive-v551 HEAD
+
+          git archive --format=zip --output="$OUT/HOUSE-v5.5.1-current-source.zip" HEAD
+          git bundle create "$OUT/HOUSE-v5.5.1-history.bundle" archive-main archive-v551
+          git format-patch --stdout --binary origin/main..HEAD > "$OUT/HOUSE-v5.5.1-changes.patch"
+          git diff --binary origin/main...HEAD > "$OUT/HOUSE-v5.5.1-changes.diff"
+
+          cat > "$OUT/CONTINUE_HERE.md" <<EOF
+          # 云南民间建筑生产线 V5.5.1 迁移说明
+
+          ## 固定快照
+
+          - 仓库：haihao0307/HOUSE
+          - 工作分支：codex/yunnan-surface-production-v5.5.0
+          - 快照提交：${GITHUB_SHA}
+          - 基线分支：main
+          - PR：${PR_URL}
+          - 项目目录：${PROJECT_DIR}
+
+          ## 三种恢复方式
+
+          ### 直接查看源文件
+
+          解压 `HOUSE-v5.5.1-current-source.zip`，进入项目目录后从 `folk-building-production-line.html` 或 `surface-production-lab.html` 开始检查。
+
+          ### 保留 Git 历史继续开发
+
+          ```bash
+          git clone HOUSE-v5.5.1-history.bundle HOUSE-v5.5.1
+          cd HOUSE-v5.5.1
+          git checkout archive-v551
+          ```
+
+          ### 在 main 基线上重新应用本轮改动
+
+          ```bash
+          git checkout main
+          git am HOUSE-v5.5.1-changes.patch
+          ```
+
+          ## 新会话继续工作前必须执行
+
+          1. 先阅读项目根目录的 `AGENTS.md`、`PROJECT_STATE.md`、知识合同与测绘资料。
+          2. 先运行现有验证与浏览器测试，再修改生成器。
+          3. 板瓦、筒瓦、正脊、出檐、山墙、墙面与门窗不得凭视觉猜测，必须服从 GitHub 知识库。
+          4. 主网页只展示最新成果，历史版本仅用于后台回归。
+          5. 用户只验收网页成果，中间文件操作由项目代理完成。
+
+          ## 当前尚需继续修正
+
+          - 板瓦凹面水槽与筒瓦盖缝的空间关系。
+          - 正脊位于两坡最高交界轴线，脊瓦与封口细节。
+          - 板瓦和筒瓦的真实出檐、端口厚度及手工微差。
+          - 山墙仅位于双坡屋面两端山面。
+          - 瓦面机械阵列感，需加入连续沉降、积尘、雨蚀、苔藓、破损和成片修补。
+          - 墙面抹灰、稻草纤维、土坯深浅、夯筑层理、返潮、雨痕、裂缝与修补。
+          - 门窗木作的日晒、雨淋、包浆、返潮、磨损与替换件年代差。
+          EOF
+
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          out = Path(os.environ['GITHUB_WORKSPACE']) / 'export-v551'
+          state = {
+              'schemaVersion': '5.5.1-migration-1',
+              'repository': 'haihao0307/HOUSE',
+              'branch': os.environ['GITHUB_REF_NAME'],
+              'headSha': os.environ['GITHUB_SHA'],
+              'baseBranch': 'main',
+              'pullRequest': 11,
+              'pullRequestUrl': 'https://github.com/haihao0307/HOUSE/pull/11',
+              'projectDirectory': 'yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local',
+              'primaryPages': [
+                  'folk-building-production-line.html',
+                  'surface-production-lab.html',
+                  'index.html',
+                  'reference-model-showcase.html'
+              ],
+              'knowledgeFirst': True,
+              'latestOnlyInMainUI': True,
+              'status': 'archived-for-next-adjustment-session'
+          }
+          (out / 'CURRENT_STATE.json').write_text(json.dumps(state, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+          PY
+
+          (
+            cd "$OUT"
+            sha256sum \
+              HOUSE-v5.5.1-current-source.zip \
+              HOUSE-v5.5.1-history.bundle \
+              HOUSE-v5.5.1-changes.patch \
+              HOUSE-v5.5.1-changes.diff \
+              CONTINUE_HERE.md \
+              CURRENT_STATE.json > CHECKSUMS.sha256
+          )
+
+          python - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile, ZIP_DEFLATED
+          import os
+          root = Path(os.environ['GITHUB_WORKSPACE']) / 'export-v551'
+          target = Path(os.environ['GITHUB_WORKSPACE']) / 'HOUSE-yunnan-production-v5.5.1-migration.zip'
+          with ZipFile(target, 'w', compression=ZIP_DEFLATED, compresslevel=6) as z:
+              for p in sorted(root.iterdir()):
+                  z.write(p, p.name)
+          print(target, target.stat().st_size)
+          PY
+
+      - name: Upload migration package
+        uses: actions/upload-artifact@v4
+        with:
+          name: HOUSE-yunnan-production-v5.5.1-migration-${{ github.sha }}
+          path: |
+            HOUSE-yunnan-production-v5.5.1-migration.zip
+            export-v551/CHECKSUMS.sha256
+            export-v551/CONTINUE_HERE.md
+            export-v551/CURRENT_STATE.json
+          if-no-files-found: error
+          retention-days: 90
