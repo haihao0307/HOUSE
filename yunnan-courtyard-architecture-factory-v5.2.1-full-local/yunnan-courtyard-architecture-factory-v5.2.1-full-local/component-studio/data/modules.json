@@ -1,0 +1,322 @@
+{
+  "schemaVersion": "1.0.0",
+  "workspaceId": "yunnan-architecture-component-studio",
+  "defaultBuilding": {
+    "buildingId": "KUNMING-YIKEYIN-001",
+    "typology": "昆明一颗印",
+    "period": "1940至1945年"
+  },
+  "statuses": [
+    {
+      "id": "draft",
+      "label": "草稿",
+      "tone": "muted"
+    },
+    {
+      "id": "research_locked",
+      "label": "知识锁定",
+      "tone": "blue"
+    },
+    {
+      "id": "visual_review",
+      "label": "视觉检查",
+      "tone": "amber"
+    },
+    {
+      "id": "visual_approved",
+      "label": "视觉通过",
+      "tone": "green"
+    },
+    {
+      "id": "production_locked",
+      "label": "生产锁定",
+      "tone": "violet"
+    }
+  ],
+  "modules": [
+    {
+      "id": "knowledge-blueprint",
+      "number": "01",
+      "name": "建筑知识与空间蓝图",
+      "shortName": "总体蓝图",
+      "repoSlug": "YUNNAN-ARCH-KNOWLEDGE",
+      "summary": "管理地区、院落类型、间数、轴网、楼层、平面、立面、剖面和单体空间关系。",
+      "scope": [
+        "地区与支系",
+        "院落拓扑",
+        "间数与开间",
+        "轴网与楼层标高",
+        "房屋单体关系",
+        "平立剖依赖",
+        "证据等级"
+      ],
+      "outputs": [
+        "KnowledgePack",
+        "BuildingBlueprint",
+        "AxisGrid",
+        "LevelLedger",
+        "HostSchedule"
+      ],
+      "dependencies": [],
+      "preview": "../index.html",
+      "accent": "#d6a75d",
+      "starterTasks": [
+        "锁定一颗印三间四耳倒八尺的单体关系",
+        "整理明间、次间、柱网和楼层标高账本",
+        "建立墙体、门窗、木构和屋面的共同宿主表",
+        "区分实测、图录、扫描外观和视觉校准"
+      ]
+    },
+    {
+      "id": "foundation-site",
+      "number": "02",
+      "name": "台基、地基与场地",
+      "shortName": "地基场地",
+      "repoSlug": "YUNNAN-FOUNDATION-SITE",
+      "summary": "管理基础、柱础、墙脚、台基、天井铺地、入口台阶、高差和排水。",
+      "scope": [
+        "石基础",
+        "柱础",
+        "墙脚",
+        "台基",
+        "天井地面",
+        "入口台阶",
+        "排水坡度",
+        "室内外高差"
+      ],
+      "outputs": [
+        "FoundationAssembly",
+        "GroundLevelMap",
+        "SupportLedger",
+        "DrainageMap"
+      ],
+      "dependencies": [
+        "knowledge-blueprint"
+      ],
+      "preview": "../index.html",
+      "accent": "#9ea680",
+      "starterTasks": [
+        "读取蓝图中的轴网、墙线和柱位",
+        "建立柱础与承重点对应关系",
+        "锁定天井、门道和室内地面标高",
+        "输出人物入户所需的连续可行走面"
+      ]
+    },
+    {
+      "id": "timber-structure",
+      "number": "03",
+      "name": "木结构几何",
+      "shortName": "木结构",
+      "repoSlug": "YUNNAN-TIMBER-STRUCTURE",
+      "summary": "管理柱、梁、枋、檩、椽、楼板、楼梯、平台、栏杆、扶手和榫卯几何。",
+      "scope": [
+        "柱梁枋",
+        "檩椽",
+        "楼楞楼板",
+        "木楼梯",
+        "平台栏杆",
+        "扶手承托",
+        "榫卯端部",
+        "构件身份"
+      ],
+      "outputs": [
+        "TimberMemberManifest",
+        "TimberGeometryPackage",
+        "JointSchedule",
+        "WalkableTimberSurfaces"
+      ],
+      "dependencies": [
+        "knowledge-blueprint",
+        "foundation-site"
+      ],
+      "preview": "../yunnan-architecture-understanding-lab.html",
+      "accent": "#a7784d",
+      "starterTasks": [
+        "为每根构件建立 memberId 和 sourceTimberId",
+        "记录构件长度轴瀁径向轴和截面",
+        "保持八加八双跑楼梯与平台连续",
+        "输出木纹生产线需要的母材连续性数据"
+      ]
+    },
+    {
+      "id": "roof-form",
+      "number": "04",
+      "name": "屋顶形制与屋面基层",
+      "shortName": "屋顶基层",
+      "repoSlug": "YUNNAN-ROOF-FORM",
+      "summary": "管理独立屋面单元、坡面、脊线、檐线、出檐、曲面、山墙端面和瓦下构造层。",
+      "scope": [
+        "独立屋面单元",
+        "双坡与单坡",
+        "正脊与垂脊轴线",
+        "檐线与出檐",
+        "坡向与排水",
+        "山墙端面",
+        "望板泥背",
+        "靠墙收口"
+      ],
+      "outputs": [
+        "RoofFormContract",
+        "RoofSectionManifest",
+        "RoofBuildUpAssembly",
+        "EaveAndRidgeLedger"
+      ],
+      "dependencies": [
+        "knowledge-blueprint",
+        "timber-structure"
+      ],
+      "preview": "../surface-production-lab.html",
+      "accent": "#748b86",
+      "starterTasks": [
+        "锁定正房、耳房、倒座、门楼和廊厦独立屋面",
+        "确保正脊沿两坡最高交界轴线",
+        "输出每个坡面的局部坐标和最大坡降方向",
+        "建立椽列以上的基层厚度与檐口构造"
+      ]
+    },
+    {
+      "id": "tilework",
+      "number": "05",
+      "name": "瓦作生产线",
+      "shortName": "瓦作",
+      "repoSlug": "YUNNAN-TILEWORK",
+      "summary": "管理板瓦、筒瓦、滴水、勾头、脊瓦、封头、搭接、盖缝、出檐和维修片区。",
+      "scope": [
+        "板瓦水槽",
+        "筒瓦盖缝",
+        "纵向搭接",
+        "滴水勾头",
+        "脊瓦封头",
+        "边缘收口",
+        "檐口微差",
+        "破损与维修"
+      ],
+      "outputs": [
+        "TileworkAssembly",
+        "TileCourseManifest",
+        "RidgeTileAssembly",
+        "RepairPatchMap"
+      ],
+      "dependencies": [
+        "roof-form"
+      ],
+      "preview": "../surface-production-lab.html",
+      "accent": "#82959a",
+      "starterTasks": [
+        "验证板瓦凹面向上形成连续水槽",
+        "由板瓦列间接缝推导筒瓦数量",
+        "锁定瓦片出檐与端口厚度",
+        "用连续场生成沉降、苔藓、破损和成片修补"
+      ]
+    },
+    {
+      "id": "walls",
+      "number": "06",
+      "name": "墙体与墙面生产线",
+      "shortName": "墙体墙面",
+      "repoSlug": "YUNNAN-WALL-SYSTEM",
+      "summary": "管理土坯、夯土、收分、山墙、洞口边界、抹灰、返潮、雨痕、裂缝和补抹。",
+      "scope": [
+        "墙体本体",
+        "收分与厚度",
+        "山墙",
+        "洞口边界",
+        "抹灰层",
+        "土坯与夯筑层理",
+        "石勒脚与砖包角",
+        "返潮雨痕裂缝修补"
+      ],
+      "outputs": [
+        "WallAssembly",
+        "WallHostManifest",
+        "WallSurfaceState",
+        "OpeningVoidLedger"
+      ],
+      "dependencies": [
+        "knowledge-blueprint",
+        "foundation-site"
+      ],
+      "preview": "../surface-production-lab.html",
+      "accent": "#a8785d",
+      "starterTasks": [
+        "只读取统一洞口表并准确留洞",
+        "建立完整抹灰与裸露基层共存关系",
+        "返潮从墙脚向上衰减，雨痕服从重力",
+        "修补具有边界、厚度和年代色差"
+      ]
+    },
+    {
+      "id": "openings",
+      "number": "07",
+      "name": "门窗与木隔扇",
+      "shortName": "门窗",
+      "repoSlug": "YUNNAN-OPENINGS",
+      "summary": "管理门框、窗框、门槛、门扇、窗扇、格扇、隔断、五金、转轴、开启和碰撞。",
+      "scope": [
+        "门窗洞口装配",
+        "框槛",
+        "门扇窗扇",
+        "格心裙板",
+        "木隔扇",
+        "枢轴插销五金",
+        "自动开合",
+        "碰撞包络"
+      ],
+      "outputs": [
+        "OpeningAssembly",
+        "OpeningInteractionContract",
+        "HardwareSchedule",
+        "OpeningCollisionEnvelope"
+      ],
+      "dependencies": [
+        "knowledge-blueprint",
+        "walls",
+        "timber-structure"
+      ],
+      "preview": "../surface-production-lab.html",
+      "accent": "#b28a5c",
+      "starterTasks": [
+        "门窗与墙体共用同一份洞口表",
+        "记录宿主、框、活动扇、转轴和开启角度",
+        "保持人物接近时的自动联动",
+        "完成门窗木作近景和开闭状态验收"
+      ]
+    },
+    {
+      "id": "timber-surface",
+      "number": "08",
+      "name": "木纹与木材表面",
+      "shortName": "木纹表面",
+      "repoSlug": "YUNNAN-TIMBER-SURFACE",
+      "summary": "整合原有程序木纹，管理圆材、方材、端面、母材连续性、微法线、视差、位移和年代状态。",
+      "scope": [
+        "圆材纵纹",
+        "方材母材坐标",
+        "端面年轮",
+        "毛孔裂纹结疤",
+        "加工痕",
+        "母材连续性",
+        "微法线与视差",
+        "日晒雨淋包浆返潮"
+      ],
+      "outputs": [
+        "TimberSurfacePackage",
+        "TimberMaterialManifest",
+        "QualityProfile",
+        "BakedChannelContract"
+      ],
+      "dependencies": [
+        "timber-structure",
+        "openings"
+      ],
+      "preview": "../surface-production-lab.html",
+      "accent": "#8d6547",
+      "starterTasks": [
+        "接入 yunnan timber procedural skill 0.4.0",
+        "统一圆柱 Y 轴与横梁、竖枋的纹理方向",
+        "按 sourceTimberId 和 grainOffset 保持母材连续",
+        "建立 building、close、inspection 三档性能"
+      ]
+    }
+  ]
+}
