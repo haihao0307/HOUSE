@@ -58,7 +58,7 @@ def main() -> None:
     server = ThreadingHTTPServer(("127.0.0.1", 0), handler)
     thread = threading.Thread(target=server.serve_forever, daemon=True)
     thread.start()
-    url = f"http://127.0.0.1:{server.server_port}/component-studio/wall-lab-v24.html"
+    url = f"http://127.0.0.1:{server.server_port}/component-studio/wall-lab-v24.html?githubMock=1"
 
     console_errors: list[str] = []
     page_errors: list[str] = []
@@ -82,20 +82,31 @@ def main() -> None:
             page.goto(url, wait_until="networkidle", timeout=90_000)
             page.wait_for_function("() => Boolean(window.__YUNNAN_WALL_V24__)", timeout=90_000)
             page.wait_for_function("() => Boolean(window.__YUNNAN_WALL_LIBRARY_V24__)", timeout=90_000)
+            page.wait_for_function("() => Boolean(window.__YUNNAN_WALL_GITHUB_BRIDGE__)", timeout=90_000)
             runtime = page.evaluate("() => window.__YUNNAN_WALL_V24__")
             library_runtime = page.evaluate("() => ({version: window.__YUNNAN_WALL_LIBRARY_V24__.version, count: window.__YUNNAN_WALL_LIBRARY_V24__.count})")
+            bridge_runtime = page.evaluate("() => ({version: window.__YUNNAN_WALL_GITHUB_BRIDGE__.version, mode: window.__YUNNAN_WALL_GITHUB_BRIDGE__.mode, mock: window.__YUNNAN_WALL_GITHUB_BRIDGE__.mock})")
             canvas_box = page.locator("#wallCanvas").bounding_box()
             library_box = page.locator("#referenceLibrary").bounding_box()
+            bridge_box = page.locator("#githubBridge").bounding_box()
             if not canvas_box or canvas_box["width"] < 700 or canvas_box["height"] < 450:
                 raise RuntimeError(f"program wall canvas is too small: {canvas_box}")
             if not library_box or library_box["width"] < 240 or library_box["height"] < 550:
                 raise RuntimeError(f"reference library is not usable: {library_box}")
+            if not bridge_box or bridge_box["width"] < 220 or bridge_box["height"] < 180:
+                raise RuntimeError(f"GitHub bridge is not usable: {bridge_box}")
             if runtime.get("version") != "2.4.0":
                 raise RuntimeError(f"unexpected runtime version: {runtime}")
             if runtime.get("noise") != ["Perlin", "Simplex", "Worley"]:
                 raise RuntimeError(f"noise stack mismatch: {runtime.get('noise')}")
             if library_runtime.get("version") != "2.4.1":
                 raise RuntimeError(f"unexpected reference library version: {library_runtime}")
+            if bridge_runtime != {
+                "version": "2.5.0",
+                "mode": "temporary-branch-exif-stripped-proxies",
+                "mock": True,
+            }:
+                raise RuntimeError(f"unexpected GitHub bridge runtime: {bridge_runtime}")
             geometry = runtime.get("geometry") or {}
             if geometry.get("brickCount", 0) < 150 or geometry.get("stoneCount", 0) < 20:
                 raise RuntimeError(f"generated geometry is incomplete: {geometry}")
@@ -110,6 +121,15 @@ def main() -> None:
             card_count = page.locator(".reference-card").count()
             if card_count < 1:
                 raise RuntimeError("reference upload did not create a visible material card")
+
+            page.locator("#githubPushButton").click()
+            page.wait_for_function(
+                "() => window.__YUNNAN_WALL_GITHUB_BRIDGE__.lastResult?.uploadedCount >= 1",
+                timeout=60_000,
+            )
+            push_result = page.evaluate("() => window.__YUNNAN_WALL_GITHUB_BRIDGE__.lastResult")
+            if push_result.get("mock") is not True or push_result.get("uploadedCount", 0) < 1:
+                raise RuntimeError(f"mock GitHub evidence push failed: {push_result}")
 
             screenshot = page.screenshot(path=str(SCREENSHOT), full_page=False)
             image = Image.open(BytesIO(screenshot)).convert("RGB")
@@ -133,7 +153,7 @@ def main() -> None:
                 raise RuntimeError(f"browser errors: console={console_errors}, page={page_errors}")
 
             report = {
-                "schemaVersion": "1.1.0",
+                "schemaVersion": "1.2.0",
                 "page": "component-studio/wall-lab-v24.html",
                 "runtime": runtime,
                 "referenceLibrary": {
@@ -141,6 +161,12 @@ def main() -> None:
                     "box": library_box,
                     "uploadedCardCount": card_count,
                     "activeReferenceVisible": True,
+                },
+                "githubBridge": {
+                    "runtime": bridge_runtime,
+                    "box": bridge_box,
+                    "mockPushResult": push_result,
+                    "proxyOnly": True,
                 },
                 "canvas": canvas_box,
                 "visual": {
