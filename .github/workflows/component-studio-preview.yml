@@ -139,21 +139,33 @@ jobs:
         run: |
           set -euo pipefail
           base="${PAGE_URL%/}/"
+          tmp="$(mktemp -d)"
+          trap 'rm -rf "$tmp"' EXIT
+
           for attempt in $(seq 1 30); do
-            build="$(curl -fsSL "${base}build.json" || true)"
-            if printf '%s' "$build" | grep -q "$EXPECTED_SHA"; then
+            if curl -fsSL "${base}build.json" -o "$tmp/build.json" \
+              && grep -Fq "$EXPECTED_SHA" "$tmp/build.json"; then
               break
             fi
             sleep 5
           done
-          printf '%s' "$build" | grep -q "$EXPECTED_SHA"
-          printf '%s' "$build" | grep -q '"componentStudioVersion":"2.0.0"'
-          curl -fsSL "${base}component-studio/" | grep -q "云南建筑组件工作台"
-          curl -fsSL "${base}component-studio/wall-lab.html" | grep -q "云南墙体与墙面工作室"
-          curl -fsSL "${base}component-studio/data/wall-knowledge-v2.json" | grep -q '"recordId": "YUNNAN-WALL-KNOWLEDGE-V2"'
-          curl -fsSL "${base}reference-model-showcase.html?mode=wulong" | grep -q "云南建筑三模型高清证据查看器"
-          curl -fsSL "${base}assets/js/reference-viewer-quality.js" | grep -q "srgb-linear-lighting-five-tap-detail-recovery-v2"
-          registry="$(curl -fsSL "${base}component-studio/data/modules.json")"
-          printf '%s' "$registry" | grep -q '"tilework"'
-          printf '%s' "$registry" | grep -q '"openings"'
-          printf '%s' "$registry" | grep -q '"timber-surface"'
+
+          grep -Fq "$EXPECTED_SHA" "$tmp/build.json"
+          grep -Fq '"componentStudioVersion":"2.0.0"' "$tmp/build.json"
+
+          fetch_and_require() {
+            local url="$1"
+            local target="$2"
+            local marker="$3"
+            curl -fsSL "$url" -o "$tmp/$target"
+            grep -Fq "$marker" "$tmp/$target"
+          }
+
+          fetch_and_require "${base}component-studio/" "component-studio.html" "云南建筑组件工作台"
+          fetch_and_require "${base}component-studio/wall-lab.html" "wall-lab.html" "云南墙体与墙面工作室"
+          fetch_and_require "${base}component-studio/data/wall-knowledge-v2.json" "wall-knowledge.json" '"recordId": "YUNNAN-WALL-KNOWLEDGE-V2"'
+          fetch_and_require "${base}reference-model-showcase.html?mode=wulong" "reference-showcase.html" "云南建筑三模型高清证据查看器"
+          fetch_and_require "${base}assets/js/reference-viewer-quality.js" "reference-viewer-quality.js" "srgb-linear-lighting-five-tap-detail-recovery-v2"
+          fetch_and_require "${base}component-studio/data/modules.json" "modules.json" '"tilework"'
+          grep -Fq '"openings"' "$tmp/modules.json"
+          grep -Fq '"timber-surface"' "$tmp/modules.json"
