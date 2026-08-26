@@ -5,6 +5,7 @@ import json
 import shutil
 import statistics
 import threading
+import zipfile
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from io import BytesIO
 from pathlib import Path
@@ -56,6 +57,7 @@ def main() -> None:
     SCREENSHOT.parent.mkdir(parents=True, exist_ok=True)
     REPORT.parent.mkdir(parents=True, exist_ok=True)
     reference_fixtures = [Path(f"/tmp/wall_reference_smoke_{index:02d}.jpg") for index in range(REFERENCE_COUNT)]
+    bundle_path = Path("/tmp/yunnan-wall-evidence-smoke.zip")
     for index, path in enumerate(reference_fixtures):
         make_reference_fixture(path, index)
 
@@ -81,16 +83,23 @@ def main() -> None:
                     "--use-angle=swiftshader",
                 ],
             )
-            page = browser.new_page(viewport={"width": 1600, "height": 1000}, device_scale_factor=1)
+            context = browser.new_context(
+                viewport={"width": 1600, "height": 1000},
+                device_scale_factor=1,
+                accept_downloads=True,
+            )
+            page = context.new_page()
             page.on("console", lambda message: console_errors.append(message.text) if message.type == "error" else None)
             page.on("pageerror", lambda error: page_errors.append(str(error)))
             page.goto(url, wait_until="networkidle", timeout=90_000)
             page.wait_for_function("() => Boolean(window.__YUNNAN_WALL_V24__)", timeout=90_000)
             page.wait_for_function("() => Boolean(window.__YUNNAN_WALL_LIBRARY_V24__)", timeout=90_000)
             page.wait_for_function("() => Boolean(window.__YUNNAN_WALL_GITHUB_BRIDGE__)", timeout=90_000)
+            page.wait_for_function("() => Boolean(window.__YUNNAN_WALL_EVIDENCE_BUNDLE__)", timeout=90_000)
             runtime = page.evaluate("() => window.__YUNNAN_WALL_V24__")
             library_runtime = page.evaluate("() => ({version: window.__YUNNAN_WALL_LIBRARY_V24__.version, count: window.__YUNNAN_WALL_LIBRARY_V24__.count})")
             bridge_runtime = page.evaluate("() => ({version: window.__YUNNAN_WALL_GITHUB_BRIDGE__.version, mode: window.__YUNNAN_WALL_GITHUB_BRIDGE__.mode, mock: window.__YUNNAN_WALL_GITHUB_BRIDGE__.mock})")
+            delivery_runtime = page.evaluate("() => ({version: window.__YUNNAN_WALL_EVIDENCE_BUNDLE__.version, mode: window.__YUNNAN_WALL_EVIDENCE_BUNDLE__.mode})")
             canvas_box = page.locator("#wallCanvas").bounding_box()
             library_box = page.locator("#referenceLibrary").bounding_box()
             bridge_box = page.locator("#githubBridge").bounding_box()
@@ -98,8 +107,8 @@ def main() -> None:
                 raise RuntimeError(f"program wall canvas is too small: {canvas_box}")
             if not library_box or library_box["width"] < 240 or library_box["height"] < 550:
                 raise RuntimeError(f"reference library is not usable: {library_box}")
-            if not bridge_box or bridge_box["width"] < 220 or bridge_box["height"] < 180:
-                raise RuntimeError(f"GitHub bridge is not usable: {bridge_box}")
+            if not bridge_box or bridge_box["width"] < 220 or bridge_box["height"] < 250:
+                raise RuntimeError(f"wall delivery center is not usable: {bridge_box}")
             if runtime.get("version") != "2.4.0":
                 raise RuntimeError(f"unexpected runtime version: {runtime}")
             if runtime.get("noise") != ["Perlin", "Simplex", "Worley"]:
@@ -112,6 +121,11 @@ def main() -> None:
                 "mock": True,
             }:
                 raise RuntimeError(f"unexpected GitHub bridge runtime: {bridge_runtime}")
+            if delivery_runtime != {
+                "version": "2.6.0",
+                "mode": "token-assisted-github-or-tokenless-zip",
+            }:
+                raise RuntimeError(f"unexpected delivery runtime: {delivery_runtime}")
             geometry = runtime.get("geometry") or {}
             if geometry.get("brickCount", 0) < 150 or geometry.get("stoneCount", 0) < 20:
                 raise RuntimeError(f"generated geometry is incomplete: {geometry}")
@@ -131,17 +145,56 @@ def main() -> None:
                 raise RuntimeError(f"reference library lost cards: {card_count}/{REFERENCE_COUNT}")
 
             button_boxes: dict[str, dict[str, float] | None] = {}
-            for button_id in ("githubTestButton", "githubPushButton", "githubCleanupButton"):
+            for button_id in (
+                "githubTokenCreateLink",
+                "githubTestButton",
+                "githubPushButton",
+                "githubCleanupButton",
+                "githubExportButton",
+            ):
                 locator = page.locator(f"#{button_id}")
                 if not locator.is_visible():
-                    raise RuntimeError(f"GitHub bridge button is hidden: {button_id}")
+                    raise RuntimeError(f"delivery control is hidden: {button_id}")
                 box = locator.bounding_box()
                 button_boxes[button_id] = box
                 if not box:
-                    raise RuntimeError(f"GitHub bridge button has no layout box: {button_id}")
+                    raise RuntimeError(f"delivery control has no layout box: {button_id}")
                 if box["y"] < library_box["y"] or box["y"] + box["height"] > library_box["y"] + library_box["height"]:
-                    raise RuntimeError(f"GitHub bridge button is outside the visible library panel: {button_id} {box}")
+                    raise RuntimeError(f"delivery control is outside the visible library panel: {button_id} {box}")
 
+            page.locator("#githubToken").fill("")
+            page.locator("#githubTestButton").click()
+            page.wait_for_function(
+                "() => document.querySelector('#githubBridgeState')?.textContent === '尚未授权'",
+                timeout=10_000,
+            )
+            blank_token_message = page.locator("#githubBridgeStatus").inner_text()
+            if "下载整批资料包" not in blank_token_message:
+                raise RuntimeError(f"blank-token fallback was not explained: {blank_token_message}")
+
+            with page.expect_download(timeout=180_000) as download_info:
+                page.locator("#githubExportButton").click()
+            download = download_info.value
+            download.save_as(bundle_path)
+            page.wait_for_function(
+                f"() => window.__YUNNAN_WALL_EVIDENCE_BUNDLE__.lastResult?.packagedCount >= {REFERENCE_COUNT}",
+                timeout=30_000,
+            )
+            bundle_result = page.evaluate("() => window.__YUNNAN_WALL_EVIDENCE_BUNDLE__.lastResult")
+            if bundle_result.get("packagedCount", 0) < REFERENCE_COUNT or bundle_result.get("bytes", 0) < 10_000:
+                raise RuntimeError(f"tokenless evidence bundle is incomplete: {bundle_result}")
+            with zipfile.ZipFile(bundle_path) as archive:
+                names = archive.namelist()
+                image_names = [name for name in names if name.startswith("images/") and name.endswith(".jpg")]
+                if "manifest.json" not in names or "README.txt" not in names:
+                    raise RuntimeError(f"bundle contract files are missing: {names[:10]}")
+                if len(image_names) < REFERENCE_COUNT:
+                    raise RuntimeError(f"bundle lost image proxies: {len(image_names)}/{REFERENCE_COUNT}")
+                manifest = json.loads(archive.read("manifest.json").decode("utf-8"))
+                if manifest.get("counts", {}).get("packagedProxies", 0) < REFERENCE_COUNT:
+                    raise RuntimeError(f"bundle manifest count mismatch: {manifest.get('counts')}")
+
+            page.locator("#githubToken").fill("github_pat_" + "A" * 40)
             page.locator("#githubPushButton").click()
             page.wait_for_function(
                 f"() => window.__YUNNAN_WALL_GITHUB_BRIDGE__.lastResult?.uploadedCount >= {REFERENCE_COUNT}",
@@ -173,7 +226,7 @@ def main() -> None:
                 raise RuntimeError(f"browser errors: console={console_errors}, page={page_errors}")
 
             report = {
-                "schemaVersion": "1.3.0",
+                "schemaVersion": "1.4.0",
                 "page": "component-studio/wall-lab-v24.html",
                 "runtime": runtime,
                 "referenceLibrary": {
@@ -182,13 +235,16 @@ def main() -> None:
                     "uploadedCardCount": card_count,
                     "activeReferenceVisible": True,
                 },
-                "githubBridge": {
-                    "runtime": bridge_runtime,
+                "delivery": {
+                    "githubRuntime": bridge_runtime,
+                    "bundleRuntime": delivery_runtime,
                     "box": bridge_box,
                     "buttonBoxes": button_boxes,
-                    "buttonsVisibleWithReferenceCount": REFERENCE_COUNT,
+                    "controlsVisibleWithReferenceCount": REFERENCE_COUNT,
+                    "blankTokenMessage": blank_token_message,
+                    "tokenlessBundle": bundle_result,
+                    "bundleImageCount": len(image_names),
                     "mockPushResult": push_result,
-                    "proxyOnly": True,
                 },
                 "canvas": canvas_box,
                 "visual": {
@@ -201,10 +257,12 @@ def main() -> None:
                 "passed": True,
             }
             REPORT.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
+            context.close()
             browser.close()
     finally:
         server.shutdown()
         server.server_close()
+        bundle_path.unlink(missing_ok=True)
         for path in reference_fixtures:
             path.unlink(missing_ok=True)
 
