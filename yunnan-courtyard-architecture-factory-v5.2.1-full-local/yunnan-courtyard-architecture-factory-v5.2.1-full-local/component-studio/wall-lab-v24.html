@@ -4,15 +4,16 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#13201c">
-<title>云南墙体与墙面工作室 V2.4.1</title>
+<title>云南墙体与墙面工作室 V2.5.0</title>
 <link rel="icon" href="data:,">
 <link rel="stylesheet" href="assets/wall-lab-v24.css">
+<link rel="stylesheet" href="assets/wall-lab-v25.css">
 <script src="assets/wall-lab-v24-db-bootstrap.js"></script>
 <script type="importmap">{"imports":{"three":"../vendor/three/three.module.js","three/addons/controls/OrbitControls.js":"../vendor/three/controls/OrbitControls.js"}}</script>
 </head>
 <body>
 <header class="topbar">
-  <a class="brand" href="./"><span class="seal">墙</span><span><strong>云南墙体与墙面工作室</strong><small>Yunnan Wall System Studio V2.4.1 · 噪波侵蚀与资料窗</small></span></a>
+  <a class="brand" href="./"><span class="seal">墙</span><span><strong>云南墙体与墙面工作室</strong><small>Yunnan Wall System Studio V2.5.0 · 噪波侵蚀、资料窗与 GitHub 临时桥</small></span></a>
   <div class="top-actions"><span class="pill ok">程序墙已直接载入</span><span class="pill">柏林噪波 + Simplex + Worley</span><a class="btn" href="./">八条生产线</a><a class="btn" href="../reference-model-showcase.html?mode=wulong">乌龙村 GLB</a></div>
 </header>
 <main>
@@ -35,6 +36,29 @@
         </select>
       </div>
       <div class="library-status" id="libraryStatus">正在连接原墙面资料仓</div>
+
+      <section class="github-bridge" id="githubBridge" aria-label="GitHub 临时资料桥">
+        <div class="github-bridge-head"><strong>GitHub 临时资料桥</strong><span class="pill" id="githubBridgeState">等待一次性授权</span></div>
+        <p>点击推送后，只上传<b>最大 2048 像素、去 EXIF 的 JPEG 预览</b>。原始照片和 RAW 留在本机。默认进入临时分支，便于小李读取并整流。公开仓库的临时提交可能在分支删除后仍被已知提交 SHA 访问，敏感资料请把目标改为已授权的私有仓库。</p>
+        <div class="github-token-row">
+          <input id="githubToken" type="password" autocomplete="off" spellcheck="false" placeholder="粘贴一次性 GitHub 细粒度令牌，Contents: Read and write">
+          <button class="btn" id="githubClearTokenButton" type="button">清空令牌</button>
+        </div>
+        <div class="github-target-grid">
+          <label><span>目标仓库</span><input id="githubRepository" value="haihao0307/HOUSE"></label>
+          <label><span>临时分支</span><input id="githubBranch" value="wall-evidence-inbox"></label>
+          <label><span>基线分支</span><input id="githubBaseBranch" value="main"></label>
+        </div>
+        <div class="github-actions">
+          <button class="btn" id="githubTestButton" type="button">测试 GitHub 连接</button>
+          <button class="btn gold" id="githubPushButton" type="button">推送全部图片预览</button>
+          <button class="btn" id="githubCleanupButton" type="button">删除临时资料分支</button>
+        </div>
+        <progress class="github-progress" id="githubProgress" value="0" max="1"></progress>
+        <div class="github-bridge-status" id="githubBridgeStatus">令牌只存在于当前输入框，不写入 localStorage、IndexedDB 或 GitHub Pages。</div>
+        <div class="github-bridge-foot"><span>建议使用仅授权单个仓库、短期限的细粒度令牌。</span><a class="github-branch-link" id="githubBranchLink" target="_blank" rel="noopener" hidden>打开本次临时批次</a></div>
+      </section>
+
       <div class="reference-grid" id="referenceGrid"><div class="library-empty">正在读取资料……</div></div>
     </div>
   </aside>
@@ -69,4 +93,5 @@
 </main>
 <script type="module" src="assets/wall-lab-v24.js"></script>
 <script type="module" src="assets/wall-lab-v24-library.js"></script>
+<script type="module" src="assets/wall-lab-v25-github.js"></script>
 </body></html>
