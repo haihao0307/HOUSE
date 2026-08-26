@@ -3,11 +3,12 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="description" content="云南墙体与墙面独立生产线 V2.1。读取原工作台资料，支持 NEF 内嵌预览、图片对比、语义标注、三模型证据，以及石基、土坯、抹灰和木过梁程序化试验墙。">
+  <meta name="description" content="云南墙体与墙面独立生产线 V2.2。读取原工作台资料，支持 NEF 内嵌预览、图片对比、语义标注、三模型证据，以及石基、土坯、抹灰和木过梁程序化试验墙。">
   <meta name="theme-color" content="#08100d">
-  <title>云南墙体与墙面工作室 V2.1</title>
+  <title>云南墙体与墙面工作室 V2.2</title>
   <link rel="icon" href="data:,">
   <link rel="stylesheet" href="assets/wall-lab.css">
+  <link rel="stylesheet" href="assets/wall-lab-v22.css">
   <script type="importmap">
   {
     "imports": {
@@ -22,7 +23,7 @@
   <header class="topbar">
     <a class="brand" href="./" aria-label="返回云南建筑组件工作台">
       <span class="brand-mark" aria-hidden="true">墙</span>
-      <span><strong>云南墙体与墙面工作室</strong><small>Yunnan Wall System Studio V2.1</small></span>
+      <span><strong>云南墙体与墙面工作室</strong><small>Yunnan Wall System Studio V2.2</small></span>
     </a>
     <div class="top-actions">
       <span class="sync-pill"><i></i><span id="storageState">正在连接原工作区</span></span>
@@ -36,13 +37,13 @@
     <div>
       <span class="eyebrow">06 · 独立组件生产线</span>
       <h1>从照片和三个真实 GLB，蒸馏一套可复建的云南墙体系统</h1>
-      <p>这一页只处理墙体本体、石基、土坯砌体、墙脚转换、门洞木过梁、抹灰、返潮、雨痕、裂缝和修补。乌龙村反馈已经进入 V2.1：下部显著石砌墙脚，上部离散土坯，抹灰作为覆盖层，墙身整体接近直立，门洞上方墙身连续。</p>
+      <p>这一页只处理墙体本体、石基、土坯砌体、墙脚转换、门洞木过梁、抹灰、返潮、雨痕、裂缝和修补。乌龙村反馈已经进入 V2.2：下部显著石砌墙脚，上部离散土坯，抹灰作为覆盖层，墙身整体接近直立，门洞上方墙身连续。</p>
     </div>
     <div class="hero-meta">
-      <span>V2.1 乌龙墙体修订</span>
+      <span>V2.2 日光侵蚀修订</span>
       <span>原 IndexedDB 资料可读</span>
       <span>三模型按需载入</span>
-      <span>石基与土坯实时重建</span>
+      <span>石基、土坯与侵蚀实时重建</span>
     </div>
   </section>
 
@@ -193,10 +194,11 @@
   </main>
 
   <footer>
-    墙面 V2.1 继续读取第一版浏览器资料。土坯默认尺寸、石基高度和木过梁嵌入量属于可调视觉校准，出现测绘数据后直接替换。图片和 NEF 原件仍保存在当前浏览器中，批准后的知识包、生成器和验收结果进入 GitHub。
+    墙面 V2.2 继续读取第一版浏览器资料。土坯默认尺寸、石基高度和木过梁嵌入量属于可调视觉校准，出现测绘数据后直接替换。图片和 NEF 原件仍保存在当前浏览器中，批准后的知识包、生成器和验收结果进入 GitHub。
   </footer>
 </div>
 <div class="toast-wrap" id="toastWrap" aria-live="polite"></div>
 <script type="module" src="assets/wall-lab-v21-loader.js"></script>
+<script type="module" src="assets/wall-lab-v22-loader.js"></script>
 </body>
 </html>
