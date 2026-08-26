@@ -125,6 +125,7 @@ def main() -> None:
                 page.goto(url, wait_until="networkidle", timeout=90_000)
                 page.wait_for_function("() => Boolean(window.__YUNNAN_WALL_GITHUB_BRIDGE__)", timeout=90_000)
                 page.wait_for_function("() => Boolean(window.__YUNNAN_WALL_GITHUB_CORS_PATCH__)", timeout=30_000)
+                page.wait_for_function("() => Boolean(window.__YUNNAN_WALL_LIBRARY_V24__)", timeout=30_000)
                 page.set_input_files("#libraryFileInput", str(fixture))
                 page.wait_for_function("() => window.__YUNNAN_WALL_LIBRARY_V24__.count >= 1", timeout=30_000)
 
