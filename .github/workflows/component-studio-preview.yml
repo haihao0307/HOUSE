@@ -29,13 +29,14 @@ jobs:
         working-directory: ${{ env.PROJECT_DIR }}
         run: python3 tools/validate.py
 
-      - name: Validate component studio V2.4
+      - name: Validate component studio V2.4.1
         working-directory: ${{ env.PROJECT_DIR }}
         shell: bash
         run: |
           set -euo pipefail
           for file in component-studio/assets/studio-*.js; do node --check "$file"; done
           node --check component-studio/assets/wall-lab-v24.js
+          node --check component-studio/assets/wall-lab-v24-library.js
           node --check assets/js/reference-viewer-quality.js
 
           python3 - <<'PY'
@@ -56,6 +57,7 @@ jobs:
               root / 'wall-lab-v24.html',
               root / 'assets/wall-lab-v24.css',
               root / 'assets/wall-lab-v24.js',
+              root / 'assets/wall-lab-v24-library.js',
               root / 'data/wall-knowledge-v2.json',
               root / 'data/evidence/wulong-wall-user-observation-2026-08-26.json',
               Path('tools/wall_v24_browser_smoke.py'),
@@ -65,7 +67,7 @@ jobs:
           ]
           missing = [str(path) for path in required if not path.is_file()]
           if missing:
-              raise SystemExit(f'missing component studio V2.4 files: {missing}')
+              raise SystemExit(f'missing component studio V2.4.1 files: {missing}')
 
           entry = (root / 'wall-lab.html').read_text(encoding='utf-8')
           if 'wall-lab-v24.html' not in entry:
@@ -73,15 +75,20 @@ jobs:
 
           page = (root / 'wall-lab-v24.html').read_text(encoding='utf-8')
           for marker in (
-              '云南墙体与墙面工作室 V2.4',
+              '云南墙体与墙面工作室 V2.4.1',
               '柏林噪波 + Simplex + Worley',
               '程序化实验墙主画面',
+              '参考资料窗口',
+              'referenceLibrary',
+              'referenceDropZone',
+              'referenceGrid',
               'wall-lab-v24.css',
               'wall-lab-v24.js',
+              'wall-lab-v24-library.js',
               'referencePlaceholder',
           ):
               if marker not in page:
-                  raise SystemExit(f'missing wall V2.4 page marker: {marker}')
+                  raise SystemExit(f'missing wall V2.4.1 page marker: {marker}')
 
           runtime = (root / 'assets/wall-lab-v24.js').read_text(encoding='utf-8')
           for marker in (
@@ -95,6 +102,18 @@ jobs:
           ):
               if marker not in runtime:
                   raise SystemExit(f'missing wall V2.4 runtime marker: {marker}')
+
+          library = (root / 'assets/wall-lab-v24-library.js').read_text(encoding='utf-8')
+          for marker in (
+              "const DB_NAME = 'YunnanComponentStudio'",
+              "const CHANNEL_NAME = 'yunnan-component-studio:v1'",
+              'reference-card',
+              'extractEmbeddedJpeg',
+              "version: '2.4.1'",
+              '__YUNNAN_WALL_LIBRARY_V24__',
+          ):
+              if marker not in library:
+                  raise SystemExit(f'missing wall reference library marker: {marker}')
 
           registry = json.loads((root / 'data/modules.json').read_text(encoding='utf-8'))
           ids = [item.get('id') for item in (registry.get('modules') or [])]
@@ -111,7 +130,7 @@ jobs:
       - name: Install wall browser QA dependencies
         run: python3 -m pip install --disable-pip-version-check playwright==1.57.0 pillow==11.3.0
 
-      - name: Run wall studio V2.4 browser QA
+      - name: Run wall studio V2.4.1 browser QA
         working-directory: ${{ env.PROJECT_DIR }}
         run: python3 tools/wall_v24_browser_smoke.py
 
@@ -133,7 +152,7 @@ jobs:
           rm -rf _site/references-private _site/release _site/.git _site/.github
           rm -f _site/assets/models/YN_TUANJIE_001_EDITABLE_HIGH.glb
           touch _site/.nojekyll
-          printf '{"schemaVersion":"5.5.1","componentStudioVersion":"2.4.0","wallStudioVersion":"2.4.0","referenceViewerQuality":"2.0.0","browserQa":"wall-v24-passed","sha":"%s","ref":"%s","runId":"%s","runAttempt":"%s"}\n' \
+          printf '{"schemaVersion":"5.5.1","componentStudioVersion":"2.4.1","wallStudioVersion":"2.4.1","referenceLibraryVersion":"2.4.1","referenceViewerQuality":"2.0.0","browserQa":"wall-v24-library-passed","sha":"%s","ref":"%s","runId":"%s","runAttempt":"%s"}\n' \
             "$GITHUB_SHA" "$GITHUB_REF_NAME" "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" > _site/build.json
 
       - name: Configure Pages
@@ -161,7 +180,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: deploy
     steps:
-      - name: Verify deployed component studio V2.4
+      - name: Verify deployed component studio V2.4.1
         env:
           PAGE_URL: ${{ needs.deploy.outputs.page_url }}
           EXPECTED_SHA: ${{ github.sha }}
@@ -181,9 +200,10 @@ jobs:
           done
 
           grep -Fq "$EXPECTED_SHA" "$tmp/build.json"
-          grep -Fq '"componentStudioVersion":"2.4.0"' "$tmp/build.json"
-          grep -Fq '"wallStudioVersion":"2.4.0"' "$tmp/build.json"
-          grep -Fq '"browserQa":"wall-v24-passed"' "$tmp/build.json"
+          grep -Fq '"componentStudioVersion":"2.4.1"' "$tmp/build.json"
+          grep -Fq '"wallStudioVersion":"2.4.1"' "$tmp/build.json"
+          grep -Fq '"referenceLibraryVersion":"2.4.1"' "$tmp/build.json"
+          grep -Fq '"browserQa":"wall-v24-library-passed"' "$tmp/build.json"
 
           fetch_and_require() {
             local url="$1"
@@ -195,13 +215,19 @@ jobs:
 
           fetch_and_require "${base}component-studio/" "component-studio.html" "云南建筑组件工作台"
           fetch_and_require "${base}component-studio/wall-lab.html" "wall-entry.html" "wall-lab-v24.html"
-          fetch_and_require "${base}component-studio/wall-lab-v24.html" "wall-v24.html" "柏林噪波 + Simplex + Worley"
-          fetch_and_require "${base}component-studio/assets/wall-lab-v24.css" "wall-v24.css" ".stage{display:grid"
+          fetch_and_require "${base}component-studio/wall-lab-v24.html" "wall-v24.html" "参考资料窗口"
+          grep -Fq 'referenceDropZone' "$tmp/wall-v24.html"
+          grep -Fq 'wall-lab-v24-library.js' "$tmp/wall-v24.html"
+          fetch_and_require "${base}component-studio/assets/wall-lab-v24.css" "wall-v24.css" ".reference-library"
           fetch_and_require "${base}component-studio/assets/wall-lab-v24.js" "wall-v24.js" "class Perlin3"
           grep -Fq 'class Simplex2' "$tmp/wall-v24.js"
           grep -Fq 'function worley2' "$tmp/wall-v24.js"
           grep -Fq "version:'2.4.0'" "$tmp/wall-v24.js"
           node --check "$tmp/wall-v24.js"
+          fetch_and_require "${base}component-studio/assets/wall-lab-v24-library.js" "wall-v24-library.js" "__YUNNAN_WALL_LIBRARY_V24__"
+          grep -Fq "version: '2.4.1'" "$tmp/wall-v24-library.js"
+          grep -Fq 'extractEmbeddedJpeg' "$tmp/wall-v24-library.js"
+          node --check "$tmp/wall-v24-library.js"
           fetch_and_require "${base}component-studio/data/wall-knowledge-v2.json" "wall-knowledge.json" '"revisionId": "WULONG-STONE-ADOBE-LINTEL-2026-08-26"'
           fetch_and_require "${base}reference-model-showcase.html?mode=wulong" "reference-showcase.html" "云南建筑三模型高清证据查看器"
           fetch_and_require "${base}component-studio/data/modules.json" "modules.json" '"tilework"'
