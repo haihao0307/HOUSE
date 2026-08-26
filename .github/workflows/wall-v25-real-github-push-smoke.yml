@@ -7,6 +7,9 @@ on:
     paths:
       - .github/workflows/wall-v25-real-github-push-smoke.yml
       - yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/tools/wall_v25_real_github_smoke.py
+      - yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/component-studio/wall-lab-v24.html
+      - yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/component-studio/assets/wall-lab-v25-cors.js
+      - yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/component-studio/assets/wall-lab-v25-github.js
   workflow_dispatch:
 
 permissions:
