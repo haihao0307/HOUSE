@@ -29,19 +29,24 @@ jobs:
         working-directory: ${{ env.PROJECT_DIR }}
         run: python3 tools/validate.py
 
-      - name: Validate component studio V2
+      - name: Validate component studio V2.1
         working-directory: ${{ env.PROJECT_DIR }}
         shell: bash
         run: |
           set -euo pipefail
           for file in component-studio/assets/studio-*.js; do node --check "$file"; done
           node --check component-studio/assets/wall-lab.js
+          node --check component-studio/assets/wall-lab-v21-loader.js
           node --check assets/js/reference-viewer-quality.js
+
           python3 - <<'PY'
+          import base64
+          import gzip
           import json
           from pathlib import Path
 
           root = Path('component-studio')
+          part_paths = [root / f'assets/wall-lab-v21.part{index:02d}.b64' for index in range(4)]
           required = [
               root / 'index.html',
               root / 'assets/studio.css',
@@ -54,13 +59,30 @@ jobs:
               root / 'wall-lab.html',
               root / 'assets/wall-lab.css',
               root / 'assets/wall-lab.js',
+              root / 'assets/wall-lab-v21-loader.js',
+              *part_paths,
               root / 'data/wall-knowledge-v2.json',
+              root / 'data/evidence/wulong-wall-user-observation-2026-08-26.json',
               Path('assets/js/reference-viewer-quality.js'),
               Path('reference-model-showcase.html'),
           ]
           missing = [str(path) for path in required if not path.is_file()]
           if missing:
               raise SystemExit(f'missing component studio files: {missing}')
+
+          encoded = ''.join(path.read_text(encoding='utf-8').strip() for path in part_paths)
+          source = gzip.decompress(base64.b64decode(encoded)).decode('utf-8')
+          reconstructed = Path('/tmp/wall-lab-v21.js')
+          reconstructed.write_text(source, encoding='utf-8')
+          for marker in (
+              "wulong-stone-adobe-lintel-v2.1",
+              'function buildEarthBrickWall',
+              'function buildStoneBase',
+              "component: 'timber-lintel-board'",
+              'continuous-spandrel',
+          ):
+              if marker not in source:
+                  raise SystemExit(f'missing reconstructed wall program marker: {marker}')
 
           registry = json.loads((root / 'data/modules.json').read_text(encoding='utf-8'))
           modules = registry.get('modules') or []
@@ -76,23 +98,50 @@ jobs:
                   raise SystemExit(f'missing UI marker: {marker}')
 
           wall_html = (root / 'wall-lab.html').read_text(encoding='utf-8')
-          for marker in ('云南墙体与墙面工作室', 'wallCanvas', 'modelFrame', 'compareGrid', 'tagCloud'):
+          for marker in (
+              '云南墙体与墙面工作室 V2.1',
+              'wallCanvas',
+              'modelFrame',
+              'compareGrid',
+              'tagCloud',
+              '下部石砌墙脚',
+              '上部土坯砌体',
+              '嵌入木过梁',
+              'wall-lab-v21-loader.js',
+          ):
               if marker not in wall_html:
                   raise SystemExit(f'missing wall studio marker: {marker}')
 
           wall = json.loads((root / 'data/wall-knowledge-v2.json').read_text(encoding='utf-8'))
           if wall.get('recordId') != 'YUNNAN-WALL-KNOWLEDGE-V2':
               raise SystemExit('wall knowledge record id mismatch')
+          if wall.get('schemaVersion') != '2.1.0':
+              raise SystemExit('wall knowledge schema must be 2.1.0')
+          if wall.get('revisionId') != 'WULONG-STONE-ADOBE-LINTEL-2026-08-26':
+              raise SystemExit('wall knowledge revision mismatch')
           if len(wall.get('referenceModels') or []) != 3:
               raise SystemExit('wall knowledge must preserve all three reference models')
           if not {'daliMaintained', 'wulongWeathered', 'tuanjieReference', 'museum1940sBalanced'} <= set(wall.get('presets') or {}):
               raise SystemExit('wall presets are incomplete')
+          wulong = wall['presets']['wulongWeathered']
+          for key in ('stoneHeightM', 'stoneProjectionM', 'earthBrickLengthM', 'earthBrickHeightM', 'mortarJointM', 'wallBatterM', 'lintelEmbedM'):
+              if key not in wulong:
+                  raise SystemExit(f'Wulong preset lacks {key}')
+          wall_system = wall.get('wallSystem') or {}
+          if not wall_system.get('earthBrickLogic') or not wall_system.get('stoneBaseLogic') or not wall_system.get('openingLogic'):
+              raise SystemExit('Wulong wall assembly contracts are incomplete')
+
+          observation = json.loads((root / 'data/evidence/wulong-wall-user-observation-2026-08-26.json').read_text(encoding='utf-8'))
+          if observation.get('recordId') != 'WULONG-WALL-USER-OBSERVATION-2026-08-26':
+              raise SystemExit('Wulong user observation receipt mismatch')
 
           showcase = Path('reference-model-showcase.html').read_text(encoding='utf-8')
           for marker in ('云南建筑三模型高清证据查看器', 'reference-viewer-quality.js', "get('mode')", 'qualityProfile'):
               if marker not in showcase:
                   raise SystemExit(f'missing high quality showcase marker: {marker}')
           PY
+
+          node --check /tmp/wall-lab-v21.js
 
       - name: Assemble public site
         shell: bash
@@ -103,7 +152,7 @@ jobs:
           rm -rf _site/references-private _site/release _site/.git _site/.github
           rm -f _site/assets/models/YN_TUANJIE_001_EDITABLE_HIGH.glb
           touch _site/.nojekyll
-          printf '{"schemaVersion":"5.5.1","componentStudioVersion":"2.0.0","wallStudioVersion":"2.0.0","referenceViewerQuality":"2.0.0","sha":"%s","ref":"%s","runId":"%s","runAttempt":"%s"}\n' \
+          printf '{"schemaVersion":"5.5.1","componentStudioVersion":"2.1.0","wallStudioVersion":"2.1.0","referenceViewerQuality":"2.0.0","sha":"%s","ref":"%s","runId":"%s","runAttempt":"%s"}\n' \
             "$GITHUB_SHA" "$GITHUB_REF_NAME" "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" > _site/build.json
 
       - name: Configure Pages
@@ -131,7 +180,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: deploy
     steps:
-      - name: Verify deployed component studio V2
+      - name: Verify deployed component studio V2.1
         env:
           PAGE_URL: ${{ needs.deploy.outputs.page_url }}
           EXPECTED_SHA: ${{ github.sha }}
@@ -151,7 +200,8 @@ jobs:
           done
 
           grep -Fq "$EXPECTED_SHA" "$tmp/build.json"
-          grep -Fq '"componentStudioVersion":"2.0.0"' "$tmp/build.json"
+          grep -Fq '"componentStudioVersion":"2.1.0"' "$tmp/build.json"
+          grep -Fq '"wallStudioVersion":"2.1.0"' "$tmp/build.json"
 
           fetch_and_require() {
             local url="$1"
@@ -162,10 +212,35 @@ jobs:
           }
 
           fetch_and_require "${base}component-studio/" "component-studio.html" "云南建筑组件工作台"
-          fetch_and_require "${base}component-studio/wall-lab.html" "wall-lab.html" "云南墙体与墙面工作室"
-          fetch_and_require "${base}component-studio/data/wall-knowledge-v2.json" "wall-knowledge.json" '"recordId": "YUNNAN-WALL-KNOWLEDGE-V2"'
+          fetch_and_require "${base}component-studio/wall-lab.html" "wall-lab.html" "云南墙体与墙面工作室 V2.1"
+          grep -Fq '下部石砌墙脚' "$tmp/wall-lab.html"
+          grep -Fq '上部土坯砌体' "$tmp/wall-lab.html"
+          grep -Fq 'wall-lab-v21-loader.js' "$tmp/wall-lab.html"
+          fetch_and_require "${base}component-studio/assets/wall-lab-v21-loader.js" "wall-lab-v21-loader.js" "DecompressionStream"
+          fetch_and_require "${base}component-studio/data/wall-knowledge-v2.json" "wall-knowledge.json" '"revisionId": "WULONG-STONE-ADOBE-LINTEL-2026-08-26"'
+          fetch_and_require "${base}component-studio/data/evidence/wulong-wall-user-observation-2026-08-26.json" "wulong-observation.json" '"recordId": "WULONG-WALL-USER-OBSERVATION-2026-08-26"'
           fetch_and_require "${base}reference-model-showcase.html?mode=wulong" "reference-showcase.html" "云南建筑三模型高清证据查看器"
           fetch_and_require "${base}assets/js/reference-viewer-quality.js" "reference-viewer-quality.js" "srgb-linear-lighting-five-tap-detail-recovery-v2"
           fetch_and_require "${base}component-studio/data/modules.json" "modules.json" '"tilework"'
           grep -Fq '"openings"' "$tmp/modules.json"
           grep -Fq '"timber-surface"' "$tmp/modules.json"
+
+          for index in 00 01 02 03; do
+            curl -fsSL "${base}component-studio/assets/wall-lab-v21.part${index}.b64" -o "$tmp/part${index}.b64"
+            test -s "$tmp/part${index}.b64"
+          done
+          python3 - "$tmp" <<'PY'
+          import base64
+          import gzip
+          import sys
+          from pathlib import Path
+
+          root = Path(sys.argv[1])
+          encoded = ''.join((root / f'part{index}.b64').read_text(encoding='utf-8').strip() for index in ('00', '01', '02', '03'))
+          source = gzip.decompress(base64.b64decode(encoded)).decode('utf-8')
+          for marker in ('wulong-stone-adobe-lintel-v2.1', 'function buildEarthBrickWall', 'function buildStoneBase', "component: 'timber-lintel-board'"):
+              if marker not in source:
+                  raise SystemExit(f'public reconstructed wall program lacks {marker}')
+          (root / 'wall-lab-v21.js').write_text(source, encoding='utf-8')
+          PY
+          node --check "$tmp/wall-lab-v21.js"
