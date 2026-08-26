@@ -9,7 +9,7 @@ from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from io import BytesIO
 from pathlib import Path
 
-from PIL import Image
+from PIL import Image, ImageDraw
 from playwright.sync_api import sync_playwright
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -35,9 +35,24 @@ def chrome_executable() -> str | None:
     return None
 
 
+def make_reference_fixture(path: Path) -> None:
+    image = Image.new("RGB", (640, 420), (143, 92, 58))
+    draw = ImageDraw.Draw(image)
+    for row in range(10):
+        y = 32 + row * 34
+        offset = 22 if row % 2 else 0
+        for column in range(13):
+            x = -20 + offset + column * 52
+            draw.rounded_rectangle((x, y, x + 47, y + 27), radius=5, fill=(157, 105, 68), outline=(91, 58, 39), width=3)
+    draw.rectangle((0, 330, 640, 420), fill=(111, 105, 91))
+    image.save(path, quality=92)
+
+
 def main() -> None:
     SCREENSHOT.parent.mkdir(parents=True, exist_ok=True)
     REPORT.parent.mkdir(parents=True, exist_ok=True)
+    reference_fixture = Path("/tmp/wall_reference_smoke.jpg")
+    make_reference_fixture(reference_fixture)
 
     handler = lambda *args, **kwargs: QuietHandler(*args, directory=str(ROOT), **kwargs)
     server = ThreadingHTTPServer(("127.0.0.1", 0), handler)
@@ -66,19 +81,35 @@ def main() -> None:
             page.on("pageerror", lambda error: page_errors.append(str(error)))
             page.goto(url, wait_until="networkidle", timeout=90_000)
             page.wait_for_function("() => Boolean(window.__YUNNAN_WALL_V24__)", timeout=90_000)
+            page.wait_for_function("() => Boolean(window.__YUNNAN_WALL_LIBRARY_V24__)", timeout=90_000)
             runtime = page.evaluate("() => window.__YUNNAN_WALL_V24__")
+            library_runtime = page.evaluate("() => ({version: window.__YUNNAN_WALL_LIBRARY_V24__.version, count: window.__YUNNAN_WALL_LIBRARY_V24__.count})")
             canvas_box = page.locator("#wallCanvas").bounding_box()
+            library_box = page.locator("#referenceLibrary").bounding_box()
             if not canvas_box or canvas_box["width"] < 700 or canvas_box["height"] < 450:
                 raise RuntimeError(f"program wall canvas is too small: {canvas_box}")
+            if not library_box or library_box["width"] < 240 or library_box["height"] < 550:
+                raise RuntimeError(f"reference library is not usable: {library_box}")
             if runtime.get("version") != "2.4.0":
                 raise RuntimeError(f"unexpected runtime version: {runtime}")
             if runtime.get("noise") != ["Perlin", "Simplex", "Worley"]:
                 raise RuntimeError(f"noise stack mismatch: {runtime.get('noise')}")
+            if library_runtime.get("version") != "2.4.1":
+                raise RuntimeError(f"unexpected reference library version: {library_runtime}")
             geometry = runtime.get("geometry") or {}
             if geometry.get("brickCount", 0) < 150 or geometry.get("stoneCount", 0) < 20:
                 raise RuntimeError(f"generated geometry is incomplete: {geometry}")
             if geometry.get("openSurfaceCount") != 0:
                 raise RuntimeError(f"open surface contract failed: {geometry}")
+
+            page.set_input_files("#libraryFileInput", str(reference_fixture))
+            page.wait_for_function("() => window.__YUNNAN_WALL_LIBRARY_V24__.count >= 1", timeout=30_000)
+            page.wait_for_selector(".reference-card", timeout=30_000)
+            page.locator(".reference-card").first.click()
+            page.wait_for_function("() => !document.querySelector('#referenceImage').hidden", timeout=30_000)
+            card_count = page.locator(".reference-card").count()
+            if card_count < 1:
+                raise RuntimeError("reference upload did not create a visible material card")
 
             screenshot = page.screenshot(path=str(SCREENSHOT), full_page=False)
             image = Image.open(BytesIO(screenshot)).convert("RGB")
@@ -102,9 +133,15 @@ def main() -> None:
                 raise RuntimeError(f"browser errors: console={console_errors}, page={page_errors}")
 
             report = {
-                "schemaVersion": "1.0.0",
+                "schemaVersion": "1.1.0",
                 "page": "component-studio/wall-lab-v24.html",
                 "runtime": runtime,
+                "referenceLibrary": {
+                    "runtime": library_runtime,
+                    "box": library_box,
+                    "uploadedCardCount": card_count,
+                    "activeReferenceVisible": True,
+                },
                 "canvas": canvas_box,
                 "visual": {
                     "whiteFraction": round(white_fraction, 6),
@@ -120,6 +157,7 @@ def main() -> None:
     finally:
         server.shutdown()
         server.server_close()
+        reference_fixture.unlink(missing_ok=True)
 
 
 if __name__ == "__main__":
