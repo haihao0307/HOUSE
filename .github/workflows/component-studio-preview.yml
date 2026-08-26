@@ -29,26 +29,20 @@ jobs:
         working-directory: ${{ env.PROJECT_DIR }}
         run: python3 tools/validate.py
 
-      - name: Validate component studio V2.2
+      - name: Validate component studio V2.4
         working-directory: ${{ env.PROJECT_DIR }}
         shell: bash
         run: |
           set -euo pipefail
           for file in component-studio/assets/studio-*.js; do node --check "$file"; done
-          node --check component-studio/assets/wall-lab.js
-          node --check component-studio/assets/wall-lab-v21-loader.js
-          node --check component-studio/assets/wall-lab-v22-loader.js
+          node --check component-studio/assets/wall-lab-v24.js
           node --check assets/js/reference-viewer-quality.js
 
           python3 - <<'PY'
-          import base64
-          import gzip
           import json
           from pathlib import Path
 
           root = Path('component-studio')
-          v21_parts = [root / f'assets/wall-lab-v21.part{index:02d}.b64' for index in range(4)]
-          v22_parts = [root / f'assets/wall-lab-v22.part{index:02d}.b64' for index in range(3)]
           required = [
               root / 'index.html',
               root / 'assets/studio.css',
@@ -59,73 +53,59 @@ jobs:
               root / 'data/modules.json',
               root / 'README.md',
               root / 'wall-lab.html',
-              root / 'assets/wall-lab.css',
-              root / 'assets/wall-lab-v22.css',
-              root / 'assets/wall-lab.js',
-              root / 'assets/wall-lab-v21-loader.js',
-              root / 'assets/wall-lab-v22-loader.js',
-              *v21_parts,
-              *v22_parts,
+              root / 'wall-lab-v24.html',
+              root / 'assets/wall-lab-v24.css',
+              root / 'assets/wall-lab-v24.js',
               root / 'data/wall-knowledge-v2.json',
               root / 'data/evidence/wulong-wall-user-observation-2026-08-26.json',
-              Path('assets/js/reference-viewer-quality.js'),
+              Path('vendor/three/three.module.js'),
+              Path('vendor/three/controls/OrbitControls.js'),
               Path('reference-model-showcase.html'),
           ]
           missing = [str(path) for path in required if not path.is_file()]
           if missing:
-              raise SystemExit(f'missing component studio files: {missing}')
+              raise SystemExit(f'missing component studio V2.4 files: {missing}')
 
-          def reconstruct(parts, target, markers):
-              encoded = ''.join(path.read_text(encoding='utf-8').strip() for path in parts)
-              source = gzip.decompress(base64.b64decode(encoded)).decode('utf-8')
-              Path(target).write_text(source, encoding='utf-8')
-              for marker in markers:
-                  if marker not in source:
-                      raise SystemExit(f'missing reconstructed marker {marker} in {target}')
+          entry = (root / 'wall-lab.html').read_text(encoding='utf-8')
+          if 'wall-lab-v24.html' not in entry:
+              raise SystemExit('wall-lab entry does not route to V2.4')
 
-          reconstruct(v21_parts, '/tmp/wall-lab-v21.js', (
-              'wulong-stone-adobe-lintel-v2.1',
-              'function buildEarthBrickWall',
-              'function buildStoneBase',
-              "component: 'timber-lintel-board'",
-          ))
-          reconstruct(v22_parts, '/tmp/wall-lab-v22.js', (
-              "const VERSION = '2.2.0'",
-              'primary-visual-stage',
-              'daylight-closed-stone-adobe-plaster-lintel-multiscale-erosion-v2',
-              'function erodedBoxGeometry',
-              'function buildDaylightWall',
-              'openSurfaceCount: 0',
-          ))
+          page = (root / 'wall-lab-v24.html').read_text(encoding='utf-8')
+          for marker in (
+              '云南墙体与墙面工作室 V2.4',
+              '柏林噪波 + Simplex + Worley',
+              '程序化实验墙主画面',
+              'wall-lab-v24.css',
+              'wall-lab-v24.js',
+              'referencePlaceholder',
+          ):
+              if marker not in page:
+                  raise SystemExit(f'missing wall V2.4 page marker: {marker}')
+
+          runtime = (root / 'assets/wall-lab-v24.js').read_text(encoding='utf-8')
+          for marker in (
+              'class Perlin3',
+              'class Simplex2',
+              'function worley2',
+              'function warpField',
+              'function extrudedBlock',
+              "version:'2.4.0'",
+              "openSurfaceCount:0",
+          ):
+              if marker not in runtime:
+                  raise SystemExit(f'missing wall V2.4 runtime marker: {marker}')
 
           registry = json.loads((root / 'data/modules.json').read_text(encoding='utf-8'))
           ids = [item.get('id') for item in (registry.get('modules') or [])]
           if len(ids) != 8 or len(set(ids)) != 8 or not {'knowledge-blueprint', 'tilework', 'openings', 'walls'} <= set(ids):
               raise SystemExit(f'invalid module registry: {ids}')
 
-          wall_html = (root / 'wall-lab.html').read_text(encoding='utf-8')
-          for marker in (
-              '云南墙体与墙面工作室 V2.2',
-              'wallCanvas',
-              'modelFrame',
-              'compareGrid',
-              'tagCloud',
-              'wall-lab-v21-loader.js',
-              'wall-lab-v22-loader.js',
-              'wall-lab-v22.css',
-          ):
-              if marker not in wall_html:
-                  raise SystemExit(f'missing wall studio marker: {marker}')
-
           wall = json.loads((root / 'data/wall-knowledge-v2.json').read_text(encoding='utf-8'))
-          if wall.get('recordId') != 'YUNNAN-WALL-KNOWLEDGE-V2' or wall.get('schemaVersion') != '2.1.0':
+          if wall.get('recordId') != 'YUNNAN-WALL-KNOWLEDGE-V2':
               raise SystemExit('wall knowledge contract mismatch')
           if len(wall.get('referenceModels') or []) != 3:
               raise SystemExit('wall knowledge must preserve all three reference models')
           PY
-
-          node --check /tmp/wall-lab-v21.js
-          node --check /tmp/wall-lab-v22.js
 
       - name: Assemble public site
         shell: bash
@@ -136,7 +116,7 @@ jobs:
           rm -rf _site/references-private _site/release _site/.git _site/.github
           rm -f _site/assets/models/YN_TUANJIE_001_EDITABLE_HIGH.glb
           touch _site/.nojekyll
-          printf '{"schemaVersion":"5.5.1","componentStudioVersion":"2.2.0","wallStudioVersion":"2.2.0","referenceViewerQuality":"2.0.0","sha":"%s","ref":"%s","runId":"%s","runAttempt":"%s"}\n' \
+          printf '{"schemaVersion":"5.5.1","componentStudioVersion":"2.4.0","wallStudioVersion":"2.4.0","referenceViewerQuality":"2.0.0","sha":"%s","ref":"%s","runId":"%s","runAttempt":"%s"}\n' \
             "$GITHUB_SHA" "$GITHUB_REF_NAME" "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" > _site/build.json
 
       - name: Configure Pages
@@ -164,7 +144,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: deploy
     steps:
-      - name: Verify deployed component studio V2.2
+      - name: Verify deployed component studio V2.4
         env:
           PAGE_URL: ${{ needs.deploy.outputs.page_url }}
           EXPECTED_SHA: ${{ github.sha }}
@@ -184,8 +164,8 @@ jobs:
           done
 
           grep -Fq "$EXPECTED_SHA" "$tmp/build.json"
-          grep -Fq '"componentStudioVersion":"2.2.0"' "$tmp/build.json"
-          grep -Fq '"wallStudioVersion":"2.2.0"' "$tmp/build.json"
+          grep -Fq '"componentStudioVersion":"2.4.0"' "$tmp/build.json"
+          grep -Fq '"wallStudioVersion":"2.4.0"' "$tmp/build.json"
 
           fetch_and_require() {
             local url="$1"
@@ -196,38 +176,16 @@ jobs:
           }
 
           fetch_and_require "${base}component-studio/" "component-studio.html" "云南建筑组件工作台"
-          fetch_and_require "${base}component-studio/wall-lab.html" "wall-lab.html" "云南墙体与墙面工作室 V2.2"
-          grep -Fq 'wall-lab-v22-loader.js' "$tmp/wall-lab.html"
-          grep -Fq 'wall-lab-v22.css' "$tmp/wall-lab.html"
-          fetch_and_require "${base}component-studio/assets/wall-lab-v22-loader.js" "wall-lab-v22-loader.js" "DecompressionStream"
-          fetch_and_require "${base}component-studio/assets/wall-lab-v22.css" "wall-lab-v22.css" "primary-visual-stage"
+          fetch_and_require "${base}component-studio/wall-lab.html" "wall-entry.html" "wall-lab-v24.html"
+          fetch_and_require "${base}component-studio/wall-lab-v24.html" "wall-v24.html" "柏林噪波 + Simplex + Worley"
+          fetch_and_require "${base}component-studio/assets/wall-lab-v24.css" "wall-v24.css" ".stage{display:grid"
+          fetch_and_require "${base}component-studio/assets/wall-lab-v24.js" "wall-v24.js" "class Perlin3"
+          grep -Fq 'class Simplex2' "$tmp/wall-v24.js"
+          grep -Fq 'function worley2' "$tmp/wall-v24.js"
+          grep -Fq "version:'2.4.0'" "$tmp/wall-v24.js"
+          node --check "$tmp/wall-v24.js"
           fetch_and_require "${base}component-studio/data/wall-knowledge-v2.json" "wall-knowledge.json" '"revisionId": "WULONG-STONE-ADOBE-LINTEL-2026-08-26"'
           fetch_and_require "${base}reference-model-showcase.html?mode=wulong" "reference-showcase.html" "云南建筑三模型高清证据查看器"
           fetch_and_require "${base}component-studio/data/modules.json" "modules.json" '"tilework"'
           grep -Fq '"openings"' "$tmp/modules.json"
           grep -Fq '"timber-surface"' "$tmp/modules.json"
-
-          for index in 00 01 02; do
-            curl -fsSL "${base}component-studio/assets/wall-lab-v22.part${index}.b64" -o "$tmp/v22-${index}.b64"
-            test -s "$tmp/v22-${index}.b64"
-          done
-          python3 - "$tmp" <<'PY'
-          import base64
-          import gzip
-          import sys
-          from pathlib import Path
-
-          root = Path(sys.argv[1])
-          encoded = ''.join((root / f'v22-{index}.b64').read_text(encoding='utf-8').strip() for index in ('00', '01', '02'))
-          source = gzip.decompress(base64.b64decode(encoded)).decode('utf-8')
-          for marker in (
-              "const VERSION = '2.2.0'",
-              'primary-visual-stage',
-              'daylight-closed-stone-adobe-plaster-lintel-multiscale-erosion-v2',
-              'openSurfaceCount: 0',
-          ):
-              if marker not in source:
-                  raise SystemExit(f'public reconstructed V2.2 wall program lacks {marker}')
-          (root / 'wall-lab-v22.js').write_text(source, encoding='utf-8')
-          PY
-          node --check "$tmp/wall-lab-v22.js"
