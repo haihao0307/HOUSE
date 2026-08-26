@@ -1,0 +1,235 @@
+{
+  "schemaVersion": "2.0.0",
+  "recordId": "YUNNAN-WALL-KNOWLEDGE-V2",
+  "moduleId": "walls",
+  "title": "云南墙体与墙面蒸馏知识包",
+  "status": "visual-research-seed",
+  "generatedFrom": {
+    "repository": "haihao0307/HOUSE",
+    "branchBaseline": "feature/yunnan-component-studio-v1",
+    "evidencePolicy": "扫描模型用于可见外观、材料转换、风化分区和体量校准；测绘、节点和控制尺寸继续约束几何与历史事实。"
+  },
+  "referenceModels": [
+    {
+      "id": "REFERENCE-DALI-001",
+      "label": "大理参考建筑",
+      "asset": "../assets/models/YN_DALI_001_REFERENCE_WEB.glb",
+      "publicBytes": 66299108,
+      "geometry": {
+        "meshes": 1,
+        "triangles": 997659
+      },
+      "textures": {
+        "baseColor": [
+          4096,
+          4096
+        ]
+      },
+      "evidenceClass": "scanned-surface-evidence",
+      "wallStudyUse": [
+        "完整抹灰与局部材料转换的综合色层",
+        "石勒脚、墙脚和转角保护关系",
+        "相对维护状态较好的墙面作为上限样本",
+        "屋面群与墙体高度、檐下遮蔽的整体关系"
+      ],
+      "limits": [
+        "单一扫描曲面不能提供墙体做法、准确厚度或修缮年代"
+      ]
+    },
+    {
+      "id": "REFERENCE-HAOSI1-WULONG-001",
+      "label": "乌龙村参考建筑",
+      "asset": "../assets/models/YN_HAOSI1_WULONG_WL_001_REFERENCE_WEB.glb",
+      "publicBytes": 54811052,
+      "geometry": {
+        "meshes": 1,
+        "triangles": 300084
+      },
+      "textures": {
+        "baseColor": [
+          4096,
+          4096
+        ],
+        "normal": [
+          2048,
+          2048
+        ]
+      },
+      "evidenceClass": "scanned-surface-plus-normal-evidence",
+      "wallStudyUse": [
+        "抹灰脱落、基层暴露和材料过渡",
+        "墙脚返潮、垂直雨痕和长期风化",
+        "边界清楚的修补与综合色差",
+        "粗糙度、凹凸和局部侵蚀尺度"
+      ],
+      "limits": [
+        "摄影测量毛刺、孔洞、拉伸面和贴图污染不得转译为建筑构造"
+      ]
+    },
+    {
+      "id": "YN_TUANJIE_001",
+      "label": "团结乡样本 01",
+      "asset": "../assets/models/YN_TUANJIE_001_EDITABLE.glb",
+      "publicBytes": 45457960,
+      "geometry": {
+        "meshes": 48,
+        "triangles": 464288
+      },
+      "textures": {
+        "baseColor": [
+          3072,
+          3072
+        ],
+        "normal": [
+          1024,
+          1024
+        ]
+      },
+      "evidenceClass": "grouped-scanned-surface-evidence",
+      "wallStudyUse": [
+        "用户确认的长期风化暖红土黄墙面",
+        "粗颗粒侵蚀、浅灰白斑和深色水流分区",
+        "墙脚石作或砌体转换",
+        "可分组对照屋顶、一层、二层、场地和细节"
+      ],
+      "limits": [
+        "土料配比、夯筑工序、浅色斑成因和修缮年表仍未锁定"
+      ]
+    }
+  ],
+  "wallSystem": {
+    "geometryLayers": [
+      "承重或围护墙体本体",
+      "底宽顶窄的收分",
+      "石勒脚或砌体墙脚",
+      "砖石包角",
+      "山墙端面",
+      "门窗洞口与连续过梁墙身"
+    ],
+    "surfaceLayers": [
+      "暖红土黄或灰褐土体",
+      "完整抹灰薄层",
+      "抹灰破碎边缘",
+      "裸露土坯或夯土基层",
+      "稻草纤维和粗颗粒夹杂",
+      "夯筑水平层理",
+      "墙脚返潮",
+      "垂直雨痕与排水污染",
+      "裂缝与材料交界开裂",
+      "局部剥落",
+      "边界明确的补抹和替换材料"
+    ],
+    "distributionRules": [
+      "返潮从墙脚向上衰减，不能在山墙高处生成悬空湿带",
+      "雨痕顺重力向下并受檐口、洞口、转角和排水路径控制",
+      "檐下和背阴区域更易保持深色或湿润，迎阳区域可褪色和粉化",
+      "裂缝优先出现在洞口角、材料交界、沉降区和修补边缘",
+      "修补必须形成有限边界、厚度变化和年代色差",
+      "大尺度分区先于中尺度剥落，细颗粒只负责最后一级表面变化",
+      "同一墙面保持连续空间场，禁止逐像素白噪声和均匀斑点"
+    ]
+  },
+  "presets": {
+    "daliMaintained": {
+      "label": "大理维护状态",
+      "plaster": 0.82,
+      "earthExposure": 0.22,
+      "fiber": 0.18,
+      "damp": 0.18,
+      "rain": 0.2,
+      "cracks": 0.16,
+      "repair": 0.26,
+      "roughness": 0.84,
+      "stoneBase": 0.72,
+      "brickCorners": 0.58,
+      "seed": 241
+    },
+    "wulongWeathered": {
+      "label": "乌龙长期风化",
+      "plaster": 0.48,
+      "earthExposure": 0.72,
+      "fiber": 0.45,
+      "damp": 0.64,
+      "rain": 0.68,
+      "cracks": 0.54,
+      "repair": 0.46,
+      "roughness": 0.96,
+      "stoneBase": 0.62,
+      "brickCorners": 0.44,
+      "seed": 517
+    },
+    "tuanjieReference": {
+      "label": "团结乡参考综合色",
+      "plaster": 0.42,
+      "earthExposure": 0.78,
+      "fiber": 0.52,
+      "damp": 0.48,
+      "rain": 0.56,
+      "cracks": 0.4,
+      "repair": 0.34,
+      "roughness": 0.94,
+      "stoneBase": 0.7,
+      "brickCorners": 0.34,
+      "seed": 401
+    },
+    "museum1940sBalanced": {
+      "label": "1940年代均衡样板",
+      "plaster": 0.68,
+      "earthExposure": 0.42,
+      "fiber": 0.3,
+      "damp": 0.34,
+      "rain": 0.4,
+      "cracks": 0.3,
+      "repair": 0.36,
+      "roughness": 0.9,
+      "stoneBase": 0.68,
+      "brickCorners": 0.46,
+      "seed": 445
+    }
+  },
+  "annotationVocabulary": [
+    "主体土体",
+    "完整抹灰",
+    "抹灰薄层",
+    "抹灰脱落边缘",
+    "稻草纤维",
+    "粗颗粒夹杂",
+    "裸露土坯",
+    "夯筑层理",
+    "石勒脚",
+    "砖包角",
+    "墙脚返潮",
+    "垂直雨痕",
+    "檐下遮蔽",
+    "裂缝",
+    "剥落",
+    "补抹",
+    "重修层",
+    "未知材料"
+  ],
+  "evidenceLevels": [
+    "照片直接可见",
+    "多张照片交叉支持",
+    "测绘资料支持",
+    "扫描模型支持",
+    "地区类比",
+    "视觉校准",
+    "仍未解决"
+  ],
+  "qaGates": [
+    "完整抹灰、裸露基层、墙脚转换和修补能够同时被读出",
+    "墙面风化具有高度、朝向、遮蔽和排水逻辑",
+    "近景可见纤维、粗颗粒、抹灰断口和自然边缘",
+    "洞口角、材料交界和修补边缘的裂缝分布有因果关系",
+    "修补片区有边界和年代色差，避免随机贴片",
+    "移动端仍可选择资料、切换模型和操作试验墙",
+    "扫描模型中的孔洞、毛刺和投影污染不进入生成规则"
+  ],
+  "unresolved": [
+    "不同地区墙体的土料配比、夹杂物和施工工序",
+    "抹灰材料、层数、厚度和表面收光",
+    "每处浅灰白斑属于粉刷、矿物沉积、修补料或基层暴露的具体成因",
+    "1940至1945年单体级修缮年表",
+    "墙体准确厚度、收分值和节点需由测绘个案锁定"
+  ]
+}
