@@ -58,6 +58,7 @@ jobs:
               root / 'assets/wall-lab-v24.js',
               root / 'data/wall-knowledge-v2.json',
               root / 'data/evidence/wulong-wall-user-observation-2026-08-26.json',
+              Path('tools/wall_v24_browser_smoke.py'),
               Path('vendor/three/three.module.js'),
               Path('vendor/three/controls/OrbitControls.js'),
               Path('reference-model-showcase.html'),
@@ -107,6 +108,22 @@ jobs:
               raise SystemExit('wall knowledge must preserve all three reference models')
           PY
 
+      - name: Install wall browser QA dependencies
+        run: python3 -m pip install --disable-pip-version-check playwright==1.57.0 pillow==11.3.0
+
+      - name: Run wall studio V2.4 browser QA
+        working-directory: ${{ env.PROJECT_DIR }}
+        run: python3 tools/wall_v24_browser_smoke.py
+
+      - name: Upload wall studio browser evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: wall-studio-v24-browser-evidence
+          path: |
+            ${{ env.PROJECT_DIR }}/qa/screenshots/wall_v24_browser.png
+            ${{ env.PROJECT_DIR }}/data/qa/wall_v24_browser.json
+          if-no-files-found: error
+
       - name: Assemble public site
         shell: bash
         run: |
@@ -116,7 +133,7 @@ jobs:
           rm -rf _site/references-private _site/release _site/.git _site/.github
           rm -f _site/assets/models/YN_TUANJIE_001_EDITABLE_HIGH.glb
           touch _site/.nojekyll
-          printf '{"schemaVersion":"5.5.1","componentStudioVersion":"2.4.0","wallStudioVersion":"2.4.0","referenceViewerQuality":"2.0.0","sha":"%s","ref":"%s","runId":"%s","runAttempt":"%s"}\n' \
+          printf '{"schemaVersion":"5.5.1","componentStudioVersion":"2.4.0","wallStudioVersion":"2.4.0","referenceViewerQuality":"2.0.0","browserQa":"wall-v24-passed","sha":"%s","ref":"%s","runId":"%s","runAttempt":"%s"}\n' \
             "$GITHUB_SHA" "$GITHUB_REF_NAME" "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" > _site/build.json
 
       - name: Configure Pages
@@ -166,6 +183,7 @@ jobs:
           grep -Fq "$EXPECTED_SHA" "$tmp/build.json"
           grep -Fq '"componentStudioVersion":"2.4.0"' "$tmp/build.json"
           grep -Fq '"wallStudioVersion":"2.4.0"' "$tmp/build.json"
+          grep -Fq '"browserQa":"wall-v24-passed"' "$tmp/build.json"
 
           fetch_and_require() {
             local url="$1"
