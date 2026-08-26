@@ -4,42 +4,68 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#13201c">
-<title>云南墙体与墙面工作室 V2.4</title>
+<title>云南墙体与墙面工作室 V2.4.1</title>
 <link rel="icon" href="data:,">
 <link rel="stylesheet" href="assets/wall-lab-v24.css">
 <script type="importmap">{"imports":{"three":"../vendor/three/three.module.js","three/addons/controls/OrbitControls.js":"../vendor/three/controls/OrbitControls.js"}}</script>
 </head>
 <body>
 <header class="topbar">
-  <a class="brand" href="./"><span class="seal">墙</span><span><strong>云南墙体与墙面工作室</strong><small>Yunnan Wall System Studio V2.4 · 噪波侵蚀版</small></span></a>
+  <a class="brand" href="./"><span class="seal">墙</span><span><strong>云南墙体与墙面工作室</strong><small>Yunnan Wall System Studio V2.4.1 · 噪波侵蚀与资料窗</small></span></a>
   <div class="top-actions"><span class="pill ok">程序墙已直接载入</span><span class="pill">柏林噪波 + Simplex + Worley</span><a class="btn" href="./">八条生产线</a><a class="btn" href="../reference-model-showcase.html?mode=wulong">乌龙村 GLB</a></div>
 </header>
 <main>
-  <section class="stage">
-    <article class="panel">
-      <div class="panel-head"><div><h2>程序化实验墙主画面</h2><small>整墙域扭曲、砖边磨蚀、坑蚀与雨流全部实时重建</small></div><span class="pill" id="runtimeLabel">初始化</span></div>
-      <div class="canvas-wrap">
-        <canvas id="wallCanvas"></canvas>
-        <div class="canvas-overlays"><div class="legend"><span>Perlin 低频整墙起伏</span><span>Simplex 域扭曲与侵蚀流</span><span>Worley 坑蚀与缺角</span></div><div class="view-actions"><button data-view="front">正面</button><button data-view="oblique">斜视</button><button data-view="close">近景</button><button data-view="reset">复位</button></div></div>
-        <div class="statusline"><span>封闭承托墙</span><span>下部石基</span><span>离散土坯</span><span>抹灰薄层</span><span>嵌入木过梁</span><span id="geometryStatus">几何生成中</span></div>
-        <div class="error" id="errorBox"></div>
+  <aside class="panel reference-library" id="referenceLibrary">
+    <div class="panel-head"><div><h2>参考资料窗口</h2><small>继续往墙面生产线里扔照片、NEF、图纸、PDF 和 JSON</small></div><span class="pill" id="libraryCount">0 个资料</span></div>
+    <div class="library-body">
+      <div class="library-drop" id="referenceDropZone" role="button" tabindex="0">
+        <input id="libraryFileInput" type="file" multiple hidden accept="image/*,.nef,.nrw,.cr2,.cr3,.arw,.dng,.raf,.rw2,.orf,.pef,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.md,.json">
+        <span class="drop-plus">＋</span>
+        <strong>拖入或点击加入参考资料</strong>
+        <small>沿用原墙面资料仓。点击任意小框即可切换右侧参考图。</small>
       </div>
-    </article>
-    <article class="panel reference">
-      <div class="panel-head"><div><h2>乌龙村参考照片</h2><small>与程序墙同屏对照</small></div><span class="pill">用户确认样本</span></div>
-      <div class="reference-stage"><div id="referencePlaceholder" style="position:absolute;inset:0;display:grid;place-items:center;padding:30px;text-align:center;color:#9aa9a0;background:linear-gradient(145deg,#1b2922,#0d1713);font-size:12px;line-height:1.7">正在读取你在墙面资料仓中已经放入的参考照片。也可以用下方按钮重新选择。</div><img id="referenceImage" alt="乌龙村石基土坯墙参考" hidden><span class="ref-label">石基、土坯、残存抹灰、重度表面侵蚀</span></div>
-      <div class="reference-footer"><p>照片用来校准可见层次和风化关系。土坯尺寸、石基高度、木过梁截面继续作为可调视觉参数。</p><div class="row"><label class="btn file-btn">替换参考图<input id="referenceFile" type="file" accept="image/*"></label><button class="btn" id="fitReference">显示完整照片</button><button class="btn" id="fillReference">铺满画面</button></div></div>
-    </article>
-  </section>
+      <div class="library-tools">
+        <input id="librarySearch" type="search" placeholder="搜索文件名">
+        <select id="libraryFilter">
+          <option value="all">全部</option>
+          <option value="image">图片</option>
+          <option value="raw">RAW</option>
+          <option value="document">文档</option>
+        </select>
+      </div>
+      <div class="library-status" id="libraryStatus">正在连接原墙面资料仓</div>
+      <div class="reference-grid" id="referenceGrid"><div class="library-empty">正在读取资料……</div></div>
+    </div>
+  </aside>
 
-  <section class="workbench" id="workbench">
-    <div class="presetbar"><div class="preset-buttons"><button class="btn active" data-preset="wulong">乌龙强侵蚀</button><button class="btn" data-preset="balanced">1940 年代均衡</button><button class="btn" data-preset="plastered">抹灰保留</button><button class="btn" id="randomize">更换噪波种子</button></div><div class="noise-note">噪波分工：柏林噪波负责整片墙的低频起伏，Simplex 负责连续域扭曲与雨蚀方向，Worley 负责砖边缺角、坑蚀和局部塌损。所有细节都受同一墙体坐标场约束。</div><div class="metrics"><div class="metric"><b id="brickMetric">0</b><span>土坯块</span></div><div class="metric"><b id="stoneMetric">0</b><span>石块</span></div><div class="metric"><b id="patchMetric">0</b><span>抹灰片区</span></div><div class="metric"><b>0</b><span>开放漏面</span></div></div></div>
+  <div class="studio-content">
+    <section class="stage">
+      <article class="panel">
+        <div class="panel-head"><div><h2>程序化实验墙主画面</h2><small>整墙域扭曲、砖边磨蚀、坑蚀与雨流全部实时重建</small></div><span class="pill" id="runtimeLabel">初始化</span></div>
+        <div class="canvas-wrap">
+          <canvas id="wallCanvas"></canvas>
+          <div class="canvas-overlays"><div class="legend"><span>Perlin 低频整墙起伏</span><span>Simplex 域扭曲与侵蚀流</span><span>Worley 坑蚀与缺角</span></div><div class="view-actions"><button data-view="front">正面</button><button data-view="oblique">斜视</button><button data-view="close">近景</button><button data-view="reset">复位</button></div></div>
+          <div class="statusline"><span>封闭承托墙</span><span>下部石基</span><span>离散土坯</span><span>抹灰薄层</span><span>嵌入木过梁</span><span id="geometryStatus">几何生成中</span></div>
+          <div class="error" id="errorBox"></div>
+        </div>
+      </article>
+      <article class="panel reference">
+        <div class="panel-head"><div><h2>当前参考照片</h2><small>从左侧资料小框中随时切换</small></div><span class="pill">墙面证据</span></div>
+        <div class="reference-stage"><div id="referencePlaceholder" style="position:absolute;inset:0;display:grid;place-items:center;padding:30px;text-align:center;color:#9aa9a0;background:linear-gradient(145deg,#1b2922,#0d1713);font-size:12px;line-height:1.7">正在读取你在墙面资料仓中已经放入的参考照片。也可以从左侧资料窗口继续加入。</div><img id="referenceImage" alt="乌龙村石基土坯墙参考" hidden><span class="ref-label">石基、土坯、残存抹灰、重度表面侵蚀</span></div>
+        <div class="reference-footer"><p>照片用来校准可见层次和风化关系。土坯尺寸、石基高度、木过梁截面继续作为可调视觉参数。</p><div class="row"><label class="btn file-btn">加入并显示参考图<input id="referenceFile" type="file" accept="image/*"></label><button class="btn" id="fitReference">显示完整照片</button><button class="btn" id="fillReference">铺满画面</button></div></div>
+      </article>
+    </section>
 
-    <article class="group"><h3>整墙噪波与侵蚀流</h3><div class="controls" id="groupWave"></div></article>
-    <article class="group"><h3>土坯块与边缘磨蚀</h3><div class="controls" id="groupBrick"></div></article>
-    <article class="group"><h3>抹灰、雨痕与表面细节</h3><div class="controls" id="groupSurface"></div></article>
-    <article class="group"><h3>石基、门洞与结构木件</h3><div class="controls" id="groupStructure"></div></article>
-  </section>
+    <section class="workbench" id="workbench">
+      <div class="presetbar"><div class="preset-buttons"><button class="btn active" data-preset="wulong">乌龙强侵蚀</button><button class="btn" data-preset="balanced">1940 年代均衡</button><button class="btn" data-preset="plastered">抹灰保留</button><button class="btn" id="randomize">更换噪波种子</button></div><div class="noise-note">噪波分工：柏林噪波负责整片墙的低频起伏，Simplex 负责连续域扭曲与雨蚀方向，Worley 负责砖边缺角、坑蚀和局部塌损。所有细节都受同一墙体坐标场约束。</div><div class="metrics"><div class="metric"><b id="brickMetric">0</b><span>土坯块</span></div><div class="metric"><b id="stoneMetric">0</b><span>石块</span></div><div class="metric"><b id="patchMetric">0</b><span>抹灰片区</span></div><div class="metric"><b>0</b><span>开放漏面</span></div></div></div>
+
+      <article class="group"><h3>整墙噪波与侵蚀流</h3><div class="controls" id="groupWave"></div></article>
+      <article class="group"><h3>土坯块与边缘磨蚀</h3><div class="controls" id="groupBrick"></div></article>
+      <article class="group"><h3>抹灰、雨痕与表面细节</h3><div class="controls" id="groupSurface"></div></article>
+      <article class="group"><h3>石基、门洞与结构木件</h3><div class="controls" id="groupStructure"></div></article>
+    </section>
+  </div>
 </main>
 <script type="module" src="assets/wall-lab-v24.js"></script>
+<script type="module" src="assets/wall-lab-v24-library.js"></script>
 </body></html>
