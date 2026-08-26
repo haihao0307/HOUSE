@@ -15,6 +15,7 @@ from playwright.sync_api import sync_playwright
 ROOT = Path(__file__).resolve().parents[1]
 SCREENSHOT = ROOT / "qa/screenshots/wall_v24_browser.png"
 REPORT = ROOT / "data/qa/wall_v24_browser.json"
+REFERENCE_COUNT = 36
 
 
 class QuietHandler(SimpleHTTPRequestHandler):
@@ -35,24 +36,28 @@ def chrome_executable() -> str | None:
     return None
 
 
-def make_reference_fixture(path: Path) -> None:
-    image = Image.new("RGB", (640, 420), (143, 92, 58))
+def make_reference_fixture(path: Path, index: int) -> None:
+    base = (132 + index % 9 * 5, 82 + index % 7 * 4, 52 + index % 5 * 3)
+    image = Image.new("RGB", (260, 170), base)
     draw = ImageDraw.Draw(image)
-    for row in range(10):
-        y = 32 + row * 34
-        offset = 22 if row % 2 else 0
-        for column in range(13):
-            x = -20 + offset + column * 52
-            draw.rounded_rectangle((x, y, x + 47, y + 27), radius=5, fill=(157, 105, 68), outline=(91, 58, 39), width=3)
-    draw.rectangle((0, 330, 640, 420), fill=(111, 105, 91))
-    image.save(path, quality=92)
+    for row in range(5):
+        y = 14 + row * 27
+        offset = 18 if row % 2 else 0
+        for column in range(7):
+            x = -16 + offset + column * 43
+            fill = (151 + (index + row) % 5 * 4, 98 + column % 3 * 4, 63 + index % 4 * 3)
+            draw.rounded_rectangle((x, y, x + 39, y + 21), radius=4, fill=fill, outline=(80, 50, 34), width=2)
+    draw.rectangle((0, 140, 260, 170), fill=(104 + index % 6 * 3, 100, 88))
+    draw.text((8, 147), f"REF {index + 1:02d}", fill=(238, 226, 202))
+    image.save(path, quality=90)
 
 
 def main() -> None:
     SCREENSHOT.parent.mkdir(parents=True, exist_ok=True)
     REPORT.parent.mkdir(parents=True, exist_ok=True)
-    reference_fixture = Path("/tmp/wall_reference_smoke.jpg")
-    make_reference_fixture(reference_fixture)
+    reference_fixtures = [Path(f"/tmp/wall_reference_smoke_{index:02d}.jpg") for index in range(REFERENCE_COUNT)]
+    for index, path in enumerate(reference_fixtures):
+        make_reference_fixture(path, index)
 
     handler = lambda *args, **kwargs: QuietHandler(*args, directory=str(ROOT), **kwargs)
     server = ThreadingHTTPServer(("127.0.0.1", 0), handler)
@@ -113,22 +118,37 @@ def main() -> None:
             if geometry.get("openSurfaceCount") != 0:
                 raise RuntimeError(f"open surface contract failed: {geometry}")
 
-            page.set_input_files("#libraryFileInput", str(reference_fixture))
-            page.wait_for_function("() => window.__YUNNAN_WALL_LIBRARY_V24__.count >= 1", timeout=30_000)
+            page.set_input_files("#libraryFileInput", [str(path) for path in reference_fixtures])
+            page.wait_for_function(
+                f"() => window.__YUNNAN_WALL_LIBRARY_V24__.count >= {REFERENCE_COUNT}",
+                timeout=60_000,
+            )
             page.wait_for_selector(".reference-card", timeout=30_000)
             page.locator(".reference-card").first.click()
             page.wait_for_function("() => !document.querySelector('#referenceImage').hidden", timeout=30_000)
             card_count = page.locator(".reference-card").count()
-            if card_count < 1:
-                raise RuntimeError("reference upload did not create a visible material card")
+            if card_count < REFERENCE_COUNT:
+                raise RuntimeError(f"reference library lost cards: {card_count}/{REFERENCE_COUNT}")
+
+            button_boxes: dict[str, dict[str, float] | None] = {}
+            for button_id in ("githubTestButton", "githubPushButton", "githubCleanupButton"):
+                locator = page.locator(f"#{button_id}")
+                if not locator.is_visible():
+                    raise RuntimeError(f"GitHub bridge button is hidden: {button_id}")
+                box = locator.bounding_box()
+                button_boxes[button_id] = box
+                if not box:
+                    raise RuntimeError(f"GitHub bridge button has no layout box: {button_id}")
+                if box["y"] < library_box["y"] or box["y"] + box["height"] > library_box["y"] + library_box["height"]:
+                    raise RuntimeError(f"GitHub bridge button is outside the visible library panel: {button_id} {box}")
 
             page.locator("#githubPushButton").click()
             page.wait_for_function(
-                "() => window.__YUNNAN_WALL_GITHUB_BRIDGE__.lastResult?.uploadedCount >= 1",
-                timeout=60_000,
+                f"() => window.__YUNNAN_WALL_GITHUB_BRIDGE__.lastResult?.uploadedCount >= {REFERENCE_COUNT}",
+                timeout=90_000,
             )
             push_result = page.evaluate("() => window.__YUNNAN_WALL_GITHUB_BRIDGE__.lastResult")
-            if push_result.get("mock") is not True or push_result.get("uploadedCount", 0) < 1:
+            if push_result.get("mock") is not True or push_result.get("uploadedCount", 0) < REFERENCE_COUNT:
                 raise RuntimeError(f"mock GitHub evidence push failed: {push_result}")
 
             screenshot = page.screenshot(path=str(SCREENSHOT), full_page=False)
@@ -153,7 +173,7 @@ def main() -> None:
                 raise RuntimeError(f"browser errors: console={console_errors}, page={page_errors}")
 
             report = {
-                "schemaVersion": "1.2.0",
+                "schemaVersion": "1.3.0",
                 "page": "component-studio/wall-lab-v24.html",
                 "runtime": runtime,
                 "referenceLibrary": {
@@ -165,6 +185,8 @@ def main() -> None:
                 "githubBridge": {
                     "runtime": bridge_runtime,
                     "box": bridge_box,
+                    "buttonBoxes": button_boxes,
+                    "buttonsVisibleWithReferenceCount": REFERENCE_COUNT,
                     "mockPushResult": push_result,
                     "proxyOnly": True,
                 },
@@ -183,7 +205,8 @@ def main() -> None:
     finally:
         server.shutdown()
         server.server_close()
-        reference_fixture.unlink(missing_ok=True)
+        for path in reference_fixtures:
+            path.unlink(missing_ok=True)
 
 
 if __name__ == "__main__":
