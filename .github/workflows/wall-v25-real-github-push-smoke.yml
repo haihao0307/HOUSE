@@ -1,0 +1,45 @@
+name: One-time wall V2.5 real GitHub push smoke
+
+on:
+  push:
+    branches:
+      - feature/yunnan-component-studio-v1
+    paths:
+      - .github/workflows/wall-v25-real-github-push-smoke.yml
+      - yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/tools/wall_v25_real_github_smoke.py
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  PROJECT_DIR: yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local
+
+jobs:
+  real-browser-push-and-cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install browser QA dependencies
+        run: python3 -m pip install --disable-pip-version-check playwright==1.57.0 pillow==11.3.0
+
+      - name: Push a real temporary proxy batch and delete its branch
+        working-directory: ${{ env.PROJECT_DIR }}
+        env:
+          WALL_GITHUB_TOKEN: ${{ github.token }}
+          WALL_GITHUB_REPOSITORY: ${{ github.repository }}
+          WALL_GITHUB_BASE_BRANCH: ${{ github.ref_name }}
+          WALL_GITHUB_RUN_ID: ${{ github.run_id }}
+        run: python3 tools/wall_v25_real_github_smoke.py
+
+      - name: Upload real push evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: wall-v25-real-github-push-evidence
+          path: |
+            ${{ env.PROJECT_DIR }}/qa/screenshots/wall_v25_real_github_push.png
+            ${{ env.PROJECT_DIR }}/data/qa/wall_v25_real_github_push.json
+          if-no-files-found: error
+          retention-days: 90
