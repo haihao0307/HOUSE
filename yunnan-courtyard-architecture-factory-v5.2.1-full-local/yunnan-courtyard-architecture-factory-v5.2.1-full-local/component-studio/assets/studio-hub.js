@@ -10,13 +10,14 @@ async function updateBuildFooter() {
     const response = await fetch('../build.json', { cache: 'no-store' });
     if (!response.ok) throw new Error('missing');
     const build = await response.json();
-    footer.textContent = `组件工作台 V1 · ${String(build.ref || '').replace('refs/heads/', '')} · ${String(build.sha || '').slice(0, 8)}`;
+    footer.textContent = `组件工作台 V2 · ${String(build.ref || '').replace('refs/heads/', '')} · ${String(build.sha || '').slice(0, 8)}`;
   } catch {
-    footer.textContent = '组件工作台 V1 · 本机工作区';
+    footer.textContent = '组件工作台 V2 · 本机工作区';
   }
 }
 
 function moduleUrl(moduleId) {
+  if (moduleId === 'walls') return new URL('./wall-lab.html', window.location.href).href;
   const url = new URL(window.location.href);
   url.search = '';
   url.searchParams.set('module', moduleId);
@@ -133,7 +134,7 @@ function fillModuleStaticContent(module) {
   document.querySelector('#moduleSummary').textContent = module.summary;
   document.querySelector('#moduleHero').style.setProperty('--module-accent', module.accent);
   const preview = document.querySelector('#previewLink');
-  preview.href = module.preview;
+  preview.href = module.id === 'walls' ? './wall-lab.html' : module.preview;
   document.querySelector('#repoInput').value = `haihao0307/${module.repoSlug}`;
 
   const scopeList = document.querySelector('#scopeList');
@@ -171,6 +172,10 @@ function fillModuleStaticContent(module) {
 }
 
 function renderModule(module) {
+  if (module.id === 'walls') {
+    window.location.replace('./wall-lab.html');
+    return;
+  }
   activeModule = module;
   activeState = getModuleState(module);
   document.title = `${module.name} · 云南建筑组件工作台`;
@@ -238,4 +243,3 @@ function renderModule(module) {
   setupAttachmentUi();
   setupModuleActions(collectState);
 }
-
