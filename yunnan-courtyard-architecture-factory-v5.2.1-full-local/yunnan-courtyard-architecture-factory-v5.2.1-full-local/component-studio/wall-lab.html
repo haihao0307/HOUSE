@@ -3,15 +3,16 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="description" content="云南墙体与墙面独立生产线 V2。读取原工作台资料，支持 NEF 内嵌预览、图片对比、语义标注、三模型证据和程序化试验墙。">
+  <meta name="description" content="云南墙体与墙面独立生产线 V2.1。读取原工作台资料，支持 NEF 内嵌预览、图片对比、语义标注、三模型证据，以及石基、土坯、抹灰和木过梁程序化试验墙。">
   <meta name="theme-color" content="#08100d">
-  <title>云南墙体与墙面工作室 V2</title>
+  <title>云南墙体与墙面工作室 V2.1</title>
   <link rel="icon" href="data:,">
   <link rel="stylesheet" href="assets/wall-lab.css">
   <script type="importmap">
   {
     "imports": {
-      "three": "../vendor/three/three.module.js"
+      "three": "../vendor/three/three.module.js",
+      "three-controls": "../vendor/three/controls/OrbitControls.js"
     }
   }
   </script>
@@ -21,7 +22,7 @@
   <header class="topbar">
     <a class="brand" href="./" aria-label="返回云南建筑组件工作台">
       <span class="brand-mark" aria-hidden="true">墙</span>
-      <span><strong>云南墙体与墙面工作室</strong><small>Yunnan Wall System Studio V2</small></span>
+      <span><strong>云南墙体与墙面工作室</strong><small>Yunnan Wall System Studio V2.1</small></span>
     </a>
     <div class="top-actions">
       <span class="sync-pill"><i></i><span id="storageState">正在连接原工作区</span></span>
@@ -35,13 +36,13 @@
     <div>
       <span class="eyebrow">06 · 独立组件生产线</span>
       <h1>从照片和三个真实 GLB，蒸馏一套可复建的云南墙体系统</h1>
-      <p>这一页只处理墙体本体、收分、墙脚、山墙、洞口边界、抹灰、裸土、返潮、雨痕、裂缝和修补。原工作台中已经放入的墙面资料会自动读取，整栋建筑不会在这里重复生成。</p>
+      <p>这一页只处理墙体本体、石基、土坯砌体、墙脚转换、门洞木过梁、抹灰、返潮、雨痕、裂缝和修补。乌龙村反馈已经进入 V2.1：下部显著石砌墙脚，上部离散土坯，抹灰作为覆盖层，墙身整体接近直立，门洞上方墙身连续。</p>
     </div>
     <div class="hero-meta">
-      <span>V2 可视化母版</span>
+      <span>V2.1 乌龙墙体修订</span>
       <span>原 IndexedDB 资料可读</span>
       <span>三模型按需载入</span>
-      <span>程序化试验墙实时更新</span>
+      <span>石基与土坯实时重建</span>
     </div>
   </section>
 
@@ -89,7 +90,7 @@
             <div class="tag-cloud" id="tagCloud"></div>
           </div>
           <label><span>观察与判断</span>
-            <textarea id="annotationNote" placeholder="记录照片中直接可见的层次、位置、方向、边界和未知项。"></textarea>
+            <textarea id="annotationNote" placeholder="记录照片中直接可见的石基、土坯、灰缝、抹灰、木过梁、位置、方向、边界和未知项。"></textarea>
           </label>
           <div class="annotation-actions">
             <button class="btn primary" id="saveAnnotationButton" type="button">保存当前标注</button>
@@ -156,7 +157,7 @@
           <div class="wall-preview" id="wallPreview">
             <canvas id="wallCanvas" aria-label="云南墙体程序化三维预览"></canvas>
             <div class="preview-overlay">
-              <span>墙体本体</span><span>石勒脚</span><span>砖包角</span><span>真实洞口</span>
+              <span>近直墙</span><span>下部石砌墙脚</span><span>上部土坯砌体</span><span>薄抹灰覆盖</span><span>嵌入木过梁</span><span>连续门楣墙身</span>
             </div>
           </div>
           <div class="preset-row" id="presetRow"></div>
@@ -170,7 +171,7 @@
             <button class="btn compact" data-model="tuanjie" type="button">团结乡墙面</button>
           </div>
           <iframe class="model-frame" id="modelFrame" title="云南建筑真实 GLB 证据" loading="lazy"></iframe>
-          <div class="model-note">模型页面启用高清渲染补丁、最大可用各向异性过滤和按需单模型载入。扫描曲面只用于可见外观与分区校准。</div>
+          <div class="model-note">模型页面启用高清渲染补丁、最大可用各向异性过滤和按需单模型载入。乌龙样本的石基、土坯、抹灰和木过梁关系已写入试验墙；精确尺寸仍等待测绘或标定证据。</div>
         </div>
       </article>
 
@@ -192,10 +193,10 @@
   </main>
 
   <footer>
-    墙面 V2 继续读取第一版浏览器资料。图片和 NEF 原件仍保存在当前浏览器中，标注与预览缓存使用独立的 V2 本地数据库。批准后的知识包、生成器和验收结果进入 GitHub，原始私有资料的云端归档仍需单独建立权限仓。
+    墙面 V2.1 继续读取第一版浏览器资料。土坯默认尺寸、石基高度和木过梁嵌入量属于可调视觉校准，出现测绘数据后直接替换。图片和 NEF 原件仍保存在当前浏览器中，批准后的知识包、生成器和验收结果进入 GitHub。
   </footer>
 </div>
 <div class="toast-wrap" id="toastWrap" aria-live="polite"></div>
-<script type="module" src="assets/wall-lab.js"></script>
+<script type="module" src="assets/wall-lab-v21-loader.js"></script>
 </body>
 </html>
