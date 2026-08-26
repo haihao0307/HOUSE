@@ -51,7 +51,7 @@ def make_fixture(path: Path) -> None:
     image.save(path, quality=94)
 
 
-def delete_branch(repository: str, branch: str, token: str) -> None:
+def delete_branch(repository: str, branch: str, token: str) -> str:
     encoded = urllib.parse.quote(branch, safe="/")
     request = urllib.request.Request(
         f"https://api.github.com/repos/{repository}/git/refs/heads/{encoded}",
@@ -65,11 +65,17 @@ def delete_branch(repository: str, branch: str, token: str) -> None:
     )
     try:
         with urllib.request.urlopen(request, timeout=30) as response:
-            if response.status not in (204,):
+            if response.status != 204:
                 raise RuntimeError(f"unexpected cleanup status {response.status}")
+            return "deleted"
     except urllib.error.HTTPError as error:
-        if error.code != 404:
-            raise
+        if error.code in (404, 422):
+            return "absent"
+        raise
+
+
+def state_text(page, selector: str) -> str:
+    return page.locator(selector).inner_text().strip()
 
 
 def main() -> None:
@@ -95,7 +101,10 @@ def main() -> None:
     console_errors: list[str] = []
     page_errors: list[str] = []
     result: dict[str, object] | None = None
+    connection_status = "not-started"
+    connection_message = ""
     cleanup_state = "not-started"
+    test_error: Exception | None = None
     try:
         with sync_playwright() as playwright:
             browser = playwright.chromium.launch(
@@ -112,74 +121,93 @@ def main() -> None:
             page = browser.new_page(viewport={"width": 1600, "height": 1000}, device_scale_factor=1)
             page.on("console", lambda message: console_errors.append(message.text) if message.type == "error" else None)
             page.on("pageerror", lambda error: page_errors.append(str(error)))
-            page.goto(url, wait_until="networkidle", timeout=90_000)
-            page.wait_for_function("() => Boolean(window.__YUNNAN_WALL_GITHUB_BRIDGE__)", timeout=90_000)
-            page.set_input_files("#libraryFileInput", str(fixture))
-            page.wait_for_function("() => window.__YUNNAN_WALL_LIBRARY_V24__.count >= 1", timeout=30_000)
+            try:
+                page.goto(url, wait_until="networkidle", timeout=90_000)
+                page.wait_for_function("() => Boolean(window.__YUNNAN_WALL_GITHUB_BRIDGE__)", timeout=90_000)
+                page.wait_for_function("() => Boolean(window.__YUNNAN_WALL_GITHUB_CORS_PATCH__)", timeout=30_000)
+                page.set_input_files("#libraryFileInput", str(fixture))
+                page.wait_for_function("() => window.__YUNNAN_WALL_LIBRARY_V24__.count >= 1", timeout=30_000)
 
-            page.locator("#githubRepository").fill(repository)
-            page.locator("#githubBranch").fill(branch)
-            page.locator("#githubBaseBranch").fill(base_branch)
-            page.locator("#githubToken").fill(token)
-            page.locator("#githubTestButton").click()
-            page.wait_for_function(
-                "() => document.querySelector('#githubBridgeState')?.textContent === '连接可用'",
-                timeout=45_000,
-            )
+                page.locator("#githubRepository").fill(repository)
+                page.locator("#githubBranch").fill(branch)
+                page.locator("#githubBaseBranch").fill(base_branch)
+                page.locator("#githubToken").fill(token)
+                page.locator("#githubTestButton").click()
+                page.wait_for_function(
+                    "() => ['连接可用','连接失败'].includes(document.querySelector('#githubBridgeState')?.textContent)",
+                    timeout=45_000,
+                )
+                connection_status = state_text(page, "#githubBridgeState")
+                connection_message = state_text(page, "#githubBridgeStatus")
+                if connection_status != "连接可用":
+                    raise RuntimeError(f"browser GitHub connection failed: {connection_message}")
 
-            page.locator("#githubPushButton").click()
-            page.wait_for_function(
-                "() => window.__YUNNAN_WALL_GITHUB_BRIDGE__.lastResult?.uploadedCount >= 1",
-                timeout=120_000,
-            )
-            result = page.evaluate("() => window.__YUNNAN_WALL_GITHUB_BRIDGE__.lastResult")
-            if result.get("mock") is not False:
-                raise RuntimeError(f"real push unexpectedly used mock mode: {result}")
-            if result.get("repository") != repository or result.get("branch") != branch:
-                raise RuntimeError(f"real push targeted the wrong location: {result}")
+                page.locator("#githubPushButton").click()
+                page.wait_for_function(
+                    "() => window.__YUNNAN_WALL_GITHUB_BRIDGE__.lastResult?.uploadedCount >= 1 || document.querySelector('#githubBridgeState')?.textContent === '推送失败'",
+                    timeout=120_000,
+                )
+                if state_text(page, "#githubBridgeState") == "推送失败":
+                    raise RuntimeError(f"real browser push failed: {state_text(page, '#githubBridgeStatus')}")
+                result = page.evaluate("() => window.__YUNNAN_WALL_GITHUB_BRIDGE__.lastResult")
+                if result.get("mock") is not False:
+                    raise RuntimeError(f"real push unexpectedly used mock mode: {result}")
+                if result.get("repository") != repository or result.get("branch") != branch:
+                    raise RuntimeError(f"real push targeted the wrong location: {result}")
 
-            page.screenshot(path=str(SCREENSHOT), full_page=False)
-
-            page.locator("#githubToken").fill(token)
-            page.once("dialog", lambda dialog: dialog.accept())
-            page.locator("#githubCleanupButton").click()
-            page.wait_for_function(
-                "() => document.querySelector('#githubBridgeState')?.textContent === '已清理'",
-                timeout=60_000,
-            )
-            cleanup_state = "browser-deleted"
-            if console_errors or page_errors:
-                raise RuntimeError(f"browser errors: console={console_errors}, page={page_errors}")
-            browser.close()
+                page.locator("#githubToken").fill(token)
+                page.once("dialog", lambda dialog: dialog.accept())
+                page.locator("#githubCleanupButton").click()
+                page.wait_for_function(
+                    "() => ['已清理','清理失败'].includes(document.querySelector('#githubBridgeState')?.textContent)",
+                    timeout=60_000,
+                )
+                cleanup_state = state_text(page, "#githubBridgeState")
+                if cleanup_state != "已清理":
+                    raise RuntimeError(f"browser cleanup failed: {state_text(page, '#githubBridgeStatus')}")
+                cleanup_state = "browser-deleted"
+                if console_errors or page_errors:
+                    raise RuntimeError(f"browser errors: console={console_errors}, page={page_errors}")
+            except Exception as error:
+                test_error = error
+                raise
+            finally:
+                page.screenshot(path=str(SCREENSHOT), full_page=False)
+                browser.close()
     finally:
-        try:
-            delete_branch(repository, branch, token)
-            if cleanup_state == "not-started":
-                cleanup_state = "fallback-deleted"
-        finally:
-            server.shutdown()
-            server.server_close()
-            fixture.unlink(missing_ok=True)
+        fallback_cleanup = delete_branch(repository, branch, token)
+        if cleanup_state == "not-started" and fallback_cleanup == "deleted":
+            cleanup_state = "fallback-deleted"
+        elif cleanup_state == "not-started" and fallback_cleanup == "absent":
+            cleanup_state = "branch-never-created"
+        server.shutdown()
+        server.server_close()
+        fixture.unlink(missing_ok=True)
+        REPORT.write_text(
+            json.dumps(
+                {
+                    "schemaVersion": "1.1.0",
+                    "page": "component-studio/wall-lab-v24.html",
+                    "repository": repository,
+                    "temporaryBranch": branch,
+                    "baseBranch": base_branch,
+                    "connectionStatus": connection_status,
+                    "connectionMessage": connection_message,
+                    "pushResult": result,
+                    "cleanup": cleanup_state,
+                    "consoleErrors": console_errors,
+                    "pageErrors": page_errors,
+                    "error": str(test_error) if test_error else None,
+                    "passed": test_error is None,
+                },
+                ensure_ascii=False,
+                indent=2,
+            ),
+            encoding="utf-8",
+        )
 
-    REPORT.write_text(
-        json.dumps(
-            {
-                "schemaVersion": "1.0.0",
-                "page": "component-studio/wall-lab-v24.html",
-                "repository": repository,
-                "temporaryBranch": branch,
-                "baseBranch": base_branch,
-                "pushResult": result,
-                "cleanup": cleanup_state,
-                "consoleErrors": console_errors,
-                "pageErrors": page_errors,
-                "passed": True,
-            },
-            ensure_ascii=False,
-            indent=2,
-        ),
-        encoding="utf-8",
-    )
+    if test_error:
+        raise test_error
 
 
 if __name__ == "__main__":
