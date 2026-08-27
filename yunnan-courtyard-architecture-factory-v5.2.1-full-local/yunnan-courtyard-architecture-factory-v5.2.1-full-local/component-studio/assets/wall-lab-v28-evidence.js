@@ -116,7 +116,7 @@ function createPanel(pack) {
   `;
   const distillation = document.getElementById('distillationLab');
   const workbench = document.getElementById('workbench');
-  if (distillation?.parentElement) distillation.parentElement.insertBefore(panel, distillation);
+  if (distillation?.parentElement) distillation.parentElement.insertBefore(panel, distillation.nextSibling);
   else workbench?.parentElement?.append(panel);
   return panel;
 }
