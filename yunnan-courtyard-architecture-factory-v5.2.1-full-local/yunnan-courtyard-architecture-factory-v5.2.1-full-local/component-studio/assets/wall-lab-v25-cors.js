@@ -129,3 +129,7 @@ window.__YUNNAN_WALL_GITHUB_CORS_PATCH__ = {
   normalizeToken: normalizeGithubToken,
   normalizeInput: normalizeTokenInput
 };
+
+import('./wall-lab-v28-evidence.js?v=2.8.0').catch((error) => {
+  console.error('35 图证据融合模块加载失败', error);
+});
