@@ -78,19 +78,24 @@ async function sha256Hex(buffer) {
 function openDb(name, version, upgrade) {
   return new Promise((resolve, reject) => {
     const request = version ? indexedDB.open(name, version) : indexedDB.open(name);
-    request.onupgradeneeded = () => upgrade?.(request.result); request.onsuccess = () => resolve(request.result);
+    request.onupgradeneeded = () => upgrade?.(request.result, request.transaction); request.onsuccess = () => resolve(request.result);
     request.onerror = () => reject(request.error);
   });
 }
 async function legacyDb() {
-  return openDb(LEGACY_DB, null, (db) => {
-    if (!db.objectStoreNames.contains(LEGACY_STORE)) {
-      const store = db.createObjectStore(LEGACY_STORE, { keyPath: 'id' }); store.createIndex('moduleId', 'moduleId');
-    }
+  const storage = window.__YUNNAN_COMPONENT_STUDIO_STORAGE__;
+  if (storage) return storage.openAttachments();
+  return openDb(LEGACY_DB, 2, (db, transaction) => {
+    const store = db.objectStoreNames.contains(LEGACY_STORE)
+      ? transaction.objectStore(LEGACY_STORE)
+      : db.createObjectStore(LEGACY_STORE, { keyPath: 'id' });
+    if (!store.indexNames.contains('moduleId')) store.createIndex('moduleId', 'moduleId');
   });
 }
 async function cacheDb() {
-  return openDb(CACHE_DB, 1, (db) => { if (!db.objectStoreNames.contains('previews')) db.createObjectStore('previews', { keyPath: 'attachmentId' }); });
+  const storage = window.__YUNNAN_COMPONENT_STUDIO_STORAGE__;
+  if (storage) return storage.openPreviews();
+  return openDb(CACHE_DB, 2, (db) => { if (!db.objectStoreNames.contains('previews')) db.createObjectStore('previews', { keyPath: 'attachmentId' }); });
 }
 async function listAttachments() {
   const db = await legacyDb(); return new Promise((resolve, reject) => {

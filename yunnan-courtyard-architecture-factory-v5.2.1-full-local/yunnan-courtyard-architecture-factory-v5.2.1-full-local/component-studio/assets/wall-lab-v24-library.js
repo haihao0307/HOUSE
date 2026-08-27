@@ -1,10 +1,7 @@
-const DB_NAME = 'YunnanComponentStudio';
-const DB_VERSION = 1;
 const STORE_NAME = 'attachments';
 const MODULE_ID = 'walls';
 const CHANNEL_NAME = 'yunnan-component-studio:v1';
 const SELECTED_KEY = 'yunnan-wall-v24:selected-reference';
-const CACHE_DB = 'YunnanWallStudioV2';
 const CACHE_STORE = 'previews';
 const RAW_RE = /\.(nef|nrw|cr2|cr3|arw|dng|raf|rw2|orf|pef)$/i;
 const IMAGE_RE = /\.(jpe?g|png|webp|gif|bmp|tiff?)$/i;
@@ -28,42 +25,21 @@ let selectedId = localStorage.getItem(SELECTED_KEY) || '';
 let selectedUrl = '';
 const thumbUrls = new Set();
 const channel = 'BroadcastChannel' in window ? new BroadcastChannel(CHANNEL_NAME) : null;
-let dbPromise = null;
-let cachePromise = null;
 
 function uid(prefix = 'attachment') {
   return `${prefix}-${crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}`}`;
 }
 
 function openDb() {
-  if (dbPromise) return dbPromise;
-  dbPromise = new Promise((resolve, reject) => {
-    const request = indexedDB.open(DB_NAME, DB_VERSION);
-    request.onupgradeneeded = () => {
-      const db = request.result;
-      if (!db.objectStoreNames.contains(STORE_NAME)) {
-        const store = db.createObjectStore(STORE_NAME, { keyPath: 'id' });
-        store.createIndex('moduleId', 'moduleId', { unique: false });
-      }
-    };
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error || new Error('资料库打开失败'));
-  });
-  return dbPromise;
+  const storage = window.__YUNNAN_COMPONENT_STUDIO_STORAGE__;
+  if (!storage) return Promise.reject(new Error('资料库迁移程序未载入'));
+  return storage.openAttachments();
 }
 
 function openCache() {
-  if (cachePromise) return cachePromise;
-  cachePromise = new Promise((resolve, reject) => {
-    const request = indexedDB.open(CACHE_DB, 1);
-    request.onupgradeneeded = () => {
-      const db = request.result;
-      if (!db.objectStoreNames.contains(CACHE_STORE)) db.createObjectStore(CACHE_STORE, { keyPath: 'attachmentId' });
-    };
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error || new Error('预览缓存打开失败'));
-  });
-  return cachePromise;
+  const storage = window.__YUNNAN_COMPONENT_STUDIO_STORAGE__;
+  if (!storage) return Promise.reject(new Error('预览缓存迁移程序未载入'));
+  return storage.openPreviews();
 }
 
 async function listRecords() {
@@ -196,6 +172,17 @@ function setStatus(text, tone = '') {
   elements.status.textContent = text;
   elements.status.dataset.tone = tone;
 }
+
+window.addEventListener('yunnan-component-studio-storage', (event) => {
+  const detail = event.detail || {};
+  if (!['YunnanComponentStudio', 'YunnanWallStudioV2'].includes(detail.database)) return;
+  const subject = detail.database === 'YunnanWallStudioV2' ? 'RAW 预览缓存' : '资料库';
+  if (detail.state === 'blocked') {
+    setStatus(`${subject}升级正在等待其他 HOUSE 页面关闭。关闭旧页面后会自动继续。`, 'error');
+  } else if (detail.state === 'versionchange') {
+    setStatus(`${subject}已经升级，请重新载入这个页面。`, 'error');
+  }
+});
 
 function revokeSelectedUrl() {
   if (selectedUrl) URL.revokeObjectURL(selectedUrl);
@@ -414,6 +401,14 @@ async function init() {
       renderGrid();
     }
   });
+  const initialStorageStates = window.__YUNNAN_COMPONENT_STUDIO_STORAGE__?.states || {};
+  const initialBlockedState = ['YunnanComponentStudio', 'YunnanWallStudioV2']
+    .map((name) => initialStorageStates[name])
+    .find((state) => state?.state === 'blocked');
+  if (initialBlockedState) {
+    const subject = initialBlockedState.database === 'YunnanWallStudioV2' ? 'RAW 预览缓存' : '资料库';
+    setStatus(`${subject}升级正在等待其他 HOUSE 页面关闭。关闭旧页面后会自动继续。`, 'error');
+  }
   records = await listRecords();
   renderGrid();
   const requested = records.find((record) => record.id === selectedId && (isImage(record) || isRaw(record)))

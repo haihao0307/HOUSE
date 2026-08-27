@@ -29,12 +29,13 @@ jobs:
         working-directory: ${{ env.PROJECT_DIR }}
         run: python3 tools/validate.py
 
-      - name: Validate component studio V2.6.0
+      - name: Validate component studio V2.6.1
         working-directory: ${{ env.PROJECT_DIR }}
         shell: bash
         run: |
           set -euo pipefail
           for file in component-studio/assets/studio-*.js; do node --check "$file"; done
+          node --check component-studio/assets/wall-lab-v24-db-bootstrap.js
           node --check component-studio/assets/wall-lab-v24.js
           node --check component-studio/assets/wall-lab-v24-library.js
           node --check component-studio/assets/wall-lab-v25-github.js
@@ -59,6 +60,7 @@ jobs:
               root / 'wall-lab-v24.html',
               root / 'assets/wall-lab-v24.css',
               root / 'assets/wall-lab-v25.css',
+              root / 'assets/wall-lab-v24-db-bootstrap.js',
               root / 'assets/wall-lab-v24.js',
               root / 'assets/wall-lab-v24-library.js',
               root / 'assets/wall-lab-v25-cors.js',
@@ -73,15 +75,22 @@ jobs:
           ]
           missing = [str(path) for path in required if not path.is_file()]
           if missing:
-              raise SystemExit(f'missing component studio V2.6.0 files: {missing}')
+              raise SystemExit(f'missing component studio V2.6.1 files: {missing}')
 
           entry = (root / 'wall-lab.html').read_text(encoding='utf-8')
           if 'wall-lab-v24.html' not in entry:
               raise SystemExit('wall-lab entry does not route to the active wall workbench')
 
+          hub = (root / 'index.html').read_text(encoding='utf-8')
+          if 'wall-lab-v24-db-bootstrap.js?v=2.6.1' not in hub:
+              raise SystemExit('component studio does not load the shared IndexedDB schema owner')
+          for asset in ('studio.css', 'studio-core.js', 'studio-hub.js', 'studio-module.js', 'studio-actions.js'):
+              if f'{asset}?v=2.6.1' not in hub:
+                  raise SystemExit(f'component studio asset is missing V2.6.1 cache key: {asset}')
+
           page = (root / 'wall-lab-v24.html').read_text(encoding='utf-8')
           for marker in (
-              '云南墙体与墙面工作室 V2.6.0',
+              '云南墙体与墙面工作室 V2.6.1',
               '柏林噪波 + Simplex + Worley',
               '程序化实验墙主画面',
               '参考资料窗口',
@@ -90,11 +99,17 @@ jobs:
               '通道 B：无需 GitHub 令牌',
               'githubTokenCreateLink',
               'githubExportButton',
-              'wall-lab-v25-github.js',
-              'wall-lab-v26-delivery.js',
+              'wall-lab-v24-db-bootstrap.js?v=2.6.1',
+              'wall-lab-v24.js?v=2.6.1',
+              'wall-lab-v24-library.js?v=2.6.1',
+              'wall-lab-v25-github.js?v=2.6.1',
+              'wall-lab-v26-delivery.js?v=2.6.1',
           ):
               if marker not in page:
-                  raise SystemExit(f'missing wall V2.6.0 page marker: {marker}')
+                  raise SystemExit(f'missing wall V2.6.1 page marker: {marker}')
+          for asset in ('wall-lab-v24.css', 'wall-lab-v25.css', 'wall-lab-v25-cors.js'):
+              if f'{asset}?v=2.6.1' not in page:
+                  raise SystemExit(f'wall studio asset is missing V2.6.1 cache key: {asset}')
 
           runtime = (root / 'assets/wall-lab-v24.js').read_text(encoding='utf-8')
           for marker in (
@@ -111,7 +126,7 @@ jobs:
 
           library = (root / 'assets/wall-lab-v24-library.js').read_text(encoding='utf-8')
           for marker in (
-              "const DB_NAME = 'YunnanComponentStudio'",
+              '__YUNNAN_COMPONENT_STUDIO_STORAGE__',
               "const CHANNEL_NAME = 'yunnan-component-studio:v1'",
               'reference-card',
               'extractEmbeddedJpeg',
@@ -120,6 +135,23 @@ jobs:
           ):
               if marker not in library:
                   raise SystemExit(f'missing wall reference library marker: {marker}')
+
+          storage = (root / 'assets/wall-lab-v24-db-bootstrap.js').read_text(encoding='utf-8')
+          for marker in (
+              "name: 'YunnanComponentStudio'",
+              "name: 'YunnanWallStudioV2'",
+              'version: 2',
+              "name: 'attachments'",
+              "name: 'moduleId'",
+              "name: 'previews'",
+              'request.onblocked',
+              'db.onversionchange',
+              '__YUNNAN_COMPONENT_STUDIO_STORAGE__',
+          ):
+              if marker not in storage:
+                  raise SystemExit(f'missing IndexedDB migration marker: {marker}')
+          if 'deleteDatabase' in storage:
+              raise SystemExit('production IndexedDB migration must never delete a user database')
 
           bridge = (root / 'assets/wall-lab-v25-github.js').read_text(encoding='utf-8')
           for marker in (
@@ -165,14 +197,14 @@ jobs:
       - name: Install wall browser QA dependencies
         run: python3 -m pip install --disable-pip-version-check playwright==1.57.0 pillow==11.3.0
 
-      - name: Run wall studio V2.6.0 browser QA
+      - name: Run wall studio V2.6.1 browser QA
         working-directory: ${{ env.PROJECT_DIR }}
         run: python3 tools/wall_v24_browser_smoke.py
 
       - name: Upload wall studio browser evidence
         uses: actions/upload-artifact@v4
         with:
-          name: wall-studio-v26-browser-evidence
+          name: wall-studio-v261-browser-evidence
           path: |
             ${{ env.PROJECT_DIR }}/qa/screenshots/wall_v24_browser.png
             ${{ env.PROJECT_DIR }}/data/qa/wall_v24_browser.json
@@ -187,7 +219,7 @@ jobs:
           rm -rf _site/references-private _site/release _site/.git _site/.github
           rm -f _site/assets/models/YN_TUANJIE_001_EDITABLE_HIGH.glb
           touch _site/.nojekyll
-          printf '{"schemaVersion":"5.5.1","componentStudioVersion":"2.6.0","wallStudioVersion":"2.6.0","referenceLibraryVersion":"2.4.1","githubEvidenceBridgeVersion":"2.5.0","wallEvidenceDeliveryVersion":"2.6.0","referenceViewerQuality":"2.0.0","browserQa":"wall-v26-dual-delivery-passed","sha":"%s","ref":"%s","runId":"%s","runAttempt":"%s"}\n' \
+          printf '{"schemaVersion":"5.5.1","componentStudioVersion":"2.6.1","wallStudioVersion":"2.6.1","indexedDbSchemaVersion":2,"referenceLibraryVersion":"2.4.1","githubEvidenceBridgeVersion":"2.5.0","wallEvidenceDeliveryVersion":"2.6.0","referenceViewerQuality":"2.0.0","browserQa":"wall-v261-idb-v2-migration-passed","sha":"%s","ref":"%s","runId":"%s","runAttempt":"%s"}\n' \
             "$GITHUB_SHA" "$GITHUB_REF_NAME" "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" > _site/build.json
 
       - name: Configure Pages
@@ -215,7 +247,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: deploy
     steps:
-      - name: Verify deployed component studio V2.6.0
+      - name: Verify deployed component studio V2.6.1
         env:
           PAGE_URL: ${{ needs.deploy.outputs.page_url }}
           EXPECTED_SHA: ${{ github.sha }}
@@ -235,11 +267,12 @@ jobs:
           done
 
           grep -Fq "$EXPECTED_SHA" "$tmp/build.json"
-          grep -Fq '"componentStudioVersion":"2.6.0"' "$tmp/build.json"
-          grep -Fq '"wallStudioVersion":"2.6.0"' "$tmp/build.json"
+          grep -Fq '"componentStudioVersion":"2.6.1"' "$tmp/build.json"
+          grep -Fq '"wallStudioVersion":"2.6.1"' "$tmp/build.json"
+          grep -Fq '"indexedDbSchemaVersion":2' "$tmp/build.json"
           grep -Fq '"githubEvidenceBridgeVersion":"2.5.0"' "$tmp/build.json"
           grep -Fq '"wallEvidenceDeliveryVersion":"2.6.0"' "$tmp/build.json"
-          grep -Fq '"browserQa":"wall-v26-dual-delivery-passed"' "$tmp/build.json"
+          grep -Fq '"browserQa":"wall-v261-idb-v2-migration-passed"' "$tmp/build.json"
 
           fetch_and_require() {
             local url="$1"
@@ -254,13 +287,17 @@ jobs:
           fetch_and_require "${base}component-studio/wall-lab-v24.html" "wall-v26.html" "墙体资料交付中心"
           grep -Fq 'githubTokenCreateLink' "$tmp/wall-v26.html"
           grep -Fq 'githubExportButton' "$tmp/wall-v26.html"
-          grep -Fq 'wall-lab-v26-delivery.js' "$tmp/wall-v26.html"
+          grep -Fq 'wall-lab-v24-db-bootstrap.js?v=2.6.1' "$tmp/wall-v26.html"
+          grep -Fq 'wall-lab-v26-delivery.js?v=2.6.1' "$tmp/wall-v26.html"
           fetch_and_require "${base}component-studio/assets/wall-lab-v24.css" "wall-v24.css" ".reference-library"
           fetch_and_require "${base}component-studio/assets/wall-lab-v25.css" "wall-v25.css" ".bundle-delivery-block"
           fetch_and_require "${base}component-studio/assets/wall-lab-v24.js" "wall-v24.js" "class Perlin3"
           grep -Fq 'class Simplex2' "$tmp/wall-v24.js"
           grep -Fq 'function worley2' "$tmp/wall-v24.js"
           node --check "$tmp/wall-v24.js"
+          fetch_and_require "${base}component-studio/assets/wall-lab-v24-db-bootstrap.js" "wall-v24-db.js" "__YUNNAN_COMPONENT_STUDIO_STORAGE__"
+          grep -Fq 'version: 2' "$tmp/wall-v24-db.js"
+          node --check "$tmp/wall-v24-db.js"
           fetch_and_require "${base}component-studio/assets/wall-lab-v24-library.js" "wall-v24-library.js" "__YUNNAN_WALL_LIBRARY_V24__"
           node --check "$tmp/wall-v24-library.js"
           fetch_and_require "${base}component-studio/assets/wall-lab-v25-github.js" "wall-v25-github.js" "temporary-branch-exif-stripped-proxies"

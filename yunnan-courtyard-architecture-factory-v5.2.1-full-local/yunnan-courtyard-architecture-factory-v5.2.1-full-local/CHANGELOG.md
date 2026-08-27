@@ -1,5 +1,12 @@
 # 变更记录
 
+## PR #13 组件工作台 V2.6.1 数据库迁移修复
+
+1. 将 `YunnanComponentStudio` 与 `YunnanWallStudioV2` 统一交给单一 Schema V2 管理器，移除各墙面脚本分别维护版本和建表逻辑的分叉。
+2. 历史空 V1 数据库会通过原子升级补建 `attachments`、`moduleId` 索引和 `previews`，保留已有 store、记录、Blob、哈希和缓存，禁止自动删除数据库。
+3. 所有连接加入 `versionchange` 自动关闭与 `blocked` 可见提示，避免 iPhone 后台旧标签页长期阻断升级。
+4. 墙面浏览器 QA 同时覆盖缺少目标 store 的空 V1 库、保有真实附件/预览 Blob 但缺少索引的 V1 库，以及旧标签页阻塞升级的场景；验证升级至 V2、Blob 字节与哈希保留、刷新持久化、资料窗口解除卡死，并继续执行 36 张资料、ZIP 与 GitHub mock 全链路。
+
 ## 5.5.0
 
 1. 将数据驱动的墙面、瓦顶风化系统接入完整一颗印正式生成器，三个预设的参数实际进入材质 uniform、实例综合色和连续片区生成。

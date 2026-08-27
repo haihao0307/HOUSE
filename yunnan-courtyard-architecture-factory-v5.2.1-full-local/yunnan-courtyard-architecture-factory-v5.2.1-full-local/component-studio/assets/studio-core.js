@@ -1,8 +1,6 @@
 const CONFIG_URL = './data/modules.json';
 const WORKSPACE_KEY = 'yunnan-component-studio:v1:workspace';
 const MODULE_KEY_PREFIX = 'yunnan-component-studio:v1:module:';
-const DB_NAME = 'YunnanComponentStudio';
-const DB_VERSION = 1;
 const CHANNEL_NAME = 'yunnan-component-studio:v1';
 const ISSUE_BASE = 'https://github.com/haihao0307/HOUSE/issues/new';
 
@@ -16,7 +14,6 @@ const channel = 'BroadcastChannel' in window ? new BroadcastChannel(CHANNEL_NAME
 let config = null;
 let activeModule = null;
 let activeState = null;
-let attachmentDbPromise = null;
 let saveTimer = null;
 
 function safeParse(value, fallback) {
@@ -138,6 +135,16 @@ function showToast(message, tone = 'normal') {
   window.setTimeout(() => item.remove(), 3600);
 }
 
+window.addEventListener('yunnan-component-studio-storage', (event) => {
+  const detail = event.detail || {};
+  if (detail.database !== 'YunnanComponentStudio') return;
+  if (detail.state === 'blocked') {
+    showToast('资料库升级正在等待其他 HOUSE 页面关闭，请关闭旧页面后再试', 'error');
+  } else if (detail.state === 'versionchange') {
+    showToast('资料库已经升级，请重新载入这个页面', 'error');
+  }
+});
+
 function downloadJson(filename, data) {
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json;charset=utf-8' });
   const url = URL.createObjectURL(blob);
@@ -166,20 +173,9 @@ async function copyText(text) {
 }
 
 function openAttachmentDb() {
-  if (attachmentDbPromise) return attachmentDbPromise;
-  attachmentDbPromise = new Promise((resolve, reject) => {
-    const request = indexedDB.open(DB_NAME, DB_VERSION);
-    request.onupgradeneeded = () => {
-      const db = request.result;
-      if (!db.objectStoreNames.contains('attachments')) {
-        const store = db.createObjectStore('attachments', { keyPath: 'id' });
-        store.createIndex('moduleId', 'moduleId', { unique: false });
-      }
-    };
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error);
-  });
-  return attachmentDbPromise;
+  const storage = window.__YUNNAN_COMPONENT_STUDIO_STORAGE__;
+  if (!storage) return Promise.reject(new Error('组件资料库迁移程序未载入'));
+  return storage.openAttachments();
 }
 
 async function dbTransaction(mode, callback) {
@@ -246,4 +242,3 @@ async function attachmentMetadata(moduleId) {
   const items = await listAttachments(moduleId);
   return items.map(({ blob, ...metadata }) => metadata);
 }
-

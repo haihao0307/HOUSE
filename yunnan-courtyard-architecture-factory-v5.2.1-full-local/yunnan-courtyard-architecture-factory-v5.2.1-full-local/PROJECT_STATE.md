@@ -65,6 +65,7 @@
 54. 本轮一次隔离本地 Surface 性能验收按桌面/移动各一个新 Chromium 进程、一次 6 秒样本且无重试执行：桌面 7.479 FPS、移动 8.226 FPS；移动端相对历史 0.659 FPS 已超过 5 FPS 门槛，draw calls 407 低于历史 913 和本轮基线 1526。
 55. 屋面系统与浏览器 QA 同时要求七屋面精确坡数为 `2+2+2+2+1+3+2=14`；Surface 制品中的 16 张 PNG 均逐张解码，校验非透明像素、颜色变化、字节数、SHA-256 与完整相机/seed/结构/表面元数据。
 56. 公开 Pages QA 在创建浏览器上下文前轮询 `build.json`、Surface Lab 和风化 seed，要求三项均为 HTTP 200 且 `build.json` 的 SHA/ref 匹配本轮；随后仍以浏览器正式阶段的零控制台错误、零 pageerror、零失败请求和零 HTTP 4xx/5xx 为硬门槛。
+57. PR #13 组件工作台 V2.6.1 的本机资料库统一升级为 IndexedDB Schema V2。历史空 V1 主库与预览缓存通过加法迁移补齐 store 和索引，保留旧资料与 Blob；浏览器 QA 从真实缺表旧库开始验证迁移、资料列表、整批 ZIP 和 GitHub mock 推送。
 
 ## 强制不变量
 

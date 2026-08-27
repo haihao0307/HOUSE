@@ -3,10 +3,7 @@ const DEFAULT_REPOSITORY = `${OWNER}/HOUSE`;
 const DEFAULT_BRANCH = 'wall-evidence-inbox';
 const DEFAULT_BASE_BRANCH = 'main';
 const MODULE_ID = 'walls';
-const DB_NAME = 'YunnanComponentStudio';
-const DB_VERSION = 1;
 const STORE_NAME = 'attachments';
-const CACHE_DB = 'YunnanWallStudioV2';
 const CACHE_STORE = 'previews';
 const RAW_RE = /\.(nef|nrw|cr2|cr3|arw|dng|raf|rw2|orf|pef)$/i;
 const IMAGE_RE = /\.(jpe?g|png|webp|gif|bmp|tiff?)$/i;
@@ -30,8 +27,6 @@ const elements = {
   clearToken: document.getElementById('githubClearTokenButton')
 };
 
-let dbPromise = null;
-let cachePromise = null;
 let busy = false;
 let lastResult = null;
 
@@ -89,36 +84,15 @@ function assertBranch(value) {
 }
 
 function openDb() {
-  if (dbPromise) return dbPromise;
-  dbPromise = new Promise((resolve, reject) => {
-    const request = indexedDB.open(DB_NAME, DB_VERSION);
-    request.onupgradeneeded = () => {
-      const db = request.result;
-      if (!db.objectStoreNames.contains(STORE_NAME)) {
-        const store = db.createObjectStore(STORE_NAME, { keyPath: 'id' });
-        store.createIndex('moduleId', 'moduleId', { unique: false });
-      }
-    };
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error || new Error('资料库打开失败'));
-  });
-  return dbPromise;
+  const storage = window.__YUNNAN_COMPONENT_STUDIO_STORAGE__;
+  if (!storage) return Promise.reject(new Error('资料库迁移程序未载入'));
+  return storage.openAttachments();
 }
 
 function openCache() {
-  if (cachePromise) return cachePromise;
-  cachePromise = new Promise((resolve, reject) => {
-    const request = indexedDB.open(CACHE_DB, 1);
-    request.onupgradeneeded = () => {
-      const db = request.result;
-      if (!db.objectStoreNames.contains(CACHE_STORE)) {
-        db.createObjectStore(CACHE_STORE, { keyPath: 'attachmentId' });
-      }
-    };
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error || new Error('RAW 预览缓存打开失败'));
-  });
-  return cachePromise;
+  const storage = window.__YUNNAN_COMPONENT_STUDIO_STORAGE__;
+  if (!storage) return Promise.reject(new Error('RAW 预览缓存迁移程序未载入'));
+  return storage.openPreviews();
 }
 
 async function listRecords() {
