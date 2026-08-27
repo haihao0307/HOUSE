@@ -1,0 +1,45 @@
+{
+  "schemaVersion": "1.0.0",
+  "recordId": "YUNNAN-WALL-SYSTEM-V30-CONTRACT",
+  "studioVersion": "3.0.0",
+  "status": "visual-calibration",
+  "purpose": "Independent full-wall workbench for wall core, adobe masonry, exterior and interior plaster, stone plinth, door closure, continuous erosion, cavities and straw fibres.",
+  "evidenceBasis": {
+    "sourcePackage": "YUNNAN-WALL-EVIDENCE-PACK-20260827-35",
+    "sourceReceipts": 35,
+    "uniqueEvidence": 34,
+    "primaryRules": [
+      "adobe courses continue from the stone plinth to the wall top with only a thin adjustable closure gap",
+      "adobe units are embedded into the core and protrude only slightly on exterior and interior faces",
+      "exterior and interior plaster are independent thin layers with continuous remnants and irregular loss boundaries",
+      "stone plinth and first adobe course overlap slightly to avoid a floating seam",
+      "rounded edge erosion, pitting, small cavities, straw exposure and large weathering share continuous noise fields",
+      "door opening, frame, lintel, piers and upper wall are derived from one closure contract"
+    ]
+  },
+  "geometryContract": {
+    "closedCorePieceCount": 3,
+    "openSurfaceCount": 0,
+    "doorOpening": "derived from frame width, lintel height and closure overlap",
+    "topClosure": "adobe course pitch is redistributed to reach wallHeight minus topClosureGap",
+    "stoneAdobeJoint": "adobeStart equals stoneHeight minus stoneAdobeOverlap",
+    "interiorExterior": "two independently controllable plaster and brick faces share one tapered core"
+  },
+  "noiseStack": {
+    "Perlin": "low-frequency wall undulation and material macro variation",
+    "Simplex": "domain warping, rain flow and continuous erosion direction",
+    "Worley": "rounded missing corners, pits, cavities and patch-edge bites"
+  },
+  "qaGates": {
+    "runtimeVersion": "3.0.0",
+    "minimumBrickCount": 120,
+    "minimumStoneCount": 20,
+    "maximumDefaultBrickProjectionMeters": 0.02,
+    "maximumTopGapMeters": 0.03,
+    "maximumStoneAdobeGapMeters": 0.002,
+    "doorClosurePassed": true,
+    "openSurfaceCount": 0,
+    "browserConsoleErrors": 0,
+    "browserPageErrors": 0
+  }
+}

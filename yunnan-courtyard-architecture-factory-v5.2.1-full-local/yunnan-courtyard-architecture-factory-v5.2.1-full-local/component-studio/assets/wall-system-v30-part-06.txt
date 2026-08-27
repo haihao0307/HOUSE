@@ -1,0 +1,105 @@
+        addMesh(geometry, materials.stone[stoneCount % materials.stone.length], stoneGroup, cx, cy, frontZ - depth / 2, { x: (random() - 0.5) * 0.018, y: (random() - 0.5) * 0.018, z: (random() - 0.5) * 0.03 });
+        const backZ = backAt(cy, contract) - parameters.stoneProjection * 0.55 - parameters.innerFaceInset - field * 0.18;
+        addMesh(geometry.clone(), materials.stone[(stoneCount + 1) % materials.stone.length], stoneGroup, cx, cy, backZ + depth / 2, { x: (random() - 0.5) * 0.015, y: (random() - 0.5) * 0.015, z: (random() - 0.5) * 0.02 });
+        stoneCount += 1;
+      }
+      x = x1 + 0.012;
+    }
+  }
+  return { stoneCount, stoneRows: rowCount, stoneTop: parameters.stoneHeight };
+}
+
+function buildBricks(contract, materials, noise) {
+  const adobeStart = Math.max(0.06, parameters.stoneHeight - parameters.stoneAdobeOverlap);
+  const adobeEnd = Math.max(adobeStart + 0.20, contract.wallHeight - parameters.topClosureGap);
+  const available = adobeEnd - adobeStart;
+  const baseCourses = Math.max(1, Math.round(available / Math.max(0.08, parameters.brickHeight + parameters.mortar)));
+  const courseCount = Math.max(1, baseCourses + Math.round(parameters.brickCourseAdjust));
+  const pitch = available / courseCount;
+  const actualHeight = Math.max(0.08, pitch - parameters.mortar);
+  let brickCount = 0;
+  let missingCount = 0;
+  const random = mulberry32(parameters.seed + 3301);
+  for (let row = 0; row < courseCount; row += 1) {
+    const y0 = adobeStart + row * pitch + parameters.mortar * 0.5;
+    const cy = y0 + actualHeight / 2;
+    const half = halfWidthAt(cy, contract);
+    const stagger = row % 2 ? (parameters.brickLength + parameters.mortar) / 2 : 0;
+    for (let x = -half - parameters.brickLength + stagger; x < half; x += parameters.brickLength + parameters.mortar) {
+      const x0 = Math.max(-half + 0.015, x);
+      const x1 = Math.min(half - 0.015, x + parameters.brickLength);
+      if (x1 - x0 < 0.12) continue;
+      if (openingIntersects(x0, x1, y0, y0 + actualHeight, contract, 0.025)) continue;
+      const brickRandom = mulberry32(parameters.seed + row * 1193 + Math.round((x0 + x1) * 1000));
+      if (brickRandom() < parameters.missingBrickRate) {
+        missingCount += 1;
+        continue;
+      }
+      const cx = (x0 + x1) / 2;
+      const width = (x1 - x0 - parameters.mortar * 0.65) * (1 + (brickRandom() - 0.5) * parameters.brickIrregularity * 0.08);
+      const height = actualHeight * (1 + (brickRandom() - 0.5) * parameters.brickIrregularity * 0.09);
+      const depth = 0.105 + brickRandom() * 0.035;
+      const field = surfaceField(cx, cy, noise);
+      const geometry = erodedBlockGeometry(width, height, depth, parameters.seed + brickCount * 43, noise, 'brick');
+      const exteriorZ = frontAt(cy, contract) + parameters.brickProjection + field;
+      const exterior = addMesh(geometry, materials.adobe[Math.floor(brickRandom() * materials.adobe.length)], exteriorBrickGroup,
+        cx + (brickRandom() - 0.5) * parameters.mortar * 0.45,
+        cy + (brickRandom() - 0.5) * parameters.mortar * 0.30,
+        exteriorZ - depth / 2,
+        { x: (brickRandom() - 0.5) * 0.014, y: (brickRandom() - 0.5) * 0.014, z: (brickRandom() - 0.5) * 0.016 });
+      exterior.userData.surfacePoint = { x: cx, y: cy, z: exteriorZ };
+      const interiorField = field * 0.42;
+      const interiorZ = backAt(cy, contract) - parameters.innerFaceInset - parameters.innerBrickProjection - interiorField;
+      addMesh(geometry.clone(), materials.adobeInterior[Math.floor(brickRandom() * materials.adobeInterior.length)], interiorBrickGroup,
+        cx + (brickRandom() - 0.5) * parameters.mortar * 0.25,
+        cy + (brickRandom() - 0.5) * parameters.mortar * 0.22,
+        interiorZ + depth / 2,
+        { x: (brickRandom() - 0.5) * 0.010, y: (brickRandom() - 0.5) * 0.010, z: (brickRandom() - 0.5) * 0.012 });
+      brickCount += 1;
+    }
+  }
+  return {
+    brickCount,
+    brickRows: courseCount,
+    missingCount,
+    adobeStart,
+    adobeEnd,
+    topGapActual: contract.wallHeight - adobeEnd,
+    jointGapActual: Math.max(0, adobeStart - parameters.stoneHeight),
+    jointOverlapActual: Math.max(0, parameters.stoneHeight - adobeStart)
+  };
+}
+
+function validPatchPosition(x, y, width, height, contract) {
+  const half = halfWidthAt(y, contract);
+  if (Math.abs(x) + width / 2 > half - 0.08) return false;
+  if (openingIntersects(x - width / 2, x + width / 2, y - height / 2, y + height / 2, contract, 0.08)) return false;
+  return true;
+}
+
+function buildPlaster(contract, materials, noise) {
+  let patchCount = 0;
+  const buildSide = (side, count, coverage, loss, thickness, material, seedBase) => {
+    const random = mulberry32(parameters.seed + seedBase);
+    const effectiveCount = Math.max(0, Math.round(count));
+    for (let index = 0; index < effectiveCount; index += 1) {
+      let placed = false;
+      for (let attempt = 0; attempt < 50 && !placed; attempt += 1) {
+        const y = parameters.stoneHeight + 0.18 + random() * Math.max(0.3, contract.wallHeight - parameters.stoneHeight - 0.35);
+        const half = halfWidthAt(y, contract);
+        const width = (0.80 + random() * 2.20) * (0.52 + coverage * 0.82);
+        const height = (0.55 + random() * 1.80) * (0.48 + coverage * 0.80);
+        const x = (random() * 2 - 1) * Math.max(0.1, half - width / 2 - 0.08);
+        if (!validPatchPosition(x, y, width, height, contract)) continue;
+        const geometry = irregularPatchGeometry(width, height, thickness, parameters.seed + seedBase + index * 73, noise, loss, side);
+        const field = surfaceField(x, y, noise);
+        const z = side > 0
+          ? frontAt(y, contract) + parameters.brickProjection + field + thickness / 2 + 0.012
+          : backAt(y, contract) - parameters.innerFaceInset - parameters.innerBrickProjection - field * 0.42 - thickness / 2 - 0.010;
+        addMesh(geometry, material, plasterGroup, x, y, z, side > 0 ? null : { y: Math.PI });
+        patchCount += 1;
+        placed = true;
+      }
+    }
+  };
+  buildSide(1, parameters.outerPatchCount, parameters.outerPlasterCoverage, parameters.outerPlasterLoss, parameters.outerPlasterThickness, materials.plasterOuter, 5100);

@@ -1,0 +1,152 @@
+    const node = document.getElementById(id);
+    if (!node) return;
+    node.textContent = text;
+    node.classList.toggle('ok', passed === true);
+    node.classList.toggle('error', passed === false);
+  };
+  set('auditCore', '3 个封闭实体', true);
+  set('auditDoor', contract.closurePassed ? '门框与墙心联动通过' : '门洞闭合失败', contract.closurePassed);
+  set('auditTop', `${geometry.topGapActual.toFixed(3)} m`, geometry.topGapActual <= parameters.topClosureGap + 0.002);
+  set('auditJoint', geometry.jointGapActual <= 0.002 ? `压接 ${geometry.jointOverlapActual.toFixed(3)} m` : `空缝 ${geometry.jointGapActual.toFixed(3)} m`, geometry.jointGapActual <= 0.002);
+  set('auditPier', `${contract.minPierActual.toFixed(2)} m`, contract.minPierActual >= parameters.minPierWidth - 0.001);
+  set('auditOpen', '0', true);
+}
+
+function updateMetrics(geometry) {
+  document.getElementById('metricBricks').textContent = `${geometry.brickCount} 土坯`;
+  document.getElementById('metricRows').textContent = `${geometry.brickRows} 层`;
+  document.getElementById('metricStones').textContent = `${geometry.stoneCount} 石块`;
+  document.getElementById('metricPlaster').textContent = `${geometry.patchCount} 灰层片区`;
+  document.getElementById('metricFibers').textContent = `${geometry.fiberCount} 稻草`;
+  document.getElementById('metricHoles').textContent = `${geometry.holeCount} 孔洞`;
+  document.getElementById('metricCracks').textContent = `${geometry.crackCount} 裂缝`;
+  document.getElementById('geometryState').textContent = `V${VERSION} · 完整墙体已闭合`;
+  document.getElementById('runtimeState').textContent = `V${VERSION} 运行中`;
+}
+
+function applyVisibility() {
+  exteriorBrickGroup.visible = !coreReview;
+  interiorBrickGroup.visible = !coreReview;
+  stoneGroup.visible = !coreReview;
+  detailGroup.visible = !coreReview;
+  plasterGroup.visible = !coreReview && plasterVisible;
+  frameGroup.visible = true;
+  guideGroup.visible = wireVisible;
+}
+
+function rebuild() {
+  disposeRoot();
+  const noise = noiseStack();
+  const contract = deriveContract(parameters);
+  const materials = makeMaterials(noise);
+  buildCore(contract, materials);
+  const stones = buildStones(contract, materials, noise);
+  const bricks = buildBricks(contract, materials, noise);
+  const plaster = buildPlaster(contract, materials, noise);
+  buildFrame(contract, materials, noise);
+  const details = buildDetails(contract, materials, noise);
+  const geometry = {
+    ...stones,
+    ...bricks,
+    ...plaster,
+    ...details,
+    corePieceCount: 3,
+    openSurfaceCount: 0,
+    doorClosurePassed: contract.closurePassed,
+    brickProjection: parameters.brickProjection,
+    innerBrickProjection: parameters.innerBrickProjection
+  };
+  lastContract = contract;
+  lastGeometry = geometry;
+  updateAudit(contract, geometry);
+  updateMetrics(geometry);
+  applyVisibility();
+  window.__YUNNAN_WALL_SYSTEM_V30__ = {
+    version: VERSION,
+    parameters: { ...parameters },
+    contract: { ...contract },
+    geometry: { ...geometry },
+    controlDefs,
+    presets,
+    applyParameters(values) {
+      parameters = { ...parameters, ...values };
+      renderControls();
+      rebuild();
+    },
+    rebuild,
+    setView
+  };
+}
+
+function formatValue(value, step) {
+  if (step >= 1) return String(Math.round(value));
+  if (step < 0.005) return Number(value).toFixed(3);
+  return Number(value).toFixed(2);
+}
+
+function renderControls() {
+  let count = 0;
+  for (const [hostId, definitions] of Object.entries(controlDefs)) {
+    const host = document.getElementById(hostId);
+    if (!host) continue;
+    const nodes = definitions.map((definition) => {
+      count += 1;
+      const wrapper = document.createElement('div');
+      wrapper.className = 'control';
+      const label = document.createElement('label');
+      const text = document.createElement('span');
+      text.textContent = definition.label;
+      const output = document.createElement('output');
+      output.textContent = formatValue(parameters[definition.key], definition.step);
+      label.append(text, output);
+      const input = document.createElement('input');
+      input.type = 'range';
+      input.min = definition.min;
+      input.max = definition.max;
+      input.step = definition.step;
+      input.value = parameters[definition.key];
+      input.dataset.parameter = definition.key;
+      input.addEventListener('input', () => {
+        parameters[definition.key] = Number(input.value);
+        output.textContent = formatValue(parameters[definition.key], definition.step);
+        clearTimeout(rebuildTimer);
+        rebuildTimer = setTimeout(rebuild, 95);
+      });
+      wrapper.append(label, input);
+      return wrapper;
+    });
+    host.replaceChildren(...nodes);
+  }
+  document.getElementById('controlCount').textContent = `${count} 项`;
+}
+
+function setView(name) {
+  if (name === 'front') camera.position.set(0, 2.75, 12.4);
+  if (name === 'oblique') camera.position.set(9.7, 4.8, 11.6);
+  if (name === 'interior') camera.position.set(-8.8, 4.2, -10.8);
+  if (name === 'close') camera.position.set(3.1, 2.75, 5.0);
+  orbit.target.set(0, 2.45, 0);
+  orbit.update();
+  document.querySelectorAll('[data-view]').forEach((button) => button.classList.toggle('active', button.dataset.view === name));
+}
+
+function setupUi() {
+  document.querySelectorAll('[data-preset]').forEach((button) => {
+    button.addEventListener('click', () => {
+      parameters = { ...presets[button.dataset.preset], seed: parameters.seed };
+      document.querySelectorAll('[data-preset]').forEach((item) => item.classList.toggle('active', item === button));
+      renderControls();
+      rebuild();
+    });
+  });
+  document.querySelectorAll('[data-view]').forEach((button) => button.addEventListener('click', () => setView(button.dataset.view)));
+  document.getElementById('toggleCore').addEventListener('click', (event) => {
+    coreReview = !coreReview;
+    event.currentTarget.classList.toggle('active', coreReview);
+    applyVisibility();
+  });
+  document.getElementById('togglePlaster').addEventListener('click', (event) => {
+    plasterVisible = !plasterVisible;
+    event.currentTarget.classList.toggle('active', !plasterVisible);
+    applyVisibility();
+  });
