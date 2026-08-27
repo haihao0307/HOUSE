@@ -279,16 +279,15 @@ def main() -> None:
             )
             mock_push = page.evaluate("() => window.__YUNNAN_WALL_GITHUB_BRIDGE__.lastResult")
 
-            canvas_box = page.locator("#wallCanvas").bounding_box()
+            canvas = page.locator("#wallCanvas")
+            canvas_box = canvas.bounding_box()
             if not canvas_box or canvas_box["width"] < 800 or canvas_box["height"] < 500:
                 raise RuntimeError(f"program wall canvas is too small: {canvas_box}")
-            screenshot = page.screenshot(path=str(SCREENSHOT), full_page=False)
-            image = Image.open(BytesIO(screenshot)).convert("RGB")
-            left = max(0, round(canvas_box["x"]))
-            top = max(0, round(canvas_box["y"]))
-            right = min(image.width, round(canvas_box["x"] + canvas_box["width"]))
-            bottom = min(image.height, round(canvas_box["y"] + canvas_box["height"]))
-            crop = image.crop((left, top, right, bottom)).resize((320, 180))
+            canvas.scroll_into_view_if_needed()
+            page.wait_for_timeout(350)
+            page.screenshot(path=str(SCREENSHOT), full_page=False)
+            canvas_image = Image.open(BytesIO(canvas.screenshot())).convert("RGB")
+            crop = canvas_image.resize((320, 180))
             pixels = list(crop.getdata())
             luminance = [0.2126 * red + 0.7152 * green + 0.0722 * blue for red, green, blue in pixels]
             white_fraction = sum(red > 244 and green > 244 and blue > 244 for red, green, blue in pixels) / len(pixels)
@@ -302,7 +301,7 @@ def main() -> None:
                 raise RuntimeError(f"browser errors: console={console_errors}, page={page_errors}")
 
             report = {
-                "schemaVersion": "2.0.0",
+                "schemaVersion": "2.1.0",
                 "page": "component-studio/wall-lab-v24.html",
                 "studioVersion": "2.7.0",
                 "migration": migration,
@@ -320,6 +319,7 @@ def main() -> None:
                 },
                 "mockGithubPush": mock_push,
                 "visual": {
+                    "source": "wallCanvas-element-screenshot",
                     "whiteFraction": round(white_fraction, 6),
                     "uniqueColors": unique_colors,
                     "luminanceStddev": round(luminance_stddev, 6),
