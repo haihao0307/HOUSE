@@ -159,8 +159,10 @@ function decorateCards() {
           card.append(badge);
         }
         const tagCount = Array.isArray(annotation.tags) ? annotation.tags.length : 0;
-        badge.textContent = `${tagCount} 标签`;
-        badge.title = `${grades[annotation.grade]?.label || '未分级'}${annotation.note ? ` · ${annotation.note}` : ''}`;
+        const badgeText = `${tagCount} 标签`;
+        const badgeTitle = `${grades[annotation.grade]?.label || '未分级'}${annotation.note ? ` · ${annotation.note}` : ''}`;
+        if (badge.textContent !== badgeText) badge.textContent = badgeText;
+        if (badge.title !== badgeTitle) badge.title = badgeTitle;
       } else if (badge) {
         badge.remove();
       }
