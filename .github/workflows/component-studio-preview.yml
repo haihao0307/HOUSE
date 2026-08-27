@@ -29,18 +29,21 @@ jobs:
         working-directory: ${{ env.PROJECT_DIR }}
         run: python3 tools/validate.py
 
-      - name: Validate component studio V2.6.1
+      - name: Validate component studio V2.7.0
         working-directory: ${{ env.PROJECT_DIR }}
         shell: bash
         run: |
           set -euo pipefail
           for file in component-studio/assets/studio-*.js; do node --check "$file"; done
           node --check component-studio/assets/wall-lab-v24-db-bootstrap.js
-          node --check component-studio/assets/wall-lab-v24.js
           node --check component-studio/assets/wall-lab-v24-library.js
+          node --check component-studio/assets/wall-lab-v25-cors.js
           node --check component-studio/assets/wall-lab-v25-github.js
           node --check component-studio/assets/wall-lab-v26-delivery.js
+          node --check component-studio/assets/wall-lab-v27.js
+          node --check component-studio/assets/wall-lab-v27-distillation.js
           node --check assets/js/reference-viewer-quality.js
+          python3 -m py_compile tools/wall_v27_browser_smoke.py
 
           python3 - <<'PY'
           import json
@@ -60,69 +63,77 @@ jobs:
               root / 'wall-lab-v24.html',
               root / 'assets/wall-lab-v24.css',
               root / 'assets/wall-lab-v25.css',
+              root / 'assets/wall-lab-v27.css',
               root / 'assets/wall-lab-v24-db-bootstrap.js',
-              root / 'assets/wall-lab-v24.js',
               root / 'assets/wall-lab-v24-library.js',
               root / 'assets/wall-lab-v25-cors.js',
               root / 'assets/wall-lab-v25-github.js',
               root / 'assets/wall-lab-v26-delivery.js',
+              root / 'assets/wall-lab-v27.js',
+              root / 'assets/wall-lab-v27-distillation.js',
               root / 'data/wall-knowledge-v2.json',
+              root / 'data/wall-distillation-contract-v1.json',
               root / 'data/evidence/wulong-wall-user-observation-2026-08-26.json',
-              Path('tools/wall_v24_browser_smoke.py'),
+              Path('tools/wall_v27_browser_smoke.py'),
               Path('vendor/three/three.module.js'),
               Path('vendor/three/controls/OrbitControls.js'),
               Path('reference-model-showcase.html'),
           ]
           missing = [str(path) for path in required if not path.is_file()]
           if missing:
-              raise SystemExit(f'missing component studio V2.6.1 files: {missing}')
+              raise SystemExit(f'missing component studio V2.7.0 files: {missing}')
 
           entry = (root / 'wall-lab.html').read_text(encoding='utf-8')
           if 'wall-lab-v24.html' not in entry:
               raise SystemExit('wall-lab entry does not route to the active wall workbench')
 
-          hub = (root / 'index.html').read_text(encoding='utf-8')
-          if 'wall-lab-v24-db-bootstrap.js?v=2.6.1' not in hub:
-              raise SystemExit('component studio does not load the shared IndexedDB schema owner')
-          for asset in ('studio.css', 'studio-core.js', 'studio-hub.js', 'studio-module.js', 'studio-actions.js'):
-              if f'{asset}?v=2.6.1' not in hub:
-                  raise SystemExit(f'component studio asset is missing V2.6.1 cache key: {asset}')
-
           page = (root / 'wall-lab-v24.html').read_text(encoding='utf-8')
           for marker in (
-              '云南墙体与墙面工作室 V2.6.1',
-              '柏林噪波 + Simplex + Worley',
+              '云南墙体与墙面工作室 V2.7.0',
               '程序化实验墙主画面',
-              '参考资料窗口',
               '墙体资料交付中心',
-              '通道 A：自动推送 GitHub',
-              '通道 B：无需 GitHub 令牌',
-              'githubTokenCreateLink',
-              'githubExportButton',
-              'wall-lab-v24-db-bootstrap.js?v=2.6.1',
-              'wall-lab-v24.js?v=2.6.1',
-              'wall-lab-v24-library.js?v=2.6.1',
-              'wall-lab-v25-github.js?v=2.6.1',
-              'wall-lab-v26-delivery.js?v=2.6.1',
+              '资料知识整流',
+              'distillTagGrid',
+              'distillApplyParams',
+              'wall-lab-v27.css?v=2.7.0',
+              'wall-lab-v27.js?v=2.7.0',
+              'wall-lab-v27-distillation.js?v=2.7.0',
           ):
               if marker not in page:
-                  raise SystemExit(f'missing wall V2.6.1 page marker: {marker}')
-          for asset in ('wall-lab-v24.css', 'wall-lab-v25.css', 'wall-lab-v25-cors.js'):
-              if f'{asset}?v=2.6.1' not in page:
-                  raise SystemExit(f'wall studio asset is missing V2.6.1 cache key: {asset}')
+                  raise SystemExit(f'missing wall V2.7.0 page marker: {marker}')
 
-          runtime = (root / 'assets/wall-lab-v24.js').read_text(encoding='utf-8')
+          runtime = (root / 'assets/wall-lab-v27.js').read_text(encoding='utf-8')
           for marker in (
+              "const VERSION = '2.7.0'",
               'class Perlin3',
               'class Simplex2',
               'function worley2',
-              'function warpField',
-              'function extrudedBlock',
-              "version:'2.4.0'",
-              "openSurfaceCount:0",
+              'brickLength',
+              'stoneWidth',
+              'plasterPatchCount',
+              'holeDensity',
+              'strawDensity',
+              'function addCavity',
+              'function applyParameters',
+              '__YUNNAN_WALL_V27__',
+              'openSurfaceCount: 0',
           ):
               if marker not in runtime:
-                  raise SystemExit(f'missing wall V2.4 runtime marker: {marker}')
+                  raise SystemExit(f'missing wall V2.7 runtime marker: {marker}')
+
+          distillation = (root / 'assets/wall-lab-v27-distillation.js').read_text(encoding='utf-8')
+          for marker in (
+              "const VERSION = '2.7.0'",
+              'tagDefinitions',
+              'function generateDistillation',
+              'function suggestParameters',
+              'function applySuggestedParameters',
+              '__YUNNAN_WALL_DISTILLATION__',
+              'yunnan-wall-v27:annotations',
+              'yunnan-wall-v27:snapshots',
+          ):
+              if marker not in distillation:
+                  raise SystemExit(f'missing wall distillation marker: {marker}')
 
           library = (root / 'assets/wall-lab-v24-library.js').read_text(encoding='utf-8')
           for marker in (
@@ -182,6 +193,12 @@ jobs:
               if marker not in delivery:
                   raise SystemExit(f'missing dual delivery marker: {marker}')
 
+          contract = json.loads((root / 'data/wall-distillation-contract-v1.json').read_text(encoding='utf-8'))
+          if contract.get('recordId') != 'YUNNAN-WALL-DISTILLATION-CONTRACT-V1':
+              raise SystemExit('wall distillation contract mismatch')
+          if contract.get('studioVersion') != '2.7.0':
+              raise SystemExit('wall distillation contract version mismatch')
+
           registry = json.loads((root / 'data/modules.json').read_text(encoding='utf-8'))
           ids = [item.get('id') for item in (registry.get('modules') or [])]
           if len(ids) != 8 or len(set(ids)) != 8 or not {'knowledge-blueprint', 'tilework', 'openings', 'walls'} <= set(ids):
@@ -197,18 +214,19 @@ jobs:
       - name: Install wall browser QA dependencies
         run: python3 -m pip install --disable-pip-version-check playwright==1.57.0 pillow==11.3.0
 
-      - name: Run wall studio V2.6.1 browser QA
+      - name: Run wall studio V2.7.0 browser QA
         working-directory: ${{ env.PROJECT_DIR }}
-        run: python3 tools/wall_v24_browser_smoke.py
+        run: python3 tools/wall_v27_browser_smoke.py
 
       - name: Upload wall studio browser evidence
         uses: actions/upload-artifact@v4
         with:
-          name: wall-studio-v261-browser-evidence
+          name: wall-studio-v27-browser-evidence
           path: |
-            ${{ env.PROJECT_DIR }}/qa/screenshots/wall_v24_browser.png
-            ${{ env.PROJECT_DIR }}/data/qa/wall_v24_browser.json
+            ${{ env.PROJECT_DIR }}/qa/screenshots/wall_v27_browser.png
+            ${{ env.PROJECT_DIR }}/data/qa/wall_v27_browser.json
           if-no-files-found: error
+          retention-days: 90
 
       - name: Assemble public site
         shell: bash
@@ -219,7 +237,7 @@ jobs:
           rm -rf _site/references-private _site/release _site/.git _site/.github
           rm -f _site/assets/models/YN_TUANJIE_001_EDITABLE_HIGH.glb
           touch _site/.nojekyll
-          printf '{"schemaVersion":"5.5.1","componentStudioVersion":"2.6.1","wallStudioVersion":"2.6.1","indexedDbSchemaVersion":2,"referenceLibraryVersion":"2.4.1","githubEvidenceBridgeVersion":"2.5.0","wallEvidenceDeliveryVersion":"2.6.0","referenceViewerQuality":"2.0.0","browserQa":"wall-v261-idb-v2-migration-passed","sha":"%s","ref":"%s","runId":"%s","runAttempt":"%s"}\n' \
+          printf '{"schemaVersion":"5.5.1","componentStudioVersion":"2.7.0","wallStudioVersion":"2.7.0","wallRuntimeVersion":"2.7.0","wallDistillationVersion":"2.7.0","indexedDbSchemaVersion":2,"referenceLibraryVersion":"2.4.1","githubEvidenceBridgeVersion":"2.5.0","wallEvidenceDeliveryVersion":"2.6.0","referenceViewerQuality":"2.0.0","browserQa":"wall-v27-long-term-distillation-passed","sha":"%s","ref":"%s","runId":"%s","runAttempt":"%s"}\n' \
             "$GITHUB_SHA" "$GITHUB_REF_NAME" "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" > _site/build.json
 
       - name: Configure Pages
@@ -247,7 +265,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: deploy
     steps:
-      - name: Verify deployed component studio V2.6.1
+      - name: Verify deployed component studio V2.7.0
         env:
           PAGE_URL: ${{ needs.deploy.outputs.page_url }}
           EXPECTED_SHA: ${{ github.sha }}
@@ -267,12 +285,10 @@ jobs:
           done
 
           grep -Fq "$EXPECTED_SHA" "$tmp/build.json"
-          grep -Fq '"componentStudioVersion":"2.6.1"' "$tmp/build.json"
-          grep -Fq '"wallStudioVersion":"2.6.1"' "$tmp/build.json"
-          grep -Fq '"indexedDbSchemaVersion":2' "$tmp/build.json"
-          grep -Fq '"githubEvidenceBridgeVersion":"2.5.0"' "$tmp/build.json"
-          grep -Fq '"wallEvidenceDeliveryVersion":"2.6.0"' "$tmp/build.json"
-          grep -Fq '"browserQa":"wall-v261-idb-v2-migration-passed"' "$tmp/build.json"
+          grep -Fq '"componentStudioVersion":"2.7.0"' "$tmp/build.json"
+          grep -Fq '"wallRuntimeVersion":"2.7.0"' "$tmp/build.json"
+          grep -Fq '"wallDistillationVersion":"2.7.0"' "$tmp/build.json"
+          grep -Fq '"browserQa":"wall-v27-long-term-distillation-passed"' "$tmp/build.json"
 
           fetch_and_require() {
             local url="$1"
@@ -284,31 +300,21 @@ jobs:
 
           fetch_and_require "${base}component-studio/" "component-studio.html" "云南建筑组件工作台"
           fetch_and_require "${base}component-studio/wall-lab.html" "wall-entry.html" "wall-lab-v24.html"
-          fetch_and_require "${base}component-studio/wall-lab-v24.html" "wall-v26.html" "墙体资料交付中心"
-          grep -Fq 'githubTokenCreateLink' "$tmp/wall-v26.html"
-          grep -Fq 'githubExportButton' "$tmp/wall-v26.html"
-          grep -Fq 'wall-lab-v24-db-bootstrap.js?v=2.6.1' "$tmp/wall-v26.html"
-          grep -Fq 'wall-lab-v26-delivery.js?v=2.6.1' "$tmp/wall-v26.html"
-          fetch_and_require "${base}component-studio/assets/wall-lab-v24.css" "wall-v24.css" ".reference-library"
-          fetch_and_require "${base}component-studio/assets/wall-lab-v25.css" "wall-v25.css" ".bundle-delivery-block"
-          fetch_and_require "${base}component-studio/assets/wall-lab-v24.js" "wall-v24.js" "class Perlin3"
-          grep -Fq 'class Simplex2' "$tmp/wall-v24.js"
-          grep -Fq 'function worley2' "$tmp/wall-v24.js"
-          node --check "$tmp/wall-v24.js"
-          fetch_and_require "${base}component-studio/assets/wall-lab-v24-db-bootstrap.js" "wall-v24-db.js" "__YUNNAN_COMPONENT_STUDIO_STORAGE__"
-          grep -Fq 'version: 2' "$tmp/wall-v24-db.js"
-          node --check "$tmp/wall-v24-db.js"
-          fetch_and_require "${base}component-studio/assets/wall-lab-v24-library.js" "wall-v24-library.js" "__YUNNAN_WALL_LIBRARY_V24__"
-          node --check "$tmp/wall-v24-library.js"
-          fetch_and_require "${base}component-studio/assets/wall-lab-v25-github.js" "wall-v25-github.js" "temporary-branch-exif-stripped-proxies"
-          grep -Fq "version: '2.5.0'" "$tmp/wall-v25-github.js"
-          node --check "$tmp/wall-v25-github.js"
-          fetch_and_require "${base}component-studio/assets/wall-lab-v26-delivery.js" "wall-v26-delivery.js" "token-assisted-github-or-tokenless-zip"
-          grep -Fq "const DELIVERY_VERSION = '2.6.0'" "$tmp/wall-v26-delivery.js"
-          grep -Fq 'function makeZip' "$tmp/wall-v26-delivery.js"
-          node --check "$tmp/wall-v26-delivery.js"
+          fetch_and_require "${base}component-studio/wall-lab-v24.html" "wall-v27.html" "资料知识整流"
+          grep -Fq 'wall-lab-v27.js?v=2.7.0' "$tmp/wall-v27.html"
+          grep -Fq 'wall-lab-v27-distillation.js?v=2.7.0' "$tmp/wall-v27.html"
+          fetch_and_require "${base}component-studio/assets/wall-lab-v27.css" "wall-v27.css" ".distillation-lab"
+          fetch_and_require "${base}component-studio/assets/wall-lab-v27.js" "wall-v27.js" "__YUNNAN_WALL_V27__"
+          grep -Fq 'function addCavity' "$tmp/wall-v27.js"
+          grep -Fq 'strawDensity' "$tmp/wall-v27.js"
+          node --check "$tmp/wall-v27.js"
+          fetch_and_require "${base}component-studio/assets/wall-lab-v27-distillation.js" "wall-v27-distillation.js" "__YUNNAN_WALL_DISTILLATION__"
+          grep -Fq 'function generateDistillation' "$tmp/wall-v27-distillation.js"
+          node --check "$tmp/wall-v27-distillation.js"
+          fetch_and_require "${base}component-studio/assets/wall-lab-v24-db-bootstrap.js" "wall-db.js" "__YUNNAN_COMPONENT_STUDIO_STORAGE__"
+          fetch_and_require "${base}component-studio/assets/wall-lab-v24-library.js" "wall-library.js" "__YUNNAN_WALL_LIBRARY_V24__"
+          fetch_and_require "${base}component-studio/assets/wall-lab-v25-github.js" "wall-github.js" "temporary-branch-exif-stripped-proxies"
+          fetch_and_require "${base}component-studio/assets/wall-lab-v26-delivery.js" "wall-delivery.js" "token-assisted-github-or-tokenless-zip"
           fetch_and_require "${base}component-studio/data/wall-knowledge-v2.json" "wall-knowledge.json" '"revisionId": "WULONG-STONE-ADOBE-LINTEL-2026-08-26"'
+          fetch_and_require "${base}component-studio/data/wall-distillation-contract-v1.json" "wall-distillation-contract.json" 'YUNNAN-WALL-DISTILLATION-CONTRACT-V1'
           fetch_and_require "${base}reference-model-showcase.html?mode=wulong" "reference-showcase.html" "云南建筑三模型高清证据查看器"
-          fetch_and_require "${base}component-studio/data/modules.json" "modules.json" '"tilework"'
-          grep -Fq '"openings"' "$tmp/modules.json"
-          grep -Fq '"timber-surface"' "$tmp/modules.json"
