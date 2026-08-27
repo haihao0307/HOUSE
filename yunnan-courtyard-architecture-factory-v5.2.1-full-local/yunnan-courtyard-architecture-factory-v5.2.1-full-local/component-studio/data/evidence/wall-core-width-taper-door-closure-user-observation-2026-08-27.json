@@ -1,0 +1,18 @@
+{
+  "schemaVersion": "1.0.0",
+  "recordId": "WALL-CORE-WIDTH-TAPER-DOOR-CLOSURE-USER-OBSERVATION-2026-08-27",
+  "source": "user visual review after 35-image wall evidence integration",
+  "status": "implementation-driving",
+  "observations": [
+    "The wall core must be an independent adjustable system with direct controls for total width and taper.",
+    "The core opening must follow the timber frame and lintel so the jambs and head remain geometrically closed under parameter changes.",
+    "Adobe blocks and plaster are surface layers governed by the wall core contract and must rebuild when the wall core changes.",
+    "The earthen wall body visible in the supplied photographs is deep brown and must remain visible at joints, the door reveal and the wall top."
+  ],
+  "implementationDecisions": [
+    "Create three closed wall-core solids around the opening.",
+    "Derive the opening from door clear dimensions, timber frame section and adjustable masonry overlap.",
+    "Expose wall width, side taper, depth taper, top core reveal and soil darkness as direct controls.",
+    "Regenerate stone, adobe, plaster and timber layers from the same contract."
+  ]
+}
