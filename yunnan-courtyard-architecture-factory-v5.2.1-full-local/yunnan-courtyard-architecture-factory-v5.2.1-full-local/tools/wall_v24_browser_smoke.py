@@ -25,7 +25,10 @@ class QuietHandler(SimpleHTTPRequestHandler):
 
     def do_GET(self) -> None:  # noqa: N802 - inherited HTTP handler API
         if self.path.partition("?")[0] == "/__idb_fixture__.html":
-            body = b"<!doctype html><meta charset=utf-8><title>IndexedDB fixture</title>"
+            body = (
+                b"<!doctype html><meta charset=utf-8><link rel=icon href=data:,>"
+                b"<title>IndexedDB fixture</title>"
+            )
             self.send_response(200)
             self.send_header("Content-Type", "text/html; charset=utf-8")
             self.send_header("Content-Length", str(len(body)))
@@ -158,6 +161,8 @@ def main() -> None:
             )
             if preservation_fixture != {"attachmentsVersion": 1, "previewsVersion": 1}:
                 raise RuntimeError(f"record-preservation fixture is invalid: {preservation_fixture}")
+            preservation_console_errors.clear()
+            preservation_page_errors.clear()
             preservation_page.goto(url, wait_until="networkidle", timeout=90_000)
             preservation_page.wait_for_function(
                 "() => Boolean(window.__YUNNAN_WALL_LIBRARY_V24__)", timeout=90_000
