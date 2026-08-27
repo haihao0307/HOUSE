@@ -23,6 +23,17 @@ class QuietHandler(SimpleHTTPRequestHandler):
     def log_message(self, *_args: object) -> None:
         return
 
+    def do_GET(self) -> None:  # noqa: N802 - inherited HTTP handler API
+        if self.path.partition("?")[0] == "/__idb_fixture__.html":
+            body = b"<!doctype html><meta charset=utf-8><title>IndexedDB fixture</title>"
+            self.send_response(200)
+            self.send_header("Content-Type", "text/html; charset=utf-8")
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+            return
+        super().do_GET()
+
 
 def chrome_executable() -> str | None:
     for candidate in (
@@ -99,7 +110,7 @@ def main() -> None:
                 else None,
             )
             preservation_page.on("pageerror", lambda error: preservation_page_errors.append(str(error)))
-            preservation_page.goto(f"{origin}/VERSION", wait_until="domcontentloaded", timeout=30_000)
+            preservation_page.goto(f"{origin}/__idb_fixture__.html", wait_until="domcontentloaded", timeout=30_000)
             preservation_fixture = preservation_page.evaluate(
                 """async () => {
                   const remove = (name) => new Promise((resolve, reject) => {
@@ -286,7 +297,7 @@ def main() -> None:
                 accept_downloads=True,
             )
             seed_page = context.new_page()
-            seed_page.goto(f"{origin}/VERSION", wait_until="domcontentloaded", timeout=30_000)
+            seed_page.goto(f"{origin}/__idb_fixture__.html", wait_until="domcontentloaded", timeout=30_000)
             pre_migration = seed_page.evaluate(
                 """async () => {
                   const listNames = (names) => {
