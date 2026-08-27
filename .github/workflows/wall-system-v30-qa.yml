@@ -27,7 +27,9 @@ jobs:
           test -f component-studio/wall-system-lab.html
           test -f component-studio/assets/wall-system-v30.css
           test -f component-studio/assets/wall-system-v30.js
-          for part in $(seq -w 1 9); do test -f "component-studio/assets/wall-system-v30-part-${part}.txt"; done
+          for part in $(seq -f '%02g' 1 9); do
+            test -f "component-studio/assets/wall-system-v30-part-${part}.txt"
+          done
           test -f component-studio/data/wall-system-v30-contract.json
           test -f component-studio/data/evidence/wall-system-v30-user-requirements-2026-08-27.json
           test -f tools/wall_system_v30_browser_smoke.py
