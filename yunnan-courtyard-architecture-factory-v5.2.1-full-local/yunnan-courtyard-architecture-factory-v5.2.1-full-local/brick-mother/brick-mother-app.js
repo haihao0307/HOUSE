@@ -28,7 +28,8 @@ function updateProfilePanel(profile) {
   $('#profileFamily').textContent = familyLabel(profile);
   $('#profileSource').textContent = profile.source.filename;
   $('#profileTriangles').textContent = triangleLabel(profile.measured.triangleCount);
-  $('#profileDimensions').textContent = profile.measured.dimensionsMm.map((v) => Math.round(v * 10) / 10).join(' × ') + ' mm';
+  const dimensionSuffix = profile.measured.dimensionUnitStatus === 'source-units-pending-calibration' ? ' 源文件单位（实物尺度待校准）' : ' mm';
+  $('#profileDimensions').textContent = profile.measured.dimensionsMm.map((v) => Math.round(v * 10) / 10).join(' × ') + dimensionSuffix;
   $('#profileColor').textContent = formatColor(profile.measured.baseColorMeanSRGB);
   const rough = profile.measured.roughnessMean ?? profile.measured.rawRoughnessMean;
   $('#profileRoughness').textContent = Number(rough).toFixed(3) + (profile.measured.rawMetalnessMean ? '（原始导出已规范化）' : '');
