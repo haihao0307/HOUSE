@@ -1,0 +1,230 @@
+{
+  "schemaVersion": "0.1.0",
+  "rendererVersion": "brick-mother-neutral-point-renderer/0.1.0",
+  "renderMode": "deterministic neutral geometry point sampling",
+  "originalTexturesUsed": false,
+  "cameraPolicy": "canonical PCA frame, orthographic front/side/top, common per-asset scale",
+  "files": [
+    {
+      "sourceFile": "12th_-14th_century_building_brick.glb",
+      "sourceSha256": "36848fd806fc251f3a754701aef71a1e09b3a2996c78783b9082346600e8ffb8",
+      "outputFile": "12th_-14th_century_building_brick_neutral_3view.png",
+      "outputBytes": 89825,
+      "outputSha256": "5d584ca5cbb2629722489f31c84a674d2b9a52f8278a3994e5650be5f3376f15",
+      "samplePoints": 135730,
+      "canonicalDimensionsMeters": [
+        0.319865,
+        0.077586,
+        0.149357
+      ],
+      "canonicalFrameColumns": [
+        [
+          0.999938,
+          -0.008209,
+          -0.007558
+        ],
+        [
+          0.008427,
+          0.999537,
+          0.02923
+        ],
+        [
+          0.007314,
+          -0.029292,
+          0.999544
+        ]
+      ],
+      "views": [
+        "FRONT",
+        "SIDE",
+        "TOP"
+      ],
+      "originalTexturesUsed": false
+    },
+    {
+      "sourceFile": "brick (1).glb",
+      "sourceSha256": "7600d24df319efccc454a27bf65b63a3e4f096ab8d2bfe7d8dafe0aa8339222a",
+      "outputFile": "brick_(1)_neutral_3view.png",
+      "outputBytes": 27324,
+      "outputSha256": "fa7e2a7e52df00b44c76d0a455ff70bb117c086e001ec78b2aff5a7b922c4802",
+      "samplePoints": 36322,
+      "canonicalDimensionsMeters": [
+        26.138753,
+        13.259832,
+        25.846443
+      ],
+      "canonicalFrameColumns": [
+        [
+          0.995498,
+          -0.094778,
+          -0.00118
+        ],
+        [
+          0.094573,
+          0.994024,
+          -0.054524
+        ],
+        [
+          0.00634,
+          0.054167,
+          0.998512
+        ]
+      ],
+      "views": [
+        "FRONT",
+        "SIDE",
+        "TOP"
+      ],
+      "originalTexturesUsed": false
+    },
+    {
+      "sourceFile": "brick.glb",
+      "sourceSha256": "b90d0b805926b684d62034deaf90ba922ac8c5c52bf0e9115fd2d0fd2bcdf5be",
+      "outputFile": "brick_neutral_3view.png",
+      "outputBytes": 110550,
+      "outputSha256": "ff8334f18895dccf931c5abf359f4d9828ffdfb2b59ae10fe6c614a776cc7c26",
+      "samplePoints": 209972,
+      "canonicalDimensionsMeters": [
+        0.423174,
+        0.115865,
+        0.283784
+      ],
+      "canonicalFrameColumns": [
+        [
+          0.02113,
+          0.02299,
+          -0.999512
+        ],
+        [
+          -0.002357,
+          0.999734,
+          0.022946
+        ],
+        [
+          0.999774,
+          0.001871,
+          0.021178
+        ]
+      ],
+      "views": [
+        "FRONT",
+        "SIDE",
+        "TOP"
+      ],
+      "originalTexturesUsed": false
+    },
+    {
+      "sourceFile": "clay_brick.glb",
+      "sourceSha256": "e15725edb10adf87b0bdc6d92a73d749f97b5d2f2a6b0f70c3deecfa8f57d02d",
+      "outputFile": "clay_brick_neutral_3view.png",
+      "outputBytes": 181586,
+      "outputSha256": "9c499ba633d4aa8742ed4328cfbe50ce0a7f99b004300a809f5bff67bcd370f7",
+      "samplePoints": 180782,
+      "canonicalDimensionsMeters": [
+        605.889937,
+        132.145498,
+        600.269881
+      ],
+      "canonicalFrameColumns": [
+        [
+          0.996396,
+          0.007847,
+          -0.084456
+        ],
+        [
+          -0.007333,
+          0.999953,
+          0.006386
+        ],
+        [
+          0.084502,
+          -0.005743,
+          0.996407
+        ]
+      ],
+      "views": [
+        "FRONT",
+        "SIDE",
+        "TOP"
+      ],
+      "originalTexturesUsed": false
+    },
+    {
+      "sourceFile": "stone_brick.glb",
+      "sourceSha256": "69a2be880fab4a209ee0d46e639b2ad458fdb327e15c738092b1ce55f5e68ebe",
+      "outputFile": "stone_brick_neutral_3view.png",
+      "outputBytes": 122369,
+      "outputSha256": "6326bc6eaa4d5d8e5c4647e3b15a9e737eb38aba40d9712b2a5df214edc5faac",
+      "samplePoints": 470522,
+      "canonicalDimensionsMeters": [
+        0.015198,
+        0.008081,
+        0.01015
+      ],
+      "canonicalFrameColumns": [
+        [
+          0.978726,
+          0.135836,
+          -0.153768
+        ],
+        [
+          -0.180228,
+          0.211036,
+          -0.960719
+        ],
+        [
+          -0.09805,
+          0.967994,
+          0.231028
+        ]
+      ],
+      "views": [
+        "FRONT",
+        "SIDE",
+        "TOP"
+      ],
+      "originalTexturesUsed": false
+    },
+    {
+      "sourceFile": "white_wall_texture.glb",
+      "sourceSha256": "f7be88c37a354bf80c6723f87188a8b0d9049e3ae56d6e1a78ed78ad8396a4ef",
+      "outputFile": "white_wall_texture_neutral_3view.png",
+      "outputBytes": 70871,
+      "outputSha256": "52497e1e9e56bf4db17c361a5e918ce8d22ac2ed918ba36ba54df9aa4878b975",
+      "samplePoints": 76800,
+      "canonicalDimensionsMeters": [
+        168.369379,
+        152.494086,
+        153.298794
+      ],
+      "canonicalFrameColumns": [
+        [
+          0.588989,
+          -0.508257,
+          0.628304
+        ],
+        [
+          0.61695,
+          -0.219378,
+          -0.755808
+        ],
+        [
+          0.521981,
+          0.832795,
+          0.184358
+        ]
+      ],
+      "views": [
+        "FRONT",
+        "SIDE",
+        "TOP"
+      ],
+      "originalTexturesUsed": false
+    }
+  ],
+  "contactSheet": {
+    "path": "BRICK_MOTHER_REFERENCE_NEUTRAL_3VIEW_CONTACT_SHEET_V0.1.png",
+    "bytes": 313038,
+    "sha256": "28c1e386dbee9d987a03f192dce1cca376e4352a18556bf3a26adc8dbc06bfd1"
+  }
+}

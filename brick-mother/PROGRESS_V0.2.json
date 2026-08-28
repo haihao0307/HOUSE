@@ -1,0 +1,26 @@
+{
+  "name": "brick-mother-v0.2-progress",
+  "status": "reference-geometry-audit-complete",
+  "date": "2026-08-28",
+  "baseGithubHead": "121dac5f0acae3840dbd4c273d8d24048f61613c",
+  "completed": [
+    "six GLB container audits",
+    "world and normalized geometry measurements",
+    "index-space and position-welded topology checks",
+    "UV, material, texture-reference and image receipts",
+    "license metadata checks",
+    "deterministic neutral front-side-top reference views",
+    "per-reference distillation admission decisions"
+  ],
+  "pending": [
+    "macro edge-radius and chip-spectrum metrics",
+    "ADOBE, FIRED_CLAY and STONE child generator V0.2",
+    "nine child fixed three-view output",
+    "child parameter JSON receipts",
+    "browser screenshot, console and performance QA",
+    "Yunnan regional calibration"
+  ],
+  "productionReady": false,
+  "visualAcceptance": false
+}
+

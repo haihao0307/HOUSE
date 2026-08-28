@@ -1,0 +1,74 @@
+{
+  "schemaVersion": "0.1.0",
+  "date": "2026-08-28",
+  "input": {
+    "archive": "reference/brick-reference-source-2026-08-28.zip",
+    "archiveBytes": 38282490,
+    "archiveSha256": "8567d93a3e129dc3a91b03ad0cb690ad61d3020cb5e82e823b971906e6d0742c",
+    "glbFiles": 6
+  },
+  "commands": [
+    {
+      "name": "initial path resolution",
+      "exitCode": 1,
+      "result": "no GLB files found because the input path moved two levels instead of one; no input file was modified"
+    },
+    {
+      "name": "final GLB audit",
+      "exitCode": 0,
+      "result": "6 of 6 files parsed"
+    },
+    {
+      "name": "neutral three-view renderer",
+      "exitCode": 0,
+      "result": "6 of 6 files rendered"
+    },
+    {
+      "name": "Python syntax compile",
+      "exitCode": 0,
+      "result": "both audit scripts compiled"
+    },
+    {
+      "name": "audit assertions",
+      "exitCode": 0,
+      "result": "fileCount=6, every GLB length matched, runtimeTextureAuthority=false for every file"
+    }
+  ],
+  "outputs": {
+    "auditJson": {
+      "path": "docs/reference-analysis/BRICK_MOTHER_GLB_AUDIT_V0.1.json",
+      "sha256": "fc5a053ff8a9f13dd05175c01d3619c08a19df52bb81cd8a18b0c21b52ccab84"
+    },
+    "auditMarkdown": {
+      "path": "docs/reference-analysis/BRICK_MOTHER_GLB_AUDIT_V0.1.md",
+      "sha256": "66ce58440ca9a840b3b8c1323d3c3dd8693fecd53b86ea33a3cd424272de479a"
+    },
+    "distillationDecisions": {
+      "path": "docs/reference-analysis/BRICK_MOTHER_REFERENCE_DISTILLATION_DECISIONS_V0.1.md",
+      "sha256": "c1890189216e76f3ea0d19f3ba66334250e07ca13ddf6f665a543226563cf7ac"
+    },
+    "contactSheet": {
+      "path": "evidence/BRICK_MOTHER_REFERENCE_NEUTRAL_3VIEW_CONTACT_SHEET_V0.1.png",
+      "bytes": 313038,
+      "sha256": "28c1e386dbee9d987a03f192dce1cca376e4352a18556bf3a26adc8dbc06bfd1"
+    },
+    "inspector": {
+      "path": "tools/inspect_glb_reference.py",
+      "sha256": "53ab6775672edc7f7a842d26a86c51bdc5188631299148f64fbe74ad989ffae6"
+    },
+    "renderer": {
+      "path": "tools/render_glb_reference_views.py",
+      "sha256": "780803e4ee358b76274dd4f521c60e3c0800aab5885c3e10be262b791462b4a2"
+    }
+  },
+  "gates": {
+    "glbStructureAudit": "PASS",
+    "referenceThreeViewEvidence": "PASS",
+    "originalTexturesUsed": false,
+    "materialIdentityConfirmation": "PENDING",
+    "programmaticChildThreeViews": "PENDING",
+    "browserVisualQa": "NOT_RUN",
+    "productionReady": false
+  }
+}
+

@@ -49,7 +49,25 @@ npm run build
 
 V0.1 已经形成可操作、可再生、可分材料控制的三维原型。浏览器内会实际生成 3 个土坯、3 个烧结砖和 3 个石块，支持旋转、缩放、材料筛选、年代、湿度、批次差异和母种子再生。
 
-当前几何属于早期程序化原型。参考 GLB 尚未完成只读尺寸、拓扑、UV 和材质槽蒸馏，三视图也尚未建立同一资产、同一种子的确定性证据链。因此，V0.1 适合继续研发和快速视觉迭代，暂未达到云南建筑生产线资产门禁。
+当前几何属于早期程序化原型。因此，V0.1 适合继续研发和快速视觉迭代，暂未达到云南建筑生产线资产门禁。
+
+## V0.2 解析进展
+
+V0.1 封包后已经完成以下增量：
+
+- 6 个参考 GLB 的只读容器、几何、拓扑、UV、材质槽、图像引用和许可审计。
+- 6 个参考 GLB 的确定性中性正面、侧面和顶面证据。
+- 原始纹理使用量保持为零。
+- 建立逐资产准入表，区分可接受几何、条件参考、隔离主网格和排除项。
+
+入口：
+
+- `docs/reference-analysis/BRICK_MOTHER_GLB_AUDIT_V0.1.md`
+- `docs/reference-analysis/BRICK_MOTHER_REFERENCE_DISTILLATION_DECISIONS_V0.1.md`
+- `evidence/BRICK_MOTHER_REFERENCE_NEUTRAL_3VIEW_CONTACT_SHEET_V0.1.png`
+- `qa/GLB_REFERENCE_AUDIT_QA.json`
+
+程序化子代的同资产三视图仍待完成，浏览器截图和控制台证据仍未运行。
 
 ## 仓库隔离
 

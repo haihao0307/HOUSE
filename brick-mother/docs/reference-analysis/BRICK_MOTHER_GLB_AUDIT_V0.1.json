@@ -1,0 +1,2420 @@
+{
+  "schemaVersion": "0.1.0",
+  "parserVersion": "brick-mother-glb-inspector/0.1.0",
+  "inputPolicy": "read-only; original textures are evidence only",
+  "fileCount": 6,
+  "files": [
+    {
+      "file": "12th_-14th_century_building_brick.glb",
+      "bytes": 3474792,
+      "sha256": "36848fd806fc251f3a754701aef71a1e09b3a2996c78783b9082346600e8ffb8",
+      "header": {
+        "magic": "glTF",
+        "version": 2,
+        "declaredLength": 3474792,
+        "actualLength": 3474792,
+        "lengthMatches": true,
+        "chunks": [
+          {
+            "type": "0x4e4f534a",
+            "bytes": 2980
+          },
+          {
+            "type": "0x004e4942",
+            "bytes": 3471784
+          }
+        ],
+        "trailingBytes": 0
+      },
+      "asset": {
+        "version": "2.0",
+        "generator": "Sketchfab-12.67.0",
+        "title": "12th -14th century building brick",
+        "author": "pasquill (https://sketchfab.com/pasquill)",
+        "source": "https://sketchfab.com/3d-models/12th-14th-century-building-brick-5f7758009c0b4599a36ecb2114c1a6a7",
+        "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+        "licenseRisk": "attribution required for redistribution of the source asset"
+      },
+      "coordinateConvention": {
+        "unit": "meter by glTF 2.0 convention",
+        "handedness": "right-handed",
+        "upAxis": "+Y",
+        "forwardAxis": "+Z",
+        "unitMetadataPresent": false
+      },
+      "evidenceRole": "historic fired or unfired brick evidence pending visual confirmation",
+      "materialIdentityStatus": "pending visual and cross-section confirmation",
+      "runtimeTextureAuthority": false,
+      "counts": {
+        "scenes": 1,
+        "nodes": 5,
+        "meshInstances": 1,
+        "meshes": 1,
+        "primitives": 1,
+        "accessors": 5,
+        "bufferViews": 6,
+        "buffers": 1,
+        "materials": 1,
+        "textures": 2,
+        "images": 2,
+        "vertices": 11130,
+        "indices": 58170,
+        "triangles": 19390,
+        "degenerateTriangles": 0,
+        "indexBoundaryEdges": 2964,
+        "indexNonManifoldEdges": 0,
+        "positionWeldedBoundaryEdges": 0,
+        "positionWeldedNonManifoldEdges": 16
+      },
+      "sceneBounds": {
+        "minMeters": [
+          -0.160184,
+          -0.040538,
+          -0.073202
+        ],
+        "maxMeters": [
+          0.158775,
+          0.040957,
+          0.074194
+        ],
+        "dimensionsMeters": [
+          0.318959,
+          0.081495,
+          0.147397
+        ],
+        "sortedDimensionRatio": [
+          1.0,
+          0.462118,
+          0.255503
+        ],
+        "pcaDimensionsMeters": [
+          0.319308,
+          0.148106,
+          0.079291
+        ],
+        "pcaAxesColumns": [
+          [
+            -0.999974,
+            -0.002643,
+            -0.006746
+          ],
+          [
+            -0.006787,
+            0.01558,
+            0.999856
+          ],
+          [
+            -0.002537,
+            0.999875,
+            -0.015598
+          ]
+        ]
+      },
+      "uvSets": [
+        "TEXCOORD_0"
+      ],
+      "extensionsUsed": [],
+      "extensionsRequired": [],
+      "materials": [
+        {
+          "index": 0,
+          "name": "Material",
+          "alphaMode": "OPAQUE",
+          "doubleSided": true,
+          "baseColorFactor": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "metallicFactor": 0.0,
+          "roughnessFactor": 0.9577051494623774,
+          "textureReferences": {
+            "baseColor": 0,
+            "normal": 1
+          },
+          "extensions": []
+        }
+      ],
+      "textures": [
+        {
+          "index": 0,
+          "name": null,
+          "source": 0,
+          "sampler": 0,
+          "extensions": []
+        },
+        {
+          "index": 1,
+          "name": null,
+          "source": 1,
+          "sampler": 0,
+          "extensions": []
+        }
+      ],
+      "images": [
+        {
+          "index": 0,
+          "name": null,
+          "mimeType": "image/png",
+          "uri": null,
+          "embedded": true,
+          "bytes": 1273974,
+          "sha256": "88e2bbc3dedf3bc11cb2f1a2c0b3c24836fcb740407b568e5c28d38ebc5aa552"
+        },
+        {
+          "index": 1,
+          "name": null,
+          "mimeType": "image/png",
+          "uri": null,
+          "embedded": true,
+          "bytes": 1430890,
+          "sha256": "76ff543e950064e00af37c426238c0bfc8742cace1af2adb3210a48cc02b3547"
+        }
+      ],
+      "meshes": [
+        {
+          "index": 0,
+          "name": "rock_Material_0",
+          "primitives": [
+            {
+              "meshIndex": 0,
+              "meshName": "rock_Material_0",
+              "primitiveIndex": 0,
+              "mode": 4,
+              "materialIndex": 0,
+              "vertexCount": 11130,
+              "indexCount": 58170,
+              "attributes": [
+                "NORMAL",
+                "POSITION",
+                "TANGENT",
+                "TEXCOORD_0"
+              ],
+              "localBounds": {
+                "min": [
+                  -1.724804,
+                  -0.798899,
+                  -0.436497
+                ],
+                "max": [
+                  1.709635,
+                  0.788218,
+                  0.441013
+                ],
+                "dimensions": [
+                  3.434439,
+                  1.587117,
+                  0.87751
+                ]
+              },
+              "uv": {
+                "TEXCOORD_0": {
+                  "count": 11130,
+                  "min": [
+                    0.0,
+                    0.0
+                  ],
+                  "max": [
+                    1.0,
+                    1.0
+                  ]
+                }
+              },
+              "topology": {
+                "triangleCount": 19390,
+                "degenerateTriangles": 0,
+                "indexBoundaryEdges": 2964,
+                "indexNonManifoldEdges": 0,
+                "positionWeldedBoundaryEdges": 0,
+                "positionWeldedNonManifoldEdges": 16,
+                "positionWeldedVertexCount": 9689,
+                "indexOutOfRange": false
+              }
+            }
+          ]
+        }
+      ],
+      "meshInstances": [
+        {
+          "nodeIndex": 4,
+          "nodeName": "rock_Material_0",
+          "meshIndex": 0,
+          "worldTranslation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "worldScaleSingularValues": [
+            0.092871,
+            0.092871,
+            0.092871
+          ],
+          "worldDeterminant": 0.000801007,
+          "worldMatrixColumnMajor": [
+            0.092871,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            -0.0,
+            -0.092871,
+            0.0,
+            0.0,
+            0.092871,
+            -0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        }
+      ],
+      "unreferencedNodes": [],
+      "anomalies": [
+        "mesh 0 primitive 0 has 16 position-welded non-manifold edges"
+      ]
+    },
+    {
+      "file": "brick (1).glb",
+      "bytes": 1172640,
+      "sha256": "7600d24df319efccc454a27bf65b63a3e4f096ab8d2bfe7d8dafe0aa8339222a",
+      "header": {
+        "magic": "glTF",
+        "version": 2,
+        "declaredLength": 1172640,
+        "actualLength": 1172640,
+        "lengthMatches": true,
+        "chunks": [
+          {
+            "type": "0x4e4f534a",
+            "bytes": 3528
+          },
+          {
+            "type": "0x004e4942",
+            "bytes": 1169084
+          }
+        ],
+        "trailingBytes": 0
+      },
+      "asset": {
+        "version": "2.0",
+        "generator": "Sketchfab-12.66.0",
+        "title": "Brick",
+        "author": "martn00 (https://sketchfab.com/martn00)",
+        "source": "https://sketchfab.com/3d-models/brick-4dc3468b35c947809c6811359686c64c",
+        "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+        "licenseRisk": "attribution required for redistribution of the source asset"
+      },
+      "coordinateConvention": {
+        "unit": "meter by glTF 2.0 convention",
+        "handedness": "right-handed",
+        "upAxis": "+Y",
+        "forwardAxis": "+Z",
+        "unitMetadataPresent": false
+      },
+      "evidenceRole": "generic brick evidence pending visual confirmation",
+      "materialIdentityStatus": "pending visual and cross-section confirmation",
+      "runtimeTextureAuthority": false,
+      "counts": {
+        "scenes": 1,
+        "nodes": 8,
+        "meshInstances": 2,
+        "meshes": 2,
+        "primitives": 2,
+        "accessors": 7,
+        "bufferViews": 4,
+        "buffers": 1,
+        "materials": 2,
+        "textures": 1,
+        "images": 1,
+        "vertices": 2717,
+        "indices": 8382,
+        "triangles": 2794,
+        "degenerateTriangles": 0,
+        "indexBoundaryEdges": 1930,
+        "indexNonManifoldEdges": 0,
+        "positionWeldedBoundaryEdges": 14,
+        "positionWeldedNonManifoldEdges": 0
+      },
+      "sceneBounds": {
+        "minMeters": [
+          -13.674812,
+          -0.4885,
+          -11.927716
+        ],
+        "maxMeters": [
+          11.927716,
+          10.702789,
+          13.674812
+        ],
+        "dimensionsMeters": [
+          25.602529,
+          11.191289,
+          25.602529
+        ],
+        "sortedDimensionRatio": [
+          1.0,
+          1.0,
+          0.437117
+        ],
+        "pcaDimensionsMeters": [
+          33.661792,
+          29.970427,
+          13.108503
+        ],
+        "pcaAxesColumns": [
+          [
+            -0.390728,
+            -0.916242,
+            0.088501
+          ],
+          [
+            0.018491,
+            -0.103937,
+            -0.994412
+          ],
+          [
+            -0.920321,
+            0.386908,
+            -0.057553
+          ]
+        ]
+      },
+      "uvSets": [
+        "TEXCOORD_0"
+      ],
+      "extensionsUsed": [
+        "KHR_materials_pbrSpecularGlossiness"
+      ],
+      "extensionsRequired": [
+        "KHR_materials_pbrSpecularGlossiness"
+      ],
+      "materials": [
+        {
+          "index": 0,
+          "name": "Root",
+          "alphaMode": "OPAQUE",
+          "doubleSided": true,
+          "baseColorFactor": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "metallicFactor": 1,
+          "roughnessFactor": 1,
+          "textureReferences": {},
+          "extensions": [
+            "KHR_materials_pbrSpecularGlossiness"
+          ]
+        },
+        {
+          "index": 1,
+          "name": "brick",
+          "alphaMode": "OPAQUE",
+          "doubleSided": true,
+          "baseColorFactor": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "metallicFactor": 1,
+          "roughnessFactor": 1,
+          "textureReferences": {
+            "diffuse": 0
+          },
+          "extensions": [
+            "KHR_materials_pbrSpecularGlossiness"
+          ]
+        }
+      ],
+      "textures": [
+        {
+          "index": 0,
+          "name": null,
+          "source": 0,
+          "sampler": 0,
+          "extensions": []
+        }
+      ],
+      "images": [
+        {
+          "index": 0,
+          "name": null,
+          "mimeType": "image/jpeg",
+          "uri": null,
+          "embedded": true,
+          "bytes": 1048761,
+          "sha256": "843adf8637f7fa8f5f039bb65c5f16c01dc5c494f317d2f275927bdac109a0b9"
+        }
+      ],
+      "meshes": [
+        {
+          "index": 0,
+          "name": "Cube.001_0",
+          "primitives": [
+            {
+              "meshIndex": 0,
+              "meshName": "Cube.001_0",
+              "primitiveIndex": 0,
+              "mode": 4,
+              "materialIndex": 1,
+              "vertexCount": 2698,
+              "indexCount": 8316,
+              "attributes": [
+                "NORMAL",
+                "POSITION",
+                "TEXCOORD_0"
+              ],
+              "localBounds": {
+                "min": [
+                  -5.25131,
+                  -2.2633,
+                  -0.4885
+                ],
+                "max": [
+                  1.62126,
+                  3.64909,
+                  1.35107
+                ],
+                "dimensions": [
+                  6.87257,
+                  5.91239,
+                  1.83957
+                ]
+              },
+              "uv": {
+                "TEXCOORD_0": {
+                  "count": 2698,
+                  "min": [
+                    0.12102,
+                    0.17662
+                  ],
+                  "max": [
+                    0.8579,
+                    0.91605
+                  ]
+                }
+              },
+              "topology": {
+                "triangleCount": 2772,
+                "degenerateTriangles": 0,
+                "indexBoundaryEdges": 1916,
+                "indexNonManifoldEdges": 0,
+                "positionWeldedBoundaryEdges": 0,
+                "positionWeldedNonManifoldEdges": 0,
+                "positionWeldedVertexCount": 1412,
+                "indexOutOfRange": false
+              }
+            }
+          ]
+        },
+        {
+          "index": 1,
+          "name": "Plane_0",
+          "primitives": [
+            {
+              "meshIndex": 1,
+              "meshName": "Plane_0",
+              "primitiveIndex": 0,
+              "mode": 4,
+              "materialIndex": 0,
+              "vertexCount": 19,
+              "indexCount": 66,
+              "attributes": [
+                "NORMAL",
+                "POSITION"
+              ],
+              "localBounds": {
+                "min": [
+                  -1.34322,
+                  -1.34322,
+                  0.0
+                ],
+                "max": [
+                  1.17161,
+                  1.17161,
+                  1.09622
+                ],
+                "dimensions": [
+                  2.51483,
+                  2.51483,
+                  1.09622
+                ]
+              },
+              "uv": {},
+              "topology": {
+                "triangleCount": 22,
+                "degenerateTriangles": 0,
+                "indexBoundaryEdges": 14,
+                "indexNonManifoldEdges": 0,
+                "positionWeldedBoundaryEdges": 14,
+                "positionWeldedNonManifoldEdges": 0,
+                "positionWeldedVertexCount": 19,
+                "indexOutOfRange": false
+              }
+            }
+          ]
+        }
+      ],
+      "meshInstances": [
+        {
+          "nodeIndex": 3,
+          "nodeName": "Cube.001_0",
+          "meshIndex": 0,
+          "worldTranslation": [
+            0.49413,
+            0.0,
+            -2.35354
+          ],
+          "worldScaleSingularValues": [
+            1.000003,
+            1.000003,
+            1.0
+          ],
+          "worldDeterminant": 1.000006102,
+          "worldMatrixColumnMajor": [
+            -0.43896,
+            0.0,
+            -0.89851,
+            0.0,
+            -0.89851,
+            -0.0,
+            0.43896,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.49413,
+            0.0,
+            -2.35354,
+            1.0
+          ]
+        },
+        {
+          "nodeIndex": 5,
+          "nodeName": "Plane_0",
+          "meshIndex": 1,
+          "worldTranslation": [
+            0.0,
+            -0.45741,
+            -0.0
+          ],
+          "worldScaleSingularValues": [
+            10.18062,
+            10.18062,
+            10.18062
+          ],
+          "worldDeterminant": 1055.170600004,
+          "worldMatrixColumnMajor": [
+            10.18062,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            -10.18062,
+            0.0,
+            0.0,
+            10.18062,
+            0.0,
+            0.0,
+            0.0,
+            -0.45741,
+            -0.0,
+            1.0
+          ]
+        }
+      ],
+      "unreferencedNodes": [],
+      "anomalies": [
+        "mesh 1 primitive 0 has no TEXCOORD set",
+        "mesh 1 primitive 0 has 14 position-welded boundary edges",
+        "absolute scene scale 25.6025 m is implausible for a single brick; use normalized proportions until calibrated"
+      ]
+    },
+    {
+      "file": "brick.glb",
+      "bytes": 4218980,
+      "sha256": "b90d0b805926b684d62034deaf90ba922ac8c5c52bf0e9115fd2d0fd2bcdf5be",
+      "header": {
+        "magic": "glTF",
+        "version": 2,
+        "declaredLength": 4218980,
+        "actualLength": 4218980,
+        "lengthMatches": true,
+        "chunks": [
+          {
+            "type": "0x4e4f534a",
+            "bytes": 3088
+          },
+          {
+            "type": "0x004e4942",
+            "bytes": 4215864
+          }
+        ],
+        "trailingBytes": 0
+      },
+      "asset": {
+        "version": "2.0",
+        "generator": "Sketchfab-12.68.0",
+        "title": "Brick",
+        "author": "Rigsters (https://sketchfab.com/rigsters)",
+        "source": "https://sketchfab.com/3d-models/brick-504a59ef14a148809cec657d7c99367c",
+        "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+        "licenseRisk": "attribution required for redistribution of the source asset"
+      },
+      "coordinateConvention": {
+        "unit": "meter by glTF 2.0 convention",
+        "handedness": "right-handed",
+        "upAxis": "+Y",
+        "forwardAxis": "+Z",
+        "unitMetadataPresent": false
+      },
+      "evidenceRole": "generic brick evidence pending visual confirmation",
+      "materialIdentityStatus": "pending visual and cross-section confirmation",
+      "runtimeTextureAuthority": false,
+      "counts": {
+        "scenes": 1,
+        "nodes": 3,
+        "meshInstances": 1,
+        "meshes": 1,
+        "primitives": 1,
+        "accessors": 5,
+        "bufferViews": 7,
+        "buffers": 1,
+        "materials": 1,
+        "textures": 3,
+        "images": 3,
+        "vertices": 15898,
+        "indices": 89988,
+        "triangles": 29996,
+        "degenerateTriangles": 0,
+        "indexBoundaryEdges": 1792,
+        "indexNonManifoldEdges": 0,
+        "positionWeldedBoundaryEdges": 0,
+        "positionWeldedNonManifoldEdges": 0
+      },
+      "sceneBounds": {
+        "minMeters": [
+          6.362722,
+          -2.827625,
+          9.291314
+        ],
+        "maxMeters": [
+          6.639659,
+          -2.712524,
+          9.70991
+        ],
+        "dimensionsMeters": [
+          0.276937,
+          0.115101,
+          0.418595
+        ],
+        "sortedDimensionRatio": [
+          1.0,
+          0.661587,
+          0.27497
+        ],
+        "pcaDimensionsMeters": [
+          0.421988,
+          0.281908,
+          0.116202
+        ],
+        "pcaAxesColumns": [
+          [
+            0.015565,
+            0.999582,
+            0.024347
+          ],
+          [
+            -0.002233,
+            -0.024315,
+            0.999702
+          ],
+          [
+            0.999876,
+            -0.015615,
+            0.001854
+          ]
+        ]
+      },
+      "uvSets": [
+        "TEXCOORD_0"
+      ],
+      "extensionsUsed": [],
+      "extensionsRequired": [],
+      "materials": [
+        {
+          "index": 0,
+          "name": "brcik_activision_low-tex",
+          "alphaMode": "OPAQUE",
+          "doubleSided": true,
+          "baseColorFactor": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "metallicFactor": 0.0,
+          "roughnessFactor": 1,
+          "textureReferences": {
+            "baseColor": 0,
+            "metallicRoughness": 1,
+            "normal": 2
+          },
+          "extensions": []
+        }
+      ],
+      "textures": [
+        {
+          "index": 0,
+          "name": null,
+          "source": 0,
+          "sampler": 0,
+          "extensions": []
+        },
+        {
+          "index": 1,
+          "name": null,
+          "source": 1,
+          "sampler": 0,
+          "extensions": []
+        },
+        {
+          "index": 2,
+          "name": null,
+          "source": 2,
+          "sampler": 0,
+          "extensions": []
+        }
+      ],
+      "images": [
+        {
+          "index": 0,
+          "name": null,
+          "mimeType": "image/jpeg",
+          "uri": null,
+          "embedded": true,
+          "bytes": 868885,
+          "sha256": "ed0fd768c6fc2d90387cb1d413ad9283174e0778d535824c1fd349f3e1f54e0f"
+        },
+        {
+          "index": 1,
+          "name": null,
+          "mimeType": "image/png",
+          "uri": null,
+          "embedded": true,
+          "bytes": 558722,
+          "sha256": "bf359ec8ebd7c5bf78065020fc5848e4d1e0c5319ae0efeb0b23ad90a19ee248"
+        },
+        {
+          "index": 2,
+          "name": null,
+          "mimeType": "image/png",
+          "uri": null,
+          "embedded": true,
+          "bytes": 1665199,
+          "sha256": "c3abe3123fd378daf2985e329a60e9ea55904f09a93402a6b1d92a5bf067917c"
+        }
+      ],
+      "meshes": [
+        {
+          "index": 0,
+          "name": "Object_0",
+          "primitives": [
+            {
+              "meshIndex": 0,
+              "meshName": "Object_0",
+              "primitiveIndex": 0,
+              "mode": 4,
+              "materialIndex": 0,
+              "vertexCount": 15898,
+              "indexCount": 89988,
+              "attributes": [
+                "NORMAL",
+                "POSITION",
+                "TANGENT",
+                "TEXCOORD_0"
+              ],
+              "localBounds": {
+                "min": [
+                  -5.314621,
+                  -16.42135,
+                  -13.594711
+                ],
+                "max": [
+                  2.067344,
+                  -0.110156,
+                  11.176238
+                ],
+                "dimensions": [
+                  7.381965,
+                  16.311194,
+                  24.770949
+                ]
+              },
+              "uv": {
+                "TEXCOORD_0": {
+                  "count": 15898,
+                  "min": [
+                    0.009321,
+                    0.018426
+                  ],
+                  "max": [
+                    0.991329,
+                    0.982975
+                  ]
+                }
+              },
+              "topology": {
+                "triangleCount": 29996,
+                "degenerateTriangles": 0,
+                "indexBoundaryEdges": 1792,
+                "indexNonManifoldEdges": 0,
+                "positionWeldedBoundaryEdges": 0,
+                "positionWeldedNonManifoldEdges": 0,
+                "positionWeldedVertexCount": 15000,
+                "indexOutOfRange": false
+              }
+            }
+          ]
+        }
+      ],
+      "meshInstances": [
+        {
+          "nodeIndex": 2,
+          "nodeName": "Object_2",
+          "meshIndex": 0,
+          "worldTranslation": [
+            6.64153,
+            -2.796875,
+            9.522106
+          ],
+          "worldScaleSingularValues": [
+            0.016978,
+            0.016978,
+            0.016978
+          ],
+          "worldDeterminant": 4.894e-06,
+          "worldMatrixColumnMajor": [
+            0.0,
+            -0.016971,
+            0.000496,
+            0.0,
+            0.016978,
+            0.0,
+            0.0,
+            0.0,
+            -0.0,
+            0.000496,
+            0.016971,
+            0.0,
+            6.64153,
+            -2.796875,
+            9.522106,
+            1.0
+          ]
+        }
+      ],
+      "unreferencedNodes": [],
+      "anomalies": []
+    },
+    {
+      "file": "clay_brick.glb",
+      "bytes": 10191844,
+      "sha256": "e15725edb10adf87b0bdc6d92a73d749f97b5d2f2a6b0f70c3deecfa8f57d02d",
+      "header": {
+        "magic": "glTF",
+        "version": 2,
+        "declaredLength": 10191844,
+        "actualLength": 10191844,
+        "lengthMatches": true,
+        "chunks": [
+          {
+            "type": "0x4e4f534a",
+            "bytes": 4056
+          },
+          {
+            "type": "0x004e4942",
+            "bytes": 10187760
+          }
+        ],
+        "trailingBytes": 0
+      },
+      "asset": {
+        "version": "2.0",
+        "generator": "Sketchfab-12.68.0",
+        "title": "Clay Brick",
+        "author": "Världskulturmuseerna (https://sketchfab.com/varldskulturmuseerna)",
+        "source": "https://sketchfab.com/3d-models/clay-brick-adc8de4f9d4a4091bf5b5dedf45fcba4",
+        "license": "CC-BY-NC-4.0 (http://creativecommons.org/licenses/by-nc/4.0/)",
+        "licenseRisk": "non-commercial restriction, keep reference-only"
+      },
+      "coordinateConvention": {
+        "unit": "meter by glTF 2.0 convention",
+        "handedness": "right-handed",
+        "upAxis": "+Y",
+        "forwardAxis": "+Z",
+        "unitMetadataPresent": false
+      },
+      "evidenceRole": "candidate ADOBE or FIRED_CLAY evidence pending visual confirmation",
+      "materialIdentityStatus": "pending visual and cross-section confirmation",
+      "runtimeTextureAuthority": false,
+      "counts": {
+        "scenes": 1,
+        "nodes": 6,
+        "meshInstances": 2,
+        "meshes": 2,
+        "primitives": 2,
+        "accessors": 10,
+        "bufferViews": 6,
+        "buffers": 1,
+        "materials": 1,
+        "textures": 2,
+        "images": 2,
+        "vertices": 104009,
+        "indices": 542346,
+        "triangles": 180782,
+        "degenerateTriangles": 4,
+        "indexBoundaryEdges": 27446,
+        "indexNonManifoldEdges": 0,
+        "positionWeldedBoundaryEdges": 23904,
+        "positionWeldedNonManifoldEdges": 2
+      },
+      "sceneBounds": {
+        "minMeters": [
+          -308.600545,
+          -64.880671,
+          -277.776865
+        ],
+        "maxMeters": [
+          257.357025,
+          66.991552,
+          285.798176
+        ],
+        "dimensionsMeters": [
+          565.95757,
+          131.872222,
+          563.575041
+        ],
+        "sortedDimensionRatio": [
+          1.0,
+          0.99579,
+          0.233007
+        ],
+        "pcaDimensionsMeters": [
+          564.206514,
+          561.687152,
+          132.493114
+        ],
+        "pcaAxesColumns": [
+          [
+            -0.999967,
+            0.004216,
+            0.006946
+          ],
+          [
+            0.006978,
+            0.007667,
+            0.999946
+          ],
+          [
+            0.004163,
+            0.999962,
+            -0.007696
+          ]
+        ]
+      },
+      "uvSets": [
+        "TEXCOORD_0"
+      ],
+      "extensionsUsed": [],
+      "extensionsRequired": [],
+      "materials": [
+        {
+          "index": 0,
+          "name": "material0",
+          "alphaMode": "OPAQUE",
+          "doubleSided": true,
+          "baseColorFactor": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "metallicFactor": 0.0,
+          "roughnessFactor": 0.7906289251,
+          "textureReferences": {
+            "baseColor": 0,
+            "normal": 1
+          },
+          "extensions": []
+        }
+      ],
+      "textures": [
+        {
+          "index": 0,
+          "name": null,
+          "source": 0,
+          "sampler": 0,
+          "extensions": []
+        },
+        {
+          "index": 1,
+          "name": null,
+          "source": 1,
+          "sampler": 0,
+          "extensions": []
+        }
+      ],
+      "images": [
+        {
+          "index": 0,
+          "name": null,
+          "mimeType": "image/png",
+          "uri": null,
+          "embedded": true,
+          "bytes": 1481464,
+          "sha256": "b002503f29e8d105af419670f61db550f66b02eac1638a142b03ab329a5166da"
+        },
+        {
+          "index": 1,
+          "name": null,
+          "mimeType": "image/png",
+          "uri": null,
+          "embedded": true,
+          "bytes": 1544480,
+          "sha256": "014067cd74ceaaa83261d718b99cdf04b81150405f7f3b921aa3bf10d2de098a"
+        }
+      ],
+      "meshes": [
+        {
+          "index": 0,
+          "name": "Model_material0_0",
+          "primitives": [
+            {
+              "meshIndex": 0,
+              "meshName": "Model_material0_0",
+              "primitiveIndex": 0,
+              "mode": 4,
+              "materialIndex": 0,
+              "vertexCount": 65532,
+              "indexCount": 364206,
+              "attributes": [
+                "NORMAL",
+                "POSITION",
+                "TANGENT",
+                "TEXCOORD_0"
+              ],
+              "localBounds": {
+                "min": [
+                  -3.086005,
+                  -2.857982,
+                  -0.648807
+                ],
+                "max": [
+                  2.57357,
+                  2.777769,
+                  0.669916
+                ],
+                "dimensions": [
+                  5.659576,
+                  5.63575,
+                  1.318722
+                ]
+              },
+              "uv": {
+                "TEXCOORD_0": {
+                  "count": 65532,
+                  "min": [
+                    0.000301,
+                    0.0
+                  ],
+                  "max": [
+                    0.886814,
+                    1.0
+                  ]
+                }
+              },
+              "topology": {
+                "triangleCount": 121402,
+                "degenerateTriangles": 0,
+                "indexBoundaryEdges": 12776,
+                "indexNonManifoldEdges": 0,
+                "positionWeldedBoundaryEdges": 11952,
+                "positionWeldedNonManifoldEdges": 0,
+                "positionWeldedVertexCount": 65067,
+                "indexOutOfRange": false
+              }
+            }
+          ]
+        },
+        {
+          "index": 1,
+          "name": "Model_material0_0",
+          "primitives": [
+            {
+              "meshIndex": 1,
+              "meshName": "Model_material0_0",
+              "primitiveIndex": 0,
+              "mode": 4,
+              "materialIndex": 0,
+              "vertexCount": 38477,
+              "indexCount": 178140,
+              "attributes": [
+                "NORMAL",
+                "POSITION",
+                "TANGENT",
+                "TEXCOORD_0"
+              ],
+              "localBounds": {
+                "min": [
+                  -1.553882,
+                  -2.846172,
+                  -0.648807
+                ],
+                "max": [
+                  2.570684,
+                  2.775637,
+                  0.669895
+                ],
+                "dimensions": [
+                  4.124567,
+                  5.621809,
+                  1.318702
+                ]
+              },
+              "uv": {
+                "TEXCOORD_0": {
+                  "count": 38477,
+                  "min": [
+                    0.00274,
+                    0.000996
+                  ],
+                  "max": [
+                    0.915709,
+                    1.0
+                  ]
+                }
+              },
+              "topology": {
+                "triangleCount": 59380,
+                "degenerateTriangles": 4,
+                "indexBoundaryEdges": 14670,
+                "indexNonManifoldEdges": 0,
+                "positionWeldedBoundaryEdges": 11952,
+                "positionWeldedNonManifoldEdges": 2,
+                "positionWeldedVertexCount": 37014,
+                "indexOutOfRange": false
+              }
+            }
+          ]
+        }
+      ],
+      "meshInstances": [
+        {
+          "nodeIndex": 4,
+          "nodeName": "Model_material0_0",
+          "meshIndex": 0,
+          "worldTranslation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "worldScaleSingularValues": [
+            100.0,
+            100.0,
+            100.0
+          ],
+          "worldDeterminant": 1000000.0,
+          "worldMatrixColumnMajor": [
+            100.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            -1.6e-05,
+            -100.0,
+            0.0,
+            0.0,
+            100.0,
+            -1.6e-05,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "nodeIndex": 5,
+          "nodeName": "Model_material0_0",
+          "meshIndex": 1,
+          "worldTranslation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "worldScaleSingularValues": [
+            100.0,
+            100.0,
+            100.0
+          ],
+          "worldDeterminant": 1000000.0,
+          "worldMatrixColumnMajor": [
+            100.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            -1.6e-05,
+            -100.0,
+            0.0,
+            0.0,
+            100.0,
+            -1.6e-05,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        }
+      ],
+      "unreferencedNodes": [],
+      "anomalies": [
+        "mesh 0 primitive 0 has 11952 position-welded boundary edges",
+        "mesh 1 primitive 0 has 4 degenerate triangles",
+        "mesh 1 primitive 0 has 11952 position-welded boundary edges",
+        "mesh 1 primitive 0 has 2 position-welded non-manifold edges",
+        "absolute scene scale 565.958 m is implausible for a single brick; use normalized proportions until calibrated",
+        "source metadata declares a non-commercial license"
+      ]
+    },
+    {
+      "file": "stone_brick.glb",
+      "bytes": 23979900,
+      "sha256": "69a2be880fab4a209ee0d46e639b2ad458fdb327e15c738092b1ce55f5e68ebe",
+      "header": {
+        "magic": "glTF",
+        "version": 2,
+        "declaredLength": 23979900,
+        "actualLength": 23979900,
+        "lengthMatches": true,
+        "chunks": [
+          {
+            "type": "0x4e4f534a",
+            "bytes": 10268
+          },
+          {
+            "type": "0x004e4942",
+            "bytes": 23969604
+          }
+        ],
+        "trailingBytes": 0
+      },
+      "asset": {
+        "version": "2.0",
+        "generator": "Sketchfab-15.27.0",
+        "title": "stone brick",
+        "author": "LuthBird1 (https://sketchfab.com/LuthBird1)",
+        "source": "https://sketchfab.com/3d-models/stone-brick-8a31a831769f491f849f20715127d239",
+        "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+        "licenseRisk": "attribution required for redistribution of the source asset"
+      },
+      "coordinateConvention": {
+        "unit": "meter by glTF 2.0 convention",
+        "handedness": "right-handed",
+        "upAxis": "+Y",
+        "forwardAxis": "+Z",
+        "unitMetadataPresent": false
+      },
+      "evidenceRole": "candidate STONE shape and surface evidence",
+      "materialIdentityStatus": "pending visual and cross-section confirmation",
+      "runtimeTextureAuthority": false,
+      "counts": {
+        "scenes": 1,
+        "nodes": 7,
+        "meshInstances": 3,
+        "meshes": 3,
+        "primitives": 3,
+        "accessors": 42,
+        "bufferViews": 8,
+        "buffers": 1,
+        "materials": 1,
+        "textures": 4,
+        "images": 4,
+        "vertices": 152745,
+        "indices": 791232,
+        "triangles": 263744,
+        "degenerateTriangles": 0,
+        "indexBoundaryEdges": 41294,
+        "indexNonManifoldEdges": 0,
+        "positionWeldedBoundaryEdges": 38930,
+        "positionWeldedNonManifoldEdges": 0
+      },
+      "sceneBounds": {
+        "minMeters": [
+          -0.007105,
+          -0.00406,
+          -0.003089
+        ],
+        "maxMeters": [
+          0.007101,
+          0.003764,
+          0.002879
+        ],
+        "dimensionsMeters": [
+          0.014206,
+          0.007824,
+          0.005968
+        ],
+        "sortedDimensionRatio": [
+          1.0,
+          0.550775,
+          0.420102
+        ],
+        "pcaDimensionsMeters": [
+          0.01425,
+          0.007983,
+          0.006184
+        ],
+        "pcaAxesColumns": [
+          [
+            -0.999529,
+            0.001596,
+            0.030635
+          ],
+          [
+            0.001062,
+            -0.996248,
+            0.086539
+          ],
+          [
+            0.030658,
+            0.086531,
+            0.995777
+          ]
+        ]
+      },
+      "uvSets": [
+        "TEXCOORD_0",
+        "TEXCOORD_1",
+        "TEXCOORD_2",
+        "TEXCOORD_3",
+        "TEXCOORD_4",
+        "TEXCOORD_5",
+        "TEXCOORD_6",
+        "TEXCOORD_7",
+        "TEXCOORD_8",
+        "TEXCOORD_9"
+      ],
+      "extensionsUsed": [],
+      "extensionsRequired": [],
+      "materials": [
+        {
+          "index": 0,
+          "name": "phong1",
+          "alphaMode": "BLEND",
+          "doubleSided": true,
+          "baseColorFactor": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "metallicFactor": 1,
+          "roughnessFactor": 1,
+          "textureReferences": {
+            "baseColor": 0,
+            "metallicRoughness": 1,
+            "normal": 3,
+            "emissive": 2
+          },
+          "extensions": []
+        }
+      ],
+      "textures": [
+        {
+          "index": 0,
+          "name": null,
+          "source": 0,
+          "sampler": 0,
+          "extensions": []
+        },
+        {
+          "index": 1,
+          "name": null,
+          "source": 1,
+          "sampler": 0,
+          "extensions": []
+        },
+        {
+          "index": 2,
+          "name": null,
+          "source": 2,
+          "sampler": 0,
+          "extensions": []
+        },
+        {
+          "index": 3,
+          "name": null,
+          "source": 3,
+          "sampler": 0,
+          "extensions": []
+        }
+      ],
+      "images": [
+        {
+          "index": 0,
+          "name": null,
+          "mimeType": "image/png",
+          "uri": null,
+          "embedded": true,
+          "bytes": 1069607,
+          "sha256": "79addb9c4227ec8869a7d69c9813df29ae210e26674b71c78dfe42d690337a5d"
+        },
+        {
+          "index": 1,
+          "name": null,
+          "mimeType": "image/png",
+          "uri": null,
+          "embedded": true,
+          "bytes": 409220,
+          "sha256": "4081852ec6d1d795ea43ae3413d2c42b8a8fca9b49921a95e07ceacb70758be9"
+        },
+        {
+          "index": 2,
+          "name": null,
+          "mimeType": "image/png",
+          "uri": null,
+          "embedded": true,
+          "bytes": 207,
+          "sha256": "50209af612979d8a0e3a9a05860f3da26df6ee849cb2430438afe0385e1922d6"
+        },
+        {
+          "index": 3,
+          "name": null,
+          "mimeType": "image/png",
+          "uri": null,
+          "embedded": true,
+          "bytes": 996241,
+          "sha256": "591ff00c34f4007477f6a070dcc99df1df868dee7d963a7b107137fd03981c1f"
+        }
+      ],
+      "meshes": [
+        {
+          "index": 0,
+          "name": "brick not finished_phong1_0",
+          "primitives": [
+            {
+              "meshIndex": 0,
+              "meshName": "brick not finished_phong1_0",
+              "primitiveIndex": 0,
+              "mode": 4,
+              "materialIndex": 0,
+              "vertexCount": 65532,
+              "indexCount": 354447,
+              "attributes": [
+                "NORMAL",
+                "POSITION",
+                "TANGENT",
+                "TEXCOORD_0",
+                "TEXCOORD_1",
+                "TEXCOORD_2",
+                "TEXCOORD_3",
+                "TEXCOORD_4",
+                "TEXCOORD_5",
+                "TEXCOORD_6",
+                "TEXCOORD_7",
+                "TEXCOORD_8",
+                "TEXCOORD_9"
+              ],
+              "localBounds": {
+                "min": [
+                  -0.710119,
+                  -0.405976,
+                  -0.308917
+                ],
+                "max": [
+                  0.710118,
+                  0.372171,
+                  0.287049
+                ],
+                "dimensions": [
+                  1.420237,
+                  0.778147,
+                  0.595965
+                ]
+              },
+              "uv": {
+                "TEXCOORD_0": {
+                  "count": 65532,
+                  "min": [
+                    0.000316,
+                    0.000848
+                  ],
+                  "max": [
+                    1.0,
+                    0.807832
+                  ]
+                },
+                "TEXCOORD_1": {
+                  "count": 65532,
+                  "min": [
+                    0.000316,
+                    0.000848
+                  ],
+                  "max": [
+                    1.0,
+                    0.807832
+                  ]
+                },
+                "TEXCOORD_2": {
+                  "count": 65532,
+                  "min": [
+                    0.000316,
+                    0.000848
+                  ],
+                  "max": [
+                    1.0,
+                    0.807832
+                  ]
+                },
+                "TEXCOORD_3": {
+                  "count": 65532,
+                  "min": [
+                    0.000316,
+                    0.000848
+                  ],
+                  "max": [
+                    1.0,
+                    0.807832
+                  ]
+                },
+                "TEXCOORD_4": {
+                  "count": 65532,
+                  "min": [
+                    0.000316,
+                    0.000848
+                  ],
+                  "max": [
+                    1.0,
+                    0.807832
+                  ]
+                },
+                "TEXCOORD_5": {
+                  "count": 65532,
+                  "min": [
+                    0.000316,
+                    0.000848
+                  ],
+                  "max": [
+                    1.0,
+                    0.807832
+                  ]
+                },
+                "TEXCOORD_6": {
+                  "count": 65532,
+                  "min": [
+                    0.000316,
+                    0.000848
+                  ],
+                  "max": [
+                    1.0,
+                    0.807832
+                  ]
+                },
+                "TEXCOORD_7": {
+                  "count": 65532,
+                  "min": [
+                    0.000316,
+                    0.000848
+                  ],
+                  "max": [
+                    1.0,
+                    0.807832
+                  ]
+                },
+                "TEXCOORD_8": {
+                  "count": 65532,
+                  "min": [
+                    0.000316,
+                    0.000848
+                  ],
+                  "max": [
+                    1.0,
+                    0.807832
+                  ]
+                },
+                "TEXCOORD_9": {
+                  "count": 65532,
+                  "min": [
+                    0.000316,
+                    0.000848
+                  ],
+                  "max": [
+                    1.0,
+                    0.807832
+                  ]
+                }
+              },
+              "topology": {
+                "triangleCount": 118149,
+                "degenerateTriangles": 0,
+                "indexBoundaryEdges": 14671,
+                "indexNonManifoldEdges": 0,
+                "positionWeldedBoundaryEdges": 13677,
+                "positionWeldedNonManifoldEdges": 0,
+                "positionWeldedVertexCount": 64984,
+                "indexOutOfRange": false
+              }
+            }
+          ]
+        },
+        {
+          "index": 1,
+          "name": "brick not finished_phong1_0",
+          "primitives": [
+            {
+              "meshIndex": 1,
+              "meshName": "brick not finished_phong1_0",
+              "primitiveIndex": 0,
+              "mode": 4,
+              "materialIndex": 0,
+              "vertexCount": 65532,
+              "indexCount": 333396,
+              "attributes": [
+                "NORMAL",
+                "POSITION",
+                "TANGENT",
+                "TEXCOORD_0",
+                "TEXCOORD_1",
+                "TEXCOORD_2",
+                "TEXCOORD_3",
+                "TEXCOORD_4",
+                "TEXCOORD_5",
+                "TEXCOORD_6",
+                "TEXCOORD_7",
+                "TEXCOORD_8",
+                "TEXCOORD_9"
+              ],
+              "localBounds": {
+                "min": [
+                  -0.710459,
+                  -0.405498,
+                  -0.308559
+                ],
+                "max": [
+                  0.710118,
+                  0.376442,
+                  0.287871
+                ],
+                "dimensions": [
+                  1.420577,
+                  0.78194,
+                  0.59643
+                ]
+              },
+              "uv": {
+                "TEXCOORD_0": {
+                  "count": 65532,
+                  "min": [
+                    0.0,
+                    0.0
+                  ],
+                  "max": [
+                    0.999535,
+                    0.80822
+                  ]
+                },
+                "TEXCOORD_1": {
+                  "count": 65532,
+                  "min": [
+                    0.0,
+                    0.0
+                  ],
+                  "max": [
+                    0.999535,
+                    0.80822
+                  ]
+                },
+                "TEXCOORD_2": {
+                  "count": 65532,
+                  "min": [
+                    0.0,
+                    0.0
+                  ],
+                  "max": [
+                    0.999535,
+                    0.80822
+                  ]
+                },
+                "TEXCOORD_3": {
+                  "count": 65532,
+                  "min": [
+                    0.0,
+                    0.0
+                  ],
+                  "max": [
+                    0.999535,
+                    0.80822
+                  ]
+                },
+                "TEXCOORD_4": {
+                  "count": 65532,
+                  "min": [
+                    0.0,
+                    0.0
+                  ],
+                  "max": [
+                    0.999535,
+                    0.80822
+                  ]
+                },
+                "TEXCOORD_5": {
+                  "count": 65532,
+                  "min": [
+                    0.0,
+                    0.0
+                  ],
+                  "max": [
+                    0.999535,
+                    0.80822
+                  ]
+                },
+                "TEXCOORD_6": {
+                  "count": 65532,
+                  "min": [
+                    0.0,
+                    0.0
+                  ],
+                  "max": [
+                    0.999535,
+                    0.80822
+                  ]
+                },
+                "TEXCOORD_7": {
+                  "count": 65532,
+                  "min": [
+                    0.0,
+                    0.0
+                  ],
+                  "max": [
+                    0.999535,
+                    0.80822
+                  ]
+                },
+                "TEXCOORD_8": {
+                  "count": 65532,
+                  "min": [
+                    0.0,
+                    0.0
+                  ],
+                  "max": [
+                    0.999535,
+                    0.80822
+                  ]
+                },
+                "TEXCOORD_9": {
+                  "count": 65532,
+                  "min": [
+                    0.0,
+                    0.0
+                  ],
+                  "max": [
+                    0.999535,
+                    0.80822
+                  ]
+                }
+              },
+              "topology": {
+                "triangleCount": 111132,
+                "degenerateTriangles": 0,
+                "indexBoundaryEdges": 19004,
+                "indexNonManifoldEdges": 0,
+                "positionWeldedBoundaryEdges": 18032,
+                "positionWeldedNonManifoldEdges": 0,
+                "positionWeldedVertexCount": 64987,
+                "indexOutOfRange": false
+              }
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "name": "brick not finished_phong1_0",
+          "primitives": [
+            {
+              "meshIndex": 2,
+              "meshName": "brick not finished_phong1_0",
+              "primitiveIndex": 0,
+              "mode": 4,
+              "materialIndex": 0,
+              "vertexCount": 21681,
+              "indexCount": 103389,
+              "attributes": [
+                "NORMAL",
+                "POSITION",
+                "TANGENT",
+                "TEXCOORD_0",
+                "TEXCOORD_1",
+                "TEXCOORD_2",
+                "TEXCOORD_3",
+                "TEXCOORD_4",
+                "TEXCOORD_5",
+                "TEXCOORD_6",
+                "TEXCOORD_7",
+                "TEXCOORD_8",
+                "TEXCOORD_9"
+              ],
+              "localBounds": {
+                "min": [
+                  -0.706118,
+                  -0.400278,
+                  -0.307065
+                ],
+                "max": [
+                  0.707476,
+                  0.376422,
+                  0.287702
+                ],
+                "dimensions": [
+                  1.413594,
+                  0.776699,
+                  0.594767
+                ]
+              },
+              "uv": {
+                "TEXCOORD_0": {
+                  "count": 21681,
+                  "min": [
+                    0.001891,
+                    0.018378
+                  ],
+                  "max": [
+                    0.997309,
+                    0.808112
+                  ]
+                },
+                "TEXCOORD_1": {
+                  "count": 21681,
+                  "min": [
+                    0.001891,
+                    0.018378
+                  ],
+                  "max": [
+                    0.997309,
+                    0.808112
+                  ]
+                },
+                "TEXCOORD_2": {
+                  "count": 21681,
+                  "min": [
+                    0.001891,
+                    0.018378
+                  ],
+                  "max": [
+                    0.997309,
+                    0.808112
+                  ]
+                },
+                "TEXCOORD_3": {
+                  "count": 21681,
+                  "min": [
+                    0.001891,
+                    0.018378
+                  ],
+                  "max": [
+                    0.997309,
+                    0.808112
+                  ]
+                },
+                "TEXCOORD_4": {
+                  "count": 21681,
+                  "min": [
+                    0.001891,
+                    0.018378
+                  ],
+                  "max": [
+                    0.997309,
+                    0.808112
+                  ]
+                },
+                "TEXCOORD_5": {
+                  "count": 21681,
+                  "min": [
+                    0.001891,
+                    0.018378
+                  ],
+                  "max": [
+                    0.997309,
+                    0.808112
+                  ]
+                },
+                "TEXCOORD_6": {
+                  "count": 21681,
+                  "min": [
+                    0.001891,
+                    0.018378
+                  ],
+                  "max": [
+                    0.997309,
+                    0.808112
+                  ]
+                },
+                "TEXCOORD_7": {
+                  "count": 21681,
+                  "min": [
+                    0.001891,
+                    0.018378
+                  ],
+                  "max": [
+                    0.997309,
+                    0.808112
+                  ]
+                },
+                "TEXCOORD_8": {
+                  "count": 21681,
+                  "min": [
+                    0.001891,
+                    0.018378
+                  ],
+                  "max": [
+                    0.997309,
+                    0.808112
+                  ]
+                },
+                "TEXCOORD_9": {
+                  "count": 21681,
+                  "min": [
+                    0.001891,
+                    0.018378
+                  ],
+                  "max": [
+                    0.997309,
+                    0.808112
+                  ]
+                }
+              },
+              "topology": {
+                "triangleCount": 34463,
+                "degenerateTriangles": 0,
+                "indexBoundaryEdges": 7619,
+                "indexNonManifoldEdges": 0,
+                "positionWeldedBoundaryEdges": 7221,
+                "positionWeldedNonManifoldEdges": 0,
+                "positionWeldedVertexCount": 21461,
+                "indexOutOfRange": false
+              }
+            }
+          ]
+        }
+      ],
+      "meshInstances": [
+        {
+          "nodeIndex": 4,
+          "nodeName": "brick not finished_phong1_0",
+          "meshIndex": 0,
+          "worldTranslation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "worldScaleSingularValues": [
+            0.01,
+            0.01,
+            0.01
+          ],
+          "worldDeterminant": 1e-06,
+          "worldMatrixColumnMajor": [
+            0.01,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.01,
+            0.0,
+            0.0,
+            0.0,
+            -0.0,
+            0.01,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "nodeIndex": 5,
+          "nodeName": "brick not finished_phong1_0",
+          "meshIndex": 1,
+          "worldTranslation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "worldScaleSingularValues": [
+            0.01,
+            0.01,
+            0.01
+          ],
+          "worldDeterminant": 1e-06,
+          "worldMatrixColumnMajor": [
+            0.01,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.01,
+            0.0,
+            0.0,
+            0.0,
+            -0.0,
+            0.01,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "nodeIndex": 6,
+          "nodeName": "brick not finished_phong1_0",
+          "meshIndex": 2,
+          "worldTranslation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "worldScaleSingularValues": [
+            0.01,
+            0.01,
+            0.01
+          ],
+          "worldDeterminant": 1e-06,
+          "worldMatrixColumnMajor": [
+            0.01,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.01,
+            0.0,
+            0.0,
+            0.0,
+            -0.0,
+            0.01,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        }
+      ],
+      "unreferencedNodes": [],
+      "anomalies": [
+        "mesh 0 primitive 0 has 13677 position-welded boundary edges",
+        "mesh 1 primitive 0 has 18032 position-welded boundary edges",
+        "mesh 2 primitive 0 has 7221 position-welded boundary edges",
+        "absolute scene scale 0.0142058 m is implausible for a single brick; use normalized proportions until calibrated"
+      ]
+    },
+    {
+      "file": "white_wall_texture.glb",
+      "bytes": 5260124,
+      "sha256": "f7be88c37a354bf80c6723f87188a8b0d9049e3ae56d6e1a78ed78ad8396a4ef",
+      "header": {
+        "magic": "glTF",
+        "version": 2,
+        "declaredLength": 5260124,
+        "actualLength": 5260124,
+        "lengthMatches": true,
+        "chunks": [
+          {
+            "type": "0x4e4f534a",
+            "bytes": 2964
+          },
+          {
+            "type": "0x004e4942",
+            "bytes": 5257132
+          }
+        ],
+        "trailingBytes": 0
+      },
+      "asset": {
+        "version": "2.0",
+        "generator": "Sketchfab-12.67.0",
+        "title": "White wall texture",
+        "author": "PixelatoR (https://sketchfab.com/pixelator111)",
+        "source": "https://sketchfab.com/3d-models/white-wall-texture-87e21c64e53d4d099f5a606e6131d36f",
+        "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+        "licenseRisk": "attribution required for redistribution of the source asset"
+      },
+      "coordinateConvention": {
+        "unit": "meter by glTF 2.0 convention",
+        "handedness": "right-handed",
+        "upAxis": "+Y",
+        "forwardAxis": "+Z",
+        "unitMetadataPresent": false
+      },
+      "evidenceRole": "auxiliary plaster or wall-surface reference",
+      "materialIdentityStatus": "pending visual and cross-section confirmation",
+      "runtimeTextureAuthority": false,
+      "counts": {
+        "scenes": 1,
+        "nodes": 5,
+        "meshInstances": 1,
+        "meshes": 1,
+        "primitives": 1,
+        "accessors": 5,
+        "bufferViews": 7,
+        "buffers": 1,
+        "materials": 1,
+        "textures": 3,
+        "images": 3,
+        "vertices": 38961,
+        "indices": 230400,
+        "triangles": 76800,
+        "degenerateTriangles": 0,
+        "indexBoundaryEdges": 1120,
+        "indexNonManifoldEdges": 0,
+        "positionWeldedBoundaryEdges": 0,
+        "positionWeldedNonManifoldEdges": 0
+      },
+      "sceneBounds": {
+        "minMeters": [
+          -50.0,
+          -8e-06,
+          -50.000008
+        ],
+        "maxMeters": [
+          50.0,
+          100.000008,
+          50.000008
+        ],
+        "dimensionsMeters": [
+          100.0,
+          100.000015,
+          100.000015
+        ],
+        "sortedDimensionRatio": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "pcaDimensionsMeters": [
+          100.001345,
+          133.325356,
+          133.324469
+        ],
+        "pcaAxesColumns": [
+          [
+            9e-06,
+            0.880738,
+            0.473605
+          ],
+          [
+            1.0,
+            -1.1e-05,
+            1e-06
+          ],
+          [
+            6e-06,
+            0.473605,
+            -0.880738
+          ]
+        ]
+      },
+      "uvSets": [
+        "TEXCOORD_0"
+      ],
+      "extensionsUsed": [],
+      "extensionsRequired": [],
+      "materials": [
+        {
+          "index": 0,
+          "name": "Scene_-_Root",
+          "alphaMode": "OPAQUE",
+          "doubleSided": true,
+          "baseColorFactor": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "metallicFactor": 0.0,
+          "roughnessFactor": 1,
+          "textureReferences": {
+            "baseColor": 0,
+            "metallicRoughness": 1,
+            "normal": 2,
+            "occlusion": 1
+          },
+          "extensions": []
+        }
+      ],
+      "textures": [
+        {
+          "index": 0,
+          "name": null,
+          "source": 0,
+          "sampler": 0,
+          "extensions": []
+        },
+        {
+          "index": 1,
+          "name": null,
+          "source": 1,
+          "sampler": 0,
+          "extensions": []
+        },
+        {
+          "index": 2,
+          "name": null,
+          "source": 2,
+          "sampler": 0,
+          "extensions": []
+        }
+      ],
+      "images": [
+        {
+          "index": 0,
+          "name": null,
+          "mimeType": "image/jpeg",
+          "uri": null,
+          "embedded": true,
+          "bytes": 234344,
+          "sha256": "b7e89749b125874142b1dea9215e75b5d4110d40b2de5965a60a2aee96f983db"
+        },
+        {
+          "index": 1,
+          "name": null,
+          "mimeType": "image/png",
+          "uri": null,
+          "embedded": true,
+          "bytes": 473142,
+          "sha256": "6efa9e049e627b861df0f66b9dbf74f19ebdd9c7b37f494e81515cc0286bec76"
+        },
+        {
+          "index": 2,
+          "name": null,
+          "mimeType": "image/png",
+          "uri": null,
+          "embedded": true,
+          "bytes": 1757916,
+          "sha256": "8cd94de4d128d42923be030b76cdfd62441fbed639803ff9ac3d1c08742951e8"
+        }
+      ],
+      "meshes": [
+        {
+          "index": 0,
+          "name": "Rounded Cube__0",
+          "primitives": [
+            {
+              "meshIndex": 0,
+              "meshName": "Rounded Cube__0",
+              "primitiveIndex": 0,
+              "mode": 4,
+              "materialIndex": 0,
+              "vertexCount": 38961,
+              "indexCount": 230400,
+              "attributes": [
+                "NORMAL",
+                "POSITION",
+                "TANGENT",
+                "TEXCOORD_0"
+              ],
+              "localBounds": {
+                "min": [
+                  -50.0,
+                  -50.000008,
+                  -8e-06
+                ],
+                "max": [
+                  50.0,
+                  50.000008,
+                  100.000008
+                ],
+                "dimensions": [
+                  100.0,
+                  100.000015,
+                  100.000015
+                ]
+              },
+              "uv": {
+                "TEXCOORD_0": {
+                  "count": 38961,
+                  "min": [
+                    -1.0,
+                    -1.0
+                  ],
+                  "max": [
+                    3.0,
+                    2.0
+                  ]
+                }
+              },
+              "topology": {
+                "triangleCount": 76800,
+                "degenerateTriangles": 0,
+                "indexBoundaryEdges": 1120,
+                "indexNonManifoldEdges": 0,
+                "positionWeldedBoundaryEdges": 0,
+                "positionWeldedNonManifoldEdges": 0,
+                "positionWeldedVertexCount": 38402,
+                "indexOutOfRange": false
+              }
+            }
+          ]
+        }
+      ],
+      "meshInstances": [
+        {
+          "nodeIndex": 4,
+          "nodeName": "Rounded Cube__0",
+          "meshIndex": 0,
+          "worldTranslation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "worldScaleSingularValues": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "worldDeterminant": 1.0,
+          "worldMatrixColumnMajor": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            -1.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        }
+      ],
+      "unreferencedNodes": [],
+      "anomalies": []
+    }
+  ]
+}
