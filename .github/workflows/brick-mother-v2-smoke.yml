@@ -1,0 +1,154 @@
+name: Brick Mother V2 Composite DNA Smoke
+
+on:
+  push:
+    branches:
+      - feature/brick-mother-v2.0-composite-material-dna
+    paths:
+      - "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/**"
+      - ".github/workflows/brick-mother-v2-smoke.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  browser-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate V2 source contracts
+        shell: bash
+        run: |
+          set -euo pipefail
+          brick="yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother"
+          node --check "$brick/brick-mother-geometry-v2.js"
+          node --check "$brick/brick-mother-renderer-v2.js"
+          node --check "$brick/brick-mother-app-v2.js"
+          python3 -m json.tool "$brick/data/brick-material-profiles-v2.json" >/dev/null
+          python3 -m json.tool "$brick/VERSION.json" >/dev/null
+          grep -q '"version": "2.0.0-alpha.1"' "$brick/VERSION.json"
+          grep -q '"independentSeedLayers": 8' "$brick/VERSION.json"
+          grep -q 'geometryDeepPoreCount' "$brick/data/brick-material-profiles-v2.json"
+          grep -q 'adobeInclusionFamilies' "$brick/data/brick-material-profiles-v2.json"
+
+      - name: Start local production server
+        shell: bash
+        run: |
+          set -euo pipefail
+          src="yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local"
+          cd "$src"
+          python3 -m http.server 4173 --bind 127.0.0.1 > /tmp/brick-mother-v2-http.log 2>&1 &
+          echo $! > /tmp/brick-mother-v2-http.pid
+          for attempt in $(seq 1 40); do
+            if curl -fsS http://127.0.0.1:4173/brick-mother/ > /dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/brick-mother-v2-http.log
+          exit 1
+
+      - name: Run real Chromium V2 generation smoke
+        shell: bash
+        run: |
+          set -euo pipefail
+          chrome="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser || true)"
+          if [ -z "$chrome" ]; then
+            echo "No Chromium executable found" >&2
+            exit 1
+          fi
+
+          timeout 330s "$chrome" \
+            --headless=new \
+            --no-sandbox \
+            --disable-dev-shm-usage \
+            --enable-webgl \
+            --ignore-gpu-blocklist \
+            --enable-unsafe-swiftshader \
+            --use-gl=angle \
+            --use-angle=swiftshader \
+            --virtual-time-budget=150000 \
+            --dump-dom \
+            "http://127.0.0.1:4173/brick-mother/?qa=browser-smoke-v2-alpha1" \
+            > /tmp/brick-mother-v2-dom.html \
+            2> /tmp/brick-mother-v2-chrome.log
+
+          grep -q 'data-brick-mother-ready="true"' /tmp/brick-mother-v2-dom.html
+          grep -q 'data-brick-mother-version="2.0.0-alpha.1"' /tmp/brick-mother-v2-dom.html
+          grep -q 'data-seed-layers="8"' /tmp/brick-mother-v2-dom.html
+          grep -Eq 'data-deep-pores="[1-9][0-9]*"' /tmp/brick-mother-v2-dom.html
+          grep -q 'data-index="0"' /tmp/brick-mother-v2-dom.html
+          grep -q 'data-index="1"' /tmp/brick-mother-v2-dom.html
+          grep -q 'data-index="2"' /tmp/brick-mother-v2-dom.html
+          grep -q 'data-control="colorRichness"' /tmp/brick-mother-v2-dom.html
+          grep -q 'data-control="poreDepth"' /tmp/brick-mother-v2-dom.html
+          grep -q 'data-seed="inclusion"' /tmp/brick-mother-v2-dom.html
+          grep -q 'data-channel="7"' /tmp/brick-mother-v2-dom.html
+          grep -q 'V2 复合材质 DNA 首轮生成完成' /tmp/brick-mother-v2-dom.html
+
+          echo "Brick Mother V2 browser smoke passed"
+          grep -o 'data-deep-pores="[0-9]*"' /tmp/brick-mother-v2-dom.html | head -1
+
+      - name: Capture V2 browser evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          chrome="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)"
+          timeout 330s "$chrome" \
+            --headless=new \
+            --no-sandbox \
+            --disable-dev-shm-usage \
+            --enable-webgl \
+            --ignore-gpu-blocklist \
+            --enable-unsafe-swiftshader \
+            --use-gl=angle \
+            --use-angle=swiftshader \
+            --window-size=1600,1100 \
+            --virtual-time-budget=150000 \
+            --screenshot=/tmp/brick-mother-v2-alpha1.png \
+            "http://127.0.0.1:4173/brick-mother/?qa=browser-evidence-v2-alpha1" \
+            > /tmp/brick-mother-v2-screenshot.log \
+            2>&1
+          test -s /tmp/brick-mother-v2-alpha1.png
+
+      - name: Write job summary
+        if: always()
+        shell: bash
+        run: |
+          {
+            echo "## Brick Mother V2 Composite DNA"
+            echo
+            echo "* Version: 2.0.0-alpha.1"
+            echo "* Independent seed layers: 8"
+            echo "* Adjustable composite controls: 7"
+            echo "* Adobe inclusion families: 5"
+            if [ -f /tmp/brick-mother-v2-dom.html ]; then
+              echo "* DOM evidence: generated"
+              grep -o 'data-deep-pores="[0-9]*"' /tmp/brick-mother-v2-dom.html | head -1 | sed 's/data-deep-pores=/Deep pore events: /'
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload V2 browser evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: brick-mother-v2-alpha1-browser-evidence
+          path: |
+            /tmp/brick-mother-v2-alpha1.png
+            /tmp/brick-mother-v2-dom.html
+            /tmp/brick-mother-v2-chrome.log
+            /tmp/brick-mother-v2-screenshot.log
+            /tmp/brick-mother-v2-http.log
+          if-no-files-found: ignore
+
+      - name: Stop local server
+        if: always()
+        shell: bash
+        run: |
+          if [ -f /tmp/brick-mother-v2-http.pid ]; then
+            kill "$(cat /tmp/brick-mother-v2-http.pid)" 2>/dev/null || true
+          fi
