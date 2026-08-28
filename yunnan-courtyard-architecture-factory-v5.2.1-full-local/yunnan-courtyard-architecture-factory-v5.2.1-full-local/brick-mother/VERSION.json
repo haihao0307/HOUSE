@@ -1,0 +1,25 @@
+{
+  "product": "Brick Mother",
+  "displayName": "Brick Mother 砖块母体生产线",
+  "version": "1.0.0",
+  "releaseDate": "2026-08-28",
+  "status": "frozen-baseline",
+  "engineLineage": {
+    "materialGeometryEngine": "0.4.0",
+    "releaseMeaning": "V0.4 multiband noise fidelity implementation frozen as the first approved product baseline"
+  },
+  "repository": "haihao0307/HOUSE",
+  "releaseBranch": "release/brick-mother-v1.0",
+  "sourceCommit": "587b7612c4afd44174457ff769715986f5a68c62",
+  "onlinePath": "https://haihao0307.github.io/HOUSE/brick-mother/",
+  "runtimeDependencies": {
+    "browser": "WebGL2 capable browser",
+    "server": "Any local static HTTP server",
+    "externalReferenceViewer": "Sketchfab connection only when opening source reference panel"
+  },
+  "approval": {
+    "freezeRequestedByUser": true,
+    "approvedScope": "current V0.4 visual and runtime baseline promoted to V1.0",
+    "visualStatus": "accepted as V1.0 baseline; further fidelity work moves to V2.0"
+  }
+}
