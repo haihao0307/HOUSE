@@ -1,0 +1,89 @@
+name: Brick Mother Browser Smoke
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/**"
+      - ".github/workflows/brick-mother-smoke.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  browser-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Start local production server
+        shell: bash
+        run: |
+          set -euo pipefail
+          src="yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local"
+          cd "$src"
+          python3 -m http.server 4173 --bind 127.0.0.1 > /tmp/brick-mother-http.log 2>&1 &
+          echo $! > /tmp/brick-mother-http.pid
+          for attempt in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:4173/brick-mother/ > /dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/brick-mother-http.log
+          exit 1
+
+      - name: Run real Chromium generation smoke
+        shell: bash
+        run: |
+          set -euo pipefail
+          chrome="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser || true)"
+          if [ -z "$chrome" ]; then
+            echo "No Chromium executable found" >&2
+            exit 1
+          fi
+          timeout 150s "$chrome" \
+            --headless=new \
+            --no-sandbox \
+            --disable-dev-shm-usage \
+            --enable-webgl \
+            --ignore-gpu-blocklist \
+            --use-gl=angle \
+            --use-angle=swiftshader \
+            --virtual-time-budget=90000 \
+            --dump-dom \
+            "http://127.0.0.1:4173/brick-mother/?qa=browser-smoke" \
+            > /tmp/brick-mother-dom.html \
+            2> /tmp/brick-mother-chrome.log
+
+          grep -q 'data-index="0"' /tmp/brick-mother-dom.html
+          grep -q 'data-index="1"' /tmp/brick-mother-dom.html
+          grep -q 'data-index="2"' /tmp/brick-mother-dom.html
+          grep -q '<dd id="profileFamily">烧结黏土</dd>' /tmp/brick-mother-dom.html
+          grep -q 'class="loading" id="loadingMask"' /tmp/brick-mother-dom.html
+          grep -q '首批子代生成完成，可以旋转和放大检查。' /tmp/brick-mother-dom.html
+
+          echo "Brick Mother browser smoke passed"
+          grep -o 'data-index="[0-2]"' /tmp/brick-mother-dom.html | sort -u
+
+      - name: Upload diagnostics on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: brick-mother-browser-smoke-diagnostics
+          path: |
+            /tmp/brick-mother-dom.html
+            /tmp/brick-mother-chrome.log
+            /tmp/brick-mother-http.log
+          if-no-files-found: ignore
+
+      - name: Stop local server
+        if: always()
+        shell: bash
+        run: |
+          if [ -f /tmp/brick-mother-http.pid ]; then
+            kill "$(cat /tmp/brick-mother-http.pid)" 2>/dev/null || true
+          fi
