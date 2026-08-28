@@ -1,11 +1,129 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="dark"><title>Brick Mother 砖块母体材质真值实验室 V0.2</title><style>
-:root{--bg:#090a09;--p:#171816;--p2:#111210;--l:#ffffff1a;--t:#f2eee7;--m:#aaa49b;--a:#d3a56e;--as:#d3a56e22;--ok:#8cc79a}*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 12% 0,#795e3c29,transparent 34rem),linear-gradient(#11120f,var(--bg));color:var(--t);font:14px/1.55 Inter,system-ui,"Microsoft YaHei",sans-serif}.shell{width:min(1500px,calc(100% - 24px));margin:auto;padding:14px 0 40px}.bar,.card{border:1px solid var(--l);border-radius:17px;background:#151614ed;box-shadow:0 22px 70px #0007}.bar{position:sticky;top:10px;z-index:9;display:flex;justify-content:space-between;align-items:center;gap:16px;padding:16px 18px;backdrop-filter:blur(16px)}.brand{display:flex;gap:13px;align-items:center}.mark{width:46px;height:46px;display:grid;place-items:center;border:1px solid #d3a56e66;border-radius:13px;color:var(--a);font-weight:800}.ey{margin:0;color:var(--a);font-size:10px;font-weight:800;letter-spacing:.16em}h1{margin:2px 0 0;font-size:clamp(18px,2.2vw,29px)}.status{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end}.pill{padding:6px 9px;border:1px solid var(--l);border-radius:99px;color:var(--m);font-size:11px}.pill:before{content:"";display:inline-block;width:7px;height:7px;margin-right:6px;border-radius:50%;background:var(--ok)}.hero{display:grid;grid-template-columns:1.35fr .65fr;gap:14px;margin-top:14px}.hero .card{padding:clamp(22px,4vw,44px)}.hero h2{max-width:950px;margin:8px 0 14px;font-size:clamp(28px,4.2vw,58px);line-height:1.04;letter-spacing:-.04em}.hero p{margin:0;color:var(--m);font-size:15px;line-height:1.8}.rules{display:grid;gap:10px;align-content:center}.rule{padding:13px;border:1px solid var(--l);border-radius:12px;background:#ffffff07}.rule b{display:block;color:var(--a);margin-bottom:3px}.rule span{color:var(--m);font-size:12px}.work{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:14px;margin-top:14px;align-items:start}.stage{overflow:hidden}.head{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:14px 16px;border-bottom:1px solid var(--l)}.head h2{margin:0;font-size:17px}.head p{margin:2px 0 0;color:var(--m);font-size:11px}.switch{display:flex;padding:4px;border:1px solid var(--l);border-radius:11px;background:#080908}.switch button,.assets button{border:0;color:inherit;cursor:pointer}.switch button{padding:7px 11px;border-radius:8px;background:transparent;color:var(--m);font-size:11px}.switch button.on{background:var(--as);color:var(--t)}.compare{display:grid;grid-template-columns:1fr 1fr}.pane:first-child{border-right:1px solid var(--l)}.pt{display:flex;justify-content:space-between;padding:11px 13px;border-bottom:1px solid var(--l);font-size:12px}.pt span{color:var(--m);font-size:10px}iframe{display:block;width:100%;height:600px;border:0;background:#10110f}.note{margin:0;padding:11px 13px;border-top:1px solid var(--l);color:var(--m);font-size:11px}.family{display:none;padding:12px;grid-template-columns:repeat(3,1fr);gap:10px}.family.on{display:grid}.kid{overflow:hidden;border:1px solid var(--l);border-radius:13px;background:var(--p2)}.kid iframe{height:450px}.km{padding:11px 12px;border-top:1px solid var(--l)}.km small{color:var(--a);font-weight:800;letter-spacing:.12em}.km h3{margin:4px 0;font-size:14px}.km p{margin:0;color:var(--m);font-size:11px}.side{position:sticky;top:94px;padding:17px}.sec+.sec{margin-top:20px;padding-top:18px;border-top:1px solid var(--l)}.sec h2{margin:0 0 10px;font-size:16px}.assets{display:grid;grid-template-columns:1fr 1fr;gap:7px}.assets button{min-height:68px;padding:10px;border:1px solid var(--l);border-radius:11px;background:#ffffff07;text-align:left}.assets button.on{border-color:var(--a);background:var(--as)}.assets strong,.assets span{display:block}.assets strong{font-size:12px}.assets span{margin-top:3px;color:var(--m);font-size:9px}.facts{margin:0}.facts div{display:grid;grid-template-columns:78px 1fr;gap:8px;padding:9px 0;border-bottom:1px solid var(--l)}.facts dt{color:var(--m);font-size:10px}.facts dd{margin:0;font-size:10px;word-break:break-word}.warn{padding:9px 10px;border:1px solid #dc9f8c44;border-radius:9px;background:#dc9f8c12;color:#e0ad9e;font-size:10px}.warn:empty{display:none}.source{display:flex;justify-content:center;margin-top:10px;padding:9px;border-radius:10px;background:var(--a);color:#21160d;text-decoration:none;font-size:11px;font-weight:800}.proof{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}.proof .card{padding:15px;background:#1d1e1bd9}.proof small{color:var(--a);font-weight:800;letter-spacing:.12em}.proof h3{margin:6px 0;font-size:14px}.proof p{margin:0;color:var(--m);font-size:11px}.footer{padding:22px 4px 0;text-align:center;color:var(--m);font-size:10px}.hide{display:none!important}@media(max-width:1050px){.work{grid-template-columns:1fr}.side{position:static}iframe{height:500px}.kid iframe{height:380px}}@media(max-width:760px){.shell{width:calc(100% - 12px);padding-top:6px}.bar{position:static;align-items:flex-start;flex-direction:column}.status{justify-content:flex-start}.hero{grid-template-columns:1fr}.compare{grid-template-columns:1fr}.pane:first-child{border-right:0;border-bottom:1px solid var(--l)}.family.on,.proof{grid-template-columns:1fr}.head{align-items:flex-start;flex-direction:column}iframe,.kid iframe{height:430px}}
-</style></head><body><div class="shell"><header class="bar"><div class="brand"><div class="mark">BM</div><div><p class="ey">MATERIAL TRUTH ONLINE LAB · V0.2</p><h1>Brick Mother 砖块母体材质真值实验室</h1></div></div><div class="status"><span class="pill">在线直接查看</span><span class="pill">原始材质来源</span><span class="pill">无随机调色</span><span class="pill">无糖果噪波</span></div></header>
-<section class="hero"><article class="card"><p class="ey">REFERENCE FIRST · MATERIAL IDENTITY LOCK</p><h2>先把真实材料锁住，再做几何损伤与子代变化。</h2><p>页面直接嵌入四个原始三维参考模型。左右窗口读取同一个来源，用来核对材质身份。颜色、粗糙度、法线和表面颗粒都以原始模型为观察权威。年代、湿度、随机色偏、通用噪波和外贴黑孔继续冻结。</p></article><aside class="card rules"><div class="rule"><b>材质来源锁定</b><span>作者、许可和参考模型逐项保留。</span></div><div class="rule"><b>程序层边界</b><span>后续只接入真实崩角、负向孔洞、裂缝、盐析与湿痕。</span></div><div class="rule"><b>验收顺序</b><span>单砖原材质通过以后，再进入三子代和墙体砌筑。</span></div></aside></section>
-<section class="work"><article class="card stage"><header class="head"><div><h2 id="st">同源材质双窗核对</h2><p id="ss">完整 PBR 老砖 · 两侧使用同一真实来源</p></div><div class="switch"><button class="on" data-v="compare">双窗核对</button><button data-v="family">三个子代</button></div></header><div id="compare" class="compare"><section class="pane"><div class="pt"><b>原始参考模型</b><span>材质权威</span></div><iframe id="left" title="原始参考模型" allow="autoplay; fullscreen; xr-spatial-tracking" allowfullscreen></iframe><p class="note">拖动旋转，滚轮缩放。观察真实颜色、粗糙度、孔隙、矿物颗粒和边缘。</p></section><section class="pane"><div class="pt"><b>材质锁定观察副本</b><span>同一来源</span></div><iframe id="right" title="材质锁定观察副本" allow="autoplay; fullscreen; xr-spatial-tracking" allowfullscreen></iframe><p class="note">右侧保留同一真实来源，作为材质零偏移基线。</p></section></div><div id="family" class="family"><article class="kid"><iframe class="fv" title="子代一" allow="autoplay; fullscreen; xr-spatial-tracking" allowfullscreen loading="lazy"></iframe><div class="km"><small>CHILD 01</small><h3>原始状态母体</h3><p>来源材质的零点。</p></div></article><article class="kid"><iframe class="fv" title="子代二" allow="autoplay; fullscreen; xr-spatial-tracking" allowfullscreen loading="lazy"></iframe><div class="km"><small>CHILD 02</small><h3>几何变化候选</h3><p>崩角和负向孔洞下一轮接入。</p></div></article><article class="kid"><iframe class="fv" title="子代三" allow="autoplay; fullscreen; xr-spatial-tracking" allowfullscreen loading="lazy"></iframe><div class="km"><small>CHILD 03</small><h3>年代变化候选</h3><p>湿痕、盐析和沉积层保持冻结。</p></div></article></div></article>
-<aside class="card side"><section class="sec"><p class="ey">01 · REFERENCE PROFILE</p><h2>选择真实参考</h2><div class="assets"><button data-a="historical"><strong>历史手工砖</strong><span>12 至 14 世纪烧结砖</span></button><button class="on" data-a="brick"><strong>完整 PBR 老砖</strong><span>颜色、粗糙度、法线</span></button><button data-a="clay"><strong>原始黏土砖</strong><span>土坯与团粒参考</span></button><button data-a="stone"><strong>石块</strong><span>断面、颗粒与解理</span></button></div></section><section class="sec"><p class="ey">02 · MATERIAL AUTHORITY</p><h2 id="title">完整 PBR 老砖</h2><dl class="facts"><div><dt>原始文件</dt><dd id="file">brick.glb</dd></div><div><dt>三角面</dt><dd id="tri">29,996</dd></div><div><dt>材质结构</dt><dd id="mat">Base Color、Metallic Roughness、Normal</dd></div><div><dt>作者与许可</dt><dd id="lic">Rigsters · CC BY 4.0</dd></div><div><dt>当前用途</dt><dd id="use">烧结砖材质零偏移基线</dd></div></dl><p class="warn" id="warn"></p><a id="src" class="source" target="_blank" rel="noopener">查看原始模型来源</a></section><section class="sec"><p class="ey">03 · NEXT MATERIAL GATE</p><h2>下一步只做真实损伤</h2><dl class="facts"><div><dt>孔洞</dt><dd>负向凹陷或真实切削</dd></div><div><dt>崩角</dt><dd>进入几何，不贴黑球</dd></div><div><dt>裂缝</dt><dd>沿材料结构生长</dd></div><div><dt>表面层</dt><dd>湿痕、盐析、泥污独立叠加</dd></div></dl></section></aside></section>
-<section class="proof"><article class="card"><small>GEOMETRY</small><h3>几何与材质分开管理</h3><p>大尺度缺损进入网格，微尺度细节进入法线和粗糙度。</p></article><article class="card"><small>MATERIAL</small><h3>原始颜色分布保持稳定</h3><p>取消自由 HSL 漂移，批次差异必须来自真实工艺和材料机制。</p></article><article class="card"><small>ACCEPTANCE</small><h3>浏览器画面单独验收</h3><p>自动 QA 证明页面可运行，最终质感仍以固定机位视觉对比为准。</p></article></section><footer class="footer">参考模型通过 Sketchfab 官方嵌入播放器加载，模型著作权与许可归各自作者及条款所有。</footer></div>
-<script>
-const M={historical:{t:"历史手工砖",s:"12 至 14 世纪手工烧结砖 · 真实泥褐色与细碎表面",u:"5f7758009c0b4599a36ecb2114c1a6a7",f:"12th_-14th_century_building_brick.glb",n:"19,390",m:"Base Color、Normal，Roughness 0.9577",l:"pasquill · CC BY 4.0",x:"历史烧结砖色彩与微表面基线",o:"https://sketchfab.com/3d-models/12th-14th-century-building-brick-5f7758009c0b4599a36ecb2114c1a6a7",w:""},brick:{t:"完整 PBR 老砖",s:"完整 PBR 老砖 · 两侧使用同一真实来源",u:"504a59ef14a148809cec657d7c99367c",f:"brick.glb",n:"29,996",m:"Base Color、Metallic Roughness、Normal",l:"Rigsters · CC BY 4.0",x:"烧结砖材质零偏移基线",o:"https://sketchfab.com/3d-models/brick-504a59ef14a148809cec657d7c99367c",w:""},clay:{t:"原始黏土砖",s:"摄影测量黏土砖 · 团粒、沉积与自然凹凸",u:"adc8de4f9d4a4091bf5b5dedf45fcba4",f:"clay_brick.glb",n:"180,782",m:"Base Color、Normal，Roughness 0.7906",l:"Världskulturmuseerna · CC BY NC 4.0",x:"土坯与原始黏土视觉研究",o:"https://sketchfab.com/3d-models/clay-brick-adc8de4f9d4a4091bf5b5dedf45fcba4",w:"该参考带非商业许可，当前只用于内部研究与视觉校准。"},stone:{t:"石块参考",s:"石块断面、颗粒、解理与自然风化参考",u:"8a31a831769f491f849f20715127d239",f:"stone_brick.glb",n:"263,744",m:"Base Color、Metallic Roughness、Normal",l:"LuthBird1 · CC BY 4.0",x:"石基与石块断裂形貌基线",o:"https://sketchfab.com/3d-models/stone-brick-8a31a831769f491f849f20715127d239",w:"原文件含偏暗、透明与金属度导出异常。当前保留原始画面，规范化副本需要单独验收。"}};
-const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)],E=(u,r)=>`https://sketchfab.com/models/${u}/embed?autostart=1&preload=1&ui_theme=dark&ui_infos=0&ui_inspector=0&ui_hint=0&ui_stop=0&ui_settings=0&autospin=${r}`;function load(k){let a=M[k];$("#left").src=E(a.u,.05);$("#right").src=E(a.u,-.04);$$('.fv').forEach((e,i)=>e.src=E(a.u,[.06,-.05,.035][i]));$("#ss").textContent=a.s;$("#title").textContent=a.t;$("#file").textContent=a.f;$("#tri").textContent=a.n;$("#mat").textContent=a.m;$("#lic").textContent=a.l;$("#use").textContent=a.x;$("#warn").textContent=a.w;$("#src").href=a.o;$$('[data-a]').forEach(b=>b.classList.toggle('on',b.dataset.a===k))}function view(v){let c=v==='compare';$("#compare").classList.toggle('hide',!c);$("#family").classList.toggle('on',!c);$("#st").textContent=c?'同源材质双窗核对':'三个材质锁定子代';$$('[data-v]').forEach(b=>b.classList.toggle('on',b.dataset.v===v))}$$('[data-a]').forEach(b=>b.onclick=()=>load(b.dataset.a));$$('[data-v]').forEach(b=>b.onclick=()=>view(b.dataset.v));load('brick');view('compare');
-</script></body></html>
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta name="description" content="Brick Mother 砖块母体程序化生产线，依据真实 GLB 数据生成烧结砖、黏土砖和石块子代。">
+  <title>Brick Mother 砖块母体生产线 V0.3</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="./style.css?v=20260828-3">
+  <script src="./brick-mother-geometry.js?v=20260828-3" defer></script>
+  <script src="./brick-mother-renderer.js?v=20260828-3" defer></script>
+  <script src="./brick-mother-app.js?v=20260828-3" defer></script>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="mark">BM</div>
+        <div><p class="eyebrow">MATERIAL DNA PRODUCTION LINE · V0.3</p><h1>Brick Mother 砖块母体生产线</h1></div>
+      </div>
+      <div class="status">
+        <span class="pill">在线直接查看</span>
+        <span class="pill">四套参考数据入库</span>
+        <span class="pill">程序化独立网格</span>
+        <span class="pill">负向几何损伤</span>
+      </div>
+    </header>
+
+    <section class="hero">
+      <article class="card">
+        <p class="eyebrow">FIRST GENERATED BATCH · SOURCE BOUNDED</p>
+        <h2>参考数据已经进入母体，现在看第一批真正生成的砖。</h2>
+        <p>历史手工烧结砖、完整 PBR 老砖、原始黏土砖和石块的尺寸比例、颜色分布、粗糙度、法线倾角、颗粒尺度与破损倾向已经整理成四套材料 DNA。中间三块砖由网页实时生成，几何与材质都来自这些数据边界。</p>
+      </article>
+      <aside class="card hero-rules">
+        <div class="rule"><b>颜色受参考约束</b><span>每个通道在来源统计范围内变化，取消自由调色。</span></div>
+        <div class="rule"><b>孔洞进入网格</b><span>崩角、浅坑和裂缝采用负向几何切除。</span></div>
+        <div class="rule"><b>材质按家族分流</b><span>烧结、原始黏土和石材各用独立颗粒机制。</span></div>
+      </aside>
+    </section>
+
+    <section class="workspace">
+      <article class="card stage">
+        <header class="stage-head">
+          <div><h2>第一批程序化子代</h2><p id="batchStats">正在准备材料 DNA 与几何场</p></div>
+          <div class="mode-switch">
+            <button class="mode-button" data-mode="mixed">首批三材</button>
+            <button class="mode-button on" data-mode="siblings">单母体三子代</button>
+          </div>
+        </header>
+        <div class="viewer">
+          <canvas id="brickCanvas" aria-label="程序化砖块三维视图"></canvas>
+          <div class="viewer-hud"><b>拖动旋转 · 滚轮缩放 · Shift 拖动平移</b><p id="buildStatus">正在初始化生产运行时</p></div>
+          <div class="toolbar">
+            <button class="tool-button" id="resetView">家族总览</button>
+            <button class="tool-button" id="autoRotate">自动旋转</button>
+            <button class="tool-button" id="regenerate">换一窝</button>
+            <button class="tool-button" id="showReference">查看原始参考</button>
+          </div>
+          <div class="loading on" id="loadingMask">
+            <div class="loading-box"><b>正在生成真实材料子代</b><div class="progress"><i id="progressBar"></i></div><pre id="loadingError"></pre></div>
+          </div>
+        </div>
+        <div class="child-grid" id="childCards"></div>
+      </article>
+
+      <aside class="card side">
+        <section class="section">
+          <p class="eyebrow">01 · MATERIAL DNA</p>
+          <h2>四套参考档案</h2>
+          <div class="profile-buttons">
+            <button class="profile-button" data-profile="historical-fired"><strong>历史手工砖</strong><span>泥褐窑变与细碎表面</span></button>
+            <button class="profile-button on" data-profile="old-pbr-fired"><strong>完整 PBR 老砖</strong><span>颜色、粗糙度与法线</span></button>
+            <button class="profile-button" data-profile="raw-clay"><strong>原始黏土砖</strong><span>团粒、松散边缘与浅裂</span></button>
+            <button class="profile-button" data-profile="stone-block"><strong>石块</strong><span>解理、矿物颗粒与脆断</span></button>
+          </div>
+        </section>
+
+        <section class="section">
+          <p class="eyebrow">02 · ACTIVE PROFILE</p>
+          <h2 id="profileName">完整 PBR 老砖</h2>
+          <dl class="facts">
+            <div><dt>材料家族</dt><dd id="profileFamily"></dd></div>
+            <div><dt>原始文件</dt><dd id="profileSource"></dd></div>
+            <div><dt>原模型面数</dt><dd id="profileTriangles"></dd></div>
+            <div><dt>来源外包围</dt><dd id="profileDimensions"></dd></div>
+            <div><dt>平均色值</dt><dd id="profileColor"></dd></div>
+            <div><dt>粗糙度</dt><dd id="profileRoughness"></dd></div>
+            <div><dt>法线均值 / P95</dt><dd id="profileNormal"></dd></div>
+          </dl>
+          <a class="primary secondary" id="profileLink" target="_blank" rel="noopener">打开原始来源页面</a>
+        </section>
+
+        <section class="section">
+          <p class="eyebrow">03 · GENERATOR CONTRACT</p>
+          <h2>进入生产线的数据</h2>
+          <div class="dna-list">
+            <div class="dna"><b>几何 DNA</b><span id="dnaGeometry"></span></div>
+            <div class="dna"><b>材质 DNA</b><span id="dnaMaterial"></span></div>
+            <div class="dna"><b>损伤 DNA</b><span id="dnaDamage"></span></div>
+            <div class="dna"><b>固定规则</b><span>石材金属度归零，发光归零；所有随机变化保持种子可复现。</span></div>
+          </div>
+        </section>
+      </aside>
+    </section>
+
+    <section class="proof">
+      <article class="card"><small>GEOMETRY</small><h3>三块砖都是独立网格</h3><p>浏览器依据 SDF 与四面体等值面重建生成，没有复用原模型几何。</p></article>
+      <article class="card"><small>MATERIAL</small><h3>色彩与粗糙度有边界</h3><p>均值、低位、高位、粗糙度范围和颗粒尺度来自参考档案。</p></article>
+      <article class="card"><small>DAMAGE</small><h3>崩角和孔蚀向内切除</h3><p>边角球形切除、表面凹坑与胶囊裂缝共同改变真实轮廓。</p></article>
+      <article class="card"><small>NEXT GATE</small><h3>下一轮进入墙体砌筑</h3><p>单砖视觉确认以后，继续建立砖缝、错缝、灰浆与墙体批次系统。</p></article>
+    </section>
+
+    <footer class="footer">Brick Mother V0.3 · 原始参考的作者、许可、哈希和材料统计保留在在线数据档案中。</footer>
+  </div>
+
+  <section class="reference-panel" id="referencePanel" aria-label="原始参考模型">
+    <div class="reference-backdrop" id="referenceBackdrop"></div>
+    <div class="reference-sheet">
+      <header class="reference-head"><div><p class="eyebrow">SOURCE REFERENCE</p><h2>原始 GLB 材质参考</h2></div><button class="close" id="closeReference">关闭</button></header>
+      <iframe id="referenceFrame" title="原始参考模型" allow="autoplay; fullscreen; xr-spatial-tracking" allowfullscreen loading="lazy"></iframe>
+      <footer class="reference-foot"><span id="sourceLicense"></span><a id="referenceSourceLink" target="_blank" rel="noopener">来源页面</a></footer>
+    </div>
+  </section>
+
+  <div class="fatal" id="fatal" hidden></div>
+</body>
+</html>
