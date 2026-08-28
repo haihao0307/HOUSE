@@ -1,0 +1,35 @@
+{
+  "packageName": "BRICK_MOTHER_FULL_HANDOFF_V0.1_2026-08-28",
+  "packageVersion": "0.1.0-handoff.20260828",
+  "generatedAtUtc": "2026-08-28T00:00:00Z",
+  "payloadFiles": 113,
+  "payloadBytes": 42191688,
+  "webSourceFiles": 99,
+  "checksumsFile": {
+    "path": "manifests/FILES.sha256",
+    "bytes": 10888,
+    "sha256": "361da4e599b8e24da17ed1e17b10985659b8861b03a14dd5156837aa83d3e75a",
+    "coverage": "all payload files except manifests and the post-push GitHub receipt"
+  },
+  "binaryPayloads": [
+    {
+      "path": "reference/brick-reference-source-2026-08-28.zip",
+      "bytes": 38282490,
+      "sha256": "8567d93a3e129dc3a91b03ad0cb690ad61d3020cb5e82e823b971906e6d0742c"
+    },
+    {
+      "path": "evidence/brick-mother-v0.1-visual-board.png",
+      "bytes": 3062887,
+      "sha256": "3dc0e6eca9925223a304c9a20346b57c61b6856e89acd45e892c99da51e1b82d"
+    }
+  ],
+  "canonicalSource": {
+    "repository": "haihao0307/HOUSE",
+    "branch": "feature/brick-mother-production-v0.1-full-package",
+    "rootPath": "brick-mother",
+    "scope": "UTF-8 source, configuration, knowledge, schema, QA and binary receipts"
+  },
+  "downloadPackageScope": "canonical source plus the original binary reference archive and visual evidence",
+  "liveUrl": "https://brick-mother-nest.sunhaihao.chatgpt.site",
+  "sitesSourceCommit": "8a0fd5b176f2188d1ea3bb1cb6ab57b7da6bc57a"
+}

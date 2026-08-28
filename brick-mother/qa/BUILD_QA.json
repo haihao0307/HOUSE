@@ -1,0 +1,52 @@
+{
+  "date": "2026-08-28",
+  "sourceCommit": "8a0fd5b176f2188d1ea3bb1cb6ab57b7da6bc57a",
+  "runtime": {
+    "three": "0.180.0",
+    "typesThree": "0.180.0",
+    "requiredNode": ">=22.13.0"
+  },
+  "lint": {
+    "initialRun": {
+      "status": "FAIL",
+      "reason": "react-hooks set-state-in-effect"
+    },
+    "finalRun": {
+      "status": "PASS",
+      "exitCode": 0
+    }
+  },
+  "build": {
+    "status": "PASS",
+    "exitCode": 0,
+    "moduleCounts": {
+      "clientReference": 132,
+      "serverReference": 102,
+      "rsc": 138,
+      "clientEnv": 1980,
+      "ssr": 108
+    },
+    "warnings": [
+      "A minified client chunk exceeded 500 kB due to the Three.js bundle"
+    ]
+  },
+  "deployment": {
+    "status": "PASS",
+    "url": "https://brick-mother-nest.sunhaihao.chatgpt.site"
+  },
+  "browserVisualQa": {
+    "status": "NOT_RUN",
+    "screenshots": 0,
+    "consoleCapture": false,
+    "webglCapture": false,
+    "performanceCapture": false
+  },
+  "glbInspection": {
+    "status": "PENDING",
+    "inventoryComplete": true,
+    "geometryParsed": false
+  },
+  "githubActions": "NONE",
+  "githubPages": "NONE"
+}
+

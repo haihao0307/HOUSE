@@ -1,0 +1,24 @@
+{
+  "source": {
+    "originalFilename": "砖brick (2).zip",
+    "packagedFilename": "brick-reference-source-2026-08-28.zip",
+    "bytes": 38282490,
+    "sha256": "8567d93a3e129dc3a91b03ad0cb690ad61d3020cb5e82e823b971906e6d0742c"
+  },
+  "inventory": [
+    "12th_-14th_century_building_brick.glb",
+    "brick (1).glb",
+    "brick.glb",
+    "clay_brick.glb",
+    "stone_brick.glb",
+    "white_wall_texture.glb"
+  ],
+  "processingStatus": "inventory_only",
+  "geometryParsed": false,
+  "uvParsed": false,
+  "materialsParsed": false,
+  "texturesParsed": false,
+  "runtimeTextureAuthority": false,
+  "intendedUse": "read-only observation and rule distillation"
+}
+

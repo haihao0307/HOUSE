@@ -1,0 +1,168 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://brick-mother.example/schema/brick-mother-v0.1.schema.json",
+  "title": "Brick Mother V0.1 Parameters",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "materialMode",
+    "shape",
+    "surface",
+    "material",
+    "region",
+    "time",
+    "seeds",
+    "storage"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "0.1.0"
+    },
+    "materialMode": {
+      "enum": ["ADOBE", "FIRED_CLAY", "STONE"]
+    },
+    "shape": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["lengthMm", "heightMm", "depthMm", "edgeRoundness", "chipRate", "voidRate"],
+      "properties": {
+        "lengthMm": {"type": "number", "exclusiveMinimum": 0},
+        "heightMm": {"type": "number", "exclusiveMinimum": 0},
+        "depthMm": {"type": "number", "exclusiveMinimum": 0},
+        "edgeRoundness": {"type": "number", "minimum": 0, "maximum": 1},
+        "chipRate": {"type": "number", "minimum": 0, "maximum": 1},
+        "voidRate": {"type": "number", "minimum": 0, "maximum": 1}
+      }
+    },
+    "surface": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["lowFrequency", "midFrequency", "highFrequency", "microScaleMm", "roughness"],
+      "properties": {
+        "lowFrequency": {"type": "number", "minimum": 0, "maximum": 1},
+        "midFrequency": {"type": "number", "minimum": 0, "maximum": 1},
+        "highFrequency": {"type": "number", "minimum": 0, "maximum": 1},
+        "microScaleMm": {"type": "number", "exclusiveMinimum": 0},
+        "roughness": {"type": "number", "minimum": 0, "maximum": 1}
+      }
+    },
+    "material": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["strawDensity", "firingTemperatureC", "firingAtmosphere", "geologyFamily", "baseColorLab"],
+      "properties": {
+        "strawDensity": {"type": "number", "minimum": 0, "maximum": 1},
+        "firingTemperatureC": {"type": ["number", "null"], "minimum": 500, "maximum": 1400},
+        "firingAtmosphere": {"type": ["string", "null"], "enum": ["oxidizing", "reducing", "mixed", null]},
+        "geologyFamily": {"type": ["string", "null"]},
+        "baseColorLab": {
+          "type": "array",
+          "prefixItems": [
+            {"type": "number", "minimum": 0, "maximum": 100},
+            {"type": "number"},
+            {"type": "number"}
+          ],
+          "items": false,
+          "minItems": 3,
+          "maxItems": 3
+        }
+      }
+    },
+    "region": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["profileId", "latitude", "longitude", "soilPrior", "rainfallPrior", "confidence"],
+      "properties": {
+        "profileId": {"type": "string", "minLength": 1},
+        "latitude": {"type": "number", "minimum": -90, "maximum": 90},
+        "longitude": {"type": "number", "minimum": -180, "maximum": 180},
+        "soilPrior": {"type": "string"},
+        "rainfallPrior": {"type": "number", "minimum": 0, "maximum": 1},
+        "confidence": {"type": "number", "minimum": 0, "maximum": 1}
+      }
+    },
+    "time": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ageYears", "humidity", "exposure", "saltLoad", "repairLevel"],
+      "properties": {
+        "ageYears": {"type": "number", "minimum": 0},
+        "humidity": {"type": "number", "minimum": 0, "maximum": 1},
+        "exposure": {"type": "number", "minimum": 0, "maximum": 1},
+        "saltLoad": {"type": "number", "minimum": 0, "maximum": 1},
+        "repairLevel": {"type": "number", "minimum": 0, "maximum": 1}
+      }
+    },
+    "seeds": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["master", "material", "batch", "instance"],
+      "properties": {
+        "master": {"type": "integer", "minimum": 0, "maximum": 4294967295},
+        "material": {"type": "integer", "minimum": 0, "maximum": 4294967295},
+        "batch": {"type": "integer", "minimum": 0, "maximum": 4294967295},
+        "instance": {"type": "integer", "minimum": 0, "maximum": 4294967295}
+      }
+    },
+    "storage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["persistentBytes", "heroOverride"],
+      "properties": {
+        "persistentBytes": {"type": "integer", "minimum": 0, "maximum": 32},
+        "heroOverride": {"type": "boolean"}
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"materialMode": {"const": "ADOBE"}}},
+      "then": {
+        "properties": {
+          "material": {
+            "properties": {
+              "firingTemperatureC": {"type": "null"},
+              "firingAtmosphere": {"type": "null"},
+              "geologyFamily": {"type": "null"}
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {"properties": {"materialMode": {"const": "FIRED_CLAY"}}},
+      "then": {
+        "properties": {
+          "material": {
+            "properties": {
+              "strawDensity": {"const": 0},
+              "firingTemperatureC": {"type": "number", "minimum": 500, "maximum": 1400},
+              "firingAtmosphere": {"type": "string", "enum": ["oxidizing", "reducing", "mixed"]},
+              "geologyFamily": {"type": "null"}
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {"properties": {"materialMode": {"const": "STONE"}}},
+      "then": {
+        "properties": {
+          "material": {
+            "properties": {
+              "strawDensity": {"const": 0},
+              "firingTemperatureC": {"type": "null"},
+              "firingAtmosphere": {"type": "null"},
+              "geologyFamily": {"type": "string", "minLength": 1}
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {"properties": {"storage": {"properties": {"heroOverride": {"const": false}}}}},
+      "then": {"properties": {"storage": {"properties": {"persistentBytes": {"const": 0}}}}}
+    }
+  ]
+}

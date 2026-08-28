@@ -1,0 +1,12 @@
+{
+  "name": "brick-mother-full-handoff",
+  "version": "0.1.0-handoff.20260828",
+  "generatedAtUtc": "2026-08-28T00:00:00Z",
+  "liveUrl": "https://brick-mother-nest.sunhaihao.chatgpt.site",
+  "sitesSourceCommit": "8a0fd5b176f2188d1ea3bb1cb6ab57b7da6bc57a",
+  "githubRepository": "haihao0307/HOUSE",
+  "githubBranch": "feature/brick-mother-production-v0.1-full-package",
+  "packageScope": "knowledge, schema, web source, binary references, visual evidence, QA receipts",
+  "productionStatus": "research-prototype"
+}
+
