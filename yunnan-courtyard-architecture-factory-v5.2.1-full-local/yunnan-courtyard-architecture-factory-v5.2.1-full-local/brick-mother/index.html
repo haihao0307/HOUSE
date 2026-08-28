@@ -5,19 +5,16 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="color-scheme" content="dark">
   <meta name="description" content="Brick Mother 砖块母体程序化生产线，依据真实 GLB 数据生成烧结砖、黏土砖和石块子代。">
-  <title>Brick Mother 砖块母体生产线 V0.3</title>
+  <title>Brick Mother 砖块母体生产线 V0.3.1</title>
   <link rel="icon" href="data:,">
-  <link rel="stylesheet" href="./style.css?v=20260828-3">
-  <script src="./brick-mother-geometry.js?v=20260828-3" defer></script>
-  <script src="./brick-mother-renderer.js?v=20260828-3" defer></script>
-  <script src="./brick-mother-app.js?v=20260828-3" defer></script>
+  <link rel="stylesheet" href="./style.css?v=20260828-4">
 </head>
 <body>
   <div class="shell">
     <header class="topbar">
       <div class="brand">
         <div class="mark">BM</div>
-        <div><p class="eyebrow">MATERIAL DNA PRODUCTION LINE · V0.3</p><h1>Brick Mother 砖块母体生产线</h1></div>
+        <div><p class="eyebrow">MATERIAL DNA PRODUCTION LINE · V0.3.1</p><h1>Brick Mother 砖块母体生产线</h1></div>
       </div>
       <div class="status">
         <span class="pill">在线直接查看</span>
@@ -51,7 +48,7 @@
         </header>
         <div class="viewer">
           <canvas id="brickCanvas" aria-label="程序化砖块三维视图"></canvas>
-          <div class="viewer-hud"><b>拖动旋转 · 滚轮缩放 · Shift 拖动平移</b><p id="buildStatus">正在初始化生产运行时</p></div>
+          <div class="viewer-hud"><b>拖动旋转 · 滚轮缩放 · Shift 拖动平移</b><p id="buildStatus">正在加载生产运行时</p></div>
           <div class="toolbar">
             <button class="tool-button" id="resetView">家族总览</button>
             <button class="tool-button" id="autoRotate">自动旋转</button>
@@ -112,7 +109,7 @@
       <article class="card"><small>NEXT GATE</small><h3>下一轮进入墙体砌筑</h3><p>单砖视觉确认以后，继续建立砖缝、错缝、灰浆与墙体批次系统。</p></article>
     </section>
 
-    <footer class="footer">Brick Mother V0.3 · 原始参考的作者、许可、哈希和材料统计保留在在线数据档案中。</footer>
+    <footer class="footer">Brick Mother V0.3.1 · 原始参考的作者、许可、哈希和材料统计保留在在线数据档案中。</footer>
   </div>
 
   <section class="reference-panel" id="referencePanel" aria-label="原始参考模型">
@@ -125,5 +122,24 @@
   </section>
 
   <div class="fatal" id="fatal" hidden></div>
+  <script type="module">
+    const version = '20260828-4';
+    const fatal = document.getElementById('fatal');
+    const mask = document.getElementById('loadingMask');
+    const errorBox = document.getElementById('loadingError');
+    try {
+      await import(`./brick-mother-geometry.js?v=${version}`);
+      await import(`./brick-mother-renderer.js?v=${version}`);
+      await import(`./brick-mother-app.js?v=${version}`);
+      window.__BRICK_MOTHER_BOOTSTRAP__ = { ready: true, version };
+    } catch (error) {
+      console.error(error);
+      const message = `运行时加载失败：${error?.message || error}`;
+      window.__BRICK_MOTHER_BOOTSTRAP__ = { ready: false, version, error: String(error) };
+      if (errorBox) errorBox.textContent = error?.stack || String(error);
+      if (mask) mask.classList.remove('on');
+      if (fatal) { fatal.hidden = false; fatal.textContent = message; }
+    }
+  </script>
 </body>
 </html>
