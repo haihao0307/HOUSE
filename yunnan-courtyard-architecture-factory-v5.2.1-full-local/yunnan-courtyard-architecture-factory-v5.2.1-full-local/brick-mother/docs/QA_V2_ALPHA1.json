@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "1.0.0",
+  "productVersion": "2.0.0-alpha.1",
+  "baseVersion": "1.0.0",
+  "baseCommit": "77ce0a1bc63d301829942c14e5708fc16a06cdcd",
+  "localValidation": {
+    "javascriptSyntax": "passed",
+    "profileJsonParse": "passed",
+    "glslEs3VertexCompile": "passed",
+    "glslEs3FragmentCompile": "passed",
+    "glslEs3ProgramLink": "passed",
+    "fourProfileGeometryRegression": "passed",
+    "finitePositionAndNormalArrays": "passed",
+    "deepPorePresenceAllProfiles": "passed"
+  },
+  "visualValidation": {
+    "realChromium": "pending-github-actions",
+    "userReview": "pending",
+    "productionApproved": false
+  },
+  "contracts": {
+    "independentSeedLayers": 8,
+    "adjustableCompositeControls": 7,
+    "adobeOrganicInclusionFamilies": 5,
+    "debugChannels": 8,
+    "v1BaselineModified": false
+  }
+}

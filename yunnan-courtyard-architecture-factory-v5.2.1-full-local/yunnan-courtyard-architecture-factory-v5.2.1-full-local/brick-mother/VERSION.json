@@ -1,25 +1,36 @@
 {
   "product": "Brick Mother",
   "displayName": "Brick Mother 砖块母体生产线",
-  "version": "1.0.0",
+  "version": "2.0.0-alpha.1",
   "releaseDate": "2026-08-28",
-  "status": "frozen-baseline",
+  "status": "visual-calibration-alpha",
+  "base": {
+    "version": "1.0.0",
+    "branch": "release/brick-mother-v1.0",
+    "commit": "77ce0a1bc63d301829942c14e5708fc16a06cdcd",
+    "immutable": true
+  },
+  "featureBranch": "feature/brick-mother-v2.0-composite-material-dna",
   "engineLineage": {
-    "materialGeometryEngine": "0.4.0",
-    "releaseMeaning": "V0.4 multiband noise fidelity implementation frozen as the first approved product baseline"
+    "materialGeometryEngine": "2.0.0-alpha.1",
+    "releaseMeaning": "First composite material DNA implementation with independent seeds, richer source-informed color clusters, deep bore geometry, runoff weathering and adobe organic inclusions"
   },
   "repository": "haihao0307/HOUSE",
-  "releaseBranch": "release/brick-mother-v1.0",
-  "sourceCommit": "587b7612c4afd44174457ff769715986f5a68c62",
-  "onlinePath": "https://haihao0307.github.io/HOUSE/brick-mother/",
   "runtimeDependencies": {
     "browser": "WebGL2 capable browser",
     "server": "Any local static HTTP server",
     "externalReferenceViewer": "Sketchfab connection only when opening source reference panel"
   },
+  "capabilities": {
+    "independentSeedLayers": 8,
+    "adjustableCompositeControls": 7,
+    "debugChannels": 8,
+    "deepNegativeGeometry": true,
+    "adobeOrganicInclusionFamilies": 5
+  },
   "approval": {
-    "freezeRequestedByUser": true,
-    "approvedScope": "current V0.4 visual and runtime baseline promoted to V1.0",
-    "visualStatus": "accepted as V1.0 baseline; further fidelity work moves to V2.0"
+    "visualStatus": "pending-user-review",
+    "productionStatus": false,
+    "v1BaselineModified": false
   }
 }

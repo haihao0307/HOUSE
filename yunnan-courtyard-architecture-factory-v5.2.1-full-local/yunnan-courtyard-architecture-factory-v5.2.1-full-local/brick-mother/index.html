@@ -4,13 +4,13 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="color-scheme" content="dark">
-  <meta name="description" content="Brick Mother V1.0 多频噪波材质生产线，依据真实 GLB 数据生成烧结砖、黏土砖和石块子代。">
-  <title>Brick Mother 砖块母体生产线 V1.0</title>
+  <meta name="description" content="Brick Mother V2 复合材质 DNA 实验室，以八类独立种子生成富色砖材、深孔、水痕、风化和土坯有机夹杂。">
+  <title>Brick Mother 砖块母体生产线 V2</title>
   <link rel="icon" href="data:,">
-  <link rel="stylesheet" href="./style.css?v=20260828-6">
-  <script src="./brick-mother-geometry-v04.js?v=20260828-6" defer></script>
-  <script src="./brick-mother-renderer-v04.js?v=20260828-6" defer></script>
-  <script src="./brick-mother-app-v04.js?v=20260828-6" defer></script>
+  <link rel="stylesheet" href="./style.css?v=20260828-v2a1">
+  <script src="./brick-mother-geometry-v2.js?v=20260828-v2a1" defer></script>
+  <script src="./brick-mother-renderer-v2.js?v=20260828-v2a1" defer></script>
+  <script src="./brick-mother-app-v2.js?v=20260828-v2a1" defer></script>
 </head>
 <body>
   <div class="shell">
@@ -18,29 +18,29 @@
       <div class="brand">
         <div class="mark">BM</div>
         <div>
-          <p class="eyebrow">MULTIBAND MATERIAL NOISE · V1.0</p>
+          <p class="eyebrow">COMPOSITE MATERIAL DNA · V2 ALPHA 1</p>
           <h1>Brick Mother 砖块母体生产线</h1>
         </div>
       </div>
       <div class="status">
-        <span class="pill">V1.0 冻结基线</span>
-        <span class="pill">在线直接查看</span>
-        <span class="pill">六层噪波组合</span>
-        <span class="pill">真实负向空洞</span>
-        <span class="pill">材质通道联动</span>
+        <span class="pill accent">V2 复合材质首轮</span>
+        <span class="pill">八类独立种子</span>
+        <span class="pill">富色参考校准</span>
+        <span class="pill">深孔负向几何</span>
+        <span class="pill">土坯夹杂层</span>
       </div>
     </header>
 
     <section class="hero">
       <article class="card">
-        <p class="eyebrow">NOISE FIDELITY PASS · SOURCE BOUNDED</p>
-        <h2>把空洞、颗粒、锐利色阶和粗糙度放回同一套材料机制。</h2>
-        <p>这一版将渐变噪波、分形叠加、脊状噪波、湍流、域扭曲和 Worley 细胞噪波组合起来。大尺度缺损继续进入真实网格，微孔、矿物颗粒、色彩边界、粗糙度和微法线由同一套噪波场共同驱动，避免各通道互不相关的假纹理。</p>
+        <p class="eyebrow">COLOR CLUSTERS · COMPOSITE EVENTS · REPRODUCIBLE SEEDS</p>
+        <h2>让色彩、孔洞、水痕、风化、破碎和有机夹杂共同形成砖材身份。</h2>
+        <p>这一轮把单一种子拆成形体、破损、孔洞、色彩、水痕、风化、夹杂和微细节八类种子。每一层都可独立调整，同时继续通过域扭曲、分形、脊状、湍流和细胞距离场互相复合，形成更丰富的颜色簇、深孔、边缘侵蚀和沉积痕迹。</p>
       </article>
       <aside class="card hero-rules">
-        <div class="rule"><b>大形由网格负责</b><span>崩角、裂缝、浅坑和孔簇继续采用负向几何切除。</span></div>
-        <div class="rule"><b>微观由多频噪波负责</b><span>孔洞、颗粒、窑变、矿物斑点和断面细节分尺度生成。</span></div>
-        <div class="rule"><b>颜色保持来源边界</b><span>提高局部锐度，同时继续锁定原始模型的统计色域。</span></div>
+        <div class="rule"><b>多色簇共同工作</b><span>基底、深色骨料、橙红氧化、浅色矿物、绿色附着与湿痕分层叠加。</span></div>
+        <div class="rule"><b>孔洞拥有独立深度</b><span>浅坑、微孔、深孔通道、裂缝、崩角和风蚀缺口进入同一几何场。</span></div>
+        <div class="rule"><b>土坯夹杂独立成层</b><span>长稻草、短切稻草、稻壳、种粒和脱落孔分别生成并联动颜色与微法线。</span></div>
       </aside>
     </section>
 
@@ -48,8 +48,8 @@
       <article class="card stage">
         <header class="stage-head">
           <div>
-            <h2>第二批高细节程序化子代</h2>
-            <p id="batchStats">正在准备多频噪波和高细节几何场</p>
+            <h2>Brick Mother V2 首批复合子代</h2>
+            <p id="batchStats">正在准备八类种子与复合材料事件场</p>
           </div>
           <div class="mode-switch">
             <button class="mode-button" data-mode="mixed">三种母材</button>
@@ -58,17 +58,18 @@
         </header>
 
         <div class="viewer">
-          <canvas id="brickCanvas" aria-label="高细节程序化砖块三维视图"></canvas>
+          <canvas id="brickCanvas" aria-label="Brick Mother V2 高细节程序化砖块三维视图"></canvas>
 
           <div class="viewer-hud">
             <b>拖动旋转 · 滚轮缩放 · Shift 拖动平移</b>
-            <p id="buildStatus">正在初始化 V1.0 生产运行时</p>
+            <p id="buildStatus">正在初始化 V2 复合材质运行时</p>
           </div>
 
           <div class="toolbar">
             <button class="tool-button" id="resetView">家族总览</button>
             <button class="tool-button" id="autoRotate">自动旋转</button>
             <button class="tool-button" id="regenerate">换一窝</button>
+            <button class="tool-button" id="exportDNA">导出当前 DNA</button>
             <button class="tool-button compare-button" id="showReference">并排查看原始参考</button>
           </div>
 
@@ -81,12 +82,14 @@
               <button class="channel-button" data-channel="3" data-label="粗糙度">粗糙</button>
               <button class="channel-button" data-channel="4" data-label="微法线">法线</button>
               <button class="channel-button" data-channel="5" data-label="噪波分层">噪波</button>
+              <button class="channel-button" data-channel="6" data-label="水痕与风化">水痕</button>
+              <button class="channel-button" data-channel="7" data-label="土坯有机夹杂">夹杂</button>
             </div>
           </div>
 
           <div class="loading on" id="loadingMask">
             <div class="loading-box">
-              <b>正在生成高细节真实材料子代</b>
+              <b>正在生成复合材质 DNA 子代</b>
               <div class="progress"><i id="progressBar"></i></div>
               <pre id="loadingError"></pre>
             </div>
@@ -102,16 +105,16 @@
           <h2>四套参考档案</h2>
           <div class="profile-buttons">
             <button class="profile-button" data-profile="historical-fired">
-              <strong>历史手工砖</strong><span>泥褐窑变与细碎孔隙</span>
+              <strong>历史手工砖</strong><span>深褐窑变、氧化斑与细碎孔隙</span>
             </button>
             <button class="profile-button on" data-profile="old-pbr-fired">
-              <strong>完整 PBR 老砖</strong><span>颜色、粗糙度与法线</span>
+              <strong>完整 PBR 老砖</strong><span>灰褐基底、矿物与丰富污痕</span>
             </button>
             <button class="profile-button" data-profile="raw-clay">
-              <strong>原始黏土砖</strong><span>团粒、松散边缘与浅裂</span>
+              <strong>原始黏土砖</strong><span>稻草、稻壳、种粒与湿痕</span>
             </button>
             <button class="profile-button" data-profile="stone-block">
-              <strong>石块</strong><span>解理、矿物颗粒与脆断</span>
+              <strong>石块</strong><span>解理、矿物、锈色与水蚀</span>
             </button>
           </div>
         </section>
@@ -131,15 +134,51 @@
           <a class="primary secondary" id="profileLink" target="_blank" rel="noopener">打开原始来源页面</a>
         </section>
 
+        <section class="section composite-controls">
+          <p class="eyebrow">03 · COMPOSITE CONTROLS</p>
+          <h2>复合强度</h2>
+          <div class="slider-list">
+            <label><span><b>色彩浓度</b><output data-control-output="colorRichness">1.40</output></span><input data-control="colorRichness" type="range" min="0.35" max="1.90" step="0.01"></label>
+            <label><span><b>破碎强度</b><output data-control-output="damage">0.72</output></span><input data-control="damage" type="range" min="0" max="1.60" step="0.01"></label>
+            <label><span><b>孔洞深度</b><output data-control-output="poreDepth">1.04</output></span><input data-control="poreDepth" type="range" min="0" max="1.80" step="0.01"></label>
+            <label><span><b>水痕强度</b><output data-control-output="waterStain">0.78</output></span><input data-control="waterStain" type="range" min="0" max="1.60" step="0.01"></label>
+            <label><span><b>风化强度</b><output data-control-output="weathering">0.80</output></span><input data-control="weathering" type="range" min="0" max="1.60" step="0.01"></label>
+            <label><span><b>有机夹杂</b><output data-control-output="inclusion">0.20</output></span><input data-control="inclusion" type="range" min="0" max="1.60" step="0.01"></label>
+            <label><span><b>形体变化</b><output data-control-output="shapeVariation">0.90</output></span><input data-control="shapeVariation" type="range" min="0.20" max="1.70" step="0.01"></label>
+          </div>
+          <div class="control-actions">
+            <button class="tool-button" id="resetDNA">恢复母体参数</button>
+            <button class="tool-button accent-button" id="randomizeSeeds">全部换种子</button>
+          </div>
+        </section>
+
+        <section class="section seed-lab">
+          <details>
+            <summary><span><small>04 · SEED LAB</small><b>展开八类种子</b></span><i>可独立输入</i></summary>
+            <div class="seed-grid">
+              <label><span>母种子</span><input data-seed="master" type="number" min="1" max="9999999" step="1"></label>
+              <label><span>形体</span><input data-seed="shape" type="number" min="1" max="9999999" step="1"></label>
+              <label><span>破损</span><input data-seed="damage" type="number" min="1" max="9999999" step="1"></label>
+              <label><span>孔洞</span><input data-seed="pore" type="number" min="1" max="9999999" step="1"></label>
+              <label><span>色彩</span><input data-seed="color" type="number" min="1" max="9999999" step="1"></label>
+              <label><span>水痕</span><input data-seed="water" type="number" min="1" max="9999999" step="1"></label>
+              <label><span>风化</span><input data-seed="weather" type="number" min="1" max="9999999" step="1"></label>
+              <label><span>夹杂</span><input data-seed="inclusion" type="number" min="1" max="9999999" step="1"></label>
+              <label><span>微细节</span><input data-seed="detail" type="number" min="1" max="9999999" step="1"></label>
+            </div>
+          </details>
+        </section>
+
         <section class="section">
-          <p class="eyebrow">03 · NOISE CONTRACT</p>
-          <h2>进入生产线的数据</h2>
+          <p class="eyebrow">05 · COMPOSITE CONTRACT</p>
+          <h2>当前材料机制</h2>
           <div class="dna-list">
             <div class="dna"><b>几何 DNA</b><span id="dnaGeometry"></span></div>
             <div class="dna"><b>材质 DNA</b><span id="dnaMaterial"></span></div>
             <div class="dna"><b>损伤 DNA</b><span id="dnaDamage"></span></div>
-            <div class="dna emphasis"><b>多频噪波</b><span id="noiseSummary"></span></div>
-            <div class="dna"><b>固定规则</b><span>石材金属度与发光归零，所有变化保持种子可复现。</span></div>
+            <div class="dna emphasis"><b>复合种子</b><span id="noiseSummary"></span></div>
+            <div class="dna organic"><b>有机夹杂</b><span id="inclusionSummary"></span></div>
+            <div class="dna"><b>固定规则</b><span>石材金属度与发光归零，全部变化保持种子可复现。</span></div>
           </div>
         </section>
       </aside>
@@ -147,28 +186,28 @@
 
     <section class="proof">
       <article class="card">
-        <small>DOMAIN WARP</small>
-        <h3>材料纹理不再笔直重复</h3>
-        <p>低频域扭曲改变后续全部噪波坐标，让窑变、孔蚀和矿物分布互相影响。</p>
+        <small>COLOR CLUSTER FIELD</small>
+        <h3>颜色由多个真实材料事件组成</h3>
+        <p>灰褐基底、暖色团粒、橙红氧化、浅色矿物、绿色附着、湿痕和暗孔共同构成色彩。</p>
       </article>
       <article class="card">
-        <small>WORLEY CAVITY</small>
-        <h3>空洞拥有清晰边缘</h3>
-        <p>细胞距离场生成稀疏孔洞，并同步驱动暗部、粗糙度和微法线凹陷。</p>
+        <small>DEEP BORE GEOMETRY</small>
+        <h3>孔洞深度可以单独控制</h3>
+        <p>深孔采用带不规则口沿的负向通道，和浅坑、微孔、裂缝及崩角共同参与网格重建。</p>
       </article>
       <article class="card">
-        <small>RIDGED DETAIL</small>
-        <h3>颗粒和断面更锐利</h3>
-        <p>脊状分形与高频颗粒共同形成断面、烧结斑和矿物边界。</p>
+        <small>GRAVITY WATER TRACE</small>
+        <h3>水痕遵循重力方向</h3>
+        <p>窄滴流、宽湿斑、底部返潮和盐析边界由独立种子生成，并联动颜色、粗糙度与微法线。</p>
       </article>
       <article class="card">
-        <small>CHANNEL AUDIT</small>
-        <h3>每个材质通道都能单独检查</h3>
-        <p>可切换颜色、空洞、粗糙度、法线和噪波层，避免只看最终灯光画面。</p>
+        <small>ADOBE ORGANIC LAYER</small>
+        <h3>土坯夹杂拥有独立造纹体系</h3>
+        <p>长纤维、短切纤维、稻壳、种粒和脱落小孔分别生成，可独立换种子和调整密度。</p>
       </article>
     </section>
 
-    <footer class="footer">Brick Mother V1.0 · 原始参考的作者、许可、哈希和材料统计继续保留在在线档案中。</footer>
+    <footer class="footer">Brick Mother V2 Alpha 1 · V1.0 冻结基线保持不变，当前页面用于复合材质与色彩视觉校准。</footer>
   </div>
 
   <section class="reference-panel" id="referencePanel" aria-label="原始参考模型并排对照">
@@ -178,7 +217,7 @@
         <div>
           <p class="eyebrow">SOURCE REFERENCE · LIVE COMPARISON</p>
           <h2>原始 GLB 材质参考</h2>
-          <p>左侧程序生成画面保持原亮度，右侧用于直接比较空洞、颗粒、色彩和边缘。</p>
+          <p>左侧程序画面保持原亮度，右侧用于直接比较色彩、孔洞、颗粒、水痕、风化和边缘。</p>
         </div>
         <button class="close" id="closeReference">关闭</button>
       </header>

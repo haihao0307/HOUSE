@@ -1,0 +1,79 @@
+{
+  "schemaVersion": "1.0.0",
+  "productVersion": "2.0.0-alpha.1",
+  "environment": "local Node.js geometry regression",
+  "quality": 0.92,
+  "damageLevel": 0.38,
+  "assertions": {
+    "minimumTriangles": 1000,
+    "allPositionsFinite": true,
+    "allNormalsFinite": true,
+    "deepPoreCountAtLeastOnePerProfile": true
+  },
+  "profiles": [
+    {
+      "id": "historical-fired",
+      "ms": 4428,
+      "triangles": 20632,
+      "vertices": 61896,
+      "grid": [
+        48,
+        20,
+        26
+      ],
+      "deepPores": 5,
+      "poreClusters": 12,
+      "chips": 7,
+      "cracks": 3,
+      "erosionBites": 2
+    },
+    {
+      "id": "old-pbr-fired",
+      "ms": 7354,
+      "triangles": 27404,
+      "vertices": 82212,
+      "grid": [
+        48,
+        22,
+        35
+      ],
+      "deepPores": 3,
+      "poreClusters": 9,
+      "chips": 6,
+      "cracks": 2,
+      "erosionBites": 2
+    },
+    {
+      "id": "raw-clay",
+      "ms": 6341,
+      "triangles": 39356,
+      "vertices": 118068,
+      "grid": [
+        48,
+        20,
+        48
+      ],
+      "deepPores": 3,
+      "poreClusters": 10,
+      "chips": 7,
+      "cracks": 4,
+      "erosionBites": 2
+    },
+    {
+      "id": "stone-block",
+      "ms": 3869,
+      "triangles": 25600,
+      "vertices": 76800,
+      "grid": [
+        48,
+        32,
+        27
+      ],
+      "deepPores": 3,
+      "poreClusters": 7,
+      "chips": 6,
+      "cracks": 2,
+      "erosionBites": 2
+    }
+  ]
+}
