@@ -1,7 +1,5 @@
   document.getElementById('toggleWire').addEventListener('click', (event) => {
-    wireVisible = !wireVisible;
-    event.currentTarget.classList.toggle('active', wireVisible);
-    applyVisibility();
+    setLayerState({ wireVisible: !wireVisible });
   });
 }
 
@@ -64,6 +62,27 @@ async function setupReferences() {
   document.getElementById('referenceFill').addEventListener('click', () => { document.getElementById('referenceImage').style.objectFit = 'cover'; });
 }
 
+async function setupBuildEvidence() {
+  const node = document.getElementById('gateBrowser');
+  if (!node) return;
+  if (location.hostname === '127.0.0.1' || location.hostname === 'localhost') {
+    node.textContent = '本机浏览器验收中';
+    return;
+  }
+  try {
+    const response = await fetch(new URL('../build.json', location.href), { cache: 'no-store' });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const build = await response.json();
+    const passed = build.wallSystemVersion === VERSION && String(build.browserQa || '').includes('v30');
+    node.textContent = passed ? `已绑定 ${String(build.sha || '').slice(0, 8)}` : '部署记录未含 V3.0 QA';
+    node.classList.toggle('ok', passed);
+    node.classList.toggle('error', !passed);
+  } catch (error) {
+    node.textContent = `部署证据未读取：${error.message || error}`;
+    node.classList.add('error');
+  }
+}
+
 function resize() {
   const width = canvas.clientWidth;
   const height = canvas.clientHeight;
@@ -93,4 +112,5 @@ setupUi();
 resize();
 rebuild();
 setupReferences();
+setupBuildEvidence();
 animate();

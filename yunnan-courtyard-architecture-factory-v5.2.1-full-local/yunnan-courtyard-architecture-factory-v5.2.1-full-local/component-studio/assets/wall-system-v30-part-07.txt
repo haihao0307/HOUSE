@@ -1,5 +1,14 @@
   buildSide(-1, parameters.innerPatchCount, parameters.innerPlasterCoverage, parameters.innerPlasterLoss, parameters.innerPlasterThickness, materials.plasterInner, 6200);
-  return { patchCount };
+  return {
+    patchCount,
+    outerPatchCount,
+    innerPatchCount,
+    outerPlasterArea,
+    innerPlasterArea,
+    exposedFaceArea: faceArea,
+    outerPlasterCoverageActual: clamp(outerPlasterArea / faceArea, 0, 1),
+    innerPlasterCoverageActual: clamp(innerPlasterArea / faceArea, 0, 1)
+  };
 }
 
 function buildFrame(contract, materials, noise) {
@@ -107,6 +116,70 @@ function makeMaterials(noise) {
   const plasterInner = makeMaterial('plaster', noise, 191, 0xe0d9cc);
   const timber = makeMaterial('timber', noise, 211, 0x6c4028);
   return { core, adobe, adobeInterior, stone, plasterOuter, plasterInner, timber };
+}
+
+function boundaryEdgeCount(geometry) {
+  const index = geometry.index;
+  if (!index) return null;
+  const counts = new Map();
+  const add = (a, b) => {
+    const key = a < b ? `${a}:${b}` : `${b}:${a}`;
+    counts.set(key, (counts.get(key) || 0) + 1);
+  };
+  for (let offset = 0; offset < index.count; offset += 3) {
+    const a = index.getX(offset);
+    const b = index.getX(offset + 1);
+    const c = index.getX(offset + 2);
+    add(a, b); add(b, c); add(c, a);
+  }
+  return [...counts.values()].filter((count) => count !== 2).length;
+}
+
+function childMeshBounds(group, predicate = () => true) {
+  const records = [];
+  group.traverse((object) => {
+    if (!object.isMesh || !predicate(object)) return;
+    records.push({ object, box: new THREE.Box3().setFromObject(object) });
+  });
+  return records;
+}
+
+function measureStoneAdobeJoint(contract, stoneRows, brickRows) {
+  root.updateMatrixWorld(true);
+  const stones = childMeshBounds(stoneGroup, (mesh) => mesh.userData.side === 'exterior' && mesh.userData.row === stoneRows - 1);
+  const bricks = childMeshBounds(exteriorBrickGroup, (mesh) => mesh.userData.row === 0);
+  const topBricks = childMeshBounds(exteriorBrickGroup, (mesh) => mesh.userData.row === brickRows - 1);
+  const gaps = [];
+  const overlaps = [];
+  const half = halfWidthAt(parameters.stoneHeight, contract);
+  for (let x = -half + 0.03; x <= half - 0.03; x += 0.035) {
+    if (openingIntersects(x - 0.012, x + 0.012, parameters.stoneHeight - 0.08, parameters.stoneHeight + 0.08, contract, 0)) continue;
+    const stoneAtX = stones.filter(({ box }) => x >= box.min.x + 0.003 && x <= box.max.x - 0.003);
+    const brickAtX = bricks.filter(({ box }) => x >= box.min.x + 0.003 && x <= box.max.x - 0.003);
+    if (!stoneAtX.length || !brickAtX.length) continue;
+    const stoneTop = Math.max(...stoneAtX.map(({ box }) => box.max.y));
+    const brickBottom = Math.min(...brickAtX.map(({ box }) => box.min.y));
+    gaps.push(Math.max(0, brickBottom - stoneTop));
+    overlaps.push(Math.max(0, stoneTop - brickBottom));
+  }
+  const topGaps = topBricks.map(({ box }) => Math.max(0, contract.wallHeight - box.max.y));
+  return {
+    jointSampleCount: gaps.length,
+    jointGapActual: gaps.length ? Math.max(...gaps) : Number.POSITIVE_INFINITY,
+    jointOverlapActual: overlaps.length ? overlaps.reduce((sum, value) => sum + value, 0) / overlaps.length : 0,
+    stoneTopActual: stones.length ? Math.max(...stones.map(({ box }) => box.max.y)) : 0,
+    adobeBottomActual: bricks.length ? Math.min(...bricks.map(({ box }) => box.min.y)) : 0,
+    adobeTopActual: topBricks.length ? Math.max(...topBricks.map(({ box }) => box.max.y)) : 0,
+    topGapActual: topGaps.length ? Math.max(...topGaps) : Number.POSITIVE_INFINITY
+  };
+}
+
+function measureCoreTopology() {
+  const meshes = childMeshBounds(coreGroup);
+  return {
+    corePieceCount: meshes.length,
+    openSurfaceCount: meshes.reduce((sum, { object }) => sum + (boundaryEdgeCount(object.geometry) ?? 1), 0)
+  };
 }
 
 function updateAudit(contract, geometry) {

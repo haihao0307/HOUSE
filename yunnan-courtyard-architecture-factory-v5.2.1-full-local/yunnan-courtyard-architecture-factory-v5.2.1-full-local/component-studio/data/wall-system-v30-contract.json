@@ -2,7 +2,7 @@
   "schemaVersion": "1.0.0",
   "recordId": "YUNNAN-WALL-SYSTEM-V30-CONTRACT",
   "studioVersion": "3.0.0",
-  "status": "visual-calibration",
+  "status": "production-candidate-awaiting-exact-head-browser-evidence",
   "purpose": "Independent full-wall workbench for wall core, adobe masonry, exterior and interior plaster, stone plinth, door closure, continuous erosion, cavities and straw fibres.",
   "evidenceBasis": {
     "sourcePackage": "YUNNAN-WALL-EVIDENCE-PACK-20260827-35",
@@ -18,17 +18,27 @@
     ]
   },
   "geometryContract": {
-    "closedCorePieceCount": 3,
-    "openSurfaceCount": 0,
+    "closedCorePieceCount": "measured from the live core group",
+    "openSurfaceCount": "measured from indexed triangle edge incidence",
     "doorOpening": "derived from frame width, lintel height and closure overlap",
     "topClosure": "adobe course pitch is redistributed to reach wallHeight minus topClosureGap",
-    "stoneAdobeJoint": "adobeStart equals stoneHeight minus stoneAdobeOverlap",
-    "interiorExterior": "two independently controllable plaster and brick faces share one tapered core"
+    "stoneAdobeJoint": "world-space bounds are sampled across overlapping top-stone and first-adobe units; the maximum visible gap is gated",
+    "interiorExterior": "two independently controllable plaster and brick faces share one tapered core",
+    "plasterCoverage": "coverage zero creates zero geometry; non-zero target coverage is converted to bounded exterior or interior remnant area",
+    "measurementMethod": "world-space-box-sampling-and-indexed-edge-topology"
   },
   "noiseStack": {
     "Perlin": "low-frequency wall undulation and material macro variation",
     "Simplex": "domain warping, rain flow and continuous erosion direction",
     "Worley": "rounded missing corners, pits, cavities and patch-edge bites"
+  },
+  "productionReadiness": {
+    "stoneAdobeJoint": "candidate after world-space maximum-gap gate",
+    "exteriorInteriorPlaster": "candidate as independent bounded geometry with measured area",
+    "roundedErosionEdges": "candidate as parameter-driven rounded and beveled geometry",
+    "layeredErosion": "visual-review; continuous wall-space field is implemented, causal material loss and true subtractive cavities remain outside this lab",
+    "surfaceRandomness": "candidate with deterministic seed fingerprint and cross-seed browser comparison",
+    "browserEvidence": "requires exact-head multi-view artifact and public Pages verification"
   },
   "qaGates": {
     "runtimeVersion": "3.0.0",
@@ -37,6 +47,12 @@
     "maximumDefaultBrickProjectionMeters": 0.02,
     "maximumTopGapMeters": 0.03,
     "maximumStoneAdobeGapMeters": 0.002,
+    "minimumStoneAdobeWorldSamples": 20,
+    "minimumExteriorPlasterMeasuredCoverage": 0.05,
+    "minimumInteriorPlasterMeasuredCoverage": 0.05,
+    "sameSeedFingerprintStable": true,
+    "differentSeedFingerprintChanges": true,
+    "requiredEvidenceViews": 9,
     "doorClosurePassed": true,
     "openSurfaceCount": 0,
     "browserConsoleErrors": 0,

@@ -236,7 +236,7 @@
         "knowledge-blueprint",
         "foundation-site"
       ],
-      "preview": "../surface-production-lab.html",
+      "preview": "./wall-system-lab.html",
       "accent": "#a8785d",
       "starterTasks": [
         "只读取统一洞口表并准确留洞",

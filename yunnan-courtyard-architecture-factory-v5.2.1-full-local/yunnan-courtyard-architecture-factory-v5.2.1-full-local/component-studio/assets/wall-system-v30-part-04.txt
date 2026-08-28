@@ -13,13 +13,15 @@
 function erodedBlockGeometry(width, height, depth, seed, noise, kind = 'brick') {
   const shape = erodedRoundedShape(width, height, seed, noise, kind);
   const minimum = Math.min(width, height);
-  const bevel = minimum * (kind === 'stone' ? 0.045 : 0.025 + parameters.edgeRoundness * 0.040);
+  const bevel = minimum * (kind === 'stone'
+    ? 0.025 + parameters.stoneIrregularity * 0.035
+    : 0.002 + parameters.edgeRoundness * 0.060);
   const geometry = new THREE.ExtrudeGeometry(shape, {
     depth,
     steps: 1,
     bevelEnabled: true,
     bevelSegments: 3,
-    bevelSize: clamp(bevel, 0.004, minimum * 0.13),
+    bevelSize: clamp(bevel, 0.0005, minimum * 0.13),
     bevelThickness: Math.min(depth * 0.16, 0.035),
     curveSegments: 5
   });
@@ -77,6 +79,73 @@ function surfaceField(x, y, noise) {
   const rain = noise.simplex.noise(wx * 0.34 + 11, wy * 0.075 - 6) * parameters.rainWash * 0.22;
   const damp = Math.pow(clamp(1 - y / Math.max(parameters.wallHeight, 0.1), 0, 1), 3.2) * parameters.dampRise * -0.11;
   return parameters.largeWeathering * (low * 0.095 - Math.pow(erosion, 2.8) * 0.060) + rain * 0.18 + damp;
+}
+
+function applyContinuousSurfaceField(geometry, centerX, centerY, noise, side = 1, strength = 1) {
+  geometry.computeBoundingBox();
+  const position = geometry.attributes.position;
+  const faceZ = side > 0 ? geometry.boundingBox.max.z : geometry.boundingBox.min.z;
+  const depth = Math.max(0.001, geometry.boundingBox.max.z - geometry.boundingBox.min.z);
+  const centerValue = surfaceField(centerX, centerY, noise);
+  for (let index = 0; index < position.count; index += 1) {
+    const x = position.getX(index);
+    const y = position.getY(index);
+    const z = position.getZ(index);
+    const faceDistance = Math.abs(faceZ - z);
+    const influence = 1 - clamp(faceDistance / Math.max(0.018, depth * 0.48), 0, 1);
+    if (influence <= 0) continue;
+    const delta = (surfaceField(centerX + x, centerY + y, noise) - centerValue) * strength * influence;
+    position.setZ(index, z + delta * side);
+  }
+  position.needsUpdate = true;
+  geometry.computeBoundingBox();
+  geometry.computeVertexNormals();
+  return geometry;
+}
+
+function projectedFaceArea(geometry) {
+  const position = geometry.attributes.position;
+  const index = geometry.index;
+  const triangleCount = index ? index.count / 3 : position.count / 3;
+  let doubledArea = 0;
+  const vertexIndex = (triangle, corner) => index ? index.getX(triangle * 3 + corner) : triangle * 3 + corner;
+  for (let triangle = 0; triangle < triangleCount; triangle += 1) {
+    const ia = vertexIndex(triangle, 0);
+    const ib = vertexIndex(triangle, 1);
+    const ic = vertexIndex(triangle, 2);
+    const ax = position.getX(ia); const ay = position.getY(ia);
+    const bx = position.getX(ib); const by = position.getY(ib);
+    const cx = position.getX(ic); const cy = position.getY(ic);
+    doubledArea += Math.abs((bx - ax) * (cy - ay) - (by - ay) * (cx - ax)) * 0.5;
+  }
+  return doubledArea * 0.5;
+}
+
+function sampledSurfaceStats(noise, contract) {
+  const values = [];
+  let fingerprint = 2166136261;
+  for (let row = 0; row <= 18; row += 1) {
+    const y = contract.wallHeight * row / 18;
+    const half = halfWidthAt(y, contract);
+    for (let column = 0; column <= 30; column += 1) {
+      const x = lerp(-half, half, column / 30);
+      const value = surfaceField(x, y, noise);
+      values.push(value);
+      const quantized = Math.round((value + 1) * 1e6);
+      fingerprint ^= quantized;
+      fingerprint = Math.imul(fingerprint, 16777619) >>> 0;
+    }
+  }
+  const mean = values.reduce((sum, value) => sum + value, 0) / values.length;
+  const variance = values.reduce((sum, value) => sum + (value - mean) ** 2, 0) / values.length;
+  return {
+    erosionSampleCount: values.length,
+    erosionMean: mean,
+    erosionStddev: Math.sqrt(variance),
+    erosionMin: Math.min(...values),
+    erosionMax: Math.max(...values),
+    surfaceFingerprint: fingerprint.toString(16).padStart(8, '0')
+  };
 }
 
 function makeTexture(kind, noise, seedOffset = 0) {

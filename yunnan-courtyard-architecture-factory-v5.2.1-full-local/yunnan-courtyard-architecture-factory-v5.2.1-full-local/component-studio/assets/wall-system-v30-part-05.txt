@@ -49,13 +49,13 @@ function makeMaterial(kind, noise, seedOffset = 0, tint = 0xffffff) {
 }
 
 function disposeRoot() {
-  root.tranverse((object) => {
+  root.traverse((object) => {
     if (object.geometry) object.geometry.dispose();
     if (object.material) {
       const materials = Array.isArray(object.material) ? object.material : [object.material];
       for (const material of materials) {
-        material.map?.dispose();
-        material.bumpMap?.dispose();
+        const textures = new Set([material.map, material.bumpMap, material.roughnessMap, material.normalMap].filter(Boolean));
+        textures.forEach((texture) => texture.dispose());
         material.dispose();
       }
     }
@@ -70,18 +70,19 @@ function disposeRoot() {
   guideGroup.clear();
 }
 
-function addMesh(geometry, material, parent, x, y, z, rotation = null) {
+function addMesh(geometry, material, parent, x, y, z, rotation = null, metadata = null) {
   const mesh = new THREE.Mesh(geometry, material);
   mesh.position.set(x, y, z);
   if (rotation) mesh.rotation.set(rotation.x || 0, rotation.y || 0, rotation.z || 0);
   mesh.castShadow = true;
   mesh.receiveShadow = true;
+  if (metadata) Object.assign(mesh.userData, metadata);
   parent.add(mesh);
   return mesh;
 }
 
 function addCorePiece(geometry, material) {
-  const mesh = addMesh(geometry, material, coreGroup, 0, 0, 0);
+  const mesh = addMesh(geometry, material, coreGroup, 0, 0, 0, null, { semantic: 'closed-core-piece' });
   const edges = new THREE.LineSegments(new THREE.EdgesGeometry(geometry, 18), new THREE.LineBasicMaterial({ color: 0xf4c775, transparent: true, opacity: 0.8 }));
   guideGroup.add(edges);
   return mesh;
@@ -126,14 +127,18 @@ function buildStones(contract, materials, noise) {
   const coursePitch = parameters.stoneHeight / rowCount;
   const random = mulberry32(parameters.seed + 2201);
   let stoneCount = 0;
+  const stoneWidths = [];
   for (let row = 0; row < rowCount; row += 1) {
-    const y0 = row * coursePitch;
-    const height = Math.max(0.12, coursePitch - 0.018);
-    const cy = y0 + height / 2;
+    const courseStart = row * coursePitch;
+    const courseEnd = courseStart + coursePitch;
+    const y0 = courseStart + (row > 0 ? 0.009 : 0);
+    const y1 = courseEnd - (row < rowCount - 1 ? 0.009 : 0);
+    const height = Math.max(0.12, y1 - y0);
+    const cy = (y0 + y1) / 2;
     const half = halfWidthAt(cy, contract);
     let x = -half + 0.015;
     while (x < half - 0.015) {
-      const widthTarget = parameters.stoneWidth * (0.72 + random() * 0.66);
+      const widthTarget = parameters.stoneWidth * (1 + (random() - 0.5) * parameters.stoneIrregularity * 0.90);
       const x1 = Math.min(half - 0.015, x + widthTarget);
       const width = x1 - x;
       if (width < 0.14) break;
@@ -141,5 +146,9 @@ function buildStones(contract, materials, noise) {
       if (!openingIntersects(x, x1, y0, y0 + height, contract, 0.02)) {
         const depth = 0.15 + random() * 0.055;
         const field = surfaceField(cx, cy, noise);
-        const geometry = erodedBlockGeometry(width - 0.018, height, depth, parameters.seed + stoneCount * 31, noise, 'stone');
+        const blockSeed = parameters.seed + stoneCount * 31;
+        const exteriorGeometry = erodedBlockGeometry(width - 0.018, height, depth, blockSeed, noise, 'stone');
+        const interiorGeometry = exteriorGeometry.clone();
+        applyContinuousSurfaceField(exteriorGeometry, cx, cy, noise, 1, 0.45);
+        applyContinuousSurfaceField(interiorGeometry, cx, cy, noise, -1, 0.24);
         const frontZ = frontAt(cy, contract) + parameters.stoneProjection + field * 0.35;

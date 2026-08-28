@@ -34,6 +34,14 @@ const plasterGroup = new THREE.Group();
 const detailGroup = new THREE.Group();
 const frameGroup = new THREE.Group();
 const guideGroup = new THREE.Group();
+coreGroup.name = 'wall-core';
+exteriorBrickGroup.name = 'exterior-adobe';
+interiorBrickGroup.name = 'interior-adobe';
+stoneGroup.name = 'stone-plinth';
+plasterGroup.name = 'plaster-remnants';
+detailGroup.name = 'erosion-details';
+frameGroup.name = 'door-frame';
+guideGroup.name = 'closure-guides';
 root.add(coreGroup, exteriorBrickGroup, interiorBrickGroup, stoneGroup, plasterGroup, detailGroup, frameGroup, guideGroup);
 scene.add(root);
 
@@ -139,8 +147,11 @@ function roundedRectPoints(width, height, radius, segments = 8) {
 
 function erodedRoundedShape(width, height, seed, noise, kind = 'brick') {
   const minimum = Math.min(width, height);
-  const rounding = minimum * (kind === 'stone' ? 0.18 : 0.12) * (0.45 + parameters.edgeRoundness * 0.75);
-  const base = roundedRectPoints(width, height, clamp(rounding, minimum * 0.035, minimum * 0.32), kind === 'stone' ? 7 : 9);
+  const roundingFactor = kind === 'stone'
+    ? 0.07 + parameters.stoneIrregularity * 0.15
+    : parameters.edgeRoundness * 0.20;
+  const rounding = minimum * roundingFactor;
+  const base = roundedRectPoints(width, height, clamp(rounding, 0.001, minimum * 0.32), kind === 'stone' ? 7 : 9);
   const shape = new THREE.Shape();
   base.forEach((point, index) => {
     const normalizedX = point.x / Math.max(width, 0.001);

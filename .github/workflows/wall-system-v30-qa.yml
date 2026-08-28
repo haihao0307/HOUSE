@@ -11,6 +11,7 @@ permissions:
 
 env:
   PROJECT_DIR: yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local
+  WALL_V30_QA_OUTPUT_DIR: ${{ github.workspace }}/.qa-output/wall-system-v30-${{ github.sha }}-attempt-${{ github.run_attempt }}
 
 jobs:
   wall-system-v30:
@@ -18,6 +19,15 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Initialize exact-head evidence directory
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$WALL_V30_QA_OUTPUT_DIR/screenshots"
+          printf '{"schemaVersion":"2.0.0","sha":"%s","ref":"%s","runId":"%s","runAttempt":"%s"}\n' \
+            "$GITHUB_SHA" "$GITHUB_REF_NAME" "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" \
+            > "$WALL_V30_QA_OUTPUT_DIR/run-metadata.json"
 
       - name: Validate static files and contracts
         working-directory: ${{ env.PROJECT_DIR }}
@@ -47,20 +57,28 @@ jobs:
           grep -Fq "innerPlasterCoverage" /tmp/wall-system-v30-runtime.js
           grep -Fq "function erodedRoundedShape" /tmp/wall-system-v30-runtime.js
           grep -Fq "function surfaceField" /tmp/wall-system-v30-runtime.js
-          grep -Fq "openSurfaceCount: 0" /tmp/wall-system-v30-runtime.js
+          grep -Fq "function boundaryEdgeCount" /tmp/wall-system-v30-runtime.js
+          grep -Fq "function measureStoneAdobeJoint" /tmp/wall-system-v30-runtime.js
+          grep -Fq "function projectedFaceArea" /tmp/wall-system-v30-runtime.js
+          grep -Fq "surfaceFingerprint" /tmp/wall-system-v30-runtime.js
+          ! grep -Fq "tranverse" /tmp/wall-system-v30-runtime.js
 
       - name: Install browser QA dependencies
         run: python3 -m pip install --disable-pip-version-check playwright==1.57.0 pillow==11.3.0
 
       - name: Run full wall browser QA
         working-directory: ${{ env.PROJECT_DIR }}
-        run: python3 tools/wall_system_v30_browser_smoke.py
+        run: |
+          python3 tools/wall_system_v30_browser_smoke.py \
+            --run-sha "$GITHUB_SHA" \
+            --run-ref "$GITHUB_REF_NAME" \
+            --output-dir "$WALL_V30_QA_OUTPUT_DIR"
 
       - name: Upload wall system evidence
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: wall-system-v30-browser-evidence
-          path: |
-            ${{ env.PROJECT_DIR }}/qa/screenshots/wall_system_v30_browser.png
-            ${{ env.PROJECT_DIR }}/data/qa/wall_system_v30_browser.json
+          name: wall-system-v30-browser-evidence-${{ github.sha }}-attempt-${{ github.run_attempt }}
+          path: ${{ env.WALL_V30_QA_OUTPUT_DIR }}/**
           if-no-files-found: error
+          retention-days: 90

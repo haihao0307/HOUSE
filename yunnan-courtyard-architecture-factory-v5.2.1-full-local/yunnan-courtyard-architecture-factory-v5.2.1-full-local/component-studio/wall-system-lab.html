@@ -39,7 +39,7 @@
       <section class="control-group"><h3>03 土坯尺寸、层数与贴墙关系</h3><div class="controls" id="brickControls"></div></section>
       <section class="control-group"><h3>04 外灰、内灰与断口</h3><div class="controls" id="plasterControls"></div></section>
       <section class="control-group"><h3>05 石基、过渡与砌筑</h3><div class="controls" id="stoneControls"></div></section>
-      <section class="control-group"><h3>06 噪波侵蚀、孔洞与稻草</h3><div class="controls" id="erosionControls"></div></section>
+      <section class="control-group"><h3>06 噪波侵蚀、孔痕与稻草</h3><div class="controls" id="erosionControls"></div></section>
       <section class="control-group"><h3>07 土色与灰层颜色</h3><div class="controls" id="materialControls"></div></section>
       <section class="audit-box">
         <h3>实时闭合审计</h3>
@@ -50,6 +50,10 @@
           <div><dt>石基与土坯衔接</dt><dd id="auditJoint">等待</dd></div>
           <div><dt>最窄墙垛</dt><dd id="auditPier">等待</dd></div>
           <div><dt>开放漏面</dt><dd id="auditOpen">等待</dd></div>
+          <div><dt>外灰实测覆盖</dt><dd id="auditOuterPlaster">等待</dd></div>
+          <div><dt>内灰实测覆盖</dt><dd id="auditInnerPlaster">等待</dd></div>
+          <div><dt>层状侵蚀场</dt><dd id="auditErosion">等待</dd></div>
+          <div><dt>确定性种子</dt><dd id="auditSeed">等待</dd></div>
         </dl>
       </section>
     </div>
@@ -63,7 +67,9 @@
         <button class="active" data-view="oblique" type="button">外墙斜视</button>
         <button data-view="front" type="button">外墙正面</button>
         <button data-view="interior" type="button">内墙</button>
-        <button data-view="close" type="button">砖面近景</button>
+        <button data-view="plaster" type="button">灰层断口</button>
+        <button data-view="joint" type="button">石土节点</button>
+        <button data-view="close" type="button">圆蚀近景</button>
         <button id="toggleCore" type="button">墙心审阅</button>
         <button id="togglePlaster" type="button">灰层开关</button>
         <button id="toggleWire" type="button">闭合线框</button>
@@ -74,8 +80,9 @@
         <span id="metricStones">0 石块</span>
         <span id="metricPlaster">0 灰层片区</span>
         <span id="metricFibers">0 稻草</span>
-        <span id="metricHoles">0 孔洞</span>
+        <span id="metricHoles">0 孔蚀痕</span>
         <span id="metricCracks">0 裂缝</span>
+        <span id="metricErosion">侵蚀等待</span>
       </div>
       <div class="canvas-error" id="canvasError" hidden></div>
     </div>
@@ -102,13 +109,24 @@
         <li>土坯从石基顶面连续铺到墙顶，顶部只保留可调的薄收口。</li>
         <li>土坯大部分埋入墙心，仅在外墙和内墙表面轻微凸出。</li>
         <li>外灰与内灰是独立薄层，残留和脱落形成连续片区。</li>
-        <li>小孔洞、圆润缺角、稻草纤维和大片侵蚀共享连续噪波场。</li>
+        <li>小孔蚀痕、圆润缺角、稻草纤维和大片侵蚀共享连续噪波场。</li>
         <li>门洞、门框、过梁、左右墙垛和门楣上墙同步重算并保持封闭。</li>
       </ul>
     </section>
     <section class="contract-card">
       <h3>本轮目标</h3>
       <p>减少顶部空白，恢复灰层，缩小砖体外凸，增强圆润侵蚀、整墙风化、稻草和石土过渡，同时保留可独立调节的内墙与外墙。</p>
+    </section>
+    <section class="readiness-card">
+      <h3>生产门槛现场状态</h3>
+      <dl>
+        <div><dt>石基—土坯</dt><dd id="gateJoint">测量中</dd></div>
+        <div><dt>内外抹灰</dt><dd id="gatePlaster">测量中</dd></div>
+        <div><dt>圆蚀边缘</dt><dd id="gateRounded">测量中</dd></div>
+        <div><dt>层状侵蚀</dt><dd id="gateErosion">测量中</dd></div>
+        <div><dt>表面随机性</dt><dd id="gateRandom">测量中</dd></div>
+        <div><dt>浏览器证据</dt><dd id="gateBrowser">读取 build.json</dd></div>
+      </dl>
     </section>
   </aside>
 </main>

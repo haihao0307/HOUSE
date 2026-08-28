@@ -68,13 +68,14 @@ const controlDefs = {
     { key: 'stoneAdobeOverlap', label: '石土压接 m', min: 0, max: 0.08, step: 0.002 }
   ],
   erosionControls: [
+    { key: 'seed', label: '随机种子', min: 1, max: 9999, step: 1 },
     { key: 'largeWeathering', label: '大片风化侵蚀', min: 0, max: 1, step: 0.01 },
     { key: 'domainWarp', label: '噪波域扭曲', min: 0, max: 1, step: 0.01 },
     { key: 'waveScale', label: '大起伏尺度', min: 0.06, max: 0.50, step: 0.01 },
     { key: 'rainWash', label: '竖向雨蚀', min: 0, max: 1, step: 0.01 },
     { key: 'dampRise', label: '墙脚返潮', min: 0, max: 1, step: 0.01 },
-    { key: 'holeDensity', label: '小孔洞密度', min: 0, max: 1, step: 0.01 },
-    { key: 'holeScale', label: '小孔洞尺度 m', min: 0.018, max: 0.12, step: 0.002 },
+    { key: 'holeDensity', label: '小孔蚀痕密度', min: 0, max: 1, step: 0.01 },
+    { key: 'holeScale', label: '小孔蚀痕尺度 m', min: 0.018, max: 0.12, step: 0.002 },
     { key: 'strawDensity', label: '稻草显露密度', min: 0, max: 1, step: 0.01 },
     { key: 'strawLength', label: '稻草长度 m', min: 0.035, max: 0.24, step: 0.005 },
     { key: 'crackDensity', label: '细裂密度', min: 0, max: 1, step: 0.01 },
@@ -98,6 +99,8 @@ let referenceIndex = 0;
 let referenceUrl = '';
 let lastContract = null;
 let lastGeometry = null;
+let geometryRevision = 0;
+let activeView = 'oblique';
 
 const canvas = document.getElementById('wallSystemCanvas');
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });

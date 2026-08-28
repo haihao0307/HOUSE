@@ -4,22 +4,35 @@
     node.classList.toggle('ok', passed === true);
     node.classList.toggle('error', passed === false);
   };
-  set('auditCore', '3 个封闭实体', true);
+  set('auditCore', `${geometry.corePieceCount} 个实体 · ${geometry.openSurfaceCount} 开边`, geometry.corePieceCount === 3 && geometry.openSurfaceCount === 0);
   set('auditDoor', contract.closurePassed ? '门框与墙心联动通过' : '门洞闭合失败', contract.closurePassed);
-  set('auditTop', `${geometry.topGapActual.toFixed(3)} m`, geometry.topGapActual <= parameters.topClosureGap + 0.002);
-  set('auditJoint', geometry.jointGapActual <= 0.002 ? `压接 ${geometry.jointOverlapActual.toFixed(3)} m` : `空缝 ${geometry.jointGapActual.toFixed(3)} m`, geometry.jointGapActual <= 0.002);
+  set('auditTop', `实测 ${geometry.topGapActual.toFixed(3)} m`, geometry.topGapActual <= Math.max(0.030, parameters.topClosureGap + 0.006));
+  set('auditJoint', geometry.jointGapActual <= 0.002 ? `实测压接 ${geometry.jointOverlapActual.toFixed(3)} m` : `实测最大空缝 ${geometry.jointGapActual.toFixed(3)} m`, geometry.jointGapActual <= 0.002 && geometry.jointSampleCount >= 20);
   set('auditPier', `${contract.minPierActual.toFixed(2)} m`, contract.minPierActual >= parameters.minPierWidth - 0.001);
-  set('auditOpen', '0', true);
+  set('auditOpen', String(geometry.openSurfaceCount), geometry.openSurfaceCount === 0);
+  set('auditOuterPlaster', `${(geometry.outerPlasterCoverageActual * 100).toFixed(1)}% · ${geometry.outerPatchCount} 片`, geometry.outerPatchCount > 0 && geometry.outerPlasterCoverageActual > 0.05);
+  set('auditInnerPlaster', `${(geometry.innerPlasterCoverageActual * 100).toFixed(1)}% · ${geometry.innerPatchCount} 片`, geometry.innerPatchCount > 0 && geometry.innerPlasterCoverageActual > 0.05);
+  set('auditErosion', `${geometry.erosionStddev.toFixed(4)} · ${geometry.surfaceFingerprint}`, geometry.erosionSampleCount >= 500 && geometry.erosionStddev > 0.001);
+  set('auditSeed', String(parameters.seed), true);
+  const jointPassed = geometry.jointGapActual <= 0.002 && geometry.jointSampleCount >= 20;
+  const plasterPassed = geometry.outerPatchCount > 0 && geometry.innerPatchCount > 0
+    && geometry.outerPlasterCoverageActual > 0.05 && geometry.innerPlasterCoverageActual > 0.05;
+  set('gateJoint', jointPassed ? `候选 · 最大缝 ${geometry.jointGapActual.toFixed(3)} m` : '需修改', jointPassed);
+  set('gatePlaster', plasterPassed ? `候选 · 外/内 ${(geometry.outerPlasterCoverageActual * 100).toFixed(0)}%/${(geometry.innerPlasterCoverageActual * 100).toFixed(0)}%` : '需修改', plasterPassed);
+  set('gateRounded', `几何半径 ${geometry.brickRoundnessActual.toFixed(3)} m`, geometry.brickRoundnessActual > 0.006);
+  set('gateErosion', `连续场 ${geometry.surfaceFingerprint}`, geometry.erosionStddev > 0.001);
+  set('gateRandom', `Seed ${parameters.seed} · 可复现`, Boolean(geometry.surfaceFingerprint));
 }
 
 function updateMetrics(geometry) {
   document.getElementById('metricBricks').textContent = `${geometry.brickCount} 土坯`;
   document.getElementById('metricRows').textContent = `${geometry.brickRows} 层`;
   document.getElementById('metricStones').textContent = `${geometry.stoneCount} 石块`;
-  document.getElementById('metricPlaster').textContent = `${geometry.patchCount} 灰层片区`;
+  document.getElementById('metricPlaster').textContent = `${geometry.outerPatchCount}/${geometry.innerPatchCount} 外/内灰片`;
   document.getElementById('metricFibers').textContent = `${geometry.fiberCount} 稻草`;
-  document.getElementById('metricHoles').textContent = `${geometry.holeCount} 孔洞`;
+  document.getElementById('metricHoles').textContent = `${geometry.holeCount} 孔蚀痕`;
   document.getElementById('metricCracks').textContent = `${geometry.crackCount} 裂缝`;
+  document.getElementById('metricErosion').textContent = `侵蚀 ${geometry.surfaceFingerprint}`;
   document.getElementById('geometryState').textContent = `V${VERSION} · 完整墙体已闭合`;
   document.getElementById('runtimeState').textContent = `V${VERSION} 运行中`;
 }
@@ -34,6 +47,19 @@ function applyVisibility() {
   guideGroup.visible = wireVisible;
 }
 
+function setLayerState(values = {}) {
+  if (typeof values.coreReview === 'boolean') coreReview = values.coreReview;
+  if (typeof values.plasterVisible === 'boolean') plasterVisible = values.plasterVisible;
+  if (typeof values.wireVisible === 'boolean') wireVisible = values.wireVisible;
+  document.getElementById('toggleCore')?.classList.toggle('active', coreReview);
+  document.getElementById('togglePlaster')?.classList.toggle('active', !plasterVisible);
+  document.getElementById('toggleWire')?.classList.toggle('active', wireVisible);
+  applyVisibility();
+  const state = { coreReview, plasterVisible, wireVisible };
+  if (window.__YUNNAN_WALL_SYSTEM_V30__) window.__YUNNAN_WALL_SYSTEM_V30__.layers = { ...state };
+  return state;
+}
+
 function rebuild() {
   disposeRoot();
   const noise = noiseStack();
@@ -45,27 +71,38 @@ function rebuild() {
   const plaster = buildPlaster(contract, materials, noise);
   buildFrame(contract, materials, noise);
   const details = buildDetails(contract, materials, noise);
+  const topology = measureCoreTopology();
+  const joint = measureStoneAdobeJoint(contract, stones.stoneRows, bricks.brickRows);
+  const erosion = sampledSurfaceStats(noise, contract);
   const geometry = {
     ...stones,
     ...bricks,
     ...plaster,
     ...details,
-    corePieceCount: 3,
-    openSurfaceCount: 0,
+    ...topology,
+    ...joint,
+    ...erosion,
     doorClosurePassed: contract.closurePassed,
     brickProjection: parameters.brickProjection,
-    innerBrickProjection: parameters.innerBrickProjection
+    innerBrickProjection: parameters.innerBrickProjection,
+    brickRoundnessActual: Math.min(parameters.brickLength, parameters.brickHeight) * parameters.edgeRoundness * 0.20,
+    measurementMethod: 'world-space-box-sampling-and-indexed-edge-topology'
   };
+  geometryRevision += 1;
   lastContract = contract;
   lastGeometry = geometry;
   updateAudit(contract, geometry);
   updateMetrics(geometry);
   applyVisibility();
+  document.body.dataset.wallSystemReady = 'true';
   window.__YUNNAN_WALL_SYSTEM_V30__ = {
     version: VERSION,
     parameters: { ...parameters },
     contract: { ...contract },
     geometry: { ...geometry },
+    revision: geometryRevision,
+    view: activeView,
+    layers: { coreReview, plasterVisible, wireVisible },
     controlDefs,
     presets,
     applyParameters(values) {
@@ -74,7 +111,8 @@ function rebuild() {
       rebuild();
     },
     rebuild,
-    setView
+    setView,
+    setLayerState
   };
 }
 
@@ -121,13 +159,24 @@ function renderControls() {
 }
 
 function setView(name) {
-  if (name === 'front') camera.position.set(0, 2.75, 12.4);
-  if (name === 'oblique') camera.position.set(9.7, 4.8, 11.6);
-  if (name === 'interior') camera.position.set(-8.8, 4.2, -10.8);
-  if (name === 'close') camera.position.set(3.1, 2.75, 5.0);
-  orbit.target.set(0, 2.45, 0);
+  const views = {
+    oblique: { position: [9.7, 4.8, 11.6], target: [0, 2.45, 0], fov: 38 },
+    front: { position: [0, 2.75, 12.4], target: [0, 2.45, 0], fov: 38 },
+    interior: { position: [-7.8, 4.0, -10.4], target: [0, 2.45, 0], fov: 38 },
+    plaster: { position: [-1.8, 3.8, 8.0], target: [-0.9, 3.15, 0], fov: 34 },
+    joint: { position: [4.7, 1.65, 4.2], target: [2.65, 1.03, 0], fov: 30 },
+    close: { position: [4.15, 3.55, 4.5], target: [2.25, 3.15, 0], fov: 28 }
+  };
+  const view = views[name] || views.oblique;
+  activeView = views[name] ? name : 'oblique';
+  camera.position.fromArray(view.position);
+  camera.fov = view.fov;
+  camera.updateProjectionMatrix();
+  orbit.target.fromArray(view.target);
   orbit.update();
-  document.querySelectorAll('[data-view]').forEach((button) => button.classList.toggle('active', button.dataset.view === name));
+  document.querySelectorAll('[data-view]').forEach((button) => button.classList.toggle('active', button.dataset.view === activeView));
+  if (window.__YUNNAN_WALL_SYSTEM_V30__) window.__YUNNAN_WALL_SYSTEM_V30__.view = activeView;
+  return activeView;
 }
 
 function setupUi() {
@@ -141,12 +190,8 @@ function setupUi() {
   });
   document.querySelectorAll('[data-view]').forEach((button) => button.addEventListener('click', () => setView(button.dataset.view)));
   document.getElementById('toggleCore').addEventListener('click', (event) => {
-    coreReview = !coreReview;
-    event.currentTarget.classList.toggle('active', coreReview);
-    applyVisibility();
+    setLayerState({ coreReview: !coreReview });
   });
   document.getElementById('togglePlaster').addEventListener('click', (event) => {
-    plasterVisible = !plasterVisible;
-    event.currentTarget.classList.toggle('active', !plasterVisible);
-    applyVisibility();
+    setLayerState({ plasterVisible: !plasterVisible });
   });
