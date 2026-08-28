@@ -523,16 +523,30 @@ def main() -> None:
 
         with sync_playwright() as playwright:
             browser = browser_launch(playwright)
-            page = browser.new_page(
-                viewport={"width": 1720, "height": 1080},
-                device_scale_factor=1,
-            )
-            run_browser(page, url, output, report)
-            report["passed"] = True
+            try:
+                page = browser.new_page(
+                    viewport={"width": 1720, "height": 1080},
+                    device_scale_factor=1,
+                )
+                run_browser(page, url, output, report)
+                report["passed"] = True
+            except Exception:
+                if page is not None:
+                    try:
+                        page.screenshot(
+                            path=str(screenshots / "99-failure-diagnostic.png"),
+                            full_page=False,
+                        )
+                    except Exception as screenshot_error:
+                        report["diagnosticScreenshotError"] = str(screenshot_error)
+                raise
+            finally:
+                browser.close()
+                browser = None
     except Exception as error:
         report["error"] = str(error)
         report["traceback"] = traceback.format_exc()
-        if page is not None:
+        if page is not None and browser is not None:
             try:
                 page.screenshot(path=str(screenshots / "99-failure-diagnostic.png"), full_page=False)
             except Exception as screenshot_error:
