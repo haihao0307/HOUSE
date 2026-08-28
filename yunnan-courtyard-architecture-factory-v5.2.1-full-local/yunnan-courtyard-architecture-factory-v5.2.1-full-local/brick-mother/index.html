@@ -4,61 +4,94 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="color-scheme" content="dark">
-  <meta name="description" content="Brick Mother 砖块母体程序化生产线，依据真实 GLB 数据生成烧结砖、黏土砖和石块子代。">
-  <title>Brick Mother 砖块母体生产线 V0.3.1</title>
+  <meta name="description" content="Brick Mother V0.4 多频噪波材质生产线，依据真实 GLB 数据生成烧结砖、黏土砖和石块子代。">
+  <title>Brick Mother 砖块母体生产线 V0.4</title>
   <link rel="icon" href="data:,">
-  <link rel="stylesheet" href="./style.css?v=20260828-4">
+  <link rel="stylesheet" href="./style.css?v=20260828-5">
+  <script src="./brick-mother-geometry-v04.js?v=20260828-5" defer></script>
+  <script src="./brick-mother-renderer-v04.js?v=20260828-5" defer></script>
+  <script src="./brick-mother-app-v04.js?v=20260828-5" defer></script>
 </head>
 <body>
   <div class="shell">
     <header class="topbar">
       <div class="brand">
         <div class="mark">BM</div>
-        <div><p class="eyebrow">MATERIAL DNA PRODUCTION LINE · V0.3.1</p><h1>Brick Mother 砖块母体生产线</h1></div>
+        <div>
+          <p class="eyebrow">MULTIBAND MATERIAL NOISE · V0.4</p>
+          <h1>Brick Mother 砖块母体生产线</h1>
+        </div>
       </div>
       <div class="status">
         <span class="pill">在线直接查看</span>
-        <span class="pill">四套参考数据入库</span>
-        <span class="pill">程序化独立网格</span>
-        <span class="pill">负向几何损伤</span>
+        <span class="pill">六层噪波组合</span>
+        <span class="pill">真实负向空洞</span>
+        <span class="pill">材质通道联动</span>
       </div>
     </header>
 
     <section class="hero">
       <article class="card">
-        <p class="eyebrow">FIRST GENERATED BATCH · SOURCE BOUNDED</p>
-        <h2>参考数据已经进入母体，现在看第一批真正生成的砖。</h2>
-        <p>历史手工烧结砖、完整 PBR 老砖、原始黏土砖和石块的尺寸比例、颜色分布、粗糙度、法线倾角、颗粒尺度与破损倾向已经整理成四套材料 DNA。中间三块砖由网页实时生成，几何与材质都来自这些数据边界。</p>
+        <p class="eyebrow">NOISE FIDELITY PASS · SOURCE BOUNDED</p>
+        <h2>把空洞、颗粒、锐利色阶和粗糙度放回同一套材料机制。</h2>
+        <p>这一版将渐变噪波、分形叠加、脊状噪波、湍流、域扭曲和 Worley 细胞噪波组合起来。大尺度缺损继续进入真实网格，微孔、矿物颗粒、色彩边界、粗糙度和微法线由同一套噪波场共同驱动，避免各通道互不相关的假纹理。</p>
       </article>
       <aside class="card hero-rules">
-        <div class="rule"><b>颜色受参考约束</b><span>每个通道在来源统计范围内变化，取消自由调色。</span></div>
-        <div class="rule"><b>孔洞进入网格</b><span>崩角、浅坑和裂缝采用负向几何切除。</span></div>
-        <div class="rule"><b>材质按家族分流</b><span>烧结、原始黏土和石材各用独立颗粒机制。</span></div>
+        <div class="rule"><b>大形由网格负责</b><span>崩角、裂缝、浅坑和孔簇继续采用负向几何切除。</span></div>
+        <div class="rule"><b>微观由多频噪波负责</b><span>孔洞、颗粒、窑变、矿物斑点和断面细节分尺度生成。</span></div>
+        <div class="rule"><b>颜色保持来源边界</b><span>提高局部锐度，同时继续锁定原始模型的统计色域。</span></div>
       </aside>
     </section>
 
     <section class="workspace">
       <article class="card stage">
         <header class="stage-head">
-          <div><h2>第一批程序化子代</h2><p id="batchStats">正在准备材料 DNA 与几何场</p></div>
+          <div>
+            <h2>第二批高细节程序化子代</h2>
+            <p id="batchStats">正在准备多频噪波和高细节几何场</p>
+          </div>
           <div class="mode-switch">
-            <button class="mode-button" data-mode="mixed">首批三材</button>
+            <button class="mode-button" data-mode="mixed">三种母材</button>
             <button class="mode-button on" data-mode="siblings">单母体三子代</button>
           </div>
         </header>
+
         <div class="viewer">
-          <canvas id="brickCanvas" aria-label="程序化砖块三维视图"></canvas>
-          <div class="viewer-hud"><b>拖动旋转 · 滚轮缩放 · Shift 拖动平移</b><p id="buildStatus">正在加载生产运行时</p></div>
+          <canvas id="brickCanvas" aria-label="高细节程序化砖块三维视图"></canvas>
+
+          <div class="viewer-hud">
+            <b>拖动旋转 · 滚轮缩放 · Shift 拖动平移</b>
+            <p id="buildStatus">正在初始化 V0.4 生产运行时</p>
+          </div>
+
           <div class="toolbar">
             <button class="tool-button" id="resetView">家族总览</button>
             <button class="tool-button" id="autoRotate">自动旋转</button>
             <button class="tool-button" id="regenerate">换一窝</button>
-            <button class="tool-button" id="showReference">查看原始参考</button>
+            <button class="tool-button compare-button" id="showReference">并排查看原始参考</button>
           </div>
+
+          <div class="channel-bar">
+            <div class="channel-title">当前通道 <b id="channelName">最终材质</b></div>
+            <div class="channel-buttons">
+              <button class="channel-button on" data-channel="0" data-label="最终材质">最终</button>
+              <button class="channel-button" data-channel="1" data-label="基础颜色">颜色</button>
+              <button class="channel-button" data-channel="2" data-label="空洞与凹陷">空洞</button>
+              <button class="channel-button" data-channel="3" data-label="粗糙度">粗糙</button>
+              <button class="channel-button" data-channel="4" data-label="微法线">法线</button>
+              <button class="channel-button" data-channel="5" data-label="噪波分层">噪波</button>
+            </div>
+          </div>
+
           <div class="loading on" id="loadingMask">
-            <div class="loading-box"><b>正在生成真实材料子代</b><div class="progress"><i id="progressBar"></i></div><pre id="loadingError"></pre></div>
+            <div class="loading-box">
+              <b>正在生成高细节真实材料子代</b>
+              <div class="progress"><i id="progressBar"></i></div>
+              <pre id="loadingError"></pre>
+            </div>
           </div>
         </div>
+
         <div class="child-grid" id="childCards"></div>
       </article>
 
@@ -67,10 +100,18 @@
           <p class="eyebrow">01 · MATERIAL DNA</p>
           <h2>四套参考档案</h2>
           <div class="profile-buttons">
-            <button class="profile-button" data-profile="historical-fired"><strong>历史手工砖</strong><span>泥褐窑变与细碎表面</span></button>
-            <button class="profile-button on" data-profile="old-pbr-fired"><strong>完整 PBR 老砖</strong><span>颜色、粗糙度与法线</span></button>
-            <button class="profile-button" data-profile="raw-clay"><strong>原始黏土砖</strong><span>团粒、松散边缘与浅裂</span></button>
-            <button class="profile-button" data-profile="stone-block"><strong>石块</strong><span>解理、矿物颗粒与脆断</span></button>
+            <button class="profile-button" data-profile="historical-fired">
+              <strong>历史手工砖</strong><span>泥褐窑变与细碎孔隙</span>
+            </button>
+            <button class="profile-button on" data-profile="old-pbr-fired">
+              <strong>完整 PBR 老砖</strong><span>颜色、粗糙度与法线</span>
+            </button>
+            <button class="profile-button" data-profile="raw-clay">
+              <strong>原始黏土砖</strong><span>团粒、松散边缘与浅裂</span>
+            </button>
+            <button class="profile-button" data-profile="stone-block">
+              <strong>石块</strong><span>解理、矿物颗粒与脆断</span>
+            </button>
           </div>
         </section>
 
@@ -90,56 +131,64 @@
         </section>
 
         <section class="section">
-          <p class="eyebrow">03 · GENERATOR CONTRACT</p>
+          <p class="eyebrow">03 · NOISE CONTRACT</p>
           <h2>进入生产线的数据</h2>
           <div class="dna-list">
             <div class="dna"><b>几何 DNA</b><span id="dnaGeometry"></span></div>
             <div class="dna"><b>材质 DNA</b><span id="dnaMaterial"></span></div>
             <div class="dna"><b>损伤 DNA</b><span id="dnaDamage"></span></div>
-            <div class="dna"><b>固定规则</b><span>石材金属度归零，发光归零；所有随机变化保持种子可复现。</span></div>
+            <div class="dna emphasis"><b>多频噪波</b><span id="noiseSummary"></span></div>
+            <div class="dna"><b>固定规则</b><span>石材金属度与发光归零，所有变化保持种子可复现。</span></div>
           </div>
         </section>
       </aside>
     </section>
 
     <section class="proof">
-      <article class="card"><small>GEOMETRY</small><h3>三块砖都是独立网格</h3><p>浏览器依据 SDF 与四面体等值面重建生成，没有复用原模型几何。</p></article>
-      <article class="card"><small>MATERIAL</small><h3>色彩与粗糙度有边界</h3><p>均值、低位、高位、粗糙度范围和颗粒尺度来自参考档案。</p></article>
-      <article class="card"><small>DAMAGE</small><h3>崩角和孔蚀向内切除</h3><p>边角球形切除、表面凹坑与胶囊裂缝共同改变真实轮廓。</p></article>
-      <article class="card"><small>NEXT GATE</small><h3>下一轮进入墙体砌筑</h3><p>单砖视觉确认以后，继续建立砖缝、错缝、灰浆与墙体批次系统。</p></article>
+      <article class="card">
+        <small>DOMAIN WARP</small>
+        <h3>材料纹理不再笔直重复</h3>
+        <p>低频域扭曲改变后续全部噪波坐标，让窑变、孔蚀和矿物分布互相影响。</p>
+      </article>
+      <article class="card">
+        <small>WORLEY CAVITY</small>
+        <h3>空洞拥有清晰边缘</h3>
+        <p>细胞距离场生成稀疏孔洞，并同步驱动暗部、粗糙度和微法线凹陷。</p>
+      </article>
+      <article class="card">
+        <small>RIDGED DETAIL</small>
+        <h3>颗粒和断面更锐利</h3>
+        <p>脊状分形与高频颗粒共同形成断面、烧结斑和矿物边界。</p>
+      </article>
+      <article class="card">
+        <small>CHANNEL AUDIT</small>
+        <h3>每个材质通道都能单独检查</h3>
+        <p>可切换颜色、空洞、粗糙度、法线和噪波层，避免只看最终灯光画面。</p>
+      </article>
     </section>
 
-    <footer class="footer">Brick Mother V0.3.1 · 原始参考的作者、许可、哈希和材料统计保留在在线数据档案中。</footer>
+    <footer class="footer">Brick Mother V0.4 · 原始参考的作者、许可、哈希和材料统计继续保留在在线档案中。</footer>
   </div>
 
-  <section class="reference-panel" id="referencePanel" aria-label="原始参考模型">
-    <div class="reference-backdrop" id="referenceBackdrop"></div>
+  <section class="reference-panel" id="referencePanel" aria-label="原始参考模型并排对照">
+    <div class="reference-backdrop" id="referenceBackdrop" title="点击关闭参考面板"></div>
     <div class="reference-sheet">
-      <header class="reference-head"><div><p class="eyebrow">SOURCE REFERENCE</p><h2>原始 GLB 材质参考</h2></div><button class="close" id="closeReference">关闭</button></header>
+      <header class="reference-head">
+        <div>
+          <p class="eyebrow">SOURCE REFERENCE · LIVE COMPARISON</p>
+          <h2>原始 GLB 材质参考</h2>
+          <p>左侧程序生成画面保持原亮度，右侧用于直接比较空洞、颗粒、色彩和边缘。</p>
+        </div>
+        <button class="close" id="closeReference">关闭</button>
+      </header>
       <iframe id="referenceFrame" title="原始参考模型" allow="autoplay; fullscreen; xr-spatial-tracking" allowfullscreen loading="lazy"></iframe>
-      <footer class="reference-foot"><span id="sourceLicense"></span><a id="referenceSourceLink" target="_blank" rel="noopener">来源页面</a></footer>
+      <footer class="reference-foot">
+        <span id="sourceLicense"></span>
+        <a id="referenceSourceLink" target="_blank" rel="noopener">来源页面</a>
+      </footer>
     </div>
   </section>
 
   <div class="fatal" id="fatal" hidden></div>
-  <script type="module">
-    const version = '20260828-4';
-    const fatal = document.getElementById('fatal');
-    const mask = document.getElementById('loadingMask');
-    const errorBox = document.getElementById('loadingError');
-    try {
-      await import(`./brick-mother-geometry.js?v=${version}`);
-      await import(`./brick-mother-renderer.js?v=${version}`);
-      await import(`./brick-mother-app.js?v=${version}`);
-      window.__BRICK_MOTHER_BOOTSTRAP__ = { ready: true, version };
-    } catch (error) {
-      console.error(error);
-      const message = `运行时加载失败：${error?.message || error}`;
-      window.__BRICK_MOTHER_BOOTSTRAP__ = { ready: false, version, error: String(error) };
-      if (errorBox) errorBox.textContent = error?.stack || String(error);
-      if (mask) mask.classList.remove('on');
-      if (fatal) { fatal.hidden = false; fatal.textContent = message; }
-    }
-  </script>
 </body>
 </html>

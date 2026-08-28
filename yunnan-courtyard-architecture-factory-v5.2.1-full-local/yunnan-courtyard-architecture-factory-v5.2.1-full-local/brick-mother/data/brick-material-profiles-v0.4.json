@@ -1,0 +1,289 @@
+{
+  "schemaVersion": "0.4.0",
+  "generatedAt": "2026-08-28",
+  "pipelineId": "brick-mother-multiband-noise-fidelity",
+  "researchBasis": {
+    "userReference": "https://threejsroadmap.com/blog/10-noise-functions-for-threejs-tsl-shaders",
+    "primaryImplementationReferences": [
+      "https://github.com/mrdoob/three.js/blob/dev/src/nodes/materialx/MaterialXNoise.js",
+      "https://github.com/mrdoob/three.js/wiki/Three.js-Shading-Language"
+    ],
+    "adoptedNoiseFamilies": [
+      "gradient noise",
+      "fractal Brownian motion",
+      "ridged fBm",
+      "turbulence",
+      "domain warp",
+      "Worley cellular noise"
+    ]
+  },
+  "rendererContract": {
+    "engine": "BrickMother WebGL2 Runtime V0.4",
+    "workingColorSpace": "linear-sRGB",
+    "outputColorSpace": "sRGB",
+    "toneMapping": "neutral exponential",
+    "metalnessPolicy": "all masonry runtime materials forced to 0.0 unless independently verified",
+    "damagePolicy": "macro damage uses negative geometry; micro pores use correlated cellular cavity, roughness and normal fields",
+    "mutationPolicy": "seeded and profile-bounded; hue remains inside source-derived channel ranges",
+    "channelCorrelation": "base color, cavity, roughness and micro-normal are derived from the same multiband field"
+  },
+  "profiles": [
+    {
+      "id": "historical-fired",
+      "label": "历史手工烧结砖",
+      "family": "FIRED_CLAY",
+      "source": {
+        "filename": "12th_-14th_century_building_brick.glb",
+        "bytes": 3474792,
+        "sha256": "36848fd806fc251f3a754701aef71a1e09b3a2996c78783b9082346600e8ffb8",
+        "author": "pasquill",
+        "license": "CC BY 4.0",
+        "sourceUrl": "https://sketchfab.com/3d-models/12th-14th-century-building-brick-5f7758009c0b4599a36ecb2114c1a6a7"
+      },
+      "measured": {
+        "dimensionsMm": [318.95884, 81.495, 147.39672],
+        "triangleCount": 19390,
+        "baseColorMeanSRGB": [0.492622, 0.357764, 0.209922],
+        "baseColorP05SRGB": [0.0, 0.0, 0.0],
+        "baseColorP95SRGB": [0.694118, 0.505882, 0.298039],
+        "roughnessMean": 0.9577051495,
+        "normalTiltDegrees": {"mean": 9.0951, "p50": 6.5735, "p95": 27.8144}
+      },
+      "runtimeDNA": {
+        "shapeRatio": [3.913, 1.0, 1.809],
+        "edgeRadius": 0.075,
+        "macroWarp": 0.03,
+        "surfaceRelief": 0.032,
+        "grainScale": 7.2,
+        "fineScale": 34.0,
+        "roughnessRange": [0.9, 0.99],
+        "colorLowSRGB": [0.2709, 0.1968, 0.1155],
+        "colorMeanSRGB": [0.492622, 0.357764, 0.209922],
+        "colorHighSRGB": [0.694118, 0.505882, 0.298039],
+        "mineralFleck": 0.26,
+        "firingBand": 0.34,
+        "pitDensity": 0.48,
+        "edgeFragility": 0.64,
+        "crackAffinity": 0.52,
+        "seedBase": 1214
+      },
+      "noiseDNA": {
+        "warpStrength": 0.19,
+        "macroScale": 1.55,
+        "ridgedScale": 6.2,
+        "cellScale": 16.0,
+        "poreThreshold": 0.115,
+        "poreSharpness": 0.047,
+        "microScale": 58.0,
+        "colorContrast": 1.48,
+        "cavityStrength": 0.92,
+        "bumpStrength": 0.125,
+        "roughnessCorrelation": 0.5,
+        "mineralScale": 24.0,
+        "geometryPoreCount": 10,
+        "edgeRoundnessScale": 0.56,
+        "geometryWarp": 0.84,
+        "geometryRelief": 0.7,
+        "domainWarpScale": 0.82
+      }
+    },
+    {
+      "id": "old-pbr-fired",
+      "label": "完整 PBR 老砖",
+      "family": "FIRED_CLAY",
+      "source": {
+        "filename": "brick.glb",
+        "bytes": 4218980,
+        "sha256": "b90d0b805926b684d62034deaf90ba922ac8c5c52bf0e9115fd2d0fd2bcdf5be",
+        "author": "Rigsters",
+        "license": "CC BY 4.0",
+        "sourceUrl": "https://sketchfab.com/3d-models/brick-504a59ef14a148809cec657d7c99367c"
+      },
+      "measured": {
+        "dimensionsMm": [424.04932, 137.55632, 276.93737],
+        "triangleCount": 29996,
+        "baseColorMeanSRGB": [0.623176, 0.560165, 0.435435],
+        "baseColorP05SRGB": [0.501961, 0.439216, 0.282353],
+        "baseColorP95SRGB": [0.737255, 0.678431, 0.572549],
+        "roughnessMean": 0.646511,
+        "roughnessP05": 0.529412,
+        "roughnessP95": 0.72549,
+        "normalTiltDegrees": {"mean": 8.5061, "p50": 5.7543, "p95": 25.9049}
+      },
+      "runtimeDNA": {
+        "shapeRatio": [3.083, 1.0, 2.013],
+        "edgeRadius": 0.085,
+        "macroWarp": 0.024,
+        "surfaceRelief": 0.026,
+        "grainScale": 8.0,
+        "fineScale": 42.0,
+        "roughnessRange": [0.529412, 0.72549],
+        "colorLowSRGB": [0.501961, 0.439216, 0.282353],
+        "colorMeanSRGB": [0.623176, 0.560165, 0.435435],
+        "colorHighSRGB": [0.737255, 0.678431, 0.572549],
+        "mineralFleck": 0.68,
+        "firingBand": 0.18,
+        "pitDensity": 0.56,
+        "edgeFragility": 0.47,
+        "crackAffinity": 0.34,
+        "seedBase": 5045
+      },
+      "noiseDNA": {
+        "warpStrength": 0.16,
+        "macroScale": 1.45,
+        "ridgedScale": 5.8,
+        "cellScale": 14.0,
+        "poreThreshold": 0.12,
+        "poreSharpness": 0.045,
+        "microScale": 52.0,
+        "colorContrast": 1.54,
+        "cavityStrength": 0.86,
+        "bumpStrength": 0.115,
+        "roughnessCorrelation": 0.48,
+        "mineralScale": 22.0,
+        "geometryPoreCount": 8,
+        "edgeRoundnessScale": 0.54,
+        "geometryWarp": 0.72,
+        "geometryRelief": 0.62,
+        "domainWarpScale": 0.78
+      }
+    },
+    {
+      "id": "raw-clay",
+      "label": "原始黏土砖",
+      "family": "ADOBE",
+      "source": {
+        "filename": "clay_brick.glb",
+        "bytes": 10191844,
+        "sha256": "e15725edb10adf87b0bdc6d92a73d749f97b5d2f2a6b0f70c3deecfa8f57d02d",
+        "author": "Världskulturmuseerna",
+        "license": "CC BY-NC 4.0",
+        "sourceUrl": "https://sketchfab.com/3d-models/clay-brick-adc8de4f9d4a4091bf5b5dedf45fcba4"
+      },
+      "measured": {
+        "dimensionsMm": [565.95757, 131.872305, 563.575051],
+        "triangleCount": 180782,
+        "baseColorMeanSRGB": [0.644732, 0.579669, 0.497125],
+        "baseColorP05SRGB": [0.466667, 0.415686, 0.360784],
+        "baseColorP95SRGB": [0.760784, 0.690196, 0.6],
+        "roughnessMean": 0.7906289251,
+        "normalTiltDegrees": {"mean": 6.6057, "p50": 4.7973, "p95": 19.7048}
+      },
+      "runtimeDNA": {
+        "shapeRatio": [4.291, 1.0, 4.273],
+        "edgeRadius": 0.105,
+        "macroWarp": 0.052,
+        "surfaceRelief": 0.041,
+        "grainScale": 5.6,
+        "fineScale": 28.0,
+        "roughnessRange": [0.72, 0.9],
+        "colorLowSRGB": [0.466667, 0.415686, 0.360784],
+        "colorMeanSRGB": [0.644732, 0.579669, 0.497125],
+        "colorHighSRGB": [0.760784, 0.690196, 0.6],
+        "mineralFleck": 0.36,
+        "firingBand": 0.0,
+        "pitDensity": 0.66,
+        "edgeFragility": 0.78,
+        "crackAffinity": 0.7,
+        "seedBase": 4517
+      },
+      "noiseDNA": {
+        "warpStrength": 0.23,
+        "macroScale": 1.25,
+        "ridgedScale": 4.4,
+        "cellScale": 10.5,
+        "poreThreshold": 0.155,
+        "poreSharpness": 0.065,
+        "microScale": 34.0,
+        "colorContrast": 1.25,
+        "cavityStrength": 0.72,
+        "bumpStrength": 0.108,
+        "roughnessCorrelation": 0.56,
+        "mineralScale": 17.0,
+        "geometryPoreCount": 9,
+        "edgeRoundnessScale": 0.72,
+        "geometryWarp": 1.05,
+        "geometryRelief": 0.86,
+        "domainWarpScale": 0.68
+      }
+    },
+    {
+      "id": "stone-block",
+      "label": "石块",
+      "family": "STONE",
+      "source": {
+        "filename": "stone_brick.glb",
+        "bytes": 23979900,
+        "sha256": "69a2be880fab4a209ee0d46e639b2ad458fdb327e15c738092b1ce55f5e68ebe",
+        "author": "LuthBird1",
+        "license": "CC BY 4.0",
+        "sourceUrl": "https://sketchfab.com/3d-models/stone-brick-8a31a831769f491f849f20715127d239"
+      },
+      "measured": {
+        "dimensionsMm": [14.20577, 7.82418, 5.96787],
+        "dimensionUnitStatus": "source-units-pending-calibration",
+        "triangleCount": 263744,
+        "baseColorMeanSRGB": [0.154841, 0.174215, 0.191687],
+        "baseColorP05SRGB": [0.054902, 0.105882, 0.152941],
+        "baseColorP95SRGB": [0.266667, 0.258824, 0.25098],
+        "rawRoughnessMean": 0.513786,
+        "rawMetalnessMean": 0.268394,
+        "normalTiltDegrees": {"mean": 3.2268, "p50": 1.9322, "p95": 11.2616},
+        "sourceExportAnomalies": [
+          "alphaMode BLEND",
+          "emissiveFactor 1,1,1 with black emissive map",
+          "non-zero metalness on masonry"
+        ]
+      },
+      "runtimeDNA": {
+        "shapeRatio": [1.816, 1.0, 0.763],
+        "edgeRadius": 0.055,
+        "macroWarp": 0.044,
+        "surfaceRelief": 0.03,
+        "grainScale": 10.0,
+        "fineScale": 52.0,
+        "roughnessRange": [0.66, 0.84],
+        "colorLowSRGB": [0.054902, 0.105882, 0.152941],
+        "colorMeanSRGB": [0.154841, 0.174215, 0.191687],
+        "colorHighSRGB": [0.266667, 0.258824, 0.25098],
+        "mineralFleck": 0.82,
+        "firingBand": 0.0,
+        "pitDensity": 0.38,
+        "edgeFragility": 0.56,
+        "crackAffinity": 0.84,
+        "seedBase": 8231,
+        "normalization": {"metalness": 0.0, "emissive": 0.0, "alphaMode": "OPAQUE"}
+      },
+      "noiseDNA": {
+        "warpStrength": 0.2,
+        "macroScale": 1.75,
+        "ridgedScale": 7.2,
+        "cellScale": 18.0,
+        "poreThreshold": 0.105,
+        "poreSharpness": 0.043,
+        "microScale": 64.0,
+        "colorContrast": 1.6,
+        "cavityStrength": 0.8,
+        "bumpStrength": 0.122,
+        "roughnessCorrelation": 0.44,
+        "mineralScale": 29.0,
+        "geometryPoreCount": 6,
+        "edgeRoundnessScale": 0.44,
+        "geometryWarp": 0.92,
+        "geometryRelief": 0.74,
+        "domainWarpScale": 0.88
+      }
+    }
+  ],
+  "batchPresets": [
+    {
+      "id": "first-production-batch-v04",
+      "label": "首批三材 V0.4",
+      "members": [
+        {"profileId": "historical-fired", "seedOffset": 101, "damageLevel": 0.24},
+        {"profileId": "raw-clay", "seedOffset": 202, "damageLevel": 0.34},
+        {"profileId": "stone-block", "seedOffset": 303, "damageLevel": 0.3}
+      ]
+    }
+  ]
+}
