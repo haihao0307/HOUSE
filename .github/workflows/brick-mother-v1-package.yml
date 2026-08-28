@@ -1,0 +1,136 @@
+name: Brick Mother V1.0 Full Package
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/**"
+      - ".github/workflows/brick-mother-v1-package.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout frozen source
+        uses: actions/checkout@v4
+
+      - name: Download approved browser evidence
+        uses: actions/download-artifact@v4
+        with:
+          name: brick-mother-v04-browser-evidence
+          path: /tmp/brick-mother-evidence
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: 33160946482
+
+      - name: Assemble Brick Mother V1.0 full package
+        shell: bash
+        run: |
+          set -euo pipefail
+          src="yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local"
+          name="BRICK_MOTHER_V1.0_FULL_PACKAGE_2026-08-28"
+          pkg="/tmp/$name"
+          out="$RUNNER_TEMP/brick-mother-v1-output"
+          rm -rf "$pkg" "$out"
+          mkdir -p "$pkg" "$pkg/evidence/browser" "$pkg/github-workflows" "$pkg/docs" "$out"
+          cp -a "$src/brick-mother" "$pkg/brick-mother"
+          cp -a /tmp/brick-mother-evidence/. "$pkg/evidence/browser/"
+          cp .github/workflows/pages.yml "$pkg/github-workflows/pages.yml"
+          cp .github/workflows/brick-mother-smoke.yml "$pkg/github-workflows/brick-mother-smoke.yml"
+          cp .github/workflows/brick-mother-v1-package.yml "$pkg/github-workflows/brick-mother-v1-package.yml"
+          cp "$src/brick-mother/releases/v1.0/README.md" "$pkg/README.md"
+          cp "$src/brick-mother/releases/v1.0/NEXT_V2_HANDOFF.md" "$pkg/docs/NEXT_V2_HANDOFF.md"
+
+          cat > "$pkg/START_LOCAL_WINDOWS.bat" <<'BAT'
+          @echo off
+          setlocal
+          cd /d "%~dp0"
+          where py >nul 2>nul
+          if %errorlevel%==0 (
+            start "" "http://127.0.0.1:4173/brick-mother/"
+            py -m http.server 4173 --bind 127.0.0.1
+          ) else (
+            start "" "http://127.0.0.1:4173/brick-mother/"
+            python -m http.server 4173 --bind 127.0.0.1
+          )
+          BAT
+
+          cat > "$pkg/START_LOCAL.sh" <<'SH'
+          #!/usr/bin/env bash
+          set -euo pipefail
+          cd "$(dirname "$0")"
+          printf '%s\n' 'Open http://127.0.0.1:4173/brick-mother/'
+          python3 -m http.server 4173 --bind 127.0.0.1
+          SH
+          chmod +x "$pkg/START_LOCAL.sh"
+
+          python3 - "$pkg" "$GITHUB_SHA" <<'PY'
+          from pathlib import Path
+          import json, hashlib, sys
+          root=Path(sys.argv[1]); commit=sys.argv[2]
+          profiles=json.loads((root/'brick-mother/data/brick-material-profiles-v0.4.json').read_text('utf-8'))
+          refs=[]
+          for p in profiles['profiles']:
+              s=p['source']
+              refs.append({
+                  'profileId':p['id'],'label':p['label'],'family':p['family'],
+                  'filename':s['filename'],'bytes':s.get('bytes'),'sha256':s.get('sha256'),
+                  'author':s.get('author'),'license':s.get('license'),'sourceUrl':s.get('sourceUrl'),
+                  'distributionPolicy':'Source URL, authorship, license and hash are retained. Third-party GLB binary is not redistributed in this runtime package.'
+              })
+          (root/'docs/SOURCE_REFERENCE_INDEX.json').write_text(json.dumps({'schemaVersion':'1.0.0','release':'Brick Mother 1.0','references':refs},ensure_ascii=False,indent=2)+'\n','utf-8')
+          qa={
+              'schemaVersion':'1.0.0','release':'Brick Mother 1.0','releaseCommit':commit,
+              'pages':{'workflowRunId':33160946550,'conclusion':'success'},
+              'browserSmoke':{'workflowRunId':33160946482,'conclusion':'success','realChromium':True,'evidenceArtifactId':9681613755},
+              'visualAcceptance':{'status':'approved-for-v1-freeze','basis':'User reviewed V0.4 and requested promotion to Brick Mother 1.0.'}
+          }
+          (root/'docs/QA_RELEASE_SUMMARY.json').write_text(json.dumps(qa,ensure_ascii=False,indent=2)+'\n','utf-8')
+          manifest={
+              'schemaVersion':'1.0.0','packageName':root.name,'productVersion':'1.0.0','engineVersion':'0.4.0',
+              'createdAt':'2026-08-28','sourceRepository':'haihao0307/HOUSE','releaseCommit':commit,
+              'releaseBranch':'release/brick-mother-v1.0','contains':{'runtime':True,'materialProfiles':True,'sourceCode':True,'browserEvidence':True,'deploymentWorkflows':True,'thirdPartyReferenceBinaries':False},
+              'onlineUrl':'https://haihao0307.github.io/HOUSE/brick-mother/?v=20260828-6'
+          }
+          (root/'PACKAGE_MANIFEST.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2)+'\n','utf-8')
+          lines=[]
+          for p in sorted(root.rglob('*')):
+              if p.is_file() and p.name!='CHECKSUMS.sha256':
+                  lines.append(f'{hashlib.sha256(p.read_bytes()).hexdigest()}  {p.relative_to(root).as_posix()}')
+          (root/'CHECKSUMS.sha256').write_text('\n'.join(lines)+'\n','utf-8')
+          PY
+
+          python3 - "$pkg" "$out/$name.zip" <<'PY'
+          from pathlib import Path
+          import zipfile, os, sys
+          root=Path(sys.argv[1]); out=Path(sys.argv[2]); fixed=(2026,8,28,0,0,0)
+          with zipfile.ZipFile(out,'w',zipfile.ZIP_DEFLATED,compresslevel=9) as z:
+              for p in sorted(root.rglob('*')):
+                  if not p.is_file():
+                      continue
+                  arc=(Path(root.name)/p.relative_to(root)).as_posix()
+                  info=zipfile.ZipInfo(arc,fixed)
+                  info.compress_type=zipfile.ZIP_DEFLATED
+                  mode=0o755 if p.name=='START_LOCAL.sh' else 0o644
+                  info.external_attr=(mode & 0xFFFF) << 16
+                  z.writestr(info,p.read_bytes(),compress_type=zipfile.ZIP_DEFLATED,compresslevel=9)
+          PY
+
+          sha256sum "$out/$name.zip" | tee "$out/$name.zip.sha256"
+          unzip -t "$out/$name.zip"
+
+      - name: Upload immutable V1.0 package
+        uses: actions/upload-artifact@v4
+        with:
+          name: BRICK_MOTHER_V1.0_FULL_PACKAGE_2026-08-28
+          path: |
+            ${{ runner.temp }}/brick-mother-v1-output/BRICK_MOTHER_V1.0_FULL_PACKAGE_2026-08-28.zip
+            ${{ runner.temp }}/brick-mother-v1-output/BRICK_MOTHER_V1.0_FULL_PACKAGE_2026-08-28.zip.sha256
+          if-no-files-found: error
+          retention-days: 90
