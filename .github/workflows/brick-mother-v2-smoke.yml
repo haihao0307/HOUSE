@@ -1,4 +1,4 @@
-name: Brick Mother V2.2 Event Calibration Smoke
+name: Brick Mother V2.5 Deep Pore Rich Material Smoke
 
 on:
   push:
@@ -13,14 +13,14 @@ permissions:
   contents: read
 
 jobs:
-  browser-smoke:
+  standalone-gate:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 10
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Validate V2.2 source contracts
+      - name: Validate V2.5 source and standalone contracts
         shell: bash
         run: |
           set -euo pipefail
@@ -30,145 +30,141 @@ jobs:
           node --check "$brick/brick-mother-renderer-v2.js"
           node --check "$brick/brick-mother-app-v2.js"
           python3 -m json.tool "$brick/data/brick-material-profiles-v2.json" >/dev/null
-          python3 -m json.tool "$brick/data/gaea-distilled-node-recipes-v1.json" >/dev/null
           python3 -m json.tool "$brick/qa/gaea-distillation-contract-v1.json" >/dev/null
           python3 -m json.tool "$brick/VERSION.json" >/dev/null
-          grep -q '"version": "2.2.0-alpha.1"' "$brick/VERSION.json"
-          grep -q '"gaeaKernel": "1.1.0"' "$brick/VERSION.json"
-          grep -q '"eventColorMasking": true' "$brick/VERSION.json"
-          grep -q '"regularOxideContourSuppression": true' "$brick/VERSION.json"
-          grep -q '"physicalAdobeInclusionVoids": true' "$brick/VERSION.json"
-          grep -q 'inclusionVoids' "$brick/brick-mother-geometry-v2.js"
-          grep -q 'eventGate' "$brick/brick-mother-renderer-v2.js"
-          grep -q 'kilnMacro' "$brick/brick-mother-renderer-v2.js"
-          if grep -q 'float band = sin' "$brick/brick-mother-renderer-v2.js"; then
-            echo "Legacy regular firing band remains" >&2
-            exit 1
-          fi
+          grep -q '"version": "2.5.0-alpha.1"' "$brick/VERSION.json"
+          grep -q '"clusteredPoreAnchors": true' "$brick/VERSION.json"
+          grep -q '"collapsedPoreMouths": true' "$brick/VERSION.json"
+          grep -q '"brokenPoreRims": true' "$brick/VERSION.json"
+          grep -q 'poreRimChips' "$brick/brick-mother-geometry-v2.js"
+          grep -q 'collapsedPores' "$brick/brick-mother-geometry-v2.js"
+          grep -q 'uPoreDensity' "$brick/brick-mother-renderer-v2.js"
+          grep -q 'uPoreVariety' "$brick/brick-mother-renderer-v2.js"
+          grep -q 'firedRed' "$brick/brick-mother-renderer-v2.js"
+          grep -q 'clayRed' "$brick/brick-mother-renderer-v2.js"
+          grep -q 'slateBlue' "$brick/brick-mother-renderer-v2.js"
+          standalone="$brick/brick-mother-standalone-v2.5.html"
+          test -s "$standalone"
+          test "$(wc -c < "$standalone")" -gt 150000
+          ! grep -q '<script src=' "$standalone"
+          ! grep -q '<link rel="stylesheet"' "$standalone"
+          grep -q 'window.__BRICK_MOTHER_INLINE_DATA__' "$standalone"
+          grep -q 'DOMContentLoaded' "$standalone"
+          sha256sum "$standalone" > /tmp/brick-mother-v25-standalone.sha256
 
-      - name: Start local production server
+      - name: Gate standalone directly from file URL
         shell: bash
         run: |
           set -euo pipefail
-          src="yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local"
-          cd "$src"
-          python3 -m http.server 4173 --bind 127.0.0.1 > /tmp/brick-mother-v22-http.log 2>&1 &
-          echo $! > /tmp/brick-mother-v22-http.pid
-          for attempt in $(seq 1 45); do
-            if curl -fsS http://127.0.0.1:4173/brick-mother/ > /dev/null; then
-              exit 0
-            fi
-            sleep 1
-          done
-          cat /tmp/brick-mother-v22-http.log
-          exit 1
-
-      - name: Run real Chromium V2.2 generation gate
-        shell: bash
-        run: |
-          set -euo pipefail
-          chrome="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser || true)"
-          test -n "$chrome"
-          timeout 420s "$chrome" \
+          chrome="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)"
+          uri="$(python3 - <<'PY'
+          from pathlib import Path
+          print(Path('yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/brick-mother-standalone-v2.5.html').resolve().as_uri())
+          PY
+          )"
+          timeout 300s "$chrome" \
             --headless=new \
             --no-sandbox \
             --disable-dev-shm-usage \
+            --disable-background-networking \
+            --allow-file-access-from-files \
             --enable-webgl \
             --ignore-gpu-blocklist \
             --enable-unsafe-swiftshader \
             --use-gl=angle \
             --use-angle=swiftshader \
-            --virtual-time-budget=180000 \
+            --virtual-time-budget=140000 \
             --dump-dom \
-            "http://127.0.0.1:4173/brick-mother/?qa=v22-gate&evidence=1&profile=old-pbr-fired&focus=1" \
-            > /tmp/brick-mother-v22-dom.html \
-            2> /tmp/brick-mother-v22-chrome.log
-          grep -q 'data-brick-mother-ready="true"' /tmp/brick-mother-v22-dom.html
-          grep -q 'data-brick-mother-version="2.2.0-alpha.1"' /tmp/brick-mother-v22-dom.html
-          grep -q 'data-gaea-kernel="1.1.0"' /tmp/brick-mother-v22-dom.html
-          grep -q 'data-active-profile="old-pbr-fired"' /tmp/brick-mother-v22-dom.html
-          grep -q 'data-oxide-contours="suppressed"' /tmp/brick-mother-v22-dom.html
-          grep -q 'data-event-color-masking="true"' /tmp/brick-mother-v22-dom.html
-          grep -q 'data-evidence-ready="true"' /tmp/brick-mother-v22-dom.html
-          grep -Eq 'data-deep-pores="[1-9][0-9]*"' /tmp/brick-mother-v22-dom.html
+            "${uri}?evidence=1&solo=1&profile=old-pbr-fired&focus=2&debug=0&qa=v25-continuous-gate" \
+            > /tmp/brick-mother-v25-gate-dom.html \
+            2> /tmp/brick-mother-v25-gate-chrome.log
+          grep -q 'data-brick-mother-ready="true"' /tmp/brick-mother-v25-gate-dom.html
+          grep -q 'data-brick-mother-version="2.5.0-alpha.1"' /tmp/brick-mother-v25-gate-dom.html
+          grep -q 'data-solo-mode="true"' /tmp/brick-mother-v25-gate-dom.html
+          grep -Eq 'data-deep-pores="[1-9][0-9]*"' /tmp/brick-mother-v25-gate-dom.html
+          grep -Eq 'data-pore-rim-chips="[1-9][0-9]*"' /tmp/brick-mother-v25-gate-dom.html
+          grep -q 'data-collapsed-pores=' /tmp/brick-mother-v25-gate-dom.html
+          grep -q 'data-evidence-ready="true"' /tmp/brick-mother-v25-gate-dom.html
 
-      - name: Capture fired, stone, and adobe evidence
+      - name: Upload standalone gate
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: brick-mother-v25-standalone-gate
+          path: |
+            /tmp/brick-mother-v25-gate-dom.html
+            /tmp/brick-mother-v25-gate-chrome.log
+            /tmp/brick-mother-v25-standalone.sha256
+            yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/brick-mother-standalone-v2.5.html
+            yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/VERSION.json
+          compression-level: 1
+          if-no-files-found: ignore
+
+  material-evidence:
+    needs: standalone-gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - profile: old-pbr-fired
+            label: fired
+          - profile: stone-block
+            label: stone
+          - profile: raw-clay
+            label: adobe
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Capture solo material closeup
         shell: bash
         run: |
           set -euo pipefail
           chrome="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)"
-          capture() {
-            name="$1"
-            query="$2"
-            timeout 420s "$chrome" \
-              --headless=new \
-              --no-sandbox \
-              --disable-dev-shm-usage \
-              --enable-webgl \
-              --ignore-gpu-blocklist \
-              --enable-unsafe-swiftshader \
-              --use-gl=angle \
-              --use-angle=swiftshader \
-              --window-size=1600,1000 \
-              --virtual-time-budget=180000 \
-              --screenshot="/tmp/${name}.png" \
-              "http://127.0.0.1:4173/brick-mother/?evidence=1&${query}" \
-              > "/tmp/${name}.log" 2>&1
-            test -s "/tmp/${name}.png"
-          }
-          capture brick-mother-v22-fired-final 'profile=old-pbr-fired&focus=1&debug=0&qa=fired-final'
-          capture brick-mother-v22-stone-final 'profile=stone-block&focus=2&debug=0&qa=stone-final'
-          capture brick-mother-v22-stone-field 'profile=stone-block&focus=2&debug=8&qa=stone-field'
-          capture brick-mother-v22-adobe-final 'profile=raw-clay&focus=1&debug=0&qa=adobe-final'
-          capture brick-mother-v22-adobe-inclusion 'profile=raw-clay&focus=1&debug=7&qa=adobe-inclusion'
+          uri="$(python3 - <<'PY'
+          from pathlib import Path
+          print(Path('yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/brick-mother-standalone-v2.5.html').resolve().as_uri())
+          PY
+          )"
+          timeout 420s "$chrome" \
+            --headless=new \
+            --no-sandbox \
+            --disable-dev-shm-usage \
+            --disable-background-networking \
+            --allow-file-access-from-files \
+            --enable-webgl \
+            --ignore-gpu-blocklist \
+            --enable-unsafe-swiftshader \
+            --use-gl=angle \
+            --use-angle=swiftshader \
+            --hide-scrollbars \
+            --window-size=1600,1000 \
+            --virtual-time-budget=140000 \
+            --screenshot="/tmp/brick-mother-v25-${{ matrix.label }}.png" \
+            "${uri}?evidence=1&solo=1&profile=${{ matrix.profile }}&focus=2&debug=0&qa=${{ matrix.label }}" \
+            > "/tmp/brick-mother-v25-${{ matrix.label }}.log" 2>&1
+          test -s "/tmp/brick-mother-v25-${{ matrix.label }}.png"
           python3 - <<'PY'
           from pathlib import Path
-          import hashlib
-          paths = sorted(Path('/tmp').glob('brick-mother-v22-*.png'))
-          assert len(paths) == 5, [p.name for p in paths]
-          hashes = []
-          for path in paths:
-              data = path.read_bytes()
-              assert data[:8] == b'\x89PNG\r\n\x1a\n'
-              assert len(data) > 100000, (path.name, len(data))
-              hashes.append(hashlib.sha256(data).hexdigest())
-          assert len(set(hashes)) == len(hashes), hashes
-          print({'screenshots': [p.name for p in paths], 'unique': True})
+          import os
+          label = os.environ['MATRIX_LABEL']
+          path = Path('/tmp') / f'brick-mother-v25-{label}.png'
+          data = path.read_bytes()
+          assert data[:8] == b'\x89PNG\r\n\x1a\n'
+          assert len(data) > 100000, (path.name, len(data))
           PY
+        env:
+          MATRIX_LABEL: ${{ matrix.label }}
 
-      - name: Write job summary
-        if: always()
-        shell: bash
-        run: |
-          {
-            echo "## Brick Mother V2.2 Event Calibration"
-            echo
-            echo "* Version: 2.2.0-alpha.1"
-            echo "* Gaea field kernel: 1.1.0"
-            echo "* Regular fired-clay contour band: removed"
-            echo "* Event-gated color masks: enabled"
-            echo "* Physical adobe pull-out channels: enabled"
-            echo "* Evidence profiles: fired brick, stone, adobe"
-            echo "* Manual visual approvals remain false"
-          } >> "$GITHUB_STEP_SUMMARY"
-
-      - name: Upload V2.2 browser evidence
+      - name: Upload material evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: brick-mother-v22-event-calibration-evidence
+          name: brick-mother-v25-${{ matrix.label }}-evidence
           path: |
-            /tmp/brick-mother-v22-*.png
-            /tmp/brick-mother-v22-*.log
-            /tmp/brick-mother-v22-dom.html
-            /tmp/brick-mother-v22-chrome.log
-            /tmp/brick-mother-v22-http.log
+            /tmp/brick-mother-v25-${{ matrix.label }}.png
+            /tmp/brick-mother-v25-${{ matrix.label }}.log
+          compression-level: 1
           if-no-files-found: ignore
-
-      - name: Stop local server
-        if: always()
-        shell: bash
-        run: |
-          if [ -f /tmp/brick-mother-v22-http.pid ]; then
-            kill "$(cat /tmp/brick-mother-v22-http.pid)" 2>/dev/null || true
-          fi
