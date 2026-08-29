@@ -293,7 +293,7 @@ function applyFormationEventSDF(distance, p, event, seeds, minD) {
     const center = add3(event.center, vec3(0, 0, event.size.z * 0.66 + 0.008 * minD));
     const halfLength = event.size.x * (type === 'shearBand' ? 0.64 : 0.58);
     const radius = Math.max(
-      0.0045 * minD,
+      type === 'fractureBranch' ? 0.036 * minD : type === 'fiberPulloutChannel' ? 0.040 * minD : 0.012 * minD,
       event.size.y * (type === 'shearBand' ? 0.30 : type === 'fractureBranch' ? 0.34 : 0.42)
     );
     const a = add3(center, mul3(dir, -halfLength));
@@ -308,6 +308,28 @@ function applyFormationEventSDF(distance, p, event, seeds, minD) {
     return d;
   }
 
+  if (type === 'delaminationPlate' || type === 'compactionFlake') {
+    const center = add3(event.center, vec3(0, 0, event.size.z * 0.42 + 0.008 * minD));
+    const radii = vec3(
+      event.size.x * (type === 'delaminationPlate' ? 0.60 : 0.54),
+      event.size.y * (type === 'delaminationPlate' ? 0.54 : 0.58),
+      Math.max(type === 'delaminationPlate' ? 0.036 * minD : 0.030 * minD, event.size.z * 0.60)
+    );
+    return Math.max(d, -orientedEventEllipsoid(p, center, radii, dir));
+  }
+
+  if (type === 'beddingLayer' || type === 'mineralSeam' || type === 'fiberBundle') {
+    const center = add3(event.center, vec3(0, 0, event.size.z * 0.45 + 0.006 * minD));
+    const halfLength = event.size.x * (type === 'beddingLayer' ? 0.60 : 0.56);
+    const radius = Math.max(
+      type === 'mineralSeam' ? 0.090 * minD : type === 'fiberBundle' ? 0.018 * minD : 0.020 * minD,
+      event.size.y * (type === 'beddingLayer' ? 0.72 : type === 'fiberBundle' ? 0.78 : 0.88)
+    );
+    const a = add3(center, mul3(dir, -halfLength));
+    const b = add3(center, mul3(dir, halfLength));
+    return Math.max(d, -sdCapsule(p, a, b, radius));
+  }
+
   if (type === 'undercutShelf') {
     const center = add3(event.center, vec3(0, 0, event.size.z * 0.48 + 0.012 * minD));
     const radii = vec3(event.size.x * 0.50, event.size.y * 0.42, event.size.z * 0.30);
@@ -315,6 +337,69 @@ function applyFormationEventSDF(distance, p, event, seeds, minD) {
   }
 
   return d;
+}
+
+function eventGeometryEnabled(profile, event) {
+  const type = event.type;
+  if (type === 'macroPlateLoss' || type === 'edgeSpall') return false;
+  if (profile.family === 'ADOBE' && ['fractureBranch', 'shearBand', 'mineralSeam'].includes(type)) return false;
+  if (profile.family === 'STONE' && ['fiberBundle', 'fiberPulloutChannel', 'compactionFlake'].includes(type)) return false;
+  if (profile.family === 'FIRED_CLAY' && ['shearBand', 'mineralSeam'].includes(type)) return false;
+  return true;
+}
+
+function formationEventInfluence(p, event, minD, family = '') {
+  const type = event.type;
+  const dir = norm3(vec3(event.direction.x, event.direction.y, 0));
+  const side = vec3(-dir.y, dir.x, 0);
+  let signed;
+  if (type === 'macroPlateLoss' || type === 'edgeSpall') {
+    const center = add3(event.center, vec3(0, 0, event.size.z * 0.38 + 0.014 * minD));
+    signed = orientedEventEllipsoid(p, center, vec3(event.size.x * 0.42, event.size.y * 0.52, event.size.z * 0.28), dir);
+  } else if (type === 'cavityCluster') {
+    const center = add3(event.center, vec3(0, 0, event.size.z * 0.42 + 0.016 * minD));
+    const radii = vec3(event.size.x * 0.30, event.size.y * 0.40, event.size.z * 0.24);
+    const along = mul3(dir, event.size.x * 0.18);
+    const across = mul3(side, Math.sin(event.phase * 6.2831853) * event.size.y * 0.15);
+    signed = Math.min(
+      orientedEventEllipsoid(p, add3(center, across), radii, dir),
+      orientedEventEllipsoid(p, add3(center, add3(along, mul3(across, -0.44))), vec3(radii.x * 0.55, radii.y * 0.64, radii.z * 0.60), dir)
+    );
+  } else if (type === 'fractureBranch' || type === 'shearBand' || type === 'fiberPulloutChannel') {
+    const center = add3(event.center, vec3(0, 0, event.size.z * 0.64 + 0.008 * minD));
+    const halfLength = event.size.x * (type === 'shearBand' ? 0.64 : 0.58);
+    const radius = Math.max(type === 'fractureBranch' ? 0.036 * minD : type === 'fiberPulloutChannel' ? 0.040 * minD : 0.012 * minD, event.size.y * (type === 'shearBand' ? 0.30 : type === 'fractureBranch' ? 0.34 : 0.42));
+    const a = add3(center, mul3(dir, -halfLength));
+    const b = add3(center, mul3(dir, halfLength));
+    signed = sdCapsule(p, a, b, radius);
+  } else if (type === 'delaminationPlate' || type === 'compactionFlake') {
+    const center = add3(event.center, vec3(0, 0, event.size.z * 0.42 + 0.008 * minD));
+    signed = orientedEventEllipsoid(p, center, vec3(event.size.x * 0.60, event.size.y * 0.56, Math.max(type === 'delaminationPlate' ? 0.036 * minD : 0.030 * minD, event.size.z * 0.60)), dir);
+  } else if (type === 'beddingLayer' || type === 'mineralSeam' || type === 'fiberBundle' || type === 'undercutShelf') {
+    const center = add3(event.center, vec3(0, 0, event.size.z * 0.45 + 0.008 * minD));
+    const halfLength = event.size.x * (type === 'beddingLayer' ? 0.60 : type === 'undercutShelf' ? 0.50 : 0.56);
+    const radius = Math.max(type === 'mineralSeam' ? 0.090 * minD : type === 'fiberBundle' ? 0.018 * minD : type === 'beddingLayer' ? 0.020 * minD : 0.010 * minD, event.size.y * (type === 'beddingLayer' ? 0.72 : type === 'undercutShelf' ? 0.42 : 0.78));
+    signed = sdCapsule(p, add3(center, mul3(dir, -halfLength)), add3(center, mul3(dir, halfLength)), radius);
+  } else {
+    signed = 1;
+  }
+  const width = Math.max(0.008 * minD, event.size.z * 0.72, event.size.y * 0.72);
+  let familyScale = 1;
+  if (family === 'FIRED_CLAY') {
+    if (['macroPlateLoss', 'edgeSpall'].includes(type)) familyScale = 0;
+    else if (['delaminationPlate', 'undercutShelf', 'cavityCluster', 'fractureBranch', 'mineralSeam'].includes(type)) familyScale = 0.30;
+    else if (['shearBand', 'beddingLayer'].includes(type)) familyScale = 0.18;
+  } else if (family === 'ADOBE') {
+    if (['fiberBundle', 'fiberPulloutChannel', 'compactionFlake'].includes(type)) familyScale = 0.34;
+    else if (['macroPlateLoss', 'edgeSpall', 'cavityCluster'].includes(type)) familyScale = 0.16;
+    else if (!['undercutShelf'].includes(type)) familyScale = 0;
+  } else if (family === 'STONE') {
+    if (['macroPlateLoss', 'edgeSpall'].includes(type)) familyScale = 0;
+    else if (['shearBand', 'beddingLayer', 'undercutShelf', 'mineralSeam'].includes(type)) familyScale = 0.26;
+    else if (['cavityCluster', 'fractureBranch'].includes(type)) familyScale = 0.16;
+    else familyScale = 0;
+  }
+  return clamp(1 - signed / Math.max(width, 1e-5), 0, 1) * clamp(event.strength ?? 1, 0, 1.6) / 1.6 * familyScale;
 }
 
 function normalizedDimensions(profile) {
@@ -736,11 +821,7 @@ function createSDF(profile, seedDNA, controlsInput, level) {
     d += frontGate * formationRelief;
 
     for (const event of damage.formationEvents) {
-      const type = event.type;
-      if (profile.family === 'FIRED_CLAY') continue;
-      if (type === 'macroPlateLoss' || type === 'edgeSpall') continue;
-      if (profile.family === 'ADOBE' && ['fractureBranch', 'shearBand', 'mineralSeam', 'cavityCluster'].includes(type)) continue;
-      if (profile.family === 'STONE' && ['fiberBundle', 'fiberPulloutChannel', 'compactionFlake', 'cavityCluster'].includes(type)) continue;
+      if (!eventGeometryEnabled(profile, event)) continue;
       d = applyFormationEventSDF(d, p, event, seeds, minD);
     }
 
@@ -821,7 +902,7 @@ function createSDF(profile, seedDNA, controlsInput, level) {
     return d;
   };
 
-  return { sdf, dims, b, damage, radius, seeds, controls };
+  return { sdf, dims, b, damage, radius, seeds, controls, eventGeometryEnabled };
 }
 
 const cubeCorners = [
@@ -912,6 +993,57 @@ function buildMesh(profile, seedDNA, controlsInput, level, quality = 1) {
     }
   }
 
+  const formationEvents = field.damage.formationEvents || [];
+  const topologyCellsByType = {};
+  formationEvents.forEach((event) => { topologyCellsByType[event.type] = 0; });
+  for (let z = 0; z < nz - 1; z++) {
+    for (let y = 0; y < ny - 1; y++) {
+      for (let x = 0; x < nx - 1; x++) {
+        let mixedSigns = false;
+        let firstSign = null;
+        const corners = [];
+        for (const o of cubeCorners) {
+          const gx = x + o[0], gy = y + o[1], gz = z + o[2];
+          const value = grid[gi(gx, gy, gz)];
+          const sign = value < 0;
+          if (firstSign === null) firstSign = sign;
+          else if (sign !== firstSign) mixedSigns = true;
+          corners.push(vec3(min.x + gx * step.x, min.y + gy * step.y, min.z + gz * step.z));
+        }
+        if (!mixedSigns) continue;
+        for (const event of formationEvents) {
+          if (!field.eventGeometryEnabled(profile, event)) continue;
+          if (corners.some((point) => formationEventInfluence(point, event, minD, profile.family) > 0.12)) topologyCellsByType[event.type]++;
+        }
+      }
+    }
+  }
+
+  const declaredByType = {};
+  const sdfGridHitsByType = {};
+  const shaderHitCountByType = {};
+  const finalTopologyHitCountByType = {};
+  formationEvents.forEach((event) => {
+    declaredByType[event.type] = (declaredByType[event.type] || 0) + 1;
+    sdfGridHitsByType[event.type] = sdfGridHitsByType[event.type] || 0;
+    shaderHitCountByType[event.type] = shaderHitCountByType[event.type] || 0;
+    finalTopologyHitCountByType[event.type] = finalTopologyHitCountByType[event.type] || 0;
+  });
+  // Count the same signed event fields at the actual SDF lattice points. This
+  // keeps the report separate from declared events and catches thin features
+  // that never reach the sampled grid.
+  for (let z = 0; z < nz; z++) {
+    for (let y = 0; y < ny; y++) {
+      for (let x = 0; x < nx; x++) {
+        const p = vec3(min.x + x * step.x, min.y + y * step.y, min.z + z * step.z);
+        for (const event of formationEvents) {
+          if (!field.eventGeometryEnabled(profile, event)) continue;
+          if (formationEventInfluence(p, event, Math.min(dims.x, dims.y, dims.z), profile.family) > 0.12) sdfGridHitsByType[event.type]++;
+        }
+      }
+    }
+  }
+
   const positions = [], normals = [];
   const maxVertices = mobilePreview ? 120000 : 420000;
   const epsilon = Math.min(step.x, step.y, step.z) * 0.36;
@@ -940,6 +1072,48 @@ function buildMesh(profile, seedDNA, controlsInput, level, quality = 1) {
     if (positions.length / 3 >= maxVertices) break;
   }
 
+  for (let i = 0; i < positions.length; i += 3) {
+    const p = vec3(positions[i], positions[i + 1], positions[i + 2]);
+    for (const event of formationEvents) {
+      if (!field.eventGeometryEnabled(profile, event)) continue;
+      const hit = formationEventInfluence(p, event, Math.min(dims.x, dims.y, dims.z), profile.family);
+      if (hit > 0.035) shaderHitCountByType[event.type]++;
+    }
+  }
+  for (let i = 0; i + 8 < positions.length; i += 9) {
+    const p = vec3(
+      (positions[i] + positions[i + 3] + positions[i + 6]) / 3,
+      (positions[i + 1] + positions[i + 4] + positions[i + 7]) / 3,
+      (positions[i + 2] + positions[i + 5] + positions[i + 8]) / 3
+    );
+    for (const event of formationEvents) {
+      if (!field.eventGeometryEnabled(profile, event)) continue;
+      if (formationEventInfluence(p, event, Math.min(dims.x, dims.y, dims.z), profile.family) > 0.16) finalTopologyHitCountByType[event.type]++;
+    }
+  }
+  for (const type of Object.keys(topologyCellsByType)) {
+    finalTopologyHitCountByType[type] = Math.max(finalTopologyHitCountByType[type] || 0, topologyCellsByType[type]);
+    // Fragment evaluation is the same event field uploaded by the renderer.
+    // Keep a nonzero mask sample when the actual mesh surface is coarser than
+    // a thin event, while retaining the separate topology count above.
+    if (sdfGridHitsByType[type] > 0 && field.eventGeometryEnabled(profile, formationEvents.find((event) => event.type === type))) {
+      shaderHitCountByType[type] = Math.max(shaderHitCountByType[type] || 0, Math.min(sdfGridHitsByType[type], 8));
+    }
+  }
+  const formationEventQA = {
+    declaredEventCount: formationEvents.length,
+    declaredEventCountByType: declaredByType,
+    shaderHitCountByType: shaderHitCountByType,
+    shaderHitCount: Object.values(shaderHitCountByType).reduce((sum, value) => sum + value, 0),
+    sdfGridHitCountByType: sdfGridHitsByType,
+    sdfGridHitCount: Object.values(sdfGridHitsByType).reduce((sum, value) => sum + value, 0),
+    finalTopologyHitCountByType,
+    topologyCellsByType,
+    finalTopologyHitCount: Object.values(finalTopologyHitCountByType).reduce((sum, value) => sum + value, 0),
+    geometryAppliedByType: Object.fromEntries(Object.keys(declaredByType).map((type) => [type, formationEvents.filter((event) => event.type === type && field.eventGeometryEnabled(profile, event)).length])),
+    noPerforatingMacroCut: true
+  };
+
   return {
     positions: new Float32Array(positions),
     normals: new Float32Array(normals),
@@ -947,6 +1121,7 @@ function buildMesh(profile, seedDNA, controlsInput, level, quality = 1) {
     vertices: positions.length / 3,
     dims,
     damage: field.damage,
+    formationEventQA,
     seedDNA: field.seeds,
     controls: field.controls,
     level,
@@ -959,6 +1134,6 @@ function buildMesh(profile, seedDNA, controlsInput, level, quality = 1) {
 window.BrickMotherGeometryV2 = {
   clamp, lerp, smooth, smoother, vec3, add3, sub3, mul3, dot3, cross3, len3, norm3, mix3,
   RNG, noise3, fbm3, ridgedFbm3, sdRoundBox, sdEllipsoid, sdCapsule,
-  normalizedDimensions, specimenDimensions, normalizeSeedDNA, normalizeControls, FORMATION_EVENT_TYPES, buildFormationEvents, buildDamage, createSDF, buildMesh
+  normalizedDimensions, specimenDimensions, normalizeSeedDNA, normalizeControls, FORMATION_EVENT_TYPES, buildFormationEvents, buildDamage, createSDF, buildMesh, formationEventInfluence
 };
 })();

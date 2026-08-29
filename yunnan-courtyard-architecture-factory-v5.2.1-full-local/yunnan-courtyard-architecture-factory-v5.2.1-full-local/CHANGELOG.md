@@ -1,5 +1,13 @@
 # 更新记录
 
+## Brick Mother V2.7.5 composite evidence pass
+
+1. Mixed mode now uses each family’s `compositeDefaults`; UI changes are carried as an explicit global delta and are reported with complete per-family controls.
+2. Inclusion is a geometry rebuild control, and changing `master` deterministically re-derives all eight child seed layers.
+3. Fired-clay delamination, fracture, undercut and cavity events now enter shallow SDF geometry; stone bedding/mineral seams and adobe fiber/compaction events are accounted as geometry events without silhouette-through cuts.
+4. QA separates declared event count, shader-mask hits, SDF-grid hits and final-topology hits. The V2.7.5 workflow captures 24 fixed 1600×1000 evidence images and validates the frozen JRB reference hash before any comparison.
+5. JRB color, stone detail, adobe inclusion and production approvals remain false pending manual review.
+
 ## 5.4.2
 
 1. 参考模型查看器新增“云南大理参考”和“浩思一·乌龙 WL”两个 GLB 入口，与团结乡高精度/网页标准档共用同一套切换、复位、分组和下载逻辑。

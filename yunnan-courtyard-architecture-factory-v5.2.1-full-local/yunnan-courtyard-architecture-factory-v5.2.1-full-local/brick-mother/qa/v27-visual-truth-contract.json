@@ -184,7 +184,14 @@
     "reportEventCounts": true,
     "reportDeepCavityCount": true,
     "reportUndercutShelfCount": true,
-    "reportAdobeFiberBundleCount": true
+    "reportAdobeFiberBundleCount": true,
+    "reportDeclaredEventCount": true,
+    "reportShaderHitCount": true,
+    "reportSdfGridHitCount": true,
+    "reportFinalTopologyHitCount": true,
+    "fixedBatchImageCount": 24,
+    "fixedCanvas": [1600, 1000],
+    "referenceHashGate": true
   },
   "approval": {
     "firedMasonryApproved": false,
@@ -199,7 +206,7 @@
     "mergeAllowed": false
   },
   "implementation": {
-    "version": "2.7.0-alpha.1",
+    "version": "2.7.5-alpha.1",
     "benchmarkSlabImplemented": true,
     "formationEventUniformUpload": true,
     "formationEventFamiliesImplemented": [
@@ -240,14 +247,19 @@
     "broadFiredClayContrast": true,
     "calmedMicroBump": true
   },
-  "implementationVersion": "2.7.3-alpha.1",
-  "implementationTarget": "2.7.4-alpha.1",
+  "implementationVersion": "2.7.5-alpha.1",
+  "implementationTarget": "2.7.5-alpha.1",
   "v274Calibration": {
     "nonPerforatingDeepPores": true,
-    "firedFormationCutsDisabled": true,
+    "firedFormationCutsDisabled": false,
     "benchmarkSilhouetteProtection": true,
     "broadFiredColorZones": true,
-    "microGeometrySuppression": true
+    "microGeometrySuppression": true,
+    "profileScopedCompositeDefaults": true,
+    "explicitGlobalControlDelta": true,
+    "inclusionGeometryRebuild": true,
+    "masterSeedDerivation": true,
+    "formationEventHitAccounting": true
   },
   "mobileRuntime": {
     "defaultMode": "single-benchmark-slab-fast-preview",

@@ -72,7 +72,14 @@
     "mobileLowGridSdf": true,
     "mobileDprCap": true,
     "visibleBootstrapPreview": true,
-    "iosFilePreviewFallback": true
+    "iosFilePreviewFallback": true,
+    "profileScopedCompositeDefaults": true,
+    "explicitGlobalControlDelta": true,
+    "inclusionGeometryRebuild": true,
+    "masterSeedDerivation": true,
+    "formationEventHitAccounting": true,
+    "fixedEvidenceBatch24": true,
+    "jrbReferenceHashGate": true
   },
   "approval": {
     "visualStatus": "pending-user-review",
@@ -113,6 +120,10 @@
     "Benchmark edge bites are reduced while pits, pores and deep bores are biased toward the review face.",
     "Fired clay receives broader charcoal, ash, oxide and mineral regions derived from the supplied reference.",
     "High-frequency bump and grit are reduced so broad formation structures remain legible.",
-    "All manual visual approvals remain false pending side-by-side review."
+    "All manual visual approvals remain false pending side-by-side review.",
+    "Mixed mode now starts each material family from its own compositeDefaults; UI changes are recorded as an explicit global delta.",
+    "Master seed changes deterministically re-derive all eight child layer seeds, and inclusion is a geometry rebuild control.",
+    "Formation QA reports declared, shader-mask, SDF-grid and final-topology hits separately; shallow non-perforating fired events are retained.",
+    "The exact-head evidence workflow emits 24 fixed 1600x1000 captures and fails closed when the frozen JRB reference is unavailable or mismatched."
   ]
 }

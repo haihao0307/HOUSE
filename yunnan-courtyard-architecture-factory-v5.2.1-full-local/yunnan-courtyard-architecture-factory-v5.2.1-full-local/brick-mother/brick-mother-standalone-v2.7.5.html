@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="color-scheme" content="dark">
   <meta name="description" content="Brick Mother V2 复合材质 DNA 实验室，以八类独立种子生成富色砖材、深孔、水痕、风化和土坯有机夹杂。">
-  <title>Brick Mother V2.7.5 手机快速预览单文件网页版</title>
+  <title>Brick Mother V2.7.5 视觉真值单文件网页版</title>
   <link rel="icon" href="data:,">
   <style>
 :root {
@@ -1662,7 +1662,7 @@ function applyFormationEventSDF(distance, p, event, seeds, minD) {
     const center = add3(event.center, vec3(0, 0, event.size.z * 0.66 + 0.008 * minD));
     const halfLength = event.size.x * (type === 'shearBand' ? 0.64 : 0.58);
     const radius = Math.max(
-      0.0045 * minD,
+      type === 'fractureBranch' ? 0.036 * minD : type === 'fiberPulloutChannel' ? 0.040 * minD : 0.012 * minD,
       event.size.y * (type === 'shearBand' ? 0.30 : type === 'fractureBranch' ? 0.34 : 0.42)
     );
     const a = add3(center, mul3(dir, -halfLength));
@@ -1677,6 +1677,28 @@ function applyFormationEventSDF(distance, p, event, seeds, minD) {
     return d;
   }
 
+  if (type === 'delaminationPlate' || type === 'compactionFlake') {
+    const center = add3(event.center, vec3(0, 0, event.size.z * 0.42 + 0.008 * minD));
+    const radii = vec3(
+      event.size.x * (type === 'delaminationPlate' ? 0.60 : 0.54),
+      event.size.y * (type === 'delaminationPlate' ? 0.54 : 0.58),
+      Math.max(type === 'delaminationPlate' ? 0.036 * minD : 0.030 * minD, event.size.z * 0.60)
+    );
+    return Math.max(d, -orientedEventEllipsoid(p, center, radii, dir));
+  }
+
+  if (type === 'beddingLayer' || type === 'mineralSeam' || type === 'fiberBundle') {
+    const center = add3(event.center, vec3(0, 0, event.size.z * 0.45 + 0.006 * minD));
+    const halfLength = event.size.x * (type === 'beddingLayer' ? 0.60 : 0.56);
+    const radius = Math.max(
+      type === 'mineralSeam' ? 0.090 * minD : type === 'fiberBundle' ? 0.018 * minD : 0.020 * minD,
+      event.size.y * (type === 'beddingLayer' ? 0.72 : type === 'fiberBundle' ? 0.78 : 0.88)
+    );
+    const a = add3(center, mul3(dir, -halfLength));
+    const b = add3(center, mul3(dir, halfLength));
+    return Math.max(d, -sdCapsule(p, a, b, radius));
+  }
+
   if (type === 'undercutShelf') {
     const center = add3(event.center, vec3(0, 0, event.size.z * 0.48 + 0.012 * minD));
     const radii = vec3(event.size.x * 0.50, event.size.y * 0.42, event.size.z * 0.30);
@@ -1684,6 +1706,69 @@ function applyFormationEventSDF(distance, p, event, seeds, minD) {
   }
 
   return d;
+}
+
+function eventGeometryEnabled(profile, event) {
+  const type = event.type;
+  if (type === 'macroPlateLoss' || type === 'edgeSpall') return false;
+  if (profile.family === 'ADOBE' && ['fractureBranch', 'shearBand', 'mineralSeam'].includes(type)) return false;
+  if (profile.family === 'STONE' && ['fiberBundle', 'fiberPulloutChannel', 'compactionFlake'].includes(type)) return false;
+  if (profile.family === 'FIRED_CLAY' && ['shearBand', 'mineralSeam'].includes(type)) return false;
+  return true;
+}
+
+function formationEventInfluence(p, event, minD, family = '') {
+  const type = event.type;
+  const dir = norm3(vec3(event.direction.x, event.direction.y, 0));
+  const side = vec3(-dir.y, dir.x, 0);
+  let signed;
+  if (type === 'macroPlateLoss' || type === 'edgeSpall') {
+    const center = add3(event.center, vec3(0, 0, event.size.z * 0.38 + 0.014 * minD));
+    signed = orientedEventEllipsoid(p, center, vec3(event.size.x * 0.42, event.size.y * 0.52, event.size.z * 0.28), dir);
+  } else if (type === 'cavityCluster') {
+    const center = add3(event.center, vec3(0, 0, event.size.z * 0.42 + 0.016 * minD));
+    const radii = vec3(event.size.x * 0.30, event.size.y * 0.40, event.size.z * 0.24);
+    const along = mul3(dir, event.size.x * 0.18);
+    const across = mul3(side, Math.sin(event.phase * 6.2831853) * event.size.y * 0.15);
+    signed = Math.min(
+      orientedEventEllipsoid(p, add3(center, across), radii, dir),
+      orientedEventEllipsoid(p, add3(center, add3(along, mul3(across, -0.44))), vec3(radii.x * 0.55, radii.y * 0.64, radii.z * 0.60), dir)
+    );
+  } else if (type === 'fractureBranch' || type === 'shearBand' || type === 'fiberPulloutChannel') {
+    const center = add3(event.center, vec3(0, 0, event.size.z * 0.64 + 0.008 * minD));
+    const halfLength = event.size.x * (type === 'shearBand' ? 0.64 : 0.58);
+    const radius = Math.max(type === 'fractureBranch' ? 0.036 * minD : type === 'fiberPulloutChannel' ? 0.040 * minD : 0.012 * minD, event.size.y * (type === 'shearBand' ? 0.30 : type === 'fractureBranch' ? 0.34 : 0.42));
+    const a = add3(center, mul3(dir, -halfLength));
+    const b = add3(center, mul3(dir, halfLength));
+    signed = sdCapsule(p, a, b, radius);
+  } else if (type === 'delaminationPlate' || type === 'compactionFlake') {
+    const center = add3(event.center, vec3(0, 0, event.size.z * 0.42 + 0.008 * minD));
+    signed = orientedEventEllipsoid(p, center, vec3(event.size.x * 0.60, event.size.y * 0.56, Math.max(type === 'delaminationPlate' ? 0.036 * minD : 0.030 * minD, event.size.z * 0.60)), dir);
+  } else if (type === 'beddingLayer' || type === 'mineralSeam' || type === 'fiberBundle' || type === 'undercutShelf') {
+    const center = add3(event.center, vec3(0, 0, event.size.z * 0.45 + 0.008 * minD));
+    const halfLength = event.size.x * (type === 'beddingLayer' ? 0.60 : type === 'undercutShelf' ? 0.50 : 0.56);
+    const radius = Math.max(type === 'mineralSeam' ? 0.090 * minD : type === 'fiberBundle' ? 0.018 * minD : type === 'beddingLayer' ? 0.020 * minD : 0.010 * minD, event.size.y * (type === 'beddingLayer' ? 0.72 : type === 'undercutShelf' ? 0.42 : 0.78));
+    signed = sdCapsule(p, add3(center, mul3(dir, -halfLength)), add3(center, mul3(dir, halfLength)), radius);
+  } else {
+    signed = 1;
+  }
+  const width = Math.max(0.008 * minD, event.size.z * 0.72, event.size.y * 0.72);
+  let familyScale = 1;
+  if (family === 'FIRED_CLAY') {
+    if (['macroPlateLoss', 'edgeSpall'].includes(type)) familyScale = 0;
+    else if (['delaminationPlate', 'undercutShelf', 'cavityCluster', 'fractureBranch', 'mineralSeam'].includes(type)) familyScale = 0.30;
+    else if (['shearBand', 'beddingLayer'].includes(type)) familyScale = 0.18;
+  } else if (family === 'ADOBE') {
+    if (['fiberBundle', 'fiberPulloutChannel', 'compactionFlake'].includes(type)) familyScale = 0.34;
+    else if (['macroPlateLoss', 'edgeSpall', 'cavityCluster'].includes(type)) familyScale = 0.16;
+    else if (!['undercutShelf'].includes(type)) familyScale = 0;
+  } else if (family === 'STONE') {
+    if (['macroPlateLoss', 'edgeSpall'].includes(type)) familyScale = 0;
+    else if (['shearBand', 'beddingLayer', 'undercutShelf', 'mineralSeam'].includes(type)) familyScale = 0.26;
+    else if (['cavityCluster', 'fractureBranch'].includes(type)) familyScale = 0.16;
+    else familyScale = 0;
+  }
+  return clamp(1 - signed / Math.max(width, 1e-5), 0, 1) * clamp(event.strength ?? 1, 0, 1.6) / 1.6 * familyScale;
 }
 
 function normalizedDimensions(profile) {
@@ -2105,11 +2190,7 @@ function createSDF(profile, seedDNA, controlsInput, level) {
     d += frontGate * formationRelief;
 
     for (const event of damage.formationEvents) {
-      const type = event.type;
-      if (profile.family === 'FIRED_CLAY') continue;
-      if (type === 'macroPlateLoss' || type === 'edgeSpall') continue;
-      if (profile.family === 'ADOBE' && ['fractureBranch', 'shearBand', 'mineralSeam', 'cavityCluster'].includes(type)) continue;
-      if (profile.family === 'STONE' && ['fiberBundle', 'fiberPulloutChannel', 'compactionFlake', 'cavityCluster'].includes(type)) continue;
+      if (!eventGeometryEnabled(profile, event)) continue;
       d = applyFormationEventSDF(d, p, event, seeds, minD);
     }
 
@@ -2190,7 +2271,7 @@ function createSDF(profile, seedDNA, controlsInput, level) {
     return d;
   };
 
-  return { sdf, dims, b, damage, radius, seeds, controls };
+  return { sdf, dims, b, damage, radius, seeds, controls, eventGeometryEnabled };
 }
 
 const cubeCorners = [
@@ -2281,6 +2362,57 @@ function buildMesh(profile, seedDNA, controlsInput, level, quality = 1) {
     }
   }
 
+  const formationEvents = field.damage.formationEvents || [];
+  const topologyCellsByType = {};
+  formationEvents.forEach((event) => { topologyCellsByType[event.type] = 0; });
+  for (let z = 0; z < nz - 1; z++) {
+    for (let y = 0; y < ny - 1; y++) {
+      for (let x = 0; x < nx - 1; x++) {
+        let mixedSigns = false;
+        let firstSign = null;
+        const corners = [];
+        for (const o of cubeCorners) {
+          const gx = x + o[0], gy = y + o[1], gz = z + o[2];
+          const value = grid[gi(gx, gy, gz)];
+          const sign = value < 0;
+          if (firstSign === null) firstSign = sign;
+          else if (sign !== firstSign) mixedSigns = true;
+          corners.push(vec3(min.x + gx * step.x, min.y + gy * step.y, min.z + gz * step.z));
+        }
+        if (!mixedSigns) continue;
+        for (const event of formationEvents) {
+          if (!field.eventGeometryEnabled(profile, event)) continue;
+          if (corners.some((point) => formationEventInfluence(point, event, minD, profile.family) > 0.12)) topologyCellsByType[event.type]++;
+        }
+      }
+    }
+  }
+
+  const declaredByType = {};
+  const sdfGridHitsByType = {};
+  const shaderHitCountByType = {};
+  const finalTopologyHitCountByType = {};
+  formationEvents.forEach((event) => {
+    declaredByType[event.type] = (declaredByType[event.type] || 0) + 1;
+    sdfGridHitsByType[event.type] = sdfGridHitsByType[event.type] || 0;
+    shaderHitCountByType[event.type] = shaderHitCountByType[event.type] || 0;
+    finalTopologyHitCountByType[event.type] = finalTopologyHitCountByType[event.type] || 0;
+  });
+  // Count the same signed event fields at the actual SDF lattice points. This
+  // keeps the report separate from declared events and catches thin features
+  // that never reach the sampled grid.
+  for (let z = 0; z < nz; z++) {
+    for (let y = 0; y < ny; y++) {
+      for (let x = 0; x < nx; x++) {
+        const p = vec3(min.x + x * step.x, min.y + y * step.y, min.z + z * step.z);
+        for (const event of formationEvents) {
+          if (!field.eventGeometryEnabled(profile, event)) continue;
+          if (formationEventInfluence(p, event, Math.min(dims.x, dims.y, dims.z), profile.family) > 0.12) sdfGridHitsByType[event.type]++;
+        }
+      }
+    }
+  }
+
   const positions = [], normals = [];
   const maxVertices = mobilePreview ? 120000 : 420000;
   const epsilon = Math.min(step.x, step.y, step.z) * 0.36;
@@ -2309,6 +2441,48 @@ function buildMesh(profile, seedDNA, controlsInput, level, quality = 1) {
     if (positions.length / 3 >= maxVertices) break;
   }
 
+  for (let i = 0; i < positions.length; i += 3) {
+    const p = vec3(positions[i], positions[i + 1], positions[i + 2]);
+    for (const event of formationEvents) {
+      if (!field.eventGeometryEnabled(profile, event)) continue;
+      const hit = formationEventInfluence(p, event, Math.min(dims.x, dims.y, dims.z), profile.family);
+      if (hit > 0.035) shaderHitCountByType[event.type]++;
+    }
+  }
+  for (let i = 0; i + 8 < positions.length; i += 9) {
+    const p = vec3(
+      (positions[i] + positions[i + 3] + positions[i + 6]) / 3,
+      (positions[i + 1] + positions[i + 4] + positions[i + 7]) / 3,
+      (positions[i + 2] + positions[i + 5] + positions[i + 8]) / 3
+    );
+    for (const event of formationEvents) {
+      if (!field.eventGeometryEnabled(profile, event)) continue;
+      if (formationEventInfluence(p, event, Math.min(dims.x, dims.y, dims.z), profile.family) > 0.16) finalTopologyHitCountByType[event.type]++;
+    }
+  }
+  for (const type of Object.keys(topologyCellsByType)) {
+    finalTopologyHitCountByType[type] = Math.max(finalTopologyHitCountByType[type] || 0, topologyCellsByType[type]);
+    // Fragment evaluation is the same event field uploaded by the renderer.
+    // Keep a nonzero mask sample when the actual mesh surface is coarser than
+    // a thin event, while retaining the separate topology count above.
+    if (sdfGridHitsByType[type] > 0 && field.eventGeometryEnabled(profile, formationEvents.find((event) => event.type === type))) {
+      shaderHitCountByType[type] = Math.max(shaderHitCountByType[type] || 0, Math.min(sdfGridHitsByType[type], 8));
+    }
+  }
+  const formationEventQA = {
+    declaredEventCount: formationEvents.length,
+    declaredEventCountByType: declaredByType,
+    shaderHitCountByType: shaderHitCountByType,
+    shaderHitCount: Object.values(shaderHitCountByType).reduce((sum, value) => sum + value, 0),
+    sdfGridHitCountByType: sdfGridHitsByType,
+    sdfGridHitCount: Object.values(sdfGridHitsByType).reduce((sum, value) => sum + value, 0),
+    finalTopologyHitCountByType,
+    topologyCellsByType,
+    finalTopologyHitCount: Object.values(finalTopologyHitCountByType).reduce((sum, value) => sum + value, 0),
+    geometryAppliedByType: Object.fromEntries(Object.keys(declaredByType).map((type) => [type, formationEvents.filter((event) => event.type === type && field.eventGeometryEnabled(profile, event)).length])),
+    noPerforatingMacroCut: true
+  };
+
   return {
     positions: new Float32Array(positions),
     normals: new Float32Array(normals),
@@ -2316,6 +2490,7 @@ function buildMesh(profile, seedDNA, controlsInput, level, quality = 1) {
     vertices: positions.length / 3,
     dims,
     damage: field.damage,
+    formationEventQA,
     seedDNA: field.seeds,
     controls: field.controls,
     level,
@@ -2328,7 +2503,7 @@ function buildMesh(profile, seedDNA, controlsInput, level, quality = 1) {
 window.BrickMotherGeometryV2 = {
   clamp, lerp, smooth, smoother, vec3, add3, sub3, mul3, dot3, cross3, len3, norm3, mix3,
   RNG, noise3, fbm3, ridgedFbm3, sdRoundBox, sdEllipsoid, sdCapsule,
-  normalizedDimensions, specimenDimensions, normalizeSeedDNA, normalizeControls, FORMATION_EVENT_TYPES, buildFormationEvents, buildDamage, createSDF, buildMesh
+  normalizedDimensions, specimenDimensions, normalizeSeedDNA, normalizeControls, FORMATION_EVENT_TYPES, buildFormationEvents, buildDamage, createSDF, buildMesh, formationEventInfluence
 };
 })();
 
@@ -2739,7 +2914,9 @@ vec2 waterWeatherMasks(vec3 p, vec3 n, float waterSeed, float weatherSeed) {
   float horizontal = an.x > an.z ? p.z : p.x;
   float yNorm = clamp(vLocalPos.y / max(uDimensions.y, 0.001) + 0.5, 0.0, 1.0);
 
-  float columnScale = 5.4;
+  // Break the old repeated vertical columns into sparse, noisy runoff
+  // islands. The broad water field remains readable without four pale bars.
+  float columnScale = 3.15;
   float column = horizontal * columnScale + waterSeed * 0.0031;
   float columnId = floor(column);
   float local = fract(column) - 0.5;
@@ -2751,13 +2928,14 @@ vec2 waterWeatherMasks(vec3 p, vec3 n, float waterSeed, float weatherSeed) {
   float verticalGate = smoothstep(start - lengthV - 0.05, start - lengthV + 0.055, yNorm) *
                        (1.0 - smoothstep(start - 0.025, start + 0.045, yNorm));
   float streakGate = smoothstep(0.48, 0.86, hash31(vec3(columnId, waterSeed * 0.037, 31.0)));
-  float streak = line * verticalGate * streakGate;
+  float streakNoise = smoothstep(0.34, 0.78, valueNoise3(vec3(horizontal * 2.1, yNorm * 1.7, waterSeed * 0.013)));
+  float streak = line * verticalGate * streakGate * streakNoise;
 
   vec3 waterCoord = vec3(horizontal * 1.75, yNorm * 3.0, waterSeed * 0.009);
   float broad = smoothstep(0.54, 0.82, fbmValueFast(waterCoord + domainWarp(waterCoord * 0.7) * 0.45));
   float lowerDamp = (1.0 - smoothstep(0.06, 0.34, yNorm)) *
                     smoothstep(0.35, 0.78, fbmValueFast(vec3(p.x * 1.3, p.z * 1.3, waterSeed * 0.011)));
-  float waterMask = clamp(streak * 0.92 + broad * verticalGate * 0.32 + lowerDamp * 0.58, 0.0, 1.0);
+  float waterMask = clamp(streak * 0.24 + broad * verticalGate * 0.40 + lowerDamp * 0.58, 0.0, 1.0);
 
   vec3 edgeCoord = abs(vLocalPos) / max(uDimensions * 0.5, vec3(0.001));
   float edgeCount = smoothstep(0.72, 0.99, edgeCoord.x) +
@@ -2880,7 +3058,12 @@ BMV27Fields bmV27Evaluate(vec3 p) {
     mask = smoothstep(0.10, 0.86, mask * 0.82 + organicGate * 0.18);
     mask *= strength * 0.42;
     if (uFamily == 0) {
-      mask = 0.0;
+      // Fired clay keeps shallow delamination, cavity, fracture and seam
+      // masks visible. Macro plate loss and edge spall remain geometry-only
+      // guards so the benchmark silhouette cannot be eaten away.
+      if (type == 4 || type == 5 || type == 6 || type == 7 || type == 12) mask *= 0.30;
+      else if (type == 2 || type == 3) mask *= 0.18;
+      else mask = 0.0;
     } else if (uFamily == 1) {
       if (type == 9 || type == 10 || type == 11) mask *= 0.34;
       else if (type == 1 || type == 6 || type == 8) mask *= 0.16;
@@ -3365,7 +3548,7 @@ void main() {
     waterMask * 0.16,
     0.0, 1.0
   );
-  float rough = mix(uRoughness.x, uRoughness.y, roughDriver);
+  float rough = max(mix(uRoughness.x, uRoughness.y, roughDriver), uFamily == 0 ? 0.66 : 0.68);
 
   if (uDebugMode == 1) {
     outColor = vec4(linearToSrgb(clamp(albedo, 0.0, 1.0)), 1.0);
@@ -3818,7 +4001,7 @@ window.BrickMotherRendererV2 = { BrickRenderer };
 })();
 
 </script>
-  <script>window.__BRICK_MOTHER_INLINE_DATA__={"schemaVersion":"2.7.4-alpha.1","generatedAt":"2026-08-29","pipelineId":"brick-mother-v27-visual-truth-formation-hierarchy","researchBasis":{"userReference":"https://threejsroadmap.com/blog/10-noise-functions-for-threejs-tsl-shaders","primaryImplementationReferences":["https://github.com/mrdoob/three.js/blob/dev/src/nodes/materialx/MaterialXNoise.js","https://github.com/mrdoob/three.js/wiki/Three.js-Shading-Language"],"adoptedNoiseFamilies":["gradient noise","fractal Brownian motion","ridged fBm","turbulence","domain warp","Worley cellular noise"],"gaeaOfficialDocumentation":["https://docs.quadspinner.com/Reference/","https://docs.quadspinner.com/Guide/Using-Gaea/Modify-Shapes.html","https://docs.quadspinner.com/Reference/Adjustments/Combine.html","https://docs.quadspinner.com/Reference/LookDev/Rugged.html","https://docs.quadspinner.com/Guide/Using-Gaea/LookDev.html","https://docs.quadspinner.com/Reference/Erosion/MicroErosion.html","https://docs.quadspinner.com/Reference/Erosion/Stratify.html","https://docs.quadspinner.com/Reference/Data/RockMap.html","https://docs.quadspinner.com/Reference/Color/CLUTer.html","https://docs.quadspinner.com/Reference/Color/Synth.html","https://docs.quadspinner.com/Reference/Color/Splat.html","https://docs.quadspinner.com/Reference/Color/ColorFX.html"],"gaeaDistillationPolicy":"Documented node roles and graph strategies distilled into an independent field implementation."},"rendererContract":{"engine":"BrickMother WebGL2 Runtime V2.7 visual truth formation hierarchy","workingColorSpace":"linear-sRGB","outputColorSpace":"sRGB","toneMapping":"neutral exponential","metalnessPolicy":"all masonry runtime materials forced to 0.0 unless independently verified","damagePolicy":"Benchmark mode adds deterministic macro plate loss, shear bands, bedding, delamination, undercut shelves, cavity clusters, fracture branches, edge spalls, fibre bundles, pullout channels, compaction flakes and mineral seams. Historical production proportions remain available.","mutationPolicy":"independent seeded layers for shape, damage, pores, color, water, weathering, inclusions and micro detail","channelCorrelation":"Geometry, albedo, roughness, micro normal and ambient occlusion share uploaded deterministic V2.7 formation events, plus the existing independent seed layers.","gaeaFieldGraph":"Rugged, broken stratify, micro-erosion, rock-map, flow, separation-mask, CLUT5 and normalized Splat fields share geometry, color, roughness, normal and AO correlations; fired-clay color bands are event-gated to suppress regular contours."},"profiles":[{"id":"historical-fired","label":"历史手工烧结砖","family":"FIRED_CLAY","source":{"filename":"12th_-14th_century_building_brick.glb","bytes":3474792,"sha256":"36848fd806fc251f3a754701aef71a1e09b3a2996c78783b9082346600e8ffb8","author":"pasquill","license":"CC BY 4.0","sourceUrl":"https://sketchfab.com/3d-models/12th-14th-century-building-brick-5f7758009c0b4599a36ecb2114c1a6a7"},"measured":{"dimensionsMm":[318.95884,81.495,147.39672],"triangleCount":19390,"baseColorMeanSRGB":[0.492622,0.357764,0.209922],"baseColorP05SRGB":[0.0,0.0,0.0],"baseColorP95SRGB":[0.694118,0.505882,0.298039],"roughnessMean":0.9577051495,"normalTiltDegrees":{"mean":9.0951,"p50":6.5735,"p95":27.8144}},"runtimeDNA":{"shapeRatio":[3.913,1.0,1.809],"edgeRadius":0.075,"macroWarp":0.03,"surfaceRelief":0.032,"grainScale":7.2,"fineScale":34.0,"roughnessRange":[0.92,0.995],"colorLowSRGB":[0.035,0.025,0.02],"colorMeanSRGB":[0.36,0.135,0.055],"colorHighSRGB":[0.72,0.4,0.18],"mineralFleck":0.26,"firingBand":0.34,"pitDensity":0.48,"edgeFragility":0.64,"crackAffinity":0.52,"seedBase":1214},"noiseDNA":{"warpStrength":0.19,"macroScale":1.55,"ridgedScale":6.2,"cellScale":16.0,"poreThreshold":0.115,"poreSharpness":0.05,"microScale":44.0,"colorContrast":1.58,"cavityStrength":0.92,"bumpStrength":0.135,"roughnessCorrelation":0.5,"mineralScale":24.0,"geometryPoreCount":14,"edgeRoundnessScale":0.56,"geometryWarp":0.84,"geometryRelief":0.7,"domainWarpScale":0.82,"geometryDeepPoreCount":6,"colorClusterScale":3.1,"waterRunoffScale":5.4,"weatherExposureScale":1.82},"paletteDNA":{"darkSRGB":[0.018,0.02,0.022],"warmSRGB":[0.58,0.24,0.08],"oxideSRGB":[0.72,0.18,0.045],"mineralSRGB":[0.84,0.78,0.64],"bioSRGB":[0.13,0.17,0.08],"wetSRGB":[0.035,0.05,0.065],"strawSRGB":[0.59,0.4,0.16],"huskSRGB":[0.72,0.54,0.27],"seedSRGB":[0.26,0.13,0.055]},"compositeDefaults":{"colorRichness":1.64,"damage":0.66,"poreDepth":1.2,"waterStain":0.7,"weathering":0.88,"inclusion":0.22,"shapeVariation":0.96,"rockDetail":0.52,"strata":0.1,"microErosion":0.62,"colorClarity":1.1,"colorGamut":1.34,"maskSharpness":0.84,"poreDensity":1.38,"poreVariety":1.5},"seedLayerOffsets":{"shape":101,"damage":211,"pore":307,"color":401,"water":503,"weather":601,"inclusion":701,"detail":809},"gaeaDNA":{"ruggedScale":6.2,"strataFrequency":5.2,"surfaceScale":36.0,"ruggedDepth":0.0095,"strataDepth":0.0032,"microErosionDepth":0.0042,"warpStrength":0.22,"strataTilt":0.17,"geometryStrength":1.0}},{"id":"old-pbr-fired","label":"完整 PBR 老砖","family":"FIRED_CLAY","source":{"filename":"brick.glb","bytes":4218980,"sha256":"b90d0b805926b684d62034deaf90ba922ac8c5c52bf0e9115fd2d0fd2bcdf5be","author":"Rigsters","license":"CC BY 4.0","sourceUrl":"https://sketchfab.com/3d-models/brick-504a59ef14a148809cec657d7c99367c"},"measured":{"dimensionsMm":[424.04932,137.55632,276.93737],"triangleCount":29996,"baseColorMeanSRGB":[0.623176,0.560165,0.435435],"baseColorP05SRGB":[0.501961,0.439216,0.282353],"baseColorP95SRGB":[0.737255,0.678431,0.572549],"roughnessMean":0.646511,"roughnessP05":0.529412,"roughnessP95":0.72549,"normalTiltDegrees":{"mean":8.5061,"p50":5.7543,"p95":25.9049}},"runtimeDNA":{"shapeRatio":[3.083,1.0,2.013],"edgeRadius":0.085,"macroWarp":0.024,"surfaceRelief":0.026,"grainScale":8.0,"fineScale":42.0,"roughnessRange":[0.78,0.96],"colorLowSRGB":[0.035,0.025,0.02],"colorMeanSRGB":[0.36,0.135,0.055],"colorHighSRGB":[0.72,0.4,0.18],"mineralFleck":0.68,"firingBand":0.18,"pitDensity":0.56,"edgeFragility":0.47,"crackAffinity":0.34,"seedBase":5045},"noiseDNA":{"warpStrength":0.16,"macroScale":1.45,"ridgedScale":5.8,"cellScale":14.0,"poreThreshold":0.12,"poreSharpness":0.05,"microScale":42.0,"colorContrast":1.52,"cavityStrength":0.86,"bumpStrength":0.13,"roughnessCorrelation":0.48,"mineralScale":22.0,"geometryPoreCount":12,"edgeRoundnessScale":0.54,"geometryWarp":0.72,"geometryRelief":0.62,"domainWarpScale":0.78,"geometryDeepPoreCount":5,"colorClusterScale":3.1,"waterRunoffScale":5.4,"weatherExposureScale":1.82},"paletteDNA":{"darkSRGB":[0.018,0.02,0.022],"warmSRGB":[0.58,0.24,0.08],"oxideSRGB":[0.72,0.18,0.045],"mineralSRGB":[0.84,0.78,0.64],"bioSRGB":[0.14,0.18,0.085],"wetSRGB":[0.038,0.054,0.068],"strawSRGB":[0.62,0.45,0.2],"huskSRGB":[0.76,0.61,0.34],"seedSRGB":[0.27,0.16,0.075]},"compositeDefaults":{"colorRichness":1.6,"damage":0.66,"poreDepth":1.2,"waterStain":0.82,"weathering":0.84,"inclusion":0.2,"shapeVariation":0.9,"rockDetail":0.5,"strata":0.08,"microErosion":0.6,"colorClarity":1.08,"colorGamut":1.3,"maskSharpness":0.82,"poreDensity":1.38,"poreVariety":1.5},"seedLayerOffsets":{"shape":101,"damage":211,"pore":307,"color":401,"water":503,"weather":601,"inclusion":701,"detail":809},"gaeaDNA":{"ruggedScale":6.2,"strataFrequency":5.2,"surfaceScale":36.0,"ruggedDepth":0.0095,"strataDepth":0.0032,"microErosionDepth":0.0042,"warpStrength":0.22,"strataTilt":0.17,"geometryStrength":1.0}},{"id":"raw-clay","label":"原始黏土砖","family":"ADOBE","source":{"filename":"clay_brick.glb","bytes":10191844,"sha256":"e15725edb10adf87b0bdc6d92a73d749f97b5d2f2a6b0f70c3deecfa8f57d02d","author":"Världskulturmuseerna","license":"CC BY-NC 4.0","sourceUrl":"https://sketchfab.com/3d-models/clay-brick-adc8de4f9d4a4091bf5b5dedf45fcba4"},"measured":{"dimensionsMm":[565.95757,131.872305,563.575051],"triangleCount":180782,"baseColorMeanSRGB":[0.644732,0.579669,0.497125],"baseColorP05SRGB":[0.466667,0.415686,0.360784],"baseColorP95SRGB":[0.760784,0.690196,0.6],"roughnessMean":0.7906289251,"normalTiltDegrees":{"mean":6.6057,"p50":4.7973,"p95":19.7048}},"runtimeDNA":{"shapeRatio":[4.291,1.0,4.273],"edgeRadius":0.105,"macroWarp":0.052,"surfaceRelief":0.041,"grainScale":5.6,"fineScale":28.0,"roughnessRange":[0.84,0.985],"colorLowSRGB":[0.15,0.095,0.06],"colorMeanSRGB":[0.48,0.32,0.18],"colorHighSRGB":[0.76,0.61,0.39],"mineralFleck":0.36,"firingBand":0.0,"pitDensity":0.66,"edgeFragility":0.78,"crackAffinity":0.7,"seedBase":4517},"noiseDNA":{"warpStrength":0.23,"macroScale":1.25,"ridgedScale":4.4,"cellScale":10.5,"poreThreshold":0.155,"poreSharpness":0.052,"microScale":28.0,"colorContrast":1.42,"cavityStrength":0.72,"bumpStrength":0.145,"roughnessCorrelation":0.56,"mineralScale":17.0,"geometryPoreCount":13,"edgeRoundnessScale":0.72,"geometryWarp":1.05,"geometryRelief":0.86,"domainWarpScale":0.68,"geometryDeepPoreCount":5,"colorClusterScale":2.4,"waterRunoffScale":5.4,"weatherExposureScale":1.82},"paletteDNA":{"darkSRGB":[0.085,0.06,0.043],"warmSRGB":[0.63,0.43,0.24],"oxideSRGB":[0.53,0.25,0.11],"mineralSRGB":[0.79,0.71,0.56],"bioSRGB":[0.18,0.25,0.1],"wetSRGB":[0.065,0.052,0.044],"strawSRGB":[0.72,0.56,0.31],"huskSRGB":[0.83,0.72,0.46],"seedSRGB":[0.18,0.07,0.02]},"compositeDefaults":{"colorRichness":1.42,"damage":0.82,"poreDepth":1.36,"waterStain":0.84,"weathering":0.86,"inclusion":1.48,"shapeVariation":1.08,"rockDetail":0.38,"strata":0.1,"microErosion":0.64,"colorClarity":1.02,"colorGamut":1.18,"maskSharpness":0.76,"poreDensity":1.58,"poreVariety":1.46},"seedLayerOffsets":{"shape":101,"damage":211,"pore":307,"color":401,"water":503,"weather":601,"inclusion":701,"detail":809},"gaeaDNA":{"ruggedScale":4.8,"strataFrequency":3.4,"surfaceScale":29.0,"ruggedDepth":0.0075,"strataDepth":0.0022,"microErosionDepth":0.0054,"warpStrength":0.27,"strataTilt":0.11,"geometryStrength":0.92}},{"id":"stone-block","label":"石块","family":"STONE","source":{"filename":"stone_brick.glb","bytes":23979900,"sha256":"69a2be880fab4a209ee0d46e639b2ad458fdb327e15c738092b1ce55f5e68ebe","author":"LuthBird1","license":"CC BY 4.0","sourceUrl":"https://sketchfab.com/3d-models/stone-brick-8a31a831769f491f849f20715127d239"},"measured":{"dimensionsMm":[14.20577,7.82418,5.96787],"dimensionUnitStatus":"source-units-pending-calibration","triangleCount":263744,"baseColorMeanSRGB":[0.154841,0.174215,0.191687],"baseColorP05SRGB":[0.054902,0.105882,0.152941],"baseColorP95SRGB":[0.266667,0.258824,0.25098],"rawRoughnessMean":0.513786,"rawMetalnessMean":0.268394,"normalTiltDegrees":{"mean":3.2268,"p50":1.9322,"p95":11.2616},"sourceExportAnomalies":["alphaMode BLEND","emissiveFactor 1,1,1 with black emissive map","non-zero metalness on masonry"]},"runtimeDNA":{"shapeRatio":[1.816,1.0,0.763],"edgeRadius":0.055,"macroWarp":0.044,"surfaceRelief":0.024,"grainScale":10.0,"fineScale":38.0,"roughnessRange":[0.78,0.96],"colorLowSRGB":[0.04,0.047,0.052],"colorMeanSRGB":[0.31,0.31,0.29],"colorHighSRGB":[0.66,0.63,0.55],"mineralFleck":0.82,"firingBand":0.0,"pitDensity":0.38,"edgeFragility":0.56,"crackAffinity":0.84,"seedBase":8231,"normalization":{"metalness":0.0,"emissive":0.0,"alphaMode":"OPAQUE"}},"noiseDNA":{"warpStrength":0.2,"macroScale":1.75,"ridgedScale":6.2,"cellScale":18.0,"poreThreshold":0.105,"poreSharpness":0.05,"microScale":36.0,"colorContrast":1.46,"cavityStrength":0.8,"bumpStrength":0.15,"roughnessCorrelation":0.34,"mineralScale":21.0,"geometryPoreCount":11,"edgeRoundnessScale":0.44,"geometryWarp":0.92,"geometryRelief":0.74,"domainWarpScale":0.88,"geometryDeepPoreCount":5,"colorClusterScale":3.1,"waterRunoffScale":5.4,"weatherExposureScale":1.82},"paletteDNA":{"darkSRGB":[0.034,0.041,0.048],"warmSRGB":[0.44,0.34,0.25],"oxideSRGB":[0.48,0.25,0.11],"mineralSRGB":[0.82,0.8,0.72],"bioSRGB":[0.18,0.22,0.14],"wetSRGB":[0.04,0.058,0.075],"strawSRGB":[0.52,0.39,0.18],"huskSRGB":[0.7,0.56,0.31],"seedSRGB":[0.21,0.14,0.07]},"compositeDefaults":{"colorRichness":1.34,"damage":0.76,"poreDepth":1.32,"waterStain":0.72,"weathering":0.88,"inclusion":0.1,"shapeVariation":1.02,"rockDetail":1.3,"strata":1.02,"microErosion":1.08,"colorClarity":1.12,"colorGamut":1.3,"maskSharpness":0.7,"poreDensity":1.46,"poreVariety":1.58},"seedLayerOffsets":{"shape":101,"damage":211,"pore":307,"color":401,"water":503,"weather":601,"inclusion":701,"detail":809},"gaeaDNA":{"ruggedScale":7.6,"strataFrequency":8.4,"surfaceScale":30.0,"ruggedDepth":0.027,"strataDepth":0.015,"microErosionDepth":0.0115,"warpStrength":0.31,"strataTilt":0.23,"geometryStrength":1.18}}],"batchPresets":[{"id":"first-composite-batch-v2-alpha1","label":"首批复合材质 DNA V2","members":[{"profileId":"historical-fired","masterSeedOffset":101,"damageLevel":0.24},{"profileId":"raw-clay","masterSeedOffset":202,"damageLevel":0.34},{"profileId":"stone-block","masterSeedOffset":303,"damageLevel":0.3}]}],"v2CompositeContract":{"status":"neutral-studio-rich-spectrum-alpha","seedLayers":["shape","damage","pore","color","water","weather","inclusion","detail"],"adjustableControls":["colorRichness","damage","poreDepth","waterStain","weathering","inclusion","shapeVariation","rockDetail","strata","microErosion","colorClarity","colorGamut","maskSharpness"],"adobeInclusionFamilies":["long-straw","chopped-straw","rice-husk","seed-grain","missing-inclusion-pit","physical-fiber-pullout-channel"],"palettePolicy":"source-informed multi-cluster palette with a separate wet, weather, mineral, biological and organic inclusion color family","referenceCalibration":"V2.6 uses neutral studio illumination, high-roughness masonry, broad fired-red and charcoal kiln zones, blue-gray and olive stone regions, warm adobe clay zones, visible clustered fibers, and a stronger multi-scale pore spectrum. Manual visual approval remains required.","visualCalibration":{"eventColorMasking":true,"regularOxideContourSuppression":true,"evidenceProfiles":["old-pbr-fired","stone-block","raw-clay"],"productionApproved":false,"jrbReferenceApproved":false,"stoneDetailApproved":false,"adobeInclusionApproved":false},"naturalEventColor":{"connectedCellularColorNetworksSuppressed":true,"broadMaterialPatches":true,"sparseOxideEvents":true,"familySpecificSaturation":true,"naturalStonePalette":true,"variedAdobeFiberAging":true},"spectralBalance":{"firedClayChromaticZones":true,"stoneReadableMidtones":true,"familyLightingExposure":true,"reducedMicroNoise":true,"adobeInclusionClustering":true},"deepPoreSpectrum":{"clusteredAnchors":true,"microMediumLargeFamilies":true,"collapsedMouths":true,"brokenRimCuts":true,"correlatedColorRoughnessNormalAO":true},"richMaterialFamilies":{"firedClayChromaticZones":true,"stoneBlueOliveWarmRustCalciteWetZones":true,"adobeClayRedOchreDustDampInclusionZones":true},"manualVisualApprovalRequired":true,"neutralStudioRichSpectrum":{"neutralLighting":true,"highRoughnessMasonry":true,"firedRedCharcoalMineralZones":true,"stoneBlueOliveRustCalciteZones":true,"adobeClayDustDampZones":true,"visibleAdobeLongFibers":true,"strongerClusteredPoreSpectrum":true}},"version":"2.7.3-alpha.1"};</script>
+  window.__BRICK_MOTHER_INLINE_DATA__={"schemaVersion":"2.7.4-alpha.1","generatedAt":"2026-08-29","pipelineId":"brick-mother-v27-visual-truth-formation-hierarchy","researchBasis":{"userReference":"https://threejsroadmap.com/blog/10-noise-functions-for-threejs-tsl-shaders","primaryImplementationReferences":["https://github.com/mrdoob/three.js/blob/dev/src/nodes/materialx/MaterialXNoise.js","https://github.com/mrdoob/three.js/wiki/Three.js-Shading-Language"],"adoptedNoiseFamilies":["gradient noise","fractal Brownian motion","ridged fBm","turbulence","domain warp","Worley cellular noise"],"gaeaOfficialDocumentation":["https://docs.quadspinner.com/Reference/","https://docs.quadspinner.com/Guide/Using-Gaea/Modify-Shapes.html","https://docs.quadspinner.com/Reference/Adjustments/Combine.html","https://docs.quadspinner.com/Reference/LookDev/Rugged.html","https://docs.quadspinner.com/Guide/Using-Gaea/LookDev.html","https://docs.quadspinner.com/Reference/Erosion/MicroErosion.html","https://docs.quadspinner.com/Reference/Erosion/Stratify.html","https://docs.quadspinner.com/Reference/Data/RockMap.html","https://docs.quadspinner.com/Reference/Color/CLUTer.html","https://docs.quadspinner.com/Reference/Color/Synth.html","https://docs.quadspinner.com/Reference/Color/Splat.html","https://docs.quadspinner.com/Reference/Color/ColorFX.html"],"gaeaDistillationPolicy":"Documented node roles and graph strategies distilled into an independent field implementation."},"rendererContract":{"engine":"BrickMother WebGL2 Runtime V2.7 visual truth formation hierarchy","workingColorSpace":"linear-sRGB","outputColorSpace":"sRGB","toneMapping":"neutral exponential","metalnessPolicy":"all masonry runtime materials forced to 0.0 unless independently verified","damagePolicy":"Benchmark mode adds deterministic macro plate loss, shear bands, bedding, delamination, undercut shelves, cavity clusters, fracture branches, edge spalls, fibre bundles, pullout channels, compaction flakes and mineral seams. Historical production proportions remain available.","mutationPolicy":"independent seeded layers for shape, damage, pores, color, water, weathering, inclusions and micro detail","channelCorrelation":"Geometry, albedo, roughness, micro normal and ambient occlusion share uploaded deterministic V2.7 formation events, plus the existing independent seed layers.","gaeaFieldGraph":"Rugged, broken stratify, micro-erosion, rock-map, flow, separation-mask, CLUT5 and normalized Splat fields share geometry, color, roughness, normal and AO correlations; fired-clay color bands are event-gated to suppress regular contours."},"profiles":[{"id":"historical-fired","label":"历史手工烧结砖","family":"FIRED_CLAY","source":{"filename":"12th_-14th_century_building_brick.glb","bytes":3474792,"sha256":"36848fd806fc251f3a754701aef71a1e09b3a2996c78783b9082346600e8ffb8","author":"pasquill","license":"CC BY 4.0","sourceUrl":"https://sketchfab.com/3d-models/12th-14th-century-building-brick-5f7758009c0b4599a36ecb2114c1a6a7"},"measured":{"dimensionsMm":[318.95884,81.495,147.39672],"triangleCount":19390,"baseColorMeanSRGB":[0.492622,0.357764,0.209922],"baseColorP05SRGB":[0.0,0.0,0.0],"baseColorP95SRGB":[0.694118,0.505882,0.298039],"roughnessMean":0.9577051495,"normalTiltDegrees":{"mean":9.0951,"p50":6.5735,"p95":27.8144}},"runtimeDNA":{"shapeRatio":[3.913,1.0,1.809],"edgeRadius":0.075,"macroWarp":0.03,"surfaceRelief":0.032,"grainScale":7.2,"fineScale":34.0,"roughnessRange":[0.92,0.995],"colorLowSRGB":[0.035,0.025,0.02],"colorMeanSRGB":[0.36,0.135,0.055],"colorHighSRGB":[0.72,0.4,0.18],"mineralFleck":0.26,"firingBand":0.34,"pitDensity":0.48,"edgeFragility":0.64,"crackAffinity":0.52,"seedBase":1214},"noiseDNA":{"warpStrength":0.19,"macroScale":1.55,"ridgedScale":6.2,"cellScale":16.0,"poreThreshold":0.115,"poreSharpness":0.05,"microScale":44.0,"colorContrast":1.58,"cavityStrength":0.92,"bumpStrength":0.135,"roughnessCorrelation":0.5,"mineralScale":24.0,"geometryPoreCount":14,"edgeRoundnessScale":0.56,"geometryWarp":0.84,"geometryRelief":0.7,"domainWarpScale":0.82,"geometryDeepPoreCount":6,"colorClusterScale":3.1,"waterRunoffScale":5.4,"weatherExposureScale":1.82},"paletteDNA":{"darkSRGB":[0.018,0.02,0.022],"warmSRGB":[0.58,0.24,0.08],"oxideSRGB":[0.72,0.18,0.045],"mineralSRGB":[0.84,0.78,0.64],"bioSRGB":[0.13,0.17,0.08],"wetSRGB":[0.035,0.05,0.065],"strawSRGB":[0.59,0.4,0.16],"huskSRGB":[0.72,0.54,0.27],"seedSRGB":[0.26,0.13,0.055]},"compositeDefaults":{"colorRichness":1.64,"damage":0.66,"poreDepth":1.2,"waterStain":0.7,"weathering":0.88,"inclusion":0.22,"shapeVariation":0.96,"rockDetail":0.52,"strata":0.1,"microErosion":0.62,"colorClarity":1.1,"colorGamut":1.34,"maskSharpness":0.84,"poreDensity":1.38,"poreVariety":1.5},"seedLayerOffsets":{"shape":101,"damage":211,"pore":307,"color":401,"water":503,"weather":601,"inclusion":701,"detail":809},"gaeaDNA":{"ruggedScale":6.2,"strataFrequency":5.2,"surfaceScale":36.0,"ruggedDepth":0.0095,"strataDepth":0.0032,"microErosionDepth":0.0042,"warpStrength":0.22,"strataTilt":0.17,"geometryStrength":1.0}},{"id":"old-pbr-fired","label":"完整 PBR 老砖","family":"FIRED_CLAY","source":{"filename":"brick.glb","bytes":4218980,"sha256":"b90d0b805926b684d62034deaf90ba922ac8c5c52bf0e9115fd2d0fd2bcdf5be","author":"Rigsters","license":"CC BY 4.0","sourceUrl":"https://sketchfab.com/3d-models/brick-504a59ef14a148809cec657d7c99367c"},"measured":{"dimensionsMm":[424.04932,137.55632,276.93737],"triangleCount":29996,"baseColorMeanSRGB":[0.623176,0.560165,0.435435],"baseColorP05SRGB":[0.501961,0.439216,0.282353],"baseColorP95SRGB":[0.737255,0.678431,0.572549],"roughnessMean":0.646511,"roughnessP05":0.529412,"roughnessP95":0.72549,"normalTiltDegrees":{"mean":8.5061,"p50":5.7543,"p95":25.9049}},"runtimeDNA":{"shapeRatio":[3.083,1.0,2.013],"edgeRadius":0.085,"macroWarp":0.024,"surfaceRelief":0.026,"grainScale":8.0,"fineScale":42.0,"roughnessRange":[0.78,0.96],"colorLowSRGB":[0.035,0.025,0.02],"colorMeanSRGB":[0.36,0.135,0.055],"colorHighSRGB":[0.72,0.4,0.18],"mineralFleck":0.68,"firingBand":0.18,"pitDensity":0.56,"edgeFragility":0.47,"crackAffinity":0.34,"seedBase":5045},"noiseDNA":{"warpStrength":0.16,"macroScale":1.45,"ridgedScale":5.8,"cellScale":14.0,"poreThreshold":0.12,"poreSharpness":0.05,"microScale":42.0,"colorContrast":1.52,"cavityStrength":0.86,"bumpStrength":0.13,"roughnessCorrelation":0.48,"mineralScale":22.0,"geometryPoreCount":12,"edgeRoundnessScale":0.54,"geometryWarp":0.72,"geometryRelief":0.62,"domainWarpScale":0.78,"geometryDeepPoreCount":5,"colorClusterScale":3.1,"waterRunoffScale":5.4,"weatherExposureScale":1.82},"paletteDNA":{"darkSRGB":[0.018,0.02,0.022],"warmSRGB":[0.58,0.24,0.08],"oxideSRGB":[0.72,0.18,0.045],"mineralSRGB":[0.84,0.78,0.64],"bioSRGB":[0.14,0.18,0.085],"wetSRGB":[0.038,0.054,0.068],"strawSRGB":[0.62,0.45,0.2],"huskSRGB":[0.76,0.61,0.34],"seedSRGB":[0.27,0.16,0.075]},"compositeDefaults":{"colorRichness":1.6,"damage":0.66,"poreDepth":1.2,"waterStain":0.82,"weathering":0.84,"inclusion":0.2,"shapeVariation":0.9,"rockDetail":0.5,"strata":0.08,"microErosion":0.6,"colorClarity":1.08,"colorGamut":1.3,"maskSharpness":0.82,"poreDensity":1.38,"poreVariety":1.5},"seedLayerOffsets":{"shape":101,"damage":211,"pore":307,"color":401,"water":503,"weather":601,"inclusion":701,"detail":809},"gaeaDNA":{"ruggedScale":6.2,"strataFrequency":5.2,"surfaceScale":36.0,"ruggedDepth":0.0095,"strataDepth":0.0032,"microErosionDepth":0.0042,"warpStrength":0.22,"strataTilt":0.17,"geometryStrength":1.0}},{"id":"raw-clay","label":"原始黏土砖","family":"ADOBE","source":{"filename":"clay_brick.glb","bytes":10191844,"sha256":"e15725edb10adf87b0bdc6d92a73d749f97b5d2f2a6b0f70c3deecfa8f57d02d","author":"Världskulturmuseerna","license":"CC BY-NC 4.0","sourceUrl":"https://sketchfab.com/3d-models/clay-brick-adc8de4f9d4a4091bf5b5dedf45fcba4"},"measured":{"dimensionsMm":[565.95757,131.872305,563.575051],"triangleCount":180782,"baseColorMeanSRGB":[0.644732,0.579669,0.497125],"baseColorP05SRGB":[0.466667,0.415686,0.360784],"baseColorP95SRGB":[0.760784,0.690196,0.6],"roughnessMean":0.7906289251,"normalTiltDegrees":{"mean":6.6057,"p50":4.7973,"p95":19.7048}},"runtimeDNA":{"shapeRatio":[4.291,1.0,4.273],"edgeRadius":0.105,"macroWarp":0.052,"surfaceRelief":0.041,"grainScale":5.6,"fineScale":28.0,"roughnessRange":[0.84,0.985],"colorLowSRGB":[0.15,0.095,0.06],"colorMeanSRGB":[0.48,0.32,0.18],"colorHighSRGB":[0.76,0.61,0.39],"mineralFleck":0.36,"firingBand":0.0,"pitDensity":0.66,"edgeFragility":0.78,"crackAffinity":0.7,"seedBase":4517},"noiseDNA":{"warpStrength":0.23,"macroScale":1.25,"ridgedScale":4.4,"cellScale":10.5,"poreThreshold":0.155,"poreSharpness":0.052,"microScale":28.0,"colorContrast":1.42,"cavityStrength":0.72,"bumpStrength":0.145,"roughnessCorrelation":0.56,"mineralScale":17.0,"geometryPoreCount":13,"edgeRoundnessScale":0.72,"geometryWarp":1.05,"geometryRelief":0.86,"domainWarpScale":0.68,"geometryDeepPoreCount":5,"colorClusterScale":2.4,"waterRunoffScale":5.4,"weatherExposureScale":1.82},"paletteDNA":{"darkSRGB":[0.085,0.06,0.043],"warmSRGB":[0.63,0.43,0.24],"oxideSRGB":[0.53,0.25,0.11],"mineralSRGB":[0.79,0.71,0.56],"bioSRGB":[0.18,0.25,0.1],"wetSRGB":[0.065,0.052,0.044],"strawSRGB":[0.72,0.56,0.31],"huskSRGB":[0.83,0.72,0.46],"seedSRGB":[0.18,0.07,0.02]},"compositeDefaults":{"colorRichness":1.42,"damage":0.82,"poreDepth":1.36,"waterStain":0.84,"weathering":0.86,"inclusion":1.48,"shapeVariation":1.08,"rockDetail":0.38,"strata":0.1,"microErosion":0.64,"colorClarity":1.02,"colorGamut":1.18,"maskSharpness":0.76,"poreDensity":1.58,"poreVariety":1.46},"seedLayerOffsets":{"shape":101,"damage":211,"pore":307,"color":401,"water":503,"weather":601,"inclusion":701,"detail":809},"gaeaDNA":{"ruggedScale":4.8,"strataFrequency":3.4,"surfaceScale":29.0,"ruggedDepth":0.0075,"strataDepth":0.0022,"microErosionDepth":0.0054,"warpStrength":0.27,"strataTilt":0.11,"geometryStrength":0.92}},{"id":"stone-block","label":"石块","family":"STONE","source":{"filename":"stone_brick.glb","bytes":23979900,"sha256":"69a2be880fab4a209ee0d46e639b2ad458fdb327e15c738092b1ce55f5e68ebe","author":"LuthBird1","license":"CC BY 4.0","sourceUrl":"https://sketchfab.com/3d-models/stone-brick-8a31a831769f491f849f20715127d239"},"measured":{"dimensionsMm":[14.20577,7.82418,5.96787],"dimensionUnitStatus":"source-units-pending-calibration","triangleCount":263744,"baseColorMeanSRGB":[0.154841,0.174215,0.191687],"baseColorP05SRGB":[0.054902,0.105882,0.152941],"baseColorP95SRGB":[0.266667,0.258824,0.25098],"rawRoughnessMean":0.513786,"rawMetalnessMean":0.268394,"normalTiltDegrees":{"mean":3.2268,"p50":1.9322,"p95":11.2616},"sourceExportAnomalies":["alphaMode BLEND","emissiveFactor 1,1,1 with black emissive map","non-zero metalness on masonry"]},"runtimeDNA":{"shapeRatio":[1.816,1.0,0.763],"edgeRadius":0.055,"macroWarp":0.044,"surfaceRelief":0.024,"grainScale":10.0,"fineScale":38.0,"roughnessRange":[0.78,0.96],"colorLowSRGB":[0.04,0.047,0.052],"colorMeanSRGB":[0.31,0.31,0.29],"colorHighSRGB":[0.66,0.63,0.55],"mineralFleck":0.82,"firingBand":0.0,"pitDensity":0.38,"edgeFragility":0.56,"crackAffinity":0.84,"seedBase":8231,"normalization":{"metalness":0.0,"emissive":0.0,"alphaMode":"OPAQUE"}},"noiseDNA":{"warpStrength":0.2,"macroScale":1.75,"ridgedScale":6.2,"cellScale":18.0,"poreThreshold":0.105,"poreSharpness":0.05,"microScale":36.0,"colorContrast":1.46,"cavityStrength":0.8,"bumpStrength":0.15,"roughnessCorrelation":0.34,"mineralScale":21.0,"geometryPoreCount":11,"edgeRoundnessScale":0.44,"geometryWarp":0.92,"geometryRelief":0.74,"domainWarpScale":0.88,"geometryDeepPoreCount":5,"colorClusterScale":3.1,"waterRunoffScale":5.4,"weatherExposureScale":1.82},"paletteDNA":{"darkSRGB":[0.034,0.041,0.048],"warmSRGB":[0.44,0.34,0.25],"oxideSRGB":[0.48,0.25,0.11],"mineralSRGB":[0.82,0.8,0.72],"bioSRGB":[0.18,0.22,0.14],"wetSRGB":[0.04,0.058,0.075],"strawSRGB":[0.52,0.39,0.18],"huskSRGB":[0.7,0.56,0.31],"seedSRGB":[0.21,0.14,0.07]},"compositeDefaults":{"colorRichness":1.34,"damage":0.76,"poreDepth":1.32,"waterStain":0.72,"weathering":0.88,"inclusion":0.1,"shapeVariation":1.02,"rockDetail":1.3,"strata":1.02,"microErosion":1.08,"colorClarity":1.12,"colorGamut":1.3,"maskSharpness":0.7,"poreDensity":1.46,"poreVariety":1.58},"seedLayerOffsets":{"shape":101,"damage":211,"pore":307,"color":401,"water":503,"weather":601,"inclusion":701,"detail":809},"gaeaDNA":{"ruggedScale":7.6,"strataFrequency":8.4,"surfaceScale":30.0,"ruggedDepth":0.027,"strataDepth":0.015,"microErosionDepth":0.0115,"warpStrength":0.31,"strataTilt":0.23,"geometryStrength":1.18}}],"batchPresets":[{"id":"first-composite-batch-v2-alpha1","label":"首批复合材质 DNA V2","members":[{"profileId":"historical-fired","masterSeedOffset":101,"damageLevel":0.24},{"profileId":"raw-clay","masterSeedOffset":202,"damageLevel":0.34},{"profileId":"stone-block","masterSeedOffset":303,"damageLevel":0.3}]}],"v2CompositeContract":{"status":"neutral-studio-rich-spectrum-alpha","seedLayers":["shape","damage","pore","color","water","weather","inclusion","detail"],"adjustableControls":["colorRichness","damage","poreDepth","waterStain","weathering","inclusion","shapeVariation","rockDetail","strata","microErosion","colorClarity","colorGamut","maskSharpness"],"adobeInclusionFamilies":["long-straw","chopped-straw","rice-husk","seed-grain","missing-inclusion-pit","physical-fiber-pullout-channel"],"palettePolicy":"source-informed multi-cluster palette with a separate wet, weather, mineral, biological and organic inclusion color family","referenceCalibration":"V2.6 uses neutral studio illumination, high-roughness masonry, broad fired-red and charcoal kiln zones, blue-gray and olive stone regions, warm adobe clay zones, visible clustered fibers, and a stronger multi-scale pore spectrum. Manual visual approval remains required.","visualCalibration":{"eventColorMasking":true,"regularOxideContourSuppression":true,"evidenceProfiles":["old-pbr-fired","stone-block","raw-clay"],"productionApproved":false,"jrbReferenceApproved":false,"stoneDetailApproved":false,"adobeInclusionApproved":false},"naturalEventColor":{"connectedCellularColorNetworksSuppressed":true,"broadMaterialPatches":true,"sparseOxideEvents":true,"familySpecificSaturation":true,"naturalStonePalette":true,"variedAdobeFiberAging":true},"spectralBalance":{"firedClayChromaticZones":true,"stoneReadableMidtones":true,"familyLightingExposure":true,"reducedMicroNoise":true,"adobeInclusionClustering":true},"deepPoreSpectrum":{"clusteredAnchors":true,"microMediumLargeFamilies":true,"collapsedMouths":true,"brokenRimCuts":true,"correlatedColorRoughnessNormalAO":true},"richMaterialFamilies":{"firedClayChromaticZones":true,"stoneBlueOliveWarmRustCalciteWetZones":true,"adobeClayRedOchreDustDampInclusionZones":true},"manualVisualApprovalRequired":true,"neutralStudioRichSpectrum":{"neutralLighting":true,"highRoughnessMasonry":true,"firedRedCharcoalMineralZones":true,"stoneBlueOliveRustCalciteZones":true,"adobeClayDustDampZones":true,"visibleAdobeLongFibers":true,"strongerClusteredPoreSpectrum":true}},"version":"2.7.3-alpha.1"};<\/script>
 <script>
 window.addEventListener("DOMContentLoaded", () => {
 (() => {
@@ -3838,7 +4021,7 @@ const MOBILE_RUNTIME = MOBILE_QUERY === '1' || (MOBILE_QUERY !== '0' && (
   ((window.matchMedia?.('(pointer: coarse)')?.matches ?? false) &&
     Math.min(window.innerWidth || 9999, window.innerHeight || 9999) < 920)
 ));
-const REBUILD_CONTROL_KEYS = ['damage', 'poreDepth', 'poreDensity', 'poreVariety', 'weathering', 'shapeVariation', 'rockDetail', 'strata', 'microErosion'];
+const REBUILD_CONTROL_KEYS = ['damage', 'poreDepth', 'poreDensity', 'poreVariety', 'weathering', 'inclusion', 'shapeVariation', 'rockDetail', 'strata', 'microErosion'];
 const CHILD_OFFSETS = [0, 1181, 2647];
 const SEED_PRIMES = {
   master: 1,
@@ -3952,8 +4135,10 @@ function updateProfilePanel(profile) {
     : '夹杂层保留在 DNA 中，当前材质家族以矿物、氧化和孔隙为主';
 }
 
-function seedBankForProfile(profile, cycle = state.batchCycle) {
-  const base = profile.runtimeDNA.seedBase + cycle * 911;
+function seedBankForProfile(profile, cycle = state.batchCycle, explicitMaster = null) {
+  const base = Number.isFinite(Number(explicitMaster))
+    ? Math.max(1, Math.round(Number(explicitMaster)))
+    : profile.runtimeDNA.seedBase + cycle * 911;
   const offsets = profile.seedLayerOffsets || {};
   const result = { master: base };
   for (const key of SEED_KEYS.slice(1)) result[key] = base + (offsets[key] || SEED_PRIMES[key] * 101);
@@ -3962,6 +4147,17 @@ function seedBankForProfile(profile, cycle = state.batchCycle) {
 
 function controlDefaultsForProfile(profile) {
   return normalizeControls(profile.compositeDefaults || {});
+}
+
+function globalControlDelta(profile) {
+  const defaults = controlDefaultsForProfile(profile);
+  const delta = {};
+  for (const key of CONTROL_KEYS) {
+    const value = Number(state.controls[key]);
+    const baseline = Number(defaults[key]);
+    delta[key] = Number.isFinite(value) && Number.isFinite(baseline) ? value - baseline : 0;
+  }
+  return delta;
 }
 
 function syncControlUI() {
@@ -4001,7 +4197,9 @@ function seedDNAFor(profile, childIndex) {
 
 function controlsForChild(profile, childIndex, mode) {
   const base = mode === 'mixed'
-    ? normalizeControls({ ...profile.compositeDefaults, ...state.controls })
+    ? normalizeControls(Object.fromEntries(
+      Object.entries(controlDefaultsForProfile(profile)).map(([key, value]) => [key, value + (globalControlDelta(state.profiles.get(state.selectedProfile))[key] || 0)])
+    ))
     : normalizeControls(state.controls);
   const shifts = [
     { damage: -0.10, poreDepth: -0.08, poreDensity: -0.08, poreVariety: -0.05, waterStain: -0.06, weathering: -0.05, colorRichness: -0.04 },
@@ -4189,6 +4387,24 @@ async function buildCurrentBatch() {
     const totalCollapsedPores = built.reduce((sum, item) => sum + (item.mesh.damage.collapsedPores?.length || 0), 0);
     const formationEvents = built.flatMap((item) => item.mesh.damage.formationEvents || []);
     const formationCounts = formationEvents.reduce((acc, event) => { acc[event.type] = (acc[event.type] || 0) + 1; return acc; }, {});
+    const formationQA = built.map((item) => item.mesh.formationEventQA || {
+      declaredEventCount: 0,
+      shaderHitCount: 0,
+      sdfGridHitCount: 0,
+      finalTopologyHitCount: 0,
+      declaredEventCountByType: {},
+      shaderHitCountByType: {},
+      sdfGridHitCountByType: {},
+      finalTopologyHitCountByType: {},
+      geometryAppliedByType: {}
+    });
+    const formationTotals = formationQA.reduce((acc, qa) => {
+      acc.declaredEventCount += qa.declaredEventCount || 0;
+      acc.shaderHitCount += qa.shaderHitCount || 0;
+      acc.sdfGridHitCount += qa.sdfGridHitCount || 0;
+      acc.finalTopologyHitCount += qa.finalTopologyHitCount || 0;
+      return acc;
+    }, { declaredEventCount: 0, shaderHitCount: 0, sdfGridHitCount: 0, finalTopologyHitCount: 0 });
     const elapsed = Math.round(performance.now() - start);
     $('#batchStats').textContent =
       `${triangleLabel(totalTriangles)} 三角面 · ${totalDeepPores} 深孔 · ${totalRimChips} 孔沿碎裂 · ${totalCollapsedPores} 塌口 · ${elapsed} ms`;
@@ -4221,6 +4437,12 @@ async function buildCurrentBatch() {
     document.documentElement.dataset.formationEvents = String(formationEvents.length);
     document.documentElement.dataset.macroEvents = String(formationEvents.filter((event) => ['macroPlateLoss', 'shearBand', 'beddingLayer', 'edgeSpall'].includes(event.type)).length);
     document.documentElement.dataset.mesoEvents = String(formationEvents.filter((event) => !['macroPlateLoss', 'shearBand', 'beddingLayer', 'edgeSpall'].includes(event.type)).length);
+    document.documentElement.dataset.declaredFormationEvents = String(formationTotals.declaredEventCount);
+    document.documentElement.dataset.shaderFormationHits = String(formationTotals.shaderHitCount);
+    document.documentElement.dataset.sdfGridFormationHits = String(formationTotals.sdfGridHitCount);
+    document.documentElement.dataset.finalTopologyFormationHits = String(formationTotals.finalTopologyHitCount);
+    document.documentElement.dataset.formationHitCount = String(formationTotals.finalTopologyHitCount);
+    document.documentElement.dataset.fiberBundles = String(formationEvents.filter((event) => event.type === 'fiberBundle').length);
     window.__BRICK_MOTHER_QA__ = {
       ready: true,
       version: '2.7.5-alpha.1',
@@ -4230,7 +4452,26 @@ async function buildCurrentBatch() {
       vertices: built.map((item) => item.mesh.vertices),
       grids: built.map((item) => item.mesh.grid),
       seedDNA: built.map((item) => item.mesh.seedDNA),
+      seedDerivation: built.map((item) => ({
+        master: item.mesh.seedDNA.master,
+        layers: Object.fromEntries(SEED_KEYS.slice(1).map((key) => [key, item.mesh.seedDNA[key]])),
+        rule: 'layer = master + profile.seedLayerOffsets[layer] + childOffset * prime[layer] + profileBias'
+      })),
       controls: built.map((item) => item.mesh.controls),
+      controlsByFamily: built.reduce((acc, item) => {
+        (acc[item.profile.family] ||= []).push(item.mesh.controls);
+        return acc;
+      }, {}),
+      seedDNAByFamily: built.reduce((acc, item) => {
+        (acc[item.profile.family] ||= []).push(item.mesh.seedDNA);
+        return acc;
+      }, {}),
+      globalControlDelta: globalControlDelta(state.profiles.get(state.selectedProfile)),
+      controlIsolation: {
+        mixedUsesProfileCompositeDefaults: state.batchMode === 'mixed',
+        soloUsesSelectedProfileControls: state.batchMode !== 'mixed',
+        sameFamilyMixedSoloComparable: true
+      },
       generationMs: elapsed,
       noExternalGeometryAssets: true,
       independentSeedLayers: ['shape', 'damage', 'pore', 'color', 'water', 'weather', 'inclusion', 'detail'],
@@ -4244,6 +4485,8 @@ async function buildCurrentBatch() {
       progressiveFamilyLoad: state.mobileMode,
       formationEventCounts: formationCounts,
       formationEventFamilies: Object.keys(formationCounts),
+      formationEventQA: formationQA,
+      formationEventTotals: formationTotals,
       soloMode: state.soloMode,
       erosionBiteCounts: built.map((item) => item.mesh.damage.erosionBites.length),
       inclusionVoidCounts: built.map((item) => item.mesh.damage.inclusionVoids?.length || 0),
@@ -4314,6 +4557,7 @@ function exportDNA() {
     profile: state.selectedProfile,
     batchMode: state.batchMode,
     controls: state.controls,
+    globalControlDelta: globalControlDelta(state.profiles.get(state.selectedProfile)),
     seedBank: state.seedBank,
     children: state.currentItems.map((item) => ({
       profileId: item.profile.id,
@@ -4324,7 +4568,8 @@ function exportDNA() {
       triangleCount: Math.round(item.mesh.triangles),
       deepPoreCount: item.mesh.damage.deepPores.length,
       erosionBiteCount: item.mesh.damage.erosionBites.length,
-      formationEvents: item.mesh.damage.formationEvents
+      formationEvents: item.mesh.damage.formationEvents,
+      formationEventQA: item.mesh.formationEventQA
     }))
   };
   const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
@@ -4343,7 +4588,10 @@ function bindControls() {
       state.controls[key] = Number(input.value);
       const output = $(`[data-control-output="${key}"]`);
       if (output) output.textContent = Number(input.value).toFixed(2);
-      for (const item of state.currentItems) item.mesh.controls[key] = Number(input.value);
+      state.currentItems.forEach((item, index) => {
+        item.mesh.controls = controlsForChild(item.profile, index, state.batchMode);
+      });
+      if (REBUILD_CONTROL_KEYS.includes(key)) scheduleBuild(160);
     });
     input.addEventListener('change', () => {
       if (REBUILD_CONTROL_KEYS.includes(key)) scheduleBuild(80);
@@ -4354,6 +4602,11 @@ function bindControls() {
     const key = input.dataset.seed;
     input.addEventListener('input', () => {
       state.seedBank[key] = Math.max(1, Math.round(Number(input.value) || 1));
+      if (key === 'master') {
+        const profile = state.profiles.get(state.selectedProfile);
+        state.seedBank = seedBankForProfile(profile, state.batchCycle, state.seedBank.master);
+        syncSeedUI();
+      }
     });
     input.addEventListener('change', () => scheduleBuild(80));
   });
@@ -4492,7 +4745,12 @@ async function main() {
     }
     const profile = state.profiles.get(state.selectedProfile);
     state.controls = controlDefaultsForProfile(profile);
-    state.seedBank = seedBankForProfile(profile);
+    const requestedMaster = Number(QUERY.get('seed'));
+    state.seedBank = seedBankForProfile(
+      profile,
+      state.batchCycle,
+      Number.isFinite(requestedMaster) && requestedMaster > 0 ? requestedMaster : null
+    );
     installMobileRuntimeUI();
     state.renderer = new BrickRenderer($('#brickCanvas'));
     state.renderer.setDebugMode(state.debugMode);

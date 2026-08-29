@@ -1,4 +1,4 @@
-name: Brick Mother V2.6 Neutral Rich Spectrum Smoke
+name: Brick Mother V2.7.5 Composite Evidence Smoke
 
 on:
   push:
@@ -13,170 +13,95 @@ permissions:
   contents: read
 
 jobs:
-  standalone-gate:
+  v275-composite-evidence:
     runs-on: ubuntu-latest
-    timeout-minutes: 11
+    timeout-minutes: 55
     steps:
-      - name: Checkout
+      - name: Checkout exact pushed head
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Validate V2.6 source and standalone contracts
+      - name: Validate V2.7.5 source contracts
         shell: bash
         run: |
           set -euo pipefail
           brick="yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother"
+          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
           node --check "$brick/brick-mother-gaea-kernel-v1.js"
           node --check "$brick/brick-mother-geometry-v2.js"
           node --check "$brick/brick-mother-renderer-v2.js"
           node --check "$brick/brick-mother-app-v2.js"
           python3 -m json.tool "$brick/data/brick-material-profiles-v2.json" >/dev/null
-          python3 -m json.tool "$brick/qa/gaea-distillation-contract-v1.json" >/dev/null
+          python3 -m json.tool "$brick/qa/v27-visual-truth-contract.json" >/dev/null
+          python3 -m json.tool "$brick/qa/evidence-manifest-v275.json" >/dev/null
           python3 -m json.tool "$brick/VERSION.json" >/dev/null
-          grep -q '"version": "2.6.0-alpha.1"' "$brick/VERSION.json"
-          grep -q '"neutralStudioLighting": true' "$brick/VERSION.json"
-          grep -q '"highRoughnessMasonry": true' "$brick/VERSION.json"
-          grep -q '"firedClayRedBlackMineralBalance": true' "$brick/VERSION.json"
-          grep -q '"stoneMineralSpectrum": true' "$brick/VERSION.json"
-          grep -q '"visibleAdobeFiberBands": true' "$brick/VERSION.json"
-          grep -q '"poreMicroContrast": true' "$brick/VERSION.json"
-          grep -q 'slateBlue' "$brick/brick-mother-renderer-v2.js"
-          grep -q 'clayRed' "$brick/brick-mother-renderer-v2.js"
-          grep -q 'cavityShade' "$brick/brick-mother-renderer-v2.js"
-          grep -q 'v2.6-neutral-studio-rich-material-alpha1' "$brick/brick-mother-geometry-v2.js"
-          standalone="$brick/brick-mother-standalone-v2.6.html"
+          grep -q '"version": "2.7.5-alpha.1"' "$brick/VERSION.json"
+          grep -q 'REBUILD_CONTROL_KEYS' "$brick/brick-mother-app-v2.js"
+          grep -q "'inclusion'" "$brick/brick-mother-app-v2.js"
+          grep -q 'eventGeometryEnabled' "$brick/brick-mother-geometry-v2.js"
+          grep -q 'formationEventQA' "$brick/brick-mother-geometry-v2.js"
+          grep -q 'finalTopologyHitCount' "$brick/brick-mother-app-v2.js"
+          grep -q 'data-channel="9"' "$brick/index.html"
+          grep -q 'data-channel="10"' "$brick/index.html"
+          standalone="$brick/brick-mother-standalone-v2.7.5.html"
           test -s "$standalone"
-          test "$(wc -c < "$standalone")" -gt 150000
+          test "$(wc -c < "$standalone")" -gt 190000
           ! grep -q '<script src=' "$standalone"
           ! grep -q '<link rel="stylesheet"' "$standalone"
-          sha256sum "$standalone" > /tmp/brick-mother-v26-standalone.sha256
+          grep -q 'window.__BRICK_MOTHER_INLINE_DATA__' "$standalone"
 
-      - name: Gate V2.6 standalone directly from file URL
+      - name: Install evidence metric dependency
+        run: python3 -m pip install --disable-pip-version-check --quiet pillow
+
+      - name: Capture 24 fixed material evidence images
         shell: bash
-        run: |
-          set -euo pipefail
-          chrome="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)"
-          uri="$(python3 - <<'PY'
-          from pathlib import Path
-          print(Path('yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/brick-mother-standalone-v2.6.html').resolve().as_uri())
-          PY
-          )"
-          timeout 330s "$chrome" \
-            --headless=new \
-            --no-sandbox \
-            --disable-dev-shm-usage \
-            --disable-background-networking \
-            --allow-file-access-from-files \
-            --enable-webgl \
-            --ignore-gpu-blocklist \
-            --enable-unsafe-swiftshader \
-            --use-gl=angle \
-            --use-angle=swiftshader \
-            --virtual-time-budget=155000 \
-            --dump-dom \
-            "${uri}?evidence=1&solo=1&profile=old-pbr-fired&focus=2&debug=0&qa=v26-continuous-gate" \
-            > /tmp/brick-mother-v26-gate-dom.html \
-            2> /tmp/brick-mother-v26-gate-chrome.log
-          grep -q 'data-brick-mother-ready="true"' /tmp/brick-mother-v26-gate-dom.html
-          grep -q 'data-brick-mother-version="2.6.0-alpha.1"' /tmp/brick-mother-v26-gate-dom.html
-          grep -q 'data-solo-mode="true"' /tmp/brick-mother-v26-gate-dom.html
-          grep -Eq 'data-deep-pores="[1-9][0-9]*"' /tmp/brick-mother-v26-gate-dom.html
-          grep -Eq 'data-pore-rim-chips="[1-9][0-9]*"' /tmp/brick-mother-v26-gate-dom.html
-          grep -q 'data-collapsed-pores=' /tmp/brick-mother-v26-gate-dom.html
-          grep -q 'data-evidence-ready="true"' /tmp/brick-mother-v26-gate-dom.html
-
-      - name: Upload V2.6 standalone gate
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: brick-mother-v26-standalone-gate
-          path: |
-            /tmp/brick-mother-v26-gate-dom.html
-            /tmp/brick-mother-v26-gate-chrome.log
-            /tmp/brick-mother-v26-standalone.sha256
-            yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/brick-mother-standalone-v2.6.html
-            yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/VERSION.json
-          compression-level: 1
-          if-no-files-found: ignore
-
-  material-evidence:
-    needs: standalone-gate
-    runs-on: ubuntu-latest
-    timeout-minutes: 16
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - profile: old-pbr-fired
-            label: fired
-          - profile: stone-block
-            label: stone
-          - profile: raw-clay
-            label: adobe
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Capture V2.6 final albedo and pore channels
-        shell: bash
-        run: |
-          set -euo pipefail
-          chrome="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)"
-          uri="$(python3 - <<'PY'
-          from pathlib import Path
-          print(Path('yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/brick-mother-standalone-v2.6.html').resolve().as_uri())
-          PY
-          )"
-          capture() {
-            suffix="$1"
-            debug="$2"
-            timeout 430s "$chrome" \
-              --headless=new \
-              --no-sandbox \
-              --disable-dev-shm-usage \
-              --disable-background-networking \
-              --allow-file-access-from-files \
-              --enable-webgl \
-              --ignore-gpu-blocklist \
-              --enable-unsafe-swiftshader \
-              --use-gl=angle \
-              --use-angle=swiftshader \
-              --hide-scrollbars \
-              --window-size=1600,1000 \
-              --virtual-time-budget=145000 \
-              --screenshot="/tmp/brick-mother-v26-${{ matrix.label }}-${suffix}.png" \
-              "${uri}?evidence=1&solo=1&profile=${{ matrix.profile }}&focus=2&debug=${debug}&qa=${{ matrix.label }}-${suffix}" \
-              > "/tmp/brick-mother-v26-${{ matrix.label }}-${suffix}.log" 2>&1
-            test -s "/tmp/brick-mother-v26-${{ matrix.label }}-${suffix}.png"
-          }
-          capture final 0
-          capture albedo 1
-          capture pores 2
-
-          python3 - <<'PY'
-          from pathlib import Path
-          import hashlib
-          import os
-          label = os.environ['MATRIX_LABEL']
-          paths = [Path('/tmp') / f'brick-mother-v26-{label}-{suffix}.png' for suffix in ('final', 'albedo', 'pores')]
-          hashes = []
-          for path in paths:
-              data = path.read_bytes()
-              assert data[:8] == b'\x89PNG\r\n\x1a\n'
-              assert len(data) > 100000, (path.name, len(data))
-              hashes.append(hashlib.sha256(data).hexdigest())
-          assert len(set(hashes)) == 3, hashes
-          print({'profile': label, 'files': [p.name for p in paths], 'hashes': hashes})
-          PY
         env:
-          MATRIX_LABEL: ${{ matrix.label }}
+          JRB_REFERENCE_PATH: ${{ vars.JRB_REFERENCE_PATH }}
+        run: |
+          set -euo pipefail
+          brick="yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother"
+          chrome="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)"
+          args=(
+            --chrome "$chrome"
+            --html "$brick/brick-mother-standalone-v2.7.5.html"
+            --out /tmp/brick-mother-v275-evidence
+          )
+          if [ -n "${JRB_REFERENCE_PATH:-}" ] && [ -f "${JRB_REFERENCE_PATH}" ]; then
+            args+=(--reference "${JRB_REFERENCE_PATH}")
+          fi
+          python3 "$brick/tools/capture_evidence_v275.py" "${args[@]}"
+          test "$(find /tmp/brick-mother-v275-evidence -maxdepth 1 -name '*.png' | wc -l)" -eq 24
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          report=json.loads(Path('/tmp/brick-mother-v275-evidence/evidence-manifest.json').read_text())
+          assert report['imageCount'] == 24, report['imageCount']
+          assert report['canvas'] == [1600,1000]
+          assert report['manualApprovals'] == {
+              'jrbReferenceColorApproved': False,
+              'stoneDetailApproved': False,
+              'adobeInclusionApproved': False,
+              'productionApproved': False,
+          }
+          assert not report['finalLuminanceStdDevFailures'], report['finalLuminanceStdDevFailures']
+          for item in report['records']:
+              assert item['size'] == [1600,1000], item
+          PY
 
-      - name: Upload V2.6 material evidence
+      - name: Upload exact-head V2.7.5 evidence and QA
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: brick-mother-v26-${{ matrix.label }}-evidence
+          name: brick-mother-v275-composite-evidence-${{ github.sha }}
           path: |
-            /tmp/brick-mother-v26-${{ matrix.label }}-*.png
-            /tmp/brick-mother-v26-${{ matrix.label }}-*.log
+            /tmp/brick-mother-v275-evidence/*.png
+            /tmp/brick-mother-v275-evidence/*.dom.html
+            /tmp/brick-mother-v275-evidence/*.chrome.log
+            /tmp/brick-mother-v275-evidence/evidence-manifest.json
+            /tmp/brick-mother-v275-evidence/evidence-report.md
+            yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/brick-mother-standalone-v2.7.5.html
+            yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/VERSION.json
+            yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/qa/evidence-manifest-v275.json
           compression-level: 1
           if-no-files-found: ignore

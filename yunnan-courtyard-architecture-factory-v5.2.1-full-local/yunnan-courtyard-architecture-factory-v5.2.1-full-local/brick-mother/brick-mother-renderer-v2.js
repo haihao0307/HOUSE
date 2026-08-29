@@ -403,7 +403,9 @@ vec2 waterWeatherMasks(vec3 p, vec3 n, float waterSeed, float weatherSeed) {
   float horizontal = an.x > an.z ? p.z : p.x;
   float yNorm = clamp(vLocalPos.y / max(uDimensions.y, 0.001) + 0.5, 0.0, 1.0);
 
-  float columnScale = 5.4;
+  // Break the old repeated vertical columns into sparse, noisy runoff
+  // islands. The broad water field remains readable without four pale bars.
+  float columnScale = 3.15;
   float column = horizontal * columnScale + waterSeed * 0.0031;
   float columnId = floor(column);
   float local = fract(column) - 0.5;
@@ -415,13 +417,14 @@ vec2 waterWeatherMasks(vec3 p, vec3 n, float waterSeed, float weatherSeed) {
   float verticalGate = smoothstep(start - lengthV - 0.05, start - lengthV + 0.055, yNorm) *
                        (1.0 - smoothstep(start - 0.025, start + 0.045, yNorm));
   float streakGate = smoothstep(0.48, 0.86, hash31(vec3(columnId, waterSeed * 0.037, 31.0)));
-  float streak = line * verticalGate * streakGate;
+  float streakNoise = smoothstep(0.34, 0.78, valueNoise3(vec3(horizontal * 2.1, yNorm * 1.7, waterSeed * 0.013)));
+  float streak = line * verticalGate * streakGate * streakNoise;
 
   vec3 waterCoord = vec3(horizontal * 1.75, yNorm * 3.0, waterSeed * 0.009);
   float broad = smoothstep(0.54, 0.82, fbmValueFast(waterCoord + domainWarp(waterCoord * 0.7) * 0.45));
   float lowerDamp = (1.0 - smoothstep(0.06, 0.34, yNorm)) *
                     smoothstep(0.35, 0.78, fbmValueFast(vec3(p.x * 1.3, p.z * 1.3, waterSeed * 0.011)));
-  float waterMask = clamp(streak * 0.92 + broad * verticalGate * 0.32 + lowerDamp * 0.58, 0.0, 1.0);
+  float waterMask = clamp(streak * 0.24 + broad * verticalGate * 0.40 + lowerDamp * 0.58, 0.0, 1.0);
 
   vec3 edgeCoord = abs(vLocalPos) / max(uDimensions * 0.5, vec3(0.001));
   float edgeCount = smoothstep(0.72, 0.99, edgeCoord.x) +
@@ -544,7 +547,12 @@ BMV27Fields bmV27Evaluate(vec3 p) {
     mask = smoothstep(0.10, 0.86, mask * 0.82 + organicGate * 0.18);
     mask *= strength * 0.42;
     if (uFamily == 0) {
-      mask = 0.0;
+      // Fired clay keeps shallow delamination, cavity, fracture and seam
+      // masks visible. Macro plate loss and edge spall remain geometry-only
+      // guards so the benchmark silhouette cannot be eaten away.
+      if (type == 4 || type == 5 || type == 6 || type == 7 || type == 12) mask *= 0.30;
+      else if (type == 2 || type == 3) mask *= 0.18;
+      else mask = 0.0;
     } else if (uFamily == 1) {
       if (type == 9 || type == 10 || type == 11) mask *= 0.34;
       else if (type == 1 || type == 6 || type == 8) mask *= 0.16;
@@ -1029,7 +1037,7 @@ void main() {
     waterMask * 0.16,
     0.0, 1.0
   );
-  float rough = mix(uRoughness.x, uRoughness.y, roughDriver);
+  float rough = max(mix(uRoughness.x, uRoughness.y, roughDriver), uFamily == 0 ? 0.66 : 0.68);
 
   if (uDebugMode == 1) {
     outColor = vec4(linearToSrgb(clamp(albedo, 0.0, 1.0)), 1.0);

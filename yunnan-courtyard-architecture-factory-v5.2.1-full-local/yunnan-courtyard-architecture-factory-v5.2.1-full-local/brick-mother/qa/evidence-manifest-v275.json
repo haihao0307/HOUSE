@@ -1,0 +1,54 @@
+{
+  "schemaVersion": "1.0.0",
+  "version": "2.7.5-alpha.1",
+  "reference": {
+    "width": 2048,
+    "height": 682,
+    "sha256": "f439b732f9b62584dac96ad5b4ab19dc77d48105d4b092cc21b064ee59c27cfb",
+    "comparisonPolicy": "hash-and-size-match-required; otherwise skip comparison"
+  },
+  "evidenceCanvas": [1600, 1000],
+  "camera": "benchmark slab, fixed yaw/pitch/distance and fixed studio lights",
+  "background": "black",
+  "materials": {
+    "old-pbr-fired": {
+      "canonicalSeed": 5045,
+      "additionalSeeds": [6112, 7179],
+      "channels": ["final", "base-color", "cavity", "normal", "macro", "meso"]
+    },
+    "stone-block": {
+      "canonicalSeed": 8231,
+      "additionalSeeds": [9298, 10365],
+      "channels": ["final", "base-color", "cavity", "normal", "macro", "meso"]
+    },
+    "raw-clay": {
+      "canonicalSeed": 4517,
+      "additionalSeeds": [5594, 6671],
+      "channels": ["final", "base-color", "cavity", "normal", "macro", "meso"]
+    }
+  },
+  "imageCount": 24,
+  "metrics": [
+    "meanSRGB",
+    "luminanceMean",
+    "luminanceStandardDeviation",
+    "luminanceP10",
+    "luminanceP50",
+    "luminanceP90",
+    "multiscaleBandEnergy",
+    "frameOccupancy",
+    "deepPoreCount",
+    "overhangCount",
+    "fiberBundleCount",
+    "declaredEventCount",
+    "shaderHitCount",
+    "sdfGridHitCount",
+    "finalTopologyHitCount"
+  ],
+  "manualApprovals": {
+    "jrbReferenceColorApproved": false,
+    "stoneDetailApproved": false,
+    "adobeInclusionApproved": false,
+    "productionApproved": false
+  }
+}

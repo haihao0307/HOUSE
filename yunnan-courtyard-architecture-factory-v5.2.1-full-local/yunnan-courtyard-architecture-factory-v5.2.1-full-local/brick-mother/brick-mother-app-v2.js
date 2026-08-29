@@ -15,7 +15,7 @@ const MOBILE_RUNTIME = MOBILE_QUERY === '1' || (MOBILE_QUERY !== '0' && (
   ((window.matchMedia?.('(pointer: coarse)')?.matches ?? false) &&
     Math.min(window.innerWidth || 9999, window.innerHeight || 9999) < 920)
 ));
-const REBUILD_CONTROL_KEYS = ['damage', 'poreDepth', 'poreDensity', 'poreVariety', 'weathering', 'shapeVariation', 'rockDetail', 'strata', 'microErosion'];
+const REBUILD_CONTROL_KEYS = ['damage', 'poreDepth', 'poreDensity', 'poreVariety', 'weathering', 'inclusion', 'shapeVariation', 'rockDetail', 'strata', 'microErosion'];
 const CHILD_OFFSETS = [0, 1181, 2647];
 const SEED_PRIMES = {
   master: 1,
@@ -129,8 +129,10 @@ function updateProfilePanel(profile) {
     : '夹杂层保留在 DNA 中，当前材质家族以矿物、氧化和孔隙为主';
 }
 
-function seedBankForProfile(profile, cycle = state.batchCycle) {
-  const base = profile.runtimeDNA.seedBase + cycle * 911;
+function seedBankForProfile(profile, cycle = state.batchCycle, explicitMaster = null) {
+  const base = Number.isFinite(Number(explicitMaster))
+    ? Math.max(1, Math.round(Number(explicitMaster)))
+    : profile.runtimeDNA.seedBase + cycle * 911;
   const offsets = profile.seedLayerOffsets || {};
   const result = { master: base };
   for (const key of SEED_KEYS.slice(1)) result[key] = base + (offsets[key] || SEED_PRIMES[key] * 101);
@@ -139,6 +141,17 @@ function seedBankForProfile(profile, cycle = state.batchCycle) {
 
 function controlDefaultsForProfile(profile) {
   return normalizeControls(profile.compositeDefaults || {});
+}
+
+function globalControlDelta(profile) {
+  const defaults = controlDefaultsForProfile(profile);
+  const delta = {};
+  for (const key of CONTROL_KEYS) {
+    const value = Number(state.controls[key]);
+    const baseline = Number(defaults[key]);
+    delta[key] = Number.isFinite(value) && Number.isFinite(baseline) ? value - baseline : 0;
+  }
+  return delta;
 }
 
 function syncControlUI() {
@@ -178,7 +191,9 @@ function seedDNAFor(profile, childIndex) {
 
 function controlsForChild(profile, childIndex, mode) {
   const base = mode === 'mixed'
-    ? normalizeControls({ ...profile.compositeDefaults, ...state.controls })
+    ? normalizeControls(Object.fromEntries(
+      Object.entries(controlDefaultsForProfile(profile)).map(([key, value]) => [key, value + (globalControlDelta(state.profiles.get(state.selectedProfile))[key] || 0)])
+    ))
     : normalizeControls(state.controls);
   const shifts = [
     { damage: -0.10, poreDepth: -0.08, poreDensity: -0.08, poreVariety: -0.05, waterStain: -0.06, weathering: -0.05, colorRichness: -0.04 },
@@ -366,6 +381,24 @@ async function buildCurrentBatch() {
     const totalCollapsedPores = built.reduce((sum, item) => sum + (item.mesh.damage.collapsedPores?.length || 0), 0);
     const formationEvents = built.flatMap((item) => item.mesh.damage.formationEvents || []);
     const formationCounts = formationEvents.reduce((acc, event) => { acc[event.type] = (acc[event.type] || 0) + 1; return acc; }, {});
+    const formationQA = built.map((item) => item.mesh.formationEventQA || {
+      declaredEventCount: 0,
+      shaderHitCount: 0,
+      sdfGridHitCount: 0,
+      finalTopologyHitCount: 0,
+      declaredEventCountByType: {},
+      shaderHitCountByType: {},
+      sdfGridHitCountByType: {},
+      finalTopologyHitCountByType: {},
+      geometryAppliedByType: {}
+    });
+    const formationTotals = formationQA.reduce((acc, qa) => {
+      acc.declaredEventCount += qa.declaredEventCount || 0;
+      acc.shaderHitCount += qa.shaderHitCount || 0;
+      acc.sdfGridHitCount += qa.sdfGridHitCount || 0;
+      acc.finalTopologyHitCount += qa.finalTopologyHitCount || 0;
+      return acc;
+    }, { declaredEventCount: 0, shaderHitCount: 0, sdfGridHitCount: 0, finalTopologyHitCount: 0 });
     const elapsed = Math.round(performance.now() - start);
     $('#batchStats').textContent =
       `${triangleLabel(totalTriangles)} 三角面 · ${totalDeepPores} 深孔 · ${totalRimChips} 孔沿碎裂 · ${totalCollapsedPores} 塌口 · ${elapsed} ms`;
@@ -398,6 +431,12 @@ async function buildCurrentBatch() {
     document.documentElement.dataset.formationEvents = String(formationEvents.length);
     document.documentElement.dataset.macroEvents = String(formationEvents.filter((event) => ['macroPlateLoss', 'shearBand', 'beddingLayer', 'edgeSpall'].includes(event.type)).length);
     document.documentElement.dataset.mesoEvents = String(formationEvents.filter((event) => !['macroPlateLoss', 'shearBand', 'beddingLayer', 'edgeSpall'].includes(event.type)).length);
+    document.documentElement.dataset.declaredFormationEvents = String(formationTotals.declaredEventCount);
+    document.documentElement.dataset.shaderFormationHits = String(formationTotals.shaderHitCount);
+    document.documentElement.dataset.sdfGridFormationHits = String(formationTotals.sdfGridHitCount);
+    document.documentElement.dataset.finalTopologyFormationHits = String(formationTotals.finalTopologyHitCount);
+    document.documentElement.dataset.formationHitCount = String(formationTotals.finalTopologyHitCount);
+    document.documentElement.dataset.fiberBundles = String(formationEvents.filter((event) => event.type === 'fiberBundle').length);
     window.__BRICK_MOTHER_QA__ = {
       ready: true,
       version: '2.7.5-alpha.1',
@@ -407,7 +446,26 @@ async function buildCurrentBatch() {
       vertices: built.map((item) => item.mesh.vertices),
       grids: built.map((item) => item.mesh.grid),
       seedDNA: built.map((item) => item.mesh.seedDNA),
+      seedDerivation: built.map((item) => ({
+        master: item.mesh.seedDNA.master,
+        layers: Object.fromEntries(SEED_KEYS.slice(1).map((key) => [key, item.mesh.seedDNA[key]])),
+        rule: 'layer = master + profile.seedLayerOffsets[layer] + childOffset * prime[layer] + profileBias'
+      })),
       controls: built.map((item) => item.mesh.controls),
+      controlsByFamily: built.reduce((acc, item) => {
+        (acc[item.profile.family] ||= []).push(item.mesh.controls);
+        return acc;
+      }, {}),
+      seedDNAByFamily: built.reduce((acc, item) => {
+        (acc[item.profile.family] ||= []).push(item.mesh.seedDNA);
+        return acc;
+      }, {}),
+      globalControlDelta: globalControlDelta(state.profiles.get(state.selectedProfile)),
+      controlIsolation: {
+        mixedUsesProfileCompositeDefaults: state.batchMode === 'mixed',
+        soloUsesSelectedProfileControls: state.batchMode !== 'mixed',
+        sameFamilyMixedSoloComparable: true
+      },
       generationMs: elapsed,
       noExternalGeometryAssets: true,
       independentSeedLayers: ['shape', 'damage', 'pore', 'color', 'water', 'weather', 'inclusion', 'detail'],
@@ -421,6 +479,8 @@ async function buildCurrentBatch() {
       progressiveFamilyLoad: state.mobileMode,
       formationEventCounts: formationCounts,
       formationEventFamilies: Object.keys(formationCounts),
+      formationEventQA: formationQA,
+      formationEventTotals: formationTotals,
       soloMode: state.soloMode,
       erosionBiteCounts: built.map((item) => item.mesh.damage.erosionBites.length),
       inclusionVoidCounts: built.map((item) => item.mesh.damage.inclusionVoids?.length || 0),
@@ -491,6 +551,7 @@ function exportDNA() {
     profile: state.selectedProfile,
     batchMode: state.batchMode,
     controls: state.controls,
+    globalControlDelta: globalControlDelta(state.profiles.get(state.selectedProfile)),
     seedBank: state.seedBank,
     children: state.currentItems.map((item) => ({
       profileId: item.profile.id,
@@ -501,7 +562,8 @@ function exportDNA() {
       triangleCount: Math.round(item.mesh.triangles),
       deepPoreCount: item.mesh.damage.deepPores.length,
       erosionBiteCount: item.mesh.damage.erosionBites.length,
-      formationEvents: item.mesh.damage.formationEvents
+      formationEvents: item.mesh.damage.formationEvents,
+      formationEventQA: item.mesh.formationEventQA
     }))
   };
   const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
@@ -520,7 +582,10 @@ function bindControls() {
       state.controls[key] = Number(input.value);
       const output = $(`[data-control-output="${key}"]`);
       if (output) output.textContent = Number(input.value).toFixed(2);
-      for (const item of state.currentItems) item.mesh.controls[key] = Number(input.value);
+      state.currentItems.forEach((item, index) => {
+        item.mesh.controls = controlsForChild(item.profile, index, state.batchMode);
+      });
+      if (REBUILD_CONTROL_KEYS.includes(key)) scheduleBuild(160);
     });
     input.addEventListener('change', () => {
       if (REBUILD_CONTROL_KEYS.includes(key)) scheduleBuild(80);
@@ -531,6 +596,11 @@ function bindControls() {
     const key = input.dataset.seed;
     input.addEventListener('input', () => {
       state.seedBank[key] = Math.max(1, Math.round(Number(input.value) || 1));
+      if (key === 'master') {
+        const profile = state.profiles.get(state.selectedProfile);
+        state.seedBank = seedBankForProfile(profile, state.batchCycle, state.seedBank.master);
+        syncSeedUI();
+      }
     });
     input.addEventListener('change', () => scheduleBuild(80));
   });
@@ -669,7 +739,12 @@ async function main() {
     }
     const profile = state.profiles.get(state.selectedProfile);
     state.controls = controlDefaultsForProfile(profile);
-    state.seedBank = seedBankForProfile(profile);
+    const requestedMaster = Number(QUERY.get('seed'));
+    state.seedBank = seedBankForProfile(
+      profile,
+      state.batchCycle,
+      Number.isFinite(requestedMaster) && requestedMaster > 0 ? requestedMaster : null
+    );
     installMobileRuntimeUI();
     state.renderer = new BrickRenderer($('#brickCanvas'));
     state.renderer.setDebugMode(state.debugMode);
