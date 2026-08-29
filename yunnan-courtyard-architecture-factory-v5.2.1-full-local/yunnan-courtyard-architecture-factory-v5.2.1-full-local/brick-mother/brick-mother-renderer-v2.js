@@ -372,7 +372,19 @@ vec4 organicInclusions(vec2 uv, float seed) {
   float pit = (1.0 - smoothstep(0.08, 0.18, length(f4 - (r4 - 0.5) * 0.34))) *
               smoothstep(0.82, 0.97, hash31(vec3(id4, seed * 0.057 + 47.0)));
 
-  return vec4(max(strawLong, strawShort), husk, seedMask, pit);
+  float clusterLarge = smoothstep(
+    0.30, 0.78,
+    fbmValueFast(vec3(uv * 1.15, seed * 0.0061))
+  );
+  float clusterFine = smoothstep(
+    0.46, 0.88,
+    valueNoise3(vec3(uv * 3.8, seed * 0.0097))
+  );
+  float burial = mix(0.28, 1.0, clusterLarge) * mix(0.72, 1.0, clusterFine);
+  vec4 result = vec4(max(strawLong, strawShort), husk, seedMask, pit);
+  result.xyz *= burial;
+  result.w *= mix(0.46, 1.0, clusterLarge);
+  return clamp(result, 0.0, 1.0);
 }
 
 vec2 waterWeatherMasks(vec3 p, vec3 n, float waterSeed, float weatherSeed) {
@@ -544,7 +556,13 @@ void main() {
     0.0, 1.0
   );
 
-  float tone = clamp(0.08 + macro * 0.56 + macroB * 0.18 + ridge * 0.14 + (micro - 0.5) * 0.11 + (grit - 0.5) * 0.035, 0.0, 1.0);
+  float microToneWeight = uFamily == 2 ? 0.035 : (uFamily == 1 ? 0.065 : 0.075);
+  float gritToneWeight = uFamily == 2 ? 0.010 : (uFamily == 1 ? 0.022 : 0.026);
+  float tone = clamp(
+    0.08 + macro * 0.56 + macroB * 0.20 + ridge * 0.14 +
+    (micro - 0.5) * microToneWeight + (grit - 0.5) * gritToneWeight,
+    0.0, 1.0
+  );
   tone = clamp((tone - 0.5) * uColorContrast + 0.5, 0.0, 1.0);
 
   vec3 low = srgbToLinear(uLowColor);
@@ -634,28 +652,43 @@ void main() {
   float brokenFace = smoothstep(0.12, 0.50, 1.0 - axisness);
 
   if (uFamily == 0) {
-    float kilnMacro = fbmValueFast(colorWarped * 1.28 + colorSeedV * 0.73);
-    float kilnBreak = fbmGradient(colorWarped * 3.95 + colorSeedV * 1.93);
+    float kilnMacro = fbmValueFast(colorWarped * 1.18 + colorSeedV * 0.73);
+    float kilnBreak = fbmGradient(colorWarped * 3.55 + colorSeedV * 1.93);
+    float kilnFine = fbmValueFast(colorWarped * 7.6 + colorSeedV * 2.67);
     float kilnHot = smoothstep(
-      0.50, 0.79,
-      kilnMacro * 0.60 + kilnBreak * 0.24 + gaea.protrusion * 0.16
+      0.52, 0.80,
+      kilnMacro * 0.62 + kilnBreak * 0.23 + gaea.protrusion * 0.15
     );
-    float kilnCool = smoothstep(
-      0.57, 0.86,
-      (1.0 - kilnMacro) * 0.49 + gaea.cavity * 0.31 + gaea.flow * 0.20
+    float kilnAsh = smoothstep(
+      0.52, 0.82,
+      (1.0 - kilnMacro) * 0.45 + gaea.cavity * 0.25 +
+      eventPatchB * 0.18 + gaea.flow * 0.12
+    );
+    float kilnNeutral = smoothstep(
+      0.48, 0.79,
+      eventPatchA * 0.44 + (1.0 - eventPatchC) * 0.32 + gaea.rockMap * 0.24
     );
     float oxideEvent = smoothstep(
-      0.57, 0.83,
-      oxideMask * 0.54 + eventPatch * 0.24 + gaea.flow * 0.12 + gaea.microErosion * 0.10
-    ) * smoothstep(0.38, 0.81, kilnBreak);
+      0.64, 0.86,
+      oxideMask * 0.46 + kilnFine * 0.20 + eventPatch * 0.17 +
+      gaea.flow * 0.10 + gaea.microErosion * 0.07
+    ) * smoothstep(0.48, 0.82, kilnBreak);
     float soot = smoothstep(
       0.67, 0.92,
-      valueNoise3(warped * 11.0 + colorSeedV * 5.1) * 0.46 + gaea.cavity * 0.39 + kilnCool * 0.15
+      valueNoise3(warped * 9.0 + colorSeedV * 5.1) * 0.42 +
+      gaea.cavity * 0.40 + kilnAsh * 0.18
     );
-    albedo = mix(albedo * 0.88, albedo * 1.10, kilnHot * (0.24 + rich * 0.08));
-    albedo = mix(albedo, rustColor, oxideEvent * (0.24 + rich * 0.20));
-    albedo = mix(albedo, charColor, soot * (0.20 + rich * 0.10));
-    albedo = mix(albedo, coolColor, kilnCool * gaea.flow * 0.13 * uGaeaColorGamut);
+    float saltBloom = smoothstep(
+      0.72, 0.92,
+      eventPatchC * 0.40 + gaea.flow * 0.31 + gaea.microErosion * 0.29
+    );
+    vec3 neutralKiln = mix(mean, coolColor, 0.32);
+    albedo = mix(albedo, warm, kilnHot * (0.22 + rich * 0.10));
+    albedo = mix(albedo, neutralKiln, kilnNeutral * 0.22);
+    albedo = mix(albedo, coolColor, kilnAsh * (0.12 + gaea.flow * 0.13));
+    albedo = mix(albedo, rustColor, oxideEvent * (0.28 + rich * 0.22));
+    albedo = mix(albedo, charColor, soot * (0.22 + rich * 0.11));
+    albedo = mix(albedo, mineralColor, saltBloom * 0.10 * uWeatherStrength);
   } else if (uFamily == 1) {
     float lump = smoothstep(0.55, 0.91, macro) * 0.21;
     float fiberAge = fbmValueFast(vec3(projected * 4.2, uInclusionSeed * 0.011));
@@ -672,24 +705,30 @@ void main() {
     albedo = mix(albedo, coolColor, gaea.flow * 0.08 * uGaeaColorGamut);
     cavity *= 1.08;
   } else {
-    float stonePatch = fbmValueFast(colorWarped * 1.72 + colorSeedV * 1.23);
-    float stonePatchFine = fbmGradient(colorWarped * 5.1 + colorSeedV * 2.61);
-    float stoneStrataGate = smoothstep(0.43, 0.80, stonePatch * 0.65 + stonePatchFine * 0.35);
+    float stonePatch = fbmValueFast(colorWarped * 1.48 + colorSeedV * 1.23);
+    float stonePatchFine = fbmGradient(colorWarped * 4.35 + colorSeedV * 2.61);
+    float stoneStrataGate = smoothstep(0.42, 0.80, stonePatch * 0.68 + stonePatchFine * 0.32);
     float stoneStrata = gaea.strata * stoneStrataGate * uGaeaStrata;
-    float stoneCool = smoothstep(0.48, 0.84, (1.0 - stonePatch) * 0.58 + gaea.cavity * 0.42);
-    float stoneWarm = smoothstep(0.62, 0.86, stonePatch * 0.64 + eventPatch * 0.36);
+    float stoneCool = smoothstep(0.43, 0.82, (1.0 - stonePatch) * 0.60 + gaea.cavity * 0.40);
+    float stoneWarm = smoothstep(0.61, 0.87, stonePatch * 0.67 + eventPatch * 0.33);
     float stoneOxide = smoothstep(
-      0.68, 0.88,
-      oxideMask * 0.42 + gaea.flow * 0.23 + gaea.microErosion * 0.17 + eventPatchC * 0.18
-    ) * smoothstep(0.70, 0.91, eventPatchA);
-    float stoneMineral = smoothstep(0.70, 0.92, mineral * 0.52 + eventPatchB * 0.32 + gaea.protrusion * 0.16);
-    float darkGrain = smoothstep(0.91, 0.987, grit);
-    albedo = mix(albedo, coolColor, stoneCool * 0.18);
-    albedo = mix(albedo, warm, stoneWarm * 0.12);
-    albedo = mix(albedo, mineralColor, stoneStrata * 0.20 + stoneMineral * 0.17);
-    albedo = mix(albedo, charColor, gaea.rockMap * 0.15 * uGaeaRockDetail + darkGrain * 0.26);
-    albedo = mix(albedo, rustColor, stoneOxide * 0.11);
-    albedo = mix(albedo, wetColor, gaea.cavity * gaea.flow * 0.16);
+      0.73, 0.91,
+      oxideMask * 0.36 + gaea.flow * 0.21 + gaea.microErosion * 0.15 +
+      eventPatchC * 0.14 + eventPatchA * 0.14
+    ) * smoothstep(0.74, 0.93, eventPatchB);
+    float stoneMineral = smoothstep(
+      0.67, 0.90,
+      mineral * 0.46 + eventPatchB * 0.30 + gaea.protrusion * 0.14 + stonePatchFine * 0.10
+    );
+    float darkGrain = smoothstep(0.94, 0.992, grit);
+    vec3 stoneCoolColor = mix(mean, coolColor, 0.28);
+    vec3 stoneWarmColor = mix(mean, warm, 0.32);
+    albedo = mix(albedo, stoneCoolColor, stoneCool * 0.24);
+    albedo = mix(albedo, stoneWarmColor, stoneWarm * 0.16);
+    albedo = mix(albedo, mineralColor, stoneStrata * 0.17 + stoneMineral * 0.14);
+    albedo = mix(albedo, charColor, gaea.rockMap * 0.045 * uGaeaRockDetail + darkGrain * 0.16);
+    albedo = mix(albedo, rustColor, stoneOxide * 0.075);
+    albedo = mix(albedo, wetColor, gaea.cavity * gaea.flow * 0.11);
   }
 
   vec2 waterWeather = waterWeatherMasks(p, baseNormal, uWaterSeed, uWeatherSeed);
@@ -699,24 +738,38 @@ void main() {
                    smoothstep(0.73, 0.94, ridgedFbm(p * 10.2 + seedVector(uWeatherSeed, 1.9))) *
                    uWeatherStrength;
   float sheltered = smoothstep(-0.08, 0.72, 0.38 - baseNormal.y);
-  albedo = mix(albedo, wetColor, clamp(waterMask * 0.54, 0.0, 0.72));
-  albedo = mix(albedo, mineralColor, clamp(weatherMask * (0.24 + max(baseNormal.y, 0.0) * 0.18) + saltMask * 0.44, 0.0, 0.62));
-  albedo = mix(albedo, dark, clamp(weatherMask * sheltered * 0.16, 0.0, 0.30));
+  float wetBlend = uFamily == 2 ? 0.34 : (uFamily == 1 ? 0.44 : 0.48);
+  float weatherBase = uFamily == 2 ? 0.10 : (uFamily == 1 ? 0.12 : 0.14);
+  float saltBlend = uFamily == 2 ? 0.22 : (uFamily == 1 ? 0.27 : 0.31);
+  albedo = mix(albedo, wetColor, clamp(waterMask * wetBlend, 0.0, 0.60));
+  albedo = mix(
+    albedo,
+    mineralColor,
+    clamp(weatherMask * (weatherBase + max(baseNormal.y, 0.0) * 0.11) + saltMask * saltBlend, 0.0, 0.44)
+  );
+  albedo = mix(albedo, dark, clamp(weatherMask * sheltered * 0.12, 0.0, 0.22));
 
-  albedo = mix(albedo, mineralColor * 0.92, brokenFace * (0.08 + weatherMask * 0.11));
-  albedo *= 1.0 - cavity * (0.40 + 0.24 * uCavityStrength + 0.10 * uPoreDepth);
+  albedo = mix(albedo, mineralColor * 0.92, brokenFace * (0.07 + weatherMask * 0.08));
+  float cavityShade = uFamily == 2
+    ? (0.20 + 0.12 * uCavityStrength + 0.045 * uPoreDepth)
+    : (uFamily == 1
+        ? (0.34 + 0.18 * uCavityStrength + 0.08 * uPoreDepth)
+        : (0.36 + 0.20 * uCavityStrength + 0.085 * uPoreDepth));
+  albedo *= 1.0 - cavity * cavityShade;
   float familySaturation = uFamily == 2
-    ? 0.72 + rich * 0.10
-    : (uFamily == 1 ? 0.84 + rich * 0.13 : 0.90 + rich * 0.18);
+    ? 0.76 + rich * 0.08
+    : (uFamily == 1 ? 0.82 + rich * 0.12 : 0.92 + rich * 0.20);
   albedo = adjustSaturation(albedo, familySaturation);
   albedo = clamp(albedo, vec3(0.004), vec3(1.0));
 
   float inclusionHeight = inclusions.x * 0.15 + inclusions.y * 0.11 + inclusions.z * 0.07 - inclusions.w * 0.28;
+  float familyMicroHeight = uFamily == 2 ? 0.060 : (uFamily == 1 ? 0.125 : 0.095);
+  float familyGritHeight = uFamily == 2 ? 0.010 : (uFamily == 1 ? 0.025 : 0.020);
   float heightField =
     (macro - 0.5) * 0.16 +
     (ridge - 0.5) * 0.22 +
-    (micro - 0.5) * 0.17 +
-    (grit - 0.5) * 0.035 +
+    (micro - 0.5) * familyMicroHeight +
+    (grit - 0.5) * familyGritHeight +
     mineral * 0.18 +
     weatherMask * 0.08 +
     inclusionHeight * 1.18 +
@@ -736,9 +789,10 @@ void main() {
   vec3 surfGrad = sign(det) * (dhdx * R1 + dhdy * R2);
   N = normalize(abs(det) * N - surfGrad * uBumpStrength);
 
+  float familyMicroRough = uFamily == 2 ? 0.16 : (uFamily == 1 ? 0.27 : 0.24);
   float roughDriver = clamp(
     0.14 +
-    micro * 0.40 +
+    micro * familyMicroRough +
     ridge * 0.15 +
     cavity * uRoughnessCorrelation +
     brokenFace * 0.18 +
@@ -800,19 +854,24 @@ void main() {
   color += shadeLight(N, V, L2, vec3(0.52, 0.64, 0.78), 0.66, albedo, rough);
   color += shadeLight(N, V, L3, vec3(0.72, 0.62, 0.54), 0.30, albedo, rough);
 
-  float hemi = 0.38 + 0.18 * clamp(N.y * 0.5 + 0.5, 0.0, 1.0);
+  float hemiBase = uFamily == 2 ? 0.48 : (uFamily == 1 ? 0.42 : 0.41);
+  float hemi = hemiBase + 0.18 * clamp(N.y * 0.5 + 0.5, 0.0, 1.0);
+  float cavityAo = uFamily == 2 ? 0.24 : (uFamily == 1 ? 0.36 : 0.38);
+  float gaeaAo = uFamily == 2 ? 0.055 : 0.085;
   float ao = clamp(
     1.0 -
-    cavity * (0.42 + uPoreDepth * 0.08) -
-    smoothstep(0.82, 1.0, 1.0 - ridge) * 0.10 -
-    gaea.cavity * uGaeaRockDetail * 0.10 -
-    gaea.microErosion * uGaeaMicroErosion * 0.06,
-    0.36, 1.0
+    cavity * (cavityAo + uPoreDepth * 0.055) -
+    smoothstep(0.82, 1.0, 1.0 - ridge) * 0.075 -
+    gaea.cavity * uGaeaRockDetail * gaeaAo -
+    gaea.microErosion * uGaeaMicroErosion * 0.045,
+    uFamily == 2 ? 0.50 : 0.42,
+    1.0
   );
   color += albedo * hemi;
   color *= ao;
 
-  color = 1.0 - exp(-color * 1.10);
+  float familyExposure = uFamily == 2 ? 1.28 : (uFamily == 1 ? 1.05 : 1.12);
+  color = 1.0 - exp(-color * familyExposure);
   color = pow(max(color, 0.0), vec3(0.97));
   outColor = vec4(linearToSrgb(color), 1.0);
 }`;

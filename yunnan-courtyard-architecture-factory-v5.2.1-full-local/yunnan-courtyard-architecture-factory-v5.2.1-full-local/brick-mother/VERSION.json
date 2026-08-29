@@ -1,9 +1,9 @@
 {
   "product": "Brick Mother",
   "displayName": "Brick Mother 砖块母体生产线",
-  "version": "2.3.0-alpha.1",
+  "version": "2.4.0-alpha.1",
   "releaseDate": "2026-08-29",
-  "status": "natural-material-event-calibration-alpha",
+  "status": "spectral-balance-and-scale-calibration-alpha",
   "base": {
     "version": "1.0.0",
     "branch": "release/brick-mother-v1.0",
@@ -12,8 +12,8 @@
   },
   "featureBranch": "feature/brick-mother-v2.0-composite-material-dna",
   "engineLineage": {
-    "materialGeometryEngine": "2.3.0-alpha.1",
-    "releaseMeaning": "Natural broad material patches, sparse oxidation events, muted stone relationships, reduced micro-noise, and varied adobe fiber aging.",
+    "materialGeometryEngine": "2.4.0-alpha.1",
+    "releaseMeaning": "Fired-clay chromatic zones, readable stone midtones, reduced micro-noise, family exposure calibration, and clustered adobe inclusions.",
     "gaeaKernel": "1.2.0"
   },
   "repository": "haihao0307/HOUSE",
@@ -37,10 +37,15 @@
     "connectedColorNetworksSuppressed": true,
     "naturalStonePalette": true,
     "familySpecificSaturation": true,
-    "broadMaterialEventPatches": true
+    "broadMaterialEventPatches": true,
+    "firedClayChromaticZones": true,
+    "stoneReadableMidtones": true,
+    "reducedMicroNoise": true,
+    "adobeInclusionClustering": true,
+    "familyLightingExposure": true
   },
   "approval": {
-    "visualStatus": "pending-user-review-v2.3",
+    "visualStatus": "pending-user-review-v2.4",
     "productionStatus": false,
     "v1BaselineModified": false,
     "jrbColorReferenceApproved": false,

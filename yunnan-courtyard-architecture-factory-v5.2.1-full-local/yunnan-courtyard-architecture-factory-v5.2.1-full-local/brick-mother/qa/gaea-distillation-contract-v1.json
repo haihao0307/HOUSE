@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "subject": "Brick Mother V2.3 natural material event graph",
+  "subject": "Brick Mother V2.4 spectral balance and material scale graph",
   "status": "implementation-gate",
   "requiredFiles": [
     "brick-mother-gaea-kernel-v1.js",
@@ -55,7 +55,7 @@
     "adobeInclusionApproved": false,
     "productionApproved": false
   },
-  "implementationTarget": "2.3.0-alpha.1",
+  "implementationTarget": "2.4.0-alpha.1",
   "gaeaKernel": "1.2.0",
   "expectedControls": [
     "rockDetail",
@@ -66,7 +66,7 @@
     "maskSharpness"
   ],
   "expectedDebugChannels": 9,
-  "version": "2.3.0-alpha.1",
+  "version": "2.4.0-alpha.1",
   "visualCalibrationGates": {
     "eventColorMasking": true,
     "regularOxideContourSuppression": true,
@@ -91,6 +91,11 @@
     "naturalStonePalette": true,
     "familySpecificSaturation": true,
     "broadMaterialEventPatches": true,
-    "sparseOxideEvents": true
+    "sparseOxideEvents": true,
+    "firedClayChromaticZones": true,
+    "stoneReadableMidtones": true,
+    "reducedMicroNoise": true,
+    "adobeInclusionClustering": true,
+    "familyLightingExposure": true
   }
 }
