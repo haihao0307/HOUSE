@@ -1,9 +1,9 @@
 {
   "product": "Brick Mother",
   "displayName": "Brick Mother 砖块母体生产线",
-  "version": "2.4.0-alpha.1",
+  "version": "2.5.0-alpha.1",
   "releaseDate": "2026-08-29",
-  "status": "spectral-balance-and-scale-calibration-alpha",
+  "status": "deep-pore-spectrum-rich-material-alpha",
   "base": {
     "version": "1.0.0",
     "branch": "release/brick-mother-v1.0",
@@ -12,8 +12,8 @@
   },
   "featureBranch": "feature/brick-mother-v2.0-composite-material-dna",
   "engineLineage": {
-    "materialGeometryEngine": "2.4.0-alpha.1",
-    "releaseMeaning": "Fired-clay chromatic zones, readable stone midtones, reduced micro-noise, family exposure calibration, and clustered adobe inclusions.",
+    "materialGeometryEngine": "2.5.0-alpha.1",
+    "releaseMeaning": "Multi-scale clustered pore spectrum, broken deep-pore rims, richer stone and adobe color families, solo close-up mode, and a self-contained standalone browser page.",
     "gaeaKernel": "1.2.0"
   },
   "repository": "haihao0307/HOUSE",
@@ -24,7 +24,7 @@
   },
   "capabilities": {
     "independentSeedLayers": 8,
-    "adjustableCompositeControls": 13,
+    "adjustableCompositeControls": 15,
     "debugChannels": 9,
     "deepNegativeGeometry": true,
     "adobeOrganicInclusionFamilies": 5,
@@ -42,15 +42,23 @@
     "stoneReadableMidtones": true,
     "reducedMicroNoise": true,
     "adobeInclusionClustering": true,
-    "familyLightingExposure": true
+    "familyLightingExposure": true,
+    "poreDensityControl": true,
+    "poreVarietyControl": true,
+    "clusteredPoreAnchors": true,
+    "collapsedPoreMouths": true,
+    "brokenPoreRims": true,
+    "soloCloseupMode": true,
+    "standaloneSingleFileHtml": true
   },
   "approval": {
-    "visualStatus": "pending-user-review-v2.4",
+    "visualStatus": "pending-user-review",
     "productionStatus": false,
     "v1BaselineModified": false,
     "jrbColorReferenceApproved": false,
     "stoneDetailApproved": false,
     "jrbReferenceColorApproved": false,
-    "adobeInclusionApproved": false
+    "adobeInclusionApproved": false,
+    "jrbColorApproved": false
   }
 }

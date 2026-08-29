@@ -7,13 +7,13 @@
   <meta name="description" content="Brick Mother V2 复合材质 DNA 实验室，以八类独立种子生成富色砖材、深孔、水痕、风化和土坯有机夹杂。">
   <title>Brick Mother 砖块母体生产线 V2</title>
   <link rel="icon" href="data:,">
-  <link rel="stylesheet" href="./style.css?v=20260829-v24-spectral-balance">
-  <link rel="stylesheet" href="./gaea-distilled.css?v=20260829-v24-spectral-balance">
-  <link rel="stylesheet" href="./visual-calibration.css?v=20260829-v24-spectral-balance">
-  <script src="./brick-mother-gaea-kernel-v1.js?v=20260829-v24-spectral-balance" defer></script>
-  <script src="./brick-mother-geometry-v2.js?v=20260829-v24-spectral-balance" defer></script>
-  <script src="./brick-mother-renderer-v2.js?v=20260829-v24-spectral-balance" defer></script>
-  <script src="./brick-mother-app-v2.js?v=20260829-v24-spectral-balance" defer></script>
+  <link rel="stylesheet" href="./style.css?v=20260829-v25-pore-spectrum">
+  <link rel="stylesheet" href="./gaea-distilled.css?v=20260829-v25-pore-spectrum">
+  <link rel="stylesheet" href="./visual-calibration.css?v=20260829-v25-pore-spectrum">
+  <script src="./brick-mother-gaea-kernel-v1.js?v=20260829-v25-pore-spectrum" defer></script>
+  <script src="./brick-mother-geometry-v2.js?v=20260829-v25-pore-spectrum" defer></script>
+  <script src="./brick-mother-renderer-v2.js?v=20260829-v25-pore-spectrum" defer></script>
+  <script src="./brick-mother-app-v2.js?v=20260829-v25-pore-spectrum" defer></script>
 </head>
 <body>
   <div class="shell">
@@ -72,6 +72,7 @@
 
           <div class="toolbar">
             <button class="tool-button" id="resetView">家族总览</button>
+            <button class="tool-button" id="soloView">单块近景</button>
             <button class="tool-button" id="autoRotate">自动旋转</button>
             <button class="tool-button" id="regenerate">换一窝</button>
             <button class="tool-button" id="exportDNA">导出当前 DNA</button>
@@ -147,6 +148,8 @@
             <label><span><b>色彩浓度</b><output data-control-output="colorRichness">1.40</output></span><input data-control="colorRichness" type="range" min="0.35" max="1.90" step="0.01"></label>
             <label><span><b>破碎强度</b><output data-control-output="damage">0.72</output></span><input data-control="damage" type="range" min="0" max="1.60" step="0.01"></label>
             <label><span><b>孔洞深度</b><output data-control-output="poreDepth">1.04</output></span><input data-control="poreDepth" type="range" min="0" max="1.80" step="0.01"></label>
+            <label><span><b>孔洞密度</b><output data-control-output="poreDensity">1.18</output></span><input data-control="poreDensity" type="range" min="0.20" max="2.20" step="0.01"></label>
+            <label><span><b>孔洞变化</b><output data-control-output="poreVariety">1.08</output></span><input data-control="poreVariety" type="range" min="0.20" max="1.80" step="0.01"></label>
             <label><span><b>水痕强度</b><output data-control-output="waterStain">0.78</output></span><input data-control="waterStain" type="range" min="0" max="1.60" step="0.01"></label>
             <label><span><b>风化强度</b><output data-control-output="weathering">0.80</output></span><input data-control="weathering" type="range" min="0" max="1.60" step="0.01"></label>
             <label><span><b>有机夹杂</b><output data-control-output="inclusion">0.20</output></span><input data-control="inclusion" type="range" min="0" max="1.60" step="0.01"></label>

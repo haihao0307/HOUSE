@@ -142,6 +142,8 @@ uniform float uWaterStrength;
 uniform float uWeatherStrength;
 uniform float uInclusionStrength;
 uniform float uPoreDepth;
+uniform float uPoreDensity;
+uniform float uPoreVariety;
 uniform float uColorSeed;
 uniform float uPoreSeed;
 uniform float uWaterSeed;
@@ -508,6 +510,9 @@ void main() {
   float micro = gradientNoise3(warped * uMicroScale + detailSeedV * 1.7);
   float grit = valueNoise3(warped * uMicroScale * 2.35 + detailSeedV * 3.1);
 
+  float poreDensityN = clamp(uPoreDensity / 2.2, 0.0, 1.0);
+  float poreVarietyN = clamp(uPoreVariety / 1.8, 0.0, 1.0);
+
   vec2 cell = worley3(poreWarped * uCellScale + poreSeedV * 0.27);
   float poreAA = max(fwidth(cell.x) * 1.4, 0.003);
   float poreCore = 1.0 - smoothstep(
@@ -515,8 +520,60 @@ void main() {
     uPoreThreshold + uPoreSharpness + poreAA,
     cell.x
   );
-  float poreGate = smoothstep(0.53, 0.87, valueNoise3(poreWarped * uCellScale * 0.31 + poreSeedV * 4.3));
+  float poreGate = smoothstep(
+    mix(0.62, 0.45, poreDensityN),
+    0.88,
+    valueNoise3(poreWarped * uCellScale * 0.31 + poreSeedV * 4.3)
+  );
   float pore = poreCore * poreGate;
+
+  vec2 mediumCell = worley3(
+    poreWarped * uCellScale * mix(0.46, 0.34, poreVarietyN) + poreSeedV * 0.61
+  );
+  float mediumAA = max(fwidth(mediumCell.x) * 1.55, 0.006);
+  float mediumRadius = mix(0.105, 0.175, poreVarietyN);
+  float mediumCore = 1.0 - smoothstep(
+    mediumRadius - mediumAA,
+    mediumRadius + 0.055 + mediumAA,
+    mediumCell.x
+  );
+  float mediumGate = smoothstep(
+    mix(0.70, 0.52, poreDensityN),
+    0.91,
+    fbmValueFast(poreWarped * 2.35 + poreSeedV * 2.7)
+  );
+  float poreMedium = mediumCore * mediumGate;
+
+  vec2 largeCell = worley3(
+    poreWarped * uCellScale * mix(0.235, 0.165, poreVarietyN) + poreSeedV * 1.17
+  );
+  float largeAA = max(fwidth(largeCell.x) * 1.65, 0.008);
+  float largeRadius = mix(0.105, 0.205, poreVarietyN);
+  float largeCore = 1.0 - smoothstep(
+    largeRadius - largeAA,
+    largeRadius + 0.070 + largeAA,
+    largeCell.x
+  );
+  float largeGate = smoothstep(
+    mix(0.82, 0.66, poreDensityN),
+    0.95,
+    fbmGradient(poreWarped * 1.55 + poreSeedV * 3.6)
+  );
+  float poreLarge = largeCore * largeGate;
+
+  float mediumRing = smoothstep(mediumRadius * 0.76, mediumRadius, mediumCell.x) *
+                     (1.0 - smoothstep(mediumRadius, mediumRadius + 0.095, mediumCell.x)) *
+                     mediumGate;
+  float largeRing = smoothstep(largeRadius * 0.70, largeRadius, largeCell.x) *
+                    (1.0 - smoothstep(largeRadius, largeRadius + 0.13, largeCell.x)) *
+                    largeGate;
+  float poreRim = clamp(mediumRing * 0.72 + largeRing, 0.0, 1.0);
+  float poreComposite = clamp(
+    pore * 0.78 +
+    poreMedium * (0.58 + poreDensityN * 0.40) +
+    poreLarge * (0.64 + poreVarietyN * 0.42),
+    0.0, 1.0
+  );
 
   vec2 mineralCell = worley3(warped * uMineralScale + colorSeedV * 1.17);
   float microPore = (1.0 - smoothstep(0.052, 0.125 + fwidth(mineralCell.x), mineralCell.x)) *
@@ -541,8 +598,9 @@ void main() {
   inclusions *= float(uFamily == 1) * uInclusionStrength;
 
   float cavity = clamp(
-    pore * (0.74 + uPoreDepth * 0.22) +
-    microPore * 0.42 +
+    poreComposite * (0.72 + uPoreDepth * 0.25) +
+    poreLarge * (0.18 + uPoreDepth * 0.12) +
+    microPore * 0.34 +
     smoothstep(0.77, 0.98, turbul) * 0.16 +
     smoothstep(0.84, 0.99, 1.0 - ridge) * 0.10 +
     inclusions.w * 0.52,
@@ -652,83 +710,136 @@ void main() {
   float brokenFace = smoothstep(0.12, 0.50, 1.0 - axisness);
 
   if (uFamily == 0) {
-    float kilnMacro = fbmValueFast(colorWarped * 1.18 + colorSeedV * 0.73);
-    float kilnBreak = fbmGradient(colorWarped * 3.55 + colorSeedV * 1.93);
-    float kilnFine = fbmValueFast(colorWarped * 7.6 + colorSeedV * 2.67);
+    float kilnMacro = fbmValueFast(colorWarped * 1.08 + colorSeedV * 0.73);
+    float kilnBreak = fbmGradient(colorWarped * 3.25 + colorSeedV * 1.93);
+    float kilnFine = fbmValueFast(colorWarped * 7.1 + colorSeedV * 2.67);
     float kilnHot = smoothstep(
-      0.52, 0.80,
-      kilnMacro * 0.62 + kilnBreak * 0.23 + gaea.protrusion * 0.15
+      0.48, 0.79,
+      kilnMacro * 0.58 + kilnBreak * 0.24 + gaea.protrusion * 0.18
+    );
+    float kilnRed = smoothstep(
+      0.51, 0.80,
+      kilnMacro * 0.36 + eventPatchA * 0.29 + eventPatchB * 0.22 + gaea.flow * 0.13
     );
     float kilnAsh = smoothstep(
-      0.52, 0.82,
-      (1.0 - kilnMacro) * 0.45 + gaea.cavity * 0.25 +
+      0.49, 0.82,
+      (1.0 - kilnMacro) * 0.43 + gaea.cavity * 0.27 +
       eventPatchB * 0.18 + gaea.flow * 0.12
     );
     float kilnNeutral = smoothstep(
-      0.48, 0.79,
-      eventPatchA * 0.44 + (1.0 - eventPatchC) * 0.32 + gaea.rockMap * 0.24
+      0.45, 0.78,
+      eventPatchA * 0.42 + (1.0 - eventPatchC) * 0.32 + gaea.rockMap * 0.26
     );
     float oxideEvent = smoothstep(
-      0.64, 0.86,
-      oxideMask * 0.46 + kilnFine * 0.20 + eventPatch * 0.17 +
-      gaea.flow * 0.10 + gaea.microErosion * 0.07
-    ) * smoothstep(0.48, 0.82, kilnBreak);
+      0.58, 0.84,
+      oxideMask * 0.39 + kilnFine * 0.22 + eventPatch * 0.20 +
+      gaea.flow * 0.11 + gaea.microErosion * 0.08
+    ) * smoothstep(0.42, 0.81, kilnBreak);
     float soot = smoothstep(
-      0.67, 0.92,
-      valueNoise3(warped * 9.0 + colorSeedV * 5.1) * 0.42 +
-      gaea.cavity * 0.40 + kilnAsh * 0.18
+      0.62, 0.90,
+      valueNoise3(warped * 8.2 + colorSeedV * 5.1) * 0.38 +
+      gaea.cavity * 0.43 + kilnAsh * 0.19
     );
     float saltBloom = smoothstep(
-      0.72, 0.92,
-      eventPatchC * 0.40 + gaea.flow * 0.31 + gaea.microErosion * 0.29
+      0.68, 0.91,
+      eventPatchC * 0.38 + gaea.flow * 0.33 + gaea.microErosion * 0.29
     );
-    vec3 neutralKiln = mix(mean, coolColor, 0.32);
-    albedo = mix(albedo, warm, kilnHot * (0.22 + rich * 0.10));
-    albedo = mix(albedo, neutralKiln, kilnNeutral * 0.22);
-    albedo = mix(albedo, coolColor, kilnAsh * (0.12 + gaea.flow * 0.13));
-    albedo = mix(albedo, rustColor, oxideEvent * (0.28 + rich * 0.22));
-    albedo = mix(albedo, charColor, soot * (0.22 + rich * 0.11));
-    albedo = mix(albedo, mineralColor, saltBloom * 0.10 * uWeatherStrength);
+    vec3 neutralKiln = mix(mean, coolColor, 0.38);
+    vec3 firedRed = mix(rustColor, vec3(0.48, 0.055, 0.018), 0.30);
+    albedo = mix(albedo, warm, kilnHot * (0.23 + rich * 0.11));
+    albedo = mix(albedo, firedRed, kilnRed * (0.18 + rich * 0.17));
+    albedo = mix(albedo, neutralKiln, kilnNeutral * 0.24);
+    albedo = mix(albedo, coolColor, kilnAsh * (0.13 + gaea.flow * 0.14));
+    albedo = mix(albedo, rustColor, oxideEvent * (0.31 + rich * 0.22));
+    albedo = mix(albedo, charColor, soot * (0.24 + rich * 0.12));
+    albedo = mix(albedo, mineralColor, saltBloom * 0.13 * uWeatherStrength);
   } else if (uFamily == 1) {
-    float lump = smoothstep(0.55, 0.91, macro) * 0.21;
+    float lump = smoothstep(0.50, 0.90, macro) * 0.24;
+    float clayRed = smoothstep(
+      0.48, 0.79,
+      eventPatchA * 0.50 + oxideBroad * 0.26 + gaea.protrusion * 0.24
+    );
+    float clayOchre = smoothstep(
+      0.42, 0.80,
+      macroB * 0.48 + eventPatchB * 0.30 + gaea.rockMap * 0.22
+    );
+    float clayDust = smoothstep(
+      0.67, 0.91,
+      eventPatchC * 0.44 + mineral * 0.31 + gaea.microErosion * 0.25
+    );
+    float clayDamp = smoothstep(
+      0.56, 0.86,
+      gaea.flow * 0.45 + gaea.cavity * 0.33 + (1.0 - macro) * 0.22
+    );
     float fiberAge = fbmValueFast(vec3(projected * 4.2, uInclusionSeed * 0.011));
     float fiberDust = valueNoise3(vec3(projected * 11.0, uInclusionSeed * 0.017));
-    vec3 strawAged = mix(strawColor, mix(warm, dark, 0.38), fiberAge * 0.44);
-    vec3 strawVar = mix(strawAged, mineralColor, smoothstep(0.78, 0.96, fiberDust) * 0.20);
-    vec3 huskVar = mix(huskColor, mix(mineralColor, dark, 0.22), micro * 0.28);
-    vec3 seedVar = mix(seedColor, dark, 0.29 + cavity * 0.16);
+    vec3 strawAged = mix(strawColor, mix(warm, dark, 0.38), fiberAge * 0.50);
+    vec3 strawVar = mix(strawAged, mineralColor, smoothstep(0.74, 0.95, fiberDust) * 0.24);
+    vec3 huskVar = mix(huskColor, mix(mineralColor, dark, 0.22), micro * 0.32);
+    vec3 seedVar = mix(seedColor, dark, 0.32 + cavity * 0.18);
     albedo = mix(albedo, warm, lump * rich);
-    albedo = mix(albedo, strawVar, inclusions.x * 0.86);
-    albedo = mix(albedo, huskVar, inclusions.y * 0.82);
-    albedo = mix(albedo, seedVar, inclusions.z * 0.88);
-    albedo = mix(albedo, charColor, inclusions.w * 0.86);
-    albedo = mix(albedo, coolColor, gaea.flow * 0.08 * uGaeaColorGamut);
-    cavity *= 1.08;
+    albedo = mix(albedo, rustColor, clayRed * (0.14 + rich * 0.10));
+    albedo = mix(albedo, warm, clayOchre * 0.18);
+    albedo = mix(albedo, mineralColor, clayDust * 0.13);
+    albedo = mix(albedo, wetColor, clayDamp * 0.20);
+    albedo = mix(albedo, strawVar, inclusions.x * 0.96);
+    albedo = mix(albedo, huskVar, inclusions.y * 0.92);
+    albedo = mix(albedo, seedVar, inclusions.z * 0.94);
+    albedo = mix(albedo, charColor, inclusions.w * 0.91);
+    cavity *= 1.10;
   } else {
-    float stonePatch = fbmValueFast(colorWarped * 1.48 + colorSeedV * 1.23);
-    float stonePatchFine = fbmGradient(colorWarped * 4.35 + colorSeedV * 2.61);
-    float stoneStrataGate = smoothstep(0.42, 0.80, stonePatch * 0.68 + stonePatchFine * 0.32);
-    float stoneStrata = gaea.strata * stoneStrataGate * uGaeaStrata;
-    float stoneCool = smoothstep(0.43, 0.82, (1.0 - stonePatch) * 0.60 + gaea.cavity * 0.40);
-    float stoneWarm = smoothstep(0.61, 0.87, stonePatch * 0.67 + eventPatch * 0.33);
-    float stoneOxide = smoothstep(
-      0.73, 0.91,
-      oxideMask * 0.36 + gaea.flow * 0.21 + gaea.microErosion * 0.15 +
-      eventPatchC * 0.14 + eventPatchA * 0.14
-    ) * smoothstep(0.74, 0.93, eventPatchB);
-    float stoneMineral = smoothstep(
-      0.67, 0.90,
-      mineral * 0.46 + eventPatchB * 0.30 + gaea.protrusion * 0.14 + stonePatchFine * 0.10
+    float stonePatch = fbmValueFast(colorWarped * 1.34 + colorSeedV * 1.23);
+    float stonePatchFine = fbmGradient(colorWarped * 3.85 + colorSeedV * 2.61);
+    float stoneThird = fbmValueFast(colorWarped * 6.2 + colorSeedV * 4.03);
+    float stoneStrataGate = smoothstep(
+      0.37, 0.78,
+      stonePatch * 0.58 + stonePatchFine * 0.28 + gaea.rockMap * 0.14
     );
-    float darkGrain = smoothstep(0.94, 0.992, grit);
-    vec3 stoneCoolColor = mix(mean, coolColor, 0.28);
-    vec3 stoneWarmColor = mix(mean, warm, 0.32);
-    albedo = mix(albedo, stoneCoolColor, stoneCool * 0.24);
-    albedo = mix(albedo, stoneWarmColor, stoneWarm * 0.16);
-    albedo = mix(albedo, mineralColor, stoneStrata * 0.17 + stoneMineral * 0.14);
-    albedo = mix(albedo, charColor, gaea.rockMap * 0.045 * uGaeaRockDetail + darkGrain * 0.16);
-    albedo = mix(albedo, rustColor, stoneOxide * 0.075);
-    albedo = mix(albedo, wetColor, gaea.cavity * gaea.flow * 0.11);
+    float stoneStrata = gaea.strata * stoneStrataGate * uGaeaStrata;
+    float stoneBlue = smoothstep(
+      0.40, 0.78,
+      (1.0 - stonePatch) * 0.50 + gaea.cavity * 0.24 + eventPatchB * 0.26
+    );
+    float stoneOlive = smoothstep(
+      0.54, 0.84,
+      eventPatchA * 0.38 + bioMask * 0.31 + gaea.flow * 0.31
+    );
+    float stoneWarm = smoothstep(
+      0.48, 0.82,
+      stonePatch * 0.48 + eventPatch * 0.30 + gaea.protrusion * 0.22
+    );
+    float stoneOxide = smoothstep(
+      0.60, 0.86,
+      oxideMask * 0.34 + gaea.flow * 0.19 + gaea.microErosion * 0.14 +
+      eventPatchC * 0.17 + stoneThird * 0.16
+    );
+    float stoneMineral = smoothstep(
+      0.58, 0.86,
+      mineral * 0.38 + eventPatchB * 0.27 + gaea.protrusion * 0.18 +
+      stonePatchFine * 0.17
+    );
+    float stoneWet = smoothstep(
+      0.55, 0.86,
+      gaea.cavity * 0.48 + gaea.flow * 0.36 + (1.0 - stoneThird) * 0.16
+    );
+    float calciteVein = smoothstep(
+      0.70, 0.92,
+      ridgedFbm(colorWarped * 5.4 + colorSeedV * 5.7) * 0.55 +
+      gaea.strata * 0.28 + stonePatchFine * 0.17
+    );
+    float darkGrain = smoothstep(0.95, 0.994, grit);
+    vec3 slateBlue = mix(mean, mix(wetColor, vec3(0.10, 0.19, 0.27), 0.48), 0.62);
+    vec3 oliveGray = mix(mean, bioColor, 0.46);
+    vec3 earthStone = mix(mean, warm, 0.48);
+    vec3 calciteColor = mix(mineralColor, vec3(0.82, 0.79, 0.68), 0.38);
+    albedo = mix(albedo, slateBlue, stoneBlue * 0.34);
+    albedo = mix(albedo, oliveGray, stoneOlive * 0.20);
+    albedo = mix(albedo, earthStone, stoneWarm * 0.27);
+    albedo = mix(albedo, mineralColor, stoneStrata * 0.23 + stoneMineral * 0.21);
+    albedo = mix(albedo, calciteColor, calciteVein * 0.24);
+    albedo = mix(albedo, rustColor, stoneOxide * 0.19);
+    albedo = mix(albedo, wetColor, stoneWet * 0.31);
+    albedo = mix(albedo, charColor, gaea.rockMap * 0.075 * uGaeaRockDetail + darkGrain * 0.16);
   }
 
   vec2 waterWeather = waterWeatherMasks(p, baseNormal, uWaterSeed, uWeatherSeed);
@@ -749,6 +860,19 @@ void main() {
   );
   albedo = mix(albedo, dark, clamp(weatherMask * sheltered * 0.12, 0.0, 0.22));
 
+  float poreInterior = clamp(pore * 0.22 + poreMedium * 0.66 + poreLarge, 0.0, 1.0);
+  float poreWetness = smoothstep(
+    0.42, 0.88,
+    gaea.flow * 0.34 + waterMask * 0.38 + gaea.cavity * 0.28
+  );
+  vec3 poreInteriorColor = mix(charColor, wetColor, poreWetness * 0.66);
+  float poreColorStrength = uFamily == 2 ? 0.58 : (uFamily == 1 ? 0.52 : 0.56);
+  albedo = mix(albedo, poreInteriorColor, poreInterior * poreColorStrength);
+  vec3 rimColor = uFamily == 2
+    ? mix(mineralColor, warm, 0.18)
+    : (uFamily == 1 ? mix(mineralColor, warm, 0.36) : mix(mineralColor, oxideColor, 0.22));
+  albedo = mix(albedo, rimColor, poreRim * (0.12 + uPoreVariety * 0.09));
+
   albedo = mix(albedo, mineralColor * 0.92, brokenFace * (0.07 + weatherMask * 0.08));
   float cavityShade = uFamily == 2
     ? (0.20 + 0.12 * uCavityStrength + 0.045 * uPoreDepth)
@@ -757,8 +881,8 @@ void main() {
         : (0.36 + 0.20 * uCavityStrength + 0.085 * uPoreDepth));
   albedo *= 1.0 - cavity * cavityShade;
   float familySaturation = uFamily == 2
-    ? 0.76 + rich * 0.08
-    : (uFamily == 1 ? 0.82 + rich * 0.12 : 0.92 + rich * 0.20);
+    ? 0.88 + rich * 0.15
+    : (uFamily == 1 ? 0.88 + rich * 0.16 : 0.94 + rich * 0.21);
   albedo = adjustSaturation(albedo, familySaturation);
   albedo = clamp(albedo, vec3(0.004), vec3(1.0));
 
@@ -775,8 +899,11 @@ void main() {
     inclusionHeight * 1.18 +
     (gaea.protrusion - 0.5) * 0.34 * uGaeaRockDetail +
     (gaea.strata - 0.5) * 0.24 * uGaeaStrata * (uFamily == 2 ? 1.0 : 0.22) -
-    gaea.microErosion * 0.29 * uGaeaMicroErosion -
-    cavity * (0.62 + uPoreDepth * 0.14);
+    gaea.microErosion * 0.29 * uGaeaMicroErosion +
+    poreRim * (0.10 + uPoreVariety * 0.05) -
+    poreMedium * (0.23 + uPoreDepth * 0.07) -
+    poreLarge * (0.40 + uPoreDepth * 0.12) -
+    cavity * (0.56 + uPoreDepth * 0.12);
 
   vec3 N = baseNormal;
   vec3 dpdx = dFdx(vWorldPos);
@@ -800,6 +927,7 @@ void main() {
     gaea.rockMap * 0.18 * uGaeaRockDetail +
     gaea.strata * 0.10 * uGaeaStrata +
     gaea.microErosion * 0.15 * uGaeaMicroErosion +
+    poreRim * 0.20 + poreMedium * 0.14 + poreLarge * 0.18 +
     inclusions.x * 0.12 + inclusions.y * 0.10 -
     mineral * 0.08 -
     waterMask * 0.16,
@@ -824,7 +952,7 @@ void main() {
     return;
   }
   if (uDebugMode == 5) {
-    outColor = vec4(vec3(macro, ridge, clamp(pore + mineral, 0.0, 1.0)), 1.0);
+    outColor = vec4(vec3(macro, ridge, clamp(poreComposite + mineral * 0.45, 0.0, 1.0)), 1.0);
     return;
   }
   if (uDebugMode == 6) {
@@ -861,6 +989,8 @@ void main() {
   float ao = clamp(
     1.0 -
     cavity * (cavityAo + uPoreDepth * 0.055) -
+    poreLarge * (0.10 + uPoreDepth * 0.045) -
+    poreMedium * 0.045 -
     smoothstep(0.82, 1.0, 1.0 - ridge) * 0.075 -
     gaea.cavity * uGaeaRockDetail * gaeaAo -
     gaea.microErosion * uGaeaMicroErosion * 0.045,
@@ -946,6 +1076,8 @@ class BrickRenderer {
       weatherStrength: u('uWeatherStrength'),
       inclusionStrength: u('uInclusionStrength'),
       poreDepth: u('uPoreDepth'),
+      poreDensity: u('uPoreDensity'),
+      poreVariety: u('uPoreVariety'),
       colorSeed: u('uColorSeed'),
       poreSeed: u('uPoreSeed'),
       waterSeed: u('uWaterSeed'),
@@ -1060,7 +1192,7 @@ class BrickRenderer {
     const m = this.meshes[index];
     if (!m) return;
     this.camera.target = vec3(m.position.x, m.mesh.dims.y * 0.48, m.position.z);
-    this.camera.distance = Math.max(4.0, Math.max(m.mesh.dims.x, m.mesh.dims.z) * 2.0);
+    this.camera.distance = Math.max(3.15, Math.max(m.mesh.dims.x, m.mesh.dims.z) * 1.48);
     this.camera.yaw = 0.82 + m.yaw * 0.25;
     this.camera.pitch = 0.24;
   }
@@ -1127,6 +1259,8 @@ class BrickRenderer {
     gl.uniform1f(l.weatherStrength, controls.weathering ?? 0.72);
     gl.uniform1f(l.inclusionStrength, controls.inclusion ?? 0.8);
     gl.uniform1f(l.poreDepth, controls.poreDepth ?? 0.9);
+    gl.uniform1f(l.poreDensity, controls.poreDensity ?? 1.18);
+    gl.uniform1f(l.poreVariety, controls.poreVariety ?? 1.08);
     gl.uniform1f(l.colorSeed, seeds.color ?? seeds.master ?? 17);
     gl.uniform1f(l.poreSeed, seeds.pore ?? seeds.master ?? 19);
     gl.uniform1f(l.waterSeed, seeds.water ?? seeds.master ?? 23);

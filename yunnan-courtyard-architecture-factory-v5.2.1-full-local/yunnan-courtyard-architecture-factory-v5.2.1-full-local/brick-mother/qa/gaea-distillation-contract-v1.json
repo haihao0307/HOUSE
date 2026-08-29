@@ -1,7 +1,7 @@
 {
   "schemaVersion": "1.0.0",
   "subject": "Brick Mother V2.4 spectral balance and material scale graph",
-  "status": "implementation-gate",
+  "status": "automatic-qa-ready-manual-visual-pending",
   "requiredFiles": [
     "brick-mother-gaea-kernel-v1.js",
     "data/gaea-distilled-node-recipes-v1.json",
@@ -66,7 +66,7 @@
     "maskSharpness"
   ],
   "expectedDebugChannels": 9,
-  "version": "2.4.0-alpha.1",
+  "version": "2.5.0-alpha.1",
   "visualCalibrationGates": {
     "eventColorMasking": true,
     "regularOxideContourSuppression": true,
@@ -97,5 +97,27 @@
     "reducedMicroNoise": true,
     "adobeInclusionClustering": true,
     "familyLightingExposure": true
+  },
+  "deepPoreSpectrum": {
+    "poreDensityControl": true,
+    "poreVarietyControl": true,
+    "clusteredAnchors": true,
+    "multiScaleShaderFields": true,
+    "deepNegativeGeometry": true,
+    "brokenRimGeometry": true,
+    "collapsedMouthGeometry": true
+  },
+  "standaloneDelivery": {
+    "singleFileHtml": true,
+    "inlineCss": true,
+    "inlineJavaScript": true,
+    "inlineProfileData": true,
+    "externalRuntimeDependency": false
+  },
+  "approval": {
+    "jrbColorApproved": false,
+    "stoneDetailApproved": false,
+    "adobeInclusionApproved": false,
+    "productionApproved": false
   }
 }
