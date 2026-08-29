@@ -1,0 +1,117 @@
+      mineral * 0.46 + eventPatchB * 0.30 + gaea.protrusion * 0.14 + stonePatchFine * 0.10
+    );
+    float darkGrain = smoothstep(0.94, 0.992, grit);
+    vec3 stoneCoolColor = mix(mean, coolColor, 0.28);
+    vec3 stoneWarmColor = mix(mean, warm, 0.32);
+    albedo = mix(albedo, stoneCoolColor, stoneCool * 0.24);
+    albedo = mix(albedo, stoneWarmColor, stoneWarm * 0.16);
+    albedo = mix(albedo, mineralColor, stoneStrata * 0.17 + stoneMineral * 0.14);
+    albedo = mix(albedo, charColor, gaea.rockMap * 0.045 * uGaeaRockDetail + darkGrain * 0.16);
+    albedo = mix(albedo, rustColor, stoneOxide * 0.075);
+    albedo = mix(albedo, wetColor, gaea.cavity * gaea.flow * 0.11);
+'''
+text = replace_between(text, stone_start, stone_end, stone_new, 'stone material zones')
+
+text = replace_once(
+    text,
+    '''  albedo = mix(albedo, wetColor, clamp(waterMask * 0.54, 0.0, 0.72));
+  albedo = mix(albedo, mineralColor, clamp(weatherMask * (0.24 + max(baseNormal.y, 0.0) * 0.18) + saltMask * 0.44, 0.0, 0.62));
+  albedo = mix(albedo, dark, clamp(weatherMask * sheltered * 0.16, 0.0, 0.30));
+
+  albedo = mix(albedo, mineralColor * 0.92, brokenFace * (0.08 + weatherMask * 0.11));
+  albedo *= 1.0 - cavity * (0.40 + 0.24 * uCavityStrength + 0.10 * uPoreDepth);''',
+    '''  float wetBlend = uFamily == 2 ? 0.34 : (uFamily == 1 ? 0.44 : 0.48);
+  float weatherBase = uFamily == 2 ? 0.10 : (uFamily == 1 ? 0.12 : 0.14);
+  float saltBlend = uFamily == 2 ? 0.22 : (uFamily == 1 ? 0.27 : 0.31);
+  albedo = mix(albedo, wetColor, clamp(waterMask * wetBlend, 0.0, 0.60));
+  albedo = mix(
+    albedo,
+    mineralColor,
+    clamp(weatherMask * (weatherBase + max(baseNormal.y, 0.0) * 0.11) + saltMask * saltBlend, 0.0, 0.44)
+  );
+  albedo = mix(albedo, dark, clamp(weatherMask * sheltered * 0.12, 0.0, 0.22));
+
+  albedo = mix(albedo, mineralColor * 0.92, brokenFace * (0.07 + weatherMask * 0.08));
+  float cavityShade = uFamily == 2
+    ? (0.20 + 0.12 * uCavityStrength + 0.045 * uPoreDepth)
+    : (uFamily == 1
+        ? (0.34 + 0.18 * uCavityStrength + 0.08 * uPoreDepth)
+        : (0.36 + 0.20 * uCavityStrength + 0.085 * uPoreDepth));
+  albedo *= 1.0 - cavity * cavityShade;''',
+    'family weather cavity'
+)
+
+text = replace_once(
+    text,
+    '''  float familySaturation = uFamily == 2
+    ? 0.72 + rich * 0.10
+    : (uFamily == 1 ? 0.84 + rich * 0.13 : 0.90 + rich * 0.18);''',
+    '''  float familySaturation = uFamily == 2
+    ? 0.76 + rich * 0.08
+    : (uFamily == 1 ? 0.82 + rich * 0.12 : 0.92 + rich * 0.20);''',
+    'family saturation V2.4'
+)
+
+text = replace_once(
+    text,
+    '''  float inclusionHeight = inclusions.x * 0.15 + inclusions.y * 0.11 + inclusions.z * 0.07 - inclusions.w * 0.28;
+  float heightField =
+    (macro - 0.5) * 0.16 +
+    (ridge - 0.5) * 0.22 +
+    (micro - 0.5) * 0.17 +
+    (grit - 0.5) * 0.035 +''',
+    '''  float inclusionHeight = inclusions.x * 0.15 + inclusions.y * 0.11 + inclusions.z * 0.07 - inclusions.w * 0.28;
+  float familyMicroHeight = uFamily == 2 ? 0.060 : (uFamily == 1 ? 0.125 : 0.095);
+  float familyGritHeight = uFamily == 2 ? 0.010 : (uFamily == 1 ? 0.025 : 0.020);
+  float heightField =
+    (macro - 0.5) * 0.16 +
+    (ridge - 0.5) * 0.22 +
+    (micro - 0.5) * familyMicroHeight +
+    (grit - 0.5) * familyGritHeight +''',
+    'family micro height'
+)
+
+text = replace_once(
+    text,
+    '''  float roughDriver = clamp(
+    0.14 +
+    micro * 0.40 +''',
+    '''  float familyMicroRough = uFamily == 2 ? 0.16 : (uFamily == 1 ? 0.27 : 0.24);
+  float roughDriver = clamp(
+    0.14 +
+    micro * familyMicroRough +''',
+    'family micro roughness'
+)
+
+text = replace_once(
+    text,
+    '''  float hemi = 0.38 + 0.18 * clamp(N.y * 0.5 + 0.5, 0.0, 1.0);
+  float ao = clamp(
+    1.0 -
+    cavity * (0.42 + uPoreDepth * 0.08) -
+    smoothstep(0.82, 1.0, 1.0 - ridge) * 0.10 -
+    gaea.cavity * uGaeaRockDetail * 0.10 -
+    gaea.microErosion * uGaeaMicroErosion * 0.06,
+    0.36, 1.0
+  );
+  color += albedo * hemi;
+  color *= ao;
+
+  color = 1.0 - exp(-color * 1.10);''',
+    '''  float hemiBase = uFamily == 2 ? 0.48 : (uFamily == 1 ? 0.42 : 0.41);
+  float hemi = hemiBase + 0.18 * clamp(N.y * 0.5 + 0.5, 0.0, 1.0);
+  float cavityAo = uFamily == 2 ? 0.24 : (uFamily == 1 ? 0.36 : 0.38);
+  float gaeaAo = uFamily == 2 ? 0.055 : 0.085;
+  float ao = clamp(
+    1.0 -
+    cavity * (cavityAo + uPoreDepth * 0.055) -
+    smoothstep(0.82, 1.0, 1.0 - ridge) * 0.075 -
+    gaea.cavity * uGaeaRockDetail * gaeaAo -
+    gaea.microErosion * uGaeaMicroErosion * 0.045,
+    uFamily == 2 ? 0.50 : 0.42,
+    1.0
+  );
+  color += albedo * hemi;
+  color *= ao;
+
+  float familyExposure = uFamily == 2 ? 1.28 : (uFamily == 1 ? 1.05 : 1.12);
