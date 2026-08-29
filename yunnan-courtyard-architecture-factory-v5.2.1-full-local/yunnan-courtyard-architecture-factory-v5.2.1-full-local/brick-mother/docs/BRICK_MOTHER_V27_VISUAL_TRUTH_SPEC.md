@@ -257,3 +257,8 @@ V1.0 remains frozen. PR 15 remains open, Draft and unmerged during V2.7 developm
 ## 14. Implementation checkpoint
 
 V2.7 Alpha 1 implements the benchmark slab, deterministic material-specific formation events, uploaded event masks shared with the renderer, macro and meso diagnostic channels, dark grid-free evidence framing and preserved false approval gates. Browser evidence and user visual approval remain open.
+
+## V2.7.1 有机浅层事件校准
+
+V2.7.1 将宏观缺损、孔群、层理、剥片和纤维事件进一步限制为浅层、圆化、嵌入式结构，
+降低穿透孔、矩形板块和涂色块的视觉风险。光照和综合色谱同步重平衡，人工视觉批准继续保持关闭。

@@ -1,9 +1,9 @@
 {
   "product": "Brick Mother",
   "displayName": "Brick Mother 砖块母体生产线",
-  "version": "2.7.0-alpha.1",
+  "version": "2.7.1-alpha.1",
   "releaseDate": "2026-08-29",
-  "status": "visual-truth-formation-hierarchy-alpha",
+  "status": "visual-calibration-alpha-organic-shallow-formation",
   "base": {
     "version": "1.0.0",
     "branch": "release/brick-mother-v1.0",
@@ -80,5 +80,17 @@
     "firedMasonryApproved": false,
     "naturalStoneApproved": false,
     "fiberAdobeApproved": false
-  }
+  },
+  "features": {
+    "organicShallowFormationEvents": true,
+    "roundedEventFields": true,
+    "rebalancedMasonryExposure": true,
+    "reducedPaintedEventBlocks": true
+  },
+  "releaseNotes": [
+    "V2.7.1 converts subtractive formation events into shallow rounded material loss and embedded flakes.",
+    "Fired clay is rebalanced toward brick red, burnt umber, charcoal, ash and mineral cream under brighter neutral light.",
+    "Stone and adobe regain broad cool-warm spectra while rectangular event-color blocks are suppressed.",
+    "Macro and meso event channels remain independently inspectable and all manual approvals remain false."
+  ]
 }

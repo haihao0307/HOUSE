@@ -224,6 +224,12 @@
       "macro-event-field",
       "meso-event-field"
     ],
-    "manualApprovalsRemainFalse": true
-  }
+    "manualApprovalsRemainFalse": true,
+    "organicShallowFormationEvents": true,
+    "roundedEventFields": true,
+    "rebalancedMasonryExposure": true,
+    "reducedPaintedEventBlocks": true,
+    "visualReviewStillRequired": true
+  },
+  "implementationVersion": "2.7.1-alpha.1"
 }

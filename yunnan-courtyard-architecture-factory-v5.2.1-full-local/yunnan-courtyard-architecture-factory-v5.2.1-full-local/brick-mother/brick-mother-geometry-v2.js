@@ -244,78 +244,141 @@ function buildFormationEvents(profile, seedDNA, controls, dims) {
   }).slice(0, 14);
 }
 
+function orientedEventEllipsoid(p, center, radii, direction) {
+  const u = norm3(vec3(direction.x, direction.y, 0));
+  const v = vec3(-u.y, u.x, 0);
+  const d = sub3(p, center);
+  const q = vec3(dot3(d, u), dot3(d, v), d.z);
+  return sdEllipsoid(q, vec3(0, 0, 0), radii);
+}
+
 function applyFormationEventSDF(distance, p, event, seeds, minD) {
   const type = event.type;
-  const sizeJitter = 0;
-  const size = vec3(
-    Math.max(0.004, event.size.x + sizeJitter),
-    Math.max(0.004, event.size.y + sizeJitter * 0.72),
-    Math.max(0.004, event.size.z + sizeJitter * 0.54)
-  );
-  const dir = event.direction;
+  const dir = norm3(vec3(event.direction.x, event.direction.y, 0));
   const side = vec3(-dir.y, dir.x, 0);
   let d = distance;
 
-  if (type === 'macroPlateLoss' || type === 'edgeSpall') {
-    const cut = sdOrientedRoundBox(p, event.center, size, dir, Math.min(size.y, size.z) * 0.34);
+  if (type === 'macroPlateLoss') {
+    const center = add3(event.center, vec3(0, 0, event.size.z * 0.34 + 0.012 * minD));
+    const radii = vec3(event.size.x * 0.43, event.size.y * 0.58, event.size.z * 0.30);
+    const cutA = orientedEventEllipsoid(p, center, radii, dir);
+    const offset = add3(mul3(dir, event.size.x * 0.24), mul3(side, event.size.y * (event.phase > 0.5 ? 0.22 : -0.22)));
+    const centerB = add3(center, add3(offset, vec3(0, 0, event.size.z * 0.08)));
+    const cutB = orientedEventEllipsoid(
+      p,
+      centerB,
+      vec3(radii.x * 0.58, radii.y * 0.62, radii.z * 0.72),
+      dir
+    );
+    return Math.max(Math.max(d, -cutA), -cutB);
+  }
+
+  if (type === 'edgeSpall') {
+    const center = add3(event.center, vec3(0, 0, event.size.z * 0.24));
+    const radii = vec3(event.size.x * 0.52, event.size.y * 0.64, event.size.z * 0.34);
+    const cut = orientedEventEllipsoid(p, center, radii, dir);
     return Math.max(d, -cut);
   }
 
-  if (type === 'shearBand' || type === 'undercutShelf') {
-    const cut = sdOrientedRoundBox(p, event.center, size, dir, Math.min(size.y, size.z) * 0.28);
-    return Math.max(d, -cut);
+  if (type === 'shearBand') {
+    const center = add3(event.center, vec3(0, 0, event.size.z * 0.52));
+    const halfLength = event.size.x * 0.82;
+    const radius = Math.max(0.010 * minD, event.size.y * 0.44);
+    const a = add3(center, mul3(dir, -halfLength));
+    const b = add3(center, mul3(dir, halfLength));
+    return Math.max(d, -sdCapsule(p, a, b, radius));
+  }
+
+  if (type === 'undercutShelf') {
+    const center = add3(event.center, vec3(0, 0, event.size.z * 0.36));
+    const radii = vec3(event.size.x * 0.72, event.size.y * 0.76, event.size.z * 0.42);
+    return Math.max(d, -orientedEventEllipsoid(p, center, radii, dir));
   }
 
   if (type === 'cavityCluster') {
-    const offsets = [-0.58, 0.0, 0.62];
+    const center = add3(event.center, vec3(0, 0, event.size.z * 0.34 + 0.010 * minD));
+    const radii = vec3(event.size.x * 0.38, event.size.y * 0.50, event.size.z * 0.28);
+    const offsets = [-0.34, 0.32];
     for (let i = 0; i < offsets.length; i++) {
-      const along = mul3(dir, offsets[i] * size.x * 0.78);
-      const across = mul3(side, Math.sin(event.phase * 8.0 + i * 2.1) * size.y * 0.54);
-      const center = add3(event.center, add3(along, across));
-      const radii = vec3(size.x * (i === 1 ? 0.72 : 0.52), size.y * (i === 1 ? 0.88 : 0.62), size.z * (i === 1 ? 1.0 : 0.72));
-      d = Math.max(d, -sdEllipsoid(p, center, radii));
+      const along = mul3(dir, offsets[i] * event.size.x);
+      const across = mul3(side, Math.sin(event.phase * 7.0 + i * 2.4) * event.size.y * 0.24);
+      const localCenter = add3(center, add3(along, across));
+      const scale = i === 0 ? 1.0 : 0.72;
+      d = Math.max(
+        d,
+        -orientedEventEllipsoid(
+          p,
+          localCenter,
+          vec3(radii.x * scale, radii.y * (0.82 + i * 0.08), radii.z * scale),
+          dir
+        )
+      );
     }
     return d;
   }
 
   if (type === 'fractureBranch' || type === 'fiberPulloutChannel') {
-    const a = add3(event.center, mul3(dir, -size.x));
-    const b = add3(event.center, mul3(dir, size.x));
-    d = Math.max(d, -sdCapsule(p, a, b, size.y));
+    const center = add3(event.center, vec3(0, 0, event.size.z * 0.62));
+    const radius = Math.max(0.006 * minD, event.size.y * (type === 'fractureBranch' ? 0.44 : 0.56));
+    const halfLength = event.size.x * (type === 'fractureBranch' ? 0.72 : 0.78);
+    const a = add3(center, mul3(dir, -halfLength));
+    const b = add3(center, mul3(dir, halfLength));
+    d = Math.max(d, -sdCapsule(p, a, b, radius));
     if (type === 'fractureBranch') {
-      const mid = add3(event.center, mul3(dir, size.x * 0.10));
-      const branchDir = norm3(add3(mul3(dir, 0.52), mul3(side, event.phase > 0.5 ? 0.86 : -0.86)));
-      d = Math.max(d, -sdCapsule(p, mid, add3(mid, mul3(branchDir, size.x * 0.58)), size.y * 0.66));
+      const branchDir = norm3(add3(mul3(dir, 0.68), mul3(side, event.phase > 0.5 ? 0.73 : -0.73)));
+      const branchA = add3(center, mul3(dir, halfLength * 0.05));
+      const branchB = add3(branchA, mul3(branchDir, halfLength * 0.46));
+      d = Math.max(d, -sdCapsule(p, branchA, branchB, radius * 0.58));
     }
     return d;
   }
 
-  if (type === 'beddingLayer' || type === 'delaminationPlate' || type === 'compactionFlake') {
-    const plate = sdOrientedRoundBox(p, event.center, size, dir, Math.min(size.y, size.z) * 0.30);
+  if (type === 'beddingLayer') {
+    const center = add3(event.center, vec3(0, 0, -event.size.z * 0.30));
+    const plate = orientedEventEllipsoid(
+      p,
+      center,
+      vec3(event.size.x * 0.82, event.size.y * 0.52, event.size.z * 0.72),
+      dir
+    );
+    return Math.min(d, plate);
+  }
+
+  if (type === 'delaminationPlate' || type === 'compactionFlake') {
+    const center = add3(event.center, vec3(0, 0, -event.size.z * 0.22));
+    const plate = orientedEventEllipsoid(
+      p,
+      center,
+      vec3(event.size.x * 0.70, event.size.y * 0.64, event.size.z * 0.68),
+      dir
+    );
     d = Math.min(d, plate);
-    if (type !== 'beddingLayer') {
-      const shadowCenter = add3(event.center, vec3(0, -size.y * 0.72, -size.z * 1.20));
-      const shadow = sdOrientedRoundBox(p, shadowCenter, vec3(size.x * 0.88, size.y * 0.18, size.z * 1.35), dir, size.z * 0.28);
-      d = Math.max(d, -shadow);
-    }
-    return d;
+    const shadowCenter = add3(
+      center,
+      add3(mul3(side, -event.size.y * 0.48), vec3(0, 0, -event.size.z * 0.62))
+    );
+    const shadow = orientedEventEllipsoid(
+      p,
+      shadowCenter,
+      vec3(event.size.x * 0.58, event.size.y * 0.22, event.size.z * 0.42),
+      dir
+    );
+    return Math.max(d, -shadow);
   }
 
   if (type === 'fiberBundle') {
-    for (let i = -2; i <= 2; i++) {
-      const center = add3(event.center, mul3(side, i * size.y * 2.2));
-      const wiggle = mul3(side, Math.sin(event.phase * 12.0 + i * 1.7) * size.y * 1.2);
-      const a = add3(add3(center, mul3(dir, -size.x)), wiggle);
-      const b = add3(add3(center, mul3(dir, size.x)), mul3(wiggle, -0.45));
-      d = Math.min(d, sdCapsule(p, a, b, size.y * (i === 0 ? 1.18 : 0.82)));
+    const centerBase = add3(event.center, vec3(0, 0, -event.size.z * 0.95));
+    for (let i = -1; i <= 1; i++) {
+      const center = add3(centerBase, mul3(side, i * event.size.y * 1.55));
+      const a = add3(center, mul3(dir, -event.size.x * (0.78 + i * 0.05)));
+      const b = add3(center, mul3(dir, event.size.x * (0.72 - i * 0.04)));
+      d = Math.min(d, sdCapsule(p, a, b, event.size.y * (i === 0 ? 0.70 : 0.48)));
     }
     return d;
   }
 
   if (type === 'mineralSeam') {
-    const a = add3(event.center, mul3(dir, -size.x));
-    const b = add3(event.center, mul3(dir, size.x));
-    return Math.min(d, sdCapsule(p, a, b, size.y));
+    return d;
   }
 
   return d;
@@ -893,7 +956,7 @@ function buildMesh(profile, seedDNA, controlsInput, level, quality = 1) {
     level,
     profileId: profile.id,
     grid: [nx, ny, nz],
-    noiseVersion: 'v2.7-visual-truth-formation-hierarchy-alpha1'
+    noiseVersion: 'v2.7.1-organic-shallow-formation-alpha1'
   };
 }
 
