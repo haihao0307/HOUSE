@@ -27,7 +27,7 @@ const state = {
   data: null,
   profiles: new Map(),
   renderer: null,
-  batchMode: 'siblings',
+  batchMode: 'mixed',
   selectedProfile: 'old-pbr-fired',
   batchCycle: 0,
   currentItems: [],
@@ -38,7 +38,8 @@ const state = {
   rebuildTimer: 0,
   evidenceMode: QUERY.get('evidence') === '1',
   evidenceFocus: Math.max(0, Math.min(2, Math.round(Number(QUERY.get('focus') ?? 1) || 1))),
-  soloMode: QUERY.get('solo') === '1'
+  soloMode: QUERY.get('solo') === '1',
+  benchmarkMode: QUERY.get('specimen') !== 'historical'
 };
 
 function showFatal(error) {
@@ -170,14 +171,15 @@ function controlsForChild(profile, childIndex, mode) {
   ][childIndex];
   const result = { ...base };
   for (const [key, delta] of Object.entries(shifts)) result[key] = Number(base[key]) + delta;
+  result.benchmarkSlab = state.benchmarkMode ? 1 : 0;
   return normalizeControls(result);
 }
 
 function createBatchDefinitions() {
   if (state.batchMode === 'mixed') {
-    const ids = ['historical-fired', 'raw-clay', 'stone-block'];
-    const levels = [0.26, 0.36, 0.32];
-    const labels = ['富色烧结砖子代', '有机夹杂土坯子代', '矿物风化石块子代'];
+    const ids = ['old-pbr-fired', 'stone-block', 'raw-clay'];
+    const levels = [0.42, 0.48, 0.46];
+    const labels = ['烧结砖视觉真值子代', '定向地质石材子代', '纤维土坯视觉真值子代'];
     return ids.map((id, i) => {
       const profile = state.profiles.get(id);
       return {
@@ -186,7 +188,7 @@ function createBatchDefinitions() {
         controls: controlsForChild(profile, i, 'mixed'),
         level: levels[i],
         label: labels[i],
-        note: ['窑变、氧化斑、深孔与水痕复合', '稻草、稻壳、种粒、脱落孔与湿痕复合', '解理、矿物、锈色、水蚀和脆断复合'][i]
+        note: ['烧结壳层、片状剥离、矿物析出与破口复合', '剪切带、层理、下切悬沿与矿物脉复合', '压实土片、纤维束、拔出沟槽与塌落区复合'][i]
       };
     });
   }
@@ -240,7 +242,7 @@ async function buildCurrentBatch() {
       const definition = buildDefinitions[i];
       setProgress(`正在生成 ${definition.label} ${i + 1}/${buildDefinitions.length}`, 12 + i * (76 / buildDefinitions.length));
       await new Promise((resolve) => setTimeout(resolve, 18));
-      const quality = state.soloMode ? 1.30 : 1.04;
+      const quality = state.evidenceMode ? 0.78 : (state.soloMode ? 1.00 : (state.benchmarkMode ? 0.72 : 1.04));
       const mesh = buildMesh(definition.profile, definition.seedDNA, definition.controls, definition.level, quality);
       if (!mesh.vertices || mesh.triangles < 1000) {
         throw new Error(`${definition.label} 网格过小，生成已停止`);
@@ -248,11 +250,11 @@ async function buildCurrentBatch() {
       built.push({ ...definition, mesh });
     }
 
-    const positions = state.soloMode ? [0] : [-4.4, 0, 4.4];
-    const yaws = state.soloMode ? [0.08] : [-0.24, 0.05, 0.28];
+    const positions = state.soloMode ? [0] : (state.benchmarkMode ? [-3.46, 0, 3.46] : [-4.4, 0, 4.4]);
+    const yaws = state.soloMode ? [0.04] : (state.benchmarkMode ? [0.02, 0.02, 0.02] : [-0.24, 0.05, 0.28]);
     state.currentItems = built.map((item, i) => ({
       ...item,
-      position: vec3(positions[i], item.mesh.dims.y * 0.5 + 0.02, 0),
+      position: vec3(positions[i], state.benchmarkMode ? 0 : item.mesh.dims.y * 0.5 + 0.02, 0),
       yaw: yaws[i]
     }));
 
@@ -268,14 +270,16 @@ async function buildCurrentBatch() {
     const totalInclusionVoids = built.reduce((sum, item) => sum + (item.mesh.damage.inclusionVoids?.length || 0), 0);
     const totalRimChips = built.reduce((sum, item) => sum + (item.mesh.damage.poreRimChips?.length || 0), 0);
     const totalCollapsedPores = built.reduce((sum, item) => sum + (item.mesh.damage.collapsedPores?.length || 0), 0);
+    const formationEvents = built.flatMap((item) => item.mesh.damage.formationEvents || []);
+    const formationCounts = formationEvents.reduce((acc, event) => { acc[event.type] = (acc[event.type] || 0) + 1; return acc; }, {});
     const elapsed = Math.round(performance.now() - start);
     $('#batchStats').textContent =
       `${triangleLabel(totalTriangles)} 三角面 · ${totalDeepPores} 深孔 · ${totalRimChips} 孔沿碎裂 · ${totalCollapsedPores} 塌口 · ${elapsed} ms`;
-    setProgress('V2.6 中性光照综合色谱生成完成。可检查烧结红黑区、石材冷暖区、孔洞和土坯夹杂。', 100);
+    setProgress('V2.7 视觉真值结构生成完成。可检查宏观片层、定向地质、悬沿深腔和土坯纤维束。', 100);
 
     window.__BRICK_MOTHER_READY__ = true;
     document.documentElement.dataset.brickMotherReady = 'true';
-    document.documentElement.dataset.brickMotherVersion = '2.6.0-alpha.1';
+    document.documentElement.dataset.brickMotherVersion = '2.7.0-alpha.1';
     document.documentElement.dataset.seedLayers = '8';
     document.documentElement.dataset.deepPores = String(totalDeepPores);
     document.documentElement.dataset.inclusionVoids = String(totalInclusionVoids);
@@ -283,14 +287,18 @@ async function buildCurrentBatch() {
     document.documentElement.dataset.collapsedPores = String(totalCollapsedPores);
     document.documentElement.dataset.soloMode = state.soloMode ? 'true' : 'false';
     document.documentElement.dataset.gaeaKernel = window.BrickMotherGaeaV1?.version || 'missing';
-    document.documentElement.dataset.debugModes = '9';
+    document.documentElement.dataset.debugModes = '11';
     document.documentElement.dataset.activeProfile = state.selectedProfile;
     document.documentElement.dataset.oxideContours = 'suppressed';
     document.documentElement.dataset.eventColorMasking = 'true';
     document.documentElement.dataset.evidenceReady = state.evidenceMode ? 'true' : 'false';
+    document.documentElement.dataset.benchmarkSpecimen = state.benchmarkMode ? 'true' : 'false';
+    document.documentElement.dataset.formationEvents = String(formationEvents.length);
+    document.documentElement.dataset.macroEvents = String(formationEvents.filter((event) => ['macroPlateLoss', 'shearBand', 'beddingLayer', 'edgeSpall'].includes(event.type)).length);
+    document.documentElement.dataset.mesoEvents = String(formationEvents.filter((event) => !['macroPlateLoss', 'shearBand', 'beddingLayer', 'edgeSpall'].includes(event.type)).length);
     window.__BRICK_MOTHER_QA__ = {
       ready: true,
-      version: '2.6.0-alpha.1',
+      version: '2.7.0-alpha.1',
       mode: state.batchMode,
       profiles: built.map((item) => item.profile.id),
       triangleCounts: built.map((item) => Math.round(item.mesh.triangles)),
@@ -305,6 +313,9 @@ async function buildCurrentBatch() {
       deepPoreCounts: built.map((item) => item.mesh.damage.deepPores.length),
       poreRimChipCounts: built.map((item) => item.mesh.damage.poreRimChips?.length || 0),
       collapsedPoreCounts: built.map((item) => item.mesh.damage.collapsedPores?.length || 0),
+      benchmarkSpecimen: state.benchmarkMode,
+      formationEventCounts: formationCounts,
+      formationEventFamilies: Object.keys(formationCounts),
       soloMode: state.soloMode,
       erosionBiteCounts: built.map((item) => item.mesh.damage.erosionBites.length),
       inclusionVoidCounts: built.map((item) => item.mesh.damage.inclusionVoids?.length || 0),
@@ -324,11 +335,15 @@ async function buildCurrentBatch() {
         stoneReadableMidtones: true,
         reducedMicroNoise: true,
         adobeInclusionClustering: true,
+        visualTruthReferenceFrozen: true,
+        formationHierarchy: ['macro', 'meso', 'micro'],
+        directionalStoneGeology: true,
+        benchmarkSlab: state.benchmarkMode,
         profileEvidenceRoute: state.evidenceMode,
         activeProfile: state.selectedProfile,
         focusedChild: state.evidenceFocus
       },
-      debugModes: 9,
+      debugModes: 11,
       sourceComparisonNoDimming: true
     };
   } catch (error) {
@@ -367,7 +382,7 @@ function renderChildCards() {
 function exportDNA() {
   const payload = {
     product: 'Brick Mother',
-    version: '2.6.0-alpha.1',
+    version: '2.7.0-alpha.1',
     profile: state.selectedProfile,
     batchMode: state.batchMode,
     controls: state.controls,
@@ -380,7 +395,8 @@ function exportDNA() {
       controls: item.mesh.controls,
       triangleCount: Math.round(item.mesh.triangles),
       deepPoreCount: item.mesh.damage.deepPores.length,
-      erosionBiteCount: item.mesh.damage.erosionBites.length
+      erosionBiteCount: item.mesh.damage.erosionBites.length,
+      formationEvents: item.mesh.damage.formationEvents
     }))
   };
   const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
@@ -469,6 +485,13 @@ function bindUI() {
 
   $('#regenerate').addEventListener('click', () => $('#randomizeSeeds').click());
 
+  $('#specimenMode').addEventListener('click', (event) => {
+    state.benchmarkMode = !state.benchmarkMode;
+    event.currentTarget.classList.toggle('on', state.benchmarkMode);
+    event.currentTarget.textContent = state.benchmarkMode ? '基准方砖' : '历史砖比例';
+    buildCurrentBatch();
+  });
+
   $('#soloView').addEventListener('click', (event) => {
     state.soloMode = !state.soloMode;
     event.currentTarget.classList.toggle('on', state.soloMode);
@@ -517,12 +540,18 @@ async function main() {
     }
     state.profiles = new Map(state.data.profiles.map((profile) => [profile.id, profile]));
     const requestedProfile = QUERY.get('profile');
-    if (requestedProfile && state.profiles.has(requestedProfile)) state.selectedProfile = requestedProfile;
-    if (QUERY.get('mode') === 'mixed') state.batchMode = 'mixed';
-    state.debugMode = Math.max(0, Math.min(8, Math.round(Number(QUERY.get('debug') ?? 0) || 0)));
+    if (requestedProfile && state.profiles.has(requestedProfile)) {
+      state.selectedProfile = requestedProfile;
+      state.batchMode = QUERY.get('mode') === 'mixed' ? 'mixed' : 'siblings';
+    } else if (QUERY.get('mode') === 'siblings') {
+      state.batchMode = 'siblings';
+    } else {
+      state.batchMode = 'mixed';
+    }
+    state.debugMode = Math.max(0, Math.min(10, Math.round(Number(QUERY.get('debug') ?? 0) || 0)));
     if (state.evidenceMode) {
       document.body.classList.add('evidence-mode');
-      document.body.dataset.evidenceLabel = `Brick Mother V2.6 · ${state.selectedProfile} · channel ${state.debugMode}`;
+      document.body.dataset.evidenceLabel = `Brick Mother V2.7 · ${state.selectedProfile} · channel ${state.debugMode}`;
     }
     const profile = state.profiles.get(state.selectedProfile);
     state.controls = controlDefaultsForProfile(profile);
@@ -540,6 +569,8 @@ async function main() {
     bindUI();
     $('#soloView').classList.toggle('on', state.soloMode);
     $('#soloView').textContent = state.soloMode ? '返回家族' : '单块近景';
+    $('#specimenMode').classList.toggle('on', state.benchmarkMode);
+    $('#specimenMode').textContent = state.benchmarkMode ? '基准方砖' : '历史砖比例';
     await buildCurrentBatch();
   } catch (error) {
     console.error(error);

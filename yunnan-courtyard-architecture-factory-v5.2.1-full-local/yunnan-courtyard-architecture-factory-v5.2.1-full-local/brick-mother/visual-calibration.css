@@ -1,4 +1,4 @@
-/* Brick Mother V2.2 browser evidence layout */
+/* Brick Mother V2.7 visual truth browser evidence layout */
 body.evidence-mode {
   margin: 0;
   overflow: hidden;
@@ -55,6 +55,7 @@ body.evidence-mode .loading {
   background: #0e100f;
 }
 body.evidence-mode::after {
+  display: none;
   content: attr(data-evidence-label);
   position: fixed;
   left: 24px;

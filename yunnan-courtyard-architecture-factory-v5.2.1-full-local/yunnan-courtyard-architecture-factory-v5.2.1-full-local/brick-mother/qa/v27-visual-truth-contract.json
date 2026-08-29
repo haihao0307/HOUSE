@@ -1,7 +1,7 @@
 {
   "schemaVersion": "1.0.0",
   "subject": "Brick Mother V2.7 user supplied visual truth",
-  "status": "frozen-target-implementation-pending",
+  "status": "implementation-alpha-browser-evidence-pending",
   "reference": {
     "attachmentLabel": "ChatGPT Image 2026年8月29日 14_45_43.png",
     "width": 2048,
@@ -17,7 +17,7 @@
     "mode": "benchmark-slab",
     "nearSquareFrontFace": true,
     "visibleSideThickness": true,
-    "frameHeightOccupancyMin": 0.70,
+    "frameHeightOccupancyMin": 0.7,
     "frameHeightOccupancyTarget": [
       0.72,
       0.88
@@ -40,7 +40,7 @@
         0.294,
         0.197
       ],
-      "meanLuminance": 0.320,
+      "meanLuminance": 0.32,
       "luminanceStandardDeviation": 0.151,
       "luminanceP10": 0.108,
       "luminanceP50": 0.323,
@@ -56,7 +56,7 @@
       "luminanceStandardDeviation": 0.156,
       "luminanceP10": 0.106,
       "luminanceP50": 0.332,
-      "luminanceP90": 0.530
+      "luminanceP90": 0.53
     },
     "fiber-adobe": {
       "meanSRGB": [
@@ -89,12 +89,12 @@
   },
   "formationHierarchy": {
     "macroContribution": [
-      0.40,
-      0.50
+      0.4,
+      0.5
     ],
     "mesoContribution": [
-      0.30,
-      0.40
+      0.3,
+      0.4
     ],
     "microContribution": [
       0.15,
@@ -197,5 +197,33 @@
     "pullRequest": 15,
     "pullRequestDraft": true,
     "mergeAllowed": false
+  },
+  "implementation": {
+    "version": "2.7.0-alpha.1",
+    "benchmarkSlabImplemented": true,
+    "formationEventUniformUpload": true,
+    "formationEventFamiliesImplemented": [
+      "macroPlateLoss",
+      "shearBand",
+      "beddingLayer",
+      "delaminationPlate",
+      "undercutShelf",
+      "cavityCluster",
+      "fractureBranch",
+      "edgeSpall",
+      "fiberBundle",
+      "fiberPulloutChannel",
+      "compactionFlake",
+      "mineralSeam"
+    ],
+    "debugChannelsImplemented": [
+      "final",
+      "base-color",
+      "cavity-undercut",
+      "surface-normal",
+      "macro-event-field",
+      "meso-event-field"
+    ],
+    "manualApprovalsRemainFalse": true
   }
 }

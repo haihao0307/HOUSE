@@ -253,3 +253,7 @@ Current approvals remain:
 4. Production approval: false
 
 V1.0 remains frozen. PR 15 remains open, Draft and unmerged during V2.7 development.
+
+## 14. Implementation checkpoint
+
+V2.7 Alpha 1 implements the benchmark slab, deterministic material-specific formation events, uploaded event masks shared with the renderer, macro and meso diagnostic channels, dark grid-free evidence framing and preserved false approval gates. Browser evidence and user visual approval remain open.

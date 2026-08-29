@@ -1,7 +1,7 @@
 {
-  "schemaVersion": "2.6.0-alpha.1",
+  "schemaVersion": "2.7.0-alpha.1",
   "generatedAt": "2026-08-29",
-  "pipelineId": "brick-mother-gaea-event-calibrated-material-dna-v2.2",
+  "pipelineId": "brick-mother-v27-visual-truth-formation-hierarchy",
   "researchBasis": {
     "userReference": "https://threejsroadmap.com/blog/10-noise-functions-for-threejs-tsl-shaders",
     "primaryImplementationReferences": [
@@ -33,14 +33,14 @@
     "gaeaDistillationPolicy": "Documented node roles and graph strategies distilled into an independent field implementation."
   },
   "rendererContract": {
-    "engine": "BrickMother WebGL2 Runtime V2.2 Gaea event-calibrated material DNA",
+    "engine": "BrickMother WebGL2 Runtime V2.7 visual truth formation hierarchy",
     "workingColorSpace": "linear-sRGB",
     "outputColorSpace": "sRGB",
     "toneMapping": "neutral exponential",
     "metalnessPolicy": "all masonry runtime materials forced to 0.0 unless independently verified",
-    "damagePolicy": "macro chips, cracks, shallow pits, deep bore pores and weather erosion are negative geometry; micro events remain correlated shader fields",
+    "damagePolicy": "Benchmark mode adds deterministic macro plate loss, shear bands, bedding, delamination, undercut shelves, cavity clusters, fracture branches, edge spalls, fibre bundles, pullout channels, compaction flakes and mineral seams. Historical production proportions remain available.",
     "mutationPolicy": "independent seeded layers for shape, damage, pores, color, water, weathering, inclusions and micro detail",
-    "channelCorrelation": "base color, aggregates, water stains, weathering, cavity, roughness, micro normal and adobe inclusions use layered event fields with independent reproducible seeds",
+    "channelCorrelation": "Geometry, albedo, roughness, micro normal and ambient occlusion share uploaded deterministic V2.7 formation events, plus the existing independent seed layers.",
     "gaeaFieldGraph": "Rugged, broken stratify, micro-erosion, rock-map, flow, separation-mask, CLUT5 and normalized Splat fields share geometry, color, roughness, normal and AO correlations; fired-clay color bands are event-gated to suppress regular contours."
   },
   "profiles": [

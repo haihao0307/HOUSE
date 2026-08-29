@@ -93,6 +93,234 @@ function sdCapsule(p, a, b, r) {
   return len3(sub3(pa, mul3(ba, h))) - r;
 }
 
+
+
+function sdOrientedRoundBox(p, center, halfSize, direction, radius = 0.02) {
+  const u = norm3(vec3(direction.x, direction.y, 0));
+  const v = vec3(-u.y, u.x, 0);
+  const d = sub3(p, center);
+  const q = vec3(dot3(d, u), dot3(d, v), d.z);
+  return sdRoundBox(q, halfSize, Math.min(radius, Math.min(halfSize.x, halfSize.y, halfSize.z) * 0.72));
+}
+
+function specimenDimensions(profile, controls) {
+  if ((controls?.benchmarkSlab ?? 0) < 0.5) return normalizedDimensions(profile);
+  const richness = clamp((controls.shapeVariation ?? 0.9) - 0.9, -0.6, 0.8);
+  if (profile.family === 'STONE') return vec3(3.12 + richness * 0.10, 3.04 - richness * 0.03, 1.12 + richness * 0.05);
+  if (profile.family === 'ADOBE') return vec3(3.18 + richness * 0.09, 3.00 - richness * 0.02, 1.08 + richness * 0.05);
+  return vec3(3.16 + richness * 0.08, 3.02 - richness * 0.03, 1.10 + richness * 0.05);
+}
+
+const FORMATION_EVENT_TYPES = Object.freeze({
+  macroPlateLoss: 1,
+  shearBand: 2,
+  beddingLayer: 3,
+  delaminationPlate: 4,
+  undercutShelf: 5,
+  cavityCluster: 6,
+  fractureBranch: 7,
+  edgeSpall: 8,
+  fiberBundle: 9,
+  fiberPulloutChannel: 10,
+  compactionFlake: 11,
+  mineralSeam: 12
+});
+
+function frontDirection(angle) {
+  return norm3(vec3(Math.cos(angle), Math.sin(angle), 0));
+}
+
+function frontEventPoint(b, rng, xRange = 0.70, yRange = 0.70, zOffset = 0) {
+  return vec3(rng.range(-xRange, xRange) * b.x, rng.range(-yRange, yRange) * b.y, b.z + zOffset);
+}
+
+function buildFormationEvents(profile, seedDNA, controls, dims) {
+  if ((controls.benchmarkSlab ?? 0) < 0.5) return [];
+  const seeds = normalizeSeedDNA(seedDNA, profile);
+  const rng = new RNG(seeds.damage ^ seeds.detail ^ 0x6a09e667);
+  const inclusionRng = new RNG(seeds.inclusion ^ 0xbb67ae85);
+  const b = mul3(dims, 0.5);
+  const minD = Math.min(dims.x, dims.y, dims.z);
+  const events = [];
+  const add = (type, center, size, angle, strength = 1, phase = rng.next()) => {
+    events.push({
+      type,
+      typeCode: FORMATION_EVENT_TYPES[type],
+      center,
+      size,
+      direction: frontDirection(angle),
+      strength,
+      phase
+    });
+  };
+
+  const commonAngle = rng.range(-0.82, 0.82);
+  add('macroPlateLoss', frontEventPoint(b, rng, 0.58, 0.62, -0.035 * minD), vec3(0.72 * minD, 0.40 * minD, 0.24 * minD), commonAngle, 1.0);
+  add('macroPlateLoss', frontEventPoint(b, rng, 0.72, 0.72, -0.025 * minD), vec3(0.48 * minD, 0.29 * minD, 0.20 * minD), commonAngle + rng.range(-0.55, 0.55), 0.78);
+
+  const cavityCount = profile.family === 'FIRED_CLAY' ? 4 : 3;
+  for (let i = 0; i < cavityCount; i++) {
+    const large = i === 0 || (profile.family === 'FIRED_CLAY' && i === 1);
+    add(
+      'cavityCluster',
+      frontEventPoint(b, rng, 0.72, 0.72, -rng.range(0.03, 0.10) * minD),
+      vec3(
+        rng.range(large ? 0.17 : 0.09, large ? 0.30 : 0.18) * minD,
+        rng.range(large ? 0.13 : 0.07, large ? 0.25 : 0.16) * minD,
+        rng.range(0.20, large ? 0.42 : 0.31) * minD
+      ),
+      rng.range(-Math.PI, Math.PI),
+      large ? 1.18 : 0.88,
+      rng.next()
+    );
+  }
+
+  for (let i = 0; i < 2; i++) {
+    add(
+      'fractureBranch',
+      frontEventPoint(b, rng, 0.62, 0.60, -0.018 * minD),
+      vec3(rng.range(0.46, 0.82) * minD, rng.range(0.018, 0.036) * minD, rng.range(0.045, 0.085) * minD),
+      rng.range(-1.15, 1.15),
+      rng.range(0.72, 1.10),
+      rng.next()
+    );
+  }
+
+  const edgeAnchors = [
+    vec3(-b.x * 0.96, b.y * rng.range(-0.72, 0.78), b.z * 0.94),
+    vec3(b.x * 0.96, b.y * rng.range(-0.76, 0.74), b.z * 0.94),
+    vec3(b.x * rng.range(-0.74, 0.74), -b.y * 0.97, b.z * 0.92)
+  ];
+  for (const center of edgeAnchors) {
+    add('edgeSpall', center, vec3(rng.range(0.18, 0.34) * minD, rng.range(0.14, 0.29) * minD, rng.range(0.20, 0.36) * minD), rng.range(-Math.PI, Math.PI), rng.range(0.72, 1.12));
+  }
+
+  if (profile.family === 'STONE') {
+    const shearAngle = rng.range(-0.66, -0.36);
+    add('shearBand', vec3(0, rng.range(-0.04, 0.16) * b.y, b.z - 0.06 * minD), vec3(1.22 * minD, 0.095 * minD, 0.16 * minD), shearAngle, 1.25);
+    for (let i = 0; i < 4; i++) {
+      const y = lerp(-0.56, 0.56, i / 3) * b.y + rng.range(-0.10, 0.10) * minD;
+      add('beddingLayer', vec3(rng.range(-0.12, 0.12) * b.x, y, b.z + rng.range(0.010, 0.045) * minD), vec3(rng.range(0.78, 1.22) * minD, rng.range(0.055, 0.12) * minD, rng.range(0.020, 0.052) * minD), shearAngle + rng.range(-0.18, 0.18), rng.range(0.62, 1.05));
+    }
+    for (let i = 0; i < 2; i++) {
+      add('undercutShelf', frontEventPoint(b, rng, 0.48, 0.52, -0.045 * minD), vec3(rng.range(0.48, 0.82) * minD, rng.range(0.045, 0.085) * minD, rng.range(0.10, 0.18) * minD), shearAngle + rng.range(-0.22, 0.22), 1.10);
+      add('mineralSeam', frontEventPoint(b, rng, 0.58, 0.58, 0.018 * minD), vec3(rng.range(0.52, 0.92) * minD, rng.range(0.012, 0.025) * minD, rng.range(0.012, 0.025) * minD), shearAngle + rng.range(-0.30, 0.30), 0.76);
+    }
+  } else if (profile.family === 'ADOBE') {
+    const flakeAngle = rng.range(-0.50, 0.50);
+    for (let i = 0; i < 4; i++) {
+      add('compactionFlake', frontEventPoint(b, rng, 0.62, 0.68, rng.range(0.010, 0.045) * minD), vec3(rng.range(0.38, 0.78) * minD, rng.range(0.19, 0.38) * minD, rng.range(0.020, 0.052) * minD), flakeAngle + rng.range(-0.72, 0.72), rng.range(0.72, 1.12));
+    }
+    for (let i = 0; i < 3; i++) {
+      add('fiberBundle', frontEventPoint(b, inclusionRng, 0.66, 0.72, rng.range(0.025, 0.060) * minD), vec3(inclusionRng.range(0.44, 0.86) * minD, inclusionRng.range(0.010, 0.021) * minD, inclusionRng.range(0.010, 0.022) * minD), inclusionRng.range(-1.25, 1.25), inclusionRng.range(0.80, 1.20), inclusionRng.next());
+    }
+    for (let i = 0; i < 2; i++) {
+      add('fiberPulloutChannel', frontEventPoint(b, inclusionRng, 0.62, 0.68, -0.022 * minD), vec3(inclusionRng.range(0.30, 0.66) * minD, inclusionRng.range(0.012, 0.026) * minD, inclusionRng.range(0.030, 0.070) * minD), inclusionRng.range(-1.35, 1.35), 0.92, inclusionRng.next());
+    }
+    add('undercutShelf', frontEventPoint(b, rng, 0.44, 0.52, -0.040 * minD), vec3(0.58 * minD, 0.070 * minD, 0.13 * minD), flakeAngle, 0.90);
+  } else {
+    const plateAngle = rng.range(-0.58, 0.58);
+    add('shearBand', frontEventPoint(b, rng, 0.32, 0.36, -0.040 * minD), vec3(0.92 * minD, 0.070 * minD, 0.13 * minD), plateAngle + rng.range(-0.38, 0.38), 0.75);
+    for (let i = 0; i < 3; i++) {
+      add('delaminationPlate', frontEventPoint(b, rng, 0.64, 0.66, rng.range(0.018, 0.055) * minD), vec3(rng.range(0.36, 0.70) * minD, rng.range(0.18, 0.34) * minD, rng.range(0.018, 0.045) * minD), plateAngle + rng.range(-0.78, 0.78), rng.range(0.72, 1.10));
+    }
+    for (let i = 0; i < 2; i++) {
+      add('undercutShelf', frontEventPoint(b, rng, 0.52, 0.56, -0.045 * minD), vec3(rng.range(0.40, 0.72) * minD, rng.range(0.045, 0.080) * minD, rng.range(0.10, 0.17) * minD), plateAngle + rng.range(-0.48, 0.48), 1.02);
+    }
+    add('mineralSeam', frontEventPoint(b, rng, 0.60, 0.60, 0.018 * minD), vec3(0.64 * minD, 0.016 * minD, 0.018 * minD), plateAngle + rng.range(-0.50, 0.50), 0.70);
+  }
+
+  const limits = profile.family === 'STONE'
+    ? { macroPlateLoss: 1, cavityCluster: 2, fractureBranch: 1, edgeSpall: 1, shearBand: 1, beddingLayer: 4, undercutShelf: 2, mineralSeam: 2 }
+    : profile.family === 'ADOBE'
+      ? { macroPlateLoss: 1, cavityCluster: 1, fractureBranch: 1, edgeSpall: 1, compactionFlake: 4, fiberBundle: 3, fiberPulloutChannel: 2, undercutShelf: 1 }
+      : { macroPlateLoss: 2, cavityCluster: 3, fractureBranch: 2, edgeSpall: 2, shearBand: 1, delaminationPlate: 2, undercutShelf: 1, mineralSeam: 1 };
+  const used = {};
+  return events.filter((event) => {
+    const limit = limits[event.type] || 0;
+    const count = used[event.type] || 0;
+    used[event.type] = count + 1;
+    return count < limit;
+  }).slice(0, 14);
+}
+
+function applyFormationEventSDF(distance, p, event, seeds, minD) {
+  const type = event.type;
+  const sizeJitter = 0;
+  const size = vec3(
+    Math.max(0.004, event.size.x + sizeJitter),
+    Math.max(0.004, event.size.y + sizeJitter * 0.72),
+    Math.max(0.004, event.size.z + sizeJitter * 0.54)
+  );
+  const dir = event.direction;
+  const side = vec3(-dir.y, dir.x, 0);
+  let d = distance;
+
+  if (type === 'macroPlateLoss' || type === 'edgeSpall') {
+    const cut = sdOrientedRoundBox(p, event.center, size, dir, Math.min(size.y, size.z) * 0.34);
+    return Math.max(d, -cut);
+  }
+
+  if (type === 'shearBand' || type === 'undercutShelf') {
+    const cut = sdOrientedRoundBox(p, event.center, size, dir, Math.min(size.y, size.z) * 0.28);
+    return Math.max(d, -cut);
+  }
+
+  if (type === 'cavityCluster') {
+    const offsets = [-0.58, 0.0, 0.62];
+    for (let i = 0; i < offsets.length; i++) {
+      const along = mul3(dir, offsets[i] * size.x * 0.78);
+      const across = mul3(side, Math.sin(event.phase * 8.0 + i * 2.1) * size.y * 0.54);
+      const center = add3(event.center, add3(along, across));
+      const radii = vec3(size.x * (i === 1 ? 0.72 : 0.52), size.y * (i === 1 ? 0.88 : 0.62), size.z * (i === 1 ? 1.0 : 0.72));
+      d = Math.max(d, -sdEllipsoid(p, center, radii));
+    }
+    return d;
+  }
+
+  if (type === 'fractureBranch' || type === 'fiberPulloutChannel') {
+    const a = add3(event.center, mul3(dir, -size.x));
+    const b = add3(event.center, mul3(dir, size.x));
+    d = Math.max(d, -sdCapsule(p, a, b, size.y));
+    if (type === 'fractureBranch') {
+      const mid = add3(event.center, mul3(dir, size.x * 0.10));
+      const branchDir = norm3(add3(mul3(dir, 0.52), mul3(side, event.phase > 0.5 ? 0.86 : -0.86)));
+      d = Math.max(d, -sdCapsule(p, mid, add3(mid, mul3(branchDir, size.x * 0.58)), size.y * 0.66));
+    }
+    return d;
+  }
+
+  if (type === 'beddingLayer' || type === 'delaminationPlate' || type === 'compactionFlake') {
+    const plate = sdOrientedRoundBox(p, event.center, size, dir, Math.min(size.y, size.z) * 0.30);
+    d = Math.min(d, plate);
+    if (type !== 'beddingLayer') {
+      const shadowCenter = add3(event.center, vec3(0, -size.y * 0.72, -size.z * 1.20));
+      const shadow = sdOrientedRoundBox(p, shadowCenter, vec3(size.x * 0.88, size.y * 0.18, size.z * 1.35), dir, size.z * 0.28);
+      d = Math.max(d, -shadow);
+    }
+    return d;
+  }
+
+  if (type === 'fiberBundle') {
+    for (let i = -2; i <= 2; i++) {
+      const center = add3(event.center, mul3(side, i * size.y * 2.2));
+      const wiggle = mul3(side, Math.sin(event.phase * 12.0 + i * 1.7) * size.y * 1.2);
+      const a = add3(add3(center, mul3(dir, -size.x)), wiggle);
+      const b = add3(add3(center, mul3(dir, size.x)), mul3(wiggle, -0.45));
+      d = Math.min(d, sdCapsule(p, a, b, size.y * (i === 0 ? 1.18 : 0.82)));
+    }
+    return d;
+  }
+
+  if (type === 'mineralSeam') {
+    const a = add3(event.center, mul3(dir, -size.x));
+    const b = add3(event.center, mul3(dir, size.x));
+    return Math.min(d, sdCapsule(p, a, b, size.y));
+  }
+
+  return d;
+}
+
 function normalizedDimensions(profile) {
   const ratio = profile.runtimeDNA.shapeRatio;
   const longest = Math.max(...ratio);
@@ -140,7 +368,8 @@ function normalizeControls(controls = {}) {
     colorGamut: number('colorGamut', 1.08, 0, 1.6),
     maskSharpness: number('maskSharpness', 0.92, 0, 1.6),
     poreDensity: number('poreDensity', 1.18, 0.20, 2.20),
-    poreVariety: number('poreVariety', 1.08, 0.20, 1.80)
+    poreVariety: number('poreVariety', 1.08, 0.20, 1.80),
+    benchmarkSlab: number('benchmarkSlab', 1.0, 0, 1)
   };
 }
 
@@ -421,13 +650,14 @@ function buildDamage(profile, seedDNA, controlsInput, level, dims) {
     });
   }
 
-  return { chips, pits, poreClusters, deepPores, poreRimChips, collapsedPores, cracks, erosionBites, inclusionVoids };
+  const formationEvents = buildFormationEvents(profile, seeds, controls, dims);
+  return { chips, pits, poreClusters, deepPores, poreRimChips, collapsedPores, cracks, erosionBites, inclusionVoids, formationEvents };
 }
 
 function createSDF(profile, seedDNA, controlsInput, level) {
   const seeds = normalizeSeedDNA(seedDNA, profile);
   const controls = normalizeControls(controlsInput);
-  const dims = normalizedDimensions(profile);
+  const dims = specimenDimensions(profile, controls);
   const b = mul3(dims, 0.5);
   const dna = profile.runtimeDNA;
   const nd = profile.noiseDNA || {};
@@ -456,6 +686,8 @@ function createSDF(profile, seedDNA, controlsInput, level) {
       const familyScale = profile.family === 'STONE' ? 1.18 : profile.family === 'ADOBE' ? 0.92 : 1.0;
       d += GAEA.geometryDisplacement(p, seeds, controls, gaeaDNA, gaeaNoiseApi) * minD * familyScale;
     }
+
+    for (const event of damage.formationEvents) d = applyFormationEventSDF(d, p, event, seeds, minD);
 
     for (const chip of damage.chips) {
       const irregular = (noise3(p.x * 12, p.y * 12, p.z * 12, seeds.damage + 131) - 0.5) * chip.irregular * minD;
@@ -603,10 +835,11 @@ function buildMesh(profile, seedDNA, controlsInput, level, quality = 1) {
   const margin = minD * 0.38;
   const size = vec3(dims.x + margin * 2, dims.y + margin * 2, dims.z + margin * 2);
   const longest = Math.max(size.x, size.y, size.z);
+  const benchmark = (field.controls.benchmarkSlab ?? 0) > 0.5;
   const target = Math.round(52 * quality);
-  const nx = clamp(Math.round(target * size.x / longest), 24, target);
-  const ny = clamp(Math.round(target * size.y / longest), 20, target);
-  const nz = clamp(Math.round(target * size.z / longest), 22, target);
+  const nx = clamp(Math.round(target * size.x / longest), benchmark ? 38 : 24, target);
+  const ny = clamp(Math.round(target * size.y / longest), benchmark ? 38 : 20, target);
+  const nz = clamp(Math.round(target * size.z / longest), benchmark ? 24 : 22, target);
   const min = vec3(-size.x / 2, -size.y / 2, -size.z / 2);
   const step = vec3(size.x / (nx - 1), size.y / (ny - 1), size.z / (nz - 1));
   const grid = new Float32Array(nx * ny * nz);
@@ -660,13 +893,13 @@ function buildMesh(profile, seedDNA, controlsInput, level, quality = 1) {
     level,
     profileId: profile.id,
     grid: [nx, ny, nz],
-    noiseVersion: 'v2.6-neutral-studio-rich-material-alpha1'
+    noiseVersion: 'v2.7-visual-truth-formation-hierarchy-alpha1'
   };
 }
 
 window.BrickMotherGeometryV2 = {
   clamp, lerp, smooth, smoother, vec3, add3, sub3, mul3, dot3, cross3, len3, norm3, mix3,
   RNG, noise3, fbm3, ridgedFbm3, sdRoundBox, sdEllipsoid, sdCapsule,
-  normalizedDimensions, normalizeSeedDNA, normalizeControls, buildDamage, createSDF, buildMesh
+  normalizedDimensions, specimenDimensions, normalizeSeedDNA, normalizeControls, FORMATION_EVENT_TYPES, buildFormationEvents, buildDamage, createSDF, buildMesh
 };
 })();
