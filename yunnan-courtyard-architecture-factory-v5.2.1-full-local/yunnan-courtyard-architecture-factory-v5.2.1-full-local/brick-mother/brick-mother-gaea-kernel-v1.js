@@ -230,9 +230,17 @@ BMGaeaFields bmGaeaEvaluate(
   vec2 cells = worley3(q * ruggedScale * 0.76 + seedV * 0.89);
   float plateEdge = 1.0 - smoothstep(0.026, 0.17, cells.y - cells.x);
 
-  float strataWave = sin((q.y + q.x * 0.18 + q.z * 0.075) * strataFrequency * 6.2831853 + seedV.x) * 0.5 + 0.5;
+  float strataPhaseNoise = fbmValueFast(q * 3.7 + seedV * 1.91) - 0.5;
+  float strataPhase = (
+    q.y + q.x * 0.18 + q.z * 0.075 + strataPhaseNoise * 0.18
+  ) * strataFrequency * 6.2831853 + seedV.x;
+  float strataWave = sin(strataPhase) * 0.5 + 0.5;
   float strataGate = bmAutoLevel(fbmValueFast(q * 2.65 + seedV * 1.43), 0.27, 0.82);
-  float strata = bmMaskSharp(strataWave * (0.33 + strataGate * 0.67), maskSharpness);
+  float strataBreak = bmAutoLevel(fbmValueFast(q * 5.1 + seedV * 2.11), 0.33, 0.81);
+  float strata = bmMaskSharp(
+    strataWave * (0.20 + strataGate * 0.58) * (0.38 + strataBreak * 0.62),
+    maskSharpness
+  );
 
   float microBase = ridgedFbm(q * surfaceScale + seedV * 1.77);
   float microGate = bmAutoLevel(turbulence(q * surfaceScale * 0.31 + seedV * 2.13), 0.31, 0.86);
@@ -250,7 +258,10 @@ BMGaeaFields bmGaeaEvaluate(
 
   float protrusion = bmSaturate(rugged * 0.58 + strata * 0.22 + (1.0 - plateEdge) * 0.20);
   float cavity = bmSaturate(plateEdge * 0.49 + microErosion * 0.31 + (1.0 - rugged) * 0.20);
-  float separation = bmSaturate(abs(rugged - strata) * 0.72 + abs(rockMap - flow) * 0.42);
+  float separation = bmMaskSharp(
+    bmSaturate(abs(rugged - strata) * 0.68 + abs(rockMap - flow) * 0.46),
+    maskSharpness * 0.68
+  );
 
   BMGaeaFields result;
   result.rugged = rugged;
@@ -266,7 +277,7 @@ BMGaeaFields bmGaeaEvaluate(
 `;
 
 window.BrickMotherGaeaV1 = Object.freeze({
-  version: '1.0.0',
+  version: '1.1.0',
   lineage: 'independent field-graph implementation distilled from documented Gaea workflow concepts',
   operatorFamilies: OPERATOR_FAMILIES,
   graphRecipes: GRAPH_RECIPES,

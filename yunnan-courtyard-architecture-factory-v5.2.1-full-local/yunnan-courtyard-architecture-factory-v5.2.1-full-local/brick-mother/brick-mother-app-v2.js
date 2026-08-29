@@ -8,6 +8,8 @@ const { BrickRenderer } = window.BrickMotherRendererV2;
 
 const CONTROL_KEYS = ['colorRichness', 'damage', 'poreDepth', 'waterStain', 'weathering', 'inclusion', 'shapeVariation', 'rockDetail', 'strata', 'microErosion', 'colorClarity', 'colorGamut', 'maskSharpness'];
 const SEED_KEYS = ['master', 'shape', 'damage', 'pore', 'color', 'water', 'weather', 'inclusion', 'detail'];
+const QUERY = new URLSearchParams(window.location.search);
+const REBUILD_CONTROL_KEYS = ['damage', 'poreDepth', 'weathering', 'shapeVariation', 'rockDetail', 'strata', 'microErosion'];
 const CHILD_OFFSETS = [0, 1181, 2647];
 const SEED_PRIMES = {
   master: 1,
@@ -33,7 +35,9 @@ const state = {
   debugMode: 0,
   controls: normalizeControls(),
   seedBank: {},
-  rebuildTimer: 0
+  rebuildTimer: 0,
+  evidenceMode: QUERY.get('evidence') === '1',
+  evidenceFocus: Math.max(0, Math.min(2, Math.round(Number(QUERY.get('focus') ?? 1) || 1)))
 };
 
 function showFatal(error) {
@@ -251,9 +255,11 @@ async function buildCurrentBatch() {
     state.renderer.setDebugMode(state.debugMode);
     state.renderer.resetView();
     renderChildCards();
+    if (state.evidenceMode) state.renderer.focus(state.evidenceFocus);
 
     const totalTriangles = built.reduce((sum, item) => sum + item.mesh.triangles, 0);
     const totalDeepPores = built.reduce((sum, item) => sum + item.mesh.damage.deepPores.length, 0);
+    const totalInclusionVoids = built.reduce((sum, item) => sum + (item.mesh.damage.inclusionVoids?.length || 0), 0);
     const elapsed = Math.round(performance.now() - start);
     $('#batchStats').textContent =
       `${triangleLabel(totalTriangles)} 三角面 · ${totalDeepPores} 个深孔事件 · 八类独立种子 · ${elapsed} ms`;
@@ -261,14 +267,19 @@ async function buildCurrentBatch() {
 
     window.__BRICK_MOTHER_READY__ = true;
     document.documentElement.dataset.brickMotherReady = 'true';
-    document.documentElement.dataset.brickMotherVersion = '2.1.0-alpha.1';
+    document.documentElement.dataset.brickMotherVersion = '2.2.0-alpha.1';
     document.documentElement.dataset.seedLayers = '8';
     document.documentElement.dataset.deepPores = String(totalDeepPores);
+    document.documentElement.dataset.inclusionVoids = String(totalInclusionVoids);
     document.documentElement.dataset.gaeaKernel = window.BrickMotherGaeaV1?.version || 'missing';
     document.documentElement.dataset.debugModes = '9';
+    document.documentElement.dataset.activeProfile = state.selectedProfile;
+    document.documentElement.dataset.oxideContours = 'suppressed';
+    document.documentElement.dataset.eventColorMasking = 'true';
+    document.documentElement.dataset.evidenceReady = state.evidenceMode ? 'true' : 'false';
     window.__BRICK_MOTHER_QA__ = {
       ready: true,
-      version: '2.1.0-alpha.1',
+      version: '2.2.0-alpha.1',
       mode: state.batchMode,
       profiles: built.map((item) => item.profile.id),
       triangleCounts: built.map((item) => Math.round(item.mesh.triangles)),
@@ -282,12 +293,20 @@ async function buildCurrentBatch() {
       negativeDamageGeometry: true,
       deepPoreCounts: built.map((item) => item.mesh.damage.deepPores.length),
       erosionBiteCounts: built.map((item) => item.mesh.damage.erosionBites.length),
-      adobeInclusionFamilies: ['long-straw', 'chopped-straw', 'rice-husk', 'seed-grain', 'missing-inclusion-pit'],
+      inclusionVoidCounts: built.map((item) => item.mesh.damage.inclusionVoids?.length || 0),
+      adobeInclusionFamilies: ['long-straw', 'chopped-straw', 'rice-husk', 'seed-grain', 'missing-inclusion-pit', 'physical-fiber-pullout-channel'],
       correlatedChannels: ['base-color', 'aggregate-color', 'water-stain', 'weathering', 'cavity', 'roughness', 'micro-normal', 'organic-inclusion', 'rugged', 'strata', 'micro-erosion', 'rock-map', 'separation-mask'],
       gaeaKernel: window.BrickMotherGaeaV1?.version || 'missing',
       gaeaOperatorFamilies: Object.keys(window.BrickMotherGaeaV1?.operatorFamilies || {}),
       gaeaGraphRecipes: Object.keys(window.BrickMotherGaeaV1?.graphRecipes || {}),
       gaeaDistilledIndependentImplementation: true,
+      visualCalibration: {
+        eventColorMasking: true,
+        oxideContourSuppression: true,
+        profileEvidenceRoute: state.evidenceMode,
+        activeProfile: state.selectedProfile,
+        focusedChild: state.evidenceFocus
+      },
       debugModes: 9,
       sourceComparisonNoDimming: true
     };
@@ -327,7 +346,7 @@ function renderChildCards() {
 function exportDNA() {
   const payload = {
     product: 'Brick Mother',
-    version: '2.1.0-alpha.1',
+    version: '2.2.0-alpha.1',
     profile: state.selectedProfile,
     batchMode: state.batchMode,
     controls: state.controls,
@@ -359,12 +378,10 @@ function bindControls() {
       state.controls[key] = Number(input.value);
       const output = $(`[data-control-output="${key}"]`);
       if (output) output.textContent = Number(input.value).toFixed(2);
-      if (['colorRichness', 'waterStain', 'inclusion'].includes(key)) {
-        for (const item of state.currentItems) item.mesh.controls[key] = Number(input.value);
-      }
+      for (const item of state.currentItems) item.mesh.controls[key] = Number(input.value);
     });
     input.addEventListener('change', () => {
-      if (['damage', 'poreDepth', 'weathering', 'shapeVariation'].includes(key)) scheduleBuild(80);
+      if (REBUILD_CONTROL_KEYS.includes(key)) scheduleBuild(80);
     });
   });
 
@@ -465,11 +482,25 @@ async function main() {
     if (!response.ok) throw new Error(`材料档案读取失败 HTTP ${response.status}`);
     state.data = await response.json();
     state.profiles = new Map(state.data.profiles.map((profile) => [profile.id, profile]));
+    const requestedProfile = QUERY.get('profile');
+    if (requestedProfile && state.profiles.has(requestedProfile)) state.selectedProfile = requestedProfile;
+    if (QUERY.get('mode') === 'mixed') state.batchMode = 'mixed';
+    state.debugMode = Math.max(0, Math.min(8, Math.round(Number(QUERY.get('debug') ?? 0) || 0)));
+    if (state.evidenceMode) {
+      document.body.classList.add('evidence-mode');
+      document.body.dataset.evidenceLabel = `Brick Mother V2.2 · ${state.selectedProfile} · channel ${state.debugMode}`;
+    }
     const profile = state.profiles.get(state.selectedProfile);
     state.controls = controlDefaultsForProfile(profile);
     state.seedBank = seedBankForProfile(profile);
     state.renderer = new BrickRenderer($('#brickCanvas'));
+    state.renderer.setDebugMode(state.debugMode);
     updateProfilePanel(profile);
+    $$('.profile-button').forEach((item) => item.classList.toggle('on', item.dataset.profile === state.selectedProfile));
+    $$('.mode-button').forEach((item) => item.classList.toggle('on', item.dataset.mode === state.batchMode));
+    $$('.channel-button').forEach((item) => item.classList.toggle('on', Number(item.dataset.channel) === state.debugMode));
+    const activeChannel = $(`.channel-button[data-channel="${state.debugMode}"]`);
+    if (activeChannel) $('#channelName').textContent = activeChannel.dataset.label;
     syncControlUI();
     syncSeedUI();
     bindUI();

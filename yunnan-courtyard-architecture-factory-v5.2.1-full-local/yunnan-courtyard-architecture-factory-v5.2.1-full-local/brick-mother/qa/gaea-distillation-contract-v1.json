@@ -56,7 +56,7 @@
     "productionApproved": false
   },
   "implementationTarget": "2.1.0-alpha.1",
-  "gaeaKernel": "1.0.0",
+  "gaeaKernel": "1.1.0",
   "expectedControls": [
     "rockDetail",
     "strata",
@@ -65,5 +65,27 @@
     "colorGamut",
     "maskSharpness"
   ],
-  "expectedDebugChannels": 9
+  "expectedDebugChannels": 9,
+  "version": "2.2.0-alpha.1",
+  "visualCalibrationGates": {
+    "eventColorMasking": true,
+    "regularOxideContourSuppression": true,
+    "physicalAdobeInclusionVoids": true,
+    "requiredEvidenceProfiles": [
+      "old-pbr-fired",
+      "stone-block",
+      "raw-clay"
+    ],
+    "requiredEvidenceChannels": [
+      "final",
+      "stone-gaea-field",
+      "adobe-inclusion"
+    ],
+    "manualApprovalsRemainFalse": [
+      "jrbReferenceColor",
+      "stoneDetail",
+      "adobeInclusion",
+      "production"
+    ]
+  }
 }

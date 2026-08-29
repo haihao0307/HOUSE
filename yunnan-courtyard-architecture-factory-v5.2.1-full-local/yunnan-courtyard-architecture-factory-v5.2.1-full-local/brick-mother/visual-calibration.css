@@ -1,0 +1,71 @@
+/* Brick Mother V2.2 browser evidence layout */
+body.evidence-mode {
+  margin: 0;
+  overflow: hidden;
+  background: #0e100f;
+}
+body.evidence-mode .shell {
+  max-width: none;
+  width: 100vw;
+  min-height: 100vh;
+  padding: 0;
+}
+body.evidence-mode .topbar,
+body.evidence-mode .hero,
+body.evidence-mode .side,
+body.evidence-mode .stage-head,
+body.evidence-mode .viewer-hud,
+body.evidence-mode .toolbar,
+body.evidence-mode .channel-bar,
+body.evidence-mode .child-grid,
+body.evidence-mode .proof,
+body.evidence-mode .reference-panel,
+body.evidence-mode .reference-backdrop,
+body.evidence-mode footer {
+  display: none !important;
+}
+body.evidence-mode .workspace {
+  display: block;
+  width: 100vw;
+  min-height: 100vh;
+  margin: 0;
+}
+body.evidence-mode .stage {
+  width: 100vw;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: #0e100f;
+}
+body.evidence-mode .viewer {
+  width: 100vw;
+  height: 100vh;
+  min-height: 100vh;
+  border: 0;
+  border-radius: 0;
+}
+body.evidence-mode #brickCanvas {
+  width: 100vw !important;
+  height: 100vh !important;
+}
+body.evidence-mode .loading {
+  background: #0e100f;
+}
+body.evidence-mode::after {
+  content: attr(data-evidence-label);
+  position: fixed;
+  left: 24px;
+  bottom: 20px;
+  z-index: 20;
+  padding: 8px 12px;
+  border: 1px solid rgba(255,255,255,.16);
+  border-radius: 8px;
+  background: rgba(10,12,11,.72);
+  color: rgba(255,255,255,.82);
+  font: 600 13px/1.2 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  letter-spacing: .04em;
+  backdrop-filter: blur(8px);
+}

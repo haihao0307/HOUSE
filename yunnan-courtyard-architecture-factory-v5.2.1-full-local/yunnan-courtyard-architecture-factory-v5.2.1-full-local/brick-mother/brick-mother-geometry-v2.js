@@ -179,9 +179,10 @@ function buildDamage(profile, seedDNA, controlsInput, level, dims) {
   const damageRng = new RNG(seeds.damage ^ 0x9e3779b9);
   const poreRng = new RNG(seeds.pore ^ 0x85ebca6b);
   const weatherRng = new RNG(seeds.weather ^ 0xc2b2ae35);
+  const inclusionRng = new RNG(seeds.inclusion ^ 0x27d4eb2d);
   const b = mul3(dims, 0.5);
   const minD = Math.min(dims.x, dims.y, dims.z);
-  const chips = [], pits = [], poreClusters = [], deepPores = [], cracks = [], erosionBites = [];
+  const chips = [], pits = [], poreClusters = [], deepPores = [], cracks = [], erosionBites = [], inclusionVoids = [];
   const compositeDamage = clamp(level * 0.78 + controls.damage * 0.62, 0, 1.75);
   const chipCount = Math.max(1, Math.round(1 + dna.edgeFragility * 2.9 + compositeDamage * 4.8));
   const pitCount = Math.max(1, Math.round(1 + dna.pitDensity * 2.5 + compositeDamage * 3.5));
@@ -189,6 +190,9 @@ function buildDamage(profile, seedDNA, controlsInput, level, dims) {
   const deepPoreCount = Math.max(1, Math.round((nd.geometryDeepPoreCount ?? 2.5) * (0.35 + controls.poreDepth * 0.65 + level * 0.28)));
   const crackCount = compositeDamage < 0.28 ? 0 : Math.max(1, Math.round(dna.crackAffinity * 1.4 + compositeDamage * 1.45));
   const erosionCount = Math.max(0, Math.round(controls.weathering * (0.9 + dna.edgeFragility * 1.7) + level * 1.2));
+  const inclusionVoidCount = profile.family === 'ADOBE'
+    ? Math.max(3, Math.round(2 + controls.inclusion * 5.5 + level * 2.2))
+    : 0;
   const signs = [-1, 1];
 
   for (let i = 0; i < chipCount; i++) {
@@ -301,7 +305,29 @@ function buildDamage(profile, seedDNA, controlsInput, level, dims) {
     });
   }
 
-  return { chips, pits, poreClusters, deepPores, cracks, erosionBites };
+  for (let i = 0; i < inclusionVoidCount; i++) {
+    const face = inclusionRng.pick(['py', 'py', 'px', 'nx', 'pz', 'nz']);
+    const normal = faceNormal(face);
+    const surface = facePoint(face, b, inclusionRng, 0);
+    const angle = inclusionRng.range(0, Math.PI * 2);
+    let tangent;
+    if (face === 'px' || face === 'nx') tangent = vec3(0, Math.cos(angle), Math.sin(angle));
+    else if (face === 'py' || face === 'ny') tangent = vec3(Math.cos(angle), 0, Math.sin(angle));
+    else tangent = vec3(Math.cos(angle), Math.sin(angle), 0);
+    const halfLength = inclusionRng.range(0.055, 0.17) * minD * (0.72 + controls.inclusion * 0.34);
+    const radius = inclusionRng.range(0.008, 0.019) * minD * (0.72 + controls.inclusion * 0.28);
+    const depth = inclusionRng.range(0.12, 0.46) * radius;
+    const center = add3(surface, mul3(normal, -depth));
+    inclusionVoids.push({
+      face,
+      a: add3(center, mul3(tangent, -halfLength)),
+      b: add3(center, mul3(tangent, halfLength)),
+      radius,
+      irregular: inclusionRng.range(0.08, 0.24)
+    });
+  }
+
+  return { chips, pits, poreClusters, deepPores, cracks, erosionBites, inclusionVoids };
 }
 
 function createSDF(profile, seedDNA, controlsInput, level) {
@@ -333,7 +359,8 @@ function createSDF(profile, seedDNA, controlsInput, level) {
     const crust = fbm3(p.x * 10.8, p.y * 8.6, p.z * 10.8, seeds.weather + 109, 3) - 0.5;
     d += (broad * 0.64 + ridge * 0.27 + crust * 0.09 * controls.weathering) * reliefAmp;
     if (GAEA) {
-      d += GAEA.geometryDisplacement(p, seeds, controls, gaeaDNA, gaeaNoiseApi) * minD;
+      const familyScale = profile.family === 'STONE' ? 1.18 : profile.family === 'ADOBE' ? 0.92 : 1.0;
+      d += GAEA.geometryDisplacement(p, seeds, controls, gaeaDNA, gaeaNoiseApi) * minD * familyScale;
     }
 
     for (const chip of damage.chips) {
@@ -374,6 +401,12 @@ function createSDF(profile, seedDNA, controlsInput, level) {
     }
 
     for (const crack of damage.cracks) d = Math.max(d, -sdCapsule(p, crack.a, crack.b, crack.radius));
+
+    for (const inclusionVoid of damage.inclusionVoids) {
+      const wobble = (noise3(p.x * 37, p.y * 37, p.z * 37, seeds.inclusion + 557) - 0.5) * inclusionVoid.irregular;
+      const radius = Math.max(0.0015, inclusionVoid.radius * (1 + wobble));
+      d = Math.max(d, -sdCapsule(p, inclusionVoid.a, inclusionVoid.b, radius));
+    }
 
     for (const bite of damage.erosionBites) {
       const irregular = (noise3(p.x * 15, p.y * 15, p.z * 15, seeds.weather + 419) - 0.5) * bite.irregular * minD;
@@ -513,7 +546,7 @@ function buildMesh(profile, seedDNA, controlsInput, level, quality = 1) {
     level,
     profileId: profile.id,
     grid: [nx, ny, nz],
-    noiseVersion: 'v2.1-gaea-distilled-field-graph-alpha1'
+    noiseVersion: 'v2.2-event-calibrated-field-graph-alpha1'
   };
 }
 

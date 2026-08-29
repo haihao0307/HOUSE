@@ -1,7 +1,7 @@
 {
-  "schemaVersion": "2.1.0-alpha.1",
-  "generatedAt": "2026-08-28",
-  "pipelineId": "brick-mother-gaea-distilled-composite-material-dna-v2.1",
+  "schemaVersion": "2.2.0-alpha.1",
+  "generatedAt": "2026-08-29",
+  "pipelineId": "brick-mother-gaea-event-calibrated-material-dna-v2.2",
   "researchBasis": {
     "userReference": "https://threejsroadmap.com/blog/10-noise-functions-for-threejs-tsl-shaders",
     "primaryImplementationReferences": [
@@ -33,7 +33,7 @@
     "gaeaDistillationPolicy": "Documented node roles and graph strategies distilled into an independent field implementation."
   },
   "rendererContract": {
-    "engine": "BrickMother WebGL2 Runtime V2 composite material DNA alpha 1",
+    "engine": "BrickMother WebGL2 Runtime V2.2 Gaea event-calibrated material DNA",
     "workingColorSpace": "linear-sRGB",
     "outputColorSpace": "sRGB",
     "toneMapping": "neutral exponential",
@@ -41,7 +41,7 @@
     "damagePolicy": "macro chips, cracks, shallow pits, deep bore pores and weather erosion are negative geometry; micro events remain correlated shader fields",
     "mutationPolicy": "independent seeded layers for shape, damage, pores, color, water, weathering, inclusions and micro detail",
     "channelCorrelation": "base color, aggregates, water stains, weathering, cavity, roughness, micro normal and adobe inclusions use layered event fields with independent reproducible seeds",
-    "gaeaFieldGraph": "Rugged, stratify, micro-erosion, rock-map, flow, separation-mask, CLUT5 and normalized Splat fields share geometry, color, roughness, normal and AO correlations."
+    "gaeaFieldGraph": "Rugged, broken stratify, micro-erosion, rock-map, flow, separation-mask, CLUT5 and normalized Splat fields share geometry, color, roughness, normal and AO correlations; fired-clay color bands are event-gated to suppress regular contours."
   },
   "profiles": [
     {
@@ -147,34 +147,34 @@
       },
       "paletteDNA": {
         "darkSRGB": [
-          0.105,
-          0.052,
-          0.022
+          0.07,
+          0.032,
+          0.016
         ],
         "warmSRGB": [
-          0.68,
-          0.36,
-          0.12
+          0.7,
+          0.32,
+          0.095
         ],
         "oxideSRGB": [
-          0.82,
-          0.235,
-          0.045
+          0.84,
+          0.16,
+          0.025
         ],
         "mineralSRGB": [
-          0.86,
-          0.67,
+          0.88,
+          0.68,
           0.38
         ],
         "bioSRGB": [
-          0.16,
-          0.24,
-          0.09
+          0.12,
+          0.22,
+          0.065
         ],
         "wetSRGB": [
-          0.07,
-          0.052,
-          0.038
+          0.035,
+          0.046,
+          0.05
         ],
         "strawSRGB": [
           0.59,
@@ -193,7 +193,7 @@
         ]
       },
       "compositeDefaults": {
-        "colorRichness": 1.52,
+        "colorRichness": 1.6,
         "damage": 0.78,
         "poreDepth": 1.12,
         "waterStain": 0.64,
@@ -203,9 +203,9 @@
         "rockDetail": 0.66,
         "strata": 0.26,
         "microErosion": 0.68,
-        "colorClarity": 1.08,
-        "colorGamut": 1.22,
-        "maskSharpness": 1.12
+        "colorClarity": 1.16,
+        "colorGamut": 1.38,
+        "maskSharpness": 1.18
       },
       "seedLayerOffsets": {
         "shape": 101,
@@ -334,34 +334,34 @@
       },
       "paletteDNA": {
         "darkSRGB": [
-          0.13,
-          0.095,
-          0.052
+          0.075,
+          0.048,
+          0.026
         ],
         "warmSRGB": [
-          0.72,
-          0.5,
-          0.22
+          0.69,
+          0.4,
+          0.16
         ],
         "oxideSRGB": [
-          0.82,
-          0.29,
-          0.075
+          0.8,
+          0.19,
+          0.038
         ],
         "mineralSRGB": [
-          0.88,
-          0.79,
-          0.59
+          0.87,
+          0.74,
+          0.49
         ],
         "bioSRGB": [
-          0.18,
-          0.29,
-          0.12
+          0.12,
+          0.23,
+          0.075
         ],
         "wetSRGB": [
-          0.09,
-          0.073,
-          0.055
+          0.042,
+          0.052,
+          0.06
         ],
         "strawSRGB": [
           0.62,
@@ -380,7 +380,7 @@
         ]
       },
       "compositeDefaults": {
-        "colorRichness": 1.5,
+        "colorRichness": 1.58,
         "damage": 0.72,
         "poreDepth": 1.04,
         "waterStain": 0.78,
@@ -390,9 +390,9 @@
         "rockDetail": 0.66,
         "strata": 0.26,
         "microErosion": 0.68,
-        "colorClarity": 1.08,
-        "colorGamut": 1.3,
-        "maskSharpness": 1.12
+        "colorClarity": 1.15,
+        "colorGamut": 1.4,
+        "maskSharpness": 1.18
       },
       "seedLayerOffsets": {
         "shape": 101,
@@ -519,49 +519,49 @@
       },
       "paletteDNA": {
         "darkSRGB": [
-          0.25,
           0.2,
-          0.15
+          0.135,
+          0.085
         ],
         "warmSRGB": [
-          0.72,
-          0.57,
-          0.4
+          0.74,
+          0.54,
+          0.31
         ],
         "oxideSRGB": [
-          0.66,
-          0.36,
-          0.18
+          0.68,
+          0.29,
+          0.11
         ],
         "mineralSRGB": [
-          0.84,
-          0.77,
-          0.66
+          0.86,
+          0.78,
+          0.65
         ],
         "bioSRGB": [
-          0.3,
-          0.33,
-          0.18
+          0.24,
+          0.31,
+          0.14
         ],
         "wetSRGB": [
-          0.14,
-          0.095,
-          0.065
+          0.085,
+          0.07,
+          0.058
         ],
         "strawSRGB": [
-          0.68,
-          0.47,
-          0.17
+          0.74,
+          0.49,
+          0.13
         ],
         "huskSRGB": [
-          0.82,
-          0.64,
-          0.29
+          0.86,
+          0.68,
+          0.26
         ],
         "seedSRGB": [
-          0.31,
-          0.15,
-          0.045
+          0.3,
+          0.12,
+          0.035
         ]
       },
       "compositeDefaults": {
@@ -570,14 +570,14 @@
         "poreDepth": 0.94,
         "waterStain": 0.84,
         "weathering": 0.76,
-        "inclusion": 1.18,
+        "inclusion": 1.38,
         "shapeVariation": 1.08,
         "rockDetail": 0.46,
         "strata": 0.15,
-        "microErosion": 0.76,
-        "colorClarity": 0.9,
-        "colorGamut": 1.04,
-        "maskSharpness": 0.82
+        "microErosion": 0.82,
+        "colorClarity": 0.98,
+        "colorGamut": 1.16,
+        "maskSharpness": 0.94
       },
       "seedLayerOffsets": {
         "shape": 101,
@@ -716,34 +716,34 @@
       },
       "paletteDNA": {
         "darkSRGB": [
-          0.095,
-          0.085,
-          0.074
+          0.035,
+          0.043,
+          0.052
         ],
         "warmSRGB": [
-          0.46,
-          0.34,
-          0.23
+          0.43,
+          0.29,
+          0.17
         ],
         "oxideSRGB": [
-          0.64,
-          0.24,
-          0.075
+          0.72,
+          0.18,
+          0.034
         ],
         "mineralSRGB": [
-          0.78,
-          0.72,
-          0.61
+          0.8,
+          0.75,
+          0.65
         ],
         "bioSRGB": [
-          0.15,
-          0.23,
-          0.12
+          0.1,
+          0.18,
+          0.075
         ],
         "wetSRGB": [
-          0.065,
-          0.072,
-          0.075
+          0.028,
+          0.044,
+          0.062
         ],
         "strawSRGB": [
           0.52,
@@ -769,12 +769,12 @@
         "weathering": 0.94,
         "inclusion": 0.1,
         "shapeVariation": 1.02,
-        "rockDetail": 1.18,
-        "strata": 1.08,
-        "microErosion": 0.92,
-        "colorClarity": 1.02,
-        "colorGamut": 1.16,
-        "maskSharpness": 1.06
+        "rockDetail": 1.34,
+        "strata": 1.22,
+        "microErosion": 1.02,
+        "colorClarity": 1.12,
+        "colorGamut": 1.3,
+        "maskSharpness": 1.2
       },
       "seedLayerOffsets": {
         "shape": 101,
@@ -790,12 +790,12 @@
         "ruggedScale": 7.6,
         "strataFrequency": 8.4,
         "surfaceScale": 43.0,
-        "ruggedDepth": 0.023,
-        "strataDepth": 0.014,
-        "microErosionDepth": 0.0085,
+        "ruggedDepth": 0.027,
+        "strataDepth": 0.016,
+        "microErosionDepth": 0.0092,
         "warpStrength": 0.31,
         "strataTilt": 0.23,
-        "geometryStrength": 1.12
+        "geometryStrength": 1.18
       }
     }
   ],
@@ -823,7 +823,7 @@
     }
   ],
   "v2CompositeContract": {
-    "status": "visual-calibration-alpha",
+    "status": "visual-calibration-alpha-v2.2",
     "seedLayers": [
       "shape",
       "damage",
@@ -841,16 +841,36 @@
       "waterStain",
       "weathering",
       "inclusion",
-      "shapeVariation"
+      "shapeVariation",
+      "rockDetail",
+      "strata",
+      "microErosion",
+      "colorClarity",
+      "colorGamut",
+      "maskSharpness"
     ],
     "adobeInclusionFamilies": [
       "long-straw",
       "chopped-straw",
       "rice-husk",
       "seed-grain",
-      "missing-inclusion-pit"
+      "missing-inclusion-pit",
+      "physical-fiber-pullout-channel"
     ],
     "palettePolicy": "source-informed multi-cluster palette with a separate wet, weather, mineral, biological and organic inclusion color family",
-    "referenceCalibration": "initial visual calibration prepared from frozen source statistics and source preview images; further user visual approval required"
+    "referenceCalibration": "initial visual calibration prepared from frozen source statistics and source preview images; further user visual approval required",
+    "visualCalibration": {
+      "eventColorMasking": true,
+      "regularOxideContourSuppression": true,
+      "evidenceProfiles": [
+        "old-pbr-fired",
+        "stone-block",
+        "raw-clay"
+      ],
+      "productionApproved": false,
+      "jrbReferenceApproved": false,
+      "stoneDetailApproved": false,
+      "adobeInclusionApproved": false
+    }
   }
 }
