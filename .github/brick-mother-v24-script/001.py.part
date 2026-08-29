@@ -1,0 +1,119 @@
+from pathlib import Path
+import json
+
+ROOT = Path('yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother')
+
+
+def replace_once(text: str, old: str, new: str, label: str) -> str:
+    if old not in text:
+        raise RuntimeError(f'missing anchor: {label}')
+    return text.replace(old, new, 1)
+
+
+def replace_between(text: str, start: str, end: str, new: str, label: str) -> str:
+    i = text.find(start)
+    if i < 0:
+        raise RuntimeError(f'missing start anchor: {label}')
+    j = text.find(end, i)
+    if j < 0:
+        raise RuntimeError(f'missing end anchor: {label}')
+    return text[:i] + new + text[j:]
+
+
+# Renderer V2.4
+path = ROOT / 'brick-mother-renderer-v2.js'
+text = path.read_text(encoding='utf-8')
+
+text = replace_once(
+    text,
+    '''  return vec4(max(strawLong, strawShort), husk, seedMask, pit);
+}''',
+    '''  float clusterLarge = smoothstep(
+    0.30, 0.78,
+    fbmValueFast(vec3(uv * 1.15, seed * 0.0061))
+  );
+  float clusterFine = smoothstep(
+    0.46, 0.88,
+    valueNoise3(vec3(uv * 3.8, seed * 0.0097))
+  );
+  float burial = mix(0.28, 1.0, clusterLarge) * mix(0.72, 1.0, clusterFine);
+  vec4 result = vec4(max(strawLong, strawShort), husk, seedMask, pit);
+  result.xyz *= burial;
+  result.w *= mix(0.46, 1.0, clusterLarge);
+  return clamp(result, 0.0, 1.0);
+}''',
+    'clustered organic inclusions'
+)
+
+text = replace_once(
+    text,
+    '''  float tone = clamp(0.08 + macro * 0.56 + macroB * 0.18 + ridge * 0.14 + (micro - 0.5) * 0.11 + (grit - 0.5) * 0.035, 0.0, 1.0);''',
+    '''  float microToneWeight = uFamily == 2 ? 0.035 : (uFamily == 1 ? 0.065 : 0.075);
+  float gritToneWeight = uFamily == 2 ? 0.010 : (uFamily == 1 ? 0.022 : 0.026);
+  float tone = clamp(
+    0.08 + macro * 0.56 + macroB * 0.20 + ridge * 0.14 +
+    (micro - 0.5) * microToneWeight + (grit - 0.5) * gritToneWeight,
+    0.0, 1.0
+  );''',
+    'family micro tone'
+)
+
+fired_start = '  if (uFamily == 0) {\n'
+fired_end = '  } else if (uFamily == 1) {\n'
+fired_new = '''  if (uFamily == 0) {
+    float kilnMacro = fbmValueFast(colorWarped * 1.18 + colorSeedV * 0.73);
+    float kilnBreak = fbmGradient(colorWarped * 3.55 + colorSeedV * 1.93);
+    float kilnFine = fbmValueFast(colorWarped * 7.6 + colorSeedV * 2.67);
+    float kilnHot = smoothstep(
+      0.52, 0.80,
+      kilnMacro * 0.62 + kilnBreak * 0.23 + gaea.protrusion * 0.15
+    );
+    float kilnAsh = smoothstep(
+      0.52, 0.82,
+      (1.0 - kilnMacro) * 0.45 + gaea.cavity * 0.25 +
+      eventPatchB * 0.18 + gaea.flow * 0.12
+    );
+    float kilnNeutral = smoothstep(
+      0.48, 0.79,
+      eventPatchA * 0.44 + (1.0 - eventPatchC) * 0.32 + gaea.rockMap * 0.24
+    );
+    float oxideEvent = smoothstep(
+      0.64, 0.86,
+      oxideMask * 0.46 + kilnFine * 0.20 + eventPatch * 0.17 +
+      gaea.flow * 0.10 + gaea.microErosion * 0.07
+    ) * smoothstep(0.48, 0.82, kilnBreak);
+    float soot = smoothstep(
+      0.67, 0.92,
+      valueNoise3(warped * 9.0 + colorSeedV * 5.1) * 0.42 +
+      gaea.cavity * 0.40 + kilnAsh * 0.18
+    );
+    float saltBloom = smoothstep(
+      0.72, 0.92,
+      eventPatchC * 0.40 + gaea.flow * 0.31 + gaea.microErosion * 0.29
+    );
+    vec3 neutralKiln = mix(mean, coolColor, 0.32);
+    albedo = mix(albedo, warm, kilnHot * (0.22 + rich * 0.10));
+    albedo = mix(albedo, neutralKiln, kilnNeutral * 0.22);
+    albedo = mix(albedo, coolColor, kilnAsh * (0.12 + gaea.flow * 0.13));
+    albedo = mix(albedo, rustColor, oxideEvent * (0.28 + rich * 0.22));
+    albedo = mix(albedo, charColor, soot * (0.22 + rich * 0.11));
+    albedo = mix(albedo, mineralColor, saltBloom * 0.10 * uWeatherStrength);
+'''
+text = replace_between(text, fired_start, fired_end, fired_new, 'fired material zones')
+
+stone_start = '  } else {\n    float stonePatch ='
+stone_end = '  }\n\n  vec2 waterWeather ='
+stone_new = '''  } else {
+    float stonePatch = fbmValueFast(colorWarped * 1.48 + colorSeedV * 1.23);
+    float stonePatchFine = fbmGradient(colorWarped * 4.35 + colorSeedV * 2.61);
+    float stoneStrataGate = smoothstep(0.42, 0.80, stonePatch * 0.68 + stonePatchFine * 0.32);
+    float stoneStrata = gaea.strata * stoneStrataGate * uGaeaStrata;
+    float stoneCool = smoothstep(0.43, 0.82, (1.0 - stonePatch) * 0.60 + gaea.cavity * 0.40);
+    float stoneWarm = smoothstep(0.61, 0.87, stonePatch * 0.67 + eventPatch * 0.33);
+    float stoneOxide = smoothstep(
+      0.73, 0.91,
+      oxideMask * 0.36 + gaea.flow * 0.21 + gaea.microErosion * 0.15 +
+      eventPatchC * 0.14 + eventPatchA * 0.14
+    ) * smoothstep(0.74, 0.93, eventPatchB);
+    float stoneMineral = smoothstep(
+      0.67, 0.90,
