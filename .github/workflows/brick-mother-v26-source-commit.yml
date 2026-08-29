@@ -1,0 +1,224 @@
+name: Brick Mother V2.6 Neutral Spectrum Source Commit
+
+on:
+  push:
+    branches:
+      - feature/brick-mother-v2.0-composite-material-dna
+    paths:
+      - ".github/workflows/brick-mother-v26-source-commit.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  apply-gate-commit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - name: Checkout exact branch
+        uses: actions/checkout@v4
+        with:
+          ref: feature/brick-mother-v2.0-composite-material-dna
+          fetch-depth: 0
+
+      - name: Reconstruct deterministic V2.6 patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat .github/brick-mother-v26-payload/*.b64 > /tmp/brick-mother-v26.b64
+          echo '4f63a3bef42df08c5e948a6330e0ccb81cf9bf903c89affc11347212f0912e4c  /tmp/brick-mother-v26.b64' | sha256sum -c -
+          base64 -d /tmp/brick-mother-v26.b64 > /tmp/brick-mother-v26.xz
+          echo 'b0e631cb37559f133697cb8aae02ac0bad13d44317a6047bbc6ed6ec4b05ac49  /tmp/brick-mother-v26.xz' | sha256sum -c -
+          xz -dc /tmp/brick-mother-v26.xz > /tmp/apply-brick-mother-v26.py
+          echo 'b2500e5860e95a0520659d340612ece7a896ede459a4cc84563bf314d66adc99  /tmp/apply-brick-mother-v26.py' | sha256sum -c -
+          python3 -m py_compile /tmp/apply-brick-mother-v26.py
+
+      - name: Apply V2.6 neutral studio rich spectrum patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 /tmp/apply-brick-mother-v26.py
+
+      - name: Rebuild self-contained standalone from V2.6 source
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+          import re
+
+          root = Path('yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother')
+
+          app_path = root / 'brick-mother-app-v2.js'
+          app = app_path.read_text(encoding='utf-8')
+          old_source = "  $('#referenceFrame').src = profileSourceEmbed(profile);"
+          if old_source in app:
+              app = app.replace(old_source, "  $('#referenceFrame').dataset.src = profileSourceEmbed(profile);", 1)
+          old_open = "  $('#showReference').addEventListener('click', () => {\n    $('#referencePanel').classList.add('open');"
+          if old_open in app:
+              app = app.replace(
+                  old_open,
+                  "  $('#showReference').addEventListener('click', () => {\n    const frame = $('#referenceFrame');\n    if (!frame.getAttribute('src')) frame.src = frame.dataset.src || 'about:blank';\n    $('#referencePanel').classList.add('open');",
+                  1,
+              )
+          app_path.write_text(app, encoding='utf-8')
+
+          index = (root / 'index.html').read_text(encoding='utf-8')
+          styles = {
+              'style.css': (root / 'style.css').read_text(encoding='utf-8'),
+              'gaea-distilled.css': (root / 'gaea-distilled.css').read_text(encoding='utf-8'),
+              'visual-calibration.css': (root / 'visual-calibration.css').read_text(encoding='utf-8'),
+          }
+          scripts = {
+              'brick-mother-gaea-kernel-v1.js': (root / 'brick-mother-gaea-kernel-v1.js').read_text(encoding='utf-8'),
+              'brick-mother-geometry-v2.js': (root / 'brick-mother-geometry-v2.js').read_text(encoding='utf-8'),
+              'brick-mother-renderer-v2.js': (root / 'brick-mother-renderer-v2.js').read_text(encoding='utf-8'),
+          }
+          app = app_path.read_text(encoding='utf-8')
+          data = json.loads((root / 'data/brick-material-profiles-v2.json').read_text(encoding='utf-8'))
+          html = index
+
+          for filename, css in styles.items():
+              pattern = rf'<link rel="stylesheet" href="\./{re.escape(filename)}[^"]*"[^>]*>'
+              html, count = re.subn(
+                  pattern,
+                  '<style>\n' + css.replace('</style>', '<\\/style>') + '\n</style>',
+                  html,
+                  count=1,
+              )
+              if count != 1:
+                  raise RuntimeError(f'failed to inline stylesheet {filename}: {count}')
+
+          for filename, source in scripts.items():
+              pattern = rf'<script src="\./{re.escape(filename)}[^"]*" defer></script>'
+              html, count = re.subn(
+                  pattern,
+                  '<script>\n' + source.replace('</script>', '<\\/script>') + '\n</script>',
+                  html,
+                  count=1,
+              )
+              if count != 1:
+                  raise RuntimeError(f'failed to inline script {filename}: {count}')
+
+          inline_data = json.dumps(data, ensure_ascii=False, separators=(',', ':'))
+          wrapped_app = 'window.addEventListener("DOMContentLoaded", () => {\n' + app + '\n});'
+          app_inline = (
+              '<script>window.__BRICK_MOTHER_INLINE_DATA__=' + inline_data + ';</script>\n'
+              '<script>\n' + wrapped_app.replace('</script>', '<\\/script>') + '\n</script>'
+          )
+          html, count = re.subn(
+              r'<script src="\./brick-mother-app-v2\.js[^"]*" defer></script>',
+              lambda _match: app_inline,
+              html,
+              count=1,
+          )
+          if count != 1:
+              raise RuntimeError(f'failed to inline app script: {count}')
+
+          html = html.replace(
+              '<title>Brick Mother 砖块母体生产线 V2</title>',
+              '<title>Brick Mother V2.6 单文件网页版</title>',
+              1,
+          )
+          standalone = root / 'brick-mother-standalone-v2.6.html'
+          standalone.write_text(html, encoding='utf-8')
+          PY
+
+      - name: Validate V2.6 source and standalone contracts
+        shell: bash
+        run: |
+          set -euxo pipefail
+          brick="yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother"
+          node --check "$brick/brick-mother-gaea-kernel-v1.js"
+          node --check "$brick/brick-mother-geometry-v2.js"
+          node --check "$brick/brick-mother-renderer-v2.js"
+          node --check "$brick/brick-mother-app-v2.js"
+          python3 -m json.tool "$brick/data/brick-material-profiles-v2.json" >/dev/null
+          python3 -m json.tool "$brick/qa/gaea-distillation-contract-v1.json" >/dev/null
+          python3 -m json.tool "$brick/VERSION.json" >/dev/null
+          grep -q '"version": "2.6.0-alpha.1"' "$brick/VERSION.json"
+          grep -q '"neutralStudioLighting": true' "$brick/VERSION.json"
+          grep -q '"highRoughnessMasonry": true' "$brick/VERSION.json"
+          grep -q '"firedClayRedBlackMineralBalance": true' "$brick/VERSION.json"
+          grep -q '"stoneMineralSpectrum": true' "$brick/VERSION.json"
+          grep -q '"visibleAdobeFiberBands": true' "$brick/VERSION.json"
+          grep -q '"poreMicroContrast": true' "$brick/VERSION.json"
+          grep -q 'slateBlue' "$brick/brick-mother-renderer-v2.js"
+          grep -q 'clayRed' "$brick/brick-mother-renderer-v2.js"
+          grep -q 'cavityShade' "$brick/brick-mother-renderer-v2.js"
+          grep -q 'v2.6-neutral-studio-rich-material-alpha1' "$brick/brick-mother-geometry-v2.js"
+          grep -q 'V2.6' "$brick/index.html"
+          standalone="$brick/brick-mother-standalone-v2.6.html"
+          test -s "$standalone"
+          test "$(wc -c < "$standalone")" -gt 150000
+          ! grep -q '<script src=' "$standalone"
+          ! grep -q '<link rel="stylesheet"' "$standalone"
+          grep -q 'window.__BRICK_MOTHER_INLINE_DATA__' "$standalone"
+          grep -q 'DOMContentLoaded' "$standalone"
+          sha256sum "$standalone" > /tmp/brick-mother-v26-standalone.sha256
+
+      - name: Gate V2.6 standalone directly from file URL
+        shell: bash
+        run: |
+          set -euo pipefail
+          chrome="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)"
+          uri="$(python3 - <<'PY'
+          from pathlib import Path
+          print(Path('yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/brick-mother-standalone-v2.6.html').resolve().as_uri())
+          PY
+          )"
+          timeout 320s "$chrome" \
+            --headless=new \
+            --no-sandbox \
+            --disable-dev-shm-usage \
+            --disable-background-networking \
+            --allow-file-access-from-files \
+            --enable-webgl \
+            --ignore-gpu-blocklist \
+            --enable-unsafe-swiftshader \
+            --use-gl=angle \
+            --use-angle=swiftshader \
+            --virtual-time-budget=150000 \
+            --dump-dom \
+            "${uri}?evidence=1&solo=1&profile=old-pbr-fired&focus=2&debug=0&qa=v26-source-gate" \
+            > /tmp/brick-mother-v26-source-dom.html \
+            2> /tmp/brick-mother-v26-source-chrome.log
+          grep -q 'data-brick-mother-ready="true"' /tmp/brick-mother-v26-source-dom.html
+          grep -q 'data-brick-mother-version="2.6.0-alpha.1"' /tmp/brick-mother-v26-source-dom.html
+          grep -q 'data-solo-mode="true"' /tmp/brick-mother-v26-source-dom.html
+          grep -Eq 'data-deep-pores="[1-9][0-9]*"' /tmp/brick-mother-v26-source-dom.html
+          grep -Eq 'data-pore-rim-chips="[1-9][0-9]*"' /tmp/brick-mother-v26-source-dom.html
+          grep -q 'data-collapsed-pores=' /tmp/brick-mother-v26-source-dom.html
+          grep -q 'data-evidence-ready="true"' /tmp/brick-mother-v26-source-dom.html
+
+      - name: Commit V2.6 source without workflow mutation
+        shell: bash
+        run: |
+          set -euo pipefail
+          brick="yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother"
+          git restore --source=HEAD --staged --worktree .github/workflows
+          rm -rf .github/brick-mother-v26-payload
+          git config user.name "Brick Mother V2.6 Calibration Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add "$brick" .github/brick-mother-v26-payload
+          if git diff --cached --quiet; then
+            echo 'No V2.6 source changes to commit' >&2
+            exit 1
+          fi
+          git commit -m "Calibrate Brick Mother V2.6 neutral rich material spectrum"
+          git push origin HEAD:feature/brick-mother-v2.0-composite-material-dna
+
+      - name: Upload V2.6 source gate evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: brick-mother-v26-source-gate-evidence
+          path: |
+            /tmp/brick-mother-v26-source-dom.html
+            /tmp/brick-mother-v26-source-chrome.log
+            /tmp/brick-mother-v26-standalone.sha256
+            yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/brick-mother-standalone-v2.6.html
+            yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/VERSION.json
+          compression-level: 1
+          if-no-files-found: ignore
