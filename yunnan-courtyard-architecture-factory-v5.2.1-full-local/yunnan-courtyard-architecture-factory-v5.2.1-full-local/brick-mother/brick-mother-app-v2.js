@@ -271,11 +271,11 @@ async function buildCurrentBatch() {
     const elapsed = Math.round(performance.now() - start);
     $('#batchStats').textContent =
       `${triangleLabel(totalTriangles)} 三角面 · ${totalDeepPores} 深孔 · ${totalRimChips} 孔沿碎裂 · ${totalCollapsedPores} 塌口 · ${elapsed} ms`;
-    setProgress('Gaea 蒸馏材料图谱生成完成。可检查岩层、侵蚀、综合色彩、水痕和土坯夹杂通道。', 100);
+    setProgress('V2.6 中性光照综合色谱生成完成。可检查烧结红黑区、石材冷暖区、孔洞和土坯夹杂。', 100);
 
     window.__BRICK_MOTHER_READY__ = true;
     document.documentElement.dataset.brickMotherReady = 'true';
-    document.documentElement.dataset.brickMotherVersion = '2.5.0-alpha.1';
+    document.documentElement.dataset.brickMotherVersion = '2.6.0-alpha.1';
     document.documentElement.dataset.seedLayers = '8';
     document.documentElement.dataset.deepPores = String(totalDeepPores);
     document.documentElement.dataset.inclusionVoids = String(totalInclusionVoids);
@@ -290,7 +290,7 @@ async function buildCurrentBatch() {
     document.documentElement.dataset.evidenceReady = state.evidenceMode ? 'true' : 'false';
     window.__BRICK_MOTHER_QA__ = {
       ready: true,
-      version: '2.5.0-alpha.1',
+      version: '2.6.0-alpha.1',
       mode: state.batchMode,
       profiles: built.map((item) => item.profile.id),
       triangleCounts: built.map((item) => Math.round(item.mesh.triangles)),
@@ -367,7 +367,7 @@ function renderChildCards() {
 function exportDNA() {
   const payload = {
     product: 'Brick Mother',
-    version: '2.5.0-alpha.1',
+    version: '2.6.0-alpha.1',
     profile: state.selectedProfile,
     batchMode: state.batchMode,
     controls: state.controls,
@@ -522,7 +522,7 @@ async function main() {
     state.debugMode = Math.max(0, Math.min(8, Math.round(Number(QUERY.get('debug') ?? 0) || 0)));
     if (state.evidenceMode) {
       document.body.classList.add('evidence-mode');
-      document.body.dataset.evidenceLabel = `Brick Mother V2.5 · ${state.selectedProfile} · channel ${state.debugMode}`;
+      document.body.dataset.evidenceLabel = `Brick Mother V2.6 · ${state.selectedProfile} · channel ${state.debugMode}`;
     }
     const profile = state.profiles.get(state.selectedProfile);
     state.controls = controlDefaultsForProfile(profile);

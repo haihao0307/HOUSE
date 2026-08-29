@@ -1,9 +1,9 @@
 {
   "product": "Brick Mother",
   "displayName": "Brick Mother 砖块母体生产线",
-  "version": "2.5.0-alpha.1",
+  "version": "2.6.0-alpha.1",
   "releaseDate": "2026-08-29",
-  "status": "deep-pore-spectrum-rich-material-alpha",
+  "status": "neutral-studio-rich-spectrum-alpha",
   "base": {
     "version": "1.0.0",
     "branch": "release/brick-mother-v1.0",
@@ -12,8 +12,8 @@
   },
   "featureBranch": "feature/brick-mother-v2.0-composite-material-dna",
   "engineLineage": {
-    "materialGeometryEngine": "2.5.0-alpha.1",
-    "releaseMeaning": "Multi-scale clustered pore spectrum, broken deep-pore rims, richer stone and adobe color families, solo close-up mode, and a self-contained standalone browser page.",
+    "materialGeometryEngine": "2.6.0-alpha.1",
+    "releaseMeaning": "Neutral studio lighting, high-roughness masonry response, broad fired-red and charcoal kiln zones, blue-gray olive rust and calcite stone regions, richer adobe clay and visible fibers, and a stronger multi-scale clustered pore spectrum.",
     "gaeaKernel": "1.2.0"
   },
   "repository": "haihao0307/HOUSE",
@@ -49,7 +49,14 @@
     "collapsedPoreMouths": true,
     "brokenPoreRims": true,
     "soloCloseupMode": true,
-    "standaloneSingleFileHtml": true
+    "standaloneSingleFileHtml": true,
+    "neutralStudioLighting": true,
+    "highRoughnessMasonry": true,
+    "familySpecificSurfaceCrust": true,
+    "firedClayRedBlackMineralBalance": true,
+    "stoneMineralSpectrum": true,
+    "visibleAdobeFiberBands": true,
+    "poreMicroContrast": true
   },
   "approval": {
     "visualStatus": "pending-user-review",

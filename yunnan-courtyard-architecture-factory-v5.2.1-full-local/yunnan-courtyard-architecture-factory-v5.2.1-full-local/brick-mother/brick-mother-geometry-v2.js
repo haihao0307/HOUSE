@@ -195,23 +195,23 @@ function buildDamage(profile, seedDNA, controlsInput, level, dims) {
   const compositeDamage = clamp(level * 0.78 + controls.damage * 0.62, 0, 1.75);
   const poreDensity = controls.poreDensity;
   const poreVariety = controls.poreVariety;
-  const densityScale = 0.68 + poreDensity * 0.50;
-  const varietyScale = 0.72 + poreVariety * 0.34;
-  const chipCount = Math.max(1, Math.round(1 + dna.edgeFragility * 2.9 + compositeDamage * 4.8));
-  const pitCount = Math.max(2, Math.round((1.4 + dna.pitDensity * 3.1 + compositeDamage * 3.9) * densityScale));
-  const poreCount = Math.max(5, Math.round(
-    (nd.geometryPoreCount ?? 5) * (0.58 + level * 0.46 + controls.poreDepth * 0.34) * densityScale
+  const densityScale = 0.72 + poreDensity * 0.58;
+  const varietyScale = 0.70 + poreVariety * 0.42;
+  const chipCount = Math.max(2, Math.round(1.4 + dna.edgeFragility * 3.2 + compositeDamage * 5.1));
+  const pitCount = Math.max(4, Math.round((2.0 + dna.pitDensity * 3.7 + compositeDamage * 4.3) * densityScale));
+  const poreCount = Math.max(8, Math.round(
+    (nd.geometryPoreCount ?? 5) * (0.66 + level * 0.50 + controls.poreDepth * 0.39) * densityScale
   ));
-  const deepPoreCount = Math.max(2, Math.round(
-    (nd.geometryDeepPoreCount ?? 2.5) * (0.42 + controls.poreDepth * 0.68 + level * 0.26) *
-    (0.72 + poreDensity * 0.38)
+  const deepPoreCount = Math.max(3, Math.round(
+    (nd.geometryDeepPoreCount ?? 2.5) * (0.50 + controls.poreDepth * 0.74 + level * 0.29) *
+    (0.78 + poreDensity * 0.44)
   ));
   const crackCount = compositeDamage < 0.28 ? 0 : Math.max(1, Math.round(dna.crackAffinity * 1.4 + compositeDamage * 1.45));
   const erosionCount = Math.max(0, Math.round(controls.weathering * (0.9 + dna.edgeFragility * 1.7) + level * 1.2));
   const inclusionVoidCount = profile.family === 'ADOBE'
     ? Math.max(4, Math.round((2.5 + controls.inclusion * 6.0 + level * 2.5) * (0.82 + poreDensity * 0.22)))
     : 0;
-  const anchorCount = Math.max(2, Math.round(2 + poreDensity * 1.5));
+  const anchorCount = Math.max(3, Math.round(2.6 + poreDensity * 1.8));
   const poreAnchors = [];
   for (let i = 0; i < anchorCount; i++) {
     const face = poreRng.pick(FACE_IDS);
@@ -312,12 +312,12 @@ function buildDamage(profile, seedDNA, controlsInput, level, dims) {
     const face = poreRng.pick(['px', 'nx', 'py', 'pz', 'nz']);
     const normal = faceNormal(face);
     const scaleClass = poreRng.next();
-    const baseRadius = scaleClass < 0.64
-      ? poreRng.range(0.052, 0.098)
-      : (scaleClass < 0.92 ? poreRng.range(0.098, 0.145) : poreRng.range(0.145, 0.195));
-    const radius = baseRadius * minD * (0.72 + controls.poreDepth * 0.36) * varietyScale;
-    const depth = poreRng.range(0.16, scaleClass > 0.90 ? 0.48 : 0.40) * minD *
-      (0.52 + controls.poreDepth * 0.70);
+    const baseRadius = scaleClass < 0.58
+      ? poreRng.range(0.045, 0.090)
+      : (scaleClass < 0.90 ? poreRng.range(0.090, 0.155) : poreRng.range(0.155, 0.235));
+    const radius = baseRadius * minD * (0.74 + controls.poreDepth * 0.40) * varietyScale;
+    const depth = poreRng.range(0.18, scaleClass > 0.88 ? 0.58 : 0.45) * minD *
+      (0.54 + controls.poreDepth * 0.76);
     const matchingAnchors = poreAnchors.filter((item) => item.face === face);
     const anchor = matchingAnchors.length && poreRng.next() < 0.52 ? poreRng.pick(matchingAnchors) : null;
     const surface = anchor
@@ -346,7 +346,7 @@ function buildDamage(profile, seedDNA, controlsInput, level, dims) {
     };
     deepPores.push(bore);
 
-    const rimCount = Math.max(1, Math.round(poreRng.range(1.2, 2.7) + poreVariety * 0.75));
+    const rimCount = Math.max(2, Math.round(poreRng.range(1.8, 3.8) + poreVariety * 0.95));
     for (let j = 0; j < rimCount; j++) {
       const rimRadius = radius * poreRng.range(0.30, 0.68);
       const tangent = faceTangentOffset(face, poreRng, radius * poreRng.range(0.72, 1.36));
@@ -660,7 +660,7 @@ function buildMesh(profile, seedDNA, controlsInput, level, quality = 1) {
     level,
     profileId: profile.id,
     grid: [nx, ny, nz],
-    noiseVersion: 'v2.5-deep-pore-spectrum-rich-material-alpha1'
+    noiseVersion: 'v2.6-neutral-studio-rich-material-alpha1'
   };
 }
 

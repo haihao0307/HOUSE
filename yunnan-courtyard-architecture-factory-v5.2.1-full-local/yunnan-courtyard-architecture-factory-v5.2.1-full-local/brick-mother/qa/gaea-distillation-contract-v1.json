@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "subject": "Brick Mother V2.4 spectral balance and material scale graph",
+  "subject": "Brick Mother V2.6 neutral studio rich spectrum and deep pore graph",
   "status": "automatic-qa-ready-manual-visual-pending",
   "requiredFiles": [
     "brick-mother-gaea-kernel-v1.js",
@@ -55,7 +55,7 @@
     "adobeInclusionApproved": false,
     "productionApproved": false
   },
-  "implementationTarget": "2.4.0-alpha.1",
+  "implementationTarget": "2.6.0-alpha.1",
   "gaeaKernel": "1.2.0",
   "expectedControls": [
     "rockDetail",
@@ -66,7 +66,7 @@
     "maskSharpness"
   ],
   "expectedDebugChannels": 9,
-  "version": "2.5.0-alpha.1",
+  "version": "2.6.0-alpha.1",
   "visualCalibrationGates": {
     "eventColorMasking": true,
     "regularOxideContourSuppression": true,
@@ -96,7 +96,14 @@
     "stoneReadableMidtones": true,
     "reducedMicroNoise": true,
     "adobeInclusionClustering": true,
-    "familyLightingExposure": true
+    "familyLightingExposure": true,
+    "neutralStudioLighting": true,
+    "highRoughnessMasonry": true,
+    "firedClayRedBlackMineralBalance": true,
+    "stoneBlueOliveRustCalciteSpectrum": true,
+    "adobeClayDustDampSpectrum": true,
+    "visibleAdobeFiberBands": true,
+    "strongerClusteredPoreSpectrum": true
   },
   "deepPoreSpectrum": {
     "poreDensityControl": true,
@@ -119,5 +126,13 @@
     "stoneDetailApproved": false,
     "adobeInclusionApproved": false,
     "productionApproved": false
+  },
+  "neutralStudioRichSpectrum": {
+    "neutralKeyLight": true,
+    "coolFillLight": true,
+    "subtleWarmRimLight": true,
+    "familyExposureReduced": true,
+    "surfaceCrustCorrelatedToNormalAndRoughness": true,
+    "manualApprovalsRemainFalse": true
   }
 }
