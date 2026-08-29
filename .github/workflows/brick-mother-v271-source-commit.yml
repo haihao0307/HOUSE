@@ -1,0 +1,138 @@
+name: Brick Mother V2.7.1 Organic Shallow Source Commit
+
+on:
+  push:
+    branches:
+      - feature/brick-mother-v2.0-composite-material-dna
+    paths:
+      - ".github/workflows/brick-mother-v271-source-commit.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  apply-gate-commit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    steps:
+      - name: Checkout exact branch
+        uses: actions/checkout@v4
+        with:
+          ref: feature/brick-mother-v2.0-composite-material-dna
+          fetch-depth: 0
+
+      - name: Reconstruct V2.7.1 tuning scripts
+        shell: bash
+        run: |
+          set -euo pipefail
+          base64 -d .github/brick-mother-v271-tune/scripts.tar.xz.b64 > /tmp/v271-tune-scripts.tar.xz
+          echo '37cd55e05c6c676d6e186310a7a9defa50cb4f248579f843c74cf7e5360334db  /tmp/v271-tune-scripts.tar.xz' | sha256sum -c -
+          mkdir -p /tmp/v271-tune
+          tar -xJf /tmp/v271-tune-scripts.tar.xz -C /tmp/v271-tune
+          echo '94ed3de42b555ee622aefcf3a3b4c49d029bf48430c16535a6d3c1df9a7b870d  /tmp/v271-tune/apply_v271.py' | sha256sum -c -
+          echo '9b03ba6fb44a037cd2ec7e5716685adfc8cd616bc5cc1e01d00b6b18189d2894  /tmp/v271-tune/build_standalone_v271.py' | sha256sum -c -
+          python3 -m py_compile /tmp/v271-tune/apply_v271.py /tmp/v271-tune/build_standalone_v271.py
+
+      - name: Apply V2.7.1 organic shallow visual tuning
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 /tmp/v271-tune/apply_v271.py
+          python3 /tmp/v271-tune/build_standalone_v271.py
+
+      - name: Validate V2.7.1 source and standalone
+        shell: bash
+        run: |
+          set -euxo pipefail
+          brick="yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother"
+          node --check "$brick/brick-mother-gaea-kernel-v1.js"
+          node --check "$brick/brick-mother-geometry-v2.js"
+          node --check "$brick/brick-mother-renderer-v2.js"
+          node --check "$brick/brick-mother-app-v2.js"
+          python3 -m json.tool "$brick/data/brick-material-profiles-v2.json" >/dev/null
+          python3 -m json.tool "$brick/qa/gaea-distillation-contract-v1.json" >/dev/null
+          python3 -m json.tool "$brick/qa/v27-visual-truth-contract.json" >/dev/null
+          python3 -m json.tool "$brick/VERSION.json" >/dev/null
+          grep -q '"version": "2.7.1-alpha.1"' "$brick/VERSION.json"
+          grep -q '"organicShallowFormationEvents": true' "$brick/VERSION.json"
+          grep -q '"roundedEventFields": true' "$brick/VERSION.json"
+          grep -q 'orientedEventEllipsoid' "$brick/brick-mother-geometry-v2.js"
+          grep -q 'v2.7.1-organic-shallow-formation-alpha1' "$brick/brick-mother-geometry-v2.js"
+          grep -q 'float rounded = pow' "$brick/brick-mother-renderer-v2.js"
+          grep -q 'familyExposure = uFamily == 2 ? 1.34' "$brick/brick-mother-renderer-v2.js"
+          standalone="$brick/brick-mother-standalone-v2.7.1.html"
+          test -s "$standalone"
+          test "$(wc -c < "$standalone")" -gt 170000
+          ! grep -q '<script src=' "$standalone"
+          ! grep -q '<link rel="stylesheet"' "$standalone"
+          grep -q 'window.__BRICK_MOTHER_INLINE_DATA__' "$standalone"
+          sha256sum "$standalone" > /tmp/brick-mother-v271-standalone.sha256
+
+      - name: Gate V2.7.1 fired benchmark slab in Chromium
+        shell: bash
+        run: |
+          set -euo pipefail
+          chrome="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)"
+          uri="$(python3 - <<'PY'
+          from pathlib import Path
+          print(Path('yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/brick-mother-standalone-v2.7.1.html').resolve().as_uri())
+          PY
+          )"
+          timeout 300s "$chrome" \
+            --headless=new \
+            --no-sandbox \
+            --disable-dev-shm-usage \
+            --disable-background-networking \
+            --allow-file-access-from-files \
+            --enable-webgl \
+            --ignore-gpu-blocklist \
+            --enable-unsafe-swiftshader \
+            --use-gl=angle \
+            --use-angle=swiftshader \
+            --hide-scrollbars \
+            --window-size=1600,1000 \
+            --virtual-time-budget=12000 \
+            --screenshot=/tmp/brick-mother-v271-fired-gate.png \
+            --dump-dom \
+            "${uri}?evidence=1&solo=1&specimen=benchmark&profile=old-pbr-fired&focus=2&debug=0&qa=v271-source-gate" \
+            > /tmp/brick-mother-v271-source-dom.html \
+            2> /tmp/brick-mother-v271-source-chrome.log
+          grep -q 'data-brick-mother-ready="true"' /tmp/brick-mother-v271-source-dom.html
+          grep -q 'data-brick-mother-version="2.7.1-alpha.1"' /tmp/brick-mother-v271-source-dom.html
+          grep -q 'data-benchmark-specimen="true"' /tmp/brick-mother-v271-source-dom.html
+          grep -Eq 'data-formation-events="[1-9][0-9]*"' /tmp/brick-mother-v271-source-dom.html
+          grep -q 'data-debug-modes="11"' /tmp/brick-mother-v271-source-dom.html
+          test -s /tmp/brick-mother-v271-fired-gate.png
+          test "$(wc -c < /tmp/brick-mother-v271-fired-gate.png)" -gt 120000
+
+      - name: Commit browser gated V2.7.1 source
+        shell: bash
+        run: |
+          set -euo pipefail
+          brick="yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother"
+          git restore --source=HEAD --staged --worktree .github/workflows
+          rm -rf .github/brick-mother-v271-tune
+          git config user.name "Brick Mother V2.7.1 Calibration Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A "$brick" .github/brick-mother-v271-tune
+          if git diff --cached --quiet; then
+            echo 'No V2.7.1 source changes to commit' >&2
+            exit 1
+          fi
+          git commit -m "Tune Brick Mother V2.7.1 organic shallow material events"
+          git push origin HEAD:feature/brick-mother-v2.0-composite-material-dna
+
+      - name: Upload V2.7.1 source evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: brick-mother-v271-source-gate-evidence
+          path: |
+            /tmp/brick-mother-v271-fired-gate.png
+            /tmp/brick-mother-v271-source-dom.html
+            /tmp/brick-mother-v271-source-chrome.log
+            /tmp/brick-mother-v271-standalone.sha256
+            yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/brick-mother-standalone-v2.7.1.html
+            yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/VERSION.json
+          compression-level: 1
+          if-no-files-found: ignore
