@@ -1,4 +1,4 @@
-name: Brick Mother V2 Composite DNA Smoke
+name: Brick Mother V2.1 Gaea Distilled Smoke
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - feature/brick-mother-v2.0-composite-material-dna
     paths:
       - "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/**"
-      - ".github/workflows/brick-mother-v2-smoke.yml"
+      - ".github/workflows/brick-mother-v2-gaea-distillation-bootstrap.yml"
   workflow_dispatch:
 
 permissions:
@@ -15,25 +15,34 @@ permissions:
 jobs:
   browser-smoke:
     runs-on: ubuntu-latest
-    timeout-minutes: 16
+    timeout-minutes: 18
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Validate V2 source contracts
+      - name: Validate Gaea-distilled source contracts
         shell: bash
         run: |
           set -euo pipefail
           brick="yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother"
+          node --check "$brick/brick-mother-gaea-kernel-v1.js"
           node --check "$brick/brick-mother-geometry-v2.js"
           node --check "$brick/brick-mother-renderer-v2.js"
           node --check "$brick/brick-mother-app-v2.js"
           python3 -m json.tool "$brick/data/brick-material-profiles-v2.json" >/dev/null
+          python3 -m json.tool "$brick/data/gaea-distilled-node-recipes-v1.json" >/dev/null
+          python3 -m json.tool "$brick/qa/gaea-distillation-contract-v1.json" >/dev/null
           python3 -m json.tool "$brick/VERSION.json" >/dev/null
-          grep -q '"version": "2.0.0-alpha.1"' "$brick/VERSION.json"
-          grep -q '"independentSeedLayers": 8' "$brick/VERSION.json"
-          grep -q 'geometryDeepPoreCount' "$brick/data/brick-material-profiles-v2.json"
-          grep -q 'adobeInclusionFamilies' "$brick/data/brick-material-profiles-v2.json"
+          grep -q '"version": "2.1.0-alpha.1"' "$brick/VERSION.json"
+          grep -q '"gaeaKernel": "1.0.0"' "$brick/VERSION.json"
+          grep -q '"adjustableCompositeControls": 13' "$brick/VERSION.json"
+          grep -q '"debugChannels": 9' "$brick/VERSION.json"
+          grep -q '"gaeaDNA"' "$brick/data/brick-material-profiles-v2.json"
+          grep -q '"rockDetail"' "$brick/data/brick-material-profiles-v2.json"
+          grep -q '"maskSharpness"' "$brick/data/brick-material-profiles-v2.json"
+          grep -q 'BMGaeaFields' "$brick/brick-mother-gaea-kernel-v1.js"
+          grep -q 'bmClut5' "$brick/brick-mother-gaea-kernel-v1.js"
+          grep -q 'bmSplatWeights' "$brick/brick-mother-gaea-kernel-v1.js"
 
       - name: Start local production server
         shell: bash
@@ -41,18 +50,18 @@ jobs:
           set -euo pipefail
           src="yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local"
           cd "$src"
-          python3 -m http.server 4173 --bind 127.0.0.1 > /tmp/brick-mother-v2-http.log 2>&1 &
-          echo $! > /tmp/brick-mother-v2-http.pid
-          for attempt in $(seq 1 40); do
+          python3 -m http.server 4173 --bind 127.0.0.1 > /tmp/brick-mother-v21-http.log 2>&1 &
+          echo $! > /tmp/brick-mother-v21-http.pid
+          for attempt in $(seq 1 45); do
             if curl -fsS http://127.0.0.1:4173/brick-mother/ > /dev/null; then
               exit 0
             fi
             sleep 1
           done
-          cat /tmp/brick-mother-v2-http.log
+          cat /tmp/brick-mother-v21-http.log
           exit 1
 
-      - name: Run real Chromium V2 generation smoke
+      - name: Run real Chromium Gaea-distilled generation smoke
         shell: bash
         run: |
           set -euo pipefail
@@ -62,7 +71,7 @@ jobs:
             exit 1
           fi
 
-          timeout 330s "$chrome" \
+          timeout 360s "$chrome" \
             --headless=new \
             --no-sandbox \
             --disable-dev-shm-usage \
@@ -71,34 +80,39 @@ jobs:
             --enable-unsafe-swiftshader \
             --use-gl=angle \
             --use-angle=swiftshader \
-            --virtual-time-budget=150000 \
+            --virtual-time-budget=180000 \
             --dump-dom \
-            "http://127.0.0.1:4173/brick-mother/?qa=browser-smoke-v2-alpha1" \
-            > /tmp/brick-mother-v2-dom.html \
-            2> /tmp/brick-mother-v2-chrome.log
+            "http://127.0.0.1:4173/brick-mother/?qa=browser-smoke-v21-gaea" \
+            > /tmp/brick-mother-v21-dom.html \
+            2> /tmp/brick-mother-v21-chrome.log
 
-          grep -q 'data-brick-mother-ready="true"' /tmp/brick-mother-v2-dom.html
-          grep -q 'data-brick-mother-version="2.0.0-alpha.1"' /tmp/brick-mother-v2-dom.html
-          grep -q 'data-seed-layers="8"' /tmp/brick-mother-v2-dom.html
-          grep -Eq 'data-deep-pores="[1-9][0-9]*"' /tmp/brick-mother-v2-dom.html
-          grep -q 'data-index="0"' /tmp/brick-mother-v2-dom.html
-          grep -q 'data-index="1"' /tmp/brick-mother-v2-dom.html
-          grep -q 'data-index="2"' /tmp/brick-mother-v2-dom.html
-          grep -q 'data-control="colorRichness"' /tmp/brick-mother-v2-dom.html
-          grep -q 'data-control="poreDepth"' /tmp/brick-mother-v2-dom.html
-          grep -q 'data-seed="inclusion"' /tmp/brick-mother-v2-dom.html
-          grep -q 'data-channel="7"' /tmp/brick-mother-v2-dom.html
-          grep -q 'V2 复合材质 DNA 首轮生成完成' /tmp/brick-mother-v2-dom.html
+          grep -q 'data-brick-mother-ready="true"' /tmp/brick-mother-v21-dom.html
+          grep -q 'data-brick-mother-version="2.1.0-alpha.1"' /tmp/brick-mother-v21-dom.html
+          grep -q 'data-seed-layers="8"' /tmp/brick-mother-v21-dom.html
+          grep -q 'data-gaea-kernel="1.0.0"' /tmp/brick-mother-v21-dom.html
+          grep -q 'data-debug-modes="9"' /tmp/brick-mother-v21-dom.html
+          grep -Eq 'data-deep-pores="[1-9][0-9]*"' /tmp/brick-mother-v21-dom.html
+          grep -q 'data-index="0"' /tmp/brick-mother-v21-dom.html
+          grep -q 'data-index="1"' /tmp/brick-mother-v21-dom.html
+          grep -q 'data-index="2"' /tmp/brick-mother-v21-dom.html
+          grep -q 'data-control="rockDetail"' /tmp/brick-mother-v21-dom.html
+          grep -q 'data-control="strata"' /tmp/brick-mother-v21-dom.html
+          grep -q 'data-control="microErosion"' /tmp/brick-mother-v21-dom.html
+          grep -q 'data-control="colorClarity"' /tmp/brick-mother-v21-dom.html
+          grep -q 'data-control="colorGamut"' /tmp/brick-mother-v21-dom.html
+          grep -q 'data-control="maskSharpness"' /tmp/brick-mother-v21-dom.html
+          grep -q 'data-channel="8"' /tmp/brick-mother-v21-dom.html
+          grep -q 'Gaea 蒸馏材料图谱生成完成' /tmp/brick-mother-v21-dom.html
 
-          echo "Brick Mother V2 browser smoke passed"
-          grep -o 'data-deep-pores="[0-9]*"' /tmp/brick-mother-v2-dom.html | head -1
+          echo "Brick Mother V2.1 Gaea-distilled browser smoke passed"
+          grep -o 'data-deep-pores="[0-9]*"' /tmp/brick-mother-v21-dom.html | head -1
 
-      - name: Capture V2 browser evidence
+      - name: Capture Gaea-distilled browser evidence
         shell: bash
         run: |
           set -euo pipefail
           chrome="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)"
-          timeout 330s "$chrome" \
+          timeout 360s "$chrome" \
             --headless=new \
             --no-sandbox \
             --disable-dev-shm-usage \
@@ -107,48 +121,58 @@ jobs:
             --enable-unsafe-swiftshader \
             --use-gl=angle \
             --use-angle=swiftshader \
-            --window-size=1600,1100 \
-            --virtual-time-budget=150000 \
-            --screenshot=/tmp/brick-mother-v2-alpha1.png \
-            "http://127.0.0.1:4173/brick-mother/?qa=browser-evidence-v2-alpha1" \
-            > /tmp/brick-mother-v2-screenshot.log \
+            --window-size=1800,1200 \
+            --virtual-time-budget=180000 \
+            --screenshot=/tmp/brick-mother-v21-gaea.png \
+            "http://127.0.0.1:4173/brick-mother/?qa=browser-evidence-v21-gaea" \
+            > /tmp/brick-mother-v21-screenshot.log \
             2>&1
-          test -s /tmp/brick-mother-v2-alpha1.png
+          test -s /tmp/brick-mother-v21-gaea.png
+          python3 - <<'PY'
+          from pathlib import Path
+          path = Path('/tmp/brick-mother-v21-gaea.png')
+          data = path.read_bytes()
+          assert data[:8] == b'\x89PNG\r\n\x1a\n'
+          assert len(data) > 120000, len(data)
+          print({'screenshotBytes': len(data)})
+          PY
 
       - name: Write job summary
         if: always()
         shell: bash
         run: |
           {
-            echo "## Brick Mother V2 Composite DNA"
+            echo "## Brick Mother V2.1 Gaea Distilled"
             echo
-            echo "* Version: 2.0.0-alpha.1"
+            echo "* Version: 2.1.0-alpha.1"
+            echo "* Gaea field kernel: 1.0.0"
             echo "* Independent seed layers: 8"
-            echo "* Adjustable composite controls: 7"
-            echo "* Adobe inclusion families: 5"
-            if [ -f /tmp/brick-mother-v2-dom.html ]; then
+            echo "* Adjustable composite controls: 13"
+            echo "* Debug channels: 9"
+            echo "* Distilled operator families: primitives, warps, adjustments, erosion, data, color, render"
+            if [ -f /tmp/brick-mother-v21-dom.html ]; then
               echo "* DOM evidence: generated"
-              grep -o 'data-deep-pores="[0-9]*"' /tmp/brick-mother-v2-dom.html | head -1 | sed 's/data-deep-pores=/Deep pore events: /'
+              grep -o 'data-deep-pores="[0-9]*"' /tmp/brick-mother-v21-dom.html | head -1 | sed 's/data-deep-pores=/Deep pore events: /'
             fi
           } >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Upload V2 browser evidence
+      - name: Upload Gaea-distilled browser evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: brick-mother-v2-alpha1-browser-evidence
+          name: brick-mother-v21-gaea-browser-evidence
           path: |
-            /tmp/brick-mother-v2-alpha1.png
-            /tmp/brick-mother-v2-dom.html
-            /tmp/brick-mother-v2-chrome.log
-            /tmp/brick-mother-v2-screenshot.log
-            /tmp/brick-mother-v2-http.log
+            /tmp/brick-mother-v21-gaea.png
+            /tmp/brick-mother-v21-dom.html
+            /tmp/brick-mother-v21-chrome.log
+            /tmp/brick-mother-v21-screenshot.log
+            /tmp/brick-mother-v21-http.log
           if-no-files-found: ignore
 
       - name: Stop local server
         if: always()
         shell: bash
         run: |
-          if [ -f /tmp/brick-mother-v2-http.pid ]; then
-            kill "$(cat /tmp/brick-mother-v2-http.pid)" 2>/dev/null || true
+          if [ -f /tmp/brick-mother-v21-http.pid ]; then
+            kill "$(cat /tmp/brick-mother-v21-http.pid)" 2>/dev/null || true
           fi
