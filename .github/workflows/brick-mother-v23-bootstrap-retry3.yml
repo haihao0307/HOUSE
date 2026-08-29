@@ -1,0 +1,165 @@
+name: Brick Mother V2.3 Natural Events Retry 3
+
+on:
+  push:
+    branches:
+      - feature/brick-mother-v2.0-composite-material-dna
+    paths:
+      - ".github/workflows/brick-mother-v23-bootstrap-retry3.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  apply-test-commit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    steps:
+      - name: Checkout exact branch
+        uses: actions/checkout@v4
+        with:
+          ref: feature/brick-mother-v2.0-composite-material-dna
+          fetch-depth: 0
+
+      - name: Assemble, apply, and validate V2.3 patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat .github/brick-mother-v23-script/*.part > /tmp/apply-brick-mother-v23.py
+          python3 -m py_compile /tmp/apply-brick-mother-v23.py
+          python3 /tmp/apply-brick-mother-v23.py
+          brick="yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother"
+          node --check "$brick/brick-mother-gaea-kernel-v1.js"
+          node --check "$brick/brick-mother-geometry-v2.js"
+          node --check "$brick/brick-mother-renderer-v2.js"
+          node --check "$brick/brick-mother-app-v2.js"
+          python3 -m json.tool "$brick/data/brick-material-profiles-v2.json" >/dev/null
+          python3 -m json.tool "$brick/qa/gaea-distillation-contract-v1.json" >/dev/null
+          python3 -m json.tool "$brick/VERSION.json" >/dev/null
+          grep -q '"version": "2.3.0-alpha.1"' "$brick/VERSION.json"
+          grep -q '"gaeaKernel": "1.2.0"' "$brick/VERSION.json"
+          grep -q '"connectedColorNetworksSuppressed": true' "$brick/VERSION.json"
+          grep -q 'rockPatchA' "$brick/brick-mother-gaea-kernel-v1.js"
+          grep -q 'familySaturation' "$brick/brick-mother-renderer-v2.js"
+          grep -q 'stoneOxide' "$brick/brick-mother-renderer-v2.js"
+          if grep -q 'oxideMask \* gaea.separation' "$brick/brick-mother-renderer-v2.js"; then
+            echo "Connected separation color network remains" >&2
+            exit 1
+          fi
+
+      - name: Start local server
+        shell: bash
+        run: |
+          set -euo pipefail
+          src="yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local"
+          cd "$src"
+          python3 -m http.server 4173 --bind 127.0.0.1 > /tmp/brick-mother-v23-retry3-http.log 2>&1 &
+          echo $! > /tmp/brick-mother-v23-retry3-http.pid
+          for attempt in $(seq 1 45); do
+            curl -fsS http://127.0.0.1:4173/brick-mother/ > /dev/null && exit 0
+            sleep 1
+          done
+          cat /tmp/brick-mother-v23-retry3-http.log
+          exit 1
+
+      - name: Run real Chromium V2.3 generation gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          chrome="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)"
+          timeout 360s "$chrome" \
+            --headless=new \
+            --no-sandbox \
+            --disable-dev-shm-usage \
+            --enable-webgl \
+            --ignore-gpu-blocklist \
+            --enable-unsafe-swiftshader \
+            --use-gl=angle \
+            --use-angle=swiftshader \
+            --virtual-time-budget=150000 \
+            --dump-dom \
+            "http://127.0.0.1:4173/brick-mother/?qa=v23-retry3&evidence=1&profile=old-pbr-fired&focus=1" \
+            > /tmp/brick-mother-v23-retry3-dom.html \
+            2> /tmp/brick-mother-v23-retry3-chrome.log
+          grep -q 'data-brick-mother-ready="true"' /tmp/brick-mother-v23-retry3-dom.html
+          grep -q 'data-brick-mother-version="2.3.0-alpha.1"' /tmp/brick-mother-v23-retry3-dom.html
+          grep -q 'data-gaea-kernel="1.2.0"' /tmp/brick-mother-v23-retry3-dom.html
+          grep -q 'data-evidence-ready="true"' /tmp/brick-mother-v23-retry3-dom.html
+
+      - name: Capture fired, stone, and adobe evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          chrome="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)"
+          capture() {
+            name="$1"
+            query="$2"
+            timeout 360s "$chrome" \
+              --headless=new \
+              --no-sandbox \
+              --disable-dev-shm-usage \
+              --enable-webgl \
+              --ignore-gpu-blocklist \
+              --enable-unsafe-swiftshader \
+              --use-gl=angle \
+              --use-angle=swiftshader \
+              --window-size=1600,1000 \
+              --virtual-time-budget=120000 \
+              --screenshot="/tmp/${name}.png" \
+              "http://127.0.0.1:4173/brick-mother/?evidence=1&${query}" \
+              > "/tmp/${name}.log" 2>&1
+            test -s "/tmp/${name}.png"
+          }
+          capture brick-mother-v23-fired-final 'profile=old-pbr-fired&focus=1&debug=0&qa=fired-final'
+          capture brick-mother-v23-stone-final 'profile=stone-block&focus=2&debug=0&qa=stone-final'
+          capture brick-mother-v23-stone-field 'profile=stone-block&focus=2&debug=8&qa=stone-field'
+          capture brick-mother-v23-adobe-final 'profile=raw-clay&focus=1&debug=0&qa=adobe-final'
+          capture brick-mother-v23-adobe-inclusion 'profile=raw-clay&focus=1&debug=7&qa=adobe-inclusion'
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib
+          paths = sorted(Path('/tmp').glob('brick-mother-v23-*.png'))
+          assert len(paths) == 5, [p.name for p in paths]
+          hashes = []
+          for path in paths:
+              data = path.read_bytes()
+              assert data[:8] == b'\x89PNG\r\n\x1a\n'
+              assert len(data) > 100000, (path.name, len(data))
+              hashes.append(hashlib.sha256(data).hexdigest())
+          assert len(set(hashes)) == len(hashes), hashes
+          print({'screenshots': [p.name for p in paths], 'unique': True})
+          PY
+
+      - name: Commit exact browser-tested V2.3 implementation
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf .github/brick-mother-v23-payload .github/brick-mother-v23-script
+          git config user.name "Brick Mother V2.3 Calibration Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No V2.3 changes to commit" >&2
+            exit 1
+          fi
+          git commit -m "Calibrate Brick Mother V2.3 natural material events"
+          git push origin HEAD:feature/brick-mother-v2.0-composite-material-dna
+
+      - name: Upload V2.3 browser evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: brick-mother-v23-natural-event-evidence
+          path: |
+            /tmp/brick-mother-v23-*.png
+            /tmp/brick-mother-v23-*.log
+            /tmp/brick-mother-v23-retry3-dom.html
+            /tmp/brick-mother-v23-retry3-chrome.log
+            /tmp/brick-mother-v23-retry3-http.log
+          if-no-files-found: ignore
+
+      - name: Stop server
+        if: always()
+        shell: bash
+        run: |
+          if [ -f /tmp/brick-mother-v23-retry3-http.pid ]; then kill "$(cat /tmp/brick-mother-v23-retry3-http.pid)" 2>/dev/null || true; fi
