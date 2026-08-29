@@ -1,0 +1,76 @@
+    '''        familySpecificSaturation: true,
+        firedClayChromaticZones: true,
+        stoneReadableMidtones: true,
+        reducedMicroNoise: true,
+        adobeInclusionClustering: true,
+        profileEvidenceRoute: state.evidenceMode,''',
+    'app V2.4 flags'
+)
+path.write_text(text, encoding='utf-8')
+
+path = ROOT / 'index.html'
+text = path.read_text(encoding='utf-8')
+text = text.replace('20260829-v23-natural-events', '20260829-v24-spectral-balance')
+text = text.replace('V2.3 NATURAL MATERIAL EVENTS', 'V2.4 SPECTRAL BALANCE')
+text = text.replace('V2.3 Natural Events', 'V2.4 Spectral Balance')
+text = text.replace('自然事件综合色彩', '综合色域与尺度校准')
+text = text.replace('继续校准综合色域、石材层理和土坯夹杂', '继续校准烧结色域、石材中间调和土坯夹杂密度')
+path.write_text(text, encoding='utf-8')
+
+path = ROOT / 'VERSION.json'
+version = json.loads(path.read_text(encoding='utf-8'))
+version['version'] = '2.4.0-alpha.1'
+version['status'] = 'spectral-balance-and-scale-calibration-alpha'
+version['engineLineage']['materialGeometryEngine'] = '2.4.0-alpha.1'
+version['engineLineage']['releaseMeaning'] = 'Fired-clay chromatic zones, readable stone midtones, reduced micro-noise, family exposure calibration, and clustered adobe inclusions.'
+version['capabilities']['firedClayChromaticZones'] = True
+version['capabilities']['stoneReadableMidtones'] = True
+version['capabilities']['reducedMicroNoise'] = True
+version['capabilities']['adobeInclusionClustering'] = True
+version['capabilities']['familyLightingExposure'] = True
+version['approval']['visualStatus'] = 'pending-user-review-v2.4'
+version['approval']['productionStatus'] = False
+version['approval']['jrbColorReferenceApproved'] = False
+version['approval']['stoneDetailApproved'] = False
+version['approval']['adobeInclusionApproved'] = False
+path.write_text(json.dumps(version, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+
+path = ROOT / 'qa/gaea-distillation-contract-v1.json'
+qa = json.loads(path.read_text(encoding='utf-8'))
+qa['subject'] = 'Brick Mother V2.4 spectral balance and material scale graph'
+qa['implementationTarget'] = '2.4.0-alpha.1'
+qa['version'] = '2.4.0-alpha.1'
+qa.setdefault('visualCalibrationGates', {}).update({
+    'firedClayChromaticZones': True,
+    'stoneReadableMidtones': True,
+    'reducedMicroNoise': True,
+    'adobeInclusionClustering': True,
+    'familyLightingExposure': True,
+})
+path.write_text(json.dumps(qa, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+
+(ROOT / 'docs/BRICK_MOTHER_V2_4_SPECTRAL_BALANCE.md').write_text(
+    '''# Brick Mother V2.4 Spectral Balance and Material Scale
+
+V2.4 responds to the V2.3 browser evidence.
+
+## Fired clay
+
+Broad kiln-hot, kiln-ash, neutral, oxide, soot, mineral, wet, and biological zones now carry distinct hues. High-frequency noise no longer dominates the color identity.
+
+## Stone
+
+Stone midtones are lifted while cavity and AO darkening are reduced. RockMap and strata remain structural drivers, with lower micro-frequency color and bump influence.
+
+## Adobe
+
+Straw, husk, seed, and pull-out pits use a shared low-frequency burial field. This forms dense and sparse inclusion regions instead of a uniform scatter.
+
+## Approval
+
+Browser and source gates validate operation only. JRB color, stone detail, adobe inclusions, and production approval remain manual.
+''',
+    encoding='utf-8'
+)
+
+print('Brick Mother V2.4 spectral balance patch prepared successfully.')
