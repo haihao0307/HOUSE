@@ -1,9 +1,9 @@
 {
   "product": "Brick Mother",
   "displayName": "Brick Mother 砖块母体生产线",
-  "version": "2.0.0-alpha.1",
+  "version": "2.1.0-alpha.1",
   "releaseDate": "2026-08-28",
-  "status": "visual-calibration-alpha",
+  "status": "gaea-distilled-visual-calibration-alpha",
   "base": {
     "version": "1.0.0",
     "branch": "release/brick-mother-v1.0",
@@ -12,8 +12,9 @@
   },
   "featureBranch": "feature/brick-mother-v2.0-composite-material-dna",
   "engineLineage": {
-    "materialGeometryEngine": "2.0.0-alpha.1",
-    "releaseMeaning": "First composite material DNA implementation with independent seeds, richer source-informed color clusters, deep bore geometry, runoff weathering and adobe organic inclusions"
+    "materialGeometryEngine": "2.1.0-alpha.1",
+    "releaseMeaning": "Gaea-documented graph strategies distilled into independent rugged, strata, micro-erosion, rock-map, flow, CLUT and Splat fields for richer color and sharper correlated detail.",
+    "gaeaKernel": "1.0.0"
   },
   "repository": "haihao0307/HOUSE",
   "runtimeDependencies": {
@@ -23,14 +24,19 @@
   },
   "capabilities": {
     "independentSeedLayers": 8,
-    "adjustableCompositeControls": 7,
-    "debugChannels": 8,
+    "adjustableCompositeControls": 13,
+    "debugChannels": 9,
     "deepNegativeGeometry": true,
-    "adobeOrganicInclusionFamilies": 5
+    "adobeOrganicInclusionFamilies": 5,
+    "gaeaKernel": "1.0.0",
+    "gaeaOperatorFamilies": 7,
+    "gaeaIndependentImplementation": true
   },
   "approval": {
-    "visualStatus": "pending-user-review",
+    "visualStatus": "pending-user-review-gaea-distilled-alpha",
     "productionStatus": false,
-    "v1BaselineModified": false
+    "v1BaselineModified": false,
+    "jrbColorReferenceApproved": false,
+    "stoneDetailApproved": false
   }
 }

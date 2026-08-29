@@ -7,10 +7,12 @@
   <meta name="description" content="Brick Mother V2 复合材质 DNA 实验室，以八类独立种子生成富色砖材、深孔、水痕、风化和土坯有机夹杂。">
   <title>Brick Mother 砖块母体生产线 V2</title>
   <link rel="icon" href="data:,">
-  <link rel="stylesheet" href="./style.css?v=20260828-v2a1">
-  <script src="./brick-mother-geometry-v2.js?v=20260828-v2a1" defer></script>
-  <script src="./brick-mother-renderer-v2.js?v=20260828-v2a1" defer></script>
-  <script src="./brick-mother-app-v2.js?v=20260828-v2a1" defer></script>
+  <link rel="stylesheet" href="./style.css?v=20260829-v21-gaea">
+  <link rel="stylesheet" href="./gaea-distilled.css?v=20260829-v21-gaea">
+  <script src="./brick-mother-gaea-kernel-v1.js?v=20260829-v21-gaea" defer></script>
+  <script src="./brick-mother-geometry-v2.js?v=20260829-v21-gaea" defer></script>
+  <script src="./brick-mother-renderer-v2.js?v=20260829-v21-gaea" defer></script>
+  <script src="./brick-mother-app-v2.js?v=20260829-v21-gaea" defer></script>
 </head>
 <body>
   <div class="shell">
@@ -18,15 +20,16 @@
       <div class="brand">
         <div class="mark">BM</div>
         <div>
-          <p class="eyebrow">COMPOSITE MATERIAL DNA · V2 ALPHA 1</p>
+          <p class="eyebrow">COMPOSITE MATERIAL DNA · V2.1 GAEA DISTILLED</p>
           <h1>Brick Mother 砖块母体生产线</h1>
         </div>
       </div>
       <div class="status">
-        <span class="pill accent">V2 复合材质首轮</span>
+        <span class="pill accent">V2.1 Gaea 蒸馏图谱</span>
         <span class="pill">八类独立种子</span>
         <span class="pill">富色参考校准</span>
         <span class="pill">深孔负向几何</span>
+        <span class="pill">Gaea 场图蒸馏</span>
         <span class="pill">土坯夹杂层</span>
       </div>
     </header>
@@ -34,8 +37,8 @@
     <section class="hero">
       <article class="card">
         <p class="eyebrow">COLOR CLUSTERS · COMPOSITE EVENTS · REPRODUCIBLE SEEDS</p>
-        <h2>让色彩、孔洞、水痕、风化、破碎和有机夹杂共同形成砖材身份。</h2>
-        <p>这一轮把单一种子拆成形体、破损、孔洞、色彩、水痕、风化、夹杂和微细节八类种子。每一层都可独立调整，同时继续通过域扭曲、分形、脊状、湍流和细胞距离场互相复合，形成更丰富的颜色簇、深孔、边缘侵蚀和沉积痕迹。</p>
+        <h2>让形体场、侵蚀场、数据遮罩和综合色彩共同形成砖材身份。</h2>
+        <p>这一轮在八类独立种子上加入 Gaea 工作流蒸馏层。多重分形、域扭曲、低强度双层破碎、局部分层、微侵蚀、岩石图、流水与分离遮罩共同进入颜色、粗糙度、微法线和 AO，形成更锐利、更丰富且可解释的材料细节。</p>
       </article>
       <aside class="card hero-rules">
         <div class="rule"><b>多色簇共同工作</b><span>基底、深色骨料、橙红氧化、浅色矿物、绿色附着与湿痕分层叠加。</span></div>
@@ -84,6 +87,7 @@
               <button class="channel-button" data-channel="5" data-label="噪波分层">噪波</button>
               <button class="channel-button" data-channel="6" data-label="水痕与风化">水痕</button>
               <button class="channel-button" data-channel="7" data-label="土坯有机夹杂">夹杂</button>
+              <button class="channel-button" data-channel="8" data-label="Gaea 岩层与数据场">岩层</button>
             </div>
           </div>
 
@@ -145,6 +149,12 @@
             <label><span><b>风化强度</b><output data-control-output="weathering">0.80</output></span><input data-control="weathering" type="range" min="0" max="1.60" step="0.01"></label>
             <label><span><b>有机夹杂</b><output data-control-output="inclusion">0.20</output></span><input data-control="inclusion" type="range" min="0" max="1.60" step="0.01"></label>
             <label><span><b>形体变化</b><output data-control-output="shapeVariation">0.90</output></span><input data-control="shapeVariation" type="range" min="0.20" max="1.70" step="0.01"></label>
+            <label><span><b>岩石细节</b><output data-control-output="rockDetail">0.68</output></span><input data-control="rockDetail" type="range" min="0" max="1.60" step="0.01"></label>
+            <label><span><b>局部分层</b><output data-control-output="strata">0.28</output></span><input data-control="strata" type="range" min="0" max="1.60" step="0.01"></label>
+            <label><span><b>微侵蚀</b><output data-control-output="microErosion">0.64</output></span><input data-control="microErosion" type="range" min="0" max="1.60" step="0.01"></label>
+            <label><span><b>色彩清晰度</b><output data-control-output="colorClarity">0.92</output></span><input data-control="colorClarity" type="range" min="0" max="1.60" step="0.01"></label>
+            <label><span><b>综合色域</b><output data-control-output="colorGamut">1.08</output></span><input data-control="colorGamut" type="range" min="0" max="1.60" step="0.01"></label>
+            <label><span><b>遮罩锐度</b><output data-control-output="maskSharpness">0.92</output></span><input data-control="maskSharpness" type="range" min="0" max="1.60" step="0.01"></label>
           </div>
           <div class="control-actions">
             <button class="tool-button" id="resetDNA">恢复母体参数</button>
@@ -169,8 +179,25 @@
           </details>
         </section>
 
+        <section class="section gaea-panel">
+          <p class="eyebrow">05 · GAEA DISTILLED GRAPH</p>
+          <h2>从地形节点蒸馏到材料场</h2>
+          <div class="gaea-node-flow">
+            <span>Primitives<br>多重分形</span>
+            <span>Warp / Profile<br>扭曲与轮廓</span>
+            <span>Erosion / Data<br>侵蚀与遮罩</span>
+            <span>CLUT / Splat<br>颜色与渲染</span>
+          </div>
+          <div class="gaea-contract">
+            <div><b>岩石链</b><span>双层低强度 Rugged、Stratify、MicroErosion 与 RockMap 复合。</span></div>
+            <div><b>颜色链</b><span>AutoLevel、Clarity、CLUT5 与归一化 Splat 共同扩展色域。</span></div>
+            <div><b>关联链</b><span>几何、颜色、粗糙度、微法线与 AO 共用数据遮罩。</span></div>
+          </div>
+          <span class="gaea-control-tag">独立实现 · 无 Gaea 运行时依赖</span>
+        </section>
+
         <section class="section">
-          <p class="eyebrow">05 · COMPOSITE CONTRACT</p>
+          <p class="eyebrow">06 · COMPOSITE CONTRACT</p>
           <h2>当前材料机制</h2>
           <div class="dna-list">
             <div class="dna"><b>几何 DNA</b><span id="dnaGeometry"></span></div>

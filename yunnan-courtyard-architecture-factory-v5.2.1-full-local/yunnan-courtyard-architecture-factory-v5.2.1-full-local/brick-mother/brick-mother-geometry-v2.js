@@ -1,6 +1,8 @@
 (() => {
 'use strict';
 
+const GAEA = window.BrickMotherGaeaV1 || null;
+
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const lerp = (a, b, t) => a + (b - a) * t;
 const smooth = (t) => t * t * (3 - 2 * t);
@@ -130,7 +132,13 @@ function normalizeControls(controls = {}) {
     shapeVariation: number('shapeVariation', 0.9, 0.2, 1.7),
     inclusion: number('inclusion', 0.8, 0, 1.6),
     colorRichness: number('colorRichness', 1.15, 0.35, 1.9),
-    waterStain: number('waterStain', 0.72, 0, 1.6)
+    waterStain: number('waterStain', 0.72, 0, 1.6),
+    rockDetail: number('rockDetail', 0.68, 0, 1.6),
+    strata: number('strata', 0.28, 0, 1.6),
+    microErosion: number('microErosion', 0.64, 0, 1.6),
+    colorClarity: number('colorClarity', 0.92, 0, 1.6),
+    colorGamut: number('colorGamut', 1.08, 0, 1.6),
+    maskSharpness: number('maskSharpness', 0.92, 0, 1.6)
   };
 }
 
@@ -309,6 +317,8 @@ function createSDF(profile, seedDNA, controlsInput, level) {
   const macroAmp = dna.macroWarp * minD * (nd.geometryWarp ?? 0.9) * controls.shapeVariation;
   const reliefAmp = dna.surfaceRelief * minD * (nd.geometryRelief ?? 0.72) * (0.65 + controls.shapeVariation * 0.45);
   const phase = new RNG(seeds.shape).range(-100, 100);
+  const gaeaDNA = profile.gaeaDNA || {};
+  const gaeaNoiseApi = GAEA ? { noise3, fbm3, ridgedFbm3 } : null;
 
   const sdf = (p) => {
     const warpScale = nd.domainWarpScale ?? 0.78;
@@ -322,6 +332,9 @@ function createSDF(profile, seedDNA, controlsInput, level) {
     const ridge = ridgedFbm3(p.x * 4.8, p.y * 4.1, p.z * 4.8, seeds.detail + 103, 3) - 0.5;
     const crust = fbm3(p.x * 10.8, p.y * 8.6, p.z * 10.8, seeds.weather + 109, 3) - 0.5;
     d += (broad * 0.64 + ridge * 0.27 + crust * 0.09 * controls.weathering) * reliefAmp;
+    if (GAEA) {
+      d += GAEA.geometryDisplacement(p, seeds, controls, gaeaDNA, gaeaNoiseApi) * minD;
+    }
 
     for (const chip of damage.chips) {
       const irregular = (noise3(p.x * 12, p.y * 12, p.z * 12, seeds.damage + 131) - 0.5) * chip.irregular * minD;
@@ -500,7 +513,7 @@ function buildMesh(profile, seedDNA, controlsInput, level, quality = 1) {
     level,
     profileId: profile.id,
     grid: [nx, ny, nz],
-    noiseVersion: 'v2.0-composite-material-dna-alpha1'
+    noiseVersion: 'v2.1-gaea-distilled-field-graph-alpha1'
   };
 }
 

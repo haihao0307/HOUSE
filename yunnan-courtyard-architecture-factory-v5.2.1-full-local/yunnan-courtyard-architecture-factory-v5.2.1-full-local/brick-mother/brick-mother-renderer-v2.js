@@ -2,6 +2,7 @@
 'use strict';
 
 const { clamp, vec3, norm3, sub3, cross3, dot3 } = window.BrickMotherGeometryV2;
+const gaeaGLSL = window.BrickMotherGaeaV1?.glsl || '';
 
 function mat4Identity() {
   return new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
@@ -101,6 +102,7 @@ void main() {
 
 const fragmentShader = `#version 300 es
 precision highp float;
+${gaeaGLSL}
 
 in vec3 vWorldPos;
 in vec3 vLocalPos;
@@ -146,6 +148,15 @@ uniform float uWaterSeed;
 uniform float uWeatherSeed;
 uniform float uInclusionSeed;
 uniform float uDetailSeed;
+uniform float uGaeaRockDetail;
+uniform float uGaeaStrata;
+uniform float uGaeaMicroErosion;
+uniform float uGaeaColorClarity;
+uniform float uGaeaColorGamut;
+uniform float uGaeaMaskSharpness;
+uniform float uGaeaRuggedScale;
+uniform float uGaeaStrataFrequency;
+uniform float uGaeaSurfaceScale;
 uniform int uFamily;
 uniform int uDebugMode;
 uniform int uGround;
@@ -504,6 +515,15 @@ void main() {
   float cellularEdge = 1.0 - smoothstep(0.018, 0.105 + fwidth(mineralCell.y - mineralCell.x), mineralCell.y - mineralCell.x);
 
   vec3 baseNormal = normalize(vNormal);
+  BMGaeaFields gaea = bmGaeaEvaluate(
+    p,
+    baseNormal,
+    seedVector(uDetailSeed + uColorSeed * 0.37, 0.91),
+    uGaeaRuggedScale,
+    uGaeaStrataFrequency,
+    uGaeaSurfaceScale,
+    uGaeaMaskSharpness
+  );
   vec2 projected = surfaceProjection(p, baseNormal);
   vec4 inclusions = organicInclusions(projected, uInclusionSeed);
   inclusions *= float(uFamily == 1) * uInclusionStrength;
@@ -514,6 +534,13 @@ void main() {
     smoothstep(0.77, 0.98, turbul) * 0.16 +
     smoothstep(0.84, 0.99, 1.0 - ridge) * 0.10 +
     inclusions.w * 0.52,
+    0.0, 1.0
+  );
+
+  cavity = clamp(
+    cavity +
+    gaea.cavity * (0.14 + uGaeaRockDetail * 0.24) +
+    gaea.microErosion * uGaeaMicroErosion * 0.11,
     0.0, 1.0
   );
 
@@ -545,6 +572,33 @@ void main() {
   float bioMask = smoothstep(0.67, 0.91, fbmValueFast(colorWarped * 3.1 + seedVector(uWeatherSeed, 0.73))) *
                   smoothstep(-0.2, 0.58, 0.4 - baseNormal.y);
 
+  float gaeaColorDriver = bmClarity(
+    bmAutoLevel(
+      macro * 0.30 + ridge * 0.16 + gaea.rugged * 0.22 + gaea.strata * 0.16 + gaea.flow * 0.16,
+      0.14, 0.88
+    ),
+    uGaeaColorClarity
+  );
+  vec3 gaeaClut = bmClut5(gaeaColorDriver, dark, wetColor, mean, warm, mineralColor);
+  vec4 gaeaWeights = bmSplatWeights(
+    darkAggregate + gaea.cavity * 0.34,
+    oxideMask + gaea.flow * 0.24,
+    paleAggregate + gaea.strata * 0.34,
+    gaea.rockMap + mineral * 0.22,
+    uGaeaMaskSharpness
+  );
+  vec3 gaeaSplat =
+    dark * gaeaWeights.x +
+    oxideColor * gaeaWeights.y +
+    mineralColor * gaeaWeights.z +
+    warm * gaeaWeights.w;
+  float gaeaColorBlend = clamp(
+    uGaeaColorGamut * (0.16 + gaea.separation * 0.28),
+    0.0, 0.74
+  );
+  albedo = mix(albedo, gaeaClut, gaeaColorBlend * 0.58);
+  albedo = mix(albedo, gaeaSplat, gaeaColorBlend * 0.52);
+
   albedo = mix(albedo, warm, warmMask * 0.34 * rich);
   albedo = mix(albedo, oxideColor, oxideMask * (0.26 + 0.22 * rich));
   albedo = mix(albedo, mineralColor, paleAggregate * (0.34 + 0.16 * rich));
@@ -575,6 +629,9 @@ void main() {
     albedo = mix(albedo, oxideColor, oxideMask * 0.23 * rich);
     float darkGrain = smoothstep(0.89, 0.985, grit);
     albedo = mix(albedo, dark, darkGrain * 0.42);
+    albedo = mix(albedo, mineralColor, gaea.strata * 0.36 * uGaeaStrata);
+    albedo = mix(albedo, dark, gaea.rockMap * 0.20 * uGaeaRockDetail);
+    albedo = mix(albedo, oxideColor, gaea.flow * 0.14 * uGaeaColorGamut);
   }
 
   vec2 waterWeather = waterWeatherMasks(p, baseNormal, uWaterSeed, uWeatherSeed);
@@ -601,7 +658,10 @@ void main() {
     (grit - 0.5) * 0.08 +
     mineral * 0.18 +
     weatherMask * 0.08 +
-    inclusionHeight -
+    inclusionHeight +
+    (gaea.protrusion - 0.5) * 0.28 * uGaeaRockDetail +
+    (gaea.strata - 0.5) * 0.22 * uGaeaStrata -
+    gaea.microErosion * 0.24 * uGaeaMicroErosion -
     cavity * (0.62 + uPoreDepth * 0.14);
 
   vec3 N = baseNormal;
@@ -622,6 +682,9 @@ void main() {
     cavity * uRoughnessCorrelation +
     brokenFace * 0.18 +
     weatherMask * 0.18 +
+    gaea.rockMap * 0.18 * uGaeaRockDetail +
+    gaea.strata * 0.10 * uGaeaStrata +
+    gaea.microErosion * 0.15 * uGaeaMicroErosion +
     inclusions.x * 0.12 + inclusions.y * 0.10 -
     mineral * 0.08 -
     waterMask * 0.16,
@@ -657,6 +720,10 @@ void main() {
     outColor = vec4(clamp(vec3(inclusions.x, inclusions.y, inclusions.z + inclusions.w), 0.0, 1.0), 1.0);
     return;
   }
+  if (uDebugMode == 8) {
+    outColor = vec4(clamp(vec3(gaea.rugged, gaea.strata, max(gaea.rockMap, gaea.microErosion)), 0.0, 1.0), 1.0);
+    return;
+  }
 
   vec3 V = normalize(uCamera - vWorldPos);
   vec3 L1 = normalize(vec3(-0.44, 0.83, 0.36));
@@ -669,7 +736,14 @@ void main() {
   color += shadeLight(N, V, L3, vec3(0.72, 0.62, 0.54), 0.30, albedo, rough);
 
   float hemi = 0.38 + 0.18 * clamp(N.y * 0.5 + 0.5, 0.0, 1.0);
-  float ao = clamp(1.0 - cavity * (0.42 + uPoreDepth * 0.08) - smoothstep(0.82, 1.0, 1.0 - ridge) * 0.10, 0.40, 1.0);
+  float ao = clamp(
+    1.0 -
+    cavity * (0.42 + uPoreDepth * 0.08) -
+    smoothstep(0.82, 1.0, 1.0 - ridge) * 0.10 -
+    gaea.cavity * uGaeaRockDetail * 0.10 -
+    gaea.microErosion * uGaeaMicroErosion * 0.06,
+    0.36, 1.0
+  );
   color += albedo * hemi;
   color *= ao;
 
@@ -754,6 +828,15 @@ class BrickRenderer {
       weatherSeed: u('uWeatherSeed'),
       inclusionSeed: u('uInclusionSeed'),
       detailSeed: u('uDetailSeed'),
+      gaeaRockDetail: u('uGaeaRockDetail'),
+      gaeaStrata: u('uGaeaStrata'),
+      gaeaMicroErosion: u('uGaeaMicroErosion'),
+      gaeaColorClarity: u('uGaeaColorClarity'),
+      gaeaColorGamut: u('uGaeaColorGamut'),
+      gaeaMaskSharpness: u('uGaeaMaskSharpness'),
+      gaeaRuggedScale: u('uGaeaRuggedScale'),
+      gaeaStrataFrequency: u('uGaeaStrataFrequency'),
+      gaeaSurfaceScale: u('uGaeaSurfaceScale'),
       family: u('uFamily'),
       debugMode: u('uDebugMode'),
       ground: u('uGround'),
@@ -842,7 +925,7 @@ class BrickRenderer {
   }
 
   setDebugMode(mode) {
-    this.debugMode = clamp(Number(mode) || 0, 0, 7);
+    this.debugMode = clamp(Number(mode) || 0, 0, 8);
   }
 
   resetView() {
@@ -884,6 +967,7 @@ class BrickRenderer {
     const d = profile.runtimeDNA;
     const n = profile.noiseDNA || {};
     const p = profile.paletteDNA || {};
+    const g = profile.gaeaDNA || {};
     const seeds = mesh.seedDNA || {};
     const controls = mesh.controls || {};
     const palette = (key, fallback) => p[key] || fallback;
@@ -925,6 +1009,15 @@ class BrickRenderer {
     gl.uniform1f(l.weatherSeed, seeds.weather ?? seeds.master ?? 29);
     gl.uniform1f(l.inclusionSeed, seeds.inclusion ?? seeds.master ?? 31);
     gl.uniform1f(l.detailSeed, seeds.detail ?? seeds.master ?? 37);
+    gl.uniform1f(l.gaeaRockDetail, controls.rockDetail ?? 0.68);
+    gl.uniform1f(l.gaeaStrata, controls.strata ?? 0.28);
+    gl.uniform1f(l.gaeaMicroErosion, controls.microErosion ?? 0.64);
+    gl.uniform1f(l.gaeaColorClarity, controls.colorClarity ?? 0.92);
+    gl.uniform1f(l.gaeaColorGamut, controls.colorGamut ?? 1.08);
+    gl.uniform1f(l.gaeaMaskSharpness, controls.maskSharpness ?? 0.92);
+    gl.uniform1f(l.gaeaRuggedScale, g.ruggedScale ?? 6.2);
+    gl.uniform1f(l.gaeaStrataFrequency, g.strataFrequency ?? 5.4);
+    gl.uniform1f(l.gaeaSurfaceScale, g.surfaceScale ?? 34.0);
     gl.uniform1i(l.family, profile.family === 'STONE' ? 2 : profile.family === 'ADOBE' ? 1 : 0);
     gl.uniform1i(l.debugMode, this.debugMode);
   }

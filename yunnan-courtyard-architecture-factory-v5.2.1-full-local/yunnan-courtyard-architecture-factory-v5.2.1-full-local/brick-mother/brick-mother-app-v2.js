@@ -6,7 +6,7 @@ const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
 const { clamp, vec3, buildMesh, normalizeControls } = window.BrickMotherGeometryV2;
 const { BrickRenderer } = window.BrickMotherRendererV2;
 
-const CONTROL_KEYS = ['colorRichness', 'damage', 'poreDepth', 'waterStain', 'weathering', 'inclusion', 'shapeVariation'];
+const CONTROL_KEYS = ['colorRichness', 'damage', 'poreDepth', 'waterStain', 'weathering', 'inclusion', 'shapeVariation', 'rockDetail', 'strata', 'microErosion', 'colorClarity', 'colorGamut', 'maskSharpness'];
 const SEED_KEYS = ['master', 'shape', 'damage', 'pore', 'color', 'water', 'weather', 'inclusion', 'detail'];
 const CHILD_OFFSETS = [0, 1181, 2647];
 const SEED_PRIMES = {
@@ -101,7 +101,7 @@ function updateProfilePanel(profile) {
   $('#dnaDamage').textContent =
     `破碎 ${Number(c.damage ?? 0).toFixed(2)} · 深孔 ${Number(c.poreDepth ?? 0).toFixed(2)} · 边缘脆性 ${profile.runtimeDNA.edgeFragility.toFixed(2)}`;
   $('#noiseSummary').textContent =
-    `形体、破损、孔洞、色彩、水痕、风化、夹杂和微细节八类独立种子共同复合`;
+    `八类独立种子进入 Gaea 蒸馏图谱，并由 Rugged、Stratify、MicroErosion、RockMap、CLUT 与 Splat 复合`;
   $('#inclusionSummary').textContent = profile.family === 'ADOBE'
     ? '长稻草、短切稻草、稻壳、种粒与脱落孔五层造纹已启用'
     : '夹杂层保留在 DNA 中，当前材质家族以矿物、氧化和孔隙为主';
@@ -221,7 +221,7 @@ async function buildCurrentBatch() {
   state.building = true;
   window.__BRICK_MOTHER_READY__ = false;
   const start = performance.now();
-  setProgress('正在复合八类种子、深孔几何和多层材料事件场…', 4);
+  setProgress('正在复合八类种子、Gaea 场图、深孔几何和多层材料事件场…', 4);
   await new Promise((resolve) => requestAnimationFrame(resolve));
 
   const definitions = createBatchDefinitions();
@@ -257,16 +257,18 @@ async function buildCurrentBatch() {
     const elapsed = Math.round(performance.now() - start);
     $('#batchStats').textContent =
       `${triangleLabel(totalTriangles)} 三角面 · ${totalDeepPores} 个深孔事件 · 八类独立种子 · ${elapsed} ms`;
-    setProgress('V2 复合材质 DNA 首轮生成完成。可单独检查水痕风化和土坯夹杂通道。', 100);
+    setProgress('Gaea 蒸馏材料图谱生成完成。可检查岩层、侵蚀、综合色彩、水痕和土坯夹杂通道。', 100);
 
     window.__BRICK_MOTHER_READY__ = true;
     document.documentElement.dataset.brickMotherReady = 'true';
-    document.documentElement.dataset.brickMotherVersion = '2.0.0-alpha.1';
+    document.documentElement.dataset.brickMotherVersion = '2.1.0-alpha.1';
     document.documentElement.dataset.seedLayers = '8';
     document.documentElement.dataset.deepPores = String(totalDeepPores);
+    document.documentElement.dataset.gaeaKernel = window.BrickMotherGaeaV1?.version || 'missing';
+    document.documentElement.dataset.debugModes = '9';
     window.__BRICK_MOTHER_QA__ = {
       ready: true,
-      version: '2.0.0-alpha.1',
+      version: '2.1.0-alpha.1',
       mode: state.batchMode,
       profiles: built.map((item) => item.profile.id),
       triangleCounts: built.map((item) => Math.round(item.mesh.triangles)),
@@ -281,8 +283,12 @@ async function buildCurrentBatch() {
       deepPoreCounts: built.map((item) => item.mesh.damage.deepPores.length),
       erosionBiteCounts: built.map((item) => item.mesh.damage.erosionBites.length),
       adobeInclusionFamilies: ['long-straw', 'chopped-straw', 'rice-husk', 'seed-grain', 'missing-inclusion-pit'],
-      correlatedChannels: ['base-color', 'aggregate-color', 'water-stain', 'weathering', 'cavity', 'roughness', 'micro-normal', 'organic-inclusion'],
-      debugModes: 8,
+      correlatedChannels: ['base-color', 'aggregate-color', 'water-stain', 'weathering', 'cavity', 'roughness', 'micro-normal', 'organic-inclusion', 'rugged', 'strata', 'micro-erosion', 'rock-map', 'separation-mask'],
+      gaeaKernel: window.BrickMotherGaeaV1?.version || 'missing',
+      gaeaOperatorFamilies: Object.keys(window.BrickMotherGaeaV1?.operatorFamilies || {}),
+      gaeaGraphRecipes: Object.keys(window.BrickMotherGaeaV1?.graphRecipes || {}),
+      gaeaDistilledIndependentImplementation: true,
+      debugModes: 9,
       sourceComparisonNoDimming: true
     };
   } catch (error) {
@@ -321,7 +327,7 @@ function renderChildCards() {
 function exportDNA() {
   const payload = {
     product: 'Brick Mother',
-    version: '2.0.0-alpha.1',
+    version: '2.1.0-alpha.1',
     profile: state.selectedProfile,
     batchMode: state.batchMode,
     controls: state.controls,

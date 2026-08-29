@@ -54,5 +54,16 @@
     "stoneDetailApproved": false,
     "adobeInclusionApproved": false,
     "productionApproved": false
-  }
+  },
+  "implementationTarget": "2.1.0-alpha.1",
+  "gaeaKernel": "1.0.0",
+  "expectedControls": [
+    "rockDetail",
+    "strata",
+    "microErosion",
+    "colorClarity",
+    "colorGamut",
+    "maskSharpness"
+  ],
+  "expectedDebugChannels": 9
 }
