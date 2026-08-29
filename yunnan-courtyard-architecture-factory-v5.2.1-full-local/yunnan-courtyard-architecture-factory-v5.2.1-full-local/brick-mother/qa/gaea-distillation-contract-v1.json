@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "subject": "Brick Mother V2.1 Gaea-distilled field graph",
+  "subject": "Brick Mother V2.3 natural material event graph",
   "status": "implementation-gate",
   "requiredFiles": [
     "brick-mother-gaea-kernel-v1.js",
@@ -55,8 +55,8 @@
     "adobeInclusionApproved": false,
     "productionApproved": false
   },
-  "implementationTarget": "2.1.0-alpha.1",
-  "gaeaKernel": "1.1.0",
+  "implementationTarget": "2.3.0-alpha.1",
+  "gaeaKernel": "1.2.0",
   "expectedControls": [
     "rockDetail",
     "strata",
@@ -66,7 +66,7 @@
     "maskSharpness"
   ],
   "expectedDebugChannels": 9,
-  "version": "2.2.0-alpha.1",
+  "version": "2.3.0-alpha.1",
   "visualCalibrationGates": {
     "eventColorMasking": true,
     "regularOxideContourSuppression": true,
@@ -86,6 +86,11 @@
       "stoneDetail",
       "adobeInclusion",
       "production"
-    ]
+    ],
+    "connectedColorNetworksSuppressed": true,
+    "naturalStonePalette": true,
+    "familySpecificSaturation": true,
+    "broadMaterialEventPatches": true,
+    "sparseOxideEvents": true
   }
 }

@@ -238,29 +238,38 @@ BMGaeaFields bmGaeaEvaluate(
   float strataGate = bmAutoLevel(fbmValueFast(q * 2.65 + seedV * 1.43), 0.27, 0.82);
   float strataBreak = bmAutoLevel(fbmValueFast(q * 5.1 + seedV * 2.11), 0.33, 0.81);
   float strata = bmMaskSharp(
-    strataWave * (0.20 + strataGate * 0.58) * (0.38 + strataBreak * 0.62),
-    maskSharpness
+    strataWave * (0.16 + strataGate * 0.52) * (0.31 + strataBreak * 0.69),
+    maskSharpness * 0.72
   );
 
   float microBase = ridgedFbm(q * surfaceScale + seedV * 1.77);
   float microGate = bmAutoLevel(turbulence(q * surfaceScale * 0.31 + seedV * 2.13), 0.31, 0.86);
-  float microErosion = smoothstep(0.58, 0.93, microBase) * microGate;
+  float microErosion = smoothstep(0.61, 0.94, microBase) * microGate;
 
   float slope = 1.0 - abs(n.y);
+  float rockPatchA = bmAutoLevel(fbmValueFast(q * 2.12 + seedV * 2.73), 0.30, 0.79);
+  float rockPatchB = bmAutoLevel(fbmGradient(q * 4.35 + seedV * 1.57), 0.28, 0.76);
   float rockMap = bmMaskSharp(
-    mix(plateEdge, rugged, 0.62) * (0.34 + slope * 0.66),
-    maskSharpness
+    (rockPatchA * 0.46 + rockPatchB * 0.34 + rugged * 0.20) * (0.57 + slope * 0.43),
+    maskSharpness * 0.50
   );
 
   float vertical = bmAutoLevel(1.0 - (p.y + 0.5), 0.08, 0.92);
   float flowNoise = bmAutoLevel(fbmValueFast(vec3(q.x * 2.1, q.y * 0.57, q.z * 2.1) + seedV * 2.47), 0.48, 0.86);
-  float flow = bmMaskSharp(vertical * flowNoise * (0.38 + slope * 0.62), maskSharpness * 0.74);
+  float flow = bmMaskSharp(vertical * flowNoise * (0.38 + slope * 0.62), maskSharpness * 0.58);
 
-  float protrusion = bmSaturate(rugged * 0.58 + strata * 0.22 + (1.0 - plateEdge) * 0.20);
-  float cavity = bmSaturate(plateEdge * 0.49 + microErosion * 0.31 + (1.0 - rugged) * 0.20);
+  float materialA = fbmValueFast(q * 2.55 + seedV * 3.07);
+  float materialB = fbmGradient(q * 4.95 + seedV * 2.31);
+  float protrusion = bmSaturate(rugged * 0.60 + strata * 0.12 + rockPatchA * 0.28);
+  float cavity = bmSaturate(
+    microErosion * 0.41 +
+    (1.0 - rugged) * 0.27 +
+    (1.0 - rockPatchB) * 0.24 +
+    plateEdge * 0.08
+  );
   float separation = bmMaskSharp(
-    bmSaturate(abs(rugged - strata) * 0.68 + abs(rockMap - flow) * 0.46),
-    maskSharpness * 0.68
+    bmSaturate(abs(materialA - materialB) * 0.72 + flow * 0.12 + microErosion * 0.16),
+    maskSharpness * 0.40
   );
 
   BMGaeaFields result;
@@ -277,7 +286,7 @@ BMGaeaFields bmGaeaEvaluate(
 `;
 
 window.BrickMotherGaeaV1 = Object.freeze({
-  version: '1.1.0',
+  version: '1.2.0',
   lineage: 'independent field-graph implementation distilled from documented Gaea workflow concepts',
   operatorFamilies: OPERATOR_FAMILIES,
   graphRecipes: GRAPH_RECIPES,

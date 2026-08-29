@@ -1,9 +1,9 @@
 {
   "product": "Brick Mother",
   "displayName": "Brick Mother 砖块母体生产线",
-  "version": "2.2.0-alpha.1",
+  "version": "2.3.0-alpha.1",
   "releaseDate": "2026-08-29",
-  "status": "event-color-and-profile-evidence-calibration-alpha",
+  "status": "natural-material-event-calibration-alpha",
   "base": {
     "version": "1.0.0",
     "branch": "release/brick-mother-v1.0",
@@ -12,9 +12,9 @@
   },
   "featureBranch": "feature/brick-mother-v2.0-composite-material-dna",
   "engineLineage": {
-    "materialGeometryEngine": "2.2.0-alpha.1",
-    "releaseMeaning": "Event-gated color calibration, regular contour suppression, stronger stone field depth, physical adobe pull-out channels, and deterministic profile evidence routes.",
-    "gaeaKernel": "1.0.0"
+    "materialGeometryEngine": "2.3.0-alpha.1",
+    "releaseMeaning": "Natural broad material patches, sparse oxidation events, muted stone relationships, reduced micro-noise, and varied adobe fiber aging.",
+    "gaeaKernel": "1.2.0"
   },
   "repository": "haihao0307/HOUSE",
   "runtimeDependencies": {
@@ -28,15 +28,19 @@
     "debugChannels": 9,
     "deepNegativeGeometry": true,
     "adobeOrganicInclusionFamilies": 5,
-    "gaeaKernel": "1.1.0",
+    "gaeaKernel": "1.2.0",
     "gaeaOperatorFamilies": 7,
     "gaeaIndependentImplementation": true,
     "eventColorMasking": true,
     "regularOxideContourSuppression": true,
-    "physicalAdobeInclusionVoids": true
+    "physicalAdobeInclusionVoids": true,
+    "connectedColorNetworksSuppressed": true,
+    "naturalStonePalette": true,
+    "familySpecificSaturation": true,
+    "broadMaterialEventPatches": true
   },
   "approval": {
-    "visualStatus": "pending-user-review-v2.2",
+    "visualStatus": "pending-user-review-v2.3",
     "productionStatus": false,
     "v1BaselineModified": false,
     "jrbColorReferenceApproved": false,
