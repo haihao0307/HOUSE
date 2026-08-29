@@ -1,9 +1,9 @@
 {
   "product": "Brick Mother",
   "displayName": "Brick Mother 砖块母体生产线",
-  "version": "2.7.3-alpha.1",
+  "version": "2.7.4-alpha.1",
   "releaseDate": "2026-08-29",
-  "status": "visual-calibration-alpha-reference-contrast-pore-bias",
+  "status": "visual-calibration-alpha",
   "base": {
     "version": "1.0.0",
     "branch": "release/brick-mother-v1.0",
@@ -79,7 +79,8 @@
     "jrbColorApproved": false,
     "firedMasonryApproved": false,
     "naturalStoneApproved": false,
-    "fiberAdobeApproved": false
+    "fiberAdobeApproved": false,
+    "productionApproved": false
   },
   "features": {
     "organicShallowFormationEvents": true,
@@ -94,7 +95,12 @@
     "reducedSilhouetteBites": true,
     "eventArtifactSuppression": true,
     "broadFiredClayContrast": true,
-    "calmedMicroBump": true
+    "calmedMicroBump": true,
+    "shallowNonPerforatingCavities": true,
+    "firedClayBroadChromaticZones": true,
+    "organicPoreMasking": true,
+    "reducedHighFrequencyGeometry": true,
+    "preservedBenchmarkSilhouette": true
   },
   "releaseNotes": [
     "V2.7.3 suppresses straight event masks and shifts visible damage toward natural front-face cavities.",

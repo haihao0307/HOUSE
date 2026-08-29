@@ -1,7 +1,7 @@
 {
   "schemaVersion": "1.0.0",
   "subject": "Brick Mother V2.7 user supplied visual truth",
-  "status": "implementation-alpha-browser-evidence-pending",
+  "status": "automatic-qa-ready-manual-visual-pending",
   "reference": {
     "attachmentLabel": "ChatGPT Image 2026年8月29日 14_45_43.png",
     "width": 2048,
@@ -240,5 +240,13 @@
     "broadFiredClayContrast": true,
     "calmedMicroBump": true
   },
-  "implementationVersion": "2.7.3-alpha.1"
+  "implementationVersion": "2.7.3-alpha.1",
+  "implementationTarget": "2.7.4-alpha.1",
+  "v274Calibration": {
+    "nonPerforatingDeepPores": true,
+    "firedFormationCutsDisabled": true,
+    "benchmarkSilhouetteProtection": true,
+    "broadFiredColorZones": true,
+    "microGeometrySuppression": true
+  }
 }

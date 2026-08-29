@@ -544,9 +544,7 @@ BMV27Fields bmV27Evaluate(vec3 p) {
     mask = smoothstep(0.10, 0.86, mask * 0.82 + organicGate * 0.18);
     mask *= strength * 0.42;
     if (uFamily == 0) {
-      if (type == 6 || type == 8) mask *= 0.22;
-      else if (type == 1 || type == 5) mask *= 0.08;
-      else mask = 0.0;
+      mask = 0.0;
     } else if (uFamily == 1) {
       if (type == 9 || type == 10 || type == 11) mask *= 0.34;
       else if (type == 1 || type == 6 || type == 8) mask *= 0.16;
@@ -631,8 +629,8 @@ void main() {
   float turbul = turbulence(warped * uRidgedScale * 0.68 + detailSeedV * 0.91);
   float micro = gradientNoise3(warped * uMicroScale + detailSeedV * 1.7);
   float grit = valueNoise3(warped * uMicroScale * 2.35 + detailSeedV * 3.1);
-  float crustBroad = ridgedFbm(warped * (uFamily == 2 ? 10.5 : 13.5) + detailSeedV * 2.17);
-  float crustFine = fbmValueFast(warped * (uFamily == 2 ? 24.0 : 32.0) + detailSeedV * 3.73);
+  float crustBroad = ridgedFbm(warped * (uFamily == 2 ? 7.6 : 8.8) + detailSeedV * 2.17);
+  float crustFine = fbmValueFast(warped * (uFamily == 2 ? 17.0 : 20.0) + detailSeedV * 3.73);
   float crustFlake = smoothstep(0.45, 0.82, crustBroad * 0.68 + crustFine * 0.32);
 
   float poreDensityN = clamp(uPoreDensity / 2.2, 0.0, 1.0);
@@ -693,10 +691,14 @@ void main() {
                     (1.0 - smoothstep(largeRadius, largeRadius + 0.13, largeCell.x)) *
                     largeGate;
   float poreRim = clamp(mediumRing * 0.72 + largeRing, 0.0, 1.0);
+  float poreOrganicA = fbmValueFast(poreWarped * 1.65 + poreSeedV * 5.13);
+  float poreOrganicB = fbmGradient(poreWarped * 3.15 + poreSeedV * 7.31);
+  poreMedium *= smoothstep(0.28, 0.78, poreOrganicA * 0.68 + poreOrganicB * 0.32);
+  poreLarge *= smoothstep(0.34, 0.76, poreOrganicA * 0.52 + (1.0 - poreOrganicB) * 0.48);
   float poreComposite = clamp(
-    pore * 0.78 +
-    poreMedium * (0.58 + poreDensityN * 0.40) +
-    poreLarge * (0.64 + poreVarietyN * 0.42),
+    pore * 0.70 +
+    poreMedium * (0.64 + poreDensityN * 0.38) +
+    poreLarge * (0.72 + poreVarietyN * 0.36),
     0.0, 1.0
   );
 
@@ -842,29 +844,30 @@ void main() {
   float brokenFace = smoothstep(0.12, 0.50, 1.0 - axisness);
 
   if (uFamily == 0) {
-    float firedRegion = fbmValueFast(colorWarped * 0.82 + colorSeedV * 0.63);
-    float firedRegionB = fbmGradient(colorWarped * 1.95 + colorSeedV * 1.47);
-    float firedRegionC = fbmValueFast(colorWarped * 4.7 + colorSeedV * 2.91);
-    float redRegion = smoothstep(0.42, 0.72, firedRegion * 0.56 + firedRegionB * 0.31 + eventPatchA * 0.13);
-    float deepRedRegion = smoothstep(0.61, 0.84, firedRegionB * 0.48 + eventPatchB * 0.32 + gaea.protrusion * 0.20);
-    float carbonRegion = smoothstep(0.48, 0.76, (1.0 - firedRegion) * 0.50 + gaea.cavity * 0.28 + eventPatchC * 0.22);
-    float ashRegion = smoothstep(0.48, 0.77, (1.0 - firedRegionB) * 0.42 + gaea.flow * 0.34 + gaea.microErosion * 0.24);
-    float mineralBloom = smoothstep(0.57, 0.83, mineral * 0.36 + firedRegionC * 0.28 + gaea.flow * 0.22 + crustFlake * 0.14);
-    float oxideEvent = smoothstep(0.54, 0.81, oxideMask * 0.37 + firedRegionC * 0.27 + gaea.flow * 0.19 + eventPatch * 0.17);
-    vec3 brickRed = mix(mean, vec3(0.50, 0.20, 0.080), 0.62);
-    vec3 burntUmber = mix(dark, vec3(0.15, 0.055, 0.022), 0.64);
-    vec3 charcoal = mix(charColor, vec3(0.032, 0.035, 0.038), 0.46);
-    vec3 ashGray = mix(coolColor, vec3(0.36, 0.34, 0.31), 0.62);
-    vec3 creamMineral = mix(mineralColor, vec3(0.88, 0.82, 0.70), 0.58);
-    albedo = mix(albedo, brickRed, redRegion * (0.30 + rich * 0.18));
-    albedo = mix(albedo, burntUmber, deepRedRegion * (0.23 + rich * 0.11));
-    albedo = mix(albedo, charcoal, carbonRegion * (0.34 + rich * 0.12));
-    albedo = mix(albedo, ashGray, ashRegion * 0.25);
-    albedo = mix(albedo, rustColor, oxideEvent * (0.27 + rich * 0.18));
-    albedo = mix(albedo, creamMineral, mineralBloom * 0.36);
-    albedo = mix(albedo, charcoal, max(v27.cavity, v27.undercut) * 0.045);
-    albedo = mix(albedo, brickRed, v27.plate * 0.025);
-    albedo = mix(albedo, burntUmber, v27.shear * 0.025);
+    float firedRegion = fbmValueFast(colorWarped * 0.72 + colorSeedV * 0.63);
+    float firedRegionB = fbmGradient(colorWarped * 1.38 + colorSeedV * 1.47);
+    float firedRegionC = fbmValueFast(colorWarped * 3.35 + colorSeedV * 2.91);
+    float redRegion = smoothstep(0.34, 0.70, firedRegion * 0.55 + firedRegionB * 0.27 + eventPatchA * 0.18);
+    float deepRedRegion = smoothstep(0.52, 0.80, firedRegionB * 0.42 + (1.0 - firedRegionC) * 0.28 + macroB * 0.30);
+    float carbonRegion = smoothstep(0.46, 0.76, (1.0 - firedRegion) * 0.52 + gaea.cavity * 0.24 + (1.0 - eventPatchC) * 0.24);
+    float ashRegion = smoothstep(0.54, 0.82, (1.0 - firedRegionB) * 0.43 + gaea.flow * 0.29 + gaea.microErosion * 0.18 + macro * 0.10);
+    float mineralBloom = smoothstep(0.60, 0.86, mineral * 0.34 + firedRegionC * 0.24 + gaea.flow * 0.20 + crustFlake * 0.12 + paleAggregate * 0.10);
+    float oxideEvent = smoothstep(0.50, 0.78, oxideBroad * 0.34 + firedRegionC * 0.27 + gaea.flow * 0.16 + eventPatch * 0.23);
+    vec3 brickRed = vec3(0.185, 0.038, 0.012);
+    vec3 warmBrick = vec3(0.285, 0.082, 0.018);
+    vec3 burntUmber = vec3(0.060, 0.013, 0.005);
+    vec3 charcoal = vec3(0.008, 0.009, 0.010);
+    vec3 ashGray = vec3(0.115, 0.102, 0.088);
+    vec3 creamMineral = vec3(0.48, 0.40, 0.26);
+    vec3 firedBase = mix(burntUmber, warmBrick, firedRegion * 0.72 + macro * 0.28);
+    firedBase = mix(firedBase, brickRed, redRegion * 0.68);
+    albedo = mix(albedo, firedBase, 0.72);
+    albedo = mix(albedo, brickRed, redRegion * (0.24 + rich * 0.14));
+    albedo = mix(albedo, burntUmber, deepRedRegion * (0.30 + rich * 0.12));
+    albedo = mix(albedo, charcoal, carbonRegion * (0.46 + rich * 0.10));
+    albedo = mix(albedo, ashGray, ashRegion * 0.32);
+    albedo = mix(albedo, vec3(0.24, 0.048, 0.010), oxideEvent * (0.30 + rich * 0.12));
+    albedo = mix(albedo, creamMineral, mineralBloom * 0.44);
   } else if (uFamily == 1) {
     float adobeRegion = fbmValueFast(colorWarped * 0.92 + colorSeedV * 0.71);
     float adobeRegionB = fbmGradient(colorWarped * 2.15 + colorSeedV * 1.59);
@@ -973,9 +976,9 @@ void main() {
   albedo = clamp(albedo, vec3(0.004), vec3(1.0));
 
   float inclusionHeight = inclusions.x * 0.15 + inclusions.y * 0.11 + inclusions.z * 0.07 - inclusions.w * 0.28;
-  float familyMicroHeight = uFamily == 2 ? 0.018 : (uFamily == 1 ? 0.024 : 0.020);
-  float familyGritHeight = uFamily == 2 ? 0.0015 : (uFamily == 1 ? 0.0025 : 0.0020);
-  float familyCrustHeight = uFamily == 2 ? 0.078 : (uFamily == 1 ? 0.086 : 0.074);
+  float familyMicroHeight = uFamily == 2 ? 0.010 : (uFamily == 1 ? 0.014 : 0.011);
+  float familyGritHeight = uFamily == 2 ? 0.0007 : (uFamily == 1 ? 0.0010 : 0.0008);
+  float familyCrustHeight = uFamily == 2 ? 0.050 : (uFamily == 1 ? 0.058 : 0.050);
   float heightField =
     (macro - 0.5) * 0.20 +
     (ridge - 0.5) * 0.12 +
@@ -1102,7 +1105,7 @@ void main() {
   color += albedo * hemi;
   color *= ao;
 
-  float familyExposure = uFamily == 2 ? 1.72 : (uFamily == 1 ? 1.66 : 1.70);
+  float familyExposure = uFamily == 2 ? 1.44 : (uFamily == 1 ? 1.42 : 1.46);
   color = 1.0 - exp(-color * familyExposure);
   color = pow(max(color, 0.0), vec3(0.99));
   outColor = vec4(linearToSrgb(color), 1.0);

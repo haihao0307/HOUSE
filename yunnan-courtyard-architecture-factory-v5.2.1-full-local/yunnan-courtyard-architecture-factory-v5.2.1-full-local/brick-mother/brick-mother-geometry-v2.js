@@ -426,18 +426,21 @@ function buildDamage(profile, seedDNA, controlsInput, level, dims) {
   const densityScale = 0.72 + poreDensity * 0.58;
   const varietyScale = 0.70 + poreVariety * 0.42;
   const rawChipCount = Math.max(2, Math.round(1.4 + dna.edgeFragility * 3.2 + compositeDamage * 5.1));
-  const chipCount = benchmark ? Math.max(2, Math.round(rawChipCount * 0.56)) : rawChipCount;
-  const pitCount = Math.max(4, Math.round(
-    (2.0 + dna.pitDensity * 3.7 + compositeDamage * 4.3) * densityScale * (benchmark ? 1.16 : 1.0)
+  const chipCount = benchmark ? Math.min(2, Math.max(1, Math.round(rawChipCount * 0.24))) : rawChipCount;
+  const rawPitCount = Math.max(4, Math.round(
+    (2.0 + dna.pitDensity * 3.7 + compositeDamage * 4.3) * densityScale * (benchmark ? 1.02 : 1.0)
   ));
-  const poreCount = Math.max(8, Math.round(
+  const pitCount = benchmark ? Math.min(14, rawPitCount) : rawPitCount;
+  const rawPoreCount = Math.max(8, Math.round(
     (nd.geometryPoreCount ?? 5) * (0.66 + level * 0.50 + controls.poreDepth * 0.39) * densityScale *
-    (benchmark ? 1.12 : 1.0)
+    (benchmark ? 0.92 : 1.0)
   ));
-  const deepPoreCount = Math.max(3, Math.round(
+  const poreCount = benchmark ? Math.min(28, rawPoreCount) : rawPoreCount;
+  const rawDeepPoreCount = Math.max(3, Math.round(
     (nd.geometryDeepPoreCount ?? 2.5) * (0.50 + controls.poreDepth * 0.74 + level * 0.29) *
-    (0.78 + poreDensity * 0.44) * (benchmark ? 1.34 : 1.0)
+    (0.78 + poreDensity * 0.44) * (benchmark ? 0.82 : 1.0)
   ));
+  const deepPoreCount = benchmark ? Math.min(9, rawDeepPoreCount) : rawDeepPoreCount;
   const crackCount = compositeDamage < 0.28 ? 0 : Math.max(1, Math.round(dna.crackAffinity * 1.4 + compositeDamage * 1.45));
   const erosionCount = Math.max(0, Math.round(controls.weathering * (0.9 + dna.edgeFragility * 1.7) + level * 1.2));
   const inclusionVoidCount = profile.family === 'ADOBE'
@@ -470,7 +473,7 @@ function buildDamage(profile, seedDNA, controlsInput, level, dims) {
     } else {
       center = vec3(damageRng.range(-0.78, 0.78) * b.x, sy * (b.y + 0.025 * minD), sz * (b.z + 0.025 * minD));
     }
-    const r = damageRng.range(0.105, 0.238) * minD * (0.58 + compositeDamage * 0.68) * (benchmark ? 0.56 : 1.0);
+    const r = damageRng.range(0.105, 0.238) * minD * (0.58 + compositeDamage * 0.68) * (benchmark ? 0.34 : 1.0);
     chips.push({
       center,
       radii: vec3(r * damageRng.range(0.7, 1.38), r * damageRng.range(0.62, 1.14), r * damageRng.range(0.72, 1.34)),
@@ -483,13 +486,21 @@ function buildDamage(profile, seedDNA, controlsInput, level, dims) {
     const anchor = clustered ? poreRng.pick(poreAnchors) : null;
     const face = anchor ? anchor.face : choosePoreFace(poreRng, FACE_IDS, 0.64);
     const scaleClass = poreRng.next();
-    const baseRadius = scaleClass < 0.56
-      ? poreRng.range(0.030, 0.070)
-      : (scaleClass < 0.90 ? poreRng.range(0.070, 0.145) : poreRng.range(0.145, 0.225));
+    const baseRadius = benchmark
+      ? (scaleClass < 0.58
+          ? poreRng.range(0.024, 0.052)
+          : (scaleClass < 0.92 ? poreRng.range(0.052, 0.105) : poreRng.range(0.105, 0.155)))
+      : (scaleClass < 0.56
+          ? poreRng.range(0.030, 0.070)
+          : (scaleClass < 0.90 ? poreRng.range(0.070, 0.145) : poreRng.range(0.145, 0.225)));
     const radius = baseRadius * minD * (0.64 + compositeDamage * 0.34) * varietyScale;
-    const depthRatio = scaleClass < 0.56
-      ? poreRng.range(0.32, 0.72)
-      : (scaleClass < 0.90 ? poreRng.range(0.48, 1.02) : poreRng.range(0.64, 1.20));
+    const depthRatio = benchmark
+      ? (scaleClass < 0.58
+          ? poreRng.range(0.26, 0.52)
+          : (scaleClass < 0.92 ? poreRng.range(0.38, 0.76) : poreRng.range(0.48, 0.88)))
+      : (scaleClass < 0.56
+          ? poreRng.range(0.32, 0.72)
+          : (scaleClass < 0.90 ? poreRng.range(0.48, 1.02) : poreRng.range(0.64, 1.20)));
     const depth = radius * depthRatio * (0.58 + controls.poreDepth * 0.46);
     const center = anchor
       ? add3(anchor.center, faceTangentOffset(face, poreRng, anchor.spread))
@@ -501,15 +512,15 @@ function buildDamage(profile, seedDNA, controlsInput, level, dims) {
       irregular: poreRng.range(0.06, 0.28) * varietyScale,
       scaleClass
     });
-    if (scaleClass > 0.80 && poreRng.next() < 0.36 + poreVariety * 0.20) {
+    if (scaleClass > 0.86 && poreRng.next() < (benchmark ? 0.12 : 0.30) + poreVariety * 0.08) {
       const collapseRadius = radius * poreRng.range(0.72, 1.18);
       collapsedPores.push({
         face,
         center: add3(center, faceTangentOffset(face, poreRng, radius * 0.55)),
         radii: faceRadii(
           face,
-          collapseRadius * poreRng.range(1.10, 1.65),
-          depth * poreRng.range(0.42, 0.76),
+          collapseRadius * poreRng.range(0.92, 1.28),
+          depth * poreRng.range(0.32, 0.58),
           poreRng
         ),
         irregular: poreRng.range(0.12, 0.34)
@@ -544,12 +555,17 @@ function buildDamage(profile, seedDNA, controlsInput, level, dims) {
     const face = choosePoreFace(poreRng, ['px', 'nx', 'py', 'pz', 'nz'], 0.74);
     const normal = faceNormal(face);
     const scaleClass = poreRng.next();
-    const baseRadius = scaleClass < 0.58
-      ? poreRng.range(0.045, 0.090)
-      : (scaleClass < 0.90 ? poreRng.range(0.090, 0.155) : poreRng.range(0.155, 0.235));
-    const radius = baseRadius * minD * (0.74 + controls.poreDepth * 0.40) * varietyScale;
-    const depth = poreRng.range(0.18, scaleClass > 0.88 ? 0.58 : 0.45) * minD *
-      (0.54 + controls.poreDepth * 0.76);
+    const baseRadius = benchmark
+      ? (scaleClass < 0.58
+          ? poreRng.range(0.035, 0.066)
+          : (scaleClass < 0.92 ? poreRng.range(0.066, 0.112) : poreRng.range(0.112, 0.158)))
+      : (scaleClass < 0.58
+          ? poreRng.range(0.045, 0.090)
+          : (scaleClass < 0.90 ? poreRng.range(0.090, 0.155) : poreRng.range(0.155, 0.235)));
+    const radius = baseRadius * minD * (benchmark ? (0.76 + controls.poreDepth * 0.20) : (0.74 + controls.poreDepth * 0.40)) * varietyScale;
+    const depth = benchmark
+      ? Math.min(0.235 * minD, radius * poreRng.range(0.92, scaleClass > 0.90 ? 1.72 : 1.48) * (0.72 + controls.poreDepth * 0.22))
+      : poreRng.range(0.18, scaleClass > 0.88 ? 0.58 : 0.45) * minD * (0.54 + controls.poreDepth * 0.76);
     const matchingAnchors = poreAnchors.filter((item) => item.face === face);
     const anchor = matchingAnchors.length && poreRng.next() < 0.52 ? poreRng.pick(matchingAnchors) : null;
     const surface = anchor
@@ -569,8 +585,8 @@ function buildDamage(profile, seedDNA, controlsInput, level, dims) {
       mouthCenter: add3(surface, mul3(normal, -radius * 0.08)),
       mouthRadii: faceRadii(
         face,
-        radius * poreRng.range(1.10, 1.62),
-        radius * poreRng.range(0.72, 1.06),
+        radius * poreRng.range(1.04, 1.34),
+        radius * poreRng.range(0.42, 0.72),
         poreRng
       ),
       irregular: poreRng.range(0.12, 0.34) * varietyScale,
@@ -578,9 +594,9 @@ function buildDamage(profile, seedDNA, controlsInput, level, dims) {
     };
     deepPores.push(bore);
 
-    const rimCount = Math.max(2, Math.round(poreRng.range(1.8, 3.8) + poreVariety * 0.95));
+    const rimCount = Math.max(2, Math.round(poreRng.range(1.4, 2.8) + poreVariety * 0.55));
     for (let j = 0; j < rimCount; j++) {
-      const rimRadius = radius * poreRng.range(0.30, 0.68);
+      const rimRadius = radius * poreRng.range(0.22, 0.48);
       const tangent = faceTangentOffset(face, poreRng, radius * poreRng.range(0.72, 1.36));
       poreRimChips.push({
         face,
@@ -593,7 +609,7 @@ function buildDamage(profile, seedDNA, controlsInput, level, dims) {
 
   for (let i = 0; i < crackCount; i++) {
     const face = choosePoreFace(damageRng, ['px', 'nx', 'py', 'pz', 'nz'], 0.58);
-    const width = damageRng.range(0.012, 0.031) * minD * (0.58 + compositeDamage * 0.65);
+    const width = damageRng.range(0.009, 0.024) * minD * (0.52 + compositeDamage * 0.48) * (benchmark ? 0.62 : 1.0);
     let a, c;
     if (face === 'px' || face === 'nx') {
       const x = (face === 'px' ? 1 : -1) * (b.x + width * 0.12);
@@ -621,7 +637,7 @@ function buildDamage(profile, seedDNA, controlsInput, level, dims) {
 
   for (let i = 0; i < erosionCount; i++) {
     const face = weatherRng.pick(['py', 'py', 'px', 'nx', 'pz', 'nz']);
-    const radius = weatherRng.range(0.11, 0.25) * minD * (0.55 + controls.weathering * 0.48) * (benchmark ? 0.62 : 1.0);
+    const radius = weatherRng.range(0.11, 0.25) * minD * (0.55 + controls.weathering * 0.48) * (benchmark ? 0.38 : 1.0);
     const depth = radius * weatherRng.range(0.22, 0.52);
     erosionBites.push({
       face,
@@ -690,7 +706,7 @@ function createSDF(profile, seedDNA, controlsInput, level) {
     const broad = fbm3(p.x * 1.7, p.y * 1.45, p.z * 1.7, seeds.detail + 71, 4) - 0.5;
     const ridge = ridgedFbm3(p.x * 4.8, p.y * 4.1, p.z * 4.8, seeds.detail + 103, 3) - 0.5;
     const crust = fbm3(p.x * 10.8, p.y * 8.6, p.z * 10.8, seeds.weather + 109, 3) - 0.5;
-    d += (broad * 0.86 + ridge * 0.10 + crust * 0.020 * controls.weathering) * reliefAmp;
+    d += (broad * 0.64 + ridge * 0.035 + crust * 0.004 * controls.weathering) * reliefAmp;
     if (GAEA) {
       const familyScale = profile.family === 'STONE' ? 1.18 : profile.family === 'ADOBE' ? 0.92 : 1.0;
       d += GAEA.geometryDisplacement(p, seeds, controls, gaeaDNA, gaeaNoiseApi) * minD * familyScale;
@@ -706,23 +722,24 @@ function createSDF(profile, seedDNA, controlsInput, level) {
       const sv = -p.x * structureSin + p.y * structureCos;
       const strata = ridgedFbm3(su * 0.86, sv * 3.65, p.z * 0.42, seeds.damage + 1031, 3) - 0.5;
       const fault = fbm3(su * 1.35, sv * 0.72, p.z * 0.30, seeds.damage + 1063, 3) - 0.5;
-      formationRelief = (formationBroad * 0.086 + strata * 0.074 + fault * 0.038 + formationMeso * 0.010) * minD;
+      formationRelief = (formationBroad * 0.052 + strata * 0.050 + fault * 0.026 + formationMeso * 0.004) * minD;
     } else if (profile.family === 'ADOBE') {
       const clump = fbm3(p.x * 1.10, p.y * 1.02, p.z * 0.36, seeds.inclusion + 1091, 3) - 0.5;
       const flake = ridgedFbm3(p.x * 2.35, p.y * 2.05, p.z * 0.45, seeds.weather + 1123, 3) - 0.5;
-      formationRelief = (formationBroad * 0.074 + clump * 0.082 + flake * 0.034) * minD;
+      formationRelief = (formationBroad * 0.048 + clump * 0.060 + flake * 0.022) * minD;
     } else {
       const kilnPlate = fbm3(p.x * 1.18, p.y * 1.05, p.z * 0.38, seeds.damage + 1151, 3) - 0.5;
       const crustPlate = ridgedFbm3(p.x * 2.55, p.y * 2.15, p.z * 0.48, seeds.weather + 1171, 3) - 0.5;
-      formationRelief = (formationBroad * 0.078 + kilnPlate * 0.082 + crustPlate * 0.016) * minD;
+      formationRelief = (formationBroad * 0.050 + kilnPlate * 0.055 + crustPlate * 0.006) * minD;
     }
     d += frontGate * formationRelief;
 
     for (const event of damage.formationEvents) {
       const type = event.type;
-      if (profile.family === 'FIRED_CLAY' && ['fractureBranch', 'shearBand', 'fiberPulloutChannel'].includes(type)) continue;
-      if (profile.family === 'ADOBE' && ['fractureBranch', 'shearBand', 'mineralSeam'].includes(type)) continue;
-      if (profile.family === 'STONE' && ['fiberBundle', 'fiberPulloutChannel', 'compactionFlake'].includes(type)) continue;
+      if (profile.family === 'FIRED_CLAY') continue;
+      if (type === 'macroPlateLoss' || type === 'edgeSpall') continue;
+      if (profile.family === 'ADOBE' && ['fractureBranch', 'shearBand', 'mineralSeam', 'cavityCluster'].includes(type)) continue;
+      if (profile.family === 'STONE' && ['fiberBundle', 'fiberPulloutChannel', 'compactionFlake', 'cavityCluster'].includes(type)) continue;
       d = applyFormationEventSDF(d, p, event, seeds, minD);
     }
 
@@ -930,7 +947,7 @@ function buildMesh(profile, seedDNA, controlsInput, level, quality = 1) {
     level,
     profileId: profile.id,
     grid: [nx, ny, nz],
-    noiseVersion: 'v2.7.3-reference-contrast-pore-bias-alpha1'
+    noiseVersion: 'v2.7.4-shallow-cavity-rich-fired-alpha1'
   };
 }
 
