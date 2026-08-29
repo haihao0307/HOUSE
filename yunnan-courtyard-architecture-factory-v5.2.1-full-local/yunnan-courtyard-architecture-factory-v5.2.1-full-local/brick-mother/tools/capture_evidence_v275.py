@@ -130,6 +130,8 @@ def image_metrics(path: Path, dom: Path) -> dict:
     if not occupied:
         occupied = pixels
     luminance = [0.2126 * r / 255 + 0.7152 * g / 255 + 0.0722 * b / 255 for r, g, b in occupied]
+    luminance_mean = sum(luminance) / len(luminance)
+    luminance_stddev = math.sqrt(sum((value - luminance_mean) ** 2 for value in luminance) / len(luminance))
     mean_srgb = [sum(rgb[i] for rgb in occupied) / len(occupied) / 255 for i in range(3)]
     gray = image.convert("L")
     bands = {}
@@ -147,8 +149,8 @@ def image_metrics(path: Path, dom: Path) -> dict:
         "file": path.name,
         "size": list(image.size),
         "meanSRGB": [round(v, 6) for v in mean_srgb],
-        "luminanceMean": round(sum(luminance) / len(luminance), 6),
-        "luminanceStdDev": round(ImageStat.Stat(Image.frombytes("L", (len(luminance), 1), bytes(round(v * 255) for v in luminance))).std[0] / 255, 6),
+        "luminanceMean": round(luminance_mean, 6),
+        "luminanceStdDev": round(luminance_stddev, 6),
         "luminanceP10P50P90": [round(percentile(luminance, p), 6) for p in (0.10, 0.50, 0.90)],
         "multiscaleBandEnergy": bands,
         "occupancyRate": round(len(occupied) / len(pixels), 6),
