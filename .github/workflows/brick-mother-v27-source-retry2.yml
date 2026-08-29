@@ -1,0 +1,144 @@
+name: Brick Mother V2.7 Visual Truth Source Retry 2
+
+on:
+  push:
+    branches:
+      - feature/brick-mother-v2.0-composite-material-dna
+    paths:
+      - ".github/workflows/brick-mother-v27-source-retry2.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  apply-gate-commit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    steps:
+      - name: Checkout exact branch
+        uses: actions/checkout@v4
+        with:
+          ref: feature/brick-mother-v2.0-composite-material-dna
+          fetch-depth: 0
+
+      - name: Reconstruct and apply deterministic V2.7 source patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat .github/brick-mother-v27-payload/*.b64 > /tmp/brick-mother-v27.b64
+          echo '0e0c325046c3127040350a640b6bf0bbd0327a5e97ac7f97808aa32e97f02d06  /tmp/brick-mother-v27.b64' | sha256sum -c -
+          base64 -d /tmp/brick-mother-v27.b64 > /tmp/brick-mother-v27.py.xz
+          echo '34ea27f59927c396e6f88eb01ce30d1078bda23b6662ef4e3fb6e648720c57b4  /tmp/brick-mother-v27.py.xz' | sha256sum -c -
+          xz -dc /tmp/brick-mother-v27.py.xz > /tmp/apply-brick-mother-v27.py
+          echo '922752c423c975f1f27c4a72391995979745e1bddd01d48fdaa7a7edd3dc4d5b  /tmp/apply-brick-mother-v27.py' | sha256sum -c -
+          python3 -m py_compile /tmp/apply-brick-mother-v27.py
+          python3 /tmp/apply-brick-mother-v27.py
+          python3 .github/brick-mother-v27-perf/apply.py
+          python3 .github/brick-mother-v27-perf/build_standalone.py
+
+      - name: Validate optimized V2.7 source and standalone
+        shell: bash
+        run: |
+          set -euxo pipefail
+          brick="yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother"
+          node --check "$brick/brick-mother-gaea-kernel-v1.js"
+          node --check "$brick/brick-mother-geometry-v2.js"
+          node --check "$brick/brick-mother-renderer-v2.js"
+          node --check "$brick/brick-mother-app-v2.js"
+          python3 -m json.tool "$brick/data/brick-material-profiles-v2.json" >/dev/null
+          python3 -m json.tool "$brick/qa/gaea-distillation-contract-v1.json" >/dev/null
+          python3 -m json.tool "$brick/qa/v27-visual-truth-contract.json" >/dev/null
+          python3 -m json.tool "$brick/VERSION.json" >/dev/null
+          grep -q '"version": "2.7.0-alpha.1"' "$brick/VERSION.json"
+          grep -q '"benchmarkSlabMode": true' "$brick/VERSION.json"
+          grep -q '"formationEventFamilies": 12' "$brick/VERSION.json"
+          grep -q 'macroPlateLoss' "$brick/brick-mother-geometry-v2.js"
+          grep -q 'fiberBundle' "$brick/brick-mother-geometry-v2.js"
+          grep -q 'const sizeJitter = 0;' "$brick/brick-mother-geometry-v2.js"
+          grep -q 'slice(0, 14)' "$brick/brick-mother-geometry-v2.js"
+          grep -q 'uV27EventA' "$brick/brick-mother-renderer-v2.js"
+          grep -q 'uDebugMode == 10' "$brick/brick-mother-renderer-v2.js"
+          grep -q 'state.evidenceMode ? 0.78' "$brick/brick-mother-app-v2.js"
+          grep -q 'data-channel="9"' "$brick/index.html"
+          grep -q 'data-channel="10"' "$brick/index.html"
+          standalone="$brick/brick-mother-standalone-v2.7.html"
+          test -s "$standalone"
+          test "$(wc -c < "$standalone")" -gt 170000
+          ! grep -q '<script src=' "$standalone"
+          ! grep -q '<link rel="stylesheet"' "$standalone"
+          grep -q 'window.__BRICK_MOTHER_INLINE_DATA__' "$standalone"
+          grep -q 'DOMContentLoaded' "$standalone"
+          sha256sum "$standalone" > /tmp/brick-mother-v27-standalone.sha256
+
+      - name: Gate optimized V2.7 benchmark slab in Chromium
+        shell: bash
+        run: |
+          set -euo pipefail
+          chrome="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)"
+          uri="$(python3 - <<'PY'
+          from pathlib import Path
+          print(Path('yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/brick-mother-standalone-v2.7.html').resolve().as_uri())
+          PY
+          )"
+          timeout 300s "$chrome" \
+            --headless=new \
+            --no-sandbox \
+            --disable-dev-shm-usage \
+            --disable-background-networking \
+            --allow-file-access-from-files \
+            --enable-webgl \
+            --ignore-gpu-blocklist \
+            --enable-unsafe-swiftshader \
+            --use-gl=angle \
+            --use-angle=swiftshader \
+            --hide-scrollbars \
+            --window-size=1600,1000 \
+            --virtual-time-budget=12000 \
+            --screenshot=/tmp/brick-mother-v27-source-gate.png \
+            --dump-dom \
+            "${uri}?evidence=1&solo=1&specimen=benchmark&profile=old-pbr-fired&focus=2&debug=0&qa=v27-source-retry2" \
+            > /tmp/brick-mother-v27-source-dom.html \
+            2> /tmp/brick-mother-v27-source-chrome.log
+          grep -q 'data-brick-mother-ready="true"' /tmp/brick-mother-v27-source-dom.html
+          grep -q 'data-brick-mother-version="2.7.0-alpha.1"' /tmp/brick-mother-v27-source-dom.html
+          grep -q 'data-benchmark-specimen="true"' /tmp/brick-mother-v27-source-dom.html
+          grep -Eq 'data-formation-events="[1-9][0-9]*"' /tmp/brick-mother-v27-source-dom.html
+          grep -Eq 'data-macro-events="[1-9][0-9]*"' /tmp/brick-mother-v27-source-dom.html
+          grep -Eq 'data-meso-events="[1-9][0-9]*"' /tmp/brick-mother-v27-source-dom.html
+          grep -q 'data-debug-modes="11"' /tmp/brick-mother-v27-source-dom.html
+          grep -q 'data-solo-mode="true"' /tmp/brick-mother-v27-source-dom.html
+          test -s /tmp/brick-mother-v27-source-gate.png
+          test "$(wc -c < /tmp/brick-mother-v27-source-gate.png)" -gt 120000
+
+      - name: Commit browser gated V2.7 source
+        shell: bash
+        run: |
+          set -euo pipefail
+          brick="yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother"
+          git restore --source=HEAD --staged --worktree .github/workflows
+          rm -rf .github/brick-mother-v27-payload .github/brick-mother-v27-perf
+          git config user.name "Brick Mother V2.7 Calibration Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A "$brick" .github/brick-mother-v27-payload .github/brick-mother-v27-perf
+          if git diff --cached --quiet; then
+            echo 'No V2.7 source changes to commit' >&2
+            exit 1
+          fi
+          git commit -m "Implement Brick Mother V2.7 visual truth formation hierarchy"
+          git push origin HEAD:feature/brick-mother-v2.0-composite-material-dna
+
+      - name: Upload V2.7 retry 2 evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: brick-mother-v27-source-retry2-evidence
+          path: |
+            /tmp/brick-mother-v27-source-gate.png
+            /tmp/brick-mother-v27-source-dom.html
+            /tmp/brick-mother-v27-source-chrome.log
+            /tmp/brick-mother-v27-standalone.sha256
+            yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/brick-mother-standalone-v2.7.html
+            yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/VERSION.json
+            yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/qa/v27-visual-truth-contract.json
+          compression-level: 1
+          if-no-files-found: ignore
