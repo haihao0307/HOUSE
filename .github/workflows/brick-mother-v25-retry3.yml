@@ -1,0 +1,289 @@
+name: Brick Mother V2.5 Deep Pore Spectrum Retry 3
+
+on:
+  push:
+    branches:
+      - feature/brick-mother-v2.0-composite-material-dna
+    paths:
+      - ".github/workflows/brick-mother-v25-retry3.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  apply-test-commit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 28
+    steps:
+      - name: Checkout exact branch
+        uses: actions/checkout@v4
+        with:
+          ref: feature/brick-mother-v2.0-composite-material-dna
+          fetch-depth: 0
+
+      - name: Reconstruct and apply deterministic V2.5 patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat .github/brick-mother-v25-payload/*.b64 > /tmp/v25.b64
+          echo '4c9949aeaf2056e30319413f04dc2d04a7ac1c5a712393b86b87a75ed7ecc5eb  /tmp/v25.b64' | sha256sum -c -
+          base64 -d /tmp/v25.b64 > /tmp/v25.xz
+          echo '53bdefb270a5ff9797ddeaa64a4b490fb8300511833ad5496ee86715968ba527  /tmp/v25.xz' | sha256sum -c -
+          xz -dc /tmp/v25.xz > /tmp/apply-v25.py
+          echo '445b1b1f46a555c18c7e10573b0f30b514e00eb61d5b287e4ebe5034bef6fd55  /tmp/apply-v25.py' | sha256sum -c -
+          python3 -m py_compile /tmp/apply-v25.py
+          python3 /tmp/apply-v25.py
+
+      - name: Repair geometry and runtime source before standalone build
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+
+          root = Path('yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother')
+
+          geometry_path = root / 'brick-mother-geometry-v2.js'
+          geometry = geometry_path.read_text(encoding='utf-8')
+          duplicate = "  const signs = [-1, 1];\n  const signs = [-1, 1];\n"
+          if geometry.count(duplicate) != 1:
+              raise RuntimeError(f'expected one duplicate signs block, got {geometry.count(duplicate)}')
+          geometry_path.write_text(geometry.replace(duplicate, "  const signs = [-1, 1];\n", 1), encoding='utf-8')
+
+          app_path = root / 'brick-mother-app-v2.js'
+          app = app_path.read_text(encoding='utf-8')
+          old_source = "  $('#referenceFrame').src = profileSourceEmbed(profile);"
+          new_source = "  $('#referenceFrame').dataset.src = profileSourceEmbed(profile);"
+          old_open = "  $('#showReference').addEventListener('click', () => {\n    $('#referencePanel').classList.add('open');"
+          new_open = "  $('#showReference').addEventListener('click', () => {\n    const frame = $('#referenceFrame');\n    if (!frame.getAttribute('src')) frame.src = frame.dataset.src || 'about:blank';\n    $('#referencePanel').classList.add('open');"
+          if old_source not in app or old_open not in app:
+              raise RuntimeError('lazy reference anchors missing in app')
+          app = app.replace(old_source, new_source, 1).replace(old_open, new_open, 1)
+          app_path.write_text(app, encoding='utf-8')
+          PY
+
+      - name: Rebuild truly self-contained standalone from repaired source
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+          import re
+
+          root = Path('yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother')
+          index = (root / 'index.html').read_text(encoding='utf-8')
+          styles = {
+              'style.css': (root / 'style.css').read_text(encoding='utf-8'),
+              'gaea-distilled.css': (root / 'gaea-distilled.css').read_text(encoding='utf-8'),
+              'visual-calibration.css': (root / 'visual-calibration.css').read_text(encoding='utf-8'),
+          }
+          scripts = {
+              'brick-mother-gaea-kernel-v1.js': (root / 'brick-mother-gaea-kernel-v1.js').read_text(encoding='utf-8'),
+              'brick-mother-geometry-v2.js': (root / 'brick-mother-geometry-v2.js').read_text(encoding='utf-8'),
+              'brick-mother-renderer-v2.js': (root / 'brick-mother-renderer-v2.js').read_text(encoding='utf-8'),
+          }
+          app = (root / 'brick-mother-app-v2.js').read_text(encoding='utf-8')
+          data = json.loads((root / 'data/brick-material-profiles-v2.json').read_text(encoding='utf-8'))
+          inline_data = json.dumps(data, ensure_ascii=False, separators=(',', ':'))
+
+          html = index
+          for filename, css in styles.items():
+              pattern = rf'<link rel="stylesheet" href="\./{re.escape(filename)}[^"]*"[^>]*>'
+              html, count = re.subn(pattern, '<style>\n' + css.replace('</style>', '<\\/style>') + '\n</style>', html, count=1)
+              if count != 1:
+                  raise RuntimeError(f'failed to inline stylesheet {filename}: {count}')
+
+          for filename, source in scripts.items():
+              pattern = rf'<script src="\./{re.escape(filename)}[^"]*" defer></script>'
+              html, count = re.subn(pattern, '<script>\n' + source.replace('</script>', '<\\/script>') + '\n</script>', html, count=1)
+              if count != 1:
+                  raise RuntimeError(f'failed to inline script {filename}: {count}')
+
+          wrapped_app = 'window.addEventListener("DOMContentLoaded", () => {\n' + app + '\n});'
+          app_inline = (
+              '<script>window.__BRICK_MOTHER_INLINE_DATA__=' + inline_data + ';</script>\n'
+              '<script>\n' + wrapped_app.replace('</script>', '<\\/script>') + '\n</script>'
+          )
+          html, count = re.subn(
+              r'<script src="\./brick-mother-app-v2\.js[^"]*" defer></script>',
+              lambda _m: app_inline,
+              html,
+              count=1,
+          )
+          if count != 1:
+              raise RuntimeError(f'failed to inline app script: {count}')
+
+          html = html.replace(
+              '<title>Brick Mother 砖块母体生产线 V2</title>',
+              '<title>Brick Mother V2.5 单文件网页版</title>',
+              1,
+          )
+          path = root / 'brick-mother-standalone-v2.5.html'
+          path.write_text(html, encoding='utf-8')
+          PY
+
+      - name: Validate source standalone and every inline script
+        shell: bash
+        run: |
+          set -euxo pipefail
+          brick="yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother"
+          node --check "$brick/brick-mother-gaea-kernel-v1.js"
+          node --check "$brick/brick-mother-geometry-v2.js"
+          node --check "$brick/brick-mother-renderer-v2.js"
+          node --check "$brick/brick-mother-app-v2.js"
+          python3 -m json.tool "$brick/data/brick-material-profiles-v2.json" >/dev/null
+          python3 -m json.tool "$brick/qa/gaea-distillation-contract-v1.json" >/dev/null
+          python3 -m json.tool "$brick/VERSION.json" >/dev/null
+          grep -q '"version": "2.5.0-alpha.1"' "$brick/VERSION.json"
+          grep -q '"clusteredPoreAnchors": true' "$brick/VERSION.json"
+          grep -q '"collapsedPoreMouths": true' "$brick/VERSION.json"
+          grep -q '"brokenPoreRims": true' "$brick/VERSION.json"
+          grep -q '"standaloneSingleFileHtml": true' "$brick/VERSION.json"
+          grep -q 'poreRimChips' "$brick/brick-mother-geometry-v2.js"
+          grep -q 'collapsedPores' "$brick/brick-mother-geometry-v2.js"
+          grep -q 'uPoreDensity' "$brick/brick-mother-renderer-v2.js"
+          grep -q 'uPoreVariety' "$brick/brick-mother-renderer-v2.js"
+          grep -q 'firedRed' "$brick/brick-mother-renderer-v2.js"
+          grep -q 'clayRed' "$brick/brick-mother-renderer-v2.js"
+          grep -q 'slateBlue' "$brick/brick-mother-renderer-v2.js"
+          grep -q 'soloMode' "$brick/brick-mother-app-v2.js"
+
+          standalone="$brick/brick-mother-standalone-v2.5.html"
+          test -s "$standalone"
+          test "$(wc -c < "$standalone")" -gt 150000
+          ! grep -q '<script src=' "$standalone"
+          ! grep -q '<link rel="stylesheet"' "$standalone"
+          grep -q 'window.__BRICK_MOTHER_INLINE_DATA__' "$standalone"
+          grep -q 'DOMContentLoaded' "$standalone"
+
+          python3 - <<'PY'
+          from html.parser import HTMLParser
+          from pathlib import Path
+
+          class ScriptParser(HTMLParser):
+              def __init__(self):
+                  super().__init__()
+                  self.in_script = False
+                  self.parts = []
+                  self.scripts = []
+              def handle_starttag(self, tag, attrs):
+                  if tag.lower() == 'script':
+                      self.in_script = True
+                      self.parts = []
+              def handle_data(self, data):
+                  if self.in_script:
+                      self.parts.append(data)
+              def handle_endtag(self, tag):
+                  if tag.lower() == 'script' and self.in_script:
+                      self.scripts.append(''.join(self.parts))
+                      self.in_script = False
+
+          path = Path('yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/brick-mother-standalone-v2.5.html')
+          parser = ScriptParser()
+          parser.feed(path.read_text(encoding='utf-8'))
+          assert len(parser.scripts) == 5, len(parser.scripts)
+          out = Path('/tmp/brick-mother-v25-inline-scripts')
+          out.mkdir(exist_ok=True)
+          for i, source in enumerate(parser.scripts):
+              (out / f'{i:02d}.js').write_text(source, encoding='utf-8')
+          PY
+          for file in /tmp/brick-mother-v25-inline-scripts/*.js; do node --check "$file"; done
+          sha256sum "$standalone" > /tmp/brick-mother-v25-standalone.sha256
+
+      - name: Gate standalone directly from local file
+        shell: bash
+        run: |
+          set -euo pipefail
+          chrome="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)"
+          uri="$(python3 - <<'PY'
+          from pathlib import Path
+          print(Path('yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/brick-mother-standalone-v2.5.html').resolve().as_uri())
+          PY
+          )"
+          timeout 280s "$chrome" \
+            --headless=new --no-sandbox --disable-dev-shm-usage --disable-background-networking \
+            --allow-file-access-from-files --enable-webgl --ignore-gpu-blocklist \
+            --enable-unsafe-swiftshader --use-gl=angle --use-angle=swiftshader \
+            --virtual-time-budget=130000 --dump-dom \
+            "${uri}?evidence=1&solo=1&profile=old-pbr-fired&focus=2&debug=0&qa=v25-retry3-gate" \
+            > /tmp/brick-mother-v25-standalone-dom.html \
+            2> /tmp/brick-mother-v25-standalone-chrome.log
+          grep -q 'data-brick-mother-ready="true"' /tmp/brick-mother-v25-standalone-dom.html
+          grep -q 'data-brick-mother-version="2.5.0-alpha.1"' /tmp/brick-mother-v25-standalone-dom.html
+          grep -q 'data-solo-mode="true"' /tmp/brick-mother-v25-standalone-dom.html
+          grep -Eq 'data-deep-pores="[1-9][0-9]*"' /tmp/brick-mother-v25-standalone-dom.html
+          grep -Eq 'data-pore-rim-chips="[1-9][0-9]*"' /tmp/brick-mother-v25-standalone-dom.html
+          grep -q 'data-collapsed-pores=' /tmp/brick-mother-v25-standalone-dom.html
+          grep -q 'data-evidence-ready="true"' /tmp/brick-mother-v25-standalone-dom.html
+
+      - name: Capture fired stone and adobe solo closeups
+        shell: bash
+        run: |
+          set -euo pipefail
+          chrome="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)"
+          uri="$(python3 - <<'PY'
+          from pathlib import Path
+          print(Path('yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/brick-mother-standalone-v2.5.html').resolve().as_uri())
+          PY
+          )"
+          capture() {
+            name="$1"; query="$2"
+            timeout 240s "$chrome" \
+              --headless=new --no-sandbox --disable-dev-shm-usage --disable-background-networking \
+              --allow-file-access-from-files --enable-webgl --ignore-gpu-blocklist \
+              --enable-unsafe-swiftshader --use-gl=angle --use-angle=swiftshader \
+              --hide-scrollbars --window-size=1600,1000 --virtual-time-budget=105000 \
+              --screenshot="/tmp/${name}.png" "${uri}?evidence=1&solo=1&${query}" \
+              > "/tmp/${name}.log" 2>&1
+            test -s "/tmp/${name}.png"
+          }
+          capture brick-mother-v25-fired-rich 'profile=old-pbr-fired&focus=2&debug=0&qa=fired-rich'
+          capture brick-mother-v25-stone-rich 'profile=stone-block&focus=2&debug=0&qa=stone-rich'
+          capture brick-mother-v25-adobe-rich 'profile=raw-clay&focus=2&debug=0&qa=adobe-rich'
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib
+          paths = [Path('/tmp') / n for n in (
+              'brick-mother-v25-fired-rich.png',
+              'brick-mother-v25-stone-rich.png',
+              'brick-mother-v25-adobe-rich.png')]
+          hashes = []
+          for p in paths:
+              data = p.read_bytes()
+              assert data[:8] == b'\x89PNG\r\n\x1a\n'
+              assert len(data) > 100000, (p.name, len(data))
+              hashes.append(hashlib.sha256(data).hexdigest())
+          assert len(set(hashes)) == 3, hashes
+          print({'screenshots': [p.name for p in paths], 'hashes': hashes})
+          PY
+
+      - name: Commit exact browser-tested V2.5 implementation
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf .github/brick-mother-v25-payload .github/brick-mother-v25-script
+          rm -f .github/workflows/brick-mother-v25-bootstrap.yml .github/workflows/brick-mother-v25-retry.yml .github/workflows/brick-mother-v25-retry2.yml .github/workflows/brick-mother-v25-retry3.yml
+          git config user.name "Brick Mother V2.5 Calibration Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then echo 'No V2.5 changes to commit' >&2; exit 1; fi
+          git commit -m "Calibrate Brick Mother V2.5 deep pore spectrum and rich material families"
+          git push origin HEAD:feature/brick-mother-v2.0-composite-material-dna
+
+      - name: Upload V2.5 evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: brick-mother-v25-deep-pore-rich-material-evidence
+          path: |
+            /tmp/brick-mother-v25-*.png
+            /tmp/brick-mother-v25-*.log
+            /tmp/brick-mother-v25-standalone-dom.html
+            /tmp/brick-mother-v25-standalone-chrome.log
+            /tmp/brick-mother-v25-standalone.sha256
+            yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/brick-mother-standalone-v2.5.html
+            yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/VERSION.json
+            yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/qa/gaea-distillation-contract-v1.json
+          compression-level: 1
+          if-no-files-found: ignore
