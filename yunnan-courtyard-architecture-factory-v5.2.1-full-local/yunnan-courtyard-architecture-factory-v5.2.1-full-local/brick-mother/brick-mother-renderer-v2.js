@@ -534,13 +534,15 @@ BMV27Fields bmV27Evaluate(vec3 p) {
     float strength = clamp(b.w, 0.0, 1.6);
     float mask = 0.0;
     if (type == 2 || type == 7 || type == 9 || type == 10 || type == 12) {
-      mask = bmV27CapsuleMask(p, a.xyz, c.xyz, b.x, max(b.y, 0.006));
+      mask = bmV27CapsuleMask(p, a.xyz, c.xyz, b.x * 0.82, max(b.y * 0.72, 0.004));
     } else if (type == 3 || type == 4 || type == 5 || type == 11) {
-      mask = bmV27BoxMask(p, a.xyz, b.xyz, c.xyz);
+      mask = bmV27EllipsoidMask(p, a.xyz, b.xyz * vec3(0.76, 0.68, 0.58));
     } else {
-      mask = bmV27EllipsoidMask(p, a.xyz, b.xyz);
+      mask = bmV27EllipsoidMask(p, a.xyz, b.xyz * vec3(0.68, 0.76, 0.58));
     }
-    mask *= strength;
+    float organicGate = fbmValueFast(p * 2.15 + seedVector(uDetailSeed + float(type) * 13.7, 1.31));
+    mask = smoothstep(0.10, 0.86, mask * 0.82 + organicGate * 0.18);
+    mask *= strength * 0.42;
 
     if (type == 1 || type == 2 || type == 3 || type == 8) f.macroEvent = max(f.macroEvent, mask);
     else f.mesoEvent = max(f.mesoEvent, mask);
@@ -724,8 +726,8 @@ void main() {
     cavity +
     gaea.cavity * (0.14 + uGaeaRockDetail * 0.24) +
     gaea.microErosion * uGaeaMicroErosion * 0.11 +
-    v27.cavity * 0.24 +
-    v27.undercut * 0.10,
+    v27.cavity * 0.12 +
+    v27.undercut * 0.055,
     0.0, 1.0
   );
 
@@ -733,8 +735,8 @@ void main() {
   float gritToneWeight = uFamily == 2 ? 0.004 : (uFamily == 1 ? 0.008 : 0.010);
   float tone = clamp(
     0.08 + macro * 0.47 + macroB * 0.16 + ridge * 0.10 +
-    v27.macroEvent * 0.055 + v27.mesoEvent * 0.040 +
-    (v27.protrusion - v27.cavity) * 0.035 +
+    v27.macroEvent * 0.022 + v27.mesoEvent * 0.018 +
+    (v27.protrusion - v27.cavity) * 0.018 +
     (micro - 0.5) * microToneWeight + (grit - 0.5) * gritToneWeight,
     0.0, 1.0
   );
@@ -846,10 +848,10 @@ void main() {
     albedo = mix(albedo, charcoal, carbonRegion * (0.20 + rich * 0.06));
     albedo = mix(albedo, ashGray, ashRegion * 0.18);
     albedo = mix(albedo, rustColor, oxideEvent * (0.20 + rich * 0.15));
-    albedo = mix(albedo, creamMineral, max(mineralBloom, v27.seam) * 0.24);
-    albedo = mix(albedo, charcoal, max(v27.cavity, v27.undercut) * 0.14);
-    albedo = mix(albedo, brickRed, v27.plate * 0.12);
-    albedo = mix(albedo, burntUmber, v27.shear * 0.10);
+    albedo = mix(albedo, creamMineral, mineralBloom * 0.28);
+    albedo = mix(albedo, charcoal, max(v27.cavity, v27.undercut) * 0.045);
+    albedo = mix(albedo, brickRed, v27.plate * 0.025);
+    albedo = mix(albedo, burntUmber, v27.shear * 0.025);
   } else if (uFamily == 1) {
     float adobeRegion = fbmValueFast(colorWarped * 0.92 + colorSeedV * 0.71);
     float adobeRegionB = fbmGradient(colorWarped * 2.15 + colorSeedV * 1.59);
@@ -876,10 +878,10 @@ void main() {
     albedo = mix(albedo, seedVar, inclusions.z * 0.98);
     albedo = mix(albedo, charColor, inclusions.w * 0.94);
     albedo = mix(albedo, dark, inclusions.x * smoothstep(0.63, 0.91, fiberAge) * 0.18);
-    albedo = mix(albedo, adobeOchre, v27.plate * 0.15);
-    albedo = mix(albedo, strawVar, v27.fiber * 0.78);
-    albedo = mix(albedo, wetColor, v27.undercut * 0.16);
-    albedo = mix(albedo, dark, v27.cavity * 0.12);
+    albedo = mix(albedo, adobeOchre, v27.plate * 0.045);
+    albedo = mix(albedo, strawVar, v27.fiber * 0.52);
+    albedo = mix(albedo, wetColor, v27.undercut * 0.055);
+    albedo = mix(albedo, dark, v27.cavity * 0.045);
     cavity *= 1.12;
   } else {
     float stoneRegion = fbmValueFast(colorWarped * 0.78 + colorSeedV * 0.59);
@@ -907,10 +909,10 @@ void main() {
     albedo = mix(albedo, rustStone, rustRegion * 0.25);
     albedo = mix(albedo, wetColor, wetRegion * 0.38);
     albedo = mix(albedo, charColor, gaea.rockMap * 0.10 * uGaeaRockDetail);
-    albedo = mix(albedo, slateBlue, v27.shear * 0.13);
-    albedo = mix(albedo, calciteColor, max(v27.seam, v27.bedding * 0.28) * 0.20);
-    albedo = mix(albedo, neutralStone, v27.plate * 0.13);
-    albedo = mix(albedo, wetColor, max(v27.undercut, v27.cavity) * 0.16);
+    albedo = mix(albedo, slateBlue, v27.shear * 0.060);
+    albedo = mix(albedo, calciteColor, max(v27.seam, v27.bedding * 0.24) * 0.11);
+    albedo = mix(albedo, neutralStone, v27.plate * 0.050);
+    albedo = mix(albedo, wetColor, max(v27.undercut, v27.cavity) * 0.070);
   }
 
   vec2 waterWeather = waterWeatherMasks(p, baseNormal, uWaterSeed, uWeatherSeed);
@@ -958,8 +960,8 @@ void main() {
   albedo = clamp(albedo, vec3(0.004), vec3(1.0));
 
   float inclusionHeight = inclusions.x * 0.15 + inclusions.y * 0.11 + inclusions.z * 0.07 - inclusions.w * 0.28;
-  float familyMicroHeight = uFamily == 2 ? 0.050 : (uFamily == 1 ? 0.085 : 0.074);
-  float familyGritHeight = uFamily == 2 ? 0.007 : (uFamily == 1 ? 0.016 : 0.013);
+  float familyMicroHeight = uFamily == 2 ? 0.036 : (uFamily == 1 ? 0.052 : 0.044);
+  float familyGritHeight = uFamily == 2 ? 0.004 : (uFamily == 1 ? 0.008 : 0.006);
   float familyCrustHeight = uFamily == 2 ? 0.10 : (uFamily == 1 ? 0.12 : 0.11);
   float heightField =
     (macro - 0.5) * 0.16 +
@@ -971,8 +973,8 @@ void main() {
     mineral * 0.18 +
     weatherMask * 0.08 +
     inclusionHeight * 1.18 +
-    v27.protrusion * 0.18 + v27.plate * 0.09 + v27.bedding * 0.08 -
-    v27.cavity * 0.22 - v27.undercut * 0.14 +
+    v27.protrusion * 0.075 + v27.plate * 0.035 + v27.bedding * 0.035 -
+    v27.cavity * 0.10 - v27.undercut * 0.065 +
     (gaea.protrusion - 0.5) * 0.34 * uGaeaRockDetail +
     (gaea.strata - 0.5) * 0.24 * uGaeaStrata * (uFamily == 2 ? 1.0 : 0.22) -
     gaea.microErosion * 0.29 * uGaeaMicroErosion +
@@ -1005,7 +1007,7 @@ void main() {
     gaea.microErosion * 0.15 * uGaeaMicroErosion +
     crustFlake * 0.16 + crustBroad * 0.08 +
     poreRim * 0.20 + poreMedium * 0.14 + poreLarge * 0.18 +
-    v27.macroEvent * 0.12 + v27.mesoEvent * 0.16 + v27.undercut * 0.18 +
+    v27.macroEvent * 0.045 + v27.mesoEvent * 0.060 + v27.undercut * 0.075 +
     inclusions.x * 0.12 + inclusions.y * 0.10 -
     mineral * 0.08 -
     waterMask * 0.16,
@@ -1064,12 +1066,12 @@ void main() {
   vec3 L3 = normalize(vec3(-0.12, 0.28, -0.95));
 
   vec3 color = vec3(0.0);
-  color += shadeLight(N, V, L1, vec3(1.0, 0.985, 0.96), 2.62, albedo, rough);
-  color += shadeLight(N, V, L2, vec3(0.62, 0.70, 0.80), 0.60, albedo, rough);
-  color += shadeLight(N, V, L3, vec3(0.82, 0.70, 0.56), 0.23, albedo, rough);
+  color += shadeLight(N, V, L1, vec3(1.0, 0.99, 0.97), 2.88, albedo, rough);
+  color += shadeLight(N, V, L2, vec3(0.68, 0.73, 0.78), 0.66, albedo, rough);
+  color += shadeLight(N, V, L3, vec3(0.84, 0.74, 0.63), 0.27, albedo, rough);
 
-  float hemiBase = uFamily == 2 ? 0.39 : (uFamily == 1 ? 0.37 : 0.36);
-  float hemi = hemiBase + 0.18 * clamp(N.y * 0.5 + 0.5, 0.0, 1.0);
+  float hemiBase = uFamily == 2 ? 0.45 : (uFamily == 1 ? 0.43 : 0.42);
+  float hemi = hemiBase + 0.20 * clamp(N.y * 0.5 + 0.5, 0.0, 1.0);
   float cavityAo = uFamily == 2 ? 0.24 : (uFamily == 1 ? 0.36 : 0.38);
   float gaeaAo = uFamily == 2 ? 0.055 : 0.085;
   float ao = clamp(
@@ -1087,7 +1089,7 @@ void main() {
   color += albedo * hemi;
   color *= ao;
 
-  float familyExposure = uFamily == 2 ? 1.34 : (uFamily == 1 ? 1.28 : 1.32);
+  float familyExposure = uFamily == 2 ? 1.72 : (uFamily == 1 ? 1.66 : 1.70);
   color = 1.0 - exp(-color * familyExposure);
   color = pow(max(color, 0.0), vec3(0.99));
   outColor = vec4(linearToSrgb(color), 1.0);

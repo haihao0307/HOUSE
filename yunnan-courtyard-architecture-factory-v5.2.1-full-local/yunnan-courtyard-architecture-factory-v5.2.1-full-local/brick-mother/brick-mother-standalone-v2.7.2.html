@@ -1,0 +1,4486 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta name="description" content="Brick Mother V2 复合材质 DNA 实验室，以八类独立种子生成富色砖材、深孔、水痕、风化和土坯有机夹杂。">
+  <title>Brick Mother 砖块母体生产线 V2</title>
+  <link rel="icon" href="data:,">
+  <style>
+:root {
+  color-scheme: dark;
+  --bg: #080a09;
+  --panel: #151714;
+  --panel-2: #10120f;
+  --line: #ffffff18;
+  --line-2: #ffffff0c;
+  --text: #f3eee7;
+  --muted: #aaa59d;
+  --gold: #d7a66b;
+  --gold-soft: #d7a66b20;
+  --ok: #86c696;
+  --bad: #e0a38f;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background:
+    radial-gradient(circle at 12% 0, #89633c2c, transparent 34rem),
+    linear-gradient(#10120f, var(--bg) 46rem);
+  color: var(--text);
+  font: 14px/1.55 Inter, system-ui, "Microsoft YaHei", sans-serif;
+}
+button, a { font: inherit; }
+button { color: inherit; }
+
+.shell {
+  width: min(1540px, calc(100% - 24px));
+  margin: auto;
+  padding: 14px 0 38px;
+}
+
+.card, .topbar {
+  border: 1px solid var(--line);
+  background: #151714ec;
+  box-shadow: 0 24px 80px #0007;
+}
+
+.topbar {
+  position: sticky;
+  top: 10px;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 15px 18px;
+  border-radius: 17px;
+  backdrop-filter: blur(18px);
+}
+
+.brand { display: flex; align-items: center; gap: 13px; }
+.mark {
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  border: 1px solid #d7a66b66;
+  border-radius: 13px;
+  color: var(--gold);
+  font-weight: 900;
+}
+.eyebrow {
+  margin: 0;
+  color: var(--gold);
+  font-size: 10px;
+  font-weight: 850;
+  letter-spacing: .16em;
+}
+.brand h1 {
+  margin: 2px 0 0;
+  font-size: clamp(18px, 2.1vw, 29px);
+}
+.status {
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.pill {
+  padding: 6px 9px;
+  border: 1px solid var(--line);
+  border-radius: 99px;
+  color: var(--muted);
+  font-size: 11px;
+}
+.pill::before {
+  content: "";
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-right: 6px;
+  border-radius: 50%;
+  background: var(--ok);
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: 1.35fr .65fr;
+  gap: 14px;
+  margin-top: 14px;
+}
+.hero .card {
+  border-radius: 18px;
+  padding: clamp(23px, 4vw, 46px);
+}
+.hero h2 {
+  margin: 8px 0 14px;
+  font-size: clamp(30px, 4.25vw, 62px);
+  line-height: 1.02;
+  letter-spacing: -.045em;
+}
+.hero p {
+  margin: 0;
+  max-width: 980px;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.8;
+}
+.hero-rules {
+  display: grid;
+  gap: 10px;
+  align-content: center;
+}
+.rule {
+  padding: 13px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #ffffff07;
+}
+.rule b { display: block; margin-bottom: 3px; color: var(--gold); }
+.rule span { color: var(--muted); font-size: 12px; }
+
+.workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 344px;
+  gap: 14px;
+  margin-top: 14px;
+  align-items: start;
+}
+.stage {
+  overflow: hidden;
+  border-radius: 18px;
+}
+.stage-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--line);
+}
+.stage-head h2 { margin: 0; font-size: 17px; }
+.stage-head p { margin: 3px 0 0; color: var(--muted); font-size: 11px; }
+
+.mode-switch, .toolbar, .channel-buttons {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.mode-switch {
+  padding: 4px;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  background: #080a08;
+}
+
+.mode-button, .tool-button, .profile-button, .child-card, .primary, .channel-button {
+  border: 0;
+  cursor: pointer;
+}
+
+.mode-button {
+  padding: 7px 11px;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 11px;
+}
+.mode-button.on {
+  background: var(--gold-soft);
+  color: var(--text);
+}
+
+.viewer {
+  position: relative;
+  min-height: 680px;
+  background:
+    radial-gradient(circle at 46% 18%, #31342f, #171a16 42%, #0b0d0b 78%);
+}
+#brickCanvas {
+  display: block;
+  width: 100%;
+  height: 680px;
+  touch-action: none;
+  cursor: grab;
+}
+#brickCanvas:active { cursor: grabbing; }
+
+.viewer-hud {
+  position: absolute;
+  left: 15px;
+  top: 15px;
+  z-index: 3;
+  max-width: 380px;
+  padding: 11px 12px;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  background: #0d0f0ddd;
+  box-shadow: 0 10px 30px #0008;
+  pointer-events: none;
+}
+.viewer-hud b { color: var(--gold); }
+.viewer-hud p {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.toolbar {
+  position: absolute;
+  right: 15px;
+  top: 15px;
+  z-index: 4;
+  justify-content: flex-end;
+}
+.tool-button {
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: #0d0f0ddd;
+  color: var(--muted);
+  font-size: 10px;
+}
+.tool-button:hover, .tool-button.on {
+  border-color: #d7a66b77;
+  background: #2c2419;
+  color: var(--text);
+}
+.compare-button {
+  border-color: #d7a66b55;
+  color: var(--gold);
+}
+
+.channel-bar {
+  position: absolute;
+  left: 15px;
+  bottom: 15px;
+  z-index: 5;
+  min-width: 420px;
+  padding: 10px 11px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #0c0e0cdd;
+  box-shadow: 0 12px 36px #0009;
+  backdrop-filter: blur(12px);
+}
+.channel-title {
+  margin-bottom: 7px;
+  color: var(--muted);
+  font-size: 10px;
+}
+.channel-title b { color: var(--gold); }
+.channel-button {
+  min-width: 48px;
+  padding: 7px 9px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #ffffff06;
+  color: var(--muted);
+  font-size: 10px;
+}
+.channel-button:hover, .channel-button.on {
+  border-color: #d7a66b88;
+  background: var(--gold-soft);
+  color: var(--text);
+}
+
+.loading {
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  display: grid;
+  place-items: center;
+  background: #090b09dc;
+  opacity: 0;
+  visibility: hidden;
+  transition: .2s;
+}
+.loading.on {
+  opacity: 1;
+  visibility: visible;
+}
+.loading-box {
+  width: min(460px, calc(100% - 36px));
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  background: #151714;
+}
+.loading-box b { display: block; margin-bottom: 10px; }
+.progress {
+  height: 6px;
+  overflow: hidden;
+  border-radius: 99px;
+  background: #ffffff0e;
+}
+.progress i {
+  display: block;
+  width: 0;
+  height: 100%;
+  background: linear-gradient(90deg, #9a6d3e, var(--gold));
+  transition: width .18s;
+}
+.loading-box pre {
+  max-height: 90px;
+  margin: 10px 0 0;
+  overflow: auto;
+  white-space: pre-wrap;
+  color: var(--bad);
+  font-size: 9px;
+}
+
+.child-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  padding: 12px;
+  border-top: 1px solid var(--line);
+  background: #0d0f0c;
+}
+.child-card {
+  min-height: 126px;
+  padding: 13px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #151714;
+  text-align: left;
+  transition: .18s;
+}
+.child-card:hover, .child-card.on {
+  border-color: #d7a66b88;
+  background: #1d1b16;
+  transform: translateY(-1px);
+}
+.child-card span, .child-card b, .child-card em, .child-card small { display: block; }
+.child-no {
+  color: var(--gold);
+  font-size: 9px;
+  font-weight: 850;
+  letter-spacing: .14em;
+}
+.child-card b { margin-top: 5px; font-size: 13px; }
+.child-card em {
+  margin-top: 2px;
+  color: #d8d2c9;
+  font-size: 11px;
+  font-style: normal;
+}
+.child-card small { margin-top: 5px; color: var(--muted); font-size: 10px; }
+.child-card .mini { margin-top: 7px; color: #807b73; font-size: 9px; }
+
+.side {
+  position: sticky;
+  top: 94px;
+  padding: 17px;
+  border-radius: 18px;
+}
+.section + .section {
+  margin-top: 19px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+}
+.section h2 { margin: 0 0 10px; font-size: 16px; }
+
+.profile-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 7px;
+}
+.profile-button {
+  min-height: 73px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  background: #ffffff06;
+  text-align: left;
+}
+.profile-button:hover, .profile-button.on {
+  border-color: var(--gold);
+  background: var(--gold-soft);
+}
+.profile-button strong, .profile-button span { display: block; }
+.profile-button strong { font-size: 12px; }
+.profile-button span { margin-top: 3px; color: var(--muted); font-size: 9px; }
+
+.facts { margin: 0; }
+.facts div {
+  display: grid;
+  grid-template-columns: 92px 1fr;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--line-2);
+}
+.facts dt { color: var(--muted); font-size: 10px; }
+.facts dd { margin: 0; font-size: 10px; word-break: break-word; }
+
+.dna-list { display: grid; gap: 7px; }
+.dna {
+  padding: 9px 10px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: #ffffff05;
+}
+.dna.emphasis {
+  border-color: #d7a66b55;
+  background: #d7a66b0d;
+}
+.dna b {
+  display: block;
+  color: var(--gold);
+  font-size: 10px;
+}
+.dna span {
+  display: block;
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 9px;
+}
+
+.primary {
+  display: block;
+  width: 100%;
+  margin-top: 9px;
+  padding: 10px;
+  border-radius: 10px;
+  background: var(--gold);
+  color: #21160d;
+  text-align: center;
+  text-decoration: none;
+  font-size: 11px;
+  font-weight: 850;
+}
+.primary.secondary {
+  border: 1px solid #d7a66b66;
+  background: transparent;
+  color: var(--gold);
+}
+
+.proof {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-top: 14px;
+}
+.proof .card {
+  padding: 15px;
+  border-radius: 15px;
+  background: #1b1d19d9;
+}
+.proof small {
+  color: var(--gold);
+  font-weight: 850;
+  letter-spacing: .12em;
+}
+.proof h3 { margin: 6px 0; font-size: 14px; }
+.proof p { margin: 0; color: var(--muted); font-size: 11px; }
+.footer {
+  padding: 22px 4px 0;
+  text-align: center;
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.reference-panel {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: grid;
+  grid-template-columns: 1fr min(780px, 51vw);
+  background: transparent;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity .2s;
+}
+.reference-panel.open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+.reference-backdrop {
+  cursor: pointer;
+  background: transparent;
+}
+.reference-sheet {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  height: 100%;
+  background: #111310;
+  border-left: 1px solid #ffffff2c;
+  box-shadow: -24px 0 60px #000a;
+}
+.reference-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px;
+  border-bottom: 1px solid var(--line);
+}
+.reference-head h2 { margin: 0; font-size: 17px; }
+.reference-head p:not(.eyebrow) {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 10px;
+}
+.close {
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: #ffffff08;
+  color: var(--muted);
+  padding: 8px 10px;
+  cursor: pointer;
+}
+.reference-sheet iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: #0b0c0b;
+}
+.reference-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 10px;
+}
+.reference-foot a { color: var(--gold); }
+
+.fatal {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  z-index: 99;
+  transform: translate(-50%, -50%);
+  width: min(560px, calc(100% - 30px));
+  padding: 18px;
+  border: 1px solid #e0a38f55;
+  border-radius: 13px;
+  background: #231713;
+  color: #f2b7a5;
+  box-shadow: 0 24px 80px #000;
+}
+
+@media (max-width: 1120px) {
+  .workspace { grid-template-columns: 1fr; }
+  .side { position: static; }
+  .proof { grid-template-columns: repeat(2, 1fr); }
+  .reference-panel { grid-template-columns: 1fr min(720px, 65vw); }
+}
+
+@media (max-width: 800px) {
+  .shell { width: calc(100% - 12px); padding-top: 6px; }
+  .topbar {
+    position: static;
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .status { justify-content: flex-start; }
+  .hero { grid-template-columns: 1fr; }
+  .stage-head {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .viewer, #brickCanvas {
+    min-height: 540px;
+    height: 540px;
+  }
+  .child-grid, .proof { grid-template-columns: 1fr; }
+  .profile-buttons { grid-template-columns: 1fr 1fr; }
+  .toolbar {
+    left: 12px;
+    right: 12px;
+    top: auto;
+    bottom: 92px;
+    justify-content: flex-start;
+  }
+  .viewer-hud {
+    left: 12px;
+    right: 12px;
+    max-width: none;
+  }
+  .channel-bar {
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    min-width: 0;
+  }
+  .reference-panel { grid-template-columns: 1fr; }
+  .reference-backdrop { display: none; }
+  .reference-sheet { border-left: 0; }
+}
+
+/* Brick Mother V2 composite material DNA controls */
+.pill.accent {
+  border-color: #d7a66b66;
+  background: #d7a66b14;
+  color: var(--gold);
+}
+.pill.accent::before { background: var(--gold); }
+.side {
+  max-height: calc(100vh - 112px);
+  overflow: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #d7a66b55 #ffffff08;
+}
+.toolbar { max-width: min(560px, 62%); }
+.composite-controls {
+  padding: 13px;
+  margin-left: -4px;
+  margin-right: -4px;
+  border: 1px solid #d7a66b32;
+  border-radius: 13px;
+  background: linear-gradient(145deg, #d7a66b0d, #ffffff03);
+}
+.section + .composite-controls {
+  margin-top: 19px;
+  padding-top: 13px;
+}
+.slider-list {
+  display: grid;
+  gap: 11px;
+}
+.slider-list label {
+  display: grid;
+  gap: 5px;
+}
+.slider-list label > span {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  color: var(--muted);
+  font-size: 10px;
+}
+.slider-list label b {
+  color: #ded7ce;
+  font-weight: 700;
+}
+.slider-list output {
+  min-width: 38px;
+  color: var(--gold);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+.slider-list input[type="range"] {
+  width: 100%;
+  height: 4px;
+  margin: 0;
+  accent-color: var(--gold);
+  cursor: ew-resize;
+}
+.control-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 7px;
+  margin-top: 13px;
+}
+.control-actions .tool-button {
+  width: 100%;
+  background: #0d0f0dcc;
+}
+.accent-button {
+  border-color: #d7a66b66;
+  color: var(--gold);
+}
+.seed-lab details {
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  background: #ffffff04;
+}
+.seed-lab summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 11px;
+  list-style: none;
+  cursor: pointer;
+}
+.seed-lab summary::-webkit-details-marker { display: none; }
+.seed-lab summary span { display: grid; gap: 2px; }
+.seed-lab summary small {
+  color: var(--gold);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .12em;
+}
+.seed-lab summary b { font-size: 11px; }
+.seed-lab summary i {
+  color: var(--muted);
+  font-size: 9px;
+  font-style: normal;
+}
+.seed-lab details[open] summary {
+  border-bottom: 1px solid var(--line);
+}
+.seed-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+  padding: 10px;
+}
+.seed-grid label {
+  display: grid;
+  gap: 4px;
+}
+.seed-grid label:first-child {
+  grid-column: 1 / -1;
+}
+.seed-grid span {
+  color: var(--muted);
+  font-size: 9px;
+}
+.seed-grid input {
+  width: 100%;
+  min-width: 0;
+  padding: 7px 8px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  outline: 0;
+  background: #090b09;
+  color: var(--text);
+  font: 10px/1.2 ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-variant-numeric: tabular-nums;
+}
+.seed-grid input:focus {
+  border-color: #d7a66b77;
+  box-shadow: 0 0 0 2px #d7a66b12;
+}
+.dna.organic {
+  border-color: #b5a26355;
+  background: #8f7c3512;
+}
+.dna.organic b { color: #d8c786; }
+
+@media (max-width: 1120px) {
+  .side { max-height: none; overflow: visible; }
+}
+
+@media (max-width: 800px) {
+  .toolbar { max-width: none; }
+  .seed-grid { grid-template-columns: 1fr 1fr; }
+  .composite-controls { margin-left: 0; margin-right: 0; }
+}
+
+</style>
+  <style>
+.gaea-panel {
+  position: relative;
+  overflow: hidden;
+}
+
+.gaea-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 15% 18%, rgba(57, 185, 135, 0.10), transparent 36%),
+    radial-gradient(circle at 88% 10%, rgba(140, 92, 214, 0.09), transparent 32%);
+}
+
+.gaea-node-flow {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin: 14px 0;
+}
+
+.gaea-node-flow span {
+  display: grid;
+  min-height: 54px;
+  place-items: center;
+  padding: 8px;
+  border: 1px solid rgba(151, 181, 164, 0.17);
+  border-radius: 10px;
+  background: rgba(16, 24, 20, 0.78);
+  color: #d5e6dc;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.35;
+  text-align: center;
+}
+
+.gaea-node-flow span:nth-child(1) { box-shadow: inset 0 2px 0 rgba(36, 190, 111, 0.64); }
+.gaea-node-flow span:nth-child(2) { box-shadow: inset 0 2px 0 rgba(54, 150, 227, 0.64); }
+.gaea-node-flow span:nth-child(3) { box-shadow: inset 0 2px 0 rgba(226, 191, 55, 0.64); }
+.gaea-node-flow span:nth-child(4) { box-shadow: inset 0 2px 0 rgba(163, 92, 214, 0.64); }
+
+.gaea-contract {
+  position: relative;
+  display: grid;
+  gap: 8px;
+}
+
+.gaea-contract div {
+  display: grid;
+  grid-template-columns: 88px 1fr;
+  gap: 10px;
+  padding: 9px 10px;
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.gaea-contract b {
+  color: #b6d3c2;
+  font-size: 11px;
+}
+
+.gaea-contract span {
+  color: #8f9f96;
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.gaea-control-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  padding: 5px 9px;
+  border: 1px solid rgba(226, 191, 55, 0.22);
+  border-radius: 999px;
+  color: #d9c96b;
+  background: rgba(226, 191, 55, 0.05);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+}
+
+@media (max-width: 780px) {
+  .gaea-node-flow {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+</style>
+  <style>
+/* Brick Mother V2.7 visual truth browser evidence layout */
+body.evidence-mode {
+  margin: 0;
+  overflow: hidden;
+  background: #0e100f;
+}
+body.evidence-mode .shell {
+  max-width: none;
+  width: 100vw;
+  min-height: 100vh;
+  padding: 0;
+}
+body.evidence-mode .topbar,
+body.evidence-mode .hero,
+body.evidence-mode .side,
+body.evidence-mode .stage-head,
+body.evidence-mode .viewer-hud,
+body.evidence-mode .toolbar,
+body.evidence-mode .channel-bar,
+body.evidence-mode .child-grid,
+body.evidence-mode .proof,
+body.evidence-mode .reference-panel,
+body.evidence-mode .reference-backdrop,
+body.evidence-mode footer {
+  display: none !important;
+}
+body.evidence-mode .workspace {
+  display: block;
+  width: 100vw;
+  min-height: 100vh;
+  margin: 0;
+}
+body.evidence-mode .stage {
+  width: 100vw;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: #0e100f;
+}
+body.evidence-mode .viewer {
+  width: 100vw;
+  height: 100vh;
+  min-height: 100vh;
+  border: 0;
+  border-radius: 0;
+}
+body.evidence-mode #brickCanvas {
+  width: 100vw !important;
+  height: 100vh !important;
+}
+body.evidence-mode .loading {
+  background: #0e100f;
+}
+body.evidence-mode::after {
+  display: none;
+  content: attr(data-evidence-label);
+  position: fixed;
+  left: 24px;
+  bottom: 20px;
+  z-index: 20;
+  padding: 8px 12px;
+  border: 1px solid rgba(255,255,255,.16);
+  border-radius: 8px;
+  background: rgba(10,12,11,.72);
+  color: rgba(255,255,255,.82);
+  font: 600 13px/1.2 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  letter-spacing: .04em;
+  backdrop-filter: blur(8px);
+}
+
+</style>
+  <script>
+(() => {
+'use strict';
+
+const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
+const lerp = (a, b, t) => a + (b - a) * t;
+const smoothstep = (a, b, v) => {
+  const t = clamp((v - a) / Math.max(b - a, 1e-8));
+  return t * t * (3 - 2 * t);
+};
+
+const OPERATOR_FAMILIES = Object.freeze({
+  primitives: ['multi-fractal', 'ridged-noise', 'cellular-plates', 'anisotropic-fibers'],
+  warps: ['domain-warp', 'directional-warp', 'profile-recurve'],
+  adjustments: ['autolevel', 'clarity', 'soft-clip', 'gamma', 'threshold', 'combine', 'multi-combine'],
+  erosion: ['rugged-breakage', 'stratify', 'micro-erosion', 'flow-deposition'],
+  data: ['slope', 'curvature-proxy', 'cavity', 'protrusion', 'rock-map', 'flow', 'separation-mask'],
+  color: ['clut-5', 'quick-color', 'synth-palette', 'splat-weights', 'color-fx'],
+  render: ['linear-srgb', 'correlated-roughness', 'micro-normal', 'ambient-occlusion']
+});
+
+const GRAPH_RECIPES = Object.freeze({
+  firedBrick: [
+    'multi-fractal', 'domain-warp', 'rugged-breakage', 'micro-erosion',
+    'cavity+protrusion+flow masks', 'clut-5', 'splat-weights', 'color-fx', 'pbr-render'
+  ],
+  adobe: [
+    'multi-fractal', 'directional-warp', 'fiber-inclusions', 'micro-erosion',
+    'cavity+flow masks', 'synth-palette', 'splat-weights', 'pbr-render'
+  ],
+  stone: [
+    'multi-fractal', 'domain-warp', 'rugged-breakage x2 low strength', 'stratify',
+    'micro-erosion', 'rock-map+slope+curvature masks', 'clut-5', 'splat-weights', 'pbr-render'
+  ]
+});
+
+function autoLevel(v, low = 0.12, high = 0.88) {
+  return clamp((v - low) / Math.max(high - low, 1e-6));
+}
+
+function clarity(v, amount = 1) {
+  const t = clamp(v);
+  const local = t * t * (3 - 2 * t);
+  return clamp(t + (t - local) * amount * 1.45);
+}
+
+function softClip(v, low = 0.06, high = 0.94) {
+  const t = autoLevel(v, low, high);
+  return t * t * (3 - 2 * t);
+}
+
+function gamma(v, power = 1) {
+  return Math.pow(clamp(v), Math.max(power, 1e-4));
+}
+
+function combine(a, b, mode = 'blend', ratio = 0.5) {
+  const t = clamp(ratio);
+  if (mode === 'add') return clamp(a + b * t);
+  if (mode === 'subtract') return clamp(a - b * t);
+  if (mode === 'multiply') return clamp(lerp(a, a * b, t));
+  if (mode === 'max') return lerp(a, Math.max(a, b), t);
+  if (mode === 'min') return lerp(a, Math.min(a, b), t);
+  if (mode === 'screen') return lerp(a, 1 - (1 - a) * (1 - b), t);
+  if (mode === 'difference') return lerp(a, Math.abs(a - b), t);
+  return lerp(a, b, t);
+}
+
+function separationMask(a, b, sharpness = 1) {
+  return smoothstep(0.02, 0.38 / Math.max(sharpness, 0.1), Math.abs(a - b));
+}
+
+function normalizeGaeaDNA(dna = {}) {
+  return {
+    ruggedScale: Number(dna.ruggedScale ?? 6.2),
+    strataFrequency: Number(dna.strataFrequency ?? 5.4),
+    surfaceScale: Number(dna.surfaceScale ?? 34),
+    ruggedDepth: Number(dna.ruggedDepth ?? 0.009),
+    strataDepth: Number(dna.strataDepth ?? 0.0035),
+    microErosionDepth: Number(dna.microErosionDepth ?? 0.0038),
+    warpStrength: Number(dna.warpStrength ?? 0.22),
+    strataTilt: Number(dna.strataTilt ?? 0.18),
+    geometryStrength: Number(dna.geometryStrength ?? 1)
+  };
+}
+
+function geometryDisplacement(p, seeds, controls, inputDNA, noiseApi) {
+  if (!noiseApi) return 0;
+  const dna = normalizeGaeaDNA(inputDNA);
+  const { fbm3, ridgedFbm3 } = noiseApi;
+  const detailSeed = Number(seeds?.detail ?? seeds?.master ?? 17);
+  const weatherSeed = Number(seeds?.weather ?? seeds?.master ?? 29);
+
+  const wx = fbm3(p.y * 0.83, p.z * 0.79, p.x * 0.31, detailSeed + 1201, 3) - 0.5;
+  const wy = fbm3(p.x * 0.76, p.z * 0.91, p.y * 0.27, detailSeed + 1217, 3) - 0.5;
+  const wz = fbm3(p.x * 0.88, p.y * 0.82, p.z * 0.29, detailSeed + 1231, 3) - 0.5;
+  const qx = p.x + wx * dna.warpStrength;
+  const qy = p.y + wy * dna.warpStrength * 0.72;
+  const qz = p.z + wz * dna.warpStrength;
+
+  const ruggedA = ridgedFbm3(qx * dna.ruggedScale, qy * dna.ruggedScale * 0.88, qz * dna.ruggedScale, detailSeed + 1301, 4);
+  const ruggedB = ridgedFbm3(
+    (qx + wz * 0.17) * dna.ruggedScale * 0.54,
+    (qy + wx * 0.11) * dna.ruggedScale * 0.54,
+    (qz + wy * 0.15) * dna.ruggedScale * 0.54,
+    detailSeed + 1327,
+    3
+  );
+  const rugged = clarity(ruggedA * 0.68 + ruggedB * 0.32, 0.72);
+
+  const strataPhase = (
+    qy + qx * dna.strataTilt + qz * dna.strataTilt * 0.42 + wx * 0.22
+  ) * dna.strataFrequency * Math.PI * 2;
+  const strataWave = 1 - Math.abs(Math.sin(strataPhase));
+  const strataGate = autoLevel(
+    fbm3(qx * 2.3, qy * 2.0, qz * 2.3, weatherSeed + 1409, 3),
+    0.27,
+    0.82
+  );
+  const strata = softClip(strataWave * (0.36 + strataGate * 0.64), 0.18, 0.86);
+
+  const microRidge = ridgedFbm3(
+    qx * dna.surfaceScale,
+    qy * dna.surfaceScale * 0.93,
+    qz * dna.surfaceScale,
+    weatherSeed + 1511,
+    3
+  );
+  const microGate = autoLevel(
+    fbm3(qx * 5.7, qy * 5.1, qz * 5.7, weatherSeed + 1523, 3),
+    0.42,
+    0.89
+  );
+  const microErosion = smoothstep(0.58, 0.94, microRidge) * microGate;
+
+  const rockDetail = Number(controls?.rockDetail ?? 0.65);
+  const strataStrength = Number(controls?.strata ?? 0.25);
+  const microStrength = Number(controls?.microErosion ?? 0.62);
+
+  const displacement =
+    (rugged - 0.53) * dna.ruggedDepth * rockDetail +
+    (strata - 0.43) * dna.strataDepth * strataStrength -
+    microErosion * dna.microErosionDepth * microStrength;
+
+  return displacement * dna.geometryStrength;
+}
+
+const glsl = String.raw`
+float valueNoise3(vec3 p);
+float gradientNoise3(vec3 p);
+float fbmGradient(vec3 p);
+float ridgedFbm(vec3 p);
+float fbmValueFast(vec3 p);
+float turbulence(vec3 p);
+vec2 worley3(vec3 p);
+vec3 domainWarp(vec3 p);
+
+float bmSaturate(float v) {
+  return clamp(v, 0.0, 1.0);
+}
+
+float bmAutoLevel(float v, float low, float high) {
+  return bmSaturate((v - low) / max(high - low, 0.00001));
+}
+
+float bmClarity(float v, float amount) {
+  float t = bmSaturate(v);
+  float local = t * t * (3.0 - 2.0 * t);
+  return bmSaturate(t + (t - local) * amount * 1.45);
+}
+
+float bmSoftClip(float v, float low, float high) {
+  float t = bmAutoLevel(v, low, high);
+  return t * t * (3.0 - 2.0 * t);
+}
+
+float bmMaskSharp(float v, float sharpness) {
+  float width = mix(0.30, 0.035, bmSaturate(sharpness / 1.6));
+  return smoothstep(0.5 - width, 0.5 + width, v);
+}
+
+float bmCombine(float a, float b, float mode, float ratio) {
+  float r = bmSaturate(ratio);
+  if (mode < 0.5) return mix(a, b, r);
+  if (mode < 1.5) return bmSaturate(a + b * r);
+  if (mode < 2.5) return bmSaturate(mix(a, a * b, r));
+  if (mode < 3.5) return mix(a, max(a, b), r);
+  if (mode < 4.5) return mix(a, min(a, b), r);
+  if (mode < 5.5) return mix(a, 1.0 - (1.0 - a) * (1.0 - b), r);
+  return mix(a, abs(a - b), r);
+}
+
+vec3 bmClut5(float t, vec3 c0, vec3 c1, vec3 c2, vec3 c3, vec3 c4) {
+  float x = bmSaturate(t) * 4.0;
+  if (x < 1.0) return mix(c0, c1, x);
+  if (x < 2.0) return mix(c1, c2, x - 1.0);
+  if (x < 3.0) return mix(c2, c3, x - 2.0);
+  return mix(c3, c4, x - 3.0);
+}
+
+vec4 bmSplatWeights(float a, float b, float c, float d, float sharpness) {
+  float power = 1.0 + bmSaturate(sharpness / 1.6) * 5.0;
+  vec4 w = pow(max(vec4(a, b, c, d), vec4(0.00001)), vec4(power));
+  return w / max(dot(w, vec4(1.0)), 0.00001);
+}
+
+struct BMGaeaFields {
+  float rugged;
+  float strata;
+  float microErosion;
+  float rockMap;
+  float flow;
+  float protrusion;
+  float cavity;
+  float separation;
+};
+
+BMGaeaFields bmGaeaEvaluate(
+  vec3 p,
+  vec3 n,
+  vec3 seedV,
+  float ruggedScale,
+  float strataFrequency,
+  float surfaceScale,
+  float maskSharpness
+) {
+  vec3 q = p + domainWarp(p * 0.73 + seedV * 0.21) * 0.22;
+  float ruggedA = ridgedFbm(q * ruggedScale + seedV * 0.67);
+  float ruggedB = ridgedFbm((q + domainWarp(q * 1.31)) * ruggedScale * 0.53 + seedV * 1.19);
+  float rugged = bmClarity(ruggedA * 0.68 + ruggedB * 0.32, 0.74);
+
+  vec2 cells = worley3(q * ruggedScale * 0.76 + seedV * 0.89);
+  float plateEdge = 1.0 - smoothstep(0.026, 0.17, cells.y - cells.x);
+
+  float strataPhaseNoise = fbmValueFast(q * 3.7 + seedV * 1.91) - 0.5;
+  float strataPhase = (
+    q.y + q.x * 0.18 + q.z * 0.075 + strataPhaseNoise * 0.18
+  ) * strataFrequency * 6.2831853 + seedV.x;
+  float strataWave = sin(strataPhase) * 0.5 + 0.5;
+  float strataGate = bmAutoLevel(fbmValueFast(q * 2.65 + seedV * 1.43), 0.27, 0.82);
+  float strataBreak = bmAutoLevel(fbmValueFast(q * 5.1 + seedV * 2.11), 0.33, 0.81);
+  float strata = bmMaskSharp(
+    strataWave * (0.16 + strataGate * 0.52) * (0.31 + strataBreak * 0.69),
+    maskSharpness * 0.72
+  );
+
+  float microBase = ridgedFbm(q * surfaceScale + seedV * 1.77);
+  float microGate = bmAutoLevel(turbulence(q * surfaceScale * 0.31 + seedV * 2.13), 0.31, 0.86);
+  float microErosion = smoothstep(0.61, 0.94, microBase) * microGate;
+
+  float slope = 1.0 - abs(n.y);
+  float rockPatchA = bmAutoLevel(fbmValueFast(q * 2.12 + seedV * 2.73), 0.30, 0.79);
+  float rockPatchB = bmAutoLevel(fbmGradient(q * 4.35 + seedV * 1.57), 0.28, 0.76);
+  float rockMap = bmMaskSharp(
+    (rockPatchA * 0.46 + rockPatchB * 0.34 + rugged * 0.20) * (0.57 + slope * 0.43),
+    maskSharpness * 0.50
+  );
+
+  float vertical = bmAutoLevel(1.0 - (p.y + 0.5), 0.08, 0.92);
+  float flowNoise = bmAutoLevel(fbmValueFast(vec3(q.x * 2.1, q.y * 0.57, q.z * 2.1) + seedV * 2.47), 0.48, 0.86);
+  float flow = bmMaskSharp(vertical * flowNoise * (0.38 + slope * 0.62), maskSharpness * 0.58);
+
+  float materialA = fbmValueFast(q * 2.55 + seedV * 3.07);
+  float materialB = fbmGradient(q * 4.95 + seedV * 2.31);
+  float protrusion = bmSaturate(rugged * 0.60 + strata * 0.12 + rockPatchA * 0.28);
+  float cavity = bmSaturate(
+    microErosion * 0.41 +
+    (1.0 - rugged) * 0.27 +
+    (1.0 - rockPatchB) * 0.24 +
+    plateEdge * 0.08
+  );
+  float separation = bmMaskSharp(
+    bmSaturate(abs(materialA - materialB) * 0.72 + flow * 0.12 + microErosion * 0.16),
+    maskSharpness * 0.40
+  );
+
+  BMGaeaFields result;
+  result.rugged = rugged;
+  result.strata = strata;
+  result.microErosion = microErosion;
+  result.rockMap = rockMap;
+  result.flow = flow;
+  result.protrusion = protrusion;
+  result.cavity = cavity;
+  result.separation = separation;
+  return result;
+}
+`;
+
+window.BrickMotherGaeaV1 = Object.freeze({
+  version: '1.2.0',
+  lineage: 'independent field-graph implementation distilled from documented Gaea workflow concepts',
+  operatorFamilies: OPERATOR_FAMILIES,
+  graphRecipes: GRAPH_RECIPES,
+  autoLevel,
+  clarity,
+  softClip,
+  gamma,
+  combine,
+  separationMask,
+  normalizeGaeaDNA,
+  geometryDisplacement,
+  glsl
+});
+})();
+
+</script>
+  <script>
+(() => {
+'use strict';
+
+const GAEA = window.BrickMotherGaeaV1 || null;
+
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const lerp = (a, b, t) => a + (b - a) * t;
+const smooth = (t) => t * t * (3 - 2 * t);
+const smoother = (t) => t * t * t * (t * (t * 6 - 15) + 10);
+const vec3 = (x = 0, y = 0, z = 0) => ({ x, y, z });
+const add3 = (a, b) => vec3(a.x + b.x, a.y + b.y, a.z + b.z);
+const sub3 = (a, b) => vec3(a.x - b.x, a.y - b.y, a.z - b.z);
+const mul3 = (a, s) => vec3(a.x * s, a.y * s, a.z * s);
+const dot3 = (a, b) => a.x * b.x + a.y * b.y + a.z * b.z;
+const cross3 = (a, b) => vec3(a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, a.x * b.y - a.y * b.x);
+const len3 = (a) => Math.hypot(a.x, a.y, a.z);
+const norm3 = (a) => { const n = len3(a) || 1; return mul3(a, 1 / n); };
+const mix3 = (a, b, t) => vec3(lerp(a.x, b.x, t), lerp(a.y, b.y, t), lerp(a.z, b.z, t));
+
+class RNG {
+  constructor(seed) { this.s = (Number(seed) >>> 0) || 1; }
+  next() {
+    let x = this.s;
+    x ^= x << 13; x ^= x >>> 17; x ^= x << 5;
+    this.s = x >>> 0;
+    return this.s / 4294967296;
+  }
+  range(a, b) { return lerp(a, b, this.next()); }
+  int(a, b) { return Math.floor(this.range(a, b + 1)); }
+  pick(items) { return items[Math.floor(this.next() * items.length) % items.length]; }
+}
+
+function hashInt(x, y, z, seed) {
+  let h = (x * 374761393 + y * 668265263 + z * 2147483647 + seed * 1274126177) | 0;
+  h = Math.imul(h ^ (h >>> 13), 1274126177);
+  return ((h ^ (h >>> 16)) >>> 0) / 4294967295;
+}
+
+function noise3(x, y, z, seed) {
+  const xi = Math.floor(x), yi = Math.floor(y), zi = Math.floor(z);
+  const tx = smoother(x - xi), ty = smoother(y - yi), tz = smoother(z - zi);
+  const c = new Array(8);
+  let k = 0;
+  for (let dz = 0; dz <= 1; dz++) {
+    for (let dy = 0; dy <= 1; dy++) {
+      for (let dx = 0; dx <= 1; dx++) c[k++] = hashInt(xi + dx, yi + dy, zi + dz, seed);
+    }
+  }
+  const x00 = lerp(c[0], c[1], tx), x10 = lerp(c[2], c[3], tx);
+  const x01 = lerp(c[4], c[5], tx), x11 = lerp(c[6], c[7], tx);
+  return lerp(lerp(x00, x10, ty), lerp(x01, x11, ty), tz);
+}
+
+function fbm3(x, y, z, seed, octaves = 4, lacunarity = 2.03, gain = 0.5) {
+  let value = 0, amp = 0.5, freq = 1, total = 0;
+  for (let i = 0; i < octaves; i++) {
+    value += noise3(x * freq, y * freq, z * freq, seed + i * 1013) * amp;
+    total += amp;
+    amp *= gain;
+    freq *= lacunarity;
+  }
+  return value / Math.max(total, 1e-6);
+}
+
+function ridgedFbm3(x, y, z, seed, octaves = 4) {
+  let value = 0, amp = 0.55, freq = 1, total = 0;
+  for (let i = 0; i < octaves; i++) {
+    const n = 1 - Math.abs(noise3(x * freq, y * freq, z * freq, seed + i * 809) * 2 - 1);
+    value += n * n * amp;
+    total += amp;
+    amp *= 0.48;
+    freq *= 2.11;
+  }
+  return value / Math.max(total, 1e-6);
+}
+
+function sdRoundBox(p, b, r) {
+  const qx = Math.abs(p.x) - b.x + r;
+  const qy = Math.abs(p.y) - b.y + r;
+  const qz = Math.abs(p.z) - b.z + r;
+  const ox = Math.max(qx, 0), oy = Math.max(qy, 0), oz = Math.max(qz, 0);
+  return Math.hypot(ox, oy, oz) + Math.min(Math.max(qx, Math.max(qy, qz)), 0) - r;
+}
+
+function sdEllipsoid(p, center, radii) {
+  const q = vec3((p.x - center.x) / radii.x, (p.y - center.y) / radii.y, (p.z - center.z) / radii.z);
+  return (len3(q) - 1) * Math.min(radii.x, radii.y, radii.z);
+}
+
+function sdCapsule(p, a, b, r) {
+  const pa = sub3(p, a), ba = sub3(b, a);
+  const h = clamp(dot3(pa, ba) / Math.max(dot3(ba, ba), 1e-8), 0, 1);
+  return len3(sub3(pa, mul3(ba, h))) - r;
+}
+
+
+
+function sdOrientedRoundBox(p, center, halfSize, direction, radius = 0.02) {
+  const u = norm3(vec3(direction.x, direction.y, 0));
+  const v = vec3(-u.y, u.x, 0);
+  const d = sub3(p, center);
+  const q = vec3(dot3(d, u), dot3(d, v), d.z);
+  return sdRoundBox(q, halfSize, Math.min(radius, Math.min(halfSize.x, halfSize.y, halfSize.z) * 0.72));
+}
+
+function specimenDimensions(profile, controls) {
+  if ((controls?.benchmarkSlab ?? 0) < 0.5) return normalizedDimensions(profile);
+  const richness = clamp((controls.shapeVariation ?? 0.9) - 0.9, -0.6, 0.8);
+  if (profile.family === 'STONE') return vec3(3.12 + richness * 0.10, 3.04 - richness * 0.03, 1.12 + richness * 0.05);
+  if (profile.family === 'ADOBE') return vec3(3.18 + richness * 0.09, 3.00 - richness * 0.02, 1.08 + richness * 0.05);
+  return vec3(3.16 + richness * 0.08, 3.02 - richness * 0.03, 1.10 + richness * 0.05);
+}
+
+const FORMATION_EVENT_TYPES = Object.freeze({
+  macroPlateLoss: 1,
+  shearBand: 2,
+  beddingLayer: 3,
+  delaminationPlate: 4,
+  undercutShelf: 5,
+  cavityCluster: 6,
+  fractureBranch: 7,
+  edgeSpall: 8,
+  fiberBundle: 9,
+  fiberPulloutChannel: 10,
+  compactionFlake: 11,
+  mineralSeam: 12
+});
+
+function frontDirection(angle) {
+  return norm3(vec3(Math.cos(angle), Math.sin(angle), 0));
+}
+
+function frontEventPoint(b, rng, xRange = 0.70, yRange = 0.70, zOffset = 0) {
+  return vec3(rng.range(-xRange, xRange) * b.x, rng.range(-yRange, yRange) * b.y, b.z + zOffset);
+}
+
+function buildFormationEvents(profile, seedDNA, controls, dims) {
+  if ((controls.benchmarkSlab ?? 0) < 0.5) return [];
+  const seeds = normalizeSeedDNA(seedDNA, profile);
+  const rng = new RNG(seeds.damage ^ seeds.detail ^ 0x6a09e667);
+  const inclusionRng = new RNG(seeds.inclusion ^ 0xbb67ae85);
+  const b = mul3(dims, 0.5);
+  const minD = Math.min(dims.x, dims.y, dims.z);
+  const events = [];
+  const add = (type, center, size, angle, strength = 1, phase = rng.next()) => {
+    events.push({
+      type,
+      typeCode: FORMATION_EVENT_TYPES[type],
+      center,
+      size,
+      direction: frontDirection(angle),
+      strength,
+      phase
+    });
+  };
+
+  const commonAngle = rng.range(-0.82, 0.82);
+  add('macroPlateLoss', frontEventPoint(b, rng, 0.58, 0.62, -0.035 * minD), vec3(0.72 * minD, 0.40 * minD, 0.24 * minD), commonAngle, 1.0);
+  add('macroPlateLoss', frontEventPoint(b, rng, 0.72, 0.72, -0.025 * minD), vec3(0.48 * minD, 0.29 * minD, 0.20 * minD), commonAngle + rng.range(-0.55, 0.55), 0.78);
+
+  const cavityCount = profile.family === 'FIRED_CLAY' ? 4 : 3;
+  for (let i = 0; i < cavityCount; i++) {
+    const large = i === 0 || (profile.family === 'FIRED_CLAY' && i === 1);
+    add(
+      'cavityCluster',
+      frontEventPoint(b, rng, 0.72, 0.72, -rng.range(0.03, 0.10) * minD),
+      vec3(
+        rng.range(large ? 0.17 : 0.09, large ? 0.30 : 0.18) * minD,
+        rng.range(large ? 0.13 : 0.07, large ? 0.25 : 0.16) * minD,
+        rng.range(0.20, large ? 0.42 : 0.31) * minD
+      ),
+      rng.range(-Math.PI, Math.PI),
+      large ? 1.18 : 0.88,
+      rng.next()
+    );
+  }
+
+  for (let i = 0; i < 2; i++) {
+    add(
+      'fractureBranch',
+      frontEventPoint(b, rng, 0.62, 0.60, -0.018 * minD),
+      vec3(rng.range(0.46, 0.82) * minD, rng.range(0.018, 0.036) * minD, rng.range(0.045, 0.085) * minD),
+      rng.range(-1.15, 1.15),
+      rng.range(0.72, 1.10),
+      rng.next()
+    );
+  }
+
+  const edgeAnchors = [
+    vec3(-b.x * 0.96, b.y * rng.range(-0.72, 0.78), b.z * 0.94),
+    vec3(b.x * 0.96, b.y * rng.range(-0.76, 0.74), b.z * 0.94),
+    vec3(b.x * rng.range(-0.74, 0.74), -b.y * 0.97, b.z * 0.92)
+  ];
+  for (const center of edgeAnchors) {
+    add('edgeSpall', center, vec3(rng.range(0.18, 0.34) * minD, rng.range(0.14, 0.29) * minD, rng.range(0.20, 0.36) * minD), rng.range(-Math.PI, Math.PI), rng.range(0.72, 1.12));
+  }
+
+  if (profile.family === 'STONE') {
+    const shearAngle = rng.range(-0.66, -0.36);
+    add('shearBand', vec3(0, rng.range(-0.04, 0.16) * b.y, b.z - 0.06 * minD), vec3(1.22 * minD, 0.095 * minD, 0.16 * minD), shearAngle, 1.25);
+    for (let i = 0; i < 4; i++) {
+      const y = lerp(-0.56, 0.56, i / 3) * b.y + rng.range(-0.10, 0.10) * minD;
+      add('beddingLayer', vec3(rng.range(-0.12, 0.12) * b.x, y, b.z + rng.range(0.010, 0.045) * minD), vec3(rng.range(0.78, 1.22) * minD, rng.range(0.055, 0.12) * minD, rng.range(0.020, 0.052) * minD), shearAngle + rng.range(-0.18, 0.18), rng.range(0.62, 1.05));
+    }
+    for (let i = 0; i < 2; i++) {
+      add('undercutShelf', frontEventPoint(b, rng, 0.48, 0.52, -0.045 * minD), vec3(rng.range(0.48, 0.82) * minD, rng.range(0.045, 0.085) * minD, rng.range(0.10, 0.18) * minD), shearAngle + rng.range(-0.22, 0.22), 1.10);
+      add('mineralSeam', frontEventPoint(b, rng, 0.58, 0.58, 0.018 * minD), vec3(rng.range(0.52, 0.92) * minD, rng.range(0.012, 0.025) * minD, rng.range(0.012, 0.025) * minD), shearAngle + rng.range(-0.30, 0.30), 0.76);
+    }
+  } else if (profile.family === 'ADOBE') {
+    const flakeAngle = rng.range(-0.50, 0.50);
+    for (let i = 0; i < 4; i++) {
+      add('compactionFlake', frontEventPoint(b, rng, 0.62, 0.68, rng.range(0.010, 0.045) * minD), vec3(rng.range(0.38, 0.78) * minD, rng.range(0.19, 0.38) * minD, rng.range(0.020, 0.052) * minD), flakeAngle + rng.range(-0.72, 0.72), rng.range(0.72, 1.12));
+    }
+    for (let i = 0; i < 3; i++) {
+      add('fiberBundle', frontEventPoint(b, inclusionRng, 0.66, 0.72, rng.range(0.025, 0.060) * minD), vec3(inclusionRng.range(0.44, 0.86) * minD, inclusionRng.range(0.010, 0.021) * minD, inclusionRng.range(0.010, 0.022) * minD), inclusionRng.range(-1.25, 1.25), inclusionRng.range(0.80, 1.20), inclusionRng.next());
+    }
+    for (let i = 0; i < 2; i++) {
+      add('fiberPulloutChannel', frontEventPoint(b, inclusionRng, 0.62, 0.68, -0.022 * minD), vec3(inclusionRng.range(0.30, 0.66) * minD, inclusionRng.range(0.012, 0.026) * minD, inclusionRng.range(0.030, 0.070) * minD), inclusionRng.range(-1.35, 1.35), 0.92, inclusionRng.next());
+    }
+    add('undercutShelf', frontEventPoint(b, rng, 0.44, 0.52, -0.040 * minD), vec3(0.58 * minD, 0.070 * minD, 0.13 * minD), flakeAngle, 0.90);
+  } else {
+    const plateAngle = rng.range(-0.58, 0.58);
+    add('shearBand', frontEventPoint(b, rng, 0.32, 0.36, -0.040 * minD), vec3(0.92 * minD, 0.070 * minD, 0.13 * minD), plateAngle + rng.range(-0.38, 0.38), 0.75);
+    for (let i = 0; i < 3; i++) {
+      add('delaminationPlate', frontEventPoint(b, rng, 0.64, 0.66, rng.range(0.018, 0.055) * minD), vec3(rng.range(0.36, 0.70) * minD, rng.range(0.18, 0.34) * minD, rng.range(0.018, 0.045) * minD), plateAngle + rng.range(-0.78, 0.78), rng.range(0.72, 1.10));
+    }
+    for (let i = 0; i < 2; i++) {
+      add('undercutShelf', frontEventPoint(b, rng, 0.52, 0.56, -0.045 * minD), vec3(rng.range(0.40, 0.72) * minD, rng.range(0.045, 0.080) * minD, rng.range(0.10, 0.17) * minD), plateAngle + rng.range(-0.48, 0.48), 1.02);
+    }
+    add('mineralSeam', frontEventPoint(b, rng, 0.60, 0.60, 0.018 * minD), vec3(0.64 * minD, 0.016 * minD, 0.018 * minD), plateAngle + rng.range(-0.50, 0.50), 0.70);
+  }
+
+  const limits = profile.family === 'STONE'
+    ? { macroPlateLoss: 1, cavityCluster: 2, fractureBranch: 1, edgeSpall: 1, shearBand: 1, beddingLayer: 4, undercutShelf: 2, mineralSeam: 2 }
+    : profile.family === 'ADOBE'
+      ? { macroPlateLoss: 1, cavityCluster: 1, fractureBranch: 1, edgeSpall: 1, compactionFlake: 4, fiberBundle: 3, fiberPulloutChannel: 2, undercutShelf: 1 }
+      : { macroPlateLoss: 2, cavityCluster: 3, fractureBranch: 2, edgeSpall: 2, shearBand: 1, delaminationPlate: 2, undercutShelf: 1, mineralSeam: 1 };
+  const used = {};
+  return events.filter((event) => {
+    const limit = limits[event.type] || 0;
+    const count = used[event.type] || 0;
+    used[event.type] = count + 1;
+    return count < limit;
+  }).slice(0, 14);
+}
+
+function orientedEventEllipsoid(p, center, radii, direction) {
+  const u = norm3(vec3(direction.x, direction.y, 0));
+  const v = vec3(-u.y, u.x, 0);
+  const delta = sub3(p, center);
+  const q = vec3(dot3(delta, u), dot3(delta, v), delta.z);
+  return sdEllipsoid(q, vec3(0, 0, 0), radii);
+}
+
+function applyFormationEventSDF(distance, p, event, seeds, minD) {
+  const type = event.type;
+  const dir = norm3(vec3(event.direction.x, event.direction.y, 0));
+  const side = vec3(-dir.y, dir.x, 0);
+  let d = distance;
+
+  if (type === 'macroPlateLoss') {
+    const center = add3(event.center, vec3(0, 0, event.size.z * 0.43 + 0.020 * minD));
+    const radii = vec3(event.size.x * 0.31, event.size.y * 0.43, event.size.z * 0.22);
+    const cut = orientedEventEllipsoid(p, center, radii, dir);
+    return Math.max(d, -cut);
+  }
+
+  if (type === 'edgeSpall') {
+    const center = add3(event.center, vec3(0, 0, event.size.z * 0.34 + 0.012 * minD));
+    const radii = vec3(event.size.x * 0.39, event.size.y * 0.50, event.size.z * 0.27);
+    return Math.max(d, -orientedEventEllipsoid(p, center, radii, dir));
+  }
+
+  if (type === 'cavityCluster') {
+    const center = add3(event.center, vec3(0, 0, event.size.z * 0.45 + 0.018 * minD));
+    const radii = vec3(event.size.x * 0.28, event.size.y * 0.38, event.size.z * 0.22);
+    const along = mul3(dir, event.size.x * 0.19);
+    const across = mul3(side, Math.sin(event.phase * 6.2831853) * event.size.y * 0.16);
+    d = Math.max(d, -orientedEventEllipsoid(p, add3(center, across), radii, dir));
+    d = Math.max(
+      d,
+      -orientedEventEllipsoid(
+        p,
+        add3(center, add3(along, mul3(across, -0.45))),
+        vec3(radii.x * 0.52, radii.y * 0.62, radii.z * 0.58),
+        dir
+      )
+    );
+    return d;
+  }
+
+  if (type === 'fractureBranch' || type === 'shearBand' || type === 'fiberPulloutChannel') {
+    const center = add3(event.center, vec3(0, 0, event.size.z * 0.66 + 0.008 * minD));
+    const halfLength = event.size.x * (type === 'shearBand' ? 0.64 : 0.58);
+    const radius = Math.max(
+      0.0045 * minD,
+      event.size.y * (type === 'shearBand' ? 0.30 : type === 'fractureBranch' ? 0.34 : 0.42)
+    );
+    const a = add3(center, mul3(dir, -halfLength));
+    const b = add3(center, mul3(dir, halfLength));
+    d = Math.max(d, -sdCapsule(p, a, b, radius));
+    if (type === 'fractureBranch') {
+      const branchDir = norm3(add3(mul3(dir, 0.72), mul3(side, event.phase > 0.5 ? 0.70 : -0.70)));
+      const branchA = add3(center, mul3(dir, halfLength * 0.08));
+      const branchB = add3(branchA, mul3(branchDir, halfLength * 0.34));
+      d = Math.max(d, -sdCapsule(p, branchA, branchB, radius * 0.52));
+    }
+    return d;
+  }
+
+  if (type === 'undercutShelf') {
+    const center = add3(event.center, vec3(0, 0, event.size.z * 0.48 + 0.012 * minD));
+    const radii = vec3(event.size.x * 0.50, event.size.y * 0.42, event.size.z * 0.30);
+    return Math.max(d, -orientedEventEllipsoid(p, center, radii, dir));
+  }
+
+  return d;
+}
+
+function normalizedDimensions(profile) {
+  const ratio = profile.runtimeDNA.shapeRatio;
+  const longest = Math.max(...ratio);
+  const scale = 3.4 / longest;
+  return vec3(ratio[0] * scale, ratio[1] * scale, ratio[2] * scale);
+}
+
+function seedValue(value, fallback) {
+  const n = Number(value);
+  return Number.isFinite(n) ? (Math.round(n) >>> 0) || fallback : fallback;
+}
+
+function normalizeSeedDNA(seedDNA, profile) {
+  const baseFallback = seedValue(profile?.runtimeDNA?.seedBase, 1001);
+  const source = typeof seedDNA === 'number' ? { master: seedDNA } : (seedDNA || {});
+  const master = seedValue(source.master, baseFallback);
+  const derive = (key, salt) => seedValue(source[key], (master + salt) >>> 0);
+  return {
+    master,
+    shape: derive('shape', 101),
+    damage: derive('damage', 211),
+    pore: derive('pore', 307),
+    color: derive('color', 401),
+    water: derive('water', 503),
+    weather: derive('weather', 601),
+    inclusion: derive('inclusion', 701),
+    detail: derive('detail', 809)
+  };
+}
+
+function normalizeControls(controls = {}) {
+  const number = (key, fallback, min, max) => clamp(Number.isFinite(Number(controls[key])) ? Number(controls[key]) : fallback, min, max);
+  return {
+    damage: number('damage', 0.72, 0, 1.6),
+    poreDepth: number('poreDepth', 0.9, 0, 1.8),
+    weathering: number('weathering', 0.72, 0, 1.6),
+    shapeVariation: number('shapeVariation', 0.9, 0.2, 1.7),
+    inclusion: number('inclusion', 0.8, 0, 1.6),
+    colorRichness: number('colorRichness', 1.15, 0.35, 1.9),
+    waterStain: number('waterStain', 0.72, 0, 1.6),
+    rockDetail: number('rockDetail', 0.68, 0, 1.6),
+    strata: number('strata', 0.28, 0, 1.6),
+    microErosion: number('microErosion', 0.64, 0, 1.6),
+    colorClarity: number('colorClarity', 0.92, 0, 1.6),
+    colorGamut: number('colorGamut', 1.08, 0, 1.6),
+    maskSharpness: number('maskSharpness', 0.92, 0, 1.6),
+    poreDensity: number('poreDensity', 1.18, 0.20, 2.20),
+    poreVariety: number('poreVariety', 1.08, 0.20, 1.80),
+    benchmarkSlab: number('benchmarkSlab', 1.0, 0, 1)
+  };
+}
+
+const FACE_IDS = ['px', 'nx', 'py', 'ny', 'pz', 'nz'];
+
+function faceNormal(face) {
+  if (face === 'px') return vec3(1, 0, 0);
+  if (face === 'nx') return vec3(-1, 0, 0);
+  if (face === 'py') return vec3(0, 1, 0);
+  if (face === 'ny') return vec3(0, -1, 0);
+  if (face === 'pz') return vec3(0, 0, 1);
+  return vec3(0, 0, -1);
+}
+
+function facePoint(face, b, rng, inset = 0) {
+  if (face === 'px' || face === 'nx') {
+    return vec3((face === 'px' ? 1 : -1) * (b.x + inset), rng.range(-0.84, 0.84) * b.y, rng.range(-0.84, 0.84) * b.z);
+  }
+  if (face === 'py' || face === 'ny') {
+    return vec3(rng.range(-0.86, 0.86) * b.x, (face === 'py' ? 1 : -1) * (b.y + inset), rng.range(-0.84, 0.84) * b.z);
+  }
+  return vec3(rng.range(-0.86, 0.86) * b.x, rng.range(-0.82, 0.82) * b.y, (face === 'pz' ? 1 : -1) * (b.z + inset));
+}
+
+function faceRadii(face, radius, depth, rng) {
+  const a = radius * rng.range(0.72, 1.35);
+  const c = radius * rng.range(0.68, 1.25);
+  if (face === 'px' || face === 'nx') return vec3(depth, a, c);
+  if (face === 'py' || face === 'ny') return vec3(a, depth, c);
+  return vec3(a, c, depth);
+}
+
+function faceTangentOffset(face, rng, spread) {
+  if (face === 'px' || face === 'nx') return vec3(0, rng.range(-spread, spread), rng.range(-spread, spread));
+  if (face === 'py' || face === 'ny') return vec3(rng.range(-spread, spread), 0, rng.range(-spread, spread));
+  return vec3(rng.range(-spread, spread), rng.range(-spread, spread), 0);
+}
+
+function buildDamage(profile, seedDNA, controlsInput, level, dims) {
+  const dna = profile.runtimeDNA;
+  const nd = profile.noiseDNA || {};
+  const controls = normalizeControls(controlsInput);
+  const seeds = normalizeSeedDNA(seedDNA, profile);
+  const damageRng = new RNG(seeds.damage ^ 0x9e3779b9);
+  const poreRng = new RNG(seeds.pore ^ 0x85ebca6b);
+  const weatherRng = new RNG(seeds.weather ^ 0xc2b2ae35);
+  const inclusionRng = new RNG(seeds.inclusion ^ 0x27d4eb2d);
+  const b = mul3(dims, 0.5);
+  const minD = Math.min(dims.x, dims.y, dims.z);
+  const chips = [], pits = [], poreClusters = [], deepPores = [], poreRimChips = [], collapsedPores = [],
+    cracks = [], erosionBites = [], inclusionVoids = [];
+  const compositeDamage = clamp(level * 0.78 + controls.damage * 0.62, 0, 1.75);
+  const poreDensity = controls.poreDensity;
+  const poreVariety = controls.poreVariety;
+  const densityScale = 0.72 + poreDensity * 0.58;
+  const varietyScale = 0.70 + poreVariety * 0.42;
+  const chipCount = Math.max(2, Math.round(1.4 + dna.edgeFragility * 3.2 + compositeDamage * 5.1));
+  const pitCount = Math.max(4, Math.round((2.0 + dna.pitDensity * 3.7 + compositeDamage * 4.3) * densityScale));
+  const poreCount = Math.max(8, Math.round(
+    (nd.geometryPoreCount ?? 5) * (0.66 + level * 0.50 + controls.poreDepth * 0.39) * densityScale
+  ));
+  const deepPoreCount = Math.max(3, Math.round(
+    (nd.geometryDeepPoreCount ?? 2.5) * (0.50 + controls.poreDepth * 0.74 + level * 0.29) *
+    (0.78 + poreDensity * 0.44)
+  ));
+  const crackCount = compositeDamage < 0.28 ? 0 : Math.max(1, Math.round(dna.crackAffinity * 1.4 + compositeDamage * 1.45));
+  const erosionCount = Math.max(0, Math.round(controls.weathering * (0.9 + dna.edgeFragility * 1.7) + level * 1.2));
+  const inclusionVoidCount = profile.family === 'ADOBE'
+    ? Math.max(4, Math.round((2.5 + controls.inclusion * 6.0 + level * 2.5) * (0.82 + poreDensity * 0.22)))
+    : 0;
+  const anchorCount = Math.max(3, Math.round(2.6 + poreDensity * 1.8));
+  const poreAnchors = [];
+  for (let i = 0; i < anchorCount; i++) {
+    const face = poreRng.pick(FACE_IDS);
+    poreAnchors.push({
+      face,
+      center: facePoint(face, b, poreRng, 0),
+      spread: poreRng.range(0.10, 0.28) * minD * varietyScale
+    });
+  }
+  const signs = [-1, 1];
+
+  for (let i = 0; i < chipCount; i++) {
+    const sx = damageRng.pick(signs), sy = damageRng.pick(signs), sz = damageRng.pick(signs);
+    const mode = damageRng.next();
+    let center;
+    if (mode < 0.58) {
+      center = vec3(
+        sx * (b.x + damageRng.range(-0.05, 0.09) * minD),
+        sy * (b.y + damageRng.range(-0.04, 0.09) * minD),
+        sz * (b.z + damageRng.range(-0.05, 0.09) * minD)
+      );
+    } else if (mode < 0.82) {
+      center = vec3(sx * (b.x + 0.025 * minD), damageRng.range(-0.72, 0.72) * b.y, sz * (b.z + 0.025 * minD));
+    } else {
+      center = vec3(damageRng.range(-0.78, 0.78) * b.x, sy * (b.y + 0.025 * minD), sz * (b.z + 0.025 * minD));
+    }
+    const r = damageRng.range(0.105, 0.238) * minD * (0.58 + compositeDamage * 0.68);
+    chips.push({
+      center,
+      radii: vec3(r * damageRng.range(0.7, 1.38), r * damageRng.range(0.62, 1.14), r * damageRng.range(0.72, 1.34)),
+      irregular: damageRng.range(0.08, 0.30)
+    });
+  }
+
+  for (let i = 0; i < pitCount; i++) {
+    const clustered = poreRng.next() < 0.62;
+    const anchor = clustered ? poreRng.pick(poreAnchors) : null;
+    const face = anchor ? anchor.face : poreRng.pick(FACE_IDS);
+    const scaleClass = poreRng.next();
+    const baseRadius = scaleClass < 0.56
+      ? poreRng.range(0.030, 0.070)
+      : (scaleClass < 0.90 ? poreRng.range(0.070, 0.145) : poreRng.range(0.145, 0.225));
+    const radius = baseRadius * minD * (0.64 + compositeDamage * 0.34) * varietyScale;
+    const depthRatio = scaleClass < 0.56
+      ? poreRng.range(0.32, 0.72)
+      : (scaleClass < 0.90 ? poreRng.range(0.48, 1.02) : poreRng.range(0.64, 1.20));
+    const depth = radius * depthRatio * (0.58 + controls.poreDepth * 0.46);
+    const center = anchor
+      ? add3(anchor.center, faceTangentOffset(face, poreRng, anchor.spread))
+      : facePoint(face, b, poreRng, depth * poreRng.range(0.02, 0.34));
+    pits.push({
+      face,
+      center,
+      radii: faceRadii(face, radius, depth, poreRng),
+      irregular: poreRng.range(0.06, 0.28) * varietyScale,
+      scaleClass
+    });
+    if (scaleClass > 0.80 && poreRng.next() < 0.36 + poreVariety * 0.20) {
+      const collapseRadius = radius * poreRng.range(0.72, 1.18);
+      collapsedPores.push({
+        face,
+        center: add3(center, faceTangentOffset(face, poreRng, radius * 0.55)),
+        radii: faceRadii(
+          face,
+          collapseRadius * poreRng.range(1.10, 1.65),
+          depth * poreRng.range(0.42, 0.76),
+          poreRng
+        ),
+        irregular: poreRng.range(0.12, 0.34)
+      });
+    }
+  }
+
+  for (let i = 0; i < poreCount; i++) {
+    const clustered = poreRng.next() < 0.70;
+    const anchor = clustered ? poreRng.pick(poreAnchors) : null;
+    const face = anchor ? anchor.face : poreRng.pick(FACE_IDS);
+    const scaleClass = poreRng.next();
+    const baseRadius = scaleClass < 0.74
+      ? poreRng.range(0.012, 0.036)
+      : poreRng.range(0.036, 0.078);
+    const radius = baseRadius * minD *
+      (0.66 + controls.poreDepth * 0.28 + level * 0.12) * varietyScale;
+    const depth = radius * poreRng.range(0.34, scaleClass < 0.74 ? 0.78 : 1.08) *
+      (0.58 + controls.poreDepth * 0.46);
+    const center = anchor
+      ? add3(anchor.center, faceTangentOffset(face, poreRng, anchor.spread * 0.82))
+      : facePoint(face, b, poreRng, depth * poreRng.range(-0.02, 0.26));
+    poreClusters.push({
+      face,
+      center,
+      radii: faceRadii(face, radius, depth, poreRng),
+      irregular: poreRng.range(0.035, 0.18) * varietyScale
+    });
+  }
+
+  for (let i = 0; i < deepPoreCount; i++) {
+    const face = poreRng.pick(['px', 'nx', 'py', 'pz', 'nz']);
+    const normal = faceNormal(face);
+    const scaleClass = poreRng.next();
+    const baseRadius = scaleClass < 0.58
+      ? poreRng.range(0.045, 0.090)
+      : (scaleClass < 0.90 ? poreRng.range(0.090, 0.155) : poreRng.range(0.155, 0.235));
+    const radius = baseRadius * minD * (0.74 + controls.poreDepth * 0.40) * varietyScale;
+    const depth = poreRng.range(0.18, scaleClass > 0.88 ? 0.58 : 0.45) * minD *
+      (0.54 + controls.poreDepth * 0.76);
+    const matchingAnchors = poreAnchors.filter((item) => item.face === face);
+    const anchor = matchingAnchors.length && poreRng.next() < 0.52 ? poreRng.pick(matchingAnchors) : null;
+    const surface = anchor
+      ? add3(anchor.center, faceTangentOffset(face, poreRng, anchor.spread * 0.62))
+      : facePoint(face, b, poreRng, radius * 0.06);
+    const drift = vec3(
+      poreRng.range(-0.060, 0.060) * minD,
+      poreRng.range(-0.060, 0.060) * minD,
+      poreRng.range(-0.060, 0.060) * minD
+    );
+    const inside = add3(add3(surface, mul3(normal, -depth)), drift);
+    const bore = {
+      face,
+      a: add3(surface, mul3(normal, radius * 0.46)),
+      b: inside,
+      radius,
+      mouthCenter: add3(surface, mul3(normal, -radius * 0.08)),
+      mouthRadii: faceRadii(
+        face,
+        radius * poreRng.range(1.10, 1.62),
+        radius * poreRng.range(0.72, 1.06),
+        poreRng
+      ),
+      irregular: poreRng.range(0.12, 0.34) * varietyScale,
+      scaleClass
+    };
+    deepPores.push(bore);
+
+    const rimCount = Math.max(2, Math.round(poreRng.range(1.8, 3.8) + poreVariety * 0.95));
+    for (let j = 0; j < rimCount; j++) {
+      const rimRadius = radius * poreRng.range(0.30, 0.68);
+      const tangent = faceTangentOffset(face, poreRng, radius * poreRng.range(0.72, 1.36));
+      poreRimChips.push({
+        face,
+        center: add3(add3(bore.mouthCenter, tangent), mul3(normal, radius * poreRng.range(-0.10, 0.10))),
+        radii: faceRadii(face, rimRadius, rimRadius * poreRng.range(0.38, 0.72), poreRng),
+        irregular: poreRng.range(0.12, 0.36)
+      });
+    }
+  }
+
+  for (let i = 0; i < crackCount; i++) {
+    const face = damageRng.pick(['px', 'nx', 'py', 'pz', 'nz']);
+    const width = damageRng.range(0.012, 0.031) * minD * (0.58 + compositeDamage * 0.65);
+    let a, c;
+    if (face === 'px' || face === 'nx') {
+      const x = (face === 'px' ? 1 : -1) * (b.x + width * 0.12);
+      const y0 = damageRng.range(-0.58, 0.58) * b.y, z0 = damageRng.range(-0.68, 0.68) * b.z;
+      a = vec3(x, y0, z0);
+      c = vec3(x, clamp(y0 + damageRng.range(-0.78, 0.78) * b.y, -b.y, b.y), clamp(z0 + damageRng.range(-0.86, 0.86) * b.z, -b.z, b.z));
+    } else if (face === 'py') {
+      const y = b.y + width * 0.12;
+      const x0 = damageRng.range(-0.7, 0.7) * b.x, z0 = damageRng.range(-0.68, 0.68) * b.z;
+      a = vec3(x0, y, z0);
+      c = vec3(clamp(x0 + damageRng.range(-0.8, 0.8) * b.x, -b.x, b.x), y, clamp(z0 + damageRng.range(-0.78, 0.78) * b.z, -b.z, b.z));
+    } else {
+      const z = (face === 'pz' ? 1 : -1) * (b.z + width * 0.12);
+      const x0 = damageRng.range(-0.7, 0.7) * b.x, y0 = damageRng.range(-0.58, 0.58) * b.y;
+      a = vec3(x0, y0, z);
+      c = vec3(clamp(x0 + damageRng.range(-0.86, 0.86) * b.x, -b.x, b.x), clamp(y0 + damageRng.range(-0.78, 0.78) * b.y, -b.y, b.y), z);
+    }
+    cracks.push({ a, b: c, radius: width });
+    if (damageRng.next() < 0.68) {
+      const mid = mix3(a, c, damageRng.range(0.3, 0.74));
+      const branch = add3(mid, vec3(damageRng.range(-0.18, 0.18) * dims.x, damageRng.range(-0.22, 0.22) * dims.y, damageRng.range(-0.18, 0.18) * dims.z));
+      cracks.push({ a: mid, b: branch, radius: width * damageRng.range(0.46, 0.76) });
+    }
+  }
+
+  for (let i = 0; i < erosionCount; i++) {
+    const face = weatherRng.pick(['py', 'py', 'px', 'nx', 'pz', 'nz']);
+    const radius = weatherRng.range(0.11, 0.25) * minD * (0.55 + controls.weathering * 0.48);
+    const depth = radius * weatherRng.range(0.22, 0.52);
+    erosionBites.push({
+      face,
+      center: facePoint(face, b, weatherRng, depth * weatherRng.range(0.1, 0.48)),
+      radii: faceRadii(face, radius, depth, weatherRng),
+      irregular: weatherRng.range(0.08, 0.22)
+    });
+  }
+
+  for (let i = 0; i < inclusionVoidCount; i++) {
+    const face = inclusionRng.pick(['py', 'py', 'px', 'nx', 'pz', 'nz']);
+    const normal = faceNormal(face);
+    const surface = facePoint(face, b, inclusionRng, 0);
+    const angle = inclusionRng.range(0, Math.PI * 2);
+    let tangent;
+    if (face === 'px' || face === 'nx') tangent = vec3(0, Math.cos(angle), Math.sin(angle));
+    else if (face === 'py' || face === 'ny') tangent = vec3(Math.cos(angle), 0, Math.sin(angle));
+    else tangent = vec3(Math.cos(angle), Math.sin(angle), 0);
+    const halfLength = inclusionRng.range(0.055, 0.17) * minD * (0.72 + controls.inclusion * 0.34);
+    const radius = inclusionRng.range(0.008, 0.019) * minD * (0.72 + controls.inclusion * 0.28);
+    const depth = inclusionRng.range(0.12, 0.46) * radius;
+    const center = add3(surface, mul3(normal, -depth));
+    inclusionVoids.push({
+      face,
+      a: add3(center, mul3(tangent, -halfLength)),
+      b: add3(center, mul3(tangent, halfLength)),
+      radius,
+      irregular: inclusionRng.range(0.08, 0.24)
+    });
+  }
+
+  const formationEvents = buildFormationEvents(profile, seeds, controls, dims);
+  return { chips, pits, poreClusters, deepPores, poreRimChips, collapsedPores, cracks, erosionBites, inclusionVoids, formationEvents };
+}
+
+function createSDF(profile, seedDNA, controlsInput, level) {
+  const seeds = normalizeSeedDNA(seedDNA, profile);
+  const controls = normalizeControls(controlsInput);
+  const dims = specimenDimensions(profile, controls);
+  const b = mul3(dims, 0.5);
+  const dna = profile.runtimeDNA;
+  const nd = profile.noiseDNA || {};
+  const minD = Math.min(dims.x, dims.y, dims.z);
+  const radius = dna.edgeRadius * minD * (nd.edgeRoundnessScale ?? 0.68);
+  const damage = buildDamage(profile, seeds, controls, level, dims);
+  const macroAmp = dna.macroWarp * minD * (nd.geometryWarp ?? 0.9) * controls.shapeVariation;
+  const reliefAmp = dna.surfaceRelief * minD * (nd.geometryRelief ?? 0.72) * (0.65 + controls.shapeVariation * 0.45);
+  const phase = new RNG(seeds.shape).range(-100, 100);
+  const gaeaDNA = profile.gaeaDNA || {};
+  const gaeaNoiseApi = GAEA ? { noise3, fbm3, ridgedFbm3 } : null;
+  const structureRng = new RNG(seeds.damage ^ seeds.detail ^ 0x510e527f);
+  const structureAngle = profile.family === 'STONE'
+    ? structureRng.range(-0.72, -0.28)
+    : structureRng.range(-0.48, 0.48);
+  const structureCos = Math.cos(structureAngle);
+  const structureSin = Math.sin(structureAngle);
+
+  const sdf = (p) => {
+    const warpScale = nd.domainWarpScale ?? 0.78;
+    const wx = fbm3(p.y * warpScale + phase, p.z * warpScale, p.x * 0.23, seeds.shape + 17, 3) - 0.5;
+    const wy = fbm3(p.x * warpScale, p.z * warpScale + phase, p.y * 0.23, seeds.shape + 31, 3) - 0.5;
+    const wz = fbm3(p.x * warpScale + phase, p.y * warpScale, p.z * 0.23, seeds.shape + 47, 3) - 0.5;
+    const q = vec3(p.x + wx * macroAmp * 0.48, p.y + wy * macroAmp, p.z + wz * macroAmp * 0.56);
+    let d = sdRoundBox(q, b, radius);
+
+    const broad = fbm3(p.x * 1.7, p.y * 1.45, p.z * 1.7, seeds.detail + 71, 4) - 0.5;
+    const ridge = ridgedFbm3(p.x * 4.8, p.y * 4.1, p.z * 4.8, seeds.detail + 103, 3) - 0.5;
+    const crust = fbm3(p.x * 10.8, p.y * 8.6, p.z * 10.8, seeds.weather + 109, 3) - 0.5;
+    d += (broad * 0.80 + ridge * 0.16 + crust * 0.035 * controls.weathering) * reliefAmp;
+    if (GAEA) {
+      const familyScale = profile.family === 'STONE' ? 1.18 : profile.family === 'ADOBE' ? 0.92 : 1.0;
+      d += GAEA.geometryDisplacement(p, seeds, controls, gaeaDNA, gaeaNoiseApi) * minD * familyScale;
+    }
+
+    const frontT = clamp((p.z / Math.max(b.z, 0.001) - 0.12) / 0.88, 0, 1);
+    const frontGate = smooth(frontT);
+    const formationBroad = fbm3(p.x * 0.92, p.y * 0.84, p.z * 0.34, seeds.damage + 907, 3) - 0.5;
+    const formationMeso = ridgedFbm3(p.x * 2.25, p.y * 1.92, p.z * 0.48, seeds.detail + 991, 3) - 0.5;
+    let formationRelief = 0;
+    if (profile.family === 'STONE') {
+      const su = p.x * structureCos + p.y * structureSin;
+      const sv = -p.x * structureSin + p.y * structureCos;
+      const strata = ridgedFbm3(su * 0.86, sv * 3.65, p.z * 0.42, seeds.damage + 1031, 3) - 0.5;
+      const fault = fbm3(su * 1.35, sv * 0.72, p.z * 0.30, seeds.damage + 1063, 3) - 0.5;
+      formationRelief = (formationBroad * 0.070 + strata * 0.058 + fault * 0.030 + formationMeso * 0.014) * minD;
+    } else if (profile.family === 'ADOBE') {
+      const clump = fbm3(p.x * 1.10, p.y * 1.02, p.z * 0.36, seeds.inclusion + 1091, 3) - 0.5;
+      const flake = ridgedFbm3(p.x * 2.35, p.y * 2.05, p.z * 0.45, seeds.weather + 1123, 3) - 0.5;
+      formationRelief = (formationBroad * 0.052 + clump * 0.064 + flake * 0.028) * minD;
+    } else {
+      const kilnPlate = fbm3(p.x * 1.18, p.y * 1.05, p.z * 0.38, seeds.damage + 1151, 3) - 0.5;
+      const crustPlate = ridgedFbm3(p.x * 2.55, p.y * 2.15, p.z * 0.48, seeds.weather + 1171, 3) - 0.5;
+      formationRelief = (formationBroad * 0.055 + kilnPlate * 0.060 + crustPlate * 0.020) * minD;
+    }
+    d += frontGate * formationRelief;
+
+    for (const event of damage.formationEvents) d = applyFormationEventSDF(d, p, event, seeds, minD);
+
+    for (const chip of damage.chips) {
+      const irregular = (noise3(p.x * 12, p.y * 12, p.z * 12, seeds.damage + 131) - 0.5) * chip.irregular * minD;
+      const radii = vec3(
+        Math.max(0.004, chip.radii.x + irregular),
+        Math.max(0.004, chip.radii.y + irregular * 0.72),
+        Math.max(0.004, chip.radii.z + irregular * 0.88)
+      );
+      d = Math.max(d, -sdEllipsoid(p, chip.center, radii));
+    }
+
+    for (const pit of damage.pits) {
+      const irregular = (noise3(p.x * 18, p.y * 18, p.z * 18, seeds.pore + 211) - 0.5) * pit.irregular * minD;
+      const radii = vec3(
+        Math.max(0.003, pit.radii.x + irregular),
+        Math.max(0.003, pit.radii.y + irregular),
+        Math.max(0.003, pit.radii.z + irregular)
+      );
+      d = Math.max(d, -sdEllipsoid(p, pit.center, radii));
+    }
+
+    for (const pore of damage.poreClusters) {
+      const irregular = (noise3(p.x * 29, p.y * 29, p.z * 29, seeds.pore + 257) - 0.5) * pore.irregular * minD;
+      const radii = vec3(
+        Math.max(0.002, pore.radii.x + irregular),
+        Math.max(0.002, pore.radii.y + irregular),
+        Math.max(0.002, pore.radii.z + irregular)
+      );
+      d = Math.max(d, -sdEllipsoid(p, pore.center, radii));
+    }
+
+    for (const collapse of damage.collapsedPores) {
+      const irregular = (noise3(p.x * 21, p.y * 21, p.z * 21, seeds.pore + 293) - 0.5) * collapse.irregular * minD;
+      const radii = vec3(
+        Math.max(0.003, collapse.radii.x + irregular),
+        Math.max(0.003, collapse.radii.y + irregular * 0.84),
+        Math.max(0.003, collapse.radii.z + irregular)
+      );
+      d = Math.max(d, -sdEllipsoid(p, collapse.center, radii));
+    }
+
+    for (const rim of damage.poreRimChips) {
+      const irregular = (noise3(p.x * 26, p.y * 26, p.z * 26, seeds.pore + 317) - 0.5) * rim.irregular * minD;
+      const radii = vec3(
+        Math.max(0.0025, rim.radii.x + irregular),
+        Math.max(0.0025, rim.radii.y + irregular * 0.78),
+        Math.max(0.0025, rim.radii.z + irregular)
+      );
+      d = Math.max(d, -sdEllipsoid(p, rim.center, radii));
+    }
+
+    for (const bore of damage.deepPores) {
+      const boreNoise = (noise3(p.x * 24, p.y * 24, p.z * 24, seeds.pore + 337) - 0.5) * bore.irregular;
+      const radiusWobble = Math.max(0.004, bore.radius * (1 + boreNoise));
+      d = Math.max(d, -sdCapsule(p, bore.a, bore.b, radiusWobble));
+      d = Math.max(d, -sdEllipsoid(p, bore.mouthCenter, bore.mouthRadii));
+    }
+
+    for (const crack of damage.cracks) d = Math.max(d, -sdCapsule(p, crack.a, crack.b, crack.radius));
+
+    for (const inclusionVoid of damage.inclusionVoids) {
+      const wobble = (noise3(p.x * 37, p.y * 37, p.z * 37, seeds.inclusion + 557) - 0.5) * inclusionVoid.irregular;
+      const radius = Math.max(0.0015, inclusionVoid.radius * (1 + wobble));
+      d = Math.max(d, -sdCapsule(p, inclusionVoid.a, inclusionVoid.b, radius));
+    }
+
+    for (const bite of damage.erosionBites) {
+      const irregular = (noise3(p.x * 15, p.y * 15, p.z * 15, seeds.weather + 419) - 0.5) * bite.irregular * minD;
+      const radii = vec3(
+        Math.max(0.003, bite.radii.x + irregular),
+        Math.max(0.003, bite.radii.y + irregular * 0.75),
+        Math.max(0.003, bite.radii.z + irregular)
+      );
+      d = Math.max(d, -sdEllipsoid(p, bite.center, radii));
+    }
+    return d;
+  };
+
+  return { sdf, dims, b, damage, radius, seeds, controls };
+}
+
+const cubeCorners = [
+  [0, 0, 0], [1, 0, 0], [1, 1, 0], [0, 1, 0],
+  [0, 0, 1], [1, 0, 1], [1, 1, 1], [0, 1, 1]
+];
+const tetrahedra = [
+  [0, 5, 1, 6], [0, 1, 2, 6], [0, 2, 3, 6],
+  [0, 3, 7, 6], [0, 7, 4, 6], [0, 4, 5, 6]
+];
+const tetraEdges = [[0, 1], [1, 2], [2, 0], [0, 3], [1, 3], [2, 3]];
+
+function gradientSDF(sdf, p, e) {
+  const dx = sdf(vec3(p.x + e, p.y, p.z)) - sdf(vec3(p.x - e, p.y, p.z));
+  const dy = sdf(vec3(p.x, p.y + e, p.z)) - sdf(vec3(p.x, p.y - e, p.z));
+  const dz = sdf(vec3(p.x, p.y, p.z + e)) - sdf(vec3(p.x, p.y, p.z - e));
+  return norm3(vec3(dx, dy, dz));
+}
+
+function polygonizeTetra(points, values, sdf, epsilon, positions, normals, maxVertices) {
+  const hits = [];
+  for (const [ia, ib] of tetraEdges) {
+    const va = values[ia], vb = values[ib];
+    if ((va < 0) === (vb < 0)) continue;
+    const t = clamp(va / (va - vb), 0, 1);
+    hits.push(mix3(points[ia], points[ib], t));
+  }
+  if (hits.length !== 3 && hits.length !== 4) return;
+
+  let ordered = hits;
+  if (hits.length === 4) {
+    const center = mul3(hits.reduce((acc, p) => add3(acc, p), vec3()), 0.25);
+    const gn = gradientSDF(sdf, center, epsilon);
+    const axis = Math.abs(gn.y) < 0.85 ? vec3(0, 1, 0) : vec3(1, 0, 0);
+    const u = norm3(cross3(axis, gn));
+    const v = norm3(cross3(gn, u));
+    ordered = hits.slice().sort((a, b) => {
+      const da = sub3(a, center), db = sub3(b, center);
+      return Math.atan2(dot3(da, v), dot3(da, u)) - Math.atan2(dot3(db, v), dot3(db, u));
+    });
+  }
+
+  const tris = hits.length === 3
+    ? [[ordered[0], ordered[1], ordered[2]]]
+    : [[ordered[0], ordered[1], ordered[2]], [ordered[0], ordered[2], ordered[3]]];
+
+  for (let tri of tris) {
+    if (positions.length / 3 + 3 > maxVertices) return;
+    const ns = tri.map((p) => gradientSDF(sdf, p, epsilon));
+    const face = cross3(sub3(tri[1], tri[0]), sub3(tri[2], tri[0]));
+    const avg = norm3(add3(add3(ns[0], ns[1]), ns[2]));
+    if (dot3(face, avg) < 0) {
+      tri = [tri[0], tri[2], tri[1]];
+      [ns[1], ns[2]] = [ns[2], ns[1]];
+    }
+    for (let i = 0; i < 3; i++) {
+      positions.push(tri[i].x, tri[i].y, tri[i].z);
+      normals.push(ns[i].x, ns[i].y, ns[i].z);
+    }
+  }
+}
+
+function buildMesh(profile, seedDNA, controlsInput, level, quality = 1) {
+  const field = createSDF(profile, seedDNA, controlsInput, level);
+  const dims = field.dims, minD = Math.min(dims.x, dims.y, dims.z);
+  const margin = minD * 0.38;
+  const size = vec3(dims.x + margin * 2, dims.y + margin * 2, dims.z + margin * 2);
+  const longest = Math.max(size.x, size.y, size.z);
+  const benchmark = (field.controls.benchmarkSlab ?? 0) > 0.5;
+  const target = Math.round(52 * quality);
+  const nx = clamp(Math.round(target * size.x / longest), benchmark ? 38 : 24, target);
+  const ny = clamp(Math.round(target * size.y / longest), benchmark ? 38 : 20, target);
+  const nz = clamp(Math.round(target * size.z / longest), benchmark ? 24 : 22, target);
+  const min = vec3(-size.x / 2, -size.y / 2, -size.z / 2);
+  const step = vec3(size.x / (nx - 1), size.y / (ny - 1), size.z / (nz - 1));
+  const grid = new Float32Array(nx * ny * nz);
+  const gi = (x, y, z) => x + nx * (y + ny * z);
+
+  for (let z = 0; z < nz; z++) {
+    for (let y = 0; y < ny; y++) {
+      for (let x = 0; x < nx; x++) {
+        grid[gi(x, y, z)] = field.sdf(vec3(min.x + x * step.x, min.y + y * step.y, min.z + z * step.z));
+      }
+    }
+  }
+
+  const positions = [], normals = [];
+  const maxVertices = 420000;
+  const epsilon = Math.min(step.x, step.y, step.z) * 0.36;
+  const cp = new Array(8), cv = new Array(8);
+
+  for (let z = 0; z < nz - 1; z++) {
+    for (let y = 0; y < ny - 1; y++) {
+      for (let x = 0; x < nx - 1; x++) {
+        let allIn = true, allOut = true;
+        for (let c = 0; c < 8; c++) {
+          const o = cubeCorners[c], gx = x + o[0], gy = y + o[1], gz = z + o[2];
+          cp[c] = vec3(min.x + gx * step.x, min.y + gy * step.y, min.z + gz * step.z);
+          cv[c] = grid[gi(gx, gy, gz)];
+          if (cv[c] < 0) allOut = false; else allIn = false;
+        }
+        if (allIn || allOut) continue;
+        for (const tet of tetrahedra) {
+          const tp = tet.map((i) => cp[i]), tv = tet.map((i) => cv[i]);
+          polygonizeTetra(tp, tv, field.sdf, epsilon, positions, normals, maxVertices);
+          if (positions.length / 3 >= maxVertices) break;
+        }
+        if (positions.length / 3 >= maxVertices) break;
+      }
+      if (positions.length / 3 >= maxVertices) break;
+    }
+    if (positions.length / 3 >= maxVertices) break;
+  }
+
+  return {
+    positions: new Float32Array(positions),
+    normals: new Float32Array(normals),
+    triangles: positions.length / 9,
+    vertices: positions.length / 3,
+    dims,
+    damage: field.damage,
+    seedDNA: field.seeds,
+    controls: field.controls,
+    level,
+    profileId: profile.id,
+    grid: [nx, ny, nz],
+    noiseVersion: 'v2.7.2-continuous-formation-field-alpha1'
+  };
+}
+
+window.BrickMotherGeometryV2 = {
+  clamp, lerp, smooth, smoother, vec3, add3, sub3, mul3, dot3, cross3, len3, norm3, mix3,
+  RNG, noise3, fbm3, ridgedFbm3, sdRoundBox, sdEllipsoid, sdCapsule,
+  normalizedDimensions, specimenDimensions, normalizeSeedDNA, normalizeControls, FORMATION_EVENT_TYPES, buildFormationEvents, buildDamage, createSDF, buildMesh
+};
+})();
+
+</script>
+  <script>
+(() => {
+'use strict';
+
+const { clamp, vec3, norm3, sub3, cross3, dot3 } = window.BrickMotherGeometryV2;
+const gaeaGLSL = window.BrickMotherGaeaV1?.glsl || '';
+const MAX_V27_EVENTS = 20;
+
+function mat4Identity() {
+  return new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
+}
+
+function mat4Multiply(a, b) {
+  const o = new Float32Array(16);
+  for (let c = 0; c < 4; c++) {
+    for (let r = 0; r < 4; r++) {
+      o[c * 4 + r] =
+        a[r] * b[c * 4] +
+        a[4 + r] * b[c * 4 + 1] +
+        a[8 + r] * b[c * 4 + 2] +
+        a[12 + r] * b[c * 4 + 3];
+    }
+  }
+  return o;
+}
+
+function mat4Perspective(fov, aspect, near, far) {
+  const f = 1 / Math.tan(fov / 2), nf = 1 / (near - far);
+  return new Float32Array([
+    f / aspect, 0, 0, 0,
+    0, f, 0, 0,
+    0, 0, (far + near) * nf, -1,
+    0, 0, 2 * far * near * nf, 0
+  ]);
+}
+
+function mat4LookAt(eye, target, up) {
+  const z = norm3(sub3(eye, target));
+  const x = norm3(cross3(up, z));
+  const y = cross3(z, x);
+  return new Float32Array([
+    x.x, y.x, z.x, 0,
+    x.y, y.y, z.y, 0,
+    x.z, y.z, z.z, 0,
+    -dot3(x, eye), -dot3(y, eye), -dot3(z, eye), 1
+  ]);
+}
+
+function mat4Model(position, yaw = 0) {
+  const c = Math.cos(yaw), s = Math.sin(yaw);
+  return new Float32Array([
+    c, 0, -s, 0,
+    0, 1, 0, 0,
+    s, 0, c, 0,
+    position.x, position.y, position.z, 1
+  ]);
+}
+
+function createShader(gl, type, source) {
+  const shader = gl.createShader(type);
+  gl.shaderSource(shader, source);
+  gl.compileShader(shader);
+  if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+    const log = gl.getShaderInfoLog(shader) || 'Shader compile failed';
+    gl.deleteShader(shader);
+    throw new Error(log);
+  }
+  return shader;
+}
+
+function createProgram(gl, vsSource, fsSource) {
+  const vs = createShader(gl, gl.VERTEX_SHADER, vsSource);
+  const fs = createShader(gl, gl.FRAGMENT_SHADER, fsSource);
+  const program = gl.createProgram();
+  gl.attachShader(program, vs);
+  gl.attachShader(program, fs);
+  gl.linkProgram(program);
+  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+    const log = gl.getProgramInfoLog(program) || 'Shader link failed';
+    gl.deleteProgram(program);
+    throw new Error(log);
+  }
+  gl.deleteShader(vs);
+  gl.deleteShader(fs);
+  return program;
+}
+
+const vertexShader = `#version 300 es
+precision highp float;
+in vec3 aPosition;
+in vec3 aNormal;
+uniform mat4 uModel;
+uniform mat4 uViewProj;
+out vec3 vWorldPos;
+out vec3 vLocalPos;
+out vec3 vNormal;
+void main() {
+  vec4 wp = uModel * vec4(aPosition, 1.0);
+  vWorldPos = wp.xyz;
+  vLocalPos = aPosition;
+  vNormal = normalize(mat3(uModel) * aNormal);
+  gl_Position = uViewProj * wp;
+}`;
+
+const fragmentShader = `#version 300 es
+precision highp float;
+${gaeaGLSL}
+
+in vec3 vWorldPos;
+in vec3 vLocalPos;
+in vec3 vNormal;
+out vec4 outColor;
+
+uniform vec3 uCamera;
+uniform vec3 uLowColor;
+uniform vec3 uMeanColor;
+uniform vec3 uHighColor;
+uniform vec3 uPaletteDark;
+uniform vec3 uPaletteWarm;
+uniform vec3 uPaletteOxide;
+uniform vec3 uPaletteMineral;
+uniform vec3 uPaletteBio;
+uniform vec3 uPaletteWet;
+uniform vec3 uPaletteStraw;
+uniform vec3 uPaletteHusk;
+uniform vec3 uPaletteSeedColor;
+uniform vec2 uRoughness;
+uniform vec3 uDimensions;
+uniform float uWarpStrength;
+uniform float uMacroScale;
+uniform float uRidgedScale;
+uniform float uCellScale;
+uniform float uPoreThreshold;
+uniform float uPoreSharpness;
+uniform float uMicroScale;
+uniform float uColorContrast;
+uniform float uCavityStrength;
+uniform float uBumpStrength;
+uniform float uRoughnessCorrelation;
+uniform float uMineralScale;
+uniform float uFiringBand;
+uniform float uColorRichness;
+uniform float uWaterStrength;
+uniform float uWeatherStrength;
+uniform float uInclusionStrength;
+uniform float uPoreDepth;
+uniform float uPoreDensity;
+uniform float uPoreVariety;
+uniform float uColorSeed;
+uniform float uPoreSeed;
+uniform float uWaterSeed;
+uniform float uWeatherSeed;
+uniform float uInclusionSeed;
+uniform float uDetailSeed;
+uniform float uGaeaRockDetail;
+uniform float uGaeaStrata;
+uniform float uGaeaMicroErosion;
+uniform float uGaeaColorClarity;
+uniform float uGaeaColorGamut;
+uniform float uGaeaMaskSharpness;
+uniform float uGaeaRuggedScale;
+uniform float uGaeaStrataFrequency;
+uniform float uGaeaSurfaceScale;
+uniform int uFamily;
+uniform int uDebugMode;
+uniform int uGround;
+uniform vec3 uShadowPos0;
+uniform vec3 uShadowPos1;
+uniform vec3 uShadowPos2;
+uniform vec2 uShadowSize0;
+uniform vec2 uShadowSize1;
+uniform vec2 uShadowSize2;
+uniform int uV27EventCount;
+uniform vec4 uV27EventA[20];
+uniform vec4 uV27EventB[20];
+uniform vec4 uV27EventC[20];
+
+float hash31(vec3 p) {
+  p = fract(p * 0.1031);
+  p += dot(p, p.yzx + 33.33);
+  return fract((p.x + p.y) * p.z);
+}
+
+vec2 hash22(vec2 p) {
+  vec3 p3 = fract(vec3(p.xyx) * vec3(0.1031, 0.1030, 0.0973));
+  p3 += dot(p3, p3.yzx + 33.33);
+  return fract((p3.xx + p3.yz) * p3.zy);
+}
+
+vec3 hash33(vec3 p) {
+  p = vec3(
+    dot(p, vec3(127.1, 311.7, 74.7)),
+    dot(p, vec3(269.5, 183.3, 246.1)),
+    dot(p, vec3(113.5, 271.9, 124.6))
+  );
+  return fract(sin(p) * 43758.5453123);
+}
+
+mat2 rotate2(float a) {
+  float c = cos(a), s = sin(a);
+  return mat2(c, -s, s, c);
+}
+
+float valueNoise3(vec3 p) {
+  vec3 i = floor(p);
+  vec3 f = fract(p);
+  f = f * f * f * (f * (f * 6.0 - 15.0) + 10.0);
+  float n000 = hash31(i + vec3(0, 0, 0));
+  float n100 = hash31(i + vec3(1, 0, 0));
+  float n010 = hash31(i + vec3(0, 1, 0));
+  float n110 = hash31(i + vec3(1, 1, 0));
+  float n001 = hash31(i + vec3(0, 0, 1));
+  float n101 = hash31(i + vec3(1, 0, 1));
+  float n011 = hash31(i + vec3(0, 1, 1));
+  float n111 = hash31(i + vec3(1, 1, 1));
+  return mix(
+    mix(mix(n000, n100, f.x), mix(n010, n110, f.x), f.y),
+    mix(mix(n001, n101, f.x), mix(n011, n111, f.x), f.y),
+    f.z
+  );
+}
+
+float gradientNoise3(vec3 p) {
+  vec3 i = floor(p);
+  vec3 f = fract(p);
+  vec3 u = f * f * f * (f * (f * 6.0 - 15.0) + 10.0);
+  float n000 = dot(normalize(hash33(i + vec3(0, 0, 0)) * 2.0 - 1.0), f - vec3(0, 0, 0));
+  float n100 = dot(normalize(hash33(i + vec3(1, 0, 0)) * 2.0 - 1.0), f - vec3(1, 0, 0));
+  float n010 = dot(normalize(hash33(i + vec3(0, 1, 0)) * 2.0 - 1.0), f - vec3(0, 1, 0));
+  float n110 = dot(normalize(hash33(i + vec3(1, 1, 0)) * 2.0 - 1.0), f - vec3(1, 1, 0));
+  float n001 = dot(normalize(hash33(i + vec3(0, 0, 1)) * 2.0 - 1.0), f - vec3(0, 0, 1));
+  float n101 = dot(normalize(hash33(i + vec3(1, 0, 1)) * 2.0 - 1.0), f - vec3(1, 0, 1));
+  float n011 = dot(normalize(hash33(i + vec3(0, 1, 1)) * 2.0 - 1.0), f - vec3(0, 1, 1));
+  float n111 = dot(normalize(hash33(i + vec3(1, 1, 1)) * 2.0 - 1.0), f - vec3(1, 1, 1));
+  float n = mix(
+    mix(mix(n000, n100, u.x), mix(n010, n110, u.x), u.y),
+    mix(mix(n001, n101, u.x), mix(n011, n111, u.x), u.y),
+    u.z
+  );
+  return n * 0.5 + 0.5;
+}
+
+float fbmGradient(vec3 p) {
+  float v = 0.0;
+  float a = 0.52;
+  float total = 0.0;
+  for (int i = 0; i < 5; i++) {
+    v += gradientNoise3(p) * a;
+    total += a;
+    p = p * 2.03 + vec3(19.1, 7.7, 13.4);
+    a *= 0.49;
+  }
+  return v / total;
+}
+
+float ridgedFbm(vec3 p) {
+  float v = 0.0;
+  float a = 0.56;
+  float total = 0.0;
+  for (int i = 0; i < 5; i++) {
+    float n = 1.0 - abs(gradientNoise3(p) * 2.0 - 1.0);
+    v += n * n * a;
+    total += a;
+    p = p * 2.11 + vec3(11.7, 5.3, 17.9);
+    a *= 0.47;
+  }
+  return v / total;
+}
+
+float fbmValueFast(vec3 p) {
+  float v = 0.0;
+  float a = 0.54;
+  float total = 0.0;
+  for (int i = 0; i < 4; i++) {
+    v += valueNoise3(p) * a;
+    total += a;
+    p = p * 2.05 + vec3(7.3, 15.1, 3.9);
+    a *= 0.48;
+  }
+  return v / total;
+}
+
+float turbulence(vec3 p) {
+  float v = 0.0;
+  float a = 0.54;
+  float total = 0.0;
+  for (int i = 0; i < 4; i++) {
+    v += abs(valueNoise3(p) * 2.0 - 1.0) * a;
+    total += a;
+    p = p * 2.07 + vec3(3.7, 17.2, 9.1);
+    a *= 0.5;
+  }
+  return v / total;
+}
+
+vec2 worley3(vec3 p) {
+  vec3 ip = floor(p);
+  vec3 fp = fract(p);
+  float f1 = 10.0;
+  float f2 = 10.0;
+  for (int z = -1; z <= 1; z++) {
+    for (int y = -1; y <= 1; y++) {
+      for (int x = -1; x <= 1; x++) {
+        vec3 cell = vec3(float(x), float(y), float(z));
+        vec3 point = hash33(ip + cell);
+        vec3 d = cell + point - fp;
+        float dist2 = dot(d, d);
+        if (dist2 < f1) {
+          f2 = f1;
+          f1 = dist2;
+        } else if (dist2 < f2) {
+          f2 = dist2;
+        }
+      }
+    }
+  }
+  return sqrt(vec2(f1, f2));
+}
+
+vec3 domainWarp(vec3 p) {
+  return vec3(
+    fbmValueFast(p + vec3(17.1, 3.8, 9.2)),
+    fbmValueFast(p + vec3(4.4, 19.7, 12.1)),
+    fbmValueFast(p + vec3(13.8, 7.2, 23.4))
+  ) - 0.5;
+}
+
+vec3 seedVector(float s, float multiplier) {
+  return vec3(s * 0.0113, s * 0.0197, s * 0.0311) * multiplier;
+}
+
+vec2 surfaceProjection(vec3 p, vec3 n) {
+  vec3 a = abs(n);
+  if (a.x > a.y && a.x > a.z) return p.zy;
+  if (a.y > a.z) return p.xz;
+  return p.xy;
+}
+
+vec4 organicInclusions(vec2 uv, float seed) {
+  vec2 g0 = uv * 6.2;
+  vec2 id0 = floor(g0);
+  vec2 f0 = fract(g0) - 0.5;
+  vec2 r0 = hash22(id0 + seed * 0.013);
+  vec2 q0 = rotate2((r0.x - 0.5) * 3.14159265) * (f0 - (r0 - 0.5) * 0.38);
+  float gate0 = smoothstep(0.43, 0.76, hash31(vec3(id0, seed * 0.017)));
+  float strawLong = (1.0 - smoothstep(0.026, 0.066, abs(q0.y))) *
+                    (1.0 - smoothstep(0.34, 0.49, abs(q0.x))) * gate0;
+
+  vec2 g0b = uv * 3.8 + vec2(9.3, 2.7);
+  vec2 id0b = floor(g0b);
+  vec2 f0b = fract(g0b) - 0.5;
+  vec2 r0b = hash22(id0b + seed * 0.019 + 41.0);
+  vec2 q0b = rotate2(r0b.y * 6.2831853) * (f0b - (r0b - 0.5) * 0.28);
+  float gate0b = smoothstep(0.70, 0.92, hash31(vec3(id0b, seed * 0.021 + 29.0)));
+  float strawLongB = (1.0 - smoothstep(0.020, 0.052, abs(q0b.y))) *
+                     (1.0 - smoothstep(0.39, 0.51, abs(q0b.x))) * gate0b;
+
+  vec2 g1 = uv * 11.5 + vec2(3.7, 9.1);
+  vec2 id1 = floor(g1);
+  vec2 f1 = fract(g1) - 0.5;
+  vec2 r1 = hash22(id1 + seed * 0.023 + 17.0);
+  vec2 q1 = rotate2(r1.y * 6.2831853) * (f1 - (r1 - 0.5) * 0.31);
+  float gate1 = smoothstep(0.54, 0.83, hash31(vec3(id1, seed * 0.029 + 11.0)));
+  float strawShort = (1.0 - smoothstep(0.030, 0.080, abs(q1.y))) *
+                     (1.0 - smoothstep(0.20, 0.34, abs(q1.x))) * gate1;
+
+  vec2 g2 = uv * 16.0 + vec2(11.0, 2.0);
+  vec2 id2 = floor(g2);
+  vec2 f2 = fract(g2) - 0.5;
+  vec2 r2 = hash22(id2 + seed * 0.031 + 29.0);
+  vec2 q2 = rotate2((r2.x - 0.5) * 2.2) * (f2 - (r2 - 0.5) * 0.24);
+  float ellipseH = length(q2 / vec2(0.33, 0.125));
+  float husk = (1.0 - smoothstep(0.065, 0.18, abs(ellipseH - 1.0))) *
+               smoothstep(0.60, 0.87, hash31(vec3(id2, seed * 0.037 + 7.0)));
+
+  vec2 g3 = uv * 20.0 + vec2(5.0, 13.0);
+  vec2 id3 = floor(g3);
+  vec2 f3 = fract(g3) - 0.5;
+  vec2 r3 = hash22(id3 + seed * 0.041 + 43.0);
+  vec2 q3 = rotate2(r3.y * 6.2831853) * (f3 - (r3 - 0.5) * 0.19);
+  float seedEllipse = length(q3 / vec2(0.22, 0.125));
+  float seedMask = (1.0 - smoothstep(0.78, 1.15, seedEllipse)) *
+                   smoothstep(0.70, 0.91, hash31(vec3(id3, seed * 0.047 + 31.0)));
+
+  vec2 g4 = uv * 24.0 + vec2(17.0, 3.0);
+  vec2 id4 = floor(g4);
+  vec2 f4 = fract(g4) - 0.5;
+  vec2 r4 = hash22(id4 + seed * 0.051 + 59.0);
+  float pit = (1.0 - smoothstep(0.075, 0.19, length(f4 - (r4 - 0.5) * 0.34))) *
+              smoothstep(0.76, 0.95, hash31(vec3(id4, seed * 0.057 + 47.0)));
+
+  float clusterLarge = smoothstep(0.26, 0.72, fbmValueFast(vec3(uv * 1.05, seed * 0.0061)));
+  float clusterFine = smoothstep(0.40, 0.83, valueNoise3(vec3(uv * 3.1, seed * 0.0097)));
+  float burial = mix(0.22, 1.0, clusterLarge) * mix(0.64, 1.0, clusterFine);
+  float strawMask = max(max(strawLong, strawLongB), strawShort);
+  vec4 result = vec4(strawMask, husk, seedMask, pit);
+  result.xyz *= burial;
+  result.w *= mix(0.42, 1.0, clusterLarge);
+  return clamp(result, 0.0, 1.0);
+}
+
+vec2 waterWeatherMasks(vec3 p, vec3 n, float waterSeed, float weatherSeed) {
+  vec3 an = abs(n);
+  float horizontal = an.x > an.z ? p.z : p.x;
+  float yNorm = clamp(vLocalPos.y / max(uDimensions.y, 0.001) + 0.5, 0.0, 1.0);
+
+  float columnScale = 5.4;
+  float column = horizontal * columnScale + waterSeed * 0.0031;
+  float columnId = floor(column);
+  float local = fract(column) - 0.5;
+  float jitter = (hash31(vec3(columnId, waterSeed * 0.013, 7.0)) - 0.5) * 0.56;
+  float width = mix(0.045, 0.16, hash31(vec3(columnId, waterSeed * 0.019, 13.0)));
+  float line = 1.0 - smoothstep(width, width + 0.055, abs(local - jitter));
+  float start = mix(0.52, 1.02, hash31(vec3(columnId, waterSeed * 0.023, 19.0)));
+  float lengthV = mix(0.16, 0.78, hash31(vec3(columnId, waterSeed * 0.029, 23.0)));
+  float verticalGate = smoothstep(start - lengthV - 0.05, start - lengthV + 0.055, yNorm) *
+                       (1.0 - smoothstep(start - 0.025, start + 0.045, yNorm));
+  float streakGate = smoothstep(0.48, 0.86, hash31(vec3(columnId, waterSeed * 0.037, 31.0)));
+  float streak = line * verticalGate * streakGate;
+
+  vec3 waterCoord = vec3(horizontal * 1.75, yNorm * 3.0, waterSeed * 0.009);
+  float broad = smoothstep(0.54, 0.82, fbmValueFast(waterCoord + domainWarp(waterCoord * 0.7) * 0.45));
+  float lowerDamp = (1.0 - smoothstep(0.06, 0.34, yNorm)) *
+                    smoothstep(0.35, 0.78, fbmValueFast(vec3(p.x * 1.3, p.z * 1.3, waterSeed * 0.011)));
+  float waterMask = clamp(streak * 0.92 + broad * verticalGate * 0.32 + lowerDamp * 0.58, 0.0, 1.0);
+
+  vec3 edgeCoord = abs(vLocalPos) / max(uDimensions * 0.5, vec3(0.001));
+  float edgeCount = smoothstep(0.72, 0.99, edgeCoord.x) +
+                    smoothstep(0.72, 0.99, edgeCoord.y) +
+                    smoothstep(0.72, 0.99, edgeCoord.z);
+  float edgeMask = smoothstep(1.08, 1.88, edgeCount);
+  float topExposure = smoothstep(0.05, 0.72, n.y) * smoothstep(0.35, 0.98, yNorm);
+  float weatherNoise = fbmGradient(p * 1.82 + seedVector(weatherSeed, 0.74));
+  float weatherFine = ridgedFbm(p * 7.1 + seedVector(weatherSeed, 1.31));
+  float weatherMask = clamp((edgeMask * 0.72 + topExposure * 0.55) * smoothstep(0.30, 0.84, weatherNoise) +
+                            smoothstep(0.76, 0.96, weatherFine) * 0.18, 0.0, 1.0);
+  return vec2(waterMask, weatherMask);
+}
+
+vec3 srgbToLinear(vec3 c) {
+  return mix(c / 12.92, pow((c + 0.055) / 1.055, vec3(2.4)), step(vec3(0.04045), c));
+}
+
+vec3 linearToSrgb(vec3 c) {
+  return mix(c * 12.92, 1.055 * pow(max(c, 0.0), vec3(1.0 / 2.4)) - 0.055, step(vec3(0.0031308), c));
+}
+
+vec3 adjustSaturation(vec3 c, float saturation) {
+  float l = dot(c, vec3(0.2126, 0.7152, 0.0722));
+  return mix(vec3(l), c, saturation);
+}
+
+float shadowBlob(vec3 p, vec3 c, vec2 s) {
+  vec2 q = (p.xz - c.xz) / max(s, vec2(0.01));
+  return exp(-dot(q, q) * 2.65);
+}
+
+float D_GGX(float NoH, float a) {
+  float a2 = a * a;
+  float d = NoH * NoH * (a2 - 1.0) + 1.0;
+  return a2 / (3.14159265 * d * d + 0.00001);
+}
+
+float G_Schlick(float NoV, float k) {
+  return NoV / (NoV * (1.0 - k) + k + 0.00001);
+}
+
+vec3 F_Schlick(float VoH, vec3 F0) {
+  return F0 + (1.0 - F0) * pow(1.0 - VoH, 5.0);
+}
+
+
+
+float bmV27EllipsoidMask(vec3 p, vec3 center, vec3 radius) {
+  float d = length((p - center) / max(radius, vec3(0.001)));
+  return 1.0 - smoothstep(0.72, 1.18, d);
+}
+
+float bmV27CapsuleMask(vec3 p, vec3 center, vec3 direction, float halfLength, float radius) {
+  vec3 dir = normalize(direction + vec3(0.0001, 0.0002, 0.0));
+  vec3 a = center - dir * halfLength;
+  vec3 b = center + dir * halfLength;
+  vec3 pa = p - a;
+  vec3 ba = b - a;
+  float h = clamp(dot(pa, ba) / max(dot(ba, ba), 0.00001), 0.0, 1.0);
+  float d = length(pa - ba * h);
+  return 1.0 - smoothstep(radius * 0.72, radius * 1.35, d);
+}
+
+float bmV27BoxMask(vec3 p, vec3 center, vec3 size, vec3 direction) {
+  vec3 dir = normalize(vec3(direction.xy, 0.0) + vec3(0.0001, 0.0002, 0.0));
+  vec3 side = vec3(-dir.y, dir.x, 0.0);
+  vec3 d = p - center;
+  vec3 q = vec3(dot(d, dir), dot(d, side), d.z);
+  vec3 n = abs(q) / max(size, vec3(0.001));
+  float rounded = pow(
+    pow(n.x, 2.65) + pow(n.y, 2.65) + pow(n.z, 2.15),
+    1.0 / 2.65
+  );
+  return 1.0 - smoothstep(0.64, 1.18, rounded);
+}
+
+struct BMV27Fields {
+  float macroEvent;
+  float mesoEvent;
+  float cavity;
+  float protrusion;
+  float shear;
+  float bedding;
+  float plate;
+  float undercut;
+  float fiber;
+  float seam;
+};
+
+BMV27Fields bmV27Evaluate(vec3 p) {
+  BMV27Fields f;
+  f.macroEvent = 0.0;
+  f.mesoEvent = 0.0;
+  f.cavity = 0.0;
+  f.protrusion = 0.0;
+  f.shear = 0.0;
+  f.bedding = 0.0;
+  f.plate = 0.0;
+  f.undercut = 0.0;
+  f.fiber = 0.0;
+  f.seam = 0.0;
+
+  for (int i = 0; i < 20; i++) {
+    if (i >= uV27EventCount) break;
+    vec4 a = uV27EventA[i];
+    vec4 b = uV27EventB[i];
+    vec4 c = uV27EventC[i];
+    int type = int(floor(a.w + 0.5));
+    float strength = clamp(b.w, 0.0, 1.6);
+    float mask = 0.0;
+    if (type == 2 || type == 7 || type == 9 || type == 10 || type == 12) {
+      mask = bmV27CapsuleMask(p, a.xyz, c.xyz, b.x * 0.82, max(b.y * 0.72, 0.004));
+    } else if (type == 3 || type == 4 || type == 5 || type == 11) {
+      mask = bmV27EllipsoidMask(p, a.xyz, b.xyz * vec3(0.76, 0.68, 0.58));
+    } else {
+      mask = bmV27EllipsoidMask(p, a.xyz, b.xyz * vec3(0.68, 0.76, 0.58));
+    }
+    float organicGate = fbmValueFast(p * 2.15 + seedVector(uDetailSeed + float(type) * 13.7, 1.31));
+    mask = smoothstep(0.10, 0.86, mask * 0.82 + organicGate * 0.18);
+    mask *= strength * 0.42;
+
+    if (type == 1 || type == 2 || type == 3 || type == 8) f.macroEvent = max(f.macroEvent, mask);
+    else f.mesoEvent = max(f.mesoEvent, mask);
+
+    if (type == 1 || type == 2 || type == 5 || type == 6 || type == 7 || type == 8 || type == 10) {
+      f.cavity = max(f.cavity, mask);
+    }
+    if (type == 3 || type == 4 || type == 9 || type == 11 || type == 12) {
+      f.protrusion = max(f.protrusion, mask);
+    }
+    if (type == 2 || type == 7) f.shear = max(f.shear, mask);
+    if (type == 3) f.bedding = max(f.bedding, mask);
+    if (type == 4 || type == 11) f.plate = max(f.plate, mask);
+    if (type == 5) f.undercut = max(f.undercut, mask);
+    if (type == 9 || type == 10) f.fiber = max(f.fiber, mask);
+    if (type == 12) f.seam = max(f.seam, mask);
+  }
+
+  f.macroEvent = clamp(f.macroEvent, 0.0, 1.0);
+  f.mesoEvent = clamp(f.mesoEvent, 0.0, 1.0);
+  f.cavity = clamp(f.cavity, 0.0, 1.0);
+  f.protrusion = clamp(f.protrusion, 0.0, 1.0);
+  return f;
+}
+
+vec3 shadeLight(vec3 N, vec3 V, vec3 L, vec3 lightColor, float intensity, vec3 albedo, float rough) {
+  vec3 H = normalize(V + L);
+  float NoL = max(dot(N, L), 0.0);
+  float NoV = max(dot(N, V), 0.001);
+  float NoH = max(dot(N, H), 0.0);
+  float VoH = max(dot(V, H), 0.0);
+  float a = max(0.05, rough * rough);
+  float k = (rough + 1.0) * (rough + 1.0) / 8.0;
+  vec3 F = F_Schlick(VoH, vec3(0.026));
+  float D = D_GGX(NoH, a);
+  float G = G_Schlick(NoV, k) * G_Schlick(NoL, k);
+  vec3 spec = (D * G * F) / (4.0 * NoV * max(NoL, 0.001) + 0.0001);
+  vec3 kd = 1.0 - F;
+  return (kd * albedo / 3.14159265 + spec) * NoL * lightColor * intensity;
+}
+
+void main() {
+  if (uGround == 1) {
+    vec3 c = vec3(0.060, 0.064, 0.068);
+    float grain = valueNoise3(vWorldPos * 3.2 + uColorSeed) * 0.014 - 0.007;
+    float sh = clamp(
+      shadowBlob(vWorldPos, uShadowPos0, uShadowSize0) +
+      shadowBlob(vWorldPos, uShadowPos1, uShadowSize1) +
+      shadowBlob(vWorldPos, uShadowPos2, uShadowSize2),
+      0.0, 1.0
+    );
+    c = (c + grain) * (1.0 - 0.34 * sh);
+    float gx = abs(fract(vWorldPos.x * 0.5) - 0.5);
+    float gz = abs(fract(vWorldPos.z * 0.5) - 0.5);
+    float grid = min(gx, gz);
+    c += (1.0 - smoothstep(0.0, 0.028, grid)) * 0.014;
+    outColor = vec4(linearToSrgb(c), 1.0);
+    return;
+  }
+
+  float minD = max(0.0001, min(uDimensions.x, min(uDimensions.y, uDimensions.z)));
+  vec3 p = vLocalPos / minD;
+  vec3 colorSeedV = seedVector(uColorSeed, 1.0);
+  vec3 poreSeedV = seedVector(uPoreSeed, 1.0);
+  vec3 detailSeedV = seedVector(uDetailSeed, 1.0);
+  vec3 warped = p + domainWarp(p * uMacroScale * 0.72 + detailSeedV) * uWarpStrength;
+  vec3 colorWarped = p + domainWarp(p * uMacroScale * 0.58 + colorSeedV) * (uWarpStrength * 1.22);
+  vec3 poreWarped = p + domainWarp(p * uCellScale * 0.10 + poreSeedV) * (uWarpStrength * 0.72);
+
+  float macro = fbmGradient(colorWarped * uMacroScale + colorSeedV * 0.31);
+  float macroB = fbmValueFast(colorWarped * uMacroScale * 0.63 + colorSeedV * 1.27);
+  float ridge = ridgedFbm(warped * uRidgedScale + detailSeedV * 0.57);
+  float turbul = turbulence(warped * uRidgedScale * 0.68 + detailSeedV * 0.91);
+  float micro = gradientNoise3(warped * uMicroScale + detailSeedV * 1.7);
+  float grit = valueNoise3(warped * uMicroScale * 2.35 + detailSeedV * 3.1);
+  float crustBroad = ridgedFbm(warped * (uFamily == 2 ? 10.5 : 13.5) + detailSeedV * 2.17);
+  float crustFine = fbmValueFast(warped * (uFamily == 2 ? 24.0 : 32.0) + detailSeedV * 3.73);
+  float crustFlake = smoothstep(0.45, 0.82, crustBroad * 0.68 + crustFine * 0.32);
+
+  float poreDensityN = clamp(uPoreDensity / 2.2, 0.0, 1.0);
+  float poreVarietyN = clamp(uPoreVariety / 1.8, 0.0, 1.0);
+
+  vec2 cell = worley3(poreWarped * uCellScale + poreSeedV * 0.27);
+  float poreAA = max(fwidth(cell.x) * 1.4, 0.003);
+  float poreCore = 1.0 - smoothstep(
+    uPoreThreshold - poreAA,
+    uPoreThreshold + uPoreSharpness + poreAA,
+    cell.x
+  );
+  float poreGate = smoothstep(
+    mix(0.62, 0.45, poreDensityN),
+    0.88,
+    valueNoise3(poreWarped * uCellScale * 0.31 + poreSeedV * 4.3)
+  );
+  float pore = poreCore * poreGate;
+
+  vec2 mediumCell = worley3(
+    poreWarped * uCellScale * mix(0.46, 0.34, poreVarietyN) + poreSeedV * 0.61
+  );
+  float mediumAA = max(fwidth(mediumCell.x) * 1.55, 0.006);
+  float mediumRadius = mix(0.105, 0.175, poreVarietyN);
+  float mediumCore = 1.0 - smoothstep(
+    mediumRadius - mediumAA,
+    mediumRadius + 0.055 + mediumAA,
+    mediumCell.x
+  );
+  float mediumGate = smoothstep(
+    mix(0.70, 0.52, poreDensityN),
+    0.91,
+    fbmValueFast(poreWarped * 2.35 + poreSeedV * 2.7)
+  );
+  float poreMedium = mediumCore * mediumGate;
+
+  vec2 largeCell = worley3(
+    poreWarped * uCellScale * mix(0.235, 0.165, poreVarietyN) + poreSeedV * 1.17
+  );
+  float largeAA = max(fwidth(largeCell.x) * 1.65, 0.008);
+  float largeRadius = mix(0.105, 0.205, poreVarietyN);
+  float largeCore = 1.0 - smoothstep(
+    largeRadius - largeAA,
+    largeRadius + 0.070 + largeAA,
+    largeCell.x
+  );
+  float largeGate = smoothstep(
+    mix(0.82, 0.66, poreDensityN),
+    0.95,
+    fbmGradient(poreWarped * 1.55 + poreSeedV * 3.6)
+  );
+  float poreLarge = largeCore * largeGate;
+
+  float mediumRing = smoothstep(mediumRadius * 0.76, mediumRadius, mediumCell.x) *
+                     (1.0 - smoothstep(mediumRadius, mediumRadius + 0.095, mediumCell.x)) *
+                     mediumGate;
+  float largeRing = smoothstep(largeRadius * 0.70, largeRadius, largeCell.x) *
+                    (1.0 - smoothstep(largeRadius, largeRadius + 0.13, largeCell.x)) *
+                    largeGate;
+  float poreRim = clamp(mediumRing * 0.72 + largeRing, 0.0, 1.0);
+  float poreComposite = clamp(
+    pore * 0.78 +
+    poreMedium * (0.58 + poreDensityN * 0.40) +
+    poreLarge * (0.64 + poreVarietyN * 0.42),
+    0.0, 1.0
+  );
+
+  vec2 mineralCell = worley3(warped * uMineralScale + colorSeedV * 1.17);
+  float microPore = (1.0 - smoothstep(0.052, 0.125 + fwidth(mineralCell.x), mineralCell.x)) *
+                    smoothstep(0.72, 0.94, valueNoise3(warped * uMicroScale * 0.19 + poreSeedV * 6.7));
+  float mineralCore = 1.0 - smoothstep(0.055, 0.145 + fwidth(mineralCell.x), mineralCell.x);
+  float mineralGate = smoothstep(0.57, 0.90, valueNoise3(warped * uMineralScale * 0.37 + colorSeedV * 2.9));
+  float mineral = mineralCore * mineralGate;
+  float cellularEdge = 1.0 - smoothstep(0.018, 0.105 + fwidth(mineralCell.y - mineralCell.x), mineralCell.y - mineralCell.x);
+
+  vec3 baseNormal = normalize(vNormal);
+  BMGaeaFields gaea = bmGaeaEvaluate(
+    p,
+    baseNormal,
+    seedVector(uDetailSeed + uColorSeed * 0.37, 0.91),
+    uGaeaRuggedScale,
+    uGaeaStrataFrequency,
+    uGaeaSurfaceScale,
+    uGaeaMaskSharpness
+  );
+  vec2 projected = surfaceProjection(p, baseNormal);
+  vec4 inclusions = organicInclusions(projected, uInclusionSeed);
+  inclusions *= float(uFamily == 1) * uInclusionStrength;
+  BMV27Fields v27 = bmV27Evaluate(vLocalPos);
+  inclusions.x = max(inclusions.x, v27.fiber * float(uFamily == 1));
+  inclusions.w = max(inclusions.w, v27.undercut * float(uFamily == 1) * 0.68);
+
+  float cavity = clamp(
+    poreComposite * (0.72 + uPoreDepth * 0.25) +
+    poreLarge * (0.18 + uPoreDepth * 0.12) +
+    microPore * 0.34 +
+    smoothstep(0.77, 0.98, turbul) * 0.16 +
+    smoothstep(0.84, 0.99, 1.0 - ridge) * 0.10 +
+    inclusions.w * 0.52,
+    0.0, 1.0
+  );
+
+  cavity = clamp(
+    cavity +
+    gaea.cavity * (0.14 + uGaeaRockDetail * 0.24) +
+    gaea.microErosion * uGaeaMicroErosion * 0.11 +
+    v27.cavity * 0.12 +
+    v27.undercut * 0.055,
+    0.0, 1.0
+  );
+
+  float microToneWeight = uFamily == 2 ? 0.014 : (uFamily == 1 ? 0.026 : 0.030);
+  float gritToneWeight = uFamily == 2 ? 0.004 : (uFamily == 1 ? 0.008 : 0.010);
+  float tone = clamp(
+    0.08 + macro * 0.47 + macroB * 0.16 + ridge * 0.10 +
+    v27.macroEvent * 0.022 + v27.mesoEvent * 0.018 +
+    (v27.protrusion - v27.cavity) * 0.018 +
+    (micro - 0.5) * microToneWeight + (grit - 0.5) * gritToneWeight,
+    0.0, 1.0
+  );
+  tone = clamp((tone - 0.5) * uColorContrast + 0.5, 0.0, 1.0);
+
+  vec3 low = srgbToLinear(uLowColor);
+  vec3 mean = srgbToLinear(uMeanColor);
+  vec3 high = srgbToLinear(uHighColor);
+  vec3 dark = srgbToLinear(uPaletteDark);
+  vec3 warm = srgbToLinear(uPaletteWarm);
+  vec3 oxideColor = srgbToLinear(uPaletteOxide);
+  vec3 mineralColor = srgbToLinear(uPaletteMineral);
+  vec3 bioColor = srgbToLinear(uPaletteBio);
+  vec3 wetColor = srgbToLinear(uPaletteWet);
+  vec3 strawColor = srgbToLinear(uPaletteStraw);
+  vec3 huskColor = srgbToLinear(uPaletteHusk);
+  vec3 seedColor = srgbToLinear(uPaletteSeedColor);
+
+  vec3 albedo = mix(low, mean, smoothstep(0.06, 0.50, tone));
+  albedo = mix(albedo, high, smoothstep(0.49, 0.90, tone));
+
+  float rich = clamp(uColorRichness, 0.0, 2.0);
+  float warmMask = smoothstep(0.48, 0.83, macro * 0.66 + macroB * 0.34) *
+                   smoothstep(0.26, 0.79, ridge);
+  float oxideBroad = fbmValueFast(colorWarped * 2.85 + colorSeedV * 1.83);
+  float oxideMid = fbmGradient(colorWarped * 6.40 + colorSeedV * 2.37);
+  float oxideSpeck = valueNoise3(colorWarped * 19.0 + colorSeedV * 4.17);
+  float oxideMask = smoothstep(
+    0.61, 0.83,
+    oxideBroad * 0.58 + oxideMid * 0.27 + smoothstep(0.90, 0.975, oxideSpeck) * 0.15
+  ) * smoothstep(0.31, 0.83, macroB);
+  float darkAggregate = smoothstep(0.86, 0.975, valueNoise3(colorWarped * 15.0 + colorSeedV * 4.7));
+  float paleAggregate = mineral * smoothstep(0.42, 0.86, macro);
+  float bioMask = smoothstep(0.72, 0.93, fbmValueFast(colorWarped * 2.8 + seedVector(uWeatherSeed, 0.73))) *
+                  smoothstep(-0.2, 0.58, 0.4 - baseNormal.y);
+
+  vec3 charColor = mix(dark, vec3(0.006, 0.005, 0.004), 0.42);
+  vec3 coolColor = mix(wetColor, bioColor, 0.30);
+  vec3 rustColor = mix(oxideColor, warm, 0.18);
+  vec3 saltColor = mix(mineralColor, vec3(0.94, 0.91, 0.78), 0.18);
+
+  float eventPatchA = fbmValueFast(colorWarped * 2.18 + colorSeedV * 1.61);
+  float eventPatchB = fbmGradient(colorWarped * 4.65 + colorSeedV * 2.07);
+  float eventPatchC = fbmValueFast(colorWarped * 8.40 + colorSeedV * 2.91);
+  float eventPatch = smoothstep(
+    0.38, 0.77,
+    eventPatchA * 0.52 + eventPatchB * 0.31 + eventPatchC * 0.17
+  );
+  float gaeaColorDriver = bmClarity(
+    bmAutoLevel(
+      macro * 0.31 + ridge * 0.12 + gaea.rugged * 0.17 + gaea.strata * 0.07 +
+      gaea.flow * 0.08 + eventPatch * 0.25,
+      0.16, 0.86
+    ),
+    uGaeaColorClarity * 0.86
+  );
+  float eventGate = smoothstep(
+    0.36, 0.76,
+    eventPatch * 0.55 + gaea.flow * 0.12 + gaea.rockMap * 0.13 +
+    gaea.cavity * 0.12 + gaea.microErosion * 0.08
+  );
+
+  vec3 gaeaClut = bmClut5(gaeaColorDriver, charColor, coolColor, mean, rustColor, saltColor);
+  vec4 gaeaWeights = bmSplatWeights(
+    darkAggregate + gaea.cavity * 0.34,
+    oxideMask * (0.55 + eventPatch * 0.45) + gaea.flow * 0.06,
+    paleAggregate + gaea.strata * 0.12 + gaea.microErosion * 0.08,
+    warmMask * 0.60 + gaea.protrusion * 0.16 + eventPatch * 0.24,
+    uGaeaMaskSharpness * 0.74
+  );
+  vec3 gaeaSplat =
+    charColor * gaeaWeights.x +
+    rustColor * gaeaWeights.y +
+    saltColor * gaeaWeights.z +
+    warm * gaeaWeights.w;
+  float gaeaColorBlend = clamp(
+    uGaeaColorGamut * (0.018 + eventGate * 0.31),
+    0.0, 0.40
+  );
+  albedo = mix(albedo, gaeaClut, gaeaColorBlend * 0.38);
+  albedo = mix(albedo, gaeaSplat, gaeaColorBlend * 0.26);
+
+  albedo = mix(albedo, warm, warmMask * 0.11 * rich);
+  albedo = mix(albedo, oxideColor, oxideMask * (0.04 + 0.075 * rich));
+  albedo = mix(albedo, mineralColor, paleAggregate * (0.16 + 0.075 * rich));
+  albedo = mix(albedo, dark, darkAggregate * (0.18 + 0.08 * rich));
+  albedo = mix(albedo, bioColor, bioMask * (0.04 + 0.085 * uWeatherStrength));
+
+  float axisness = max(abs(baseNormal.x), max(abs(baseNormal.y), abs(baseNormal.z)));
+  float brokenFace = smoothstep(0.12, 0.50, 1.0 - axisness);
+
+  if (uFamily == 0) {
+    float firedRegion = fbmValueFast(colorWarped * 0.82 + colorSeedV * 0.63);
+    float firedRegionB = fbmGradient(colorWarped * 1.95 + colorSeedV * 1.47);
+    float firedRegionC = fbmValueFast(colorWarped * 4.7 + colorSeedV * 2.91);
+    float redRegion = smoothstep(0.42, 0.72, firedRegion * 0.56 + firedRegionB * 0.31 + eventPatchA * 0.13);
+    float deepRedRegion = smoothstep(0.61, 0.84, firedRegionB * 0.48 + eventPatchB * 0.32 + gaea.protrusion * 0.20);
+    float carbonRegion = smoothstep(0.61, 0.87, (1.0 - firedRegion) * 0.43 + gaea.cavity * 0.36 + eventPatchC * 0.21);
+    float ashRegion = smoothstep(0.60, 0.86, (1.0 - firedRegionB) * 0.38 + gaea.flow * 0.34 + gaea.microErosion * 0.28);
+    float mineralBloom = smoothstep(0.70, 0.92, mineral * 0.34 + firedRegionC * 0.29 + gaea.flow * 0.22 + crustFlake * 0.15);
+    float oxideEvent = smoothstep(0.62, 0.87, oxideMask * 0.35 + firedRegionC * 0.28 + gaea.flow * 0.20 + eventPatch * 0.17);
+    vec3 brickRed = mix(mean, vec3(0.30, 0.115, 0.055), 0.58);
+    vec3 burntUmber = mix(dark, vec3(0.13, 0.050, 0.025), 0.56);
+    vec3 charcoal = mix(charColor, vec3(0.045, 0.044, 0.040), 0.34);
+    vec3 ashGray = mix(coolColor, vec3(0.38, 0.34, 0.29), 0.56);
+    vec3 creamMineral = mix(mineralColor, vec3(0.78, 0.70, 0.56), 0.52);
+    albedo = mix(albedo, brickRed, redRegion * (0.28 + rich * 0.14));
+    albedo = mix(albedo, burntUmber, deepRedRegion * (0.18 + rich * 0.08));
+    albedo = mix(albedo, charcoal, carbonRegion * (0.20 + rich * 0.06));
+    albedo = mix(albedo, ashGray, ashRegion * 0.18);
+    albedo = mix(albedo, rustColor, oxideEvent * (0.20 + rich * 0.15));
+    albedo = mix(albedo, creamMineral, mineralBloom * 0.28);
+    albedo = mix(albedo, charcoal, max(v27.cavity, v27.undercut) * 0.045);
+    albedo = mix(albedo, brickRed, v27.plate * 0.025);
+    albedo = mix(albedo, burntUmber, v27.shear * 0.025);
+  } else if (uFamily == 1) {
+    float adobeRegion = fbmValueFast(colorWarped * 0.92 + colorSeedV * 0.71);
+    float adobeRegionB = fbmGradient(colorWarped * 2.15 + colorSeedV * 1.59);
+    float adobeRegionC = fbmValueFast(colorWarped * 4.9 + colorSeedV * 2.83);
+    float clayRed = smoothstep(0.48, 0.78, adobeRegion * 0.53 + adobeRegionB * 0.31 + oxideBroad * 0.16);
+    float clayOchre = smoothstep(0.42, 0.77, (1.0 - adobeRegion) * 0.38 + macroB * 0.35 + eventPatchB * 0.27);
+    float clayDust = smoothstep(0.64, 0.88, adobeRegionC * 0.38 + mineral * 0.30 + gaea.microErosion * 0.20 + crustFlake * 0.12);
+    float clayDamp = smoothstep(0.52, 0.83, gaea.flow * 0.47 + gaea.cavity * 0.33 + (1.0 - adobeRegionB) * 0.20);
+    float fiberAge = fbmValueFast(vec3(projected * 3.6, uInclusionSeed * 0.011));
+    float fiberDust = valueNoise3(vec3(projected * 9.0, uInclusionSeed * 0.017));
+    vec3 adobeClayRed = mix(mean, vec3(0.36, 0.20, 0.105), 0.54);
+    vec3 adobeOchre = mix(warm, vec3(0.52, 0.34, 0.18), 0.48);
+    vec3 adobeDust = mix(mineralColor, vec3(0.68, 0.57, 0.42), 0.44);
+    vec3 strawAged = mix(strawColor, mix(warm, dark, 0.46), fiberAge * 0.52);
+    vec3 strawVar = mix(strawAged, mineralColor, smoothstep(0.70, 0.94, fiberDust) * 0.24);
+    vec3 huskVar = mix(huskColor, mix(mineralColor, dark, 0.20), micro * 0.28);
+    vec3 seedVar = mix(seedColor, dark, 0.36 + cavity * 0.18);
+    albedo = mix(albedo, adobeClayRed, clayRed * (0.26 + rich * 0.14));
+    albedo = mix(albedo, adobeOchre, clayOchre * 0.22);
+    albedo = mix(albedo, adobeDust, clayDust * 0.22);
+    albedo = mix(albedo, wetColor, clayDamp * 0.26);
+    albedo = mix(albedo, strawVar, inclusions.x);
+    albedo = mix(albedo, huskVar, inclusions.y * 0.96);
+    albedo = mix(albedo, seedVar, inclusions.z * 0.98);
+    albedo = mix(albedo, charColor, inclusions.w * 0.94);
+    albedo = mix(albedo, dark, inclusions.x * smoothstep(0.63, 0.91, fiberAge) * 0.18);
+    albedo = mix(albedo, adobeOchre, v27.plate * 0.045);
+    albedo = mix(albedo, strawVar, v27.fiber * 0.52);
+    albedo = mix(albedo, wetColor, v27.undercut * 0.055);
+    albedo = mix(albedo, dark, v27.cavity * 0.045);
+    cavity *= 1.12;
+  } else {
+    float stoneRegion = fbmValueFast(colorWarped * 0.78 + colorSeedV * 0.59);
+    float stoneRegionB = fbmGradient(colorWarped * 1.82 + colorSeedV * 1.31);
+    float stoneRegionC = fbmValueFast(colorWarped * 4.2 + colorSeedV * 2.77);
+    float blueRegion = 1.0 - smoothstep(0.34, 0.57, stoneRegion);
+    float neutralRegion = smoothstep(0.28, 0.48, stoneRegion) * (1.0 - smoothstep(0.58, 0.76, stoneRegion));
+    float warmRegion = smoothstep(0.55, 0.79, stoneRegion * 0.70 + stoneRegionB * 0.30);
+    float oliveRegion = smoothstep(0.62, 0.86, stoneRegionB * 0.43 + bioMask * 0.30 + gaea.flow * 0.27);
+    float rustRegion = smoothstep(0.70, 0.91, oxideMask * 0.36 + stoneRegionC * 0.31 + gaea.flow * 0.20 + eventPatchC * 0.13);
+    float wetRegion = smoothstep(0.55, 0.84, gaea.cavity * 0.47 + gaea.flow * 0.35 + (1.0 - stoneRegionC) * 0.18);
+    float calciteVein = smoothstep(0.70, 0.91, ridgedFbm(colorWarped * 4.8 + colorSeedV * 5.7) * 0.54 + gaea.strata * 0.29 + stoneRegionB * 0.17);
+    float layerRegion = gaea.strata * smoothstep(0.39, 0.76, stoneRegionB * 0.61 + gaea.rockMap * 0.39) * uGaeaStrata;
+    vec3 slateBlue = mix(mean, vec3(0.23, 0.24, 0.24), 0.56);
+    vec3 neutralStone = mix(mean, vec3(0.38, 0.36, 0.32), 0.54);
+    vec3 earthStone = mix(mean, vec3(0.39, 0.31, 0.23), 0.54);
+    vec3 oliveGray = mix(mean, vec3(0.28, 0.29, 0.23), 0.54);
+    vec3 calciteColor = mix(mineralColor, vec3(0.78, 0.75, 0.65), 0.50);
+    vec3 rustStone = mix(oxideColor, vec3(0.38, 0.18, 0.08), 0.46);
+    albedo = mix(albedo, slateBlue, blueRegion * 0.52);
+    albedo = mix(albedo, neutralStone, neutralRegion * 0.32);
+    albedo = mix(albedo, earthStone, warmRegion * 0.34);
+    albedo = mix(albedo, oliveGray, oliveRegion * 0.26);
+    albedo = mix(albedo, calciteColor, calciteVein * 0.32 + layerRegion * 0.16);
+    albedo = mix(albedo, rustStone, rustRegion * 0.25);
+    albedo = mix(albedo, wetColor, wetRegion * 0.38);
+    albedo = mix(albedo, charColor, gaea.rockMap * 0.10 * uGaeaRockDetail);
+    albedo = mix(albedo, slateBlue, v27.shear * 0.060);
+    albedo = mix(albedo, calciteColor, max(v27.seam, v27.bedding * 0.24) * 0.11);
+    albedo = mix(albedo, neutralStone, v27.plate * 0.050);
+    albedo = mix(albedo, wetColor, max(v27.undercut, v27.cavity) * 0.070);
+  }
+
+  vec2 waterWeather = waterWeatherMasks(p, baseNormal, uWaterSeed, uWeatherSeed);
+  float waterMask = waterWeather.x * uWaterStrength;
+  float weatherMask = waterWeather.y * uWeatherStrength;
+  float saltMask = smoothstep(0.42, 0.80, waterWeather.x) *
+                   smoothstep(0.73, 0.94, ridgedFbm(p * 10.2 + seedVector(uWeatherSeed, 1.9))) *
+                   uWeatherStrength;
+  float sheltered = smoothstep(-0.08, 0.72, 0.38 - baseNormal.y);
+  float wetBlend = uFamily == 2 ? 0.34 : (uFamily == 1 ? 0.44 : 0.48);
+  float weatherBase = uFamily == 2 ? 0.10 : (uFamily == 1 ? 0.12 : 0.14);
+  float saltBlend = uFamily == 2 ? 0.22 : (uFamily == 1 ? 0.27 : 0.31);
+  albedo = mix(albedo, wetColor, clamp(waterMask * wetBlend, 0.0, 0.60));
+  albedo = mix(
+    albedo,
+    mineralColor,
+    clamp(weatherMask * (weatherBase + max(baseNormal.y, 0.0) * 0.11) + saltMask * saltBlend, 0.0, 0.44)
+  );
+  albedo = mix(albedo, dark, clamp(weatherMask * sheltered * 0.12, 0.0, 0.22));
+
+  float poreInterior = clamp(pore * 0.22 + poreMedium * 0.66 + poreLarge, 0.0, 1.0);
+  float poreWetness = smoothstep(
+    0.42, 0.88,
+    gaea.flow * 0.34 + waterMask * 0.38 + gaea.cavity * 0.28
+  );
+  vec3 poreInteriorColor = mix(charColor, wetColor, poreWetness * 0.66);
+  float poreColorStrength = uFamily == 2 ? 0.58 : (uFamily == 1 ? 0.52 : 0.56);
+  albedo = mix(albedo, poreInteriorColor, poreInterior * poreColorStrength);
+  vec3 rimColor = uFamily == 2
+    ? mix(mineralColor, warm, 0.18)
+    : (uFamily == 1 ? mix(mineralColor, warm, 0.36) : mix(mineralColor, oxideColor, 0.22));
+  albedo = mix(albedo, rimColor, poreRim * (0.018 + uPoreVariety * 0.014));
+
+  albedo = mix(albedo, mineralColor * 0.92, brokenFace * (0.07 + weatherMask * 0.08));
+  float cavityShade = uFamily == 2
+    ? (0.14 + 0.08 * uCavityStrength + 0.032 * uPoreDepth)
+    : (uFamily == 1
+        ? (0.22 + 0.11 * uCavityStrength + 0.050 * uPoreDepth)
+        : (0.24 + 0.12 * uCavityStrength + 0.052 * uPoreDepth));
+  albedo *= 1.0 - cavity * cavityShade;
+  float familySaturation = uFamily == 2
+    ? 0.86 + rich * 0.08
+    : (uFamily == 1 ? 0.90 + rich * 0.10 : 0.94 + rich * 0.14);
+  albedo = adjustSaturation(albedo, familySaturation);
+  albedo = clamp(albedo, vec3(0.004), vec3(1.0));
+
+  float inclusionHeight = inclusions.x * 0.15 + inclusions.y * 0.11 + inclusions.z * 0.07 - inclusions.w * 0.28;
+  float familyMicroHeight = uFamily == 2 ? 0.036 : (uFamily == 1 ? 0.052 : 0.044);
+  float familyGritHeight = uFamily == 2 ? 0.004 : (uFamily == 1 ? 0.008 : 0.006);
+  float familyCrustHeight = uFamily == 2 ? 0.10 : (uFamily == 1 ? 0.12 : 0.11);
+  float heightField =
+    (macro - 0.5) * 0.16 +
+    (ridge - 0.5) * 0.22 +
+    (micro - 0.5) * familyMicroHeight +
+    (grit - 0.5) * familyGritHeight +
+    (crustBroad - 0.5) * familyCrustHeight +
+    (crustFine - 0.5) * familyCrustHeight * 0.34 +
+    mineral * 0.18 +
+    weatherMask * 0.08 +
+    inclusionHeight * 1.18 +
+    v27.protrusion * 0.075 + v27.plate * 0.035 + v27.bedding * 0.035 -
+    v27.cavity * 0.10 - v27.undercut * 0.065 +
+    (gaea.protrusion - 0.5) * 0.34 * uGaeaRockDetail +
+    (gaea.strata - 0.5) * 0.24 * uGaeaStrata * (uFamily == 2 ? 1.0 : 0.22) -
+    gaea.microErosion * 0.29 * uGaeaMicroErosion +
+    poreRim * (0.10 + uPoreVariety * 0.05) -
+    poreMedium * (0.23 + uPoreDepth * 0.07) -
+    poreLarge * (0.40 + uPoreDepth * 0.12) -
+    cavity * (0.56 + uPoreDepth * 0.12);
+
+  vec3 N = baseNormal;
+  vec3 dpdx = dFdx(vWorldPos);
+  vec3 dpdy = dFdy(vWorldPos);
+  float dhdx = dFdx(heightField);
+  float dhdy = dFdy(heightField);
+  vec3 R1 = cross(dpdy, N);
+  vec3 R2 = cross(N, dpdx);
+  float det = dot(dpdx, R1);
+  vec3 surfGrad = sign(det) * (dhdx * R1 + dhdy * R2);
+  N = normalize(abs(det) * N - surfGrad * uBumpStrength);
+
+  float familyMicroRough = uFamily == 2 ? 0.20 : (uFamily == 1 ? 0.31 : 0.29);
+  float roughDriver = clamp(
+    0.14 +
+    micro * familyMicroRough +
+    ridge * 0.15 +
+    cavity * uRoughnessCorrelation +
+    brokenFace * 0.18 +
+    weatherMask * 0.18 +
+    gaea.rockMap * 0.18 * uGaeaRockDetail +
+    gaea.strata * 0.10 * uGaeaStrata +
+    gaea.microErosion * 0.15 * uGaeaMicroErosion +
+    crustFlake * 0.16 + crustBroad * 0.08 +
+    poreRim * 0.20 + poreMedium * 0.14 + poreLarge * 0.18 +
+    v27.macroEvent * 0.045 + v27.mesoEvent * 0.060 + v27.undercut * 0.075 +
+    inclusions.x * 0.12 + inclusions.y * 0.10 -
+    mineral * 0.08 -
+    waterMask * 0.16,
+    0.0, 1.0
+  );
+  float rough = mix(uRoughness.x, uRoughness.y, roughDriver);
+
+  if (uDebugMode == 1) {
+    outColor = vec4(linearToSrgb(clamp(albedo, 0.0, 1.0)), 1.0);
+    return;
+  }
+  if (uDebugMode == 2) {
+    outColor = vec4(vec3(cavity), 1.0);
+    return;
+  }
+  if (uDebugMode == 3) {
+    outColor = vec4(vec3(rough), 1.0);
+    return;
+  }
+  if (uDebugMode == 4) {
+    outColor = vec4(N * 0.5 + 0.5, 1.0);
+    return;
+  }
+  if (uDebugMode == 5) {
+    outColor = vec4(vec3(macro, ridge, clamp(poreComposite + mineral * 0.45, 0.0, 1.0)), 1.0);
+    return;
+  }
+  if (uDebugMode == 6) {
+    outColor = vec4(clamp(vec3(waterWeather.x, waterWeather.y, saltMask), 0.0, 1.0), 1.0);
+    return;
+  }
+  if (uDebugMode == 7) {
+    outColor = vec4(clamp(vec3(inclusions.x, inclusions.y, inclusions.z + inclusions.w), 0.0, 1.0), 1.0);
+    return;
+  }
+  if (uDebugMode == 8) {
+    float fieldComposite = clamp(
+      gaea.rockMap * 0.48 + gaea.strata * 0.22 + gaea.microErosion * 0.20 + gaea.flow * 0.10,
+      0.0, 1.0
+    );
+    outColor = vec4(vec3(fieldComposite), 1.0);
+    return;
+  }
+  if (uDebugMode == 9) {
+    outColor = vec4(vec3(v27.macroEvent), 1.0);
+    return;
+  }
+  if (uDebugMode == 10) {
+    outColor = vec4(vec3(v27.mesoEvent), 1.0);
+    return;
+  }
+
+  vec3 V = normalize(uCamera - vWorldPos);
+  vec3 L1 = normalize(vec3(-0.44, 0.83, 0.36));
+  vec3 L2 = normalize(vec3(0.62, 0.47, -0.63));
+  vec3 L3 = normalize(vec3(-0.12, 0.28, -0.95));
+
+  vec3 color = vec3(0.0);
+  color += shadeLight(N, V, L1, vec3(1.0, 0.99, 0.97), 2.88, albedo, rough);
+  color += shadeLight(N, V, L2, vec3(0.68, 0.73, 0.78), 0.66, albedo, rough);
+  color += shadeLight(N, V, L3, vec3(0.84, 0.74, 0.63), 0.27, albedo, rough);
+
+  float hemiBase = uFamily == 2 ? 0.45 : (uFamily == 1 ? 0.43 : 0.42);
+  float hemi = hemiBase + 0.20 * clamp(N.y * 0.5 + 0.5, 0.0, 1.0);
+  float cavityAo = uFamily == 2 ? 0.24 : (uFamily == 1 ? 0.36 : 0.38);
+  float gaeaAo = uFamily == 2 ? 0.055 : 0.085;
+  float ao = clamp(
+    1.0 -
+    cavity * (cavityAo + uPoreDepth * 0.055) -
+    poreLarge * (0.10 + uPoreDepth * 0.045) -
+    poreMedium * 0.045 -
+    smoothstep(0.82, 1.0, 1.0 - ridge) * 0.075 -
+    gaea.cavity * uGaeaRockDetail * gaeaAo -
+    gaea.microErosion * uGaeaMicroErosion * 0.045 -
+    v27.cavity * 0.08 - v27.undercut * 0.06 + v27.protrusion * 0.015,
+    uFamily == 2 ? 0.50 : 0.42,
+    1.0
+  );
+  color += albedo * hemi;
+  color *= ao;
+
+  float familyExposure = uFamily == 2 ? 1.72 : (uFamily == 1 ? 1.66 : 1.70);
+  color = 1.0 - exp(-color * familyExposure);
+  color = pow(max(color, 0.0), vec3(0.99));
+  outColor = vec4(linearToSrgb(color), 1.0);
+}`;
+
+class BrickRenderer {
+  constructor(canvas) {
+    this.canvas = canvas;
+    this.gl = canvas.getContext('webgl2', {
+      antialias: true,
+      alpha: false,
+      preserveDrawingBuffer: true,
+      powerPreference: 'high-performance'
+    });
+    if (!this.gl) throw new Error('当前浏览器没有可用的 WebGL2');
+
+    this.program = createProgram(this.gl, vertexShader, fragmentShader);
+    this.loc = this.locations();
+    this.camera = { yaw: 0.76, pitch: 0.27, distance: 13.5, target: vec3(0, 0.7, 0) };
+    this.meshes = [];
+    this.autoRotate = false;
+    this.debugMode = 0;
+    this.drag = false;
+    this.pan = false;
+    this.lastTime = 0;
+    this.bind();
+    this.createGround();
+    this.resizeObserver = new ResizeObserver(() => this.resize());
+    this.resizeObserver.observe(canvas);
+    this.resize();
+    requestAnimationFrame((t) => this.loop(t));
+  }
+
+  locations() {
+    const gl = this.gl, p = this.program;
+    const a = (n) => gl.getAttribLocation(p, n);
+    const u = (n) => gl.getUniformLocation(p, n);
+    return {
+      position: a('aPosition'),
+      normal: a('aNormal'),
+      model: u('uModel'),
+      viewProj: u('uViewProj'),
+      camera: u('uCamera'),
+      low: u('uLowColor'),
+      mean: u('uMeanColor'),
+      high: u('uHighColor'),
+      paletteDark: u('uPaletteDark'),
+      paletteWarm: u('uPaletteWarm'),
+      paletteOxide: u('uPaletteOxide'),
+      paletteMineral: u('uPaletteMineral'),
+      paletteBio: u('uPaletteBio'),
+      paletteWet: u('uPaletteWet'),
+      paletteStraw: u('uPaletteStraw'),
+      paletteHusk: u('uPaletteHusk'),
+      paletteSeedColor: u('uPaletteSeedColor'),
+      roughness: u('uRoughness'),
+      dimensions: u('uDimensions'),
+      warpStrength: u('uWarpStrength'),
+      macroScale: u('uMacroScale'),
+      ridgedScale: u('uRidgedScale'),
+      cellScale: u('uCellScale'),
+      poreThreshold: u('uPoreThreshold'),
+      poreSharpness: u('uPoreSharpness'),
+      microScale: u('uMicroScale'),
+      colorContrast: u('uColorContrast'),
+      cavityStrength: u('uCavityStrength'),
+      bumpStrength: u('uBumpStrength'),
+      roughnessCorrelation: u('uRoughnessCorrelation'),
+      mineralScale: u('uMineralScale'),
+      firingBand: u('uFiringBand'),
+      colorRichness: u('uColorRichness'),
+      waterStrength: u('uWaterStrength'),
+      weatherStrength: u('uWeatherStrength'),
+      inclusionStrength: u('uInclusionStrength'),
+      poreDepth: u('uPoreDepth'),
+      poreDensity: u('uPoreDensity'),
+      poreVariety: u('uPoreVariety'),
+      colorSeed: u('uColorSeed'),
+      poreSeed: u('uPoreSeed'),
+      waterSeed: u('uWaterSeed'),
+      weatherSeed: u('uWeatherSeed'),
+      inclusionSeed: u('uInclusionSeed'),
+      detailSeed: u('uDetailSeed'),
+      gaeaRockDetail: u('uGaeaRockDetail'),
+      gaeaStrata: u('uGaeaStrata'),
+      gaeaMicroErosion: u('uGaeaMicroErosion'),
+      gaeaColorClarity: u('uGaeaColorClarity'),
+      gaeaColorGamut: u('uGaeaColorGamut'),
+      gaeaMaskSharpness: u('uGaeaMaskSharpness'),
+      gaeaRuggedScale: u('uGaeaRuggedScale'),
+      gaeaStrataFrequency: u('uGaeaStrataFrequency'),
+      gaeaSurfaceScale: u('uGaeaSurfaceScale'),
+      family: u('uFamily'),
+      debugMode: u('uDebugMode'),
+      ground: u('uGround'),
+      shadowPos: [u('uShadowPos0'), u('uShadowPos1'), u('uShadowPos2')],
+      shadowSize: [u('uShadowSize0'), u('uShadowSize1'), u('uShadowSize2')],
+      v27EventCount: u('uV27EventCount'),
+      v27EventA: u('uV27EventA[0]'),
+      v27EventB: u('uV27EventB[0]'),
+      v27EventC: u('uV27EventC[0]')
+    };
+  }
+
+  bind() {
+    const c = this.canvas;
+    c.addEventListener('contextmenu', (e) => e.preventDefault());
+    c.addEventListener('pointerdown', (e) => {
+      this.drag = true;
+      this.pan = e.button === 2 || e.shiftKey;
+      this.px = e.clientX;
+      this.py = e.clientY;
+      c.setPointerCapture(e.pointerId);
+    });
+    c.addEventListener('pointermove', (e) => {
+      if (!this.drag) return;
+      const dx = e.clientX - this.px, dy = e.clientY - this.py;
+      this.px = e.clientX;
+      this.py = e.clientY;
+      if (this.pan) {
+        const scale = this.camera.distance * 0.0018;
+        this.camera.target.x -= dx * scale * Math.cos(this.camera.yaw);
+        this.camera.target.z += dx * scale * Math.sin(this.camera.yaw);
+        this.camera.target.y += dy * scale;
+      } else {
+        this.camera.yaw += dx * 0.007;
+        this.camera.pitch = clamp(this.camera.pitch + dy * 0.006, -1.15, 1.05);
+      }
+    });
+    const stop = () => { this.drag = false; };
+    c.addEventListener('pointerup', stop);
+    c.addEventListener('pointercancel', stop);
+    c.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      this.camera.distance = clamp(this.camera.distance * Math.exp(e.deltaY * 0.001), 3.1, 27);
+    }, { passive: false });
+  }
+
+  createBuffer(data) {
+    const gl = this.gl;
+    const b = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, b);
+    gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
+    return b;
+  }
+
+  createGround() {
+    const p = new Float32Array([
+      -20, 0, -20, 20, 0, -20, 20, 0, 20,
+      -20, 0, -20, 20, 0, 20, -20, 0, 20
+    ]);
+    const n = new Float32Array(18);
+    for (let i = 0; i < 6; i++) n[i * 3 + 1] = 1;
+    this.ground = {
+      p: this.createBuffer(p),
+      n: this.createBuffer(n),
+      count: 6,
+      model: mat4Identity()
+    };
+  }
+
+  clearMeshes() {
+    const gl = this.gl;
+    for (const m of this.meshes) {
+      gl.deleteBuffer(m.p);
+      gl.deleteBuffer(m.n);
+    }
+    this.meshes = [];
+  }
+
+  setMeshes(items) {
+    this.clearMeshes();
+    const gl = this.gl;
+    this.meshes = items.map((item) => ({
+      ...item,
+      p: this.createBuffer(item.mesh.positions),
+      n: this.createBuffer(item.mesh.normals),
+      count: item.mesh.vertices,
+      model: mat4Model(item.position, item.yaw)
+    }));
+    gl.bindBuffer(gl.ARRAY_BUFFER, null);
+  }
+
+  setDebugMode(mode) {
+    this.debugMode = clamp(Number(mode) || 0, 0, 10);
+  }
+
+  resetView() {
+    const benchmark = this.meshes.some((m) => (m.mesh.controls?.benchmarkSlab ?? 0) > 0.5);
+    this.camera = benchmark
+      ? { yaw: 0.22, pitch: 0.07, distance: this.meshes.length > 1 ? 13.2 : 4.95, target: vec3(0, 0, 0) }
+      : { yaw: 0.76, pitch: 0.27, distance: 13.5, target: vec3(0, 0.7, 0) };
+  }
+
+  focus(index) {
+    const m = this.meshes[index];
+    if (!m) return;
+    const benchmark = (m.mesh.controls?.benchmarkSlab ?? 0) > 0.5;
+    this.camera.target = benchmark
+      ? vec3(m.position.x, m.position.y, m.position.z)
+      : vec3(m.position.x, m.mesh.dims.y * 0.48, m.position.z);
+    this.camera.distance = benchmark
+      ? Math.max(4.65, Math.max(m.mesh.dims.x, m.mesh.dims.y) * 1.55)
+      : Math.max(2.90, Math.max(m.mesh.dims.x, m.mesh.dims.z) * 1.34);
+    this.camera.yaw = benchmark ? 0.22 + m.yaw * 0.10 : 0.82 + m.yaw * 0.25;
+    this.camera.pitch = benchmark ? 0.07 : 0.20;
+  }
+
+  resize() {
+    const dpr = Math.min(devicePixelRatio || 1, 2);
+    const w = Math.max(2, Math.floor(this.canvas.clientWidth * dpr));
+    const h = Math.max(2, Math.floor(this.canvas.clientHeight * dpr));
+    if (this.canvas.width !== w || this.canvas.height !== h) {
+      this.canvas.width = w;
+      this.canvas.height = h;
+    }
+    this.gl.viewport(0, 0, w, h);
+  }
+
+  bindAttributes(mesh) {
+    const gl = this.gl, l = this.loc;
+    gl.bindBuffer(gl.ARRAY_BUFFER, mesh.p);
+    gl.enableVertexAttribArray(l.position);
+    gl.vertexAttribPointer(l.position, 3, gl.FLOAT, false, 0, 0);
+    gl.bindBuffer(gl.ARRAY_BUFFER, mesh.n);
+    gl.enableVertexAttribArray(l.normal);
+    gl.vertexAttribPointer(l.normal, 3, gl.FLOAT, false, 0, 0);
+  }
+
+  setMaterial(profile, mesh) {
+    const gl = this.gl, l = this.loc;
+    const d = profile.runtimeDNA;
+    const n = profile.noiseDNA || {};
+    const p = profile.paletteDNA || {};
+    const g = profile.gaeaDNA || {};
+    const seeds = mesh.seedDNA || {};
+    const controls = mesh.controls || {};
+    const palette = (key, fallback) => p[key] || fallback;
+    gl.uniform3fv(l.low, d.colorLowSRGB);
+    gl.uniform3fv(l.mean, d.colorMeanSRGB);
+    gl.uniform3fv(l.high, d.colorHighSRGB);
+    gl.uniform3fv(l.paletteDark, palette('darkSRGB', d.colorLowSRGB));
+    gl.uniform3fv(l.paletteWarm, palette('warmSRGB', d.colorMeanSRGB));
+    gl.uniform3fv(l.paletteOxide, palette('oxideSRGB', d.colorHighSRGB));
+    gl.uniform3fv(l.paletteMineral, palette('mineralSRGB', d.colorHighSRGB));
+    gl.uniform3fv(l.paletteBio, palette('bioSRGB', d.colorLowSRGB));
+    gl.uniform3fv(l.paletteWet, palette('wetSRGB', d.colorLowSRGB));
+    gl.uniform3fv(l.paletteStraw, palette('strawSRGB', [0.58, 0.43, 0.22]));
+    gl.uniform3fv(l.paletteHusk, palette('huskSRGB', [0.72, 0.59, 0.34]));
+    gl.uniform3fv(l.paletteSeedColor, palette('seedSRGB', [0.25, 0.18, 0.10]));
+    gl.uniform2fv(l.roughness, d.roughnessRange);
+    gl.uniform3f(l.dimensions, mesh.dims.x, mesh.dims.y, mesh.dims.z);
+    gl.uniform1f(l.warpStrength, n.warpStrength ?? 0.18);
+    gl.uniform1f(l.macroScale, n.macroScale ?? 1.7);
+    gl.uniform1f(l.ridgedScale, n.ridgedScale ?? 5.5);
+    gl.uniform1f(l.cellScale, n.cellScale ?? 12.0);
+    gl.uniform1f(l.poreThreshold, n.poreThreshold ?? 0.14);
+    gl.uniform1f(l.poreSharpness, n.poreSharpness ?? 0.055);
+    gl.uniform1f(l.microScale, n.microScale ?? 44.0);
+    gl.uniform1f(l.colorContrast, n.colorContrast ?? 1.35);
+    gl.uniform1f(l.cavityStrength, n.cavityStrength ?? 0.72);
+    gl.uniform1f(l.bumpStrength, n.bumpStrength ?? 0.085);
+    gl.uniform1f(l.roughnessCorrelation, n.roughnessCorrelation ?? 0.45);
+    gl.uniform1f(l.mineralScale, n.mineralScale ?? 21.0);
+    gl.uniform1f(l.firingBand, d.firingBand ?? 0.0);
+    gl.uniform1f(l.colorRichness, controls.colorRichness ?? 1.15);
+    gl.uniform1f(l.waterStrength, controls.waterStain ?? 0.72);
+    gl.uniform1f(l.weatherStrength, controls.weathering ?? 0.72);
+    gl.uniform1f(l.inclusionStrength, controls.inclusion ?? 0.8);
+    gl.uniform1f(l.poreDepth, controls.poreDepth ?? 0.9);
+    gl.uniform1f(l.poreDensity, controls.poreDensity ?? 1.18);
+    gl.uniform1f(l.poreVariety, controls.poreVariety ?? 1.08);
+    gl.uniform1f(l.colorSeed, seeds.color ?? seeds.master ?? 17);
+    gl.uniform1f(l.poreSeed, seeds.pore ?? seeds.master ?? 19);
+    gl.uniform1f(l.waterSeed, seeds.water ?? seeds.master ?? 23);
+    gl.uniform1f(l.weatherSeed, seeds.weather ?? seeds.master ?? 29);
+    gl.uniform1f(l.inclusionSeed, seeds.inclusion ?? seeds.master ?? 31);
+    gl.uniform1f(l.detailSeed, seeds.detail ?? seeds.master ?? 37);
+    gl.uniform1f(l.gaeaRockDetail, controls.rockDetail ?? 0.68);
+    gl.uniform1f(l.gaeaStrata, controls.strata ?? 0.28);
+    gl.uniform1f(l.gaeaMicroErosion, controls.microErosion ?? 0.64);
+    gl.uniform1f(l.gaeaColorClarity, controls.colorClarity ?? 0.92);
+    gl.uniform1f(l.gaeaColorGamut, controls.colorGamut ?? 1.08);
+    gl.uniform1f(l.gaeaMaskSharpness, controls.maskSharpness ?? 0.92);
+    gl.uniform1f(l.gaeaRuggedScale, g.ruggedScale ?? 6.2);
+    gl.uniform1f(l.gaeaStrataFrequency, g.strataFrequency ?? 5.4);
+    gl.uniform1f(l.gaeaSurfaceScale, g.surfaceScale ?? 34.0);
+    const events = (mesh.damage?.formationEvents || []).slice(0, MAX_V27_EVENTS);
+    const eventA = new Float32Array(MAX_V27_EVENTS * 4);
+    const eventB = new Float32Array(MAX_V27_EVENTS * 4);
+    const eventC = new Float32Array(MAX_V27_EVENTS * 4);
+    events.forEach((event, i) => {
+      const k = i * 4;
+      eventA[k] = event.center.x; eventA[k + 1] = event.center.y; eventA[k + 2] = event.center.z; eventA[k + 3] = event.typeCode;
+      eventB[k] = event.size.x; eventB[k + 1] = event.size.y; eventB[k + 2] = event.size.z; eventB[k + 3] = event.strength ?? 1;
+      eventC[k] = event.direction.x; eventC[k + 1] = event.direction.y; eventC[k + 2] = event.direction.z; eventC[k + 3] = event.phase ?? 0;
+    });
+    gl.uniform1i(l.v27EventCount, events.length);
+    gl.uniform4fv(l.v27EventA, eventA);
+    gl.uniform4fv(l.v27EventB, eventB);
+    gl.uniform4fv(l.v27EventC, eventC);
+    gl.uniform1i(l.family, profile.family === 'STONE' ? 2 : profile.family === 'ADOBE' ? 1 : 0);
+    gl.uniform1i(l.debugMode, this.debugMode);
+  }
+
+  cameraEye() {
+    const c = this.camera, cp = Math.cos(c.pitch);
+    return vec3(
+      c.target.x + Math.sin(c.yaw) * cp * c.distance,
+      c.target.y + Math.sin(c.pitch) * c.distance,
+      c.target.z + Math.cos(c.yaw) * cp * c.distance
+    );
+  }
+
+  draw() {
+    const gl = this.gl, l = this.loc;
+    this.resize();
+    gl.enable(gl.DEPTH_TEST);
+    gl.depthFunc(gl.LEQUAL);
+    gl.disable(gl.CULL_FACE);
+    const benchmark = this.meshes.some((m) => (m.mesh.controls?.benchmarkSlab ?? 0) > 0.5);
+    gl.clearColor(benchmark ? 0.010 : 0.060, benchmark ? 0.011 : 0.064, benchmark ? 0.012 : 0.058, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    gl.useProgram(this.program);
+
+    const eye = this.cameraEye();
+    const view = mat4LookAt(eye, this.camera.target, vec3(0, 1, 0));
+    const proj = mat4Perspective(Math.PI / 4.2, this.canvas.width / this.canvas.height, 0.05, 100);
+    const viewProj = mat4Multiply(proj, view);
+
+    gl.uniformMatrix4fv(l.viewProj, false, viewProj);
+    gl.uniform3f(l.camera, eye.x, eye.y, eye.z);
+
+    for (let i = 0; i < 3; i++) {
+      const m = this.meshes[i];
+      const pos = m ? m.position : vec3(1000, 0, 1000);
+      const dims = m ? m.mesh.dims : vec3(1, 1, 1);
+      gl.uniform3f(l.shadowPos[i], pos.x, 0, pos.z);
+      gl.uniform2f(l.shadowSize[i], dims.x * 0.66, dims.z * 0.72);
+    }
+
+    if (!benchmark) {
+      gl.uniform1i(l.ground, 1);
+      gl.uniform1f(l.colorSeed, 17);
+      gl.uniformMatrix4fv(l.model, false, this.ground.model);
+      this.bindAttributes(this.ground);
+      gl.drawArrays(gl.TRIANGLES, 0, this.ground.count);
+    }
+
+    gl.uniform1i(l.ground, 0);
+    for (const mesh of this.meshes) {
+      gl.uniformMatrix4fv(l.model, false, mesh.model);
+      this.bindAttributes(mesh);
+      this.setMaterial(mesh.profile, mesh.mesh);
+      gl.drawArrays(gl.TRIANGLES, 0, mesh.count);
+    }
+  }
+
+  loop(t) {
+    const dt = Math.min(0.05, (t - this.lastTime) / 1000 || 0);
+    this.lastTime = t;
+    if (this.autoRotate && !this.drag) this.camera.yaw += dt * 0.16;
+    this.draw();
+    requestAnimationFrame((n) => this.loop(n));
+  }
+
+  capture() {
+    return this.canvas.toDataURL('image/png');
+  }
+}
+
+window.BrickMotherRendererV2 = { BrickRenderer };
+})();
+
+</script>
+  <script>window.__BRICK_MOTHER_INLINE_DATA__={"schemaVersion":"2.7.0-alpha.1","generatedAt":"2026-08-29","pipelineId":"brick-mother-v27-visual-truth-formation-hierarchy","researchBasis":{"userReference":"https://threejsroadmap.com/blog/10-noise-functions-for-threejs-tsl-shaders","primaryImplementationReferences":["https://github.com/mrdoob/three.js/blob/dev/src/nodes/materialx/MaterialXNoise.js","https://github.com/mrdoob/three.js/wiki/Three.js-Shading-Language"],"adoptedNoiseFamilies":["gradient noise","fractal Brownian motion","ridged fBm","turbulence","domain warp","Worley cellular noise"],"gaeaOfficialDocumentation":["https://docs.quadspinner.com/Reference/","https://docs.quadspinner.com/Guide/Using-Gaea/Modify-Shapes.html","https://docs.quadspinner.com/Reference/Adjustments/Combine.html","https://docs.quadspinner.com/Reference/LookDev/Rugged.html","https://docs.quadspinner.com/Guide/Using-Gaea/LookDev.html","https://docs.quadspinner.com/Reference/Erosion/MicroErosion.html","https://docs.quadspinner.com/Reference/Erosion/Stratify.html","https://docs.quadspinner.com/Reference/Data/RockMap.html","https://docs.quadspinner.com/Reference/Color/CLUTer.html","https://docs.quadspinner.com/Reference/Color/Synth.html","https://docs.quadspinner.com/Reference/Color/Splat.html","https://docs.quadspinner.com/Reference/Color/ColorFX.html"],"gaeaDistillationPolicy":"Documented node roles and graph strategies distilled into an independent field implementation."},"rendererContract":{"engine":"BrickMother WebGL2 Runtime V2.7 visual truth formation hierarchy","workingColorSpace":"linear-sRGB","outputColorSpace":"sRGB","toneMapping":"neutral exponential","metalnessPolicy":"all masonry runtime materials forced to 0.0 unless independently verified","damagePolicy":"Benchmark mode adds deterministic macro plate loss, shear bands, bedding, delamination, undercut shelves, cavity clusters, fracture branches, edge spalls, fibre bundles, pullout channels, compaction flakes and mineral seams. Historical production proportions remain available.","mutationPolicy":"independent seeded layers for shape, damage, pores, color, water, weathering, inclusions and micro detail","channelCorrelation":"Geometry, albedo, roughness, micro normal and ambient occlusion share uploaded deterministic V2.7 formation events, plus the existing independent seed layers.","gaeaFieldGraph":"Rugged, broken stratify, micro-erosion, rock-map, flow, separation-mask, CLUT5 and normalized Splat fields share geometry, color, roughness, normal and AO correlations; fired-clay color bands are event-gated to suppress regular contours."},"profiles":[{"id":"historical-fired","label":"历史手工烧结砖","family":"FIRED_CLAY","source":{"filename":"12th_-14th_century_building_brick.glb","bytes":3474792,"sha256":"36848fd806fc251f3a754701aef71a1e09b3a2996c78783b9082346600e8ffb8","author":"pasquill","license":"CC BY 4.0","sourceUrl":"https://sketchfab.com/3d-models/12th-14th-century-building-brick-5f7758009c0b4599a36ecb2114c1a6a7"},"measured":{"dimensionsMm":[318.95884,81.495,147.39672],"triangleCount":19390,"baseColorMeanSRGB":[0.492622,0.357764,0.209922],"baseColorP05SRGB":[0.0,0.0,0.0],"baseColorP95SRGB":[0.694118,0.505882,0.298039],"roughnessMean":0.9577051495,"normalTiltDegrees":{"mean":9.0951,"p50":6.5735,"p95":27.8144}},"runtimeDNA":{"shapeRatio":[3.913,1.0,1.809],"edgeRadius":0.075,"macroWarp":0.03,"surfaceRelief":0.032,"grainScale":7.2,"fineScale":34.0,"roughnessRange":[0.92,0.995],"colorLowSRGB":[0.07,0.038,0.025],"colorMeanSRGB":[0.36,0.19,0.095],"colorHighSRGB":[0.66,0.4,0.2],"mineralFleck":0.26,"firingBand":0.34,"pitDensity":0.48,"edgeFragility":0.64,"crackAffinity":0.52,"seedBase":1214},"noiseDNA":{"warpStrength":0.19,"macroScale":1.55,"ridgedScale":6.2,"cellScale":16.0,"poreThreshold":0.115,"poreSharpness":0.05,"microScale":44.0,"colorContrast":1.58,"cavityStrength":0.92,"bumpStrength":0.135,"roughnessCorrelation":0.5,"mineralScale":24.0,"geometryPoreCount":14,"edgeRoundnessScale":0.56,"geometryWarp":0.84,"geometryRelief":0.7,"domainWarpScale":0.82,"geometryDeepPoreCount":6,"colorClusterScale":3.1,"waterRunoffScale":5.4,"weatherExposureScale":1.82},"paletteDNA":{"darkSRGB":[0.035,0.027,0.022],"warmSRGB":[0.53,0.28,0.13],"oxideSRGB":[0.64,0.2,0.075],"mineralSRGB":[0.78,0.7,0.56],"bioSRGB":[0.12,0.16,0.075],"wetSRGB":[0.035,0.045,0.055],"strawSRGB":[0.59,0.4,0.16],"huskSRGB":[0.72,0.54,0.27],"seedSRGB":[0.26,0.13,0.055]},"compositeDefaults":{"colorRichness":1.64,"damage":0.78,"poreDepth":1.38,"waterStain":0.7,"weathering":0.88,"inclusion":0.22,"shapeVariation":0.96,"rockDetail":0.52,"strata":0.1,"microErosion":0.62,"colorClarity":1.1,"colorGamut":1.34,"maskSharpness":0.84,"poreDensity":1.58,"poreVariety":1.46},"seedLayerOffsets":{"shape":101,"damage":211,"pore":307,"color":401,"water":503,"weather":601,"inclusion":701,"detail":809},"gaeaDNA":{"ruggedScale":6.2,"strataFrequency":5.2,"surfaceScale":36.0,"ruggedDepth":0.0095,"strataDepth":0.0032,"microErosionDepth":0.0042,"warpStrength":0.22,"strataTilt":0.17,"geometryStrength":1.0}},{"id":"old-pbr-fired","label":"完整 PBR 老砖","family":"FIRED_CLAY","source":{"filename":"brick.glb","bytes":4218980,"sha256":"b90d0b805926b684d62034deaf90ba922ac8c5c52bf0e9115fd2d0fd2bcdf5be","author":"Rigsters","license":"CC BY 4.0","sourceUrl":"https://sketchfab.com/3d-models/brick-504a59ef14a148809cec657d7c99367c"},"measured":{"dimensionsMm":[424.04932,137.55632,276.93737],"triangleCount":29996,"baseColorMeanSRGB":[0.623176,0.560165,0.435435],"baseColorP05SRGB":[0.501961,0.439216,0.282353],"baseColorP95SRGB":[0.737255,0.678431,0.572549],"roughnessMean":0.646511,"roughnessP05":0.529412,"roughnessP95":0.72549,"normalTiltDegrees":{"mean":8.5061,"p50":5.7543,"p95":25.9049}},"runtimeDNA":{"shapeRatio":[3.083,1.0,2.013],"edgeRadius":0.085,"macroWarp":0.024,"surfaceRelief":0.026,"grainScale":8.0,"fineScale":42.0,"roughnessRange":[0.78,0.96],"colorLowSRGB":[0.075,0.042,0.028],"colorMeanSRGB":[0.38,0.205,0.105],"colorHighSRGB":[0.68,0.43,0.23],"mineralFleck":0.68,"firingBand":0.18,"pitDensity":0.56,"edgeFragility":0.47,"crackAffinity":0.34,"seedBase":5045},"noiseDNA":{"warpStrength":0.16,"macroScale":1.45,"ridgedScale":5.8,"cellScale":14.0,"poreThreshold":0.12,"poreSharpness":0.05,"microScale":42.0,"colorContrast":1.52,"cavityStrength":0.86,"bumpStrength":0.13,"roughnessCorrelation":0.48,"mineralScale":22.0,"geometryPoreCount":12,"edgeRoundnessScale":0.54,"geometryWarp":0.72,"geometryRelief":0.62,"domainWarpScale":0.78,"geometryDeepPoreCount":5,"colorClusterScale":3.1,"waterRunoffScale":5.4,"weatherExposureScale":1.82},"paletteDNA":{"darkSRGB":[0.038,0.03,0.025],"warmSRGB":[0.56,0.3,0.14],"oxideSRGB":[0.67,0.22,0.085],"mineralSRGB":[0.8,0.72,0.58],"bioSRGB":[0.13,0.17,0.08],"wetSRGB":[0.038,0.05,0.06],"strawSRGB":[0.62,0.45,0.2],"huskSRGB":[0.76,0.61,0.34],"seedSRGB":[0.27,0.16,0.075]},"compositeDefaults":{"colorRichness":1.6,"damage":0.72,"poreDepth":1.34,"waterStain":0.82,"weathering":0.84,"inclusion":0.2,"shapeVariation":0.9,"rockDetail":0.5,"strata":0.08,"microErosion":0.6,"colorClarity":1.08,"colorGamut":1.3,"maskSharpness":0.82,"poreDensity":1.52,"poreVariety":1.42},"seedLayerOffsets":{"shape":101,"damage":211,"pore":307,"color":401,"water":503,"weather":601,"inclusion":701,"detail":809},"gaeaDNA":{"ruggedScale":6.2,"strataFrequency":5.2,"surfaceScale":36.0,"ruggedDepth":0.0095,"strataDepth":0.0032,"microErosionDepth":0.0042,"warpStrength":0.22,"strataTilt":0.17,"geometryStrength":1.0}},{"id":"raw-clay","label":"原始黏土砖","family":"ADOBE","source":{"filename":"clay_brick.glb","bytes":10191844,"sha256":"e15725edb10adf87b0bdc6d92a73d749f97b5d2f2a6b0f70c3deecfa8f57d02d","author":"Världskulturmuseerna","license":"CC BY-NC 4.0","sourceUrl":"https://sketchfab.com/3d-models/clay-brick-adc8de4f9d4a4091bf5b5dedf45fcba4"},"measured":{"dimensionsMm":[565.95757,131.872305,563.575051],"triangleCount":180782,"baseColorMeanSRGB":[0.644732,0.579669,0.497125],"baseColorP05SRGB":[0.466667,0.415686,0.360784],"baseColorP95SRGB":[0.760784,0.690196,0.6],"roughnessMean":0.7906289251,"normalTiltDegrees":{"mean":6.6057,"p50":4.7973,"p95":19.7048}},"runtimeDNA":{"shapeRatio":[4.291,1.0,4.273],"edgeRadius":0.105,"macroWarp":0.052,"surfaceRelief":0.041,"grainScale":5.6,"fineScale":28.0,"roughnessRange":[0.84,0.985],"colorLowSRGB":[0.17,0.1,0.058],"colorMeanSRGB":[0.455,0.295,0.16],"colorHighSRGB":[0.7,0.55,0.34],"mineralFleck":0.36,"firingBand":0.0,"pitDensity":0.66,"edgeFragility":0.78,"crackAffinity":0.7,"seedBase":4517},"noiseDNA":{"warpStrength":0.23,"macroScale":1.25,"ridgedScale":4.4,"cellScale":10.5,"poreThreshold":0.155,"poreSharpness":0.052,"microScale":28.0,"colorContrast":1.42,"cavityStrength":0.72,"bumpStrength":0.145,"roughnessCorrelation":0.56,"mineralScale":17.0,"geometryPoreCount":13,"edgeRoundnessScale":0.72,"geometryWarp":1.05,"geometryRelief":0.86,"domainWarpScale":0.68,"geometryDeepPoreCount":5,"colorClusterScale":2.4,"waterRunoffScale":5.4,"weatherExposureScale":1.82},"paletteDNA":{"darkSRGB":[0.1,0.064,0.04],"warmSRGB":[0.58,0.39,0.21],"oxideSRGB":[0.49,0.23,0.1],"mineralSRGB":[0.74,0.66,0.5],"bioSRGB":[0.18,0.25,0.1],"wetSRGB":[0.07,0.055,0.045],"strawSRGB":[0.67,0.51,0.27],"huskSRGB":[0.79,0.67,0.41],"seedSRGB":[0.18,0.07,0.02]},"compositeDefaults":{"colorRichness":1.42,"damage":0.82,"poreDepth":1.36,"waterStain":0.84,"weathering":0.86,"inclusion":1.48,"shapeVariation":1.08,"rockDetail":0.38,"strata":0.1,"microErosion":0.64,"colorClarity":1.02,"colorGamut":1.18,"maskSharpness":0.76,"poreDensity":1.58,"poreVariety":1.46},"seedLayerOffsets":{"shape":101,"damage":211,"pore":307,"color":401,"water":503,"weather":601,"inclusion":701,"detail":809},"gaeaDNA":{"ruggedScale":4.8,"strataFrequency":3.4,"surfaceScale":29.0,"ruggedDepth":0.0075,"strataDepth":0.0022,"microErosionDepth":0.0054,"warpStrength":0.27,"strataTilt":0.11,"geometryStrength":0.92}},{"id":"stone-block","label":"石块","family":"STONE","source":{"filename":"stone_brick.glb","bytes":23979900,"sha256":"69a2be880fab4a209ee0d46e639b2ad458fdb327e15c738092b1ce55f5e68ebe","author":"LuthBird1","license":"CC BY 4.0","sourceUrl":"https://sketchfab.com/3d-models/stone-brick-8a31a831769f491f849f20715127d239"},"measured":{"dimensionsMm":[14.20577,7.82418,5.96787],"dimensionUnitStatus":"source-units-pending-calibration","triangleCount":263744,"baseColorMeanSRGB":[0.154841,0.174215,0.191687],"baseColorP05SRGB":[0.054902,0.105882,0.152941],"baseColorP95SRGB":[0.266667,0.258824,0.25098],"rawRoughnessMean":0.513786,"rawMetalnessMean":0.268394,"normalTiltDegrees":{"mean":3.2268,"p50":1.9322,"p95":11.2616},"sourceExportAnomalies":["alphaMode BLEND","emissiveFactor 1,1,1 with black emissive map","non-zero metalness on masonry"]},"runtimeDNA":{"shapeRatio":[1.816,1.0,0.763],"edgeRadius":0.055,"macroWarp":0.044,"surfaceRelief":0.024,"grainScale":10.0,"fineScale":38.0,"roughnessRange":[0.78,0.96],"colorLowSRGB":[0.045,0.05,0.052],"colorMeanSRGB":[0.285,0.292,0.278],"colorHighSRGB":[0.59,0.57,0.5],"mineralFleck":0.82,"firingBand":0.0,"pitDensity":0.38,"edgeFragility":0.56,"crackAffinity":0.84,"seedBase":8231,"normalization":{"metalness":0.0,"emissive":0.0,"alphaMode":"OPAQUE"}},"noiseDNA":{"warpStrength":0.2,"macroScale":1.75,"ridgedScale":6.2,"cellScale":18.0,"poreThreshold":0.105,"poreSharpness":0.05,"microScale":36.0,"colorContrast":1.46,"cavityStrength":0.8,"bumpStrength":0.15,"roughnessCorrelation":0.34,"mineralScale":21.0,"geometryPoreCount":11,"edgeRoundnessScale":0.44,"geometryWarp":0.92,"geometryRelief":0.74,"domainWarpScale":0.88,"geometryDeepPoreCount":5,"colorClusterScale":3.1,"waterRunoffScale":5.4,"weatherExposureScale":1.82},"paletteDNA":{"darkSRGB":[0.04,0.046,0.052],"warmSRGB":[0.4,0.32,0.24],"oxideSRGB":[0.43,0.23,0.11],"mineralSRGB":[0.77,0.74,0.66],"bioSRGB":[0.17,0.21,0.13],"wetSRGB":[0.045,0.06,0.075],"strawSRGB":[0.52,0.39,0.18],"huskSRGB":[0.7,0.56,0.31],"seedSRGB":[0.21,0.14,0.07]},"compositeDefaults":{"colorRichness":1.34,"damage":0.76,"poreDepth":1.32,"waterStain":0.72,"weathering":0.88,"inclusion":0.1,"shapeVariation":1.02,"rockDetail":1.3,"strata":1.02,"microErosion":1.08,"colorClarity":1.12,"colorGamut":1.3,"maskSharpness":0.7,"poreDensity":1.46,"poreVariety":1.58},"seedLayerOffsets":{"shape":101,"damage":211,"pore":307,"color":401,"water":503,"weather":601,"inclusion":701,"detail":809},"gaeaDNA":{"ruggedScale":7.6,"strataFrequency":8.4,"surfaceScale":30.0,"ruggedDepth":0.027,"strataDepth":0.015,"microErosionDepth":0.0115,"warpStrength":0.31,"strataTilt":0.23,"geometryStrength":1.18}}],"batchPresets":[{"id":"first-composite-batch-v2-alpha1","label":"首批复合材质 DNA V2","members":[{"profileId":"historical-fired","masterSeedOffset":101,"damageLevel":0.24},{"profileId":"raw-clay","masterSeedOffset":202,"damageLevel":0.34},{"profileId":"stone-block","masterSeedOffset":303,"damageLevel":0.3}]}],"v2CompositeContract":{"status":"neutral-studio-rich-spectrum-alpha","seedLayers":["shape","damage","pore","color","water","weather","inclusion","detail"],"adjustableControls":["colorRichness","damage","poreDepth","waterStain","weathering","inclusion","shapeVariation","rockDetail","strata","microErosion","colorClarity","colorGamut","maskSharpness"],"adobeInclusionFamilies":["long-straw","chopped-straw","rice-husk","seed-grain","missing-inclusion-pit","physical-fiber-pullout-channel"],"palettePolicy":"source-informed multi-cluster palette with a separate wet, weather, mineral, biological and organic inclusion color family","referenceCalibration":"V2.6 uses neutral studio illumination, high-roughness masonry, broad fired-red and charcoal kiln zones, blue-gray and olive stone regions, warm adobe clay zones, visible clustered fibers, and a stronger multi-scale pore spectrum. Manual visual approval remains required.","visualCalibration":{"eventColorMasking":true,"regularOxideContourSuppression":true,"evidenceProfiles":["old-pbr-fired","stone-block","raw-clay"],"productionApproved":false,"jrbReferenceApproved":false,"stoneDetailApproved":false,"adobeInclusionApproved":false},"naturalEventColor":{"connectedCellularColorNetworksSuppressed":true,"broadMaterialPatches":true,"sparseOxideEvents":true,"familySpecificSaturation":true,"naturalStonePalette":true,"variedAdobeFiberAging":true},"spectralBalance":{"firedClayChromaticZones":true,"stoneReadableMidtones":true,"familyLightingExposure":true,"reducedMicroNoise":true,"adobeInclusionClustering":true},"deepPoreSpectrum":{"clusteredAnchors":true,"microMediumLargeFamilies":true,"collapsedMouths":true,"brokenRimCuts":true,"correlatedColorRoughnessNormalAO":true},"richMaterialFamilies":{"firedClayChromaticZones":true,"stoneBlueOliveWarmRustCalciteWetZones":true,"adobeClayRedOchreDustDampInclusionZones":true},"manualVisualApprovalRequired":true,"neutralStudioRichSpectrum":{"neutralLighting":true,"highRoughnessMasonry":true,"firedRedCharcoalMineralZones":true,"stoneBlueOliveRustCalciteZones":true,"adobeClayDustDampZones":true,"visibleAdobeLongFibers":true,"strongerClusteredPoreSpectrum":true}},"version":"2.7.2-alpha.1"};</script>
+<script>
+window.addEventListener("DOMContentLoaded", () => {
+(() => {
+'use strict';
+
+const $ = (selector, root = document) => root.querySelector(selector);
+const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
+const { clamp, vec3, buildMesh, normalizeControls } = window.BrickMotherGeometryV2;
+const { BrickRenderer } = window.BrickMotherRendererV2;
+
+const CONTROL_KEYS = ['colorRichness', 'damage', 'poreDepth', 'poreDensity', 'poreVariety', 'waterStain', 'weathering', 'inclusion', 'shapeVariation', 'rockDetail', 'strata', 'microErosion', 'colorClarity', 'colorGamut', 'maskSharpness'];
+const SEED_KEYS = ['master', 'shape', 'damage', 'pore', 'color', 'water', 'weather', 'inclusion', 'detail'];
+const QUERY = new URLSearchParams(window.location.search);
+const REBUILD_CONTROL_KEYS = ['damage', 'poreDepth', 'poreDensity', 'poreVariety', 'weathering', 'shapeVariation', 'rockDetail', 'strata', 'microErosion'];
+const CHILD_OFFSETS = [0, 1181, 2647];
+const SEED_PRIMES = {
+  master: 1,
+  shape: 3,
+  damage: 5,
+  pore: 7,
+  color: 11,
+  water: 13,
+  weather: 17,
+  inclusion: 19,
+  detail: 23
+};
+
+const state = {
+  data: null,
+  profiles: new Map(),
+  renderer: null,
+  batchMode: 'mixed',
+  selectedProfile: 'old-pbr-fired',
+  batchCycle: 0,
+  currentItems: [],
+  building: false,
+  debugMode: 0,
+  controls: normalizeControls(),
+  seedBank: {},
+  rebuildTimer: 0,
+  evidenceMode: QUERY.get('evidence') === '1',
+  evidenceFocus: Math.max(0, Math.min(2, Math.round(Number(QUERY.get('focus') ?? 1) || 1))),
+  soloMode: QUERY.get('solo') === '1',
+  benchmarkMode: QUERY.get('specimen') !== 'historical'
+};
+
+function showFatal(error) {
+  const node = $('#fatal');
+  if (!node) return;
+  node.hidden = false;
+  node.textContent = `页面初始化失败：${error?.message || error}`;
+}
+
+window.addEventListener('error', (event) => {
+  if (!window.__BRICK_MOTHER_READY__) showFatal(event.error || event.message);
+});
+window.addEventListener('unhandledrejection', (event) => {
+  if (!window.__BRICK_MOTHER_READY__) showFatal(event.reason || '未处理的异步错误');
+});
+
+function profileSourceEmbed(profile) {
+  const match = profile.source.sourceUrl.match(/-([a-f0-9]{32})$/i);
+  return match
+    ? `https://sketchfab.com/models/${match[1]}/embed?autostart=1&ui_theme=dark&ui_infos=0&ui_watermark=0&ui_hint=0`
+    : profile.source.sourceUrl;
+}
+
+function formatColor(values) {
+  return values.map((v) => Math.round(v * 255)).join(' / ');
+}
+
+function familyLabel(profile) {
+  if (profile.family === 'FIRED_CLAY') return '烧结黏土';
+  if (profile.family === 'ADOBE') return '原始黏土 / 土坯';
+  return '石材';
+}
+
+function triangleLabel(n) {
+  return Math.round(n).toLocaleString('zh-CN');
+}
+
+function updateProfilePanel(profile) {
+  const n = profile.noiseDNA || {};
+  const c = profile.compositeDefaults || {};
+  $('#profileName').textContent = profile.label;
+  $('#profileFamily').textContent = familyLabel(profile);
+  $('#profileSource').textContent = profile.source.filename;
+  $('#profileTriangles').textContent = triangleLabel(profile.measured.triangleCount);
+  const dimensionSuffix = profile.measured.dimensionUnitStatus === 'source-units-pending-calibration'
+    ? ' 源文件单位（实物尺度待校准）'
+    : ' mm';
+  $('#profileDimensions').textContent =
+    profile.measured.dimensionsMm.map((v) => Math.round(v * 10) / 10).join(' × ') + dimensionSuffix;
+  $('#profileColor').textContent = formatColor(profile.measured.baseColorMeanSRGB);
+  const rough = profile.measured.roughnessMean ?? profile.measured.rawRoughnessMean;
+  $('#profileRoughness').textContent =
+    Number(rough).toFixed(3) + (profile.measured.rawMetalnessMean ? '（原始导出已规范化）' : '');
+  $('#profileNormal').textContent =
+    `${profile.measured.normalTiltDegrees.mean.toFixed(1)}° / ${profile.measured.normalTiltDegrees.p95.toFixed(1)}°`;
+  $('#profileLink').href = profile.source.sourceUrl;
+  $('#referenceSourceLink').href = profile.source.sourceUrl;
+  $('#referenceFrame').dataset.src = profileSourceEmbed(profile);
+  $('#sourceLicense').textContent = `${profile.source.author} · ${profile.source.license}`;
+
+  $('#dnaGeometry').textContent =
+    `比例 ${profile.runtimeDNA.shapeRatio.map((v) => v.toFixed(2)).join(':')} · 边缘 ${profile.runtimeDNA.edgeRadius.toFixed(3)} · 深孔基数 ${n.geometryDeepPoreCount ?? 0}`;
+  $('#dnaMaterial').textContent =
+    `色彩浓度 ${Number(c.colorRichness ?? 1).toFixed(2)} · 水痕 ${Number(c.waterStain ?? 0).toFixed(2)} · 风化 ${Number(c.weathering ?? 0).toFixed(2)}`;
+  $('#dnaDamage').textContent =
+    `破碎 ${Number(c.damage ?? 0).toFixed(2)} · 深孔 ${Number(c.poreDepth ?? 0).toFixed(2)} · 边缘脆性 ${profile.runtimeDNA.edgeFragility.toFixed(2)}`;
+  $('#noiseSummary').textContent =
+    `八类独立种子进入 Gaea 蒸馏图谱，并由 Rugged、Stratify、MicroErosion、RockMap、CLUT 与 Splat 复合`;
+  $('#inclusionSummary').textContent = profile.family === 'ADOBE'
+    ? '长稻草、短切稻草、稻壳、种粒与脱落孔五层造纹已启用'
+    : '夹杂层保留在 DNA 中，当前材质家族以矿物、氧化和孔隙为主';
+}
+
+function seedBankForProfile(profile, cycle = state.batchCycle) {
+  const base = profile.runtimeDNA.seedBase + cycle * 911;
+  const offsets = profile.seedLayerOffsets || {};
+  const result = { master: base };
+  for (const key of SEED_KEYS.slice(1)) result[key] = base + (offsets[key] || SEED_PRIMES[key] * 101);
+  return result;
+}
+
+function controlDefaultsForProfile(profile) {
+  return normalizeControls(profile.compositeDefaults || {});
+}
+
+function syncControlUI() {
+  for (const key of CONTROL_KEYS) {
+    const input = $(`[data-control="${key}"]`);
+    const output = $(`[data-control-output="${key}"]`);
+    if (!input) continue;
+    input.value = state.controls[key];
+    if (output) output.textContent = Number(state.controls[key]).toFixed(2);
+  }
+}
+
+function syncSeedUI() {
+  for (const key of SEED_KEYS) {
+    const input = $(`[data-seed="${key}"]`);
+    if (input) input.value = state.seedBank[key] ?? 1;
+  }
+}
+
+function loadProfileDNA(profile, { preserveControls = false, preserveSeeds = false } = {}) {
+  if (!preserveControls) state.controls = controlDefaultsForProfile(profile);
+  if (!preserveSeeds) state.seedBank = seedBankForProfile(profile);
+  syncControlUI();
+  syncSeedUI();
+}
+
+function seedDNAFor(profile, childIndex) {
+  const childOffset = CHILD_OFFSETS[childIndex] || 0;
+  const profileBias = profile.runtimeDNA.seedBase % 997;
+  const result = {};
+  for (const key of SEED_KEYS) {
+    const base = Number(state.seedBank[key] ?? profile.runtimeDNA.seedBase);
+    result[key] = Math.max(1, Math.round(base + profileBias + childOffset * SEED_PRIMES[key]));
+  }
+  return result;
+}
+
+function controlsForChild(profile, childIndex, mode) {
+  const base = mode === 'mixed'
+    ? normalizeControls({ ...profile.compositeDefaults, ...state.controls })
+    : normalizeControls(state.controls);
+  const shifts = [
+    { damage: -0.10, poreDepth: -0.08, poreDensity: -0.08, poreVariety: -0.05, waterStain: -0.06, weathering: -0.05, colorRichness: -0.04 },
+    { damage: 0.02, poreDepth: 0.06, poreDensity: 0.10, poreVariety: 0.12, waterStain: 0.12, weathering: 0.13, colorRichness: 0.05 },
+    { damage: 0.16, poreDepth: 0.25, poreDensity: 0.18, poreVariety: 0.22, waterStain: 0.02, weathering: 0.08, colorRichness: 0.10 }
+  ][childIndex];
+  const result = { ...base };
+  for (const [key, delta] of Object.entries(shifts)) result[key] = Number(base[key]) + delta;
+  result.benchmarkSlab = state.benchmarkMode ? 1 : 0;
+  return normalizeControls(result);
+}
+
+function createBatchDefinitions() {
+  if (state.batchMode === 'mixed') {
+    const ids = ['old-pbr-fired', 'stone-block', 'raw-clay'];
+    const levels = [0.42, 0.48, 0.46];
+    const labels = ['烧结砖视觉真值子代', '定向地质石材子代', '纤维土坯视觉真值子代'];
+    return ids.map((id, i) => {
+      const profile = state.profiles.get(id);
+      return {
+        profile,
+        seedDNA: seedDNAFor(profile, i),
+        controls: controlsForChild(profile, i, 'mixed'),
+        level: levels[i],
+        label: labels[i],
+        note: ['烧结壳层、片状剥离、矿物析出与破口复合', '剪切带、层理、下切悬沿与矿物脉复合', '压实土片、纤维束、拔出沟槽与塌落区复合'][i]
+      };
+    });
+  }
+
+  const profile = state.profiles.get(state.selectedProfile);
+  const levels = [0.18, 0.38, 0.58];
+  return levels.map((level, i) => ({
+    profile,
+    seedDNA: seedDNAFor(profile, i),
+    controls: controlsForChild(profile, i, 'siblings'),
+    level,
+    label: ['平衡复合子代', '水痕风化子代', '深孔破碎子代'][i],
+    note: [
+      '多色簇、微孔与颗粒保持平衡',
+      '增强重力水痕、边缘漂白和沉积',
+      '增加深孔、裂缝、崩角与断面事件'
+    ][i]
+  }));
+}
+
+function setProgress(text, percent = null) {
+  $('#buildStatus').textContent = text;
+  $('#progressBar').style.width = percent == null ? '0%' : `${clamp(percent, 0, 100)}%`;
+  $('#loadingMask').classList.toggle('on', state.building);
+}
+
+function scheduleBuild(delay = 220) {
+  clearTimeout(state.rebuildTimer);
+  state.rebuildTimer = setTimeout(() => buildCurrentBatch(), delay);
+}
+
+async function buildCurrentBatch() {
+  if (state.building) {
+    scheduleBuild(360);
+    return;
+  }
+  state.building = true;
+  window.__BRICK_MOTHER_READY__ = false;
+  const start = performance.now();
+  setProgress('正在复合八类种子、Gaea 场图、深孔几何和多层材料事件场…', 4);
+  await new Promise((resolve) => requestAnimationFrame(resolve));
+
+  const definitions = createBatchDefinitions();
+  const buildDefinitions = state.soloMode
+    ? [definitions[state.evidenceFocus] || definitions[0]]
+    : definitions;
+  const built = [];
+
+  try {
+    for (let i = 0; i < buildDefinitions.length; i++) {
+      const definition = buildDefinitions[i];
+      setProgress(`正在生成 ${definition.label} ${i + 1}/${buildDefinitions.length}`, 12 + i * (76 / buildDefinitions.length));
+      await new Promise((resolve) => setTimeout(resolve, 18));
+      const quality = state.evidenceMode ? 0.78 : (state.soloMode ? 1.00 : (state.benchmarkMode ? 0.72 : 1.04));
+      const mesh = buildMesh(definition.profile, definition.seedDNA, definition.controls, definition.level, quality);
+      if (!mesh.vertices || mesh.triangles < 1000) {
+        throw new Error(`${definition.label} 网格过小，生成已停止`);
+      }
+      built.push({ ...definition, mesh });
+    }
+
+    const positions = state.soloMode ? [0] : (state.benchmarkMode ? [-3.46, 0, 3.46] : [-4.4, 0, 4.4]);
+    const yaws = state.soloMode ? [0.04] : (state.benchmarkMode ? [0.02, 0.02, 0.02] : [-0.24, 0.05, 0.28]);
+    state.currentItems = built.map((item, i) => ({
+      ...item,
+      position: vec3(positions[i], state.benchmarkMode ? 0 : item.mesh.dims.y * 0.5 + 0.02, 0),
+      yaw: yaws[i]
+    }));
+
+    state.renderer.setMeshes(state.currentItems);
+    state.renderer.setDebugMode(state.debugMode);
+    state.renderer.resetView();
+    renderChildCards();
+    if (state.soloMode) state.renderer.focus(0);
+    else if (state.evidenceMode) state.renderer.focus(state.evidenceFocus);
+
+    const totalTriangles = built.reduce((sum, item) => sum + item.mesh.triangles, 0);
+    const totalDeepPores = built.reduce((sum, item) => sum + item.mesh.damage.deepPores.length, 0);
+    const totalInclusionVoids = built.reduce((sum, item) => sum + (item.mesh.damage.inclusionVoids?.length || 0), 0);
+    const totalRimChips = built.reduce((sum, item) => sum + (item.mesh.damage.poreRimChips?.length || 0), 0);
+    const totalCollapsedPores = built.reduce((sum, item) => sum + (item.mesh.damage.collapsedPores?.length || 0), 0);
+    const formationEvents = built.flatMap((item) => item.mesh.damage.formationEvents || []);
+    const formationCounts = formationEvents.reduce((acc, event) => { acc[event.type] = (acc[event.type] || 0) + 1; return acc; }, {});
+    const elapsed = Math.round(performance.now() - start);
+    $('#batchStats').textContent =
+      `${triangleLabel(totalTriangles)} 三角面 · ${totalDeepPores} 深孔 · ${totalRimChips} 孔沿碎裂 · ${totalCollapsedPores} 塌口 · ${elapsed} ms`;
+    setProgress('V2.7 视觉真值结构生成完成。可检查宏观片层、定向地质、悬沿深腔和土坯纤维束。', 100);
+
+    window.__BRICK_MOTHER_READY__ = true;
+    document.documentElement.dataset.brickMotherReady = 'true';
+    document.documentElement.dataset.brickMotherVersion = '2.7.2-alpha.1';
+    document.documentElement.dataset.seedLayers = '8';
+    document.documentElement.dataset.deepPores = String(totalDeepPores);
+    document.documentElement.dataset.inclusionVoids = String(totalInclusionVoids);
+    document.documentElement.dataset.poreRimChips = String(totalRimChips);
+    document.documentElement.dataset.collapsedPores = String(totalCollapsedPores);
+    document.documentElement.dataset.soloMode = state.soloMode ? 'true' : 'false';
+    document.documentElement.dataset.gaeaKernel = window.BrickMotherGaeaV1?.version || 'missing';
+    document.documentElement.dataset.debugModes = '11';
+    document.documentElement.dataset.activeProfile = state.selectedProfile;
+    document.documentElement.dataset.oxideContours = 'suppressed';
+    document.documentElement.dataset.eventColorMasking = 'true';
+    document.documentElement.dataset.evidenceReady = state.evidenceMode ? 'true' : 'false';
+    document.documentElement.dataset.benchmarkSpecimen = state.benchmarkMode ? 'true' : 'false';
+    document.documentElement.dataset.formationEvents = String(formationEvents.length);
+    document.documentElement.dataset.macroEvents = String(formationEvents.filter((event) => ['macroPlateLoss', 'shearBand', 'beddingLayer', 'edgeSpall'].includes(event.type)).length);
+    document.documentElement.dataset.mesoEvents = String(formationEvents.filter((event) => !['macroPlateLoss', 'shearBand', 'beddingLayer', 'edgeSpall'].includes(event.type)).length);
+    window.__BRICK_MOTHER_QA__ = {
+      ready: true,
+      version: '2.7.2-alpha.1',
+      mode: state.batchMode,
+      profiles: built.map((item) => item.profile.id),
+      triangleCounts: built.map((item) => Math.round(item.mesh.triangles)),
+      vertices: built.map((item) => item.mesh.vertices),
+      grids: built.map((item) => item.mesh.grid),
+      seedDNA: built.map((item) => item.mesh.seedDNA),
+      controls: built.map((item) => item.mesh.controls),
+      generationMs: elapsed,
+      noExternalGeometryAssets: true,
+      independentSeedLayers: ['shape', 'damage', 'pore', 'color', 'water', 'weather', 'inclusion', 'detail'],
+      negativeDamageGeometry: true,
+      deepPoreCounts: built.map((item) => item.mesh.damage.deepPores.length),
+      poreRimChipCounts: built.map((item) => item.mesh.damage.poreRimChips?.length || 0),
+      collapsedPoreCounts: built.map((item) => item.mesh.damage.collapsedPores?.length || 0),
+      benchmarkSpecimen: state.benchmarkMode,
+      formationEventCounts: formationCounts,
+      formationEventFamilies: Object.keys(formationCounts),
+      soloMode: state.soloMode,
+      erosionBiteCounts: built.map((item) => item.mesh.damage.erosionBites.length),
+      inclusionVoidCounts: built.map((item) => item.mesh.damage.inclusionVoids?.length || 0),
+      adobeInclusionFamilies: ['long-straw', 'chopped-straw', 'rice-husk', 'seed-grain', 'missing-inclusion-pit', 'physical-fiber-pullout-channel'],
+      correlatedChannels: ['base-color', 'aggregate-color', 'water-stain', 'weathering', 'cavity', 'roughness', 'micro-normal', 'organic-inclusion', 'rugged', 'strata', 'micro-erosion', 'rock-map', 'separation-mask'],
+      gaeaKernel: window.BrickMotherGaeaV1?.version || 'missing',
+      gaeaOperatorFamilies: Object.keys(window.BrickMotherGaeaV1?.operatorFamilies || {}),
+      gaeaGraphRecipes: Object.keys(window.BrickMotherGaeaV1?.graphRecipes || {}),
+      gaeaDistilledIndependentImplementation: true,
+      visualCalibration: {
+        eventColorMasking: true,
+        oxideContourSuppression: true,
+        connectedColorNetworksSuppressed: true,
+        naturalStonePalette: true,
+        familySpecificSaturation: true,
+        firedClayChromaticZones: true,
+        stoneReadableMidtones: true,
+        reducedMicroNoise: true,
+        adobeInclusionClustering: true,
+        visualTruthReferenceFrozen: true,
+        formationHierarchy: ['macro', 'meso', 'micro'],
+        directionalStoneGeology: true,
+        benchmarkSlab: state.benchmarkMode,
+        profileEvidenceRoute: state.evidenceMode,
+        activeProfile: state.selectedProfile,
+        focusedChild: state.evidenceFocus
+      },
+      debugModes: 11,
+      sourceComparisonNoDimming: true
+    };
+  } catch (error) {
+    console.error(error);
+    setProgress(`生成失败：${error.message || error}`, 0);
+    $('#loadingError').textContent = error.stack || String(error);
+    showFatal(error);
+  } finally {
+    state.building = false;
+    setTimeout(() => $('#loadingMask').classList.remove('on'), 420);
+  }
+}
+
+function renderChildCards() {
+  const host = $('#childCards');
+  host.innerHTML = '';
+  state.currentItems.forEach((item, i) => {
+    const card = document.createElement('button');
+    card.className = 'child-card';
+    card.dataset.index = i;
+    card.innerHTML = `
+      <span class="child-no">CHILD 0${i + 1}</span>
+      <b>${item.label}</b>
+      <em>${item.profile.label}</em>
+      <small>${item.note}</small>
+      <span class="mini">${triangleLabel(item.mesh.triangles)} 面 · ${item.mesh.damage.deepPores.length} 深孔 · ${item.mesh.damage.erosionBites.length} 风蚀 · master ${item.mesh.seedDNA.master}</span>
+    `;
+    card.addEventListener('click', () => {
+      state.renderer.focus(i);
+      $$('.child-card').forEach((element) => element.classList.toggle('on', element === card));
+    });
+    host.appendChild(card);
+  });
+}
+
+function exportDNA() {
+  const payload = {
+    product: 'Brick Mother',
+    version: '2.7.2-alpha.1',
+    profile: state.selectedProfile,
+    batchMode: state.batchMode,
+    controls: state.controls,
+    seedBank: state.seedBank,
+    children: state.currentItems.map((item) => ({
+      profileId: item.profile.id,
+      label: item.label,
+      level: item.level,
+      seedDNA: item.mesh.seedDNA,
+      controls: item.mesh.controls,
+      triangleCount: Math.round(item.mesh.triangles),
+      deepPoreCount: item.mesh.damage.deepPores.length,
+      erosionBiteCount: item.mesh.damage.erosionBites.length,
+      formationEvents: item.mesh.damage.formationEvents
+    }))
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `brick-mother-v2-dna-${state.selectedProfile}.json`;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+function bindControls() {
+  $$('[data-control]').forEach((input) => {
+    const key = input.dataset.control;
+    input.addEventListener('input', () => {
+      state.controls[key] = Number(input.value);
+      const output = $(`[data-control-output="${key}"]`);
+      if (output) output.textContent = Number(input.value).toFixed(2);
+      for (const item of state.currentItems) item.mesh.controls[key] = Number(input.value);
+    });
+    input.addEventListener('change', () => {
+      if (REBUILD_CONTROL_KEYS.includes(key)) scheduleBuild(80);
+    });
+  });
+
+  $$('[data-seed]').forEach((input) => {
+    const key = input.dataset.seed;
+    input.addEventListener('input', () => {
+      state.seedBank[key] = Math.max(1, Math.round(Number(input.value) || 1));
+    });
+    input.addEventListener('change', () => scheduleBuild(80));
+  });
+
+  $('#resetDNA').addEventListener('click', () => {
+    const profile = state.profiles.get(state.selectedProfile);
+    loadProfileDNA(profile);
+    buildCurrentBatch();
+  });
+
+  $('#randomizeSeeds').addEventListener('click', () => {
+    state.batchCycle = (state.batchCycle + 1) % 64;
+    state.seedBank = seedBankForProfile(state.profiles.get(state.selectedProfile), state.batchCycle);
+    syncSeedUI();
+    buildCurrentBatch();
+  });
+}
+
+function bindUI() {
+  $$('.profile-button').forEach((button) => {
+    button.addEventListener('click', () => {
+      state.selectedProfile = button.dataset.profile;
+      state.batchMode = 'siblings';
+      $$('.profile-button').forEach((item) => item.classList.toggle('on', item === button));
+      $$('.mode-button').forEach((item) => item.classList.toggle('on', item.dataset.mode === 'siblings'));
+      const profile = state.profiles.get(state.selectedProfile);
+      updateProfilePanel(profile);
+      loadProfileDNA(profile);
+      buildCurrentBatch();
+    });
+  });
+
+  $$('.mode-button').forEach((button) => {
+    button.addEventListener('click', () => {
+      state.batchMode = button.dataset.mode;
+      $$('.mode-button').forEach((item) => item.classList.toggle('on', item === button));
+      if (state.batchMode === 'mixed') {
+        $$('.profile-button').forEach((item) => item.classList.remove('on'));
+      } else {
+        $$('.profile-button').forEach((item) => {
+          item.classList.toggle('on', item.dataset.profile === state.selectedProfile);
+        });
+        updateProfilePanel(state.profiles.get(state.selectedProfile));
+      }
+      buildCurrentBatch();
+    });
+  });
+
+  $$('.channel-button').forEach((button) => {
+    button.addEventListener('click', () => {
+      state.debugMode = Number(button.dataset.channel);
+      state.renderer.setDebugMode(state.debugMode);
+      $$('.channel-button').forEach((item) => item.classList.toggle('on', item === button));
+      $('#channelName').textContent = button.dataset.label;
+    });
+  });
+
+  $('#regenerate').addEventListener('click', () => $('#randomizeSeeds').click());
+
+  $('#specimenMode').addEventListener('click', (event) => {
+    state.benchmarkMode = !state.benchmarkMode;
+    event.currentTarget.classList.toggle('on', state.benchmarkMode);
+    event.currentTarget.textContent = state.benchmarkMode ? '基准方砖' : '历史砖比例';
+    buildCurrentBatch();
+  });
+
+  $('#soloView').addEventListener('click', (event) => {
+    state.soloMode = !state.soloMode;
+    event.currentTarget.classList.toggle('on', state.soloMode);
+    event.currentTarget.textContent = state.soloMode ? '返回家族' : '单块近景';
+    buildCurrentBatch();
+  });
+
+  $('#resetView').addEventListener('click', () => {
+    state.renderer.resetView();
+    $$('.child-card').forEach((element) => element.classList.remove('on'));
+  });
+
+  $('#autoRotate').addEventListener('click', (event) => {
+    state.renderer.autoRotate = !state.renderer.autoRotate;
+    event.currentTarget.classList.toggle('on', state.renderer.autoRotate);
+    event.currentTarget.textContent = state.renderer.autoRotate ? '停止旋转' : '自动旋转';
+  });
+
+  $('#exportDNA').addEventListener('click', exportDNA);
+
+  $('#showReference').addEventListener('click', () => {
+    const frame = $('#referenceFrame');
+    if (!frame.getAttribute('src')) frame.src = frame.dataset.src || 'about:blank';
+    $('#referencePanel').classList.add('open');
+    document.body.classList.add('reference-open');
+  });
+
+  const closeReference = () => {
+    $('#referencePanel').classList.remove('open');
+    document.body.classList.remove('reference-open');
+  };
+
+  $('#closeReference').addEventListener('click', closeReference);
+  $('#referenceBackdrop').addEventListener('click', closeReference);
+  bindControls();
+}
+
+async function main() {
+  try {
+    if (window.__BRICK_MOTHER_INLINE_DATA__) {
+      state.data = window.__BRICK_MOTHER_INLINE_DATA__;
+    } else {
+      const response = await fetch('./data/brick-material-profiles-v2.json', { cache: 'no-store' });
+      if (!response.ok) throw new Error(`材料档案读取失败 HTTP ${response.status}`);
+      state.data = await response.json();
+    }
+    state.profiles = new Map(state.data.profiles.map((profile) => [profile.id, profile]));
+    const requestedProfile = QUERY.get('profile');
+    if (requestedProfile && state.profiles.has(requestedProfile)) {
+      state.selectedProfile = requestedProfile;
+      state.batchMode = QUERY.get('mode') === 'mixed' ? 'mixed' : 'siblings';
+    } else if (QUERY.get('mode') === 'siblings') {
+      state.batchMode = 'siblings';
+    } else {
+      state.batchMode = 'mixed';
+    }
+    state.debugMode = Math.max(0, Math.min(10, Math.round(Number(QUERY.get('debug') ?? 0) || 0)));
+    if (state.evidenceMode) {
+      document.body.classList.add('evidence-mode');
+      document.body.dataset.evidenceLabel = `Brick Mother V2.7 · ${state.selectedProfile} · channel ${state.debugMode}`;
+    }
+    const profile = state.profiles.get(state.selectedProfile);
+    state.controls = controlDefaultsForProfile(profile);
+    state.seedBank = seedBankForProfile(profile);
+    state.renderer = new BrickRenderer($('#brickCanvas'));
+    state.renderer.setDebugMode(state.debugMode);
+    updateProfilePanel(profile);
+    $$('.profile-button').forEach((item) => item.classList.toggle('on', item.dataset.profile === state.selectedProfile));
+    $$('.mode-button').forEach((item) => item.classList.toggle('on', item.dataset.mode === state.batchMode));
+    $$('.channel-button').forEach((item) => item.classList.toggle('on', Number(item.dataset.channel) === state.debugMode));
+    const activeChannel = $(`.channel-button[data-channel="${state.debugMode}"]`);
+    if (activeChannel) $('#channelName').textContent = activeChannel.dataset.label;
+    syncControlUI();
+    syncSeedUI();
+    bindUI();
+    $('#soloView').classList.toggle('on', state.soloMode);
+    $('#soloView').textContent = state.soloMode ? '返回家族' : '单块近景';
+    $('#specimenMode').classList.toggle('on', state.benchmarkMode);
+    $('#specimenMode').textContent = state.benchmarkMode ? '基准方砖' : '历史砖比例';
+    await buildCurrentBatch();
+  } catch (error) {
+    console.error(error);
+    showFatal(error);
+  }
+}
+
+main();
+})();
+
+});
+</script>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="mark">BM</div>
+        <div>
+          <p class="eyebrow">COMPOSITE MATERIAL DNA · V2.7 VISUAL TRUTH FORMATION</p>
+          <h1>Brick Mother 砖块母体生产线</h1>
+        </div>
+      </div>
+      <div class="status">
+        <span class="pill accent">V2.7 视觉真值结构</span>
+        <span class="pill">八类独立种子</span>
+        <span class="pill">富色参考校准</span>
+        <span class="pill">深孔负向几何</span>
+        <span class="pill">Gaea 场图蒸馏</span>
+        <span class="pill">宏观片层与悬沿</span>
+        <span class="pill">土坯夹杂层</span>
+      </div>
+    </header>
+
+    <section class="hero">
+      <article class="card">
+        <p class="eyebrow">COLOR CLUSTERS · COMPOSITE EVENTS · REPRODUCIBLE SEEDS</p>
+        <h2>让宏观缺失、层状断裂、深腔悬沿、纤维束和综合色彩共同建立三种材料身份。</h2>
+        <p>V2.7 以用户提供的三材质方砖图为视觉真值。基准方砖采用接近正方形的正面、可见侧厚、暗色背景和无网格证据镜头。烧结砖重点生成片状剥离与焦黑孔底，石材重点生成定向剪切带与层理悬沿，土坯重点生成压实土片、长短纤维束和拔出沟槽。</p>
+      </article>
+      <aside class="card hero-rules">
+        <div class="rule"><b>多色簇共同工作</b><span>基底、深色骨料、橙红氧化、浅色矿物、绿色附着与湿痕分层叠加。</span></div>
+        <div class="rule"><b>孔洞拥有独立深度</b><span>浅坑、微孔、深孔通道、裂缝、崩角和风蚀缺口进入同一几何场。</span></div>
+        <div class="rule"><b>土坯夹杂独立成层</b><span>长稻草、短切稻草、稻壳、种粒和脱落孔分别生成并联动颜色与微法线。</span></div>
+      </aside>
+    </section>
+
+    <section class="workspace">
+      <article class="card stage">
+        <header class="stage-head">
+          <div>
+            <h2>Brick Mother V2.7 视觉真值基准子代</h2>
+            <p id="batchStats">正在准备八类种子与复合材料事件场</p>
+          </div>
+          <div class="mode-switch">
+            <button class="mode-button on" data-mode="mixed">三种母材</button>
+            <button class="mode-button" data-mode="siblings">单母体三子代</button>
+          </div>
+        </header>
+
+        <div class="viewer">
+          <canvas id="brickCanvas" aria-label="Brick Mother V2 高细节程序化砖块三维视图"></canvas>
+
+          <div class="viewer-hud">
+            <b>拖动旋转 · 滚轮缩放 · Shift 拖动平移</b>
+            <p id="buildStatus">正在初始化 V2 复合材质运行时</p>
+          </div>
+
+          <div class="toolbar">
+            <button class="tool-button" id="resetView">家族总览</button>
+            <button class="tool-button on" id="specimenMode">基准方砖</button>
+            <button class="tool-button" id="soloView">单块近景</button>
+            <button class="tool-button" id="autoRotate">自动旋转</button>
+            <button class="tool-button" id="regenerate">换一窝</button>
+            <button class="tool-button" id="exportDNA">导出当前 DNA</button>
+            <button class="tool-button compare-button" id="showReference">并排查看原始参考</button>
+          </div>
+
+          <div class="channel-bar">
+            <div class="channel-title">当前通道 <b id="channelName">最终材质</b></div>
+            <div class="channel-buttons">
+              <button class="channel-button on" data-channel="0" data-label="最终材质">最终</button>
+              <button class="channel-button" data-channel="1" data-label="基础颜色">颜色</button>
+              <button class="channel-button" data-channel="2" data-label="空洞与凹陷">空洞</button>
+              <button class="channel-button" data-channel="3" data-label="粗糙度">粗糙</button>
+              <button class="channel-button" data-channel="4" data-label="微法线">法线</button>
+              <button class="channel-button" data-channel="5" data-label="噪波分层">噪波</button>
+              <button class="channel-button" data-channel="6" data-label="水痕与风化">水痕</button>
+              <button class="channel-button" data-channel="7" data-label="土坯有机夹杂">夹杂</button>
+              <button class="channel-button" data-channel="8" data-label="Gaea 岩层与数据场">岩层</button>
+              <button class="channel-button" data-channel="9" data-label="宏观材料事件">宏观</button>
+              <button class="channel-button" data-channel="10" data-label="中尺度材料事件">中尺度</button>
+            </div>
+          </div>
+
+          <div class="loading on" id="loadingMask">
+            <div class="loading-box">
+              <b>正在生成复合材质 DNA 子代</b>
+              <div class="progress"><i id="progressBar"></i></div>
+              <pre id="loadingError"></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="child-grid" id="childCards"></div>
+      </article>
+
+      <aside class="card side">
+        <section class="section">
+          <p class="eyebrow">01 · MATERIAL DNA</p>
+          <h2>四套参考档案</h2>
+          <div class="profile-buttons">
+            <button class="profile-button" data-profile="historical-fired">
+              <strong>历史手工砖</strong><span>深褐窑变、氧化斑与细碎孔隙</span>
+            </button>
+            <button class="profile-button on" data-profile="old-pbr-fired">
+              <strong>完整 PBR 老砖</strong><span>灰褐基底、矿物与丰富污痕</span>
+            </button>
+            <button class="profile-button" data-profile="raw-clay">
+              <strong>原始黏土砖</strong><span>稻草、稻壳、种粒与湿痕</span>
+            </button>
+            <button class="profile-button" data-profile="stone-block">
+              <strong>石块</strong><span>解理、矿物、锈色与水蚀</span>
+            </button>
+          </div>
+        </section>
+
+        <section class="section">
+          <p class="eyebrow">02 · ACTIVE PROFILE</p>
+          <h2 id="profileName">完整 PBR 老砖</h2>
+          <dl class="facts">
+            <div><dt>材料家族</dt><dd id="profileFamily"></dd></div>
+            <div><dt>原始文件</dt><dd id="profileSource"></dd></div>
+            <div><dt>原模型面数</dt><dd id="profileTriangles"></dd></div>
+            <div><dt>来源外包围</dt><dd id="profileDimensions"></dd></div>
+            <div><dt>平均色值</dt><dd id="profileColor"></dd></div>
+            <div><dt>粗糙度</dt><dd id="profileRoughness"></dd></div>
+            <div><dt>法线均值 / P95</dt><dd id="profileNormal"></dd></div>
+          </dl>
+          <a class="primary secondary" id="profileLink" target="_blank" rel="noopener">打开原始来源页面</a>
+        </section>
+
+        <section class="section composite-controls">
+          <p class="eyebrow">03 · COMPOSITE CONTROLS</p>
+          <h2>复合强度</h2>
+          <div class="slider-list">
+            <label><span><b>色彩浓度</b><output data-control-output="colorRichness">1.40</output></span><input data-control="colorRichness" type="range" min="0.35" max="1.90" step="0.01"></label>
+            <label><span><b>破碎强度</b><output data-control-output="damage">0.72</output></span><input data-control="damage" type="range" min="0" max="1.60" step="0.01"></label>
+            <label><span><b>孔洞深度</b><output data-control-output="poreDepth">1.04</output></span><input data-control="poreDepth" type="range" min="0" max="1.80" step="0.01"></label>
+            <label><span><b>孔洞密度</b><output data-control-output="poreDensity">1.18</output></span><input data-control="poreDensity" type="range" min="0.20" max="2.20" step="0.01"></label>
+            <label><span><b>孔洞变化</b><output data-control-output="poreVariety">1.08</output></span><input data-control="poreVariety" type="range" min="0.20" max="1.80" step="0.01"></label>
+            <label><span><b>水痕强度</b><output data-control-output="waterStain">0.78</output></span><input data-control="waterStain" type="range" min="0" max="1.60" step="0.01"></label>
+            <label><span><b>风化强度</b><output data-control-output="weathering">0.80</output></span><input data-control="weathering" type="range" min="0" max="1.60" step="0.01"></label>
+            <label><span><b>有机夹杂</b><output data-control-output="inclusion">0.20</output></span><input data-control="inclusion" type="range" min="0" max="1.60" step="0.01"></label>
+            <label><span><b>形体变化</b><output data-control-output="shapeVariation">0.90</output></span><input data-control="shapeVariation" type="range" min="0.20" max="1.70" step="0.01"></label>
+            <label><span><b>岩石细节</b><output data-control-output="rockDetail">0.68</output></span><input data-control="rockDetail" type="range" min="0" max="1.60" step="0.01"></label>
+            <label><span><b>局部分层</b><output data-control-output="strata">0.28</output></span><input data-control="strata" type="range" min="0" max="1.60" step="0.01"></label>
+            <label><span><b>微侵蚀</b><output data-control-output="microErosion">0.64</output></span><input data-control="microErosion" type="range" min="0" max="1.60" step="0.01"></label>
+            <label><span><b>色彩清晰度</b><output data-control-output="colorClarity">0.92</output></span><input data-control="colorClarity" type="range" min="0" max="1.60" step="0.01"></label>
+            <label><span><b>综合色域</b><output data-control-output="colorGamut">1.08</output></span><input data-control="colorGamut" type="range" min="0" max="1.60" step="0.01"></label>
+            <label><span><b>遮罩锐度</b><output data-control-output="maskSharpness">0.92</output></span><input data-control="maskSharpness" type="range" min="0" max="1.60" step="0.01"></label>
+          </div>
+          <div class="control-actions">
+            <button class="tool-button" id="resetDNA">恢复母体参数</button>
+            <button class="tool-button accent-button" id="randomizeSeeds">全部换种子</button>
+          </div>
+        </section>
+
+        <section class="section seed-lab">
+          <details>
+            <summary><span><small>04 · SEED LAB</small><b>展开八类种子</b></span><i>可独立输入</i></summary>
+            <div class="seed-grid">
+              <label><span>母种子</span><input data-seed="master" type="number" min="1" max="9999999" step="1"></label>
+              <label><span>形体</span><input data-seed="shape" type="number" min="1" max="9999999" step="1"></label>
+              <label><span>破损</span><input data-seed="damage" type="number" min="1" max="9999999" step="1"></label>
+              <label><span>孔洞</span><input data-seed="pore" type="number" min="1" max="9999999" step="1"></label>
+              <label><span>色彩</span><input data-seed="color" type="number" min="1" max="9999999" step="1"></label>
+              <label><span>水痕</span><input data-seed="water" type="number" min="1" max="9999999" step="1"></label>
+              <label><span>风化</span><input data-seed="weather" type="number" min="1" max="9999999" step="1"></label>
+              <label><span>夹杂</span><input data-seed="inclusion" type="number" min="1" max="9999999" step="1"></label>
+              <label><span>微细节</span><input data-seed="detail" type="number" min="1" max="9999999" step="1"></label>
+            </div>
+          </details>
+        </section>
+
+        <section class="section gaea-panel">
+          <p class="eyebrow">05 · GAEA DISTILLED GRAPH</p>
+          <h2>从地形节点蒸馏到材料场</h2>
+          <div class="gaea-node-flow">
+            <span>Primitives<br>多重分形</span>
+            <span>Warp / Profile<br>扭曲与轮廓</span>
+            <span>Erosion / Data<br>侵蚀与遮罩</span>
+            <span>CLUT / Splat<br>颜色与渲染</span>
+          </div>
+          <div class="gaea-contract">
+            <div><b>岩石链</b><span>双层低强度 Rugged、Stratify、MicroErosion 与 RockMap 复合。</span></div>
+            <div><b>颜色链</b><span>AutoLevel、Clarity、CLUT5 与归一化 Splat 共同扩展色域。</span></div>
+            <div><b>关联链</b><span>几何、颜色、粗糙度、微法线与 AO 共用数据遮罩。</span></div>
+          </div>
+          <span class="gaea-control-tag">独立实现 · 无 Gaea 运行时依赖</span>
+        </section>
+
+        <section class="section">
+          <p class="eyebrow">06 · COMPOSITE CONTRACT</p>
+          <h2>当前材料机制</h2>
+          <div class="dna-list">
+            <div class="dna"><b>几何 DNA</b><span id="dnaGeometry"></span></div>
+            <div class="dna"><b>材质 DNA</b><span id="dnaMaterial"></span></div>
+            <div class="dna"><b>损伤 DNA</b><span id="dnaDamage"></span></div>
+            <div class="dna emphasis"><b>复合种子</b><span id="noiseSummary"></span></div>
+            <div class="dna organic"><b>有机夹杂</b><span id="inclusionSummary"></span></div>
+            <div class="dna"><b>固定规则</b><span>石材金属度与发光归零，全部变化保持种子可复现。</span></div>
+          </div>
+        </section>
+      </aside>
+    </section>
+
+    <section class="proof">
+      <article class="card">
+        <small>COLOR CLUSTER FIELD</small>
+        <h3>颜色由多个真实材料事件组成</h3>
+        <p>灰褐基底、暖色团粒、橙红氧化、浅色矿物、绿色附着、湿痕和暗孔共同构成色彩。</p>
+      </article>
+      <article class="card">
+        <small>DEEP BORE GEOMETRY</small>
+        <h3>孔洞深度可以单独控制</h3>
+        <p>深孔采用带不规则口沿的负向通道，和浅坑、微孔、裂缝及崩角共同参与网格重建。</p>
+      </article>
+      <article class="card">
+        <small>GRAVITY WATER TRACE</small>
+        <h3>水痕遵循重力方向</h3>
+        <p>窄滴流、宽湿斑、底部返潮和盐析边界由独立种子生成，并联动颜色、粗糙度与微法线。</p>
+      </article>
+      <article class="card">
+        <small>ADOBE ORGANIC LAYER</small>
+        <h3>土坯夹杂拥有独立造纹体系</h3>
+        <p>长纤维、短切纤维、稻壳、种粒和脱落小孔分别生成，可独立换种子和调整密度。</p>
+      </article>
+    </section>
+
+    <footer class="footer">Brick Mother V2 Alpha 1 · V1.0 冻结基线保持不变，当前页面用于复合材质与色彩视觉校准。</footer>
+  </div>
+
+  <section class="reference-panel" id="referencePanel" aria-label="原始参考模型并排对照">
+    <div class="reference-backdrop" id="referenceBackdrop" title="点击关闭参考面板"></div>
+    <div class="reference-sheet">
+      <header class="reference-head">
+        <div>
+          <p class="eyebrow">SOURCE REFERENCE · LIVE COMPARISON</p>
+          <h2>原始 GLB 材质参考</h2>
+          <p>左侧程序画面保持原亮度，右侧用于直接比较色彩、孔洞、颗粒、水痕、风化和边缘。</p>
+        </div>
+        <button class="close" id="closeReference">关闭</button>
+      </header>
+      <iframe id="referenceFrame" title="原始参考模型" allow="autoplay; fullscreen; xr-spatial-tracking" allowfullscreen loading="lazy"></iframe>
+      <footer class="reference-foot">
+        <span id="sourceLicense"></span>
+        <a id="referenceSourceLink" target="_blank" rel="noopener">来源页面</a>
+      </footer>
+    </div>
+  </section>
+
+  <div class="fatal" id="fatal" hidden></div>
+</body>
+</html>
