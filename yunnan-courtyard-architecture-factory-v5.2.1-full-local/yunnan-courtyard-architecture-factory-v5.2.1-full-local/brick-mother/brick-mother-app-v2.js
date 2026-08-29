@@ -279,7 +279,7 @@ async function buildCurrentBatch() {
 
     window.__BRICK_MOTHER_READY__ = true;
     document.documentElement.dataset.brickMotherReady = 'true';
-    document.documentElement.dataset.brickMotherVersion = '2.7.2-alpha.1';
+    document.documentElement.dataset.brickMotherVersion = '2.7.3-alpha.1';
     document.documentElement.dataset.seedLayers = '8';
     document.documentElement.dataset.deepPores = String(totalDeepPores);
     document.documentElement.dataset.inclusionVoids = String(totalInclusionVoids);
@@ -298,7 +298,7 @@ async function buildCurrentBatch() {
     document.documentElement.dataset.mesoEvents = String(formationEvents.filter((event) => !['macroPlateLoss', 'shearBand', 'beddingLayer', 'edgeSpall'].includes(event.type)).length);
     window.__BRICK_MOTHER_QA__ = {
       ready: true,
-      version: '2.7.2-alpha.1',
+      version: '2.7.3-alpha.1',
       mode: state.batchMode,
       profiles: built.map((item) => item.profile.id),
       triangleCounts: built.map((item) => Math.round(item.mesh.triangles)),
@@ -382,7 +382,7 @@ function renderChildCards() {
 function exportDNA() {
   const payload = {
     product: 'Brick Mother',
-    version: '2.7.2-alpha.1',
+    version: '2.7.3-alpha.1',
     profile: state.selectedProfile,
     batchMode: state.batchMode,
     controls: state.controls,

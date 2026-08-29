@@ -1,9 +1,9 @@
 {
   "product": "Brick Mother",
   "displayName": "Brick Mother 砖块母体生产线",
-  "version": "2.7.2-alpha.1",
+  "version": "2.7.3-alpha.1",
   "releaseDate": "2026-08-29",
-  "status": "visual-calibration-alpha-continuous-formation-field",
+  "status": "visual-calibration-alpha-reference-contrast-pore-bias",
   "base": {
     "version": "1.0.0",
     "branch": "release/brick-mother-v1.0",
@@ -89,12 +89,18 @@
     "continuousFormationRelief": true,
     "directionalStoneStrataField": true,
     "reducedDiscretePlateGeometry": true,
-    "naturalBroadSpectrumProfiles": true
+    "naturalBroadSpectrumProfiles": true,
+    "frontBiasedPoreDistribution": true,
+    "reducedSilhouetteBites": true,
+    "eventArtifactSuppression": true,
+    "broadFiredClayContrast": true,
+    "calmedMicroBump": true
   },
   "releaseNotes": [
-    "V2.7.2 replaces most discrete plate solids with continuous front-face formation relief.",
-    "Stone receives directional strata and fault relief while fired clay and adobe receive broad clump fields.",
-    "Material profiles are rebalanced toward reference-derived brick, stone and adobe midtones.",
-    "V2.7 diagnostic event channels remain available and all manual visual approvals remain false."
+    "V2.7.3 suppresses straight event masks and shifts visible damage toward natural front-face cavities.",
+    "Benchmark edge bites are reduced while pits, pores and deep bores are biased toward the review face.",
+    "Fired clay receives broader charcoal, ash, oxide and mineral regions derived from the supplied reference.",
+    "High-frequency bump and grit are reduced so broad formation structures remain legible.",
+    "All manual visual approvals remain false pending side-by-side review."
   ]
 }

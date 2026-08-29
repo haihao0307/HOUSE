@@ -543,6 +543,19 @@ BMV27Fields bmV27Evaluate(vec3 p) {
     float organicGate = fbmValueFast(p * 2.15 + seedVector(uDetailSeed + float(type) * 13.7, 1.31));
     mask = smoothstep(0.10, 0.86, mask * 0.82 + organicGate * 0.18);
     mask *= strength * 0.42;
+    if (uFamily == 0) {
+      if (type == 6 || type == 8) mask *= 0.22;
+      else if (type == 1 || type == 5) mask *= 0.08;
+      else mask = 0.0;
+    } else if (uFamily == 1) {
+      if (type == 9 || type == 10 || type == 11) mask *= 0.34;
+      else if (type == 1 || type == 6 || type == 8) mask *= 0.16;
+      else mask = 0.0;
+    } else {
+      if (type == 2 || type == 3 || type == 5 || type == 12) mask *= 0.26;
+      else if (type == 1 || type == 6 || type == 7 || type == 8) mask *= 0.16;
+      else mask = 0.0;
+    }
 
     if (type == 1 || type == 2 || type == 3 || type == 8) f.macroEvent = max(f.macroEvent, mask);
     else f.mesoEvent = max(f.mesoEvent, mask);
@@ -731,8 +744,8 @@ void main() {
     0.0, 1.0
   );
 
-  float microToneWeight = uFamily == 2 ? 0.014 : (uFamily == 1 ? 0.026 : 0.030);
-  float gritToneWeight = uFamily == 2 ? 0.004 : (uFamily == 1 ? 0.008 : 0.010);
+  float microToneWeight = uFamily == 2 ? 0.008 : (uFamily == 1 ? 0.012 : 0.010);
+  float gritToneWeight = uFamily == 2 ? 0.0015 : (uFamily == 1 ? 0.0025 : 0.0020);
   float tone = clamp(
     0.08 + macro * 0.47 + macroB * 0.16 + ridge * 0.10 +
     v27.macroEvent * 0.022 + v27.mesoEvent * 0.018 +
@@ -768,7 +781,7 @@ void main() {
     0.61, 0.83,
     oxideBroad * 0.58 + oxideMid * 0.27 + smoothstep(0.90, 0.975, oxideSpeck) * 0.15
   ) * smoothstep(0.31, 0.83, macroB);
-  float darkAggregate = smoothstep(0.86, 0.975, valueNoise3(colorWarped * 15.0 + colorSeedV * 4.7));
+  float darkAggregate = smoothstep(0.61, 0.86, fbmValueFast(colorWarped * 3.75 + colorSeedV * 4.7)) * smoothstep(0.32, 0.82, macroB);
   float paleAggregate = mineral * smoothstep(0.42, 0.86, macro);
   float bioMask = smoothstep(0.72, 0.93, fbmValueFast(colorWarped * 2.8 + seedVector(uWeatherSeed, 0.73))) *
                   smoothstep(-0.2, 0.58, 0.4 - baseNormal.y);
@@ -834,21 +847,21 @@ void main() {
     float firedRegionC = fbmValueFast(colorWarped * 4.7 + colorSeedV * 2.91);
     float redRegion = smoothstep(0.42, 0.72, firedRegion * 0.56 + firedRegionB * 0.31 + eventPatchA * 0.13);
     float deepRedRegion = smoothstep(0.61, 0.84, firedRegionB * 0.48 + eventPatchB * 0.32 + gaea.protrusion * 0.20);
-    float carbonRegion = smoothstep(0.61, 0.87, (1.0 - firedRegion) * 0.43 + gaea.cavity * 0.36 + eventPatchC * 0.21);
-    float ashRegion = smoothstep(0.60, 0.86, (1.0 - firedRegionB) * 0.38 + gaea.flow * 0.34 + gaea.microErosion * 0.28);
-    float mineralBloom = smoothstep(0.70, 0.92, mineral * 0.34 + firedRegionC * 0.29 + gaea.flow * 0.22 + crustFlake * 0.15);
-    float oxideEvent = smoothstep(0.62, 0.87, oxideMask * 0.35 + firedRegionC * 0.28 + gaea.flow * 0.20 + eventPatch * 0.17);
-    vec3 brickRed = mix(mean, vec3(0.30, 0.115, 0.055), 0.58);
-    vec3 burntUmber = mix(dark, vec3(0.13, 0.050, 0.025), 0.56);
-    vec3 charcoal = mix(charColor, vec3(0.045, 0.044, 0.040), 0.34);
-    vec3 ashGray = mix(coolColor, vec3(0.38, 0.34, 0.29), 0.56);
-    vec3 creamMineral = mix(mineralColor, vec3(0.78, 0.70, 0.56), 0.52);
-    albedo = mix(albedo, brickRed, redRegion * (0.28 + rich * 0.14));
-    albedo = mix(albedo, burntUmber, deepRedRegion * (0.18 + rich * 0.08));
-    albedo = mix(albedo, charcoal, carbonRegion * (0.20 + rich * 0.06));
-    albedo = mix(albedo, ashGray, ashRegion * 0.18);
-    albedo = mix(albedo, rustColor, oxideEvent * (0.20 + rich * 0.15));
-    albedo = mix(albedo, creamMineral, mineralBloom * 0.28);
+    float carbonRegion = smoothstep(0.48, 0.76, (1.0 - firedRegion) * 0.50 + gaea.cavity * 0.28 + eventPatchC * 0.22);
+    float ashRegion = smoothstep(0.48, 0.77, (1.0 - firedRegionB) * 0.42 + gaea.flow * 0.34 + gaea.microErosion * 0.24);
+    float mineralBloom = smoothstep(0.57, 0.83, mineral * 0.36 + firedRegionC * 0.28 + gaea.flow * 0.22 + crustFlake * 0.14);
+    float oxideEvent = smoothstep(0.54, 0.81, oxideMask * 0.37 + firedRegionC * 0.27 + gaea.flow * 0.19 + eventPatch * 0.17);
+    vec3 brickRed = mix(mean, vec3(0.50, 0.20, 0.080), 0.62);
+    vec3 burntUmber = mix(dark, vec3(0.15, 0.055, 0.022), 0.64);
+    vec3 charcoal = mix(charColor, vec3(0.032, 0.035, 0.038), 0.46);
+    vec3 ashGray = mix(coolColor, vec3(0.36, 0.34, 0.31), 0.62);
+    vec3 creamMineral = mix(mineralColor, vec3(0.88, 0.82, 0.70), 0.58);
+    albedo = mix(albedo, brickRed, redRegion * (0.30 + rich * 0.18));
+    albedo = mix(albedo, burntUmber, deepRedRegion * (0.23 + rich * 0.11));
+    albedo = mix(albedo, charcoal, carbonRegion * (0.34 + rich * 0.12));
+    albedo = mix(albedo, ashGray, ashRegion * 0.25);
+    albedo = mix(albedo, rustColor, oxideEvent * (0.27 + rich * 0.18));
+    albedo = mix(albedo, creamMineral, mineralBloom * 0.36);
     albedo = mix(albedo, charcoal, max(v27.cavity, v27.undercut) * 0.045);
     albedo = mix(albedo, brickRed, v27.plate * 0.025);
     albedo = mix(albedo, burntUmber, v27.shear * 0.025);
@@ -960,17 +973,17 @@ void main() {
   albedo = clamp(albedo, vec3(0.004), vec3(1.0));
 
   float inclusionHeight = inclusions.x * 0.15 + inclusions.y * 0.11 + inclusions.z * 0.07 - inclusions.w * 0.28;
-  float familyMicroHeight = uFamily == 2 ? 0.036 : (uFamily == 1 ? 0.052 : 0.044);
-  float familyGritHeight = uFamily == 2 ? 0.004 : (uFamily == 1 ? 0.008 : 0.006);
-  float familyCrustHeight = uFamily == 2 ? 0.10 : (uFamily == 1 ? 0.12 : 0.11);
+  float familyMicroHeight = uFamily == 2 ? 0.018 : (uFamily == 1 ? 0.024 : 0.020);
+  float familyGritHeight = uFamily == 2 ? 0.0015 : (uFamily == 1 ? 0.0025 : 0.0020);
+  float familyCrustHeight = uFamily == 2 ? 0.078 : (uFamily == 1 ? 0.086 : 0.074);
   float heightField =
-    (macro - 0.5) * 0.16 +
-    (ridge - 0.5) * 0.22 +
+    (macro - 0.5) * 0.20 +
+    (ridge - 0.5) * 0.12 +
     (micro - 0.5) * familyMicroHeight +
     (grit - 0.5) * familyGritHeight +
     (crustBroad - 0.5) * familyCrustHeight +
     (crustFine - 0.5) * familyCrustHeight * 0.34 +
-    mineral * 0.18 +
+    mineral * 0.09 +
     weatherMask * 0.08 +
     inclusionHeight * 1.18 +
     v27.protrusion * 0.075 + v27.plate * 0.035 + v27.bedding * 0.035 -
@@ -994,7 +1007,7 @@ void main() {
   vec3 surfGrad = sign(det) * (dhdx * R1 + dhdy * R2);
   N = normalize(abs(det) * N - surfGrad * uBumpStrength);
 
-  float familyMicroRough = uFamily == 2 ? 0.20 : (uFamily == 1 ? 0.31 : 0.29);
+  float familyMicroRough = uFamily == 2 ? 0.10 : (uFamily == 1 ? 0.14 : 0.12);
   float roughDriver = clamp(
     0.14 +
     micro * familyMicroRough +
@@ -1005,7 +1018,7 @@ void main() {
     gaea.rockMap * 0.18 * uGaeaRockDetail +
     gaea.strata * 0.10 * uGaeaStrata +
     gaea.microErosion * 0.15 * uGaeaMicroErosion +
-    crustFlake * 0.16 + crustBroad * 0.08 +
+    crustFlake * 0.08 + crustBroad * 0.11 +
     poreRim * 0.20 + poreMedium * 0.14 + poreLarge * 0.18 +
     v27.macroEvent * 0.045 + v27.mesoEvent * 0.060 + v27.undercut * 0.075 +
     inclusions.x * 0.12 + inclusions.y * 0.10 -
@@ -1351,7 +1364,7 @@ class BrickRenderer {
     gl.uniform1f(l.microScale, n.microScale ?? 44.0);
     gl.uniform1f(l.colorContrast, n.colorContrast ?? 1.35);
     gl.uniform1f(l.cavityStrength, n.cavityStrength ?? 0.72);
-    gl.uniform1f(l.bumpStrength, n.bumpStrength ?? 0.085);
+    gl.uniform1f(l.bumpStrength, (n.bumpStrength ?? 0.085) * (profile.family === 'STONE' ? 0.68 : 0.60));
     gl.uniform1f(l.roughnessCorrelation, n.roughnessCorrelation ?? 0.45);
     gl.uniform1f(l.mineralScale, n.mineralScale ?? 21.0);
     gl.uniform1f(l.firingBand, d.firingBand ?? 0.0);
