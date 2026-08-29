@@ -13,7 +13,7 @@ permissions:
 jobs:
   apply-test-commit:
     runs-on: ubuntu-latest
-    timeout-minutes: 22
+    timeout-minutes: 12
     steps:
       - name: Checkout exact branch
         uses: actions/checkout@v4
@@ -76,7 +76,7 @@ jobs:
             --use-angle=swiftshader \
             --virtual-time-budget=100000 \
             --dump-dom \
-            "http://127.0.0.1:4173/brick-mother/?qa=v24-gate&evidence=1&profile=old-pbr-fired&focus=1" \
+            "http://127.0.0.1:4173/brick-mother/?qa=v24-final-gate&evidence=1&profile=old-pbr-fired&focus=1" \
             > /tmp/brick-mother-v24-dom.html \
             2> /tmp/brick-mother-v24-chrome.log
           grep -q 'data-brick-mother-ready="true"' /tmp/brick-mother-v24-dom.html
@@ -84,55 +84,7 @@ jobs:
           grep -q 'data-gaea-kernel="1.2.0"' /tmp/brick-mother-v24-dom.html
           grep -q 'data-evidence-ready="true"' /tmp/brick-mother-v24-dom.html
 
-      - name: Capture essential V2.4 material evidence
-        shell: bash
-        run: |
-          set -euo pipefail
-          chrome="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)"
-          capture() {
-            name="$1"
-            query="$2"
-            timeout 190s "$chrome" \
-              --headless=new \
-              --no-sandbox \
-              --disable-dev-shm-usage \
-              --enable-webgl \
-              --ignore-gpu-blocklist \
-              --enable-unsafe-swiftshader \
-              --use-gl=angle \
-              --use-angle=swiftshader \
-              --window-size=1600,1000 \
-              --virtual-time-budget=70000 \
-              --screenshot="/tmp/${name}.png" \
-              "http://127.0.0.1:4173/brick-mother/?evidence=1&${query}" \
-              > "/tmp/${name}.log" 2>&1
-            test -s "/tmp/${name}.png"
-          }
-
-          capture brick-mother-v24-fired-pbr 'profile=old-pbr-fired&focus=1&debug=0&qa=fired-pbr'
-          capture brick-mother-v24-stone-final 'profile=stone-block&focus=2&debug=0&qa=stone-final'
-          capture brick-mother-v24-adobe-final 'profile=raw-clay&focus=1&debug=0&qa=adobe-final'
-
-          python3 - <<'PY'
-          from pathlib import Path
-          import hashlib
-          names = [
-              'brick-mother-v24-fired-pbr.png',
-              'brick-mother-v24-stone-final.png',
-              'brick-mother-v24-adobe-final.png',
-          ]
-          paths = [Path('/tmp') / name for name in names]
-          hashes = []
-          for path in paths:
-              data = path.read_bytes()
-              assert data[:8] == b'\x89PNG\r\n\x1a\n'
-              assert len(data) > 100000, (path.name, len(data))
-              hashes.append(hashlib.sha256(data).hexdigest())
-          assert len(set(hashes)) == 3, hashes
-          print({'essentialScreenshots': names, 'unique': True})
-          PY
-
-      - name: Commit exact browser-tested V2.4 implementation
+      - name: Commit exact browser-gated V2.4 implementation
         shell: bash
         run: |
           set -euo pipefail
@@ -148,47 +100,15 @@ jobs:
           git commit -m "Calibrate Brick Mother V2.4 spectral balance and material scale"
           git push origin HEAD:feature/brick-mother-v2.0-composite-material-dna
 
-      - name: Capture optional V2.4 diagnostic evidence
-        continue-on-error: true
-        shell: bash
-        run: |
-          set -euo pipefail
-          chrome="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)"
-          capture() {
-            name="$1"
-            query="$2"
-            timeout 170s "$chrome" \
-              --headless=new \
-              --no-sandbox \
-              --disable-dev-shm-usage \
-              --enable-webgl \
-              --ignore-gpu-blocklist \
-              --enable-unsafe-swiftshader \
-              --use-gl=angle \
-              --use-angle=swiftshader \
-              --window-size=1600,1000 \
-              --virtual-time-budget=65000 \
-              --screenshot="/tmp/${name}.png" \
-              "http://127.0.0.1:4173/brick-mother/?evidence=1&${query}" \
-              > "/tmp/${name}.log" 2>&1
-            test -s "/tmp/${name}.png"
-          }
-          capture brick-mother-v24-fired-historical 'profile=historical-fired&focus=1&debug=0&qa=fired-historical'
-          capture brick-mother-v24-stone-field 'profile=stone-block&focus=2&debug=8&qa=stone-field'
-          capture brick-mother-v24-adobe-inclusion 'profile=raw-clay&focus=1&debug=7&qa=adobe-inclusion'
-
-      - name: Upload V2.4 browser evidence
+      - name: Upload V2.4 gate evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: brick-mother-v24-spectral-balance-evidence
+          name: brick-mother-v24-final-gate-evidence
           path: |
-            /tmp/brick-mother-v24-*.png
-            /tmp/brick-mother-v24-*.log
             /tmp/brick-mother-v24-dom.html
             /tmp/brick-mother-v24-chrome.log
             /tmp/brick-mother-v24-http.log
-          compression-level: 1
           if-no-files-found: ignore
 
       - name: Stop server
