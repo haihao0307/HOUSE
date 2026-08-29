@@ -9,6 +9,12 @@ const { BrickRenderer } = window.BrickMotherRendererV2;
 const CONTROL_KEYS = ['colorRichness', 'damage', 'poreDepth', 'poreDensity', 'poreVariety', 'waterStain', 'weathering', 'inclusion', 'shapeVariation', 'rockDetail', 'strata', 'microErosion', 'colorClarity', 'colorGamut', 'maskSharpness'];
 const SEED_KEYS = ['master', 'shape', 'damage', 'pore', 'color', 'water', 'weather', 'inclusion', 'detail'];
 const QUERY = new URLSearchParams(window.location.search);
+const MOBILE_QUERY = QUERY.get('mobile');
+const MOBILE_RUNTIME = MOBILE_QUERY === '1' || (MOBILE_QUERY !== '0' && (
+  /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) ||
+  ((window.matchMedia?.('(pointer: coarse)')?.matches ?? false) &&
+    Math.min(window.innerWidth || 9999, window.innerHeight || 9999) < 920)
+));
 const REBUILD_CONTROL_KEYS = ['damage', 'poreDepth', 'poreDensity', 'poreVariety', 'weathering', 'shapeVariation', 'rockDetail', 'strata', 'microErosion'];
 const CHILD_OFFSETS = [0, 1181, 2647];
 const SEED_PRIMES = {
@@ -37,16 +43,26 @@ const state = {
   seedBank: {},
   rebuildTimer: 0,
   evidenceMode: QUERY.get('evidence') === '1',
+  mobileMode: MOBILE_RUNTIME,
+  fullFamilyRequested: QUERY.get('full') === '1',
+  mobileQuickProfile: QUERY.get('profile') || 'old-pbr-fired',
   evidenceFocus: Math.max(0, Math.min(2, Math.round(Number(QUERY.get('focus') ?? 1) || 1))),
-  soloMode: QUERY.get('solo') === '1',
+  soloMode: QUERY.get('solo') === '1' || (MOBILE_RUNTIME && QUERY.get('full') !== '1'),
   benchmarkMode: QUERY.get('specimen') !== 'historical'
 };
 
 function showFatal(error) {
   const node = $('#fatal');
-  if (!node) return;
-  node.hidden = false;
-  node.textContent = `页面初始化失败：${error?.message || error}`;
+  if (node) {
+    node.hidden = false;
+    node.textContent = `页面初始化失败：${error?.message || error}`;
+  }
+  if (state.mobileMode) {
+    document.body.classList.add('runtime-failed');
+    $('#loadingMask')?.classList.remove('on');
+    const copy = $('#mobileBootstrapCopy');
+    if (copy) copy.innerHTML = '<b>当前预览器没有完成三维初始化</b><span>页面已保留可见预览。用 Safari 打开同一 HTML 可继续进入手机快速三维模式。</span>';
+  }
 }
 
 window.addEventListener('error', (event) => {
@@ -172,6 +188,7 @@ function controlsForChild(profile, childIndex, mode) {
   const result = { ...base };
   for (const [key, delta] of Object.entries(shifts)) result[key] = Number(base[key]) + delta;
   result.benchmarkSlab = state.benchmarkMode ? 1 : 0;
+  result.mobilePreview = state.mobileMode && !state.fullFamilyRequested ? 1 : 0;
   return normalizeControls(result);
 }
 
@@ -215,6 +232,76 @@ function setProgress(text, percent = null) {
   $('#loadingMask').classList.toggle('on', state.building);
 }
 
+
+function mobileQuickActive() {
+  return state.mobileMode && !state.fullFamilyRequested;
+}
+
+function syncMobileRuntimeUI() {
+  if (!state.mobileMode) return;
+  const button = $('#mobileFullFamily');
+  if (button) {
+    button.textContent = state.fullFamilyRequested ? '返回手机快速单块' : '加载完整三材质';
+    button.classList.toggle('on', state.fullFamilyRequested);
+  }
+  const copy = $('#mobileBootstrapCopy');
+  if (copy && !document.body.classList.contains('runtime-failed')) {
+    copy.innerHTML = mobileQuickActive()
+      ? '<b>手机快速预览</b><span>先生成一块低负载基准方砖，完成后可再加载完整三材质。</span>'
+      : '<b>手机完整三材质</b><span>正在依次生成烧结砖、石材和土砖，耗时会高于快速单块。</span>';
+  }
+}
+
+function installMobileRuntimeUI() {
+  if (!state.mobileMode) return;
+  document.body.classList.add('mobile-runtime');
+  document.documentElement.dataset.mobileRuntime = 'true';
+  const viewer = $('.viewer');
+  if (viewer && !$('#mobileBootstrapPreview')) {
+    const preview = document.createElement('div');
+    preview.id = 'mobileBootstrapPreview';
+    preview.className = 'mobile-bootstrap-preview';
+    preview.innerHTML = `
+      <div class="mobile-bootstrap-brick" aria-hidden="true">
+        <i></i><i></i><i></i><i></i><i></i><i></i>
+      </div>
+      <div class="mobile-bootstrap-copy" id="mobileBootstrapCopy"></div>
+    `;
+    viewer.prepend(preview);
+  }
+  const toolbar = $('.toolbar');
+  if (toolbar && !$('#mobileFullFamily')) {
+    const button = document.createElement('button');
+    button.className = 'tool-button mobile-family-button';
+    button.id = 'mobileFullFamily';
+    button.addEventListener('click', () => {
+      state.fullFamilyRequested = !state.fullFamilyRequested;
+      if (state.fullFamilyRequested) {
+        state.batchMode = 'mixed';
+        state.soloMode = false;
+      } else {
+        state.selectedProfile = state.profiles.has(state.mobileQuickProfile)
+? state.mobileQuickProfile
+: 'old-pbr-fired';
+        state.batchMode = 'siblings';
+        state.soloMode = true;
+        state.evidenceFocus = 1;
+        const profile = state.profiles.get(state.selectedProfile);
+        updateProfilePanel(profile);
+        loadProfileDNA(profile);
+      }
+      $$('.mode-button').forEach((item) => item.classList.toggle('on', item.dataset.mode === state.batchMode));
+      $$('.profile-button').forEach((item) => item.classList.toggle('on', item.dataset.profile === state.selectedProfile && state.batchMode === 'siblings'));
+      $('#soloView').classList.toggle('on', state.soloMode);
+      $('#soloView').textContent = state.soloMode ? '返回家族' : '单块近景';
+      syncMobileRuntimeUI();
+      buildCurrentBatch();
+    });
+    toolbar.prepend(button);
+  }
+  syncMobileRuntimeUI();
+}
+
 function scheduleBuild(delay = 220) {
   clearTimeout(state.rebuildTimer);
   state.rebuildTimer = setTimeout(() => buildCurrentBatch(), delay);
@@ -228,7 +315,12 @@ async function buildCurrentBatch() {
   state.building = true;
   window.__BRICK_MOTHER_READY__ = false;
   const start = performance.now();
-  setProgress('正在复合八类种子、Gaea 场图、深孔几何和多层材料事件场…', 4);
+  setProgress(
+    mobileQuickActive()
+      ? '手机快速模式：先生成一块低负载基准方砖…'
+      : '正在复合八类种子、Gaea 场图、深孔几何和多层材料事件场…',
+    4
+  );
   await new Promise((resolve) => requestAnimationFrame(resolve));
 
   const definitions = createBatchDefinitions();
@@ -242,7 +334,9 @@ async function buildCurrentBatch() {
       const definition = buildDefinitions[i];
       setProgress(`正在生成 ${definition.label} ${i + 1}/${buildDefinitions.length}`, 12 + i * (76 / buildDefinitions.length));
       await new Promise((resolve) => setTimeout(resolve, 18));
-      const quality = state.evidenceMode ? 0.78 : (state.soloMode ? 1.00 : (state.benchmarkMode ? 0.72 : 1.04));
+      const quality = state.mobileMode
+        ? (state.fullFamilyRequested ? 0.56 : 0.30)
+        : (state.evidenceMode ? 0.78 : (state.soloMode ? 1.00 : (state.benchmarkMode ? 0.72 : 1.04)));
       const mesh = buildMesh(definition.profile, definition.seedDNA, definition.controls, definition.level, quality);
       if (!mesh.vertices || mesh.triangles < 1000) {
         throw new Error(`${definition.label} 网格过小，生成已停止`);
@@ -275,11 +369,16 @@ async function buildCurrentBatch() {
     const elapsed = Math.round(performance.now() - start);
     $('#batchStats').textContent =
       `${triangleLabel(totalTriangles)} 三角面 · ${totalDeepPores} 深孔 · ${totalRimChips} 孔沿碎裂 · ${totalCollapsedPores} 塌口 · ${elapsed} ms`;
-    setProgress('V2.7 视觉真值结构生成完成。可检查宏观片层、定向地质、悬沿深腔和土坯纤维束。', 100);
+    setProgress(
+      mobileQuickActive()
+        ? '手机快速预览完成。现在可以旋转、缩放，或加载完整三材质。'
+        : 'V2.7.5 视觉真值结构生成完成。可检查三类材料与复合事件。',
+      100
+    );
 
     window.__BRICK_MOTHER_READY__ = true;
     document.documentElement.dataset.brickMotherReady = 'true';
-    document.documentElement.dataset.brickMotherVersion = '2.7.4-alpha.1';
+    document.documentElement.dataset.brickMotherVersion = '2.7.5-alpha.1';
     document.documentElement.dataset.seedLayers = '8';
     document.documentElement.dataset.deepPores = String(totalDeepPores);
     document.documentElement.dataset.inclusionVoids = String(totalInclusionVoids);
@@ -293,12 +392,15 @@ async function buildCurrentBatch() {
     document.documentElement.dataset.eventColorMasking = 'true';
     document.documentElement.dataset.evidenceReady = state.evidenceMode ? 'true' : 'false';
     document.documentElement.dataset.benchmarkSpecimen = state.benchmarkMode ? 'true' : 'false';
+    document.documentElement.dataset.mobileRuntime = state.mobileMode ? 'true' : 'false';
+    document.documentElement.dataset.mobileQuick = mobileQuickActive() ? 'true' : 'false';
+    document.documentElement.dataset.mobileGridProfile = mobileQuickActive() ? 'quick' : (state.mobileMode ? 'family' : 'desktop');
     document.documentElement.dataset.formationEvents = String(formationEvents.length);
     document.documentElement.dataset.macroEvents = String(formationEvents.filter((event) => ['macroPlateLoss', 'shearBand', 'beddingLayer', 'edgeSpall'].includes(event.type)).length);
     document.documentElement.dataset.mesoEvents = String(formationEvents.filter((event) => !['macroPlateLoss', 'shearBand', 'beddingLayer', 'edgeSpall'].includes(event.type)).length);
     window.__BRICK_MOTHER_QA__ = {
       ready: true,
-      version: '2.7.4-alpha.1',
+      version: '2.7.5-alpha.1',
       mode: state.batchMode,
       profiles: built.map((item) => item.profile.id),
       triangleCounts: built.map((item) => Math.round(item.mesh.triangles)),
@@ -314,6 +416,9 @@ async function buildCurrentBatch() {
       poreRimChipCounts: built.map((item) => item.mesh.damage.poreRimChips?.length || 0),
       collapsedPoreCounts: built.map((item) => item.mesh.damage.collapsedPores?.length || 0),
       benchmarkSpecimen: state.benchmarkMode,
+      mobileRuntime: state.mobileMode,
+      mobileQuickPreview: mobileQuickActive(),
+      progressiveFamilyLoad: state.mobileMode,
       formationEventCounts: formationCounts,
       formationEventFamilies: Object.keys(formationCounts),
       soloMode: state.soloMode,
@@ -382,7 +487,7 @@ function renderChildCards() {
 function exportDNA() {
   const payload = {
     product: 'Brick Mother',
-    version: '2.7.4-alpha.1',
+    version: '2.7.5-alpha.1',
     profile: state.selectedProfile,
     batchMode: state.batchMode,
     controls: state.controls,
@@ -548,14 +653,24 @@ async function main() {
     } else {
       state.batchMode = 'mixed';
     }
+    if (state.mobileMode && !state.fullFamilyRequested && !state.evidenceMode) {
+      state.selectedProfile = state.profiles.has(state.mobileQuickProfile)
+        ? state.mobileQuickProfile
+        : 'old-pbr-fired';
+      state.batchMode = 'siblings';
+      state.soloMode = true;
+      state.evidenceFocus = 1;
+      state.benchmarkMode = true;
+    }
     state.debugMode = Math.max(0, Math.min(10, Math.round(Number(QUERY.get('debug') ?? 0) || 0)));
     if (state.evidenceMode) {
       document.body.classList.add('evidence-mode');
-      document.body.dataset.evidenceLabel = `Brick Mother V2.7.4 · ${state.selectedProfile} · channel ${state.debugMode}`;
+      document.body.dataset.evidenceLabel = `Brick Mother V2.7.5 · ${state.selectedProfile} · channel ${state.debugMode}`;
     }
     const profile = state.profiles.get(state.selectedProfile);
     state.controls = controlDefaultsForProfile(profile);
     state.seedBank = seedBankForProfile(profile);
+    installMobileRuntimeUI();
     state.renderer = new BrickRenderer($('#brickCanvas'));
     state.renderer.setDebugMode(state.debugMode);
     updateProfilePanel(profile);

@@ -1,9 +1,9 @@
 {
   "product": "Brick Mother",
   "displayName": "Brick Mother 砖块母体生产线",
-  "version": "2.7.4-alpha.1",
+  "version": "2.7.5-alpha.1",
   "releaseDate": "2026-08-29",
-  "status": "visual-calibration-alpha",
+  "status": "mobile-fast-preview-alpha",
   "base": {
     "version": "1.0.0",
     "branch": "release/brick-mother-v1.0",
@@ -12,8 +12,8 @@
   },
   "featureBranch": "feature/brick-mother-v2.0-composite-material-dna",
   "engineLineage": {
-    "materialGeometryEngine": "2.7.0-alpha.1",
-    "releaseMeaning": "User supplied three-material truth target, benchmark slab mode, deterministic macro and meso formation events, directional stone geology, fired delamination and irregular cavities, adobe compaction flakes and readable fibre bundles, and six evidence channels.",
+    "materialGeometryEngine": "2.7.5-alpha.1",
+    "releaseMeaning": "Mobile-first progressive loading with a single low-cost benchmark slab, reduced mobile SDF grid, capped device pixel ratio, visible bootstrap preview, and optional full three-material generation.",
     "gaeaKernel": "1.2.0"
   },
   "repository": "haihao0307/HOUSE",
@@ -66,7 +66,13 @@
     "undercutShelves": true,
     "adobeFiberBundles": true,
     "macroEventDebugChannel": true,
-    "mesoEventDebugChannel": true
+    "mesoEventDebugChannel": true,
+    "mobileFastPreview": true,
+    "progressiveFamilyLoad": true,
+    "mobileLowGridSdf": true,
+    "mobileDprCap": true,
+    "visibleBootstrapPreview": true,
+    "iosFilePreviewFallback": true
   },
   "approval": {
     "visualStatus": "pending-user-review",

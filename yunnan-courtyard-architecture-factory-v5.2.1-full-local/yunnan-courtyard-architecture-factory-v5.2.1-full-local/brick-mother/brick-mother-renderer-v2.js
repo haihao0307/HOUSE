@@ -1315,7 +1315,8 @@ class BrickRenderer {
   }
 
   resize() {
-    const dpr = Math.min(devicePixelRatio || 1, 2);
+    const mobileRuntime = document.documentElement.dataset.mobileRuntime === 'true' || /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    const dpr = Math.min(devicePixelRatio || 1, mobileRuntime ? 1.20 : 2);
     const w = Math.max(2, Math.floor(this.canvas.clientWidth * dpr));
     const h = Math.max(2, Math.floor(this.canvas.clientHeight * dpr));
     if (this.canvas.width !== w || this.canvas.height !== h) {

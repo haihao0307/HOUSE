@@ -248,5 +248,21 @@
     "benchmarkSilhouetteProtection": true,
     "broadFiredColorZones": true,
     "microGeometrySuppression": true
+  },
+  "mobileRuntime": {
+    "defaultMode": "single-benchmark-slab-fast-preview",
+    "fullFamilyIsExplicit": true,
+    "quickGridMinimum": [
+      16,
+      16,
+      12
+    ],
+    "devicePixelRatioCap": 1.2,
+    "bootstrapPreviewVisibleBeforeWebGLReady": true,
+    "failureKeepsVisiblePreview": true,
+    "iphoneViewportGate": [
+      390,
+      844
+    ]
   }
 }

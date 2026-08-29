@@ -365,7 +365,8 @@ function normalizeControls(controls = {}) {
     maskSharpness: number('maskSharpness', 0.92, 0, 1.6),
     poreDensity: number('poreDensity', 1.18, 0.20, 2.20),
     poreVariety: number('poreVariety', 1.08, 0.20, 1.80),
-    benchmarkSlab: number('benchmarkSlab', 1.0, 0, 1)
+    benchmarkSlab: number('benchmarkSlab', 1.0, 0, 1),
+    mobilePreview: number('mobilePreview', 0.0, 0, 1)
   };
 }
 
@@ -890,10 +891,14 @@ function buildMesh(profile, seedDNA, controlsInput, level, quality = 1) {
   const size = vec3(dims.x + margin * 2, dims.y + margin * 2, dims.z + margin * 2);
   const longest = Math.max(size.x, size.y, size.z);
   const benchmark = (field.controls.benchmarkSlab ?? 0) > 0.5;
-  const target = Math.round(52 * quality);
-  const nx = clamp(Math.round(target * size.x / longest), benchmark ? 38 : 24, target);
-  const ny = clamp(Math.round(target * size.y / longest), benchmark ? 38 : 20, target);
-  const nz = clamp(Math.round(target * size.z / longest), benchmark ? 24 : 22, target);
+  const mobilePreview = (field.controls.mobilePreview ?? 0) > 0.5;
+  const target = Math.max(mobilePreview ? 16 : 24, Math.round(52 * quality));
+  const minX = mobilePreview ? 16 : (benchmark && quality < 0.62 ? 26 : (benchmark ? 38 : 24));
+  const minY = mobilePreview ? 16 : (benchmark && quality < 0.62 ? 26 : (benchmark ? 38 : 20));
+  const minZ = mobilePreview ? 12 : (benchmark && quality < 0.62 ? 16 : (benchmark ? 24 : 22));
+  const nx = clamp(Math.round(target * size.x / longest), Math.min(minX, target), target);
+  const ny = clamp(Math.round(target * size.y / longest), Math.min(minY, target), target);
+  const nz = clamp(Math.round(target * size.z / longest), Math.min(minZ, target), target);
   const min = vec3(-size.x / 2, -size.y / 2, -size.z / 2);
   const step = vec3(size.x / (nx - 1), size.y / (ny - 1), size.z / (nz - 1));
   const grid = new Float32Array(nx * ny * nz);
@@ -908,7 +913,7 @@ function buildMesh(profile, seedDNA, controlsInput, level, quality = 1) {
   }
 
   const positions = [], normals = [];
-  const maxVertices = 420000;
+  const maxVertices = mobilePreview ? 120000 : 420000;
   const epsilon = Math.min(step.x, step.y, step.z) * 0.36;
   const cp = new Array(8), cv = new Array(8);
 
@@ -947,7 +952,7 @@ function buildMesh(profile, seedDNA, controlsInput, level, quality = 1) {
     level,
     profileId: profile.id,
     grid: [nx, ny, nz],
-    noiseVersion: 'v2.7.4-shallow-cavity-rich-fired-alpha1'
+    noiseVersion: 'v2.7.5-mobile-fast-preview-alpha1'
   };
 }
 
