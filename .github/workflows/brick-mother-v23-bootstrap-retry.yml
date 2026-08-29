@@ -25,7 +25,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          cat .github/brick-mother-v23-payload/*.b64 > /tmp/brick-mother-v23-payload.b64
+          cat .github/brick-mother-v23-payload/*.b64 | tr -d '\r\n\t ' > /tmp/brick-mother-v23-payload.b64
           echo "b0d4e9b17a2261b8b6108834053b6c1451f37e146e8f5186e48b0b30b839d393  /tmp/brick-mother-v23-payload.b64" | sha256sum -c -
           base64 -d /tmp/brick-mother-v23-payload.b64 | gzip -d > /tmp/apply-brick-mother-v23.py
           echo "fa92726b4c570a725d2e6e147e0214d8f9ed055de41ac98884ce4555ebf9e4c7  /tmp/apply-brick-mother-v23.py" | sha256sum -c -
