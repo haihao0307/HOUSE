@@ -13,7 +13,7 @@ permissions:
 jobs:
   apply-test-commit:
     runs-on: ubuntu-latest
-    timeout-minutes: 18
+    timeout-minutes: 26
     steps:
       - name: Checkout exact branch
         uses: actions/checkout@v4
@@ -65,7 +65,7 @@ jobs:
         run: |
           set -euo pipefail
           chrome="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)"
-          timeout 300s "$chrome" \
+          timeout 240s "$chrome" \
             --headless=new \
             --no-sandbox \
             --disable-dev-shm-usage \
@@ -74,7 +74,7 @@ jobs:
             --enable-unsafe-swiftshader \
             --use-gl=angle \
             --use-angle=swiftshader \
-            --virtual-time-budget=120000 \
+            --virtual-time-budget=110000 \
             --dump-dom \
             "http://127.0.0.1:4173/brick-mother/?qa=v24-gate&evidence=1&profile=old-pbr-fired&focus=1" \
             > /tmp/brick-mother-v24-dom.html \
@@ -84,7 +84,7 @@ jobs:
           grep -q 'data-gaea-kernel="1.2.0"' /tmp/brick-mother-v24-dom.html
           grep -q 'data-evidence-ready="true"' /tmp/brick-mother-v24-dom.html
 
-      - name: Capture V2.4 browser evidence in parallel batches
+      - name: Capture V2.4 browser evidence sequentially
         shell: bash
         run: |
           set -euo pipefail
@@ -92,7 +92,7 @@ jobs:
           capture() {
             name="$1"
             query="$2"
-            timeout 300s "$chrome" \
+            timeout 210s "$chrome" \
               --headless=new \
               --no-sandbox \
               --disable-dev-shm-usage \
@@ -102,22 +102,19 @@ jobs:
               --use-gl=angle \
               --use-angle=swiftshader \
               --window-size=1600,1000 \
-              --virtual-time-budget=100000 \
+              --virtual-time-budget=80000 \
               --screenshot="/tmp/${name}.png" \
               "http://127.0.0.1:4173/brick-mother/?evidence=1&${query}" \
               > "/tmp/${name}.log" 2>&1
             test -s "/tmp/${name}.png"
           }
 
-          capture brick-mother-v24-fired-pbr 'profile=old-pbr-fired&focus=1&debug=0&qa=fired-pbr' & p1=$!
-          capture brick-mother-v24-fired-historical 'profile=historical-fired&focus=1&debug=0&qa=fired-historical' & p2=$!
-          capture brick-mother-v24-stone-final 'profile=stone-block&focus=2&debug=0&qa=stone-final' & p3=$!
-          wait "$p1" "$p2" "$p3"
-
-          capture brick-mother-v24-stone-field 'profile=stone-block&focus=2&debug=8&qa=stone-field' & p4=$!
-          capture brick-mother-v24-adobe-final 'profile=raw-clay&focus=1&debug=0&qa=adobe-final' & p5=$!
-          capture brick-mother-v24-adobe-inclusion 'profile=raw-clay&focus=1&debug=7&qa=adobe-inclusion' & p6=$!
-          wait "$p4" "$p5" "$p6"
+          capture brick-mother-v24-fired-pbr 'profile=old-pbr-fired&focus=1&debug=0&qa=fired-pbr'
+          capture brick-mother-v24-fired-historical 'profile=historical-fired&focus=1&debug=0&qa=fired-historical'
+          capture brick-mother-v24-stone-final 'profile=stone-block&focus=2&debug=0&qa=stone-final'
+          capture brick-mother-v24-stone-field 'profile=stone-block&focus=2&debug=8&qa=stone-field'
+          capture brick-mother-v24-adobe-final 'profile=raw-clay&focus=1&debug=0&qa=adobe-final'
+          capture brick-mother-v24-adobe-inclusion 'profile=raw-clay&focus=1&debug=7&qa=adobe-inclusion'
 
           python3 - <<'PY'
           from pathlib import Path
@@ -161,6 +158,7 @@ jobs:
             /tmp/brick-mother-v24-dom.html
             /tmp/brick-mother-v24-chrome.log
             /tmp/brick-mother-v24-http.log
+          compression-level: 1
           if-no-files-found: ignore
 
       - name: Stop server
