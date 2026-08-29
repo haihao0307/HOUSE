@@ -1,0 +1,58 @@
+{
+  "schemaVersion": "1.0.0",
+  "subject": "Brick Mother V2.1 Gaea-distilled field graph",
+  "status": "implementation-gate",
+  "requiredFiles": [
+    "brick-mother-gaea-kernel-v1.js",
+    "data/gaea-distilled-node-recipes-v1.json",
+    "docs/BRICK_MOTHER_GAEA_DISTILLATION_V1.md",
+    "gaea-distilled.css"
+  ],
+  "sourceGates": {
+    "kernelSyntax": true,
+    "geometrySyntax": true,
+    "rendererSyntax": true,
+    "appSyntax": true,
+    "profileJsonValid": true,
+    "recipeJsonValid": true,
+    "versionJsonValid": true
+  },
+  "runtimeGates": {
+    "webgl2Required": true,
+    "shaderCompileRequired": true,
+    "shaderLinkRequired": true,
+    "threeChildrenRequired": true,
+    "deepPoreEventsRequired": true,
+    "gaeaKernelDatasetRequired": true,
+    "debugChannel8Required": true,
+    "screenshotMinimumBytes": 120000
+  },
+  "operatorGates": {
+    "autolevel": true,
+    "clarity": true,
+    "softClip": true,
+    "combine": true,
+    "separationMask": true,
+    "ruggedBreakage": true,
+    "stratify": true,
+    "microErosion": true,
+    "rockMap": true,
+    "flow": true,
+    "clut5": true,
+    "splatWeights": true
+  },
+  "correlationGates": {
+    "geometryToColor": true,
+    "cavityToAO": true,
+    "waterToRoughness": true,
+    "strataToColorAndNormal": true,
+    "inclusionsToColorRoughnessNormalAndCavity": true
+  },
+  "visualApproval": {
+    "automatic": false,
+    "jrbColorReferenceApproved": false,
+    "stoneDetailApproved": false,
+    "adobeInclusionApproved": false,
+    "productionApproved": false
+  }
+}
