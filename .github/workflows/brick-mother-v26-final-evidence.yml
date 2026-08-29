@@ -1,0 +1,82 @@
+name: Brick Mother V2.6 Final Material Evidence
+
+on:
+  push:
+    branches:
+      - feature/brick-mother-v2.0-composite-material-dna
+    paths:
+      - ".github/workflows/brick-mother-v26-final-evidence.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  final-evidence:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - profile: old-pbr-fired
+            label: fired
+          - profile: stone-block
+            label: stone
+          - profile: raw-clay
+            label: adobe
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Capture V2.6 solo final material
+        shell: bash
+        run: |
+          set -euo pipefail
+          standalone="yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/brick-mother-standalone-v2.6.html"
+          test -s "$standalone"
+          chrome="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)"
+          uri="$(python3 - <<'PY'
+          from pathlib import Path
+          print(Path('yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/brick-mother-standalone-v2.6.html').resolve().as_uri())
+          PY
+          )"
+          timeout 360s "$chrome" \
+            --headless=new \
+            --no-sandbox \
+            --disable-dev-shm-usage \
+            --disable-background-networking \
+            --allow-file-access-from-files \
+            --enable-webgl \
+            --ignore-gpu-blocklist \
+            --enable-unsafe-swiftshader \
+            --use-gl=angle \
+            --use-angle=swiftshader \
+            --hide-scrollbars \
+            --window-size=1600,1000 \
+            --virtual-time-budget=120000 \
+            --screenshot="/tmp/brick-mother-v26-${{ matrix.label }}-final.png" \
+            "${uri}?evidence=1&solo=1&profile=${{ matrix.profile }}&focus=2&debug=0&qa=${{ matrix.label }}-final" \
+            > "/tmp/brick-mother-v26-${{ matrix.label }}-final.log" 2>&1
+          test -s "/tmp/brick-mother-v26-${{ matrix.label }}-final.png"
+          python3 - <<'PY'
+          from pathlib import Path
+          import os
+          label = os.environ['MATRIX_LABEL']
+          path = Path('/tmp') / f'brick-mother-v26-{label}-final.png'
+          data = path.read_bytes()
+          assert data[:8] == b'\x89PNG\r\n\x1a\n'
+          assert len(data) > 100000, (path.name, len(data))
+          PY
+        env:
+          MATRIX_LABEL: ${{ matrix.label }}
+
+      - name: Upload V2.6 final material evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: brick-mother-v26-${{ matrix.label }}-final-evidence
+          path: |
+            /tmp/brick-mother-v26-${{ matrix.label }}-final.png
+            /tmp/brick-mother-v26-${{ matrix.label }}-final.log
+          compression-level: 1
+          if-no-files-found: ignore
