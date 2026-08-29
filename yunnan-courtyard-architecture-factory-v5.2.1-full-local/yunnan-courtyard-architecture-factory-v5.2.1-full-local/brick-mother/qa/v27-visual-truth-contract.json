@@ -1,0 +1,201 @@
+{
+  "schemaVersion": "1.0.0",
+  "subject": "Brick Mother V2.7 user supplied visual truth",
+  "status": "frozen-target-implementation-pending",
+  "reference": {
+    "attachmentLabel": "ChatGPT Image 2026年8月29日 14_45_43.png",
+    "width": 2048,
+    "height": 682,
+    "sha256": "f439b732f9b62584dac96ad5b4ab19dc77d48105d4b092cc21b064ee59c27cfb",
+    "order": [
+      "fired-masonry",
+      "natural-stone",
+      "fiber-adobe"
+    ]
+  },
+  "benchmarkSpecimen": {
+    "mode": "benchmark-slab",
+    "nearSquareFrontFace": true,
+    "visibleSideThickness": true,
+    "frameHeightOccupancyMin": 0.70,
+    "frameHeightOccupancyTarget": [
+      0.72,
+      0.88
+    ],
+    "darkNeutralBackground": true,
+    "floorGridAllowed": false,
+    "cameraYawDegrees": [
+      8,
+      16
+    ],
+    "cameraPitchDegrees": [
+      2,
+      8
+    ]
+  },
+  "targetStatistics": {
+    "fired-masonry": {
+      "meanSRGB": [
+        0.449,
+        0.294,
+        0.197
+      ],
+      "meanLuminance": 0.320,
+      "luminanceStandardDeviation": 0.151,
+      "luminanceP10": 0.108,
+      "luminanceP50": 0.323,
+      "luminanceP90": 0.516
+    },
+    "natural-stone": {
+      "meanSRGB": [
+        0.345,
+        0.325,
+        0.293
+      ],
+      "meanLuminance": 0.327,
+      "luminanceStandardDeviation": 0.156,
+      "luminanceP10": 0.106,
+      "luminanceP50": 0.332,
+      "luminanceP90": 0.530
+    },
+    "fiber-adobe": {
+      "meanSRGB": [
+        0.496,
+        0.351,
+        0.218
+      ],
+      "meanLuminance": 0.372,
+      "luminanceStandardDeviation": 0.168,
+      "luminanceP10": 0.126,
+      "luminanceP50": 0.395,
+      "luminanceP90": 0.578
+    }
+  },
+  "frequencyTargets": {
+    "gaussianRadiiPixels": [
+      1,
+      2,
+      4,
+      8,
+      16,
+      32
+    ],
+    "absoluteBandEnergyTarget": [
+      0.022,
+      0.032
+    ],
+    "luminanceStandardDeviationMinimum": 0.11,
+    "uniformNoiseAsPrimaryDetailAllowed": false
+  },
+  "formationHierarchy": {
+    "macroContribution": [
+      0.40,
+      0.50
+    ],
+    "mesoContribution": [
+      0.30,
+      0.40
+    ],
+    "microContribution": [
+      0.15,
+      0.25
+    ]
+  },
+  "requiredEventFamilies": [
+    "macroPlateLoss",
+    "shearBand",
+    "beddingLayer",
+    "delaminationPlate",
+    "undercutShelf",
+    "cavityCluster",
+    "fractureBranch",
+    "edgeSpall",
+    "fiberBundle",
+    "fiberPulloutChannel",
+    "compactionFlake",
+    "mineralSeam"
+  ],
+  "familyContracts": {
+    "fired-masonry": {
+      "required": [
+        "red-brown-fired-body",
+        "dark-fired-crust",
+        "broad-oxide-patches",
+        "sparse-pale-minerals",
+        "delamination-plates",
+        "mixed-cavity-scales",
+        "broken-cavity-rims"
+      ]
+    },
+    "natural-stone": {
+      "required": [
+        "cool-and-warm-mineral-zones",
+        "dominant-directional-shear-band",
+        "layered-bedding-plates",
+        "fracture-intersections",
+        "undercut-strata",
+        "mineral-seams"
+      ]
+    },
+    "fiber-adobe": {
+      "required": [
+        "warm-ochre-clay-body",
+        "compaction-flakes",
+        "long-and-short-fibres",
+        "fiber-bundles",
+        "pullout-channels",
+        "ragged-fiber-edges",
+        "uneven-compaction"
+      ]
+    }
+  },
+  "requiredChannels": [
+    "final",
+    "base-color",
+    "cavity-undercut",
+    "surface-normal",
+    "macro-event-field",
+    "meso-event-field"
+  ],
+  "failClosedConditions": [
+    "smooth-box-silhouette-dominates",
+    "shared-fracture-layout-across-families",
+    "fine-noise-reads-before-macro-structure",
+    "clean-circular-large-cavity-mouths",
+    "stone-lacks-directional-geology",
+    "adobe-fibres-unreadable-at-default-closeup",
+    "fired-masonry-lacks-dark-crust-pale-mineral-or-oxide-zones",
+    "luminance-standard-deviation-below-minimum",
+    "frame-height-occupancy-below-minimum",
+    "grid-or-interface-obscures-evidence",
+    "evidence-channels-use-different-seeds",
+    "manual-approval-set-without-user-approval"
+  ],
+  "automaticEvidence": {
+    "resolutionMinimum": [
+      1600,
+      1000
+    ],
+    "reportImageBytes": true,
+    "reportImageSha256": true,
+    "reportFrameOccupancy": true,
+    "reportLuminanceStatistics": true,
+    "reportMultiScaleBandEnergy": true,
+    "reportEventCounts": true,
+    "reportDeepCavityCount": true,
+    "reportUndercutShelfCount": true,
+    "reportAdobeFiberBundleCount": true
+  },
+  "approval": {
+    "firedMasonryApproved": false,
+    "naturalStoneApproved": false,
+    "fiberAdobeApproved": false,
+    "productionApproved": false
+  },
+  "branchPolicy": {
+    "v1Frozen": true,
+    "pullRequest": 15,
+    "pullRequestDraft": true,
+    "mergeAllowed": false
+  }
+}
