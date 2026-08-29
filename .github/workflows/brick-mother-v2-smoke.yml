@@ -1,4 +1,4 @@
-name: Brick Mother V2.1 Gaea Distilled Smoke
+name: Brick Mother V2.2 Event Calibration Smoke
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - feature/brick-mother-v2.0-composite-material-dna
     paths:
       - "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/**"
-      - ".github/workflows/brick-mother-v2-gaea-distillation-bootstrap.yml"
+      - ".github/workflows/brick-mother-v2-smoke.yml"
   workflow_dispatch:
 
 permissions:
@@ -15,12 +15,12 @@ permissions:
 jobs:
   browser-smoke:
     runs-on: ubuntu-latest
-    timeout-minutes: 18
+    timeout-minutes: 30
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Validate Gaea-distilled source contracts
+      - name: Validate V2.2 source contracts
         shell: bash
         run: |
           set -euo pipefail
@@ -33,16 +33,18 @@ jobs:
           python3 -m json.tool "$brick/data/gaea-distilled-node-recipes-v1.json" >/dev/null
           python3 -m json.tool "$brick/qa/gaea-distillation-contract-v1.json" >/dev/null
           python3 -m json.tool "$brick/VERSION.json" >/dev/null
-          grep -q '"version": "2.1.0-alpha.1"' "$brick/VERSION.json"
-          grep -q '"gaeaKernel": "1.0.0"' "$brick/VERSION.json"
-          grep -q '"adjustableCompositeControls": 13' "$brick/VERSION.json"
-          grep -q '"debugChannels": 9' "$brick/VERSION.json"
-          grep -q '"gaeaDNA"' "$brick/data/brick-material-profiles-v2.json"
-          grep -q '"rockDetail"' "$brick/data/brick-material-profiles-v2.json"
-          grep -q '"maskSharpness"' "$brick/data/brick-material-profiles-v2.json"
-          grep -q 'BMGaeaFields' "$brick/brick-mother-gaea-kernel-v1.js"
-          grep -q 'bmClut5' "$brick/brick-mother-gaea-kernel-v1.js"
-          grep -q 'bmSplatWeights' "$brick/brick-mother-gaea-kernel-v1.js"
+          grep -q '"version": "2.2.0-alpha.1"' "$brick/VERSION.json"
+          grep -q '"gaeaKernel": "1.1.0"' "$brick/VERSION.json"
+          grep -q '"eventColorMasking": true' "$brick/VERSION.json"
+          grep -q '"regularOxideContourSuppression": true' "$brick/VERSION.json"
+          grep -q '"physicalAdobeInclusionVoids": true' "$brick/VERSION.json"
+          grep -q 'inclusionVoids' "$brick/brick-mother-geometry-v2.js"
+          grep -q 'eventGate' "$brick/brick-mother-renderer-v2.js"
+          grep -q 'kilnMacro' "$brick/brick-mother-renderer-v2.js"
+          if grep -q 'float band = sin' "$brick/brick-mother-renderer-v2.js"; then
+            echo "Legacy regular firing band remains" >&2
+            exit 1
+          fi
 
       - name: Start local production server
         shell: bash
@@ -50,28 +52,24 @@ jobs:
           set -euo pipefail
           src="yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local"
           cd "$src"
-          python3 -m http.server 4173 --bind 127.0.0.1 > /tmp/brick-mother-v21-http.log 2>&1 &
-          echo $! > /tmp/brick-mother-v21-http.pid
+          python3 -m http.server 4173 --bind 127.0.0.1 > /tmp/brick-mother-v22-http.log 2>&1 &
+          echo $! > /tmp/brick-mother-v22-http.pid
           for attempt in $(seq 1 45); do
             if curl -fsS http://127.0.0.1:4173/brick-mother/ > /dev/null; then
               exit 0
             fi
             sleep 1
           done
-          cat /tmp/brick-mother-v21-http.log
+          cat /tmp/brick-mother-v22-http.log
           exit 1
 
-      - name: Run real Chromium Gaea-distilled generation smoke
+      - name: Run real Chromium V2.2 generation gate
         shell: bash
         run: |
           set -euo pipefail
           chrome="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser || true)"
-          if [ -z "$chrome" ]; then
-            echo "No Chromium executable found" >&2
-            exit 1
-          fi
-
-          timeout 360s "$chrome" \
+          test -n "$chrome"
+          timeout 420s "$chrome" \
             --headless=new \
             --no-sandbox \
             --disable-dev-shm-usage \
@@ -82,59 +80,60 @@ jobs:
             --use-angle=swiftshader \
             --virtual-time-budget=180000 \
             --dump-dom \
-            "http://127.0.0.1:4173/brick-mother/?qa=browser-smoke-v21-gaea" \
-            > /tmp/brick-mother-v21-dom.html \
-            2> /tmp/brick-mother-v21-chrome.log
+            "http://127.0.0.1:4173/brick-mother/?qa=v22-gate&evidence=1&profile=old-pbr-fired&focus=1" \
+            > /tmp/brick-mother-v22-dom.html \
+            2> /tmp/brick-mother-v22-chrome.log
+          grep -q 'data-brick-mother-ready="true"' /tmp/brick-mother-v22-dom.html
+          grep -q 'data-brick-mother-version="2.2.0-alpha.1"' /tmp/brick-mother-v22-dom.html
+          grep -q 'data-gaea-kernel="1.1.0"' /tmp/brick-mother-v22-dom.html
+          grep -q 'data-active-profile="old-pbr-fired"' /tmp/brick-mother-v22-dom.html
+          grep -q 'data-oxide-contours="suppressed"' /tmp/brick-mother-v22-dom.html
+          grep -q 'data-event-color-masking="true"' /tmp/brick-mother-v22-dom.html
+          grep -q 'data-evidence-ready="true"' /tmp/brick-mother-v22-dom.html
+          grep -Eq 'data-deep-pores="[1-9][0-9]*"' /tmp/brick-mother-v22-dom.html
 
-          grep -q 'data-brick-mother-ready="true"' /tmp/brick-mother-v21-dom.html
-          grep -q 'data-brick-mother-version="2.1.0-alpha.1"' /tmp/brick-mother-v21-dom.html
-          grep -q 'data-seed-layers="8"' /tmp/brick-mother-v21-dom.html
-          grep -q 'data-gaea-kernel="1.0.0"' /tmp/brick-mother-v21-dom.html
-          grep -q 'data-debug-modes="9"' /tmp/brick-mother-v21-dom.html
-          grep -Eq 'data-deep-pores="[1-9][0-9]*"' /tmp/brick-mother-v21-dom.html
-          grep -q 'data-index="0"' /tmp/brick-mother-v21-dom.html
-          grep -q 'data-index="1"' /tmp/brick-mother-v21-dom.html
-          grep -q 'data-index="2"' /tmp/brick-mother-v21-dom.html
-          grep -q 'data-control="rockDetail"' /tmp/brick-mother-v21-dom.html
-          grep -q 'data-control="strata"' /tmp/brick-mother-v21-dom.html
-          grep -q 'data-control="microErosion"' /tmp/brick-mother-v21-dom.html
-          grep -q 'data-control="colorClarity"' /tmp/brick-mother-v21-dom.html
-          grep -q 'data-control="colorGamut"' /tmp/brick-mother-v21-dom.html
-          grep -q 'data-control="maskSharpness"' /tmp/brick-mother-v21-dom.html
-          grep -q 'data-channel="8"' /tmp/brick-mother-v21-dom.html
-          grep -q 'Gaea 蒸馏材料图谱生成完成' /tmp/brick-mother-v21-dom.html
-
-          echo "Brick Mother V2.1 Gaea-distilled browser smoke passed"
-          grep -o 'data-deep-pores="[0-9]*"' /tmp/brick-mother-v21-dom.html | head -1
-
-      - name: Capture Gaea-distilled browser evidence
+      - name: Capture fired, stone, and adobe evidence
         shell: bash
         run: |
           set -euo pipefail
           chrome="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)"
-          timeout 360s "$chrome" \
-            --headless=new \
-            --no-sandbox \
-            --disable-dev-shm-usage \
-            --enable-webgl \
-            --ignore-gpu-blocklist \
-            --enable-unsafe-swiftshader \
-            --use-gl=angle \
-            --use-angle=swiftshader \
-            --window-size=1800,1200 \
-            --virtual-time-budget=180000 \
-            --screenshot=/tmp/brick-mother-v21-gaea.png \
-            "http://127.0.0.1:4173/brick-mother/?qa=browser-evidence-v21-gaea" \
-            > /tmp/brick-mother-v21-screenshot.log \
-            2>&1
-          test -s /tmp/brick-mother-v21-gaea.png
+          capture() {
+            name="$1"
+            query="$2"
+            timeout 420s "$chrome" \
+              --headless=new \
+              --no-sandbox \
+              --disable-dev-shm-usage \
+              --enable-webgl \
+              --ignore-gpu-blocklist \
+              --enable-unsafe-swiftshader \
+              --use-gl=angle \
+              --use-angle=swiftshader \
+              --window-size=1600,1000 \
+              --virtual-time-budget=180000 \
+              --screenshot="/tmp/${name}.png" \
+              "http://127.0.0.1:4173/brick-mother/?evidence=1&${query}" \
+              > "/tmp/${name}.log" 2>&1
+            test -s "/tmp/${name}.png"
+          }
+          capture brick-mother-v22-fired-final 'profile=old-pbr-fired&focus=1&debug=0&qa=fired-final'
+          capture brick-mother-v22-stone-final 'profile=stone-block&focus=2&debug=0&qa=stone-final'
+          capture brick-mother-v22-stone-field 'profile=stone-block&focus=2&debug=8&qa=stone-field'
+          capture brick-mother-v22-adobe-final 'profile=raw-clay&focus=1&debug=0&qa=adobe-final'
+          capture brick-mother-v22-adobe-inclusion 'profile=raw-clay&focus=1&debug=7&qa=adobe-inclusion'
           python3 - <<'PY'
           from pathlib import Path
-          path = Path('/tmp/brick-mother-v21-gaea.png')
-          data = path.read_bytes()
-          assert data[:8] == b'\x89PNG\r\n\x1a\n'
-          assert len(data) > 120000, len(data)
-          print({'screenshotBytes': len(data)})
+          import hashlib
+          paths = sorted(Path('/tmp').glob('brick-mother-v22-*.png'))
+          assert len(paths) == 5, [p.name for p in paths]
+          hashes = []
+          for path in paths:
+              data = path.read_bytes()
+              assert data[:8] == b'\x89PNG\r\n\x1a\n'
+              assert len(data) > 100000, (path.name, len(data))
+              hashes.append(hashlib.sha256(data).hexdigest())
+          assert len(set(hashes)) == len(hashes), hashes
+          print({'screenshots': [p.name for p in paths], 'unique': True})
           PY
 
       - name: Write job summary
@@ -142,37 +141,34 @@ jobs:
         shell: bash
         run: |
           {
-            echo "## Brick Mother V2.1 Gaea Distilled"
+            echo "## Brick Mother V2.2 Event Calibration"
             echo
-            echo "* Version: 2.1.0-alpha.1"
-            echo "* Gaea field kernel: 1.0.0"
-            echo "* Independent seed layers: 8"
-            echo "* Adjustable composite controls: 13"
-            echo "* Debug channels: 9"
-            echo "* Distilled operator families: primitives, warps, adjustments, erosion, data, color, render"
-            if [ -f /tmp/brick-mother-v21-dom.html ]; then
-              echo "* DOM evidence: generated"
-              grep -o 'data-deep-pores="[0-9]*"' /tmp/brick-mother-v21-dom.html | head -1 | sed 's/data-deep-pores=/Deep pore events: /'
-            fi
+            echo "* Version: 2.2.0-alpha.1"
+            echo "* Gaea field kernel: 1.1.0"
+            echo "* Regular fired-clay contour band: removed"
+            echo "* Event-gated color masks: enabled"
+            echo "* Physical adobe pull-out channels: enabled"
+            echo "* Evidence profiles: fired brick, stone, adobe"
+            echo "* Manual visual approvals remain false"
           } >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Upload Gaea-distilled browser evidence
+      - name: Upload V2.2 browser evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: brick-mother-v21-gaea-browser-evidence
+          name: brick-mother-v22-event-calibration-evidence
           path: |
-            /tmp/brick-mother-v21-gaea.png
-            /tmp/brick-mother-v21-dom.html
-            /tmp/brick-mother-v21-chrome.log
-            /tmp/brick-mother-v21-screenshot.log
-            /tmp/brick-mother-v21-http.log
+            /tmp/brick-mother-v22-*.png
+            /tmp/brick-mother-v22-*.log
+            /tmp/brick-mother-v22-dom.html
+            /tmp/brick-mother-v22-chrome.log
+            /tmp/brick-mother-v22-http.log
           if-no-files-found: ignore
 
       - name: Stop local server
         if: always()
         shell: bash
         run: |
-          if [ -f /tmp/brick-mother-v21-http.pid ]; then
-            kill "$(cat /tmp/brick-mother-v21-http.pid)" 2>/dev/null || true
+          if [ -f /tmp/brick-mother-v22-http.pid ]; then
+            kill "$(cat /tmp/brick-mother-v22-http.pid)" 2>/dev/null || true
           fi
