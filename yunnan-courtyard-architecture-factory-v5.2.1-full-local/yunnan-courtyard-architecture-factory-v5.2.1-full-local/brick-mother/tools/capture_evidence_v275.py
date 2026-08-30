@@ -45,6 +45,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--reference", type=Path, default=None)
     parser.add_argument("--virtual-time-budget", type=int, default=30000)
     parser.add_argument("--workers", type=int, default=2)
+    parser.add_argument("--evidence-quality", type=float, default=0.56)
     return parser.parse_args()
 
 
@@ -69,12 +70,13 @@ def reference_status(path: Path | None) -> dict:
     return {"status": "verified", "comparison": "available", "sha256": digest, "size": list(size)}
 
 
-def capture(chrome: str, html: Path, output: Path, profile: str, seed: int, channel: int, budget: int) -> Path:
+def capture(chrome: str, html: Path, output: Path, profile: str, seed: int, channel: int, budget: int, quality: float) -> Path:
     output.parent.mkdir(parents=True, exist_ok=True)
     uri = html.resolve().as_uri()
     query = (
         f"{uri}?evidence=1&solo=1&specimen=benchmark&mode=siblings&profile={profile}"
-        f"&focus=0&debug={channel}&seed={seed}&qa=v275-{profile}-{seed}-{channel}"
+        f"&focus=0&debug={channel}&seed={seed}&evidenceQuality={quality:.2f}"
+        f"&qa=v275-{profile}-{seed}-{channel}"
     )
     dom = output.with_suffix(".dom.html")
     log = output.with_suffix(".chrome.log")
@@ -185,7 +187,7 @@ def main() -> None:
 
     def capture_one(job: tuple[str, int, int, str, Path]) -> dict:
         profile, seed, channel, channel_name, image = job
-        dom = capture(args.chrome, args.html, image, profile, seed, channel, args.virtual_time_budget)
+        dom = capture(args.chrome, args.html, image, profile, seed, channel, args.virtual_time_budget, args.evidence_quality)
         metric = image_metrics(image, dom)
         metric.update({"profile": profile, "seed": seed, "channel": channel_name, "channelIndex": channel})
         return metric
@@ -204,6 +206,7 @@ def main() -> None:
         "canvas": [1600, 1000],
         "background": "black",
         "camera": "fixed benchmark slab, evidence solo focus 0",
+        "evidenceQuality": round(args.evidence_quality, 2),
         "profiles": list(PROFILES),
         "seedsPerProfile": 3,
         "canonicalChannels": list(CHANNELS.values()),

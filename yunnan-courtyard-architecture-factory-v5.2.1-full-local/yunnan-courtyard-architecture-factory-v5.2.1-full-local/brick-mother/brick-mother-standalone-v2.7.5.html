@@ -4051,6 +4051,10 @@ const state = {
   seedBank: {},
   rebuildTimer: 0,
   evidenceMode: QUERY.get('evidence') === '1',
+  evidenceQuality: (() => {
+    const requested = Number(QUERY.get('evidenceQuality'));
+    return Number.isFinite(requested) && requested > 0 ? clamp(requested, 0.40, 1.04) : 0.78;
+  })(),
   mobileMode: MOBILE_RUNTIME,
   fullFamilyRequested: QUERY.get('full') === '1',
   mobileQuickProfile: QUERY.get('profile') || 'old-pbr-fired',
@@ -4359,7 +4363,7 @@ async function buildCurrentBatch() {
       await new Promise((resolve) => setTimeout(resolve, 18));
       const quality = state.mobileMode
         ? (state.fullFamilyRequested ? 0.56 : 0.30)
-        : (state.evidenceMode ? 0.78 : (state.soloMode ? 1.00 : (state.benchmarkMode ? 0.72 : 1.04)));
+        : (state.evidenceMode ? state.evidenceQuality : (state.soloMode ? 1.00 : (state.benchmarkMode ? 0.72 : 1.04)));
       const mesh = buildMesh(definition.profile, definition.seedDNA, definition.controls, definition.level, quality);
       if (!mesh.vertices || mesh.triangles < 1000) {
         throw new Error(`${definition.label} 网格过小，生成已停止`);
@@ -4485,6 +4489,7 @@ async function buildCurrentBatch() {
       mobileRuntime: state.mobileMode,
       mobileQuickPreview: mobileQuickActive(),
       progressiveFamilyLoad: state.mobileMode,
+      evidenceQuality: state.evidenceQuality,
       formationEventCounts: formationCounts,
       formationEventFamilies: Object.keys(formationCounts),
       formationEventQA: formationQA,

@@ -8,6 +8,7 @@
     "comparisonPolicy": "hash-and-size-match-required; otherwise skip comparison"
   },
   "evidenceCanvas": [1600, 1000],
+  "evidenceQuality": 0.56,
   "camera": "benchmark slab, fixed yaw/pitch/distance and fixed studio lights",
   "background": "black",
   "materials": {

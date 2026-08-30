@@ -68,6 +68,7 @@ jobs:
             --out /tmp/brick-mother-v275-evidence
             --virtual-time-budget 30000
             --workers 2
+            --evidence-quality 0.56
           )
           if [ -n "${JRB_REFERENCE_PATH:-}" ] && [ -f "${JRB_REFERENCE_PATH}" ]; then
             args+=(--reference "${JRB_REFERENCE_PATH}")
