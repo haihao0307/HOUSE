@@ -41,6 +41,9 @@ jobs:
           grep -q "'inclusion'" "$brick/brick-mother-app-v2.js"
           grep -q 'eventGeometryEnabled' "$brick/brick-mother-geometry-v2.js"
           grep -q 'formationEventQA' "$brick/brick-mother-geometry-v2.js"
+          grep -q 'requiredGeometryFailures' "$brick/brick-mother-geometry-v2.js"
+          grep -q 'uInclusionLayerA' "$brick/brick-mother-renderer-v2.js"
+          grep -q 'inclusionDNA' "$brick/data/brick-material-profiles-v2.json"
           grep -q 'finalTopologyHitCount' "$brick/brick-mother-app-v2.js"
           grep -q 'data-channel="9"' "$brick/index.html"
           grep -q 'data-channel="10"' "$brick/index.html"
@@ -88,6 +91,7 @@ jobs:
               'productionApproved': False,
           }
           assert not report['finalLuminanceStdDevFailures'], report['finalLuminanceStdDevFailures']
+          assert not report['requiredGeometryFailures'], report['requiredGeometryFailures']
           for item in report['records']:
               assert item['size'] == [1600,1000], item
           PY

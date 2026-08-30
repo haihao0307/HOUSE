@@ -126,6 +126,11 @@ const FORMATION_EVENT_TYPES = Object.freeze({
   mineralSeam: 12
 });
 
+// The normalized benchmark slab has a short axis of about 1.08 units.  Adobe
+// inclusions use this reference unit instead of inheriting a larger/smaller
+// brick's min dimension, keeping straw, husk, grain and pore scales physical.
+const INCLUSION_REFERENCE_MIN_D = 1.08;
+
 function frontDirection(angle) {
   return norm3(vec3(Math.cos(angle), Math.sin(angle), 0));
 }
@@ -141,6 +146,7 @@ function buildFormationEvents(profile, seedDNA, controls, dims) {
   const inclusionRng = new RNG(seeds.inclusion ^ 0xbb67ae85);
   const b = mul3(dims, 0.5);
   const minD = Math.min(dims.x, dims.y, dims.z);
+  const inclusionD = profile.family === 'ADOBE' ? INCLUSION_REFERENCE_MIN_D : minD;
   const events = [];
   const add = (type, center, size, angle, strength = 1, phase = rng.next()) => {
     events.push({
@@ -212,10 +218,12 @@ function buildFormationEvents(profile, seedDNA, controls, dims) {
       add('compactionFlake', frontEventPoint(b, rng, 0.62, 0.68, rng.range(0.010, 0.045) * minD), vec3(rng.range(0.38, 0.78) * minD, rng.range(0.19, 0.38) * minD, rng.range(0.020, 0.052) * minD), flakeAngle + rng.range(-0.72, 0.72), rng.range(0.72, 1.12));
     }
     for (let i = 0; i < 3; i++) {
-      add('fiberBundle', frontEventPoint(b, inclusionRng, 0.66, 0.72, rng.range(0.025, 0.060) * minD), vec3(inclusionRng.range(0.44, 0.86) * minD, inclusionRng.range(0.010, 0.021) * minD, inclusionRng.range(0.010, 0.022) * minD), inclusionRng.range(-1.25, 1.25), inclusionRng.range(0.80, 1.20), inclusionRng.next());
+      // Keep the bundle center just inside the front skin so the capsule has
+      // an embedded segment and an exposed segment on the sampled SDF grid.
+      add('fiberBundle', frontEventPoint(b, inclusionRng, 0.66, 0.72, -rng.range(0.018, 0.036) * inclusionD), vec3(inclusionRng.range(0.44, 0.86) * inclusionD, inclusionRng.range(0.010, 0.021) * inclusionD, inclusionRng.range(0.010, 0.022) * inclusionD), inclusionRng.range(-1.25, 1.25), inclusionRng.range(0.80, 1.20), inclusionRng.next());
     }
     for (let i = 0; i < 2; i++) {
-      add('fiberPulloutChannel', frontEventPoint(b, inclusionRng, 0.62, 0.68, -0.022 * minD), vec3(inclusionRng.range(0.30, 0.66) * minD, inclusionRng.range(0.012, 0.026) * minD, inclusionRng.range(0.030, 0.070) * minD), inclusionRng.range(-1.35, 1.35), 0.92, inclusionRng.next());
+      add('fiberPulloutChannel', frontEventPoint(b, inclusionRng, 0.62, 0.68, -0.022 * inclusionD), vec3(inclusionRng.range(0.30, 0.66) * inclusionD, inclusionRng.range(0.012, 0.026) * inclusionD, inclusionRng.range(0.030, 0.070) * inclusionD), inclusionRng.range(-1.35, 1.35), 0.92, inclusionRng.next());
     }
     add('undercutShelf', frontEventPoint(b, rng, 0.44, 0.52, -0.040 * minD), vec3(0.58 * minD, 0.070 * minD, 0.13 * minD), flakeAngle, 0.90);
   } else {
@@ -228,6 +236,28 @@ function buildFormationEvents(profile, seedDNA, controls, dims) {
       add('undercutShelf', frontEventPoint(b, rng, 0.52, 0.56, -0.045 * minD), vec3(rng.range(0.40, 0.72) * minD, rng.range(0.045, 0.080) * minD, rng.range(0.10, 0.17) * minD), plateAngle + rng.range(-0.48, 0.48), 1.02);
     }
     add('mineralSeam', frontEventPoint(b, rng, 0.60, 0.60, 0.018 * minD), vec3(0.64 * minD, 0.016 * minD, 0.018 * minD), plateAngle + rng.range(-0.50, 0.50), 0.70);
+  }
+
+  // Fired-clay large cavities are damage consequences, not free-floating
+  // decals.  Couple each cavity cluster to a nearby delamination/fracture
+  // anchor so the mouth, broken rim and dark floor share one spatial cause.
+  if (profile.family === 'FIRED_CLAY') {
+    const anchors = events.filter((event) => ['delaminationPlate', 'fractureBranch'].includes(event.type));
+    const cavities = events.filter((event) => event.type === 'cavityCluster');
+    cavities.forEach((event, index) => {
+      const anchor = anchors[index % Math.max(1, anchors.length)];
+      if (!anchor) return;
+      const jitterX = rng.range(-0.11, 0.11) * minD;
+      const jitterY = rng.range(-0.10, 0.10) * minD;
+      event.center = vec3(
+        clamp(anchor.center.x + jitterX, -b.x * 0.78, b.x * 0.78),
+        clamp(anchor.center.y + jitterY, -b.y * 0.78, b.y * 0.78),
+        b.z - rng.range(0.038, 0.084) * minD
+      );
+      event.relatedEventType = anchor.type;
+      event.relatedEventIndex = events.indexOf(anchor);
+      event.spatialAssociation = 'front-cavity-near-delamination-or-fracture';
+    });
   }
 
   const limits = profile.family === 'STONE'
@@ -286,6 +316,17 @@ function applyFormationEventSDF(distance, p, event, seeds, minD) {
         dir
       )
     );
+    // A third, offset lobe keeps fired-clay mouths visibly multi-petal while
+    // the shallow z radius prevents this cluster from becoming a tunnel.
+    d = Math.max(
+      d,
+      -orientedEventEllipsoid(
+        p,
+        add3(center, mul3(side, -event.size.y * 0.30)),
+        vec3(radii.x * 0.44, radii.y * 0.58, Math.min(radii.z * 0.54, 0.082 * minD)),
+        dir
+      )
+    );
     return d;
   }
 
@@ -340,12 +381,20 @@ function applyFormationEventSDF(distance, p, event, seeds, minD) {
 }
 
 function eventGeometryEnabled(profile, event) {
+  if (!event) return false;
   const type = event.type;
   if (type === 'macroPlateLoss' || type === 'edgeSpall') return false;
   if (profile.family === 'ADOBE' && ['fractureBranch', 'shearBand', 'mineralSeam'].includes(type)) return false;
   if (profile.family === 'STONE' && ['fiberBundle', 'fiberPulloutChannel', 'compactionFlake'].includes(type)) return false;
   if (profile.family === 'FIRED_CLAY' && ['shearBand', 'mineralSeam'].includes(type)) return false;
   return true;
+}
+
+function requiredGeometryFormationTypes(profile) {
+  if (profile.family === 'FIRED_CLAY') return ['delaminationPlate', 'fractureBranch', 'undercutShelf', 'cavityCluster'];
+  if (profile.family === 'STONE') return ['beddingLayer', 'mineralSeam', 'undercutShelf', 'shearBand'];
+  if (profile.family === 'ADOBE') return ['fiberBundle', 'fiberPulloutChannel', 'compactionFlake', 'undercutShelf'];
+  return [];
 }
 
 function formationEventInfluence(p, event, minD, family = '') {
@@ -364,6 +413,15 @@ function formationEventInfluence(p, event, minD, family = '') {
     signed = Math.min(
       orientedEventEllipsoid(p, add3(center, across), radii, dir),
       orientedEventEllipsoid(p, add3(center, add3(along, mul3(across, -0.44))), vec3(radii.x * 0.55, radii.y * 0.64, radii.z * 0.60), dir)
+    );
+    signed = Math.min(
+      signed,
+      orientedEventEllipsoid(
+        p,
+        add3(center, mul3(side, -event.size.y * 0.30)),
+        vec3(radii.x * 0.44, radii.y * 0.58, Math.min(radii.z * 0.54, 0.082 * minD)),
+        dir
+      )
     );
   } else if (type === 'fractureBranch' || type === 'shearBand' || type === 'fiberPulloutChannel') {
     const center = add3(event.center, vec3(0, 0, event.size.z * 0.64 + 0.008 * minD));
@@ -501,6 +559,9 @@ function buildDamage(profile, seedDNA, controlsInput, level, dims) {
   const inclusionRng = new RNG(seeds.inclusion ^ 0x27d4eb2d);
   const b = mul3(dims, 0.5);
   const minD = Math.min(dims.x, dims.y, dims.z);
+  const inclusionScale = profile.family === 'ADOBE'
+    ? INCLUSION_REFERENCE_MIN_D / Math.max(minD, 0.001)
+    : 1;
   const benchmark = controls.benchmarkSlab > 0.5;
   const choosePoreFace = (rng, candidates = FACE_IDS, frontProbability = 0.0) =>
     benchmark && rng.next() < frontProbability ? 'pz' : rng.pick(candidates);
@@ -742,8 +803,8 @@ function buildDamage(profile, seedDNA, controlsInput, level, dims) {
     if (face === 'px' || face === 'nx') tangent = vec3(0, Math.cos(angle), Math.sin(angle));
     else if (face === 'py' || face === 'ny') tangent = vec3(Math.cos(angle), 0, Math.sin(angle));
     else tangent = vec3(Math.cos(angle), Math.sin(angle), 0);
-    const halfLength = inclusionRng.range(0.055, 0.17) * minD * (0.72 + controls.inclusion * 0.34);
-    const radius = inclusionRng.range(0.008, 0.019) * minD * (0.72 + controls.inclusion * 0.28);
+    const halfLength = inclusionRng.range(0.055, 0.17) * minD * inclusionScale * (0.72 + controls.inclusion * 0.34);
+    const radius = inclusionRng.range(0.008, 0.019) * minD * inclusionScale * (0.72 + controls.inclusion * 0.28);
     const depth = inclusionRng.range(0.12, 0.46) * radius;
     const center = add3(surface, mul3(normal, -depth));
     inclusionVoids.push({
@@ -1100,6 +1161,12 @@ function buildMesh(profile, seedDNA, controlsInput, level, quality = 1) {
       shaderHitCountByType[type] = Math.max(shaderHitCountByType[type] || 0, Math.min(sdfGridHitsByType[type], 8));
     }
   }
+  const requiredGeometryTypes = requiredGeometryFormationTypes(profile);
+  const requiredGeometryFailures = requiredGeometryTypes.filter((type) =>
+    !eventGeometryEnabled(profile, formationEvents.find((event) => event.type === type)) ||
+    (finalTopologyHitCountByType[type] || 0) < 1
+  );
+  const formationAssociationCount = formationEvents.filter((event) => event.relatedEventType).length;
   const formationEventQA = {
     declaredEventCount: formationEvents.length,
     declaredEventCountByType: declaredByType,
@@ -1111,6 +1178,9 @@ function buildMesh(profile, seedDNA, controlsInput, level, quality = 1) {
     topologyCellsByType,
     finalTopologyHitCount: Object.values(finalTopologyHitCountByType).reduce((sum, value) => sum + value, 0),
     geometryAppliedByType: Object.fromEntries(Object.keys(declaredByType).map((type) => [type, formationEvents.filter((event) => event.type === type && field.eventGeometryEnabled(profile, event)).length])),
+    requiredGeometryTypes,
+    requiredGeometryFailures,
+    formationAssociationCount,
     noPerforatingMacroCut: true
   };
 

@@ -189,6 +189,10 @@
     "reportShaderHitCount": true,
     "reportSdfGridHitCount": true,
     "reportFinalTopologyHitCount": true,
+    "reportRequiredGeometryFailures": true,
+    "reportFormationAssociations": true,
+    "reportCompleteFamilyControlsAndSeedDNA": true,
+    "reportAdobeInclusionLayerDNA": true,
     "fixedBatchImageCount": 24,
     "fixedCanvas": [1600, 1000],
     "referenceHashGate": true
@@ -259,7 +263,10 @@
     "explicitGlobalControlDelta": true,
     "inclusionGeometryRebuild": true,
     "masterSeedDerivation": true,
-    "formationEventHitAccounting": true
+    "formationEventHitAccounting": true,
+    "requiredGeometryTopologyGate": true,
+    "firedCavityAssociation": true,
+    "adobeIndependentInclusionLayers": true
   },
   "mobileRuntime": {
     "defaultMode": "single-benchmark-slab-fast-preview",

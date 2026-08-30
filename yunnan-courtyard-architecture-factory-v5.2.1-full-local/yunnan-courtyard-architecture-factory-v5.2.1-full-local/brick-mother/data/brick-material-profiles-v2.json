@@ -605,6 +605,83 @@
         "warpStrength": 0.27,
         "strataTilt": 0.11,
         "geometryStrength": 0.92
+      },
+      "inclusionDNA": {
+        "brickScaleInvariant": true,
+        "layers": [
+          {
+            "id": "long-straw",
+            "seed": 17,
+            "density": 0.58,
+            "scale": 6.2,
+            "burialDepth": 0.58,
+            "direction": 0.18,
+            "clustering": 0.78,
+            "colorVariation": 0.34,
+            "thickness": 0.042,
+            "physicalScaleMm": [0.45, 4.8]
+          },
+          {
+            "id": "chopped-straw",
+            "seed": 29,
+            "density": 0.46,
+            "scale": 11.5,
+            "burialDepth": 0.68,
+            "direction": -0.32,
+            "clustering": 0.70,
+            "colorVariation": 0.42,
+            "thickness": 0.056,
+            "physicalScaleMm": [0.32, 2.2]
+          },
+          {
+            "id": "rice-husk",
+            "seed": 41,
+            "density": 0.34,
+            "scale": 16.0,
+            "burialDepth": 0.72,
+            "direction": 0.0,
+            "clustering": 0.64,
+            "colorVariation": 0.48,
+            "thickness": 0.11,
+            "physicalScaleMm": [0.28, 1.6]
+          },
+          {
+            "id": "seed-grain",
+            "seed": 53,
+            "density": 0.22,
+            "scale": 20.0,
+            "burialDepth": 0.76,
+            "direction": 0.0,
+            "clustering": 0.58,
+            "colorVariation": 0.52,
+            "thickness": 0.13,
+            "physicalScaleMm": [0.65, 1.8]
+          },
+          {
+            "id": "mineral-particle",
+            "seed": 67,
+            "density": 0.28,
+            "scale": 24.0,
+            "burialDepth": 0.84,
+            "direction": 0.0,
+            "clustering": 0.52,
+            "colorVariation": 0.30,
+            "thickness": 0.08,
+            "physicalScaleMm": [0.18, 0.75]
+          },
+          {
+            "id": "micro-pore",
+            "seed": 79,
+            "density": 0.38,
+            "scale": 28.0,
+            "burialDepth": 0.88,
+            "direction": 0.0,
+            "clustering": 0.46,
+            "colorVariation": 0.24,
+            "thickness": 0.05,
+            "physicalScaleMm": [0.08, 0.42]
+          }
+        ]
       }
     },
     {

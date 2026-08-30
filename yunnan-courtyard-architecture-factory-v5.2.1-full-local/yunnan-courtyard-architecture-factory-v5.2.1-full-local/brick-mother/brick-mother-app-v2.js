@@ -16,6 +16,11 @@ const MOBILE_RUNTIME = MOBILE_QUERY === '1' || (MOBILE_QUERY !== '0' && (
     Math.min(window.innerWidth || 9999, window.innerHeight || 9999) < 920)
 ));
 const REBUILD_CONTROL_KEYS = ['damage', 'poreDepth', 'poreDensity', 'poreVariety', 'weathering', 'inclusion', 'shapeVariation', 'rockDetail', 'strata', 'microErosion'];
+// Mixed mode is the canonical family order.  Keeping the slot and level
+// explicit lets an evidence solo view render the exact same family child as
+// the mixed batch, rather than silently selecting a different sibling level.
+const MIXED_PROFILE_IDS = Object.freeze(['old-pbr-fired', 'stone-block', 'raw-clay']);
+const MIXED_LEVELS = Object.freeze([0.42, 0.48, 0.46]);
 const CHILD_OFFSETS = [0, 1181, 2647];
 const SEED_PRIMES = {
   master: 1,
@@ -91,6 +96,10 @@ function familyLabel(profile) {
   if (profile.family === 'FIRED_CLAY') return '烧结黏土';
   if (profile.family === 'ADOBE') return '原始黏土 / 土坯';
   return '石材';
+}
+
+function mixedFamilySlot(profile) {
+  return Math.max(0, MIXED_PROFILE_IDS.indexOf(profile?.id));
 }
 
 function triangleLabel(n) {
@@ -213,8 +222,8 @@ function controlsForChild(profile, childIndex, mode) {
 
 function createBatchDefinitions() {
   if (state.batchMode === 'mixed') {
-    const ids = ['old-pbr-fired', 'stone-block', 'raw-clay'];
-    const levels = [0.42, 0.48, 0.46];
+    const ids = MIXED_PROFILE_IDS;
+    const levels = MIXED_LEVELS;
     const labels = ['烧结砖视觉真值子代', '定向地质石材子代', '纤维土坯视觉真值子代'];
     return ids.map((id, i) => {
       const profile = state.profiles.get(id);
@@ -403,6 +412,10 @@ async function buildCurrentBatch() {
       acc.finalTopologyHitCount += qa.finalTopologyHitCount || 0;
       return acc;
     }, { declaredEventCount: 0, shaderHitCount: 0, sdfGridHitCount: 0, finalTopologyHitCount: 0 });
+    const requiredGeometryFailures = formationQA.flatMap((qa, index) =>
+      (qa.requiredGeometryFailures || []).map((type) => ({ profile: built[index]?.profile.id, type }))
+    );
+    const overhangCount = formationQA.reduce((sum, qa) => sum + (qa.finalTopologyHitCountByType?.undercutShelf || 0), 0);
     const elapsed = Math.round(performance.now() - start);
     $('#batchStats').textContent =
       `${triangleLabel(totalTriangles)} 三角面 · ${totalDeepPores} 深孔 · ${totalRimChips} 孔沿碎裂 · ${totalCollapsedPores} 塌口 · ${elapsed} ms`;
@@ -425,6 +438,7 @@ async function buildCurrentBatch() {
     document.documentElement.dataset.gaeaKernel = window.BrickMotherGaeaV1?.version || 'missing';
     document.documentElement.dataset.debugModes = '11';
     document.documentElement.dataset.activeProfile = state.selectedProfile;
+    document.documentElement.dataset.familySlot = String(mixedFamilySlot(built[0]?.profile));
     document.documentElement.dataset.oxideContours = 'suppressed';
     document.documentElement.dataset.eventColorMasking = 'true';
     document.documentElement.dataset.evidenceReady = state.evidenceMode ? 'true' : 'false';
@@ -440,7 +454,11 @@ async function buildCurrentBatch() {
     document.documentElement.dataset.sdfGridFormationHits = String(formationTotals.sdfGridHitCount);
     document.documentElement.dataset.finalTopologyFormationHits = String(formationTotals.finalTopologyHitCount);
     document.documentElement.dataset.formationHitCount = String(formationTotals.finalTopologyHitCount);
+    document.documentElement.dataset.requiredGeometryFailures = String(requiredGeometryFailures.length);
+    document.documentElement.dataset.formationAssociations = String(formationQA.reduce((sum, qa) => sum + (qa.formationAssociationCount || 0), 0));
+    document.documentElement.dataset.overhangCount = String(overhangCount);
     document.documentElement.dataset.fiberBundles = String(formationEvents.filter((event) => event.type === 'fiberBundle').length);
+    document.documentElement.dataset.inclusionLayerCount = String(built.find((item) => item.profile.family === 'ADOBE')?.profile.inclusionDNA?.layers?.length || 0);
     window.__BRICK_MOTHER_QA__ = {
       ready: true,
       version: '2.7.5-alpha.1',
@@ -460,6 +478,17 @@ async function buildCurrentBatch() {
         (acc[item.profile.family] ||= []).push(item.mesh.controls);
         return acc;
       }, {}),
+      inclusionDNAByFamily: built.reduce((acc, item) => {
+        const layers = item.profile.inclusionDNA?.layers || [];
+        (acc[item.profile.family] ||= []).push({
+          brickScaleInvariant: item.profile.inclusionDNA?.brickScaleInvariant ?? true,
+          layers: layers.map((layer) => ({
+            ...layer,
+            derivedSeed: Math.max(1, Math.round(item.mesh.seedDNA.inclusion + Number(layer.seed || 0)))
+          }))
+        });
+        return acc;
+      }, {}),
       seedDNAByFamily: built.reduce((acc, item) => {
         (acc[item.profile.family] ||= []).push(item.mesh.seedDNA);
         return acc;
@@ -468,7 +497,19 @@ async function buildCurrentBatch() {
       controlIsolation: {
         mixedUsesProfileCompositeDefaults: state.batchMode === 'mixed',
         soloUsesSelectedProfileControls: state.batchMode !== 'mixed',
-        sameFamilyMixedSoloComparable: true
+        sameFamilyMixedSoloComparable: true,
+        canonicalMixedProfileOrder: MIXED_PROFILE_IDS,
+        canonicalMixedLevels: MIXED_LEVELS,
+        evidenceSoloSelection: state.soloMode && state.batchMode === 'mixed'
+          ? {
+              profile: built[0]?.profile.id,
+              familySlot: mixedFamilySlot(built[0]?.profile),
+              level: built[0]?.level,
+              usesProfileCompositeDefaults: true,
+              usesSameSeedDNA: true,
+              usesSameFinalControls: true
+            }
+          : null
       },
       generationMs: elapsed,
       noExternalGeometryAssets: true,
@@ -486,6 +527,7 @@ async function buildCurrentBatch() {
       formationEventFamilies: Object.keys(formationCounts),
       formationEventQA: formationQA,
       formationEventTotals: formationTotals,
+      requiredGeometryFailures,
       soloMode: state.soloMode,
       erosionBiteCounts: built.map((item) => item.mesh.damage.erosionBites.length),
       inclusionVoidCounts: built.map((item) => item.mesh.damage.inclusionVoids?.length || 0),

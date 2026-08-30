@@ -23,9 +23,9 @@ from PIL import Image, ImageFilter, ImageStat
 REFERENCE_SHA256 = "f439b732f9b62584dac96ad5b4ab19dc77d48105d4b092cc21b064ee59c27cfb"
 REFERENCE_SIZE = (2048, 682)
 PROFILES = {
-    "old-pbr-fired": {"label": "fired", "seeds": [5045, 6112, 7179]},
-    "stone-block": {"label": "stone", "seeds": [8231, 9298, 10365]},
-    "raw-clay": {"label": "adobe", "seeds": [4517, 5594, 6671]},
+    "old-pbr-fired": {"label": "fired", "slot": 0, "seeds": [5045, 6112, 7179]},
+    "stone-block": {"label": "stone", "slot": 1, "seeds": [8231, 9298, 10365]},
+    "raw-clay": {"label": "adobe", "slot": 2, "seeds": [4517, 5594, 6671]},
 }
 CHANNELS = {
     0: "final",
@@ -74,8 +74,9 @@ def capture(chrome: str, html: Path, output: Path, profile: str, seed: int, chan
     output.parent.mkdir(parents=True, exist_ok=True)
     uri = html.resolve().as_uri()
     query = (
-        f"{uri}?evidence=1&solo=1&specimen=benchmark&mode=siblings&profile={profile}"
-        f"&focus=0&debug={channel}&seed={seed}&evidenceQuality={quality:.2f}"
+        f"{uri}?evidence=1&solo=1&specimen=benchmark&mode=mixed&profile={profile}"
+        f"&focus={PROFILES[profile]['slot']}"
+        f"&debug={channel}&seed={seed}&evidenceQuality={quality:.2f}"
         f"&qa=v275-{profile}-{seed}-{channel}"
     )
     dom = output.with_suffix(".dom.html")
@@ -114,6 +115,8 @@ def capture(chrome: str, html: Path, output: Path, profile: str, seed: int, chan
         "data-version": 'data-brick-mother-version="2.7.5-alpha.1"',
         "data-solo": 'data-solo-mode="true"',
         "data-evidence": 'data-evidence-ready="true"',
+        "data-family-slot": f'data-family-slot="{PROFILES[profile]["slot"]}"',
+        "data-required-geometry-failures": 'data-required-geometry-failures="0"',
     }
     for name, needle in required.items():
         if needle not in dom_text:
@@ -164,12 +167,16 @@ def image_metrics(path: Path, dom: Path) -> dict:
         "multiscaleBandEnergy": bands,
         "occupancyRate": round(len(occupied) / len(pixels), 6),
         "deepPoreCount": attr("deep-pores"),
-        "overhangCount": attr("final-topology-formation-hits"),
+        "overhangCount": attr("overhang-count"),
         "fiberBundleCount": attr("fiber-bundles"),
         "formationTopologyHitCount": attr("formation-hit-count"),
         "declaredEventCount": attr("declared-formation-events"),
         "shaderHitCount": attr("shader-formation-hits"),
         "sdfGridHitCount": attr("sdf-grid-formation-hits"),
+        "requiredGeometryFailureCount": attr("required-geometry-failures"),
+        "formationAssociationCount": attr("formation-associations"),
+        "familySlot": attr("family-slot"),
+        "inclusionLayerCount": attr("inclusion-layer-count"),
     }
 
 
@@ -201,6 +208,7 @@ def main() -> None:
     records.sort(key=lambda item: (item["profile"], item["seed"], item["channelIndex"]))
     finals = [record for record in records if record["channel"] == "final"]
     failed_stddev = [record for record in finals if record["luminanceStdDev"] < 0.11]
+    required_geometry_failures = [record for record in records if record["requiredGeometryFailureCount"] > 0]
     manifest = {
         "version": "2.7.5-alpha.1",
         "canvas": [1600, 1000],
@@ -221,6 +229,7 @@ def main() -> None:
         },
         "records": records,
         "finalLuminanceStdDevFailures": failed_stddev,
+        "requiredGeometryFailures": required_geometry_failures,
     }
     (args.out / "evidence-manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
     lines = [
@@ -228,6 +237,7 @@ def main() -> None:
         "",
         f"Images: {len(records)} (1600x1000), fixed camera/light/background.",
         f"Reference: {reference['status']}; comparison: {reference['comparison']}.",
+        f"Required geometry failures: {len(required_geometry_failures)} records.",
         "Manual visual approvals remain false.",
         "",
         "| Profile | Seed | Final luminance stddev | P10 / P50 / P90 | Topology hits |",
@@ -242,6 +252,8 @@ def main() -> None:
     (args.out / "evidence-report.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
     if failed_stddev:
         raise SystemExit("final material luminance standard deviation below 0.11")
+    if required_geometry_failures:
+        raise SystemExit("required formation event has no final topology hit")
 
 
 if __name__ == "__main__":

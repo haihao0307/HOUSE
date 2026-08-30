@@ -4,6 +4,7 @@
 const { clamp, vec3, norm3, sub3, cross3, dot3 } = window.BrickMotherGeometryV2;
 const gaeaGLSL = window.BrickMotherGaeaV1?.glsl || '';
 const MAX_V27_EVENTS = 20;
+const MAX_INCLUSION_LAYERS = 6;
 
 function mat4Identity() {
   return new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
@@ -151,6 +152,8 @@ uniform float uWaterSeed;
 uniform float uWeatherSeed;
 uniform float uInclusionSeed;
 uniform float uDetailSeed;
+uniform vec4 uInclusionLayerA[6];
+uniform vec4 uInclusionLayerB[6];
 uniform float uGaeaRockDetail;
 uniform float uGaeaStrata;
 uniform float uGaeaMicroErosion;
@@ -336,63 +339,111 @@ vec2 surfaceProjection(vec3 p, vec3 n) {
 }
 
 vec4 organicInclusions(vec2 uv, float seed) {
-  vec2 g0 = uv * 6.2;
+  vec4 longA = uInclusionLayerA[0];
+  vec4 choppedA = uInclusionLayerA[1];
+  vec4 huskA = uInclusionLayerA[2];
+  vec4 seedA = uInclusionLayerA[3];
+  vec4 particleA = uInclusionLayerA[4];
+  vec4 poreA = uInclusionLayerA[5];
+  vec4 longB = uInclusionLayerB[0];
+  vec4 choppedB = uInclusionLayerB[1];
+  vec4 huskB = uInclusionLayerB[2];
+  vec4 seedB = uInclusionLayerB[3];
+  vec4 particleB = uInclusionLayerB[4];
+  vec4 poreB = uInclusionLayerB[5];
+  float longDensity = clamp(longA.x, 0.0, 1.0);
+  float choppedDensity = clamp(choppedA.x, 0.0, 1.0);
+  float huskDensity = clamp(huskA.x, 0.0, 1.0);
+  float seedDensity = clamp(seedA.x, 0.0, 1.0);
+  float particleDensity = clamp(particleA.x, 0.0, 1.0);
+  float poreDensity = clamp(poreA.x, 0.0, 1.0);
+  float longSeed = seed + longB.z;
+  float choppedSeed = seed + choppedB.z;
+  float huskSeed = seed + huskB.z;
+  float seedGrainSeed = seed + seedB.z;
+  float particleSeed = seed + particleB.z;
+  float poreSeed = seed + poreB.z;
+
+  vec2 g0 = uv * max(longA.y, 2.0);
   vec2 id0 = floor(g0);
   vec2 f0 = fract(g0) - 0.5;
-  vec2 r0 = hash22(id0 + seed * 0.013);
-  vec2 q0 = rotate2((r0.x - 0.5) * 3.14159265) * (f0 - (r0 - 0.5) * 0.38);
-  float gate0 = smoothstep(0.43, 0.76, hash31(vec3(id0, seed * 0.017)));
-  float strawLong = (1.0 - smoothstep(0.026, 0.066, abs(q0.y))) *
+  vec2 r0 = hash22(id0 + longSeed * 0.013);
+  vec2 q0 = rotate2(longA.w + (r0.x - 0.5) * 0.92) * (f0 - (r0 - 0.5) * 0.38);
+  float gate0 = smoothstep(mix(0.86, 0.40, longDensity), mix(0.98, 0.76, longDensity), hash31(vec3(id0, longSeed * 0.017)));
+  float strawLong = (1.0 - smoothstep(max(0.010, longB.w * 0.58), max(0.024, longB.w * 1.58), abs(q0.y))) *
                     (1.0 - smoothstep(0.34, 0.49, abs(q0.x))) * gate0;
 
-  vec2 g0b = uv * 3.8 + vec2(9.3, 2.7);
+  vec2 g0b = uv * max(choppedA.y, 2.0) + vec2(9.3, 2.7);
   vec2 id0b = floor(g0b);
   vec2 f0b = fract(g0b) - 0.5;
-  vec2 r0b = hash22(id0b + seed * 0.019 + 41.0);
-  vec2 q0b = rotate2(r0b.y * 6.2831853) * (f0b - (r0b - 0.5) * 0.28);
-  float gate0b = smoothstep(0.70, 0.92, hash31(vec3(id0b, seed * 0.021 + 29.0)));
-  float strawLongB = (1.0 - smoothstep(0.020, 0.052, abs(q0b.y))) *
+  vec2 r0b = hash22(id0b + choppedSeed * 0.019 + 41.0);
+  vec2 q0b = rotate2(choppedA.w + r0b.y * 2.9) * (f0b - (r0b - 0.5) * 0.28);
+  float gate0b = smoothstep(mix(0.90, 0.48, choppedDensity), mix(0.99, 0.82, choppedDensity), hash31(vec3(id0b, choppedSeed * 0.021 + 29.0)));
+  float strawLongB = (1.0 - smoothstep(max(0.008, choppedB.w * 0.52), max(0.020, choppedB.w * 1.42), abs(q0b.y))) *
                      (1.0 - smoothstep(0.39, 0.51, abs(q0b.x))) * gate0b;
 
-  vec2 g1 = uv * 11.5 + vec2(3.7, 9.1);
+  vec2 g1 = uv * max(choppedA.y, 2.0) * 0.72 + vec2(3.7, 9.1);
   vec2 id1 = floor(g1);
   vec2 f1 = fract(g1) - 0.5;
-  vec2 r1 = hash22(id1 + seed * 0.023 + 17.0);
-  vec2 q1 = rotate2(r1.y * 6.2831853) * (f1 - (r1 - 0.5) * 0.31);
-  float gate1 = smoothstep(0.54, 0.83, hash31(vec3(id1, seed * 0.029 + 11.0)));
-  float strawShort = (1.0 - smoothstep(0.030, 0.080, abs(q1.y))) *
+  vec2 r1 = hash22(id1 + choppedSeed * 0.023 + 17.0);
+  vec2 q1 = rotate2(choppedA.w + r1.y * 3.2) * (f1 - (r1 - 0.5) * 0.31);
+  float gate1 = smoothstep(mix(0.88, 0.44, choppedDensity), mix(0.98, 0.77, choppedDensity), hash31(vec3(id1, choppedSeed * 0.029 + 11.0)));
+  float strawShort = (1.0 - smoothstep(max(0.010, choppedB.w * 0.56), max(0.026, choppedB.w * 1.52), abs(q1.y))) *
                      (1.0 - smoothstep(0.20, 0.34, abs(q1.x))) * gate1;
 
-  vec2 g2 = uv * 16.0 + vec2(11.0, 2.0);
+  vec2 g2 = uv * max(huskA.y, 2.0) + vec2(11.0, 2.0);
   vec2 id2 = floor(g2);
   vec2 f2 = fract(g2) - 0.5;
-  vec2 r2 = hash22(id2 + seed * 0.031 + 29.0);
-  vec2 q2 = rotate2((r2.x - 0.5) * 2.2) * (f2 - (r2 - 0.5) * 0.24);
-  float ellipseH = length(q2 / vec2(0.33, 0.125));
+  vec2 r2 = hash22(id2 + huskSeed * 0.031 + 29.0);
+  vec2 q2 = rotate2(huskA.w + (r2.x - 0.5) * 2.2) * (f2 - (r2 - 0.5) * 0.24);
+  float ellipseH = length(q2 / vec2(max(0.12, huskB.w * 3.0), max(0.060, huskB.w * 1.12)));
   float husk = (1.0 - smoothstep(0.065, 0.18, abs(ellipseH - 1.0))) *
-               smoothstep(0.60, 0.87, hash31(vec3(id2, seed * 0.037 + 7.0)));
+               smoothstep(mix(0.90, 0.48, huskDensity), mix(0.99, 0.78, huskDensity), hash31(vec3(id2, huskSeed * 0.037 + 7.0)));
 
-  vec2 g3 = uv * 20.0 + vec2(5.0, 13.0);
+  vec2 g3 = uv * max(seedA.y, 2.0) + vec2(5.0, 13.0);
   vec2 id3 = floor(g3);
   vec2 f3 = fract(g3) - 0.5;
-  vec2 r3 = hash22(id3 + seed * 0.041 + 43.0);
-  vec2 q3 = rotate2(r3.y * 6.2831853) * (f3 - (r3 - 0.5) * 0.19);
-  float seedEllipse = length(q3 / vec2(0.22, 0.125));
+  vec2 r3 = hash22(id3 + seedGrainSeed * 0.041 + 43.0);
+  vec2 q3 = rotate2(seedA.w + r3.y * 6.2831853) * (f3 - (r3 - 0.5) * 0.19);
+  float seedEllipse = length(q3 / vec2(max(0.12, seedB.w * 1.70), max(0.060, seedB.w)));
   float seedMask = (1.0 - smoothstep(0.78, 1.15, seedEllipse)) *
-                   smoothstep(0.70, 0.91, hash31(vec3(id3, seed * 0.047 + 31.0)));
+                   smoothstep(mix(0.94, 0.54, seedDensity), mix(0.995, 0.82, seedDensity), hash31(vec3(id3, seedGrainSeed * 0.047 + 31.0)));
 
-  vec2 g4 = uv * 24.0 + vec2(17.0, 3.0);
+  vec2 g4 = uv * max(poreA.y, 2.0) + vec2(17.0, 3.0);
   vec2 id4 = floor(g4);
   vec2 f4 = fract(g4) - 0.5;
-  vec2 r4 = hash22(id4 + seed * 0.051 + 59.0);
+  vec2 r4 = hash22(id4 + poreSeed * 0.051 + 59.0);
   float pit = (1.0 - smoothstep(0.075, 0.19, length(f4 - (r4 - 0.5) * 0.34))) *
-              smoothstep(0.76, 0.95, hash31(vec3(id4, seed * 0.057 + 47.0)));
+              smoothstep(mix(0.95, 0.52, poreDensity), mix(0.995, 0.80, poreDensity), hash31(vec3(id4, poreSeed * 0.057 + 47.0)));
+
+  // Mineral grains and micro-pores stay in their own physical-scale fields;
+  // they tint/roughen the nearby organic masks without scaling with the brick.
+  vec2 gp = uv * max(particleA.y, 2.0) + vec2(23.0, 7.0);
+  vec2 idp = floor(gp);
+  vec2 fp = fract(gp) - 0.5;
+  vec2 rp = hash22(idp + particleSeed * 0.061);
+  float particle = (1.0 - smoothstep(max(0.055, particleB.w * 0.42), max(0.12, particleB.w * 1.40), length(fp - (rp - 0.5) * 0.22))) *
+                   smoothstep(mix(0.94, 0.48, particleDensity), mix(0.995, 0.80, particleDensity), hash31(vec3(idp, particleSeed * 0.067)));
+  vec2 gMicro = uv * max(poreA.y, 2.0) * 1.16 + vec2(31.0, 11.0);
+  vec2 idMicro = floor(gMicro);
+  vec2 fMicro = fract(gMicro) - 0.5;
+  vec2 rMicro = hash22(idMicro + poreSeed * 0.073);
+  float microPore = (1.0 - smoothstep(0.025, 0.12, length(fMicro - (rMicro - 0.5) * 0.30))) *
+                    smoothstep(mix(0.96, 0.54, poreDensity), mix(0.998, 0.84, poreDensity), hash31(vec3(idMicro, poreSeed * 0.079)));
 
   float clusterLarge = smoothstep(0.26, 0.72, fbmValueFast(vec3(uv * 1.05, seed * 0.0061)));
   float clusterFine = smoothstep(0.40, 0.83, valueNoise3(vec3(uv * 3.1, seed * 0.0097)));
-  float burial = mix(0.22, 1.0, clusterLarge) * mix(0.64, 1.0, clusterFine);
-  float strawMask = max(max(strawLong, strawLongB), strawShort);
-  vec4 result = vec4(strawMask, husk, seedMask, pit);
+  float clusterMix = clamp((longB.x + choppedB.x + huskB.x + seedB.x + particleB.x + poreB.x) / 6.0, 0.0, 1.0);
+  float burial = mix(0.20, 1.0, clusterLarge * clusterMix + (1.0 - clusterMix) * 0.22) * mix(0.64, 1.0, clusterFine);
+  float strawMask = max(max(strawLong * mix(0.76, 1.16, longB.y), strawLongB * mix(0.76, 1.16, choppedB.y)), strawShort * mix(0.76, 1.16, huskB.y));
+  float huskMask = max(husk, particle * 0.42 * mix(0.76, 1.16, particleB.y));
+  float pitMask = max(pit, microPore * 0.58 * mix(0.76, 1.16, poreB.y));
+  vec4 result = vec4(strawMask, huskMask, seedMask * mix(0.76, 1.16, seedB.y), pitMask);
+  result.x *= mix(0.36, 1.0, longA.z) * mix(0.48, 1.0, longB.x);
+  result.x = max(result.x, strawLongB * mix(0.36, 1.0, choppedA.z) * mix(0.48, 1.0, choppedB.x));
+  result.y *= mix(0.42, 1.0, huskA.z) * mix(0.48, 1.0, huskB.x);
+  result.z *= mix(0.46, 1.0, seedA.z) * mix(0.48, 1.0, seedB.x);
+  result.w *= mix(0.42, 1.0, poreA.z) * mix(0.48, 1.0, poreB.x);
   result.xyz *= burial;
   result.w *= mix(0.42, 1.0, clusterLarge);
   return clamp(result, 0.0, 1.0);
@@ -893,6 +944,13 @@ void main() {
     vec3 strawVar = mix(strawAged, mineralColor, smoothstep(0.70, 0.94, fiberDust) * 0.24);
     vec3 huskVar = mix(huskColor, mix(mineralColor, dark, 0.20), micro * 0.28);
     vec3 seedVar = mix(seedColor, dark, 0.36 + cavity * 0.18);
+    float inclusionVariation = clamp(
+      inclusions.x * uInclusionLayerB[0].y +
+      inclusions.y * uInclusionLayerB[2].y +
+      inclusions.z * uInclusionLayerB[3].y +
+      inclusions.w * uInclusionLayerB[5].y,
+      0.0, 1.0
+    );
     albedo = mix(albedo, adobeClayRed, clayRed * (0.26 + rich * 0.14));
     albedo = mix(albedo, adobeOchre, clayOchre * 0.22);
     albedo = mix(albedo, adobeDust, clayDust * 0.22);
@@ -901,6 +959,7 @@ void main() {
     albedo = mix(albedo, huskVar, inclusions.y * 0.96);
     albedo = mix(albedo, seedVar, inclusions.z * 0.98);
     albedo = mix(albedo, charColor, inclusions.w * 0.94);
+    albedo = mix(albedo, mineralColor, inclusionVariation * 0.065);
     albedo = mix(albedo, dark, inclusions.x * smoothstep(0.63, 0.91, fiberAge) * 0.18);
     albedo = mix(albedo, adobeOchre, v27.plate * 0.045);
     albedo = mix(albedo, strawVar, v27.fiber * 0.52);
@@ -1197,6 +1256,8 @@ class BrickRenderer {
       weatherSeed: u('uWeatherSeed'),
       inclusionSeed: u('uInclusionSeed'),
       detailSeed: u('uDetailSeed'),
+      inclusionLayerA: u('uInclusionLayerA[0]'),
+      inclusionLayerB: u('uInclusionLayerB[0]'),
       gaeaRockDetail: u('uGaeaRockDetail'),
       gaeaStrata: u('uGaeaStrata'),
       gaeaMicroErosion: u('uGaeaMicroErosion'),
@@ -1393,6 +1454,31 @@ class BrickRenderer {
     gl.uniform1f(l.weatherSeed, seeds.weather ?? seeds.master ?? 29);
     gl.uniform1f(l.inclusionSeed, seeds.inclusion ?? seeds.master ?? 31);
     gl.uniform1f(l.detailSeed, seeds.detail ?? seeds.master ?? 37);
+    const defaultInclusionLayers = [
+      { seed: 17, density: 0.58, scale: 6.2, burialDepth: 0.58, direction: 0.18, clustering: 0.78, colorVariation: 0.34, thickness: 0.042 },
+      { seed: 29, density: 0.46, scale: 11.5, burialDepth: 0.68, direction: -0.32, clustering: 0.70, colorVariation: 0.42, thickness: 0.056 },
+      { seed: 41, density: 0.34, scale: 16.0, burialDepth: 0.72, direction: 0.0, clustering: 0.64, colorVariation: 0.48, thickness: 0.11 },
+      { seed: 53, density: 0.22, scale: 20.0, burialDepth: 0.76, direction: 0.0, clustering: 0.58, colorVariation: 0.52, thickness: 0.13 },
+      { seed: 67, density: 0.28, scale: 24.0, burialDepth: 0.84, direction: 0.0, clustering: 0.52, colorVariation: 0.30, thickness: 0.08 },
+      { seed: 79, density: 0.38, scale: 28.0, burialDepth: 0.88, direction: 0.0, clustering: 0.46, colorVariation: 0.24, thickness: 0.05 }
+    ];
+    const inclusionLayers = profile.inclusionDNA?.layers || defaultInclusionLayers;
+    const layerA = new Float32Array(MAX_INCLUSION_LAYERS * 4);
+    const layerB = new Float32Array(MAX_INCLUSION_LAYERS * 4);
+    for (let i = 0; i < MAX_INCLUSION_LAYERS; i++) {
+      const layer = inclusionLayers[i] || defaultInclusionLayers[i];
+      const a = i * 4, b = i * 4;
+      layerA[a] = layer.density ?? defaultInclusionLayers[i].density;
+      layerA[a + 1] = layer.scale ?? defaultInclusionLayers[i].scale;
+      layerA[a + 2] = layer.burialDepth ?? defaultInclusionLayers[i].burialDepth;
+      layerA[a + 3] = layer.direction ?? defaultInclusionLayers[i].direction;
+      layerB[b] = layer.clustering ?? defaultInclusionLayers[i].clustering;
+      layerB[b + 1] = layer.colorVariation ?? defaultInclusionLayers[i].colorVariation;
+      layerB[b + 2] = layer.seed ?? defaultInclusionLayers[i].seed;
+      layerB[b + 3] = layer.thickness ?? defaultInclusionLayers[i].thickness;
+    }
+    gl.uniform4fv(l.inclusionLayerA, layerA);
+    gl.uniform4fv(l.inclusionLayerB, layerB);
     gl.uniform1f(l.gaeaRockDetail, controls.rockDetail ?? 0.68);
     gl.uniform1f(l.gaeaStrata, controls.strata ?? 0.28);
     gl.uniform1f(l.gaeaMicroErosion, controls.microErosion ?? 0.64);
