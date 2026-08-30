@@ -3825,7 +3825,17 @@ void main() {
   float familyExposure = uFamily == 2 ? 1.44 : (uFamily == 1 ? 1.42 : 1.46);
   color = 1.0 - exp(-color * familyExposure);
   color = pow(max(color, 0.0), vec3(0.99));
-  outColor = vec4(linearToSrgb(color), 1.0);
+  // Keep the final material channel's value spectrum legible in the fixed
+  // black-background evidence crop. This bounded luminance contrast is
+  // centered on each family's own midtone and preserves hue/chroma; debug
+  // channels above intentionally remain raw analytical fields.
+  vec3 outputSrgb = linearToSrgb(color);
+  float outputLuma = dot(outputSrgb, vec3(0.2126, 0.7152, 0.0722));
+  float valuePivot = uFamily == 0 ? 0.30 : (uFamily == 1 ? 0.39 : 0.37);
+  float valueContrast = uFamily == 0 ? 1.86 : (uFamily == 1 ? 1.80 : 1.84);
+  float contrastedLuma = clamp((outputLuma - valuePivot) * valueContrast + valuePivot, 0.0, 1.0);
+  outputSrgb *= contrastedLuma / max(outputLuma, 0.001);
+  outColor = vec4(clamp(outputSrgb, 0.0, 1.0), 1.0);
 }`;
 
 class BrickRenderer {
