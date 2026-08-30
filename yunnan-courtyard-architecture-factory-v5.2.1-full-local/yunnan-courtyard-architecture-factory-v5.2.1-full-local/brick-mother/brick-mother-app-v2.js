@@ -581,6 +581,11 @@ async function buildCurrentBatch() {
       debugModes: 11,
       sourceComparisonNoDimming: true
     };
+    const qaNode = document.getElementById('brickMotherQA') || document.createElement('script');
+    qaNode.type = 'application/json';
+    qaNode.id = 'brickMotherQA';
+    qaNode.textContent = JSON.stringify(window.__BRICK_MOTHER_QA__);
+    if (!qaNode.parentNode) document.documentElement.appendChild(qaNode);
   } catch (error) {
     console.error(error);
     setProgress(`生成失败：${error.message || error}`, 0);

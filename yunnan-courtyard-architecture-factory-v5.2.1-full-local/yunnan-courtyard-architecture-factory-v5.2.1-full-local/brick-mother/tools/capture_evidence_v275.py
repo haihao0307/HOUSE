@@ -177,6 +177,23 @@ def percentile(values: list[float], p: float) -> float:
     return values[lo] + (values[hi] - values[lo]) * (index - lo)
 
 
+def parse_qa_payload(dom_text: str) -> dict | None:
+    """Read the runtime QA object serialized by the evidence page.
+
+    The payload is deliberately captured from the DOM snapshot rather than
+    reconstructed in Python, so controls and seed DNA remain the exact values
+    used by the renderer for that family/seed.
+    """
+    match = re.search(r'<script\b[^>]*\bid=["\']brickMotherQA["\'][^>]*>(.*?)</script>', dom_text, re.DOTALL)
+    if not match:
+        return None
+    try:
+        payload = json.loads(match.group(1))
+    except json.JSONDecodeError:
+        return None
+    return payload if isinstance(payload, dict) else None
+
+
 def image_metrics(path: Path, dom: Path) -> dict:
     image = Image.open(path).convert("RGB")
     pixels = list(image.getdata())
@@ -194,6 +211,7 @@ def image_metrics(path: Path, dom: Path) -> dict:
         delta = ImageStat.Stat(Image.frombytes("L", gray.size, bytes(abs(a - b) for a, b in zip(gray.tobytes(), blurred.tobytes())))).mean[0] / 255
         bands[str(radius)] = round(delta, 6)
     dom_text = dom.read_text(encoding="utf-8", errors="replace")
+    qa_payload = parse_qa_payload(dom_text)
 
     def attr(name: str, default: int = 0) -> int:
         match = re.search(rf'data-{re.escape(name)}="([0-9]+)"', dom_text)
@@ -220,6 +238,7 @@ def image_metrics(path: Path, dom: Path) -> dict:
         "familySlot": attr("family-slot"),
         "masterSeed": attr("master-seed"),
         "inclusionLayerCount": attr("inclusion-layer-count"),
+        "_qaPayload": qa_payload,
     }
 
 
@@ -250,6 +269,13 @@ def main() -> None:
             records.append(future.result())
     records.sort(key=lambda item: (item["profile"], item["seed"], item["channelIndex"]))
     finals = [record for record in records if record["channel"] == "final"]
+    qa_by_family = {}
+    for item in finals:
+        payload = item.get("_qaPayload")
+        if payload and item["profile"] not in qa_by_family:
+            qa_by_family[item["profile"]] = payload
+    for item in records:
+        item.pop("_qaPayload", None)
     failed_stddev = [record for record in finals if record["luminanceStdDev"] < 0.11]
     required_geometry_failures = [record for record in records if record["requiredGeometryFailureCount"] > 0]
     manifest = {
@@ -264,6 +290,7 @@ def main() -> None:
         "extraSeedChannels": ["final"],
         "imageCount": len(records),
         "reference": reference,
+        "qaByFamily": qa_by_family,
         "manualApprovals": {
             "jrbReferenceColorApproved": False,
             "stoneDetailApproved": False,
@@ -275,6 +302,7 @@ def main() -> None:
         "requiredGeometryFailures": required_geometry_failures,
     }
     (args.out / "evidence-manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
+    (args.out / "qa-family-controls.json").write_text(json.dumps(qa_by_family, ensure_ascii=False, indent=2), encoding="utf-8")
     lines = [
         "# Brick Mother V2.7.5 evidence report",
         "",
@@ -282,6 +310,7 @@ def main() -> None:
         f"Reference: {reference['status']}; comparison: {reference['comparison']}.",
         f"Required geometry failures: {len(required_geometry_failures)} records.",
         "Manual visual approvals remain false.",
+        "Full per-family controls and seed DNA: qa-family-controls.json (also embedded in evidence-manifest.json under qaByFamily).",
         "",
         "| Profile | Seed | Final luminance stddev | P10 / P50 / P90 | Topology hits |",
         "|---|---:|---:|---|---:|",
