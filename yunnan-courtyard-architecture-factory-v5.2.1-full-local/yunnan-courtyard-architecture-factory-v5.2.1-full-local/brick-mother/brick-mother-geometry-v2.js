@@ -294,12 +294,22 @@ function buildFormationEvents(profile, seedDNA, controls, dims) {
       ? { macroPlateLoss: 1, cavityCluster: 1, fractureBranch: 1, edgeSpall: 1, compactionFlake: 4, fiberBundle: 3, fiberPulloutChannel: 2, undercutShelf: 1 }
       : { macroPlateLoss: 2, cavityCluster: 3, fractureBranch: 2, edgeSpall: 2, shearBand: 1, delaminationPlate: 2, undercutShelf: 1, mineralSeam: 1 };
   const used = {};
-  return events.filter((event) => {
+  const retained = events.filter((event) => {
     const limit = limits[event.type] || 0;
     const count = used[event.type] || 0;
     used[event.type] = count + 1;
     return count < limit;
   }).slice(0, 14);
+  // Associations are authored while the full event list is being assembled.
+  // Remap them after family limits/slicing so QA indices address the actual
+  // retained formation-event array rather than the pre-filter list.
+  const retainedIndex = new Map(retained.map((event, index) => [event, index]));
+  retained.forEach((event) => {
+    if (!event.relatedEventType || !Number.isInteger(event.relatedEventIndex)) return;
+    const related = events[event.relatedEventIndex];
+    event.relatedEventIndex = retainedIndex.has(related) ? retainedIndex.get(related) : -1;
+  });
+  return retained;
 }
 
 function orientedEventEllipsoid(p, center, radii, direction) {
