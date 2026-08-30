@@ -1527,7 +1527,10 @@ class BrickRenderer {
     gl.depthFunc(gl.LEQUAL);
     gl.disable(gl.CULL_FACE);
     const benchmark = this.meshes.some((m) => (m.mesh.controls?.benchmarkSlab ?? 0) > 0.5);
-    gl.clearColor(benchmark ? 0.010 : 0.060, benchmark ? 0.011 : 0.064, benchmark ? 0.012 : 0.058, 1);
+    // Evidence benchmark uses a true black backdrop so occupancy metrics do
+    // not count the studio background as material pixels.  Interactive
+    // previews keep their neutral dark-green environment.
+    gl.clearColor(benchmark ? 0.0 : 0.060, benchmark ? 0.0 : 0.064, benchmark ? 0.0 : 0.058, 1);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     gl.useProgram(this.program);
 

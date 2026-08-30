@@ -2,7 +2,7 @@
 body.evidence-mode {
   margin: 0;
   overflow: hidden;
-  background: #0e100f;
+  background: #000;
 }
 body.evidence-mode .shell {
   max-width: none;
@@ -38,7 +38,7 @@ body.evidence-mode .stage {
   border: 0;
   border-radius: 0;
   box-shadow: none;
-  background: #0e100f;
+  background: #000;
 }
 body.evidence-mode .viewer {
   width: 100vw;
@@ -52,7 +52,7 @@ body.evidence-mode #brickCanvas {
   height: 100vh !important;
 }
 body.evidence-mode .loading {
-  background: #0e100f;
+  background: #000;
 }
 body.evidence-mode::after {
   display: none;

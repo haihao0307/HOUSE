@@ -867,7 +867,7 @@ button { color: inherit; }
 body.evidence-mode {
   margin: 0;
   overflow: hidden;
-  background: #0e100f;
+  background: #000;
 }
 body.evidence-mode .shell {
   max-width: none;
@@ -903,7 +903,7 @@ body.evidence-mode .stage {
   border: 0;
   border-radius: 0;
   box-shadow: none;
-  background: #0e100f;
+  background: #000;
 }
 body.evidence-mode .viewer {
   width: 100vw;
@@ -917,7 +917,7 @@ body.evidence-mode #brickCanvas {
   height: 100vh !important;
 }
 body.evidence-mode .loading {
-  background: #0e100f;
+  background: #000;
 }
 body.evidence-mode::after {
   display: none;
@@ -4157,7 +4157,10 @@ class BrickRenderer {
     gl.depthFunc(gl.LEQUAL);
     gl.disable(gl.CULL_FACE);
     const benchmark = this.meshes.some((m) => (m.mesh.controls?.benchmarkSlab ?? 0) > 0.5);
-    gl.clearColor(benchmark ? 0.010 : 0.060, benchmark ? 0.011 : 0.064, benchmark ? 0.012 : 0.058, 1);
+    // Evidence benchmark uses a true black backdrop so occupancy metrics do
+    // not count the studio background as material pixels.  Interactive
+    // previews keep their neutral dark-green environment.
+    gl.clearColor(benchmark ? 0.0 : 0.060, benchmark ? 0.0 : 0.064, benchmark ? 0.0 : 0.058, 1);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     gl.useProgram(this.program);
 
