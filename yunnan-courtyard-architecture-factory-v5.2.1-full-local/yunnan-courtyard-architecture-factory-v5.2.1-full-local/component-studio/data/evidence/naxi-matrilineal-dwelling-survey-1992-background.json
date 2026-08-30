@@ -1,0 +1,90 @@
+{
+  "schemaVersion": "1.0.0",
+  "sourceId": "YUNNAN-NAXI-MATRILINEAL-DWELLING-1992-PART1",
+  "titleOriginal": "雲南省ナシ族母系社会の居住様式と建築技術に関する調査と研究（1）",
+  "titleEnglish": "A Field Survey on the Matrilineal Dwelling System and Architectural Technology of the Naxi Society, Yunnan (1)",
+  "researchNumber": "9103",
+  "publication": {
+    "series": "住宅総合研究財団研究年報",
+    "volume": 19,
+    "year": 1992,
+    "pages": "117-135",
+    "pageCount": 19,
+    "leadResearcher": "浅川滋男",
+    "researchGroup": "西南中国民族建築研究会"
+  },
+  "fileReceipt": {
+    "localFilename": "19_9103.pdf",
+    "byteSize": 4474121,
+    "sha256": "fd84ff72130ee1b26f02bff6a086ad0ac9e917ca64160ffca8d33b5abe48bdef",
+    "fullPdfPublishedToRepository": false,
+    "reason": "User-supplied copyrighted source; repository stores only metadata and distilled notes."
+  },
+  "classification": {
+    "knowledgeLayer": "background-context",
+    "evidenceGrade": "C-background",
+    "architecturalDepth": "limited",
+    "anthropologicalDepth": "moderate",
+    "formalKnowledgeEligible": false,
+    "proceduralDefaultsEligible": false,
+    "requiresCrossValidation": true
+  },
+  "userReview": {
+    "status": "accepted-as-background-only",
+    "assessment": "The report is useful for human and family relationships, dwelling use and social-space organization, but it is comparatively coarse as architectural research and lacks sufficient construction-detail depth.",
+    "reviewDate": "2026-08-30"
+  },
+  "supportedUses": [
+    "mother-line family organization and spatial use",
+    "courtyard and compound composition as case evidence",
+    "room-function terminology and household-use patterns",
+    "regional settlement context",
+    "case-level material and structural vocabulary",
+    "bibliographic leads to stronger architectural sources"
+  ],
+  "prohibitedUses": [
+    "sole source for construction dimensions",
+    "sole source for joints and component geometry",
+    "generalization to all Naxi or all Yunnan dwellings",
+    "automatic generation defaults",
+    "historical chronology without independent verification"
+  ],
+  "architecturalContentIndex": [
+    {
+      "pages": "122-123",
+      "content": "Settlement layouts, simple plans and sections for Yi dwellings, including log-wall, rammed-earth and column-beam examples."
+    },
+    {
+      "pages": "124-127",
+      "content": "Measured plans, sections and streetscape drawings for Naxi cases around Lijiang, with courtyard, three-bay and livestock-building relationships."
+    },
+    {
+      "pages": "128-130",
+      "content": "Plans, sections and interior perspective for Mosuo compounds at Yongning and Luoshui, useful mainly for family-space relations and mixed structural systems."
+    },
+    {
+      "pages": "131-132",
+      "content": "Bai residential compound plans and sections at Dali and Xizhou, plus brief descriptions of stone walls, plaster and timber framing."
+    },
+    {
+      "pages": "133-134",
+      "content": "Comparative discussion of masonry load-bearing walls and stacked-log construction; interpretive and hypothesis-heavy, so it remains background only."
+    }
+  ],
+  "nextResearchLeads": [
+    {
+      "title": "中国雲南の伝統的民家に関する建築計画及び環境工学の調査研究 : 共同研究成果報告書",
+      "leadAuthor": "浦野良美",
+      "year": 1992,
+      "reason": "Architecture-planning and environmental-engineering joint survey report with Yunnan Design Institute and Kyushu Sangyo University; likely stronger for measured plans and technical data."
+    },
+    {
+      "title": "麗江納西族民居",
+      "editor": "朱良文",
+      "year": 1988,
+      "reason": "Architecture-specific monograph cited by the source; requires direct acquisition and page-level verification."
+    }
+  ],
+  "humanVisualAcceptance": false,
+  "productionApproved": false
+}
