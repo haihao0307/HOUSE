@@ -89,52 +89,6 @@ def capture(chrome: str, html: Path, output: Path, profile: str, seed: int, chan
     # delivered artifact remains the required 1600x1000 canvas. Final material
     # images stay native resolution.
     render_size = target_size if channel == 0 else (800, 500)
-    # Chrome serializes launches that share its default profile. A private
-    # profile per evidence job keeps the requested worker parallelism real and
-    # prevents one slow WebGL process from blocking the remaining captures.
-    with tempfile.TemporaryDirectory(prefix=f"brick-mother-v275-{profile}-{seed}-{channel}-") as user_data_dir, tempfile.TemporaryDirectory(prefix="brick-mother-v275-render-") as render_dir:
-        render_output = Path(render_dir) / "capture.png"
-        command = [
-            chrome,
-            f"--user-data-dir={user_data_dir}",
-            "--no-first-run",
-            "--no-default-browser-check",
-            "--headless=new",
-            "--no-sandbox",
-            "--disable-dev-shm-usage",
-            "--disable-background-networking",
-            "--allow-file-access-from-files",
-            "--enable-webgl",
-            "--ignore-gpu-blocklist",
-            "--enable-unsafe-swiftshader",
-            "--use-gl=angle",
-            "--use-angle=swiftshader",
-            "--hide-scrollbars",
-            f"--window-size={render_size[0]},{render_size[1]}",
-            f"--virtual-time-budget={budget}",
-            f"--screenshot={render_output}",
-            "--dump-dom",
-            query,
-        ]
-        with dom.open("w", encoding="utf-8") as dom_file, log.open("w", encoding="utf-8") as log_file:
-            subprocess.run(command, stdout=dom_file, stderr=log_file, check=True, timeout=max(600, budget // 200 + 180))
-        with Image.open(render_output) as screenshot:
-            if screenshot.size != render_size:
-                raise RuntimeError(f"screenshot dimensions invalid: {render_output} -> {screenshot.size}")
-            if screenshot.convert("RGB").getbbox() is None:
-                raise RuntimeError(f"screenshot is fully empty: {render_output}")
-            if render_size == target_size:
-                screenshot.convert("RGB").save(output, format="PNG")
-            else:
-                screenshot.convert("RGB").resize(target_size, Image.Resampling.LANCZOS).save(output, format="PNG")
-    if not output.is_file() or output.stat().st_size < 4096:
-        raise RuntimeError(f"screenshot file incomplete: {output}")
-    with Image.open(output) as screenshot:
-        if screenshot.size != target_size:
-            raise RuntimeError(f"screenshot dimensions invalid: {output} -> {screenshot.size}")
-        if screenshot.convert("RGB").getbbox() is None:
-            raise RuntimeError(f"screenshot is fully empty: {output}")
-    dom_text = dom.read_text(encoding="utf-8", errors="replace")
     required = {
         "data-brick-mother-ready": 'data-brick-mother-ready="true"',
         "data-version": 'data-brick-mother-version="2.7.5-alpha.1"',
@@ -144,10 +98,68 @@ def capture(chrome: str, html: Path, output: Path, profile: str, seed: int, chan
         "data-master-seed": f'data-master-seed="{seed}"',
         "data-required-geometry-failures": 'data-required-geometry-failures="0"',
     }
-    for name, needle in required.items():
-        if needle not in dom_text:
-            raise RuntimeError(f"{name} missing in {dom}")
-    return dom
+    last_error = None
+    # SwiftShader can occasionally return an all-black canvas or a DOM snapshot
+    # from before the async mesh build. Retry the same deterministic job once
+    # with a fresh browser profile instead of poisoning the 24-image manifest.
+    for attempt in range(2):
+        try:
+            # Chrome serializes launches that share its default profile. A
+            # private profile per evidence job keeps the requested worker
+            # parallelism real and prevents one slow WebGL process from
+            # blocking the remaining captures.
+            with tempfile.TemporaryDirectory(prefix=f"brick-mother-v275-{profile}-{seed}-{channel}-") as user_data_dir, tempfile.TemporaryDirectory(prefix="brick-mother-v275-render-") as render_dir:
+                render_output = Path(render_dir) / "capture.png"
+                command = [
+                    chrome,
+                    f"--user-data-dir={user_data_dir}",
+                    "--no-first-run",
+                    "--no-default-browser-check",
+                    "--headless=new",
+                    "--no-sandbox",
+                    "--disable-dev-shm-usage",
+                    "--disable-background-networking",
+                    "--allow-file-access-from-files",
+                    "--enable-webgl",
+                    "--ignore-gpu-blocklist",
+                    "--enable-unsafe-swiftshader",
+                    "--use-gl=angle",
+                    "--use-angle=swiftshader",
+                    "--hide-scrollbars",
+                    f"--window-size={render_size[0]},{render_size[1]}",
+                    f"--virtual-time-budget={budget}",
+                    f"--screenshot={render_output}",
+                    "--dump-dom",
+                    query,
+                ]
+                with dom.open("w", encoding="utf-8") as dom_file, log.open("w", encoding="utf-8") as log_file:
+                    subprocess.run(command, stdout=dom_file, stderr=log_file, check=True, timeout=max(600, budget // 200 + 180))
+                with Image.open(render_output) as screenshot:
+                    if screenshot.size != render_size:
+                        raise RuntimeError(f"screenshot dimensions invalid: {render_output} -> {screenshot.size}")
+                    if screenshot.convert("RGB").getbbox() is None:
+                        raise RuntimeError(f"screenshot is fully empty: {render_output}")
+                    if render_size == target_size:
+                        screenshot.convert("RGB").save(output, format="PNG")
+                    else:
+                        screenshot.convert("RGB").resize(target_size, Image.Resampling.LANCZOS).save(output, format="PNG")
+            if not output.is_file() or output.stat().st_size < 4096:
+                raise RuntimeError(f"screenshot file incomplete: {output}")
+            with Image.open(output) as screenshot:
+                if screenshot.size != target_size:
+                    raise RuntimeError(f"screenshot dimensions invalid: {output} -> {screenshot.size}")
+                if screenshot.convert("RGB").getbbox() is None:
+                    raise RuntimeError(f"screenshot is fully empty: {output}")
+            dom_text = dom.read_text(encoding="utf-8", errors="replace")
+            for name, needle in required.items():
+                if needle not in dom_text:
+                    raise RuntimeError(f"{name} missing in {dom}")
+            return dom
+        except Exception as exc:
+            last_error = exc
+            if attempt == 0:
+                continue
+            raise RuntimeError(f"capture failed after retry: {output}") from last_error
 
 
 def percentile(values: list[float], p: float) -> float:
