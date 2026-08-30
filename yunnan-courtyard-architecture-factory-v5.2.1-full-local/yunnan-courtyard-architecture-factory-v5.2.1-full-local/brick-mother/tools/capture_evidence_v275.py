@@ -116,6 +116,7 @@ def capture(chrome: str, html: Path, output: Path, profile: str, seed: int, chan
         "data-solo": 'data-solo-mode="true"',
         "data-evidence": 'data-evidence-ready="true"',
         "data-family-slot": f'data-family-slot="{PROFILES[profile]["slot"]}"',
+        "data-master-seed": f'data-master-seed="{seed}"',
         "data-required-geometry-failures": 'data-required-geometry-failures="0"',
     }
     for name, needle in required.items():
@@ -176,6 +177,7 @@ def image_metrics(path: Path, dom: Path) -> dict:
         "requiredGeometryFailureCount": attr("required-geometry-failures"),
         "formationAssociationCount": attr("formation-associations"),
         "familySlot": attr("family-slot"),
+        "masterSeed": attr("master-seed"),
         "inclusionLayerCount": attr("inclusion-layer-count"),
     }
 

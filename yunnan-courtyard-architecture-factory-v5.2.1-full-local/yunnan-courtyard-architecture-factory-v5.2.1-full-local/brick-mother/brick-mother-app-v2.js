@@ -195,8 +195,18 @@ function seedDNAFor(profile, childIndex) {
   const childOffset = CHILD_OFFSETS[childIndex] || 0;
   const profileBias = profile.runtimeDNA.seedBase % 997;
   const result = {};
+  const master = Math.max(1, Math.round(Number(state.seedBank.master ?? profile.runtimeDNA.seedBase)));
   for (const key of SEED_KEYS) {
-    const base = Number(state.seedBank[key] ?? profile.runtimeDNA.seedBase);
+    if (key === 'master') {
+      // The master field is the user-facing seed.  Child/profile variation is
+      // applied only to the eight derived layers, never back into master.
+      result[key] = master;
+      continue;
+    }
+    const profileLayerBase = master + (profile.seedLayerOffsets?.[key] || SEED_PRIMES[key] * 101);
+    const base = state.batchMode === 'mixed'
+      ? profileLayerBase
+      : Number(state.seedBank[key] ?? profileLayerBase);
     result[key] = Math.max(1, Math.round(base + profileBias + childOffset * SEED_PRIMES[key]));
   }
   return result;
@@ -439,6 +449,7 @@ async function buildCurrentBatch() {
     document.documentElement.dataset.debugModes = '11';
     document.documentElement.dataset.activeProfile = state.selectedProfile;
     document.documentElement.dataset.familySlot = String(mixedFamilySlot(built[0]?.profile));
+    document.documentElement.dataset.masterSeed = String(built[0]?.mesh.seedDNA.master || 0);
     document.documentElement.dataset.oxideContours = 'suppressed';
     document.documentElement.dataset.eventColorMasking = 'true';
     document.documentElement.dataset.evidenceReady = state.evidenceMode ? 'true' : 'false';
@@ -471,7 +482,7 @@ async function buildCurrentBatch() {
       seedDerivation: built.map((item) => ({
         master: item.mesh.seedDNA.master,
         layers: Object.fromEntries(SEED_KEYS.slice(1).map((key) => [key, item.mesh.seedDNA[key]])),
-        rule: 'layer = master + profile.seedLayerOffsets[layer] + childOffset * prime[layer] + profileBias'
+        rule: 'master = input master; mixed layer = master + profile.seedLayerOffsets[layer] + profileBias + childOffset * prime[layer]; solo layer = seedBank[layer] + profileBias + childOffset * prime[layer]'
       })),
       controls: built.map((item) => item.mesh.controls),
       controlsByFamily: built.reduce((acc, item) => {
