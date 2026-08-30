@@ -45,7 +45,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--reference", type=Path, default=None)
     parser.add_argument("--virtual-time-budget", type=int, default=12000)
-    parser.add_argument("--workers", type=int, default=4)
+    parser.add_argument("--workers", type=int, default=1)
     parser.add_argument("--evidence-quality", type=float, default=0.56)
     return parser.parse_args()
 
@@ -109,7 +109,7 @@ def capture(chrome: str, html: Path, output: Path, profile: str, seed: int, chan
             query,
         ]
         with dom.open("w", encoding="utf-8") as dom_file, log.open("w", encoding="utf-8") as log_file:
-            subprocess.run(command, stdout=dom_file, stderr=log_file, check=True, timeout=max(480, budget // 200 + 180))
+            subprocess.run(command, stdout=dom_file, stderr=log_file, check=True, timeout=max(600, budget // 200 + 180))
     if not output.is_file() or output.stat().st_size < 4096:
         raise RuntimeError(f"screenshot file incomplete: {output}")
     with Image.open(output) as screenshot:

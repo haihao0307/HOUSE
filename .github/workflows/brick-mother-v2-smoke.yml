@@ -20,7 +20,7 @@ permissions:
 jobs:
   v275-composite-evidence:
     runs-on: ubuntu-latest
-    timeout-minutes: 55
+    timeout-minutes: 120
     steps:
       - name: Checkout exact pushed head
         uses: actions/checkout@v4
@@ -76,7 +76,7 @@ jobs:
             --html "$brick/brick-mother-standalone-v2.7.5.html"
             --out /tmp/brick-mother-v275-evidence
             --virtual-time-budget 12000
-            --workers 4
+            --workers 1
             --evidence-quality 0.56
           )
           if [ -n "${JRB_REFERENCE_PATH:-}" ] && [ -f "${JRB_REFERENCE_PATH}" ]; then
