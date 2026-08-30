@@ -4238,6 +4238,10 @@ class BrickRenderer {
         this.canvas.width >= 640 && this.canvas.height >= 400;
       if (this.meshes.length && !this.staticDrawn && canvasReady) {
         this.draw();
+        // Headless SwiftShader may return the screenshot before the single
+        // evidence draw has completed on the GPU.  Fence only this frozen
+        // path so interactive previews keep their normal asynchronous RAF.
+        this.gl.finish();
         this.staticDrawn = true;
       } else if (!this.staticDrawn) {
         // Wait for both the async build and the evidence CSS/ResizeObserver
