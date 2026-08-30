@@ -43,8 +43,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--html", type=Path, required=True)
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--reference", type=Path, default=None)
-    parser.add_argument("--virtual-time-budget", type=int, default=175000)
-    parser.add_argument("--workers", type=int, default=4)
+    parser.add_argument("--virtual-time-budget", type=int, default=30000)
+    parser.add_argument("--workers", type=int, default=2)
     return parser.parse_args()
 
 
