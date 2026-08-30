@@ -97,8 +97,13 @@ def capture(chrome: str, html: Path, output: Path, profile: str, seed: int, chan
     ]
     with dom.open("w", encoding="utf-8") as dom_file, log.open("w", encoding="utf-8") as log_file:
         subprocess.run(command, stdout=dom_file, stderr=log_file, check=True, timeout=max(480, budget // 200 + 180))
-    if not output.is_file() or output.stat().st_size < 120000:
-        raise RuntimeError(f"screenshot too small: {output}")
+    if not output.is_file() or output.stat().st_size < 4096:
+        raise RuntimeError(f"screenshot file incomplete: {output}")
+    with Image.open(output) as screenshot:
+        if screenshot.size != (1600, 1000):
+            raise RuntimeError(f"screenshot dimensions invalid: {output} -> {screenshot.size}")
+        if screenshot.convert("RGB").getbbox() is None:
+            raise RuntimeError(f"screenshot is fully empty: {output}")
     dom_text = dom.read_text(encoding="utf-8", errors="replace")
     required = {
         "data-brick-mother-ready": 'data-brick-mother-ready="true"',
