@@ -11,6 +11,7 @@
   "evidenceQuality": 0.56,
   "requiredGeometryTopologyGate": true,
   "firedCavityAssociation": "front-cavity-near-delamination-or-fracture",
+  "adobeFiberPulloutAssociation": "pullout-aligned-to-fiber-bundle",
   "adobeInclusionLayers": ["long-straw", "chopped-straw", "rice-husk", "seed-grain", "mineral-particle", "micro-pore"],
   "camera": "benchmark slab, fixed yaw/pitch/distance and fixed studio lights",
   "background": "black",

@@ -266,6 +266,7 @@
     "formationEventHitAccounting": true,
     "requiredGeometryTopologyGate": true,
     "firedCavityAssociation": true,
+    "adobeFiberPulloutAssociation": true,
     "adobeIndependentInclusionLayers": true
   },
   "mobileRuntime": {

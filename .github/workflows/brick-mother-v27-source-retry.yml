@@ -36,6 +36,7 @@ jobs:
           grep -q '"version": "2.7.5-alpha.1"' "$brick/VERSION.json"
           grep -q 'formationEventQA' "$brick/brick-mother-geometry-v2.js"
           grep -q 'requiredGeometryFailures' "$brick/brick-mother-geometry-v2.js"
+          grep -q 'pullout-aligned-to-fiber-bundle' "$brick/brick-mother-geometry-v2.js"
           grep -q 'uInclusionLayerA' "$brick/brick-mother-renderer-v2.js"
           grep -q 'inclusionDNA' "$brick/data/brick-material-profiles-v2.json"
           standalone="$brick/brick-mother-standalone-v2.7.5.html"

@@ -43,6 +43,7 @@ jobs:
           grep -q 'eventGeometryEnabled' "$brick/brick-mother-geometry-v2.js"
           grep -q 'formationEventQA' "$brick/brick-mother-geometry-v2.js"
           grep -q 'requiredGeometryFailures' "$brick/brick-mother-geometry-v2.js"
+          grep -q 'pullout-aligned-to-fiber-bundle' "$brick/brick-mother-geometry-v2.js"
           grep -q 'uInclusionLayerA' "$brick/brick-mother-renderer-v2.js"
           grep -q 'inclusionDNA' "$brick/data/brick-material-profiles-v2.json"
           grep -q 'finalTopologyHitCount' "$brick/brick-mother-app-v2.js"

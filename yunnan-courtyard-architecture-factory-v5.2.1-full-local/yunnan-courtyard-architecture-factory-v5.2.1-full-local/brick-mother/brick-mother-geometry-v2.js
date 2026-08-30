@@ -217,13 +217,41 @@ function buildFormationEvents(profile, seedDNA, controls, dims) {
     for (let i = 0; i < 4; i++) {
       add('compactionFlake', frontEventPoint(b, rng, 0.62, 0.68, rng.range(0.010, 0.045) * minD), vec3(rng.range(0.38, 0.78) * minD, rng.range(0.19, 0.38) * minD, rng.range(0.020, 0.052) * minD), flakeAngle + rng.range(-0.72, 0.72), rng.range(0.72, 1.12));
     }
+    const fiberBundles = [];
     for (let i = 0; i < 3; i++) {
       // Keep the bundle center just inside the front skin so the capsule has
       // an embedded segment and an exposed segment on the sampled SDF grid.
       add('fiberBundle', frontEventPoint(b, inclusionRng, 0.66, 0.72, -rng.range(0.018, 0.036) * inclusionD), vec3(inclusionRng.range(0.44, 0.86) * inclusionD, inclusionRng.range(0.010, 0.021) * inclusionD, inclusionRng.range(0.010, 0.022) * inclusionD), inclusionRng.range(-1.25, 1.25), inclusionRng.range(0.80, 1.20), inclusionRng.next());
+      fiberBundles.push(events[events.length - 1]);
     }
     for (let i = 0; i < 2; i++) {
-      add('fiberPulloutChannel', frontEventPoint(b, inclusionRng, 0.62, 0.68, -0.022 * inclusionD), vec3(inclusionRng.range(0.30, 0.66) * inclusionD, inclusionRng.range(0.012, 0.026) * inclusionD, inclusionRng.range(0.030, 0.070) * inclusionD), inclusionRng.range(-1.35, 1.35), 0.92, inclusionRng.next());
+      const bundle = fiberBundles[i % fiberBundles.length];
+      const bundleDirection = norm3(vec3(bundle.direction.x, bundle.direction.y, 0));
+      const bundleSide = vec3(-bundleDirection.y, bundleDirection.x, 0);
+      const alongOffset = bundle.size.x * (i === 0 ? -0.24 : 0.22);
+      const acrossOffset = (i === 0 ? 0.045 : -0.052) * inclusionD;
+      const relatedCenter = add3(
+        add3(bundle.center, mul3(bundleDirection, alongOffset)),
+        mul3(bundleSide, acrossOffset)
+      );
+      const center = vec3(
+        clamp(relatedCenter.x, -b.x * 0.76, b.x * 0.76),
+        clamp(relatedCenter.y, -b.y * 0.76, b.y * 0.76),
+        b.z - rng.range(0.018, 0.030) * inclusionD
+      );
+      const pulloutSize = vec3(
+        clamp(bundle.size.x * 0.62, 0.30 * inclusionD, 0.66 * inclusionD),
+        clamp(bundle.size.y * 1.35, 0.012 * inclusionD, 0.026 * inclusionD),
+        inclusionRng.range(0.030, 0.070) * inclusionD
+      );
+      const bundleAngle = Math.atan2(bundleDirection.y, bundleDirection.x);
+      add('fiberPulloutChannel', center, pulloutSize, bundleAngle, 0.92, inclusionRng.next());
+      const pullout = events[events.length - 1];
+      pullout.relatedEventType = 'fiberBundle';
+      pullout.relatedEventIndex = events.indexOf(bundle);
+      pullout.spatialAssociation = 'pullout-aligned-to-fiber-bundle';
+      pullout.relatedFiberDirection = bundleAngle;
+      pullout.relatedFiberLength = bundle.size.x * 2;
     }
     add('undercutShelf', frontEventPoint(b, rng, 0.44, 0.52, -0.040 * minD), vec3(0.58 * minD, 0.070 * minD, 0.13 * minD), flakeAngle, 0.90);
   } else {
@@ -1167,6 +1195,16 @@ function buildMesh(profile, seedDNA, controlsInput, level, quality = 1) {
     (finalTopologyHitCountByType[type] || 0) < 1
   );
   const formationAssociationCount = formationEvents.filter((event) => event.relatedEventType).length;
+  const formationAssociations = formationEvents
+    .filter((event) => event.relatedEventType)
+    .map((event) => ({
+      type: event.type,
+      relatedEventType: event.relatedEventType,
+      relatedEventIndex: event.relatedEventIndex,
+      spatialAssociation: event.spatialAssociation,
+      relatedFiberDirection: event.relatedFiberDirection,
+      relatedFiberLength: event.relatedFiberLength
+    }));
   const formationEventQA = {
     declaredEventCount: formationEvents.length,
     declaredEventCountByType: declaredByType,
@@ -1181,6 +1219,7 @@ function buildMesh(profile, seedDNA, controlsInput, level, quality = 1) {
     requiredGeometryTypes,
     requiredGeometryFailures,
     formationAssociationCount,
+    formationAssociations,
     noPerforatingMacroCut: true
   };
 

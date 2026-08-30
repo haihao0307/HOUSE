@@ -537,8 +537,15 @@ async function buildCurrentBatch() {
       formationEventCounts: formationCounts,
       formationEventFamilies: Object.keys(formationCounts),
       formationEventQA: formationQA,
+      formationAssociationsByFamily: built.reduce((acc, item, index) => {
+        acc[item.profile.family] = formationQA[index]?.formationAssociations || [];
+        return acc;
+      }, {}),
       formationEventTotals: formationTotals,
       requiredGeometryFailures,
+      adobeFiberPulloutAssociation: formationQA
+        .filter((_qa, index) => built[index]?.profile.family === 'ADOBE')
+        .every((qa) => (qa.formationAssociations || []).some((item) => item.type === 'fiberPulloutChannel' && item.relatedEventType === 'fiberBundle' && item.spatialAssociation === 'pullout-aligned-to-fiber-bundle')),
       soloMode: state.soloMode,
       erosionBiteCounts: built.map((item) => item.mesh.damage.erosionBites.length),
       inclusionVoidCounts: built.map((item) => item.mesh.damage.inclusionVoids?.length || 0),
