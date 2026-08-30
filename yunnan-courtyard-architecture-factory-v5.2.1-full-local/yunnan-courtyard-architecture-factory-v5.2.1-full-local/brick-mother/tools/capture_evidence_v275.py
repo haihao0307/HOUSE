@@ -270,10 +270,33 @@ def main() -> None:
     records.sort(key=lambda item: (item["profile"], item["seed"], item["channelIndex"]))
     finals = [record for record in records if record["channel"] == "final"]
     qa_by_family = {}
+    qa_seed_snapshots_by_family = {}
     for item in finals:
         payload = item.get("_qaPayload")
-        if payload and item["profile"] not in qa_by_family:
-            qa_by_family[item["profile"]] = payload
+        if not payload:
+            continue
+        profile = item["profile"]
+        if profile not in qa_by_family:
+            qa_by_family[profile] = payload
+        family_keys = payload.get("seedDNAByFamily", {})
+        family = next(iter(family_keys), None)
+        if family:
+            controls = payload.get("controlsByFamily", {}).get(family, [])
+            seed_dna = payload.get("seedDNAByFamily", {}).get(family, [])
+            derivation = payload.get("seedDerivation", [])
+            qa_seed_snapshots_by_family.setdefault(profile, []).append({
+                "profile": profile,
+                "family": family,
+                "masterSeed": item["seed"],
+                "controls": controls[0] if controls else None,
+                "seedDNA": seed_dna[0] if seed_dna else None,
+                "seedDerivation": derivation[0] if derivation else None,
+                "inclusionDNA": payload.get("inclusionDNAByFamily", {}).get(family, []),
+                "globalControlDelta": payload.get("globalControlDelta", {}),
+                "controlIsolation": payload.get("controlIsolation", {}),
+            })
+    for snapshots in qa_seed_snapshots_by_family.values():
+        snapshots.sort(key=lambda item: item["masterSeed"])
     for item in records:
         item.pop("_qaPayload", None)
     failed_stddev = [record for record in finals if record["luminanceStdDev"] < 0.11]
@@ -291,6 +314,7 @@ def main() -> None:
         "imageCount": len(records),
         "reference": reference,
         "qaByFamily": qa_by_family,
+        "qaSeedSnapshotsByFamily": qa_seed_snapshots_by_family,
         "manualApprovals": {
             "jrbReferenceColorApproved": False,
             "stoneDetailApproved": False,
@@ -302,7 +326,10 @@ def main() -> None:
         "requiredGeometryFailures": required_geometry_failures,
     }
     (args.out / "evidence-manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
-    (args.out / "qa-family-controls.json").write_text(json.dumps(qa_by_family, ensure_ascii=False, indent=2), encoding="utf-8")
+    (args.out / "qa-family-controls.json").write_text(json.dumps({
+        "canonical": qa_by_family,
+        "allFinalSeeds": qa_seed_snapshots_by_family,
+    }, ensure_ascii=False, indent=2), encoding="utf-8")
     lines = [
         "# Brick Mother V2.7.5 evidence report",
         "",
@@ -310,7 +337,7 @@ def main() -> None:
         f"Reference: {reference['status']}; comparison: {reference['comparison']}.",
         f"Required geometry failures: {len(required_geometry_failures)} records.",
         "Manual visual approvals remain false.",
-        "Full per-family controls and seed DNA: qa-family-controls.json (also embedded in evidence-manifest.json under qaByFamily).",
+        "Full per-family controls and seed DNA for all three final seeds: qa-family-controls.json (also embedded in evidence-manifest.json).",
         "",
         "| Profile | Seed | Final luminance stddev | P10 / P50 / P90 | Topology hits |",
         "|---|---:|---:|---|---:|",

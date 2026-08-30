@@ -106,6 +106,12 @@ jobs:
               assert payload.get('seedDerivation'), profile
               controls = next(iter(payload['controlsByFamily'].values()))[0]
               assert {'benchmarkSlab', 'mobilePreview'}.issubset(controls), profile
+          snapshots = report.get('qaSeedSnapshotsByFamily', {})
+          assert set(snapshots) == set(qa), sorted(snapshots)
+          for profile, rows in snapshots.items():
+              assert len(rows) == 3, (profile, len(rows))
+              assert len({row['masterSeed'] for row in rows}) == 3, profile
+              assert all(row.get('controls') and row.get('seedDNA') and row.get('seedDerivation') for row in rows), profile
           for item in report['records']:
               assert item['size'] == [1600,1000], item
           PY
