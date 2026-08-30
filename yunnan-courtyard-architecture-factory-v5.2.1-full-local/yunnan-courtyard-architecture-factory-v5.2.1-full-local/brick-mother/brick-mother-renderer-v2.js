@@ -1214,6 +1214,13 @@ class BrickRenderer {
     this.camera = { yaw: 0.76, pitch: 0.27, distance: 13.5, target: vec3(0, 0.7, 0) };
     this.meshes = [];
     this.autoRotate = false;
+    // Evidence captures only need one deterministic frame. Keeping the
+    // interactive RAF loop alive while Chromium is dumping a PNG makes the
+    // software WebGL path spend the whole virtual-time budget repainting the
+    // same expensive fragment shader. Evidence mode therefore draws once
+    // after its mesh is installed; normal previews retain the live loop.
+    this.staticEvidence = document.body.classList.contains('evidence-mode');
+    this.staticDrawn = false;
     this.debugMode = 0;
     this.drag = false;
     this.pan = false;
@@ -1375,6 +1382,7 @@ class BrickRenderer {
       count: item.mesh.vertices,
       model: mat4Model(item.position, item.yaw)
     }));
+    this.staticDrawn = false;
     gl.bindBuffer(gl.ARRAY_BUFFER, null);
   }
 
@@ -1583,6 +1591,15 @@ class BrickRenderer {
   }
 
   loop(t) {
+    if (this.staticEvidence) {
+      if (this.meshes.length && !this.staticDrawn) {
+        this.draw();
+        this.staticDrawn = true;
+      } else if (!this.meshes.length) {
+        requestAnimationFrame((n) => this.loop(n));
+      }
+      return;
+    }
     const dt = Math.min(0.05, (t - this.lastTime) / 1000 || 0);
     this.lastTime = t;
     if (this.autoRotate && !this.drag) this.camera.yaw += dt * 0.16;
