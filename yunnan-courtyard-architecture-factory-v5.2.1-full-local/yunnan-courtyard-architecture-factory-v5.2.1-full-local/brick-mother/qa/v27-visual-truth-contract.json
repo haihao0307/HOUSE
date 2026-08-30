@@ -249,9 +249,7 @@
     "reducedSilhouetteBites": true,
     "eventArtifactSuppression": true,
     "broadFiredClayContrast": true,
-    "calmedMicroBump": true,
-    "macroMesoValueContrast": true,
-    "trueBlackEvidenceBackdrop": true
+    "calmedMicroBump": true
   },
   "implementationVersion": "2.7.5-alpha.1",
   "implementationTarget": "2.7.5-alpha.1",
@@ -288,3 +286,4 @@
     ]
   }
 }
+
