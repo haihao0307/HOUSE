@@ -1,16 +1,18 @@
 {
-  "schemaVersion": "1.1.0",
+  "schemaVersion": "1.2.0",
   "updatedAt": "2026-08-30",
   "purpose": "Human-reviewed literature intake for the Yunnan historic architecture production line. Records remain evidence references and are not promoted to dimensional or construction rules without stronger architectural surveys.",
   "reviewPolicy": {
     "B2_BACKGROUND": "Keep for regional context, settlement patterns, domestic-space use, family organization, terminology and weak construction clues. Do not use as a sole source for dimensions, structural assemblies, component geometry, material layers or production defaults.",
     "B1_REGIONAL_ARCHITECTURAL_REFERENCE": "Keep measured architectural facts for the source's exact region and building type. Sample dimensions and proportions remain case-level evidence and may not become province-wide production defaults without independent corroboration and original measured assets.",
+    "B1_SUPPORTING_METHOD_REFERENCE": "Keep useful architectural decomposition, component ontology, dependency logic, assembly sequence and typology leads. Do not promote the source's dimensions, joints, authenticity claims or generated examples to production defaults when primary measured provenance and validation assets are incomplete.",
     "promotionRule": "Promotion to A or production rules requires primary architectural measurement, scale bars or dimensions, plans plus sections/elevations, component or joint documentation, provenance, separation of original fabric from later alterations, and cross-checking against another independent source."
   },
   "humanReview": {
     "reviewer": "project owner",
     "backgroundBatchDecision": "Keep the first six sources as background. Overall architectural depth is limited and the dominant viewpoint is humanistic, anthropological, social or contemporary-use analysis.",
     "architectureFocusedDecision": "Keep the 2025 Yunnan–Tibet Tusi manor study and distill its useful architectural evidence. Overall value is average, so retain it as a regional measured reference without promoting it to a production standard.",
+    "methodSupportDecision": "Keep the 2024 Bai timber HBIM paper as a rough supporting point. Retain its component, dependency and assembly concepts while waiting for more complete measured architectural evidence from the project owner.",
     "recordedBy": "assistant"
   },
   "records": [
@@ -22,8 +24,19 @@
       "sourcePlatform": "J-STAGE / Housing Research Foundation",
       "doi": "10.20803/jusokennen.19.0_117",
       "classification": "B2_BACKGROUND",
-      "retainFor": ["northwest Yunnan regional context", "settlement examples", "household and ritual-space relations", "limited measured plans and sections", "construction terminology"],
-      "excludeFrom": ["universal Yunnan rules", "production dimensions", "wall or roof defaults", "joint details"]
+      "retainFor": [
+        "northwest Yunnan regional context",
+        "settlement examples",
+        "household and ritual-space relations",
+        "limited measured plans and sections",
+        "construction terminology"
+      ],
+      "excludeFrom": [
+        "universal Yunnan rules",
+        "production dimensions",
+        "wall or roof defaults",
+        "joint details"
+      ]
     },
     {
       "id": "YN-LIT-1994-NAXI-02",
@@ -33,8 +46,17 @@
       "sourcePlatform": "J-STAGE / Housing Research Foundation",
       "doi": "10.20803/jusokennen.20.0_99",
       "classification": "B2_BACKGROUND",
-      "retainFor": ["Moso and Pumi settlement context", "selected measured house plans and sections", "log-wall and rammed-earth clues", "building-part vocabulary"],
-      "excludeFrom": ["province-wide typology", "standard dimensions", "production assemblies without verification"]
+      "retainFor": [
+        "Moso and Pumi settlement context",
+        "selected measured house plans and sections",
+        "log-wall and rammed-earth clues",
+        "building-part vocabulary"
+      ],
+      "excludeFrom": [
+        "province-wide typology",
+        "standard dimensions",
+        "production assemblies without verification"
+      ]
     },
     {
       "id": "YN-LIT-1999-DALI-RENLIYI",
@@ -44,8 +66,17 @@
       "sourcePlatform": "J-STAGE / Architectural Institute of Japan",
       "doi": "10.3130/aija.64.167_2",
       "classification": "B2_BACKGROUND",
-      "retainFor": ["Bai domestic-space use", "main hall and courtyard hierarchy", "orientation and ritual context", "limited plan examples"],
-      "excludeFrom": ["timber-frame geometry", "component dimensions", "construction sequencing"]
+      "retainFor": [
+        "Bai domestic-space use",
+        "main hall and courtyard hierarchy",
+        "orientation and ritual context",
+        "limited plan examples"
+      ],
+      "excludeFrom": [
+        "timber-frame geometry",
+        "component dimensions",
+        "construction sequencing"
+      ]
     },
     {
       "id": "YN-LIT-1999-MENGLIAN-DAI",
@@ -54,8 +85,16 @@
       "pages": 7,
       "sourcePlatform": "J-STAGE / Architectural Institute of Japan",
       "classification": "B2_BACKGROUND",
-      "retainFor": ["Dai spatial hierarchy", "dwelling-use patterns", "regional comparison"],
-      "excludeFrom": ["structural production rules", "detailed measured components", "province-wide generalization"]
+      "retainFor": [
+        "Dai spatial hierarchy",
+        "dwelling-use patterns",
+        "regional comparison"
+      ],
+      "excludeFrom": [
+        "structural production rules",
+        "detailed measured components",
+        "province-wide generalization"
+      ]
     },
     {
       "id": "YN-LIT-2023-LEJU-YIKEYIN",
@@ -65,8 +104,17 @@
       "sourcePlatform": "J-STAGE / Architectural Institute of Japan",
       "doi": "10.3130/aija.88.165",
       "classification": "B2_BACKGROUND",
-      "retainFor": ["Yikeyin and Half-Yikeyin terminology", "39-house change sequence from 1972 to 2021", "traditional versus modern spatial use", "modern alteration warnings"],
-      "excludeFrom": ["historic Yikeyin reconstruction defaults", "1940s dimensions", "traditional material and structural details"]
+      "retainFor": [
+        "Yikeyin and Half-Yikeyin terminology",
+        "39-house change sequence from 1972 to 2021",
+        "traditional versus modern spatial use",
+        "modern alteration warnings"
+      ],
+      "excludeFrom": [
+        "historic Yikeyin reconstruction defaults",
+        "1940s dimensions",
+        "traditional material and structural details"
+      ]
     },
     {
       "id": "YN-LIT-2026-SHIPING-HEYUAN",
@@ -76,8 +124,17 @@
       "sourcePlatform": "J-STAGE / Architectural Institute of Japan",
       "doi": "10.3130/aija.91.1576",
       "classification": "B2_BACKGROUND",
-      "retainFor": ["Shiping heyyuan component terminology", "historic core mapping", "modern ownership, infill and alteration patterns", "distinguishing original fabric from later additions"],
-      "excludeFrom": ["original construction dimensions", "timber-frame and roof reconstruction", "unverified historical-state claims"]
+      "retainFor": [
+        "Shiping heyyuan component terminology",
+        "historic core mapping",
+        "modern ownership, infill and alteration patterns",
+        "distinguishing original fabric from later additions"
+      ],
+      "excludeFrom": [
+        "original construction dimensions",
+        "timber-frame and roof reconstruction",
+        "unverified historical-state claims"
+      ]
     },
     {
       "id": "YN-LIT-2025-DIQING-TUSI-MANORS",
@@ -109,6 +166,35 @@
         "production approval"
       ],
       "distilledKnowledgeFile": "yunnan-tibet-tusi-manor-knowledge-v1.json"
+    },
+    {
+      "id": "YN-LIT-2024-BAI-TIMBER-HBIM",
+      "title": "A Parametric HBIM Approach for Preservation of Bai Ethnic Traditional Timber Dwellings in Yunnan, China",
+      "year": 2024,
+      "pages": 26,
+      "sourcePlatform": "MDPI Buildings",
+      "doi": "10.3390/buildings14071960",
+      "classification": "B1_SUPPORTING_METHOD_REFERENCE",
+      "humanAssessment": "comparatively rough; retain only as a supporting point until more complete architectural surveys are supplied",
+      "geographicScope": "Dali Bai cultural region, with Xizhou and representative Bai courtyard cases used by the paper",
+      "buildingTypeScope": "traditional Bai timber dwellings and hybrid timber courtyard houses",
+      "retainFor": [
+        "meta-object, attribute, relationship and method schema",
+        "plan, frame and roof dependency logic",
+        "base, frame, veranda and roof subsystem decomposition",
+        "component coding and parametric propagation",
+        "bottom-up frame, purlin and rafter assembly sequence",
+        "Bai typology leads requiring independent verification"
+      ],
+      "excludeFrom": [
+        "authoritative measured dimensions",
+        "exact mortise-and-tenon geometry",
+        "canonical Bai production preset",
+        "province-wide structural rules",
+        "historical accuracy or structural performance claims without validation",
+        "production approval"
+      ],
+      "distilledKnowledgeFile": "bai-traditional-timber-hbim-support-v1.json"
     }
   ]
 }
