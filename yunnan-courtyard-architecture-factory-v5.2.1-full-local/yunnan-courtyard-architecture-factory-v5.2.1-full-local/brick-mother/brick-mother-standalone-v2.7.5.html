@@ -3410,7 +3410,12 @@ void main() {
     uGaeaMaskSharpness
   );
   vec2 projected = surfaceProjection(p, baseNormal);
-  vec4 inclusions = organicInclusions(projected, uInclusionSeed);
+  // Keep adobe straw, husk, grains, particles and micro-pores at a fixed
+  // physical scale when the host brick dimensions change.  p is normalized
+  // by the current minimum dimension, so convert back through the frozen
+  // 1.08 benchmark short axis before sampling the inclusion fields.
+  vec2 inclusionProjection = projected * (minD / 1.08);
+  vec4 inclusions = organicInclusions(inclusionProjection, uInclusionSeed);
   inclusions *= float(uFamily == 1) * uInclusionStrength;
   BMV27Fields v27 = bmV27Evaluate(vLocalPos);
   inclusions.x = max(inclusions.x, v27.fiber * float(uFamily == 1));
