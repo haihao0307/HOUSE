@@ -4232,10 +4232,16 @@ class BrickRenderer {
 
   loop(t) {
     if (this.staticEvidence) {
-      if (this.meshes.length && !this.staticDrawn) {
+      const canvasReady =
+        document.documentElement.dataset.brickMotherReady === 'true' &&
+        this.canvas.clientWidth >= 640 && this.canvas.clientHeight >= 400 &&
+        this.canvas.width >= 640 && this.canvas.height >= 400;
+      if (this.meshes.length && !this.staticDrawn && canvasReady) {
         this.draw();
         this.staticDrawn = true;
-      } else if (!this.meshes.length) {
+      } else if (!this.staticDrawn) {
+        // Wait for both the async build and the evidence CSS/ResizeObserver
+        // layout before freezing the one deterministic frame.
         requestAnimationFrame((n) => this.loop(n));
       }
       return;
