@@ -10,6 +10,10 @@ on:
       - ".github/workflows/brick-mother-v2-smoke.yml"
   workflow_dispatch:
 
+concurrency:
+  group: brick-mother-v275-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
@@ -71,8 +75,8 @@ jobs:
             --chrome "$chrome"
             --html "$brick/brick-mother-standalone-v2.7.5.html"
             --out /tmp/brick-mother-v275-evidence
-            --virtual-time-budget 30000
-            --workers 2
+            --virtual-time-budget 12000
+            --workers 4
             --evidence-quality 0.56
           )
           if [ -n "${JRB_REFERENCE_PATH:-}" ] && [ -f "${JRB_REFERENCE_PATH}" ]; then

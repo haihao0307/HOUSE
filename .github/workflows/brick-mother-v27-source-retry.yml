@@ -1,0 +1,54 @@
+name: Brick Mother V2.7.5 Source Retry Validation
+
+on:
+  push:
+    branches:
+      - feature/brick-mother-v2.0-composite-material-dna
+    paths:
+      - ".github/workflows/brick-mother-v27-source-retry.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-exact-head:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout exact head
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate V2.7.5 source and standalone
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+          brick="yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother"
+          node --check "$brick/brick-mother-gaea-kernel-v1.js"
+          node --check "$brick/brick-mother-geometry-v2.js"
+          node --check "$brick/brick-mother-renderer-v2.js"
+          node --check "$brick/brick-mother-app-v2.js"
+          python3 -m json.tool "$brick/data/brick-material-profiles-v2.json" >/dev/null
+          python3 -m json.tool "$brick/qa/v27-visual-truth-contract.json" >/dev/null
+          python3 -m json.tool "$brick/qa/evidence-manifest-v275.json" >/dev/null
+          python3 -m json.tool "$brick/VERSION.json" >/dev/null
+          grep -q '"version": "2.7.5-alpha.1"' "$brick/VERSION.json"
+          grep -q 'REBUILD_CONTROL_KEYS' "$brick/brick-mother-app-v2.js"
+          grep -q "'inclusion'" "$brick/brick-mother-app-v2.js"
+          grep -q 'formationEventQA' "$brick/brick-mother-geometry-v2.js"
+          grep -q 'requiredGeometryFailures' "$brick/brick-mother-geometry-v2.js"
+          grep -q 'pullout-aligned-to-fiber-bundle' "$brick/brick-mother-geometry-v2.js"
+          grep -q 'uInclusionLayerA' "$brick/brick-mother-renderer-v2.js"
+          grep -q 'inclusionDNA' "$brick/data/brick-material-profiles-v2.json"
+          grep -q 'finalTopologyHitCount' "$brick/brick-mother-app-v2.js"
+          grep -q 'data-channel="9"' "$brick/index.html"
+          grep -q 'data-channel="10"' "$brick/index.html"
+          standalone="$brick/brick-mother-standalone-v2.7.5.html"
+          test -s "$standalone"
+          test "$(wc -c < "$standalone")" -gt 190000
+          ! grep -q '<script src=' "$standalone"
+          ! grep -q '<link rel="stylesheet"' "$standalone"
+          grep -q 'window.__BRICK_MOTHER_INLINE_DATA__' "$standalone"

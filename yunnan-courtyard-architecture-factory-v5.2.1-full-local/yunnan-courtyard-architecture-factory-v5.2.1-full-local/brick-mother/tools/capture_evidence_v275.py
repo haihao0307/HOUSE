@@ -15,6 +15,7 @@ import math
 import os
 import re
 import subprocess
+import tempfile
 from pathlib import Path
 
 from PIL import Image, ImageFilter, ImageStat
@@ -43,8 +44,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--html", type=Path, required=True)
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--reference", type=Path, default=None)
-    parser.add_argument("--virtual-time-budget", type=int, default=30000)
-    parser.add_argument("--workers", type=int, default=2)
+    parser.add_argument("--virtual-time-budget", type=int, default=12000)
+    parser.add_argument("--workers", type=int, default=4)
     parser.add_argument("--evidence-quality", type=float, default=0.56)
     return parser.parse_args()
 
@@ -81,27 +82,34 @@ def capture(chrome: str, html: Path, output: Path, profile: str, seed: int, chan
     )
     dom = output.with_suffix(".dom.html")
     log = output.with_suffix(".chrome.log")
-    command = [
-        chrome,
-        "--headless=new",
-        "--no-sandbox",
-        "--disable-dev-shm-usage",
-        "--disable-background-networking",
-        "--allow-file-access-from-files",
-        "--enable-webgl",
-        "--ignore-gpu-blocklist",
-        "--enable-unsafe-swiftshader",
-        "--use-gl=angle",
-        "--use-angle=swiftshader",
-        "--hide-scrollbars",
-        "--window-size=1600,1000",
-        f"--virtual-time-budget={budget}",
-        f"--screenshot={output}",
-        "--dump-dom",
-        query,
-    ]
-    with dom.open("w", encoding="utf-8") as dom_file, log.open("w", encoding="utf-8") as log_file:
-        subprocess.run(command, stdout=dom_file, stderr=log_file, check=True, timeout=max(480, budget // 200 + 180))
+    # Chrome serializes launches that share its default profile. A private
+    # profile per evidence job keeps the requested worker parallelism real and
+    # prevents one slow WebGL process from blocking the remaining captures.
+    with tempfile.TemporaryDirectory(prefix=f"brick-mother-v275-{profile}-{seed}-{channel}-") as user_data_dir:
+        command = [
+            chrome,
+            f"--user-data-dir={user_data_dir}",
+            "--no-first-run",
+            "--no-default-browser-check",
+            "--headless=new",
+            "--no-sandbox",
+            "--disable-dev-shm-usage",
+            "--disable-background-networking",
+            "--allow-file-access-from-files",
+            "--enable-webgl",
+            "--ignore-gpu-blocklist",
+            "--enable-unsafe-swiftshader",
+            "--use-gl=angle",
+            "--use-angle=swiftshader",
+            "--hide-scrollbars",
+            "--window-size=1600,1000",
+            f"--virtual-time-budget={budget}",
+            f"--screenshot={output}",
+            "--dump-dom",
+            query,
+        ]
+        with dom.open("w", encoding="utf-8") as dom_file, log.open("w", encoding="utf-8") as log_file:
+            subprocess.run(command, stdout=dom_file, stderr=log_file, check=True, timeout=max(480, budget // 200 + 180))
     if not output.is_file() or output.stat().st_size < 4096:
         raise RuntimeError(f"screenshot file incomplete: {output}")
     with Image.open(output) as screenshot:
@@ -260,4 +268,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
