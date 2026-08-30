@@ -194,6 +194,54 @@ def parse_qa_payload(dom_text: str) -> dict | None:
     return payload if isinstance(payload, dict) else None
 
 
+def make_supplemental_evidence(out: Path, reference_path: Path | None, reference: dict) -> dict:
+    """Emit review-only closeups without changing the canonical 24-image set."""
+    closeup_dir = out / "closeups"
+    closeup_dir.mkdir(parents=True, exist_ok=True)
+    closeups = []
+    for source_name, output_name in (
+        ("stone-8231-final.png", "stone-8231-layering-closeup.png"),
+        ("adobe-4517-final.png", "adobe-4517-inclusion-closeup.png"),
+    ):
+        source = out / source_name
+        if not source.is_file():
+            continue
+        with Image.open(source).convert("RGB") as image:
+            bbox = image.getbbox()
+            if not bbox:
+                continue
+            left, top, right, bottom = bbox
+            width = right - left
+            height = max(1, min(bottom - top, int(width / 1.6)))
+            center_y = (top + bottom) // 2
+            crop_top = max(top, min(bottom - height, center_y - height // 2))
+            crop = image.crop((left, crop_top, right, crop_top + height))
+            crop.resize((1600, 1000), Image.Resampling.LANCZOS).save(closeup_dir / output_name, format="PNG")
+            closeups.append(f"closeups/{output_name}")
+
+    comparison = {
+        "status": "skipped",
+        "comparison": "skipped",
+        "reference": reference,
+        "reason": "frozen JRB reference is unavailable or not mounted; no substitute image is used",
+    }
+    if reference.get("status") == "verified" and reference_path is not None:
+        # Keep the side-by-side path deterministic when CI eventually mounts the
+        # exact frozen bytes. It intentionally has no labels or UI over either image.
+        final = out / "fired-5045-final.png"
+        if final.is_file():
+            with Image.open(reference_path).convert("RGB") as ref_image, Image.open(final).convert("RGB") as final_image:
+                canvas = Image.new("RGB", (1600, 1000), (0, 0, 0))
+                ref_image.thumbnail((760, 760), Image.Resampling.LANCZOS)
+                final_image.thumbnail((760, 760), Image.Resampling.LANCZOS)
+                canvas.paste(ref_image, ((800 - ref_image.width) // 2, (1000 - ref_image.height) // 2))
+                canvas.paste(final_image, (800 + (800 - final_image.width) // 2, (1000 - final_image.height) // 2))
+                canvas.save(out / "jrb-side-by-side.png", format="PNG")
+                comparison = {"status": "generated", "comparison": "available", "file": "jrb-side-by-side.png", "reference": reference}
+    (out / "jrb-side-by-side.json").write_text(json.dumps(comparison, ensure_ascii=False, indent=2), encoding="utf-8")
+    return {"closeups": closeups, "jrbSideBySide": comparison}
+
+
 def image_metrics(path: Path, dom: Path) -> dict:
     image = Image.open(path).convert("RGB")
     pixels = list(image.getdata())
@@ -299,6 +347,7 @@ def main() -> None:
         snapshots.sort(key=lambda item: item["masterSeed"])
     for item in records:
         item.pop("_qaPayload", None)
+    supplemental = make_supplemental_evidence(args.out, args.reference, reference)
     failed_stddev = [record for record in finals if record["luminanceStdDev"] < 0.11]
     required_geometry_failures = [record for record in records if record["requiredGeometryFailureCount"] > 0]
     manifest = {
@@ -313,6 +362,7 @@ def main() -> None:
         "extraSeedChannels": ["final"],
         "imageCount": len(records),
         "reference": reference,
+        "supplementalEvidence": supplemental,
         "qaByFamily": qa_by_family,
         "qaSeedSnapshotsByFamily": qa_seed_snapshots_by_family,
         "manualApprovals": {
@@ -337,6 +387,7 @@ def main() -> None:
         f"Reference: {reference['status']}; comparison: {reference['comparison']}.",
         f"Required geometry failures: {len(required_geometry_failures)} records.",
         "Manual visual approvals remain false.",
+        f"Supplemental closeups: {len(supplemental['closeups'])}; JRB side-by-side: {supplemental['jrbSideBySide']['status']}.",
         "Full per-family controls and seed DNA for all three final seeds: qa-family-controls.json (also embedded in evidence-manifest.json).",
         "",
         "| Profile | Seed | Final luminance stddev | P10 / P50 / P90 | Topology hits |",

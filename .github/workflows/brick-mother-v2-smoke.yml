@@ -112,6 +112,8 @@ jobs:
               assert len(rows) == 3, (profile, len(rows))
               assert len({row['masterSeed'] for row in rows}) == 3, profile
               assert all(row.get('controls') and row.get('seedDNA') and row.get('seedDerivation') for row in rows), profile
+          supplemental = report.get('supplementalEvidence', {})
+          assert len(supplemental.get('closeups', [])) == 2, supplemental
           for item in report['records']:
               assert item['size'] == [1600,1000], item
           PY
@@ -128,6 +130,9 @@ jobs:
             /tmp/brick-mother-v275-evidence/evidence-manifest.json
             /tmp/brick-mother-v275-evidence/evidence-report.md
             /tmp/brick-mother-v275-evidence/qa-family-controls.json
+            /tmp/brick-mother-v275-evidence/closeups/*.png
+            /tmp/brick-mother-v275-evidence/jrb-side-by-side.json
+            /tmp/brick-mother-v275-evidence/jrb-side-by-side.png
             yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/brick-mother-standalone-v2.7.5.html
             yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/VERSION.json
             yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/qa/evidence-manifest-v275.json
