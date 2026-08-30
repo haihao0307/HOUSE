@@ -1012,10 +1012,10 @@ void main() {
     0.0, 1.0
   );
   float broadMaterialScale = uFamily == 0
-    ? mix(0.34, 1.86, smoothstep(0.14, 0.86, broadMaterialTone))
+    ? mix(0.16, 2.72, smoothstep(0.14, 0.86, broadMaterialTone))
     : (uFamily == 1
-      ? mix(0.28, 1.82, smoothstep(0.13, 0.87, broadMaterialTone))
-      : mix(0.20, 1.38, smoothstep(0.12, 0.88, broadMaterialTone)));
+      ? mix(0.12, 2.56, smoothstep(0.13, 0.87, broadMaterialTone))
+      : mix(0.10, 2.35, smoothstep(0.12, 0.88, broadMaterialTone)));
   albedo = clamp(albedo * broadMaterialScale, vec3(0.003), vec3(1.0));
 
   vec2 waterWeather = waterWeatherMasks(p, baseNormal, uWaterSeed, uWeatherSeed);
