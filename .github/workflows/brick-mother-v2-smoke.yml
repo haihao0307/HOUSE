@@ -98,6 +98,14 @@ jobs:
           }
           assert not report['finalLuminanceStdDevFailures'], report['finalLuminanceStdDevFailures']
           assert not report['requiredGeometryFailures'], report['requiredGeometryFailures']
+          qa = report.get('qaByFamily', {})
+          assert set(qa) == {'old-pbr-fired', 'stone-block', 'raw-clay'}, sorted(qa)
+          for profile, payload in qa.items():
+              assert payload.get('controlsByFamily'), profile
+              assert payload.get('seedDNAByFamily'), profile
+              assert payload.get('seedDerivation'), profile
+              controls = next(iter(payload['controlsByFamily'].values()))[0]
+              assert {'benchmarkSlab', 'mobilePreview'}.issubset(controls), profile
           for item in report['records']:
               assert item['size'] == [1600,1000], item
           PY
@@ -113,6 +121,7 @@ jobs:
             /tmp/brick-mother-v275-evidence/*.chrome.log
             /tmp/brick-mother-v275-evidence/evidence-manifest.json
             /tmp/brick-mother-v275-evidence/evidence-report.md
+            /tmp/brick-mother-v275-evidence/qa-family-controls.json
             yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/brick-mother-standalone-v2.7.5.html
             yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/VERSION.json
             yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/qa/evidence-manifest-v275.json
