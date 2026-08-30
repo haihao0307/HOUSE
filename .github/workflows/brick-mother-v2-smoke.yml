@@ -66,6 +66,7 @@ jobs:
             --chrome "$chrome"
             --html "$brick/brick-mother-standalone-v2.7.5.html"
             --out /tmp/brick-mother-v275-evidence
+            --workers 4
           )
           if [ -n "${JRB_REFERENCE_PATH:-}" ] && [ -f "${JRB_REFERENCE_PATH}" ]; then
             args+=(--reference "${JRB_REFERENCE_PATH}")

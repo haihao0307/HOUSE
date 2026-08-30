@@ -8,6 +8,7 @@ Missing or mismatched reference bytes never become a substitute comparison.
 from __future__ import annotations
 
 import argparse
+from concurrent.futures import ThreadPoolExecutor, as_completed
 import hashlib
 import json
 import math
@@ -43,6 +44,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--reference", type=Path, default=None)
     parser.add_argument("--virtual-time-budget", type=int, default=175000)
+    parser.add_argument("--workers", type=int, default=4)
     return parser.parse_args()
 
 
@@ -173,17 +175,28 @@ def main() -> None:
     args = parse_args()
     args.out.mkdir(parents=True, exist_ok=True)
     reference = reference_status(args.reference)
-    records = []
+    jobs = []
     for profile, config in PROFILES.items():
         for seed in config["seeds"]:
             channels = CHANNELS if seed == config["seeds"][0] else {0: "final"}
             for channel, channel_name in channels.items():
                 filename = f"{config['label']}-{seed}-{channel_name}.png"
-                image = args.out / filename
-                dom = capture(args.chrome, args.html, image, profile, seed, channel, args.virtual_time_budget)
-                metric = image_metrics(image, dom)
-                metric.update({"profile": profile, "seed": seed, "channel": channel_name, "channelIndex": channel})
-                records.append(metric)
+                jobs.append((profile, seed, channel, channel_name, args.out / filename))
+
+    def capture_one(job: tuple[str, int, int, str, Path]) -> dict:
+        profile, seed, channel, channel_name, image = job
+        dom = capture(args.chrome, args.html, image, profile, seed, channel, args.virtual_time_budget)
+        metric = image_metrics(image, dom)
+        metric.update({"profile": profile, "seed": seed, "channel": channel_name, "channelIndex": channel})
+        return metric
+
+    records = []
+    workers = max(1, min(args.workers, len(jobs)))
+    with ThreadPoolExecutor(max_workers=workers, thread_name_prefix="v275-capture") as executor:
+        futures = {executor.submit(capture_one, job): job for job in jobs}
+        for future in as_completed(futures):
+            records.append(future.result())
+    records.sort(key=lambda item: (item["profile"], item["seed"], item["channelIndex"]))
     finals = [record for record in records if record["channel"] == "final"]
     failed_stddev = [record for record in finals if record["luminanceStdDev"] < 0.11]
     manifest = {
