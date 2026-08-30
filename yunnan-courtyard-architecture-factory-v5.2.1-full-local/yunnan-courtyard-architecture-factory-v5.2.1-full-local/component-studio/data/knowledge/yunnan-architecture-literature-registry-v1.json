@@ -1,0 +1,81 @@
+{
+  "schemaVersion": "1.0.0",
+  "updatedAt": "2026-08-30",
+  "purpose": "Human-reviewed literature intake for the Yunnan historic architecture production line. Records remain evidence references and are not promoted to dimensional or construction rules without stronger architectural surveys.",
+  "reviewPolicy": {
+    "B2_BACKGROUND": "Keep for regional context, settlement patterns, domestic-space use, family organization, terminology and weak construction clues. Do not use as a sole source for dimensions, structural assemblies, component geometry, material layers or production defaults.",
+    "promotionRule": "Promotion to A or B1 requires primary architectural measurement, scale bars or dimensions, plans plus sections/elevations, component or joint documentation, provenance, and cross-checking against another independent source."
+  },
+  "humanReview": {
+    "reviewer": "project owner",
+    "decision": "Keep all six sources as background. Overall architectural depth is limited and the dominant viewpoint is humanistic, anthropological, social or contemporary-use analysis.",
+    "recordedBy": "assistant"
+  },
+  "records": [
+    {
+      "id": "YN-LIT-1992-NAXI-01",
+      "title": "A field survey on the matrilineal dwelling system and architectural technology of the Naxi society, Yunnan (1)",
+      "year": 1992,
+      "pages": 19,
+      "sourcePlatform": "J-STAGE / Housing Research Foundation",
+      "doi": "10.20803/jusokennen.19.0_117",
+      "classification": "B2_BACKGROUND",
+      "retainFor": ["northwest Yunnan regional context", "settlement examples", "household and ritual-space relations", "limited measured plans and sections", "construction terminology"],
+      "excludeFrom": ["universal Yunnan rules", "production dimensions", "wall or roof defaults", "joint details"]
+    },
+    {
+      "id": "YN-LIT-1994-NAXI-02",
+      "title": "A field survey on the matrilineal dwelling system and architectural technology of the Naxi society, Yunnan (2)",
+      "year": 1994,
+      "pages": 18,
+      "sourcePlatform": "J-STAGE / Housing Research Foundation",
+      "doi": "10.20803/jusokennen.20.0_99",
+      "classification": "B2_BACKGROUND",
+      "retainFor": ["Moso and Pumi settlement context", "selected measured house plans and sections", "log-wall and rammed-earth clues", "building-part vocabulary"],
+      "excludeFrom": ["province-wide typology", "standard dimensions", "production assemblies without verification"]
+    },
+    {
+      "id": "YN-LIT-1999-DALI-RENLIYI",
+      "title": "Cultural frameworks which govern systems of dwelling habits: Renliyi village, Dali Bai autonomous prefecture",
+      "year": 1999,
+      "pages": 8,
+      "sourcePlatform": "J-STAGE / Architectural Institute of Japan",
+      "doi": "10.3130/aija.64.167_2",
+      "classification": "B2_BACKGROUND",
+      "retainFor": ["Bai domestic-space use", "main hall and courtyard hierarchy", "orientation and ritual context", "limited plan examples"],
+      "excludeFrom": ["timber-frame geometry", "component dimensions", "construction sequencing"]
+    },
+    {
+      "id": "YN-LIT-1999-MENGLIAN-DAI",
+      "title": "Traditional Dai dwelling spatial formation in Menglian, Yunnan",
+      "year": 1999,
+      "pages": 7,
+      "sourcePlatform": "J-STAGE / Architectural Institute of Japan",
+      "classification": "B2_BACKGROUND",
+      "retainFor": ["Dai spatial hierarchy", "dwelling-use patterns", "regional comparison"],
+      "excludeFrom": ["structural production rules", "detailed measured components", "province-wide generalization"]
+    },
+    {
+      "id": "YN-LIT-2023-LEJU-YIKEYIN",
+      "title": "Inheritance of traditional space and living in modern houses of Yi people: Leju village, Kunming",
+      "year": 2023,
+      "pages": 8,
+      "sourcePlatform": "J-STAGE / Architectural Institute of Japan",
+      "doi": "10.3130/aija.88.165",
+      "classification": "B2_BACKGROUND",
+      "retainFor": ["Yikeyin and Half-Yikeyin terminology", "39-house change sequence from 1972 to 2021", "traditional versus modern spatial use", "modern alteration warnings"],
+      "excludeFrom": ["historic Yikeyin reconstruction defaults", "1940s dimensions", "traditional material and structural details"]
+    },
+    {
+      "id": "YN-LIT-2026-SHIPING-HEYUAN",
+      "title": "Contemporary transformation of traditional living spaces in Shiping ancient town, Part 1",
+      "year": 2026,
+      "pages": 10,
+      "sourcePlatform": "J-STAGE / Architectural Institute of Japan",
+      "doi": "10.3130/aija.91.1576",
+      "classification": "B2_BACKGROUND",
+      "retainFor": ["Shiping heyyuan component terminology", "historic core mapping", "modern ownership, infill and alteration patterns", "distinguishing original fabric from later additions"],
+      "excludeFrom": ["original construction dimensions", "timber-frame and roof reconstruction", "unverified historical-state claims"]
+    }
+  ]
+}
