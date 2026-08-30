@@ -1,0 +1,87 @@
+name: Brick Mother Observation Studio Package
+
+on:
+  push:
+    branches:
+      - feature/brick-mother-v2.0-composite-material-dna
+    paths:
+      - .github/workflows/brick-mother-observation-package.yml
+      - yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/brick-mother-observation-studio.html
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Checkout exact pushed head
+        uses: actions/checkout@v4
+
+      - name: Assemble complete local review package
+        shell: bash
+        run: |
+          set -euo pipefail
+          brick="yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother"
+          root="/tmp/BRICK_MOTHER_OBSERVATION_STUDIO_V275"
+          mkdir -p "$root/data"
+          cp "$brick/brick-mother-observation-studio.html" "$root/index.html"
+          cp "$brick/style.css" "$root/"
+          cp "$brick/gaea-distilled.css" "$root/"
+          cp "$brick/visual-calibration.css" "$root/"
+          cp "$brick/brick-mother-gaea-kernel-v1.js" "$root/"
+          cp "$brick/brick-mother-geometry-v2.js" "$root/"
+          cp "$brick/brick-mother-renderer-v2.js" "$root/"
+          cp "$brick/brick-mother-app-v2.js" "$root/"
+          cp "$brick/data/brick-material-profiles-v2.json" "$root/data/"
+          cp "$brick/brick-mother-standalone-v2.6.html" "$root/"
+          cat > "$root/START_OBSERVATION_STUDIO.bat" <<'BAT'
+          @echo off
+          cd /d "%~dp0"
+          where py >nul 2>nul
+          if %errorlevel%==0 (
+            start "Brick Mother Local Server" /min py -m http.server 8765
+          ) else (
+            start "Brick Mother Local Server" /min python -m http.server 8765
+          )
+          timeout /t 2 /nobreak >nul
+          start "" "http://127.0.0.1:8765/index.html?mobile=0&full=1"
+          BAT
+          cat > "$root/README.txt" <<TXT
+          Brick Mother V2.7.5 三维材质观察台
+
+          1. Windows 双击 START_OBSERVATION_STUDIO.bat。
+          2. 页面中央为三维砖块观察区。
+          3. 左侧控制材料、形体、孔洞、岩层和种子。
+          4. 右侧控制色彩、风化、水痕和夹杂。
+          5. 左下可以打开 V2.6 高变化版。
+
+          Package commit: ${GITHUB_SHA}
+          PR #15 保持 Draft、未合并。
+          人工视觉批准和 productionApproved 继续为 false。
+          TXT
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+          root=Path('/tmp/BRICK_MOTHER_OBSERVATION_STUDIO_V275')
+          required=['index.html','style.css','gaea-distilled.css','visual-calibration.css','brick-mother-gaea-kernel-v1.js','brick-mother-geometry-v2.js','brick-mother-renderer-v2.js','brick-mother-app-v2.js','data/brick-material-profiles-v2.json','brick-mother-standalone-v2.6.html','START_OBSERVATION_STUDIO.bat','README.txt']
+          missing=[name for name in required if not (root/name).is_file()]
+          assert not missing, missing
+          assert json.loads((root/'data/brick-material-profiles-v2.json').read_text(encoding='utf-8'))['profiles']
+          PY
+          cd /tmp
+          zip -9 -r BRICK_MOTHER_OBSERVATION_STUDIO_V275.zip BRICK_MOTHER_OBSERVATION_STUDIO_V275 >/dev/null
+          unzip -t BRICK_MOTHER_OBSERVATION_STUDIO_V275.zip >/dev/null
+          sha256sum BRICK_MOTHER_OBSERVATION_STUDIO_V275.zip > BRICK_MOTHER_OBSERVATION_STUDIO_V275.zip.sha256
+
+      - name: Upload complete package
+        uses: actions/upload-artifact@v4
+        with:
+          name: brick-mother-observation-studio-package-${{ github.sha }}
+          path: |
+            /tmp/BRICK_MOTHER_OBSERVATION_STUDIO_V275.zip
+            /tmp/BRICK_MOTHER_OBSERVATION_STUDIO_V275.zip.sha256
+          compression-level: 0
+          if-no-files-found: error
