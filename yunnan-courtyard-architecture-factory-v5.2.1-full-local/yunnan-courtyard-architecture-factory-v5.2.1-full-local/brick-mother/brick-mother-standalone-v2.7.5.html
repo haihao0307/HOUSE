@@ -4306,7 +4306,12 @@ const state = {
   mobileMode: MOBILE_RUNTIME,
   fullFamilyRequested: QUERY.get('full') === '1',
   mobileQuickProfile: QUERY.get('profile') || 'old-pbr-fired',
-  evidenceFocus: Math.max(0, Math.min(2, Math.round(Number(QUERY.get('focus') ?? 1) || 1))),
+  // Zero is the canonical fired-clay slot; do not let `|| 1` silently
+  // redirect focus=0 to the stone child in evidence captures.
+  evidenceFocus: (() => {
+    const requested = Number(QUERY.get('focus'));
+    return Number.isFinite(requested) ? Math.max(0, Math.min(2, Math.round(requested))) : 1;
+  })(),
   soloMode: QUERY.get('solo') === '1' || (MOBILE_RUNTIME && QUERY.get('full') !== '1'),
   benchmarkMode: QUERY.get('specimen') !== 'historical'
 };
