@@ -83,12 +83,12 @@ def capture(chrome: str, html: Path, output: Path, profile: str, seed: int, chan
     dom = output.with_suffix(".dom.html")
     log = output.with_suffix(".chrome.log")
     target_size = (1600, 1000)
-    # Analytical channels share the exact evidence camera and framing, but
-    # their full fragment field is needlessly expensive on SwiftShader. Render
-    # those masks at half resolution and upscale the finished bitmap so every
-    # delivered artifact remains the required 1600x1000 canvas. Final material
-    # images stay native resolution.
-    render_size = target_size if channel == 0 else (800, 500)
+    # SwiftShader cannot reliably finish the full PBR fragment field at a
+    # 1600x1000 screenshot viewport before Chromium dumps the first frame.
+    # Render every channel at the stable 800x500 evidence viewport, then
+    # upscale the finished bitmap so every delivered artifact remains the
+    # required 1600x1000 canvas with identical camera, light and framing.
+    render_size = (800, 500)
     required = {
         "data-brick-mother-ready": 'data-brick-mother-ready="true"',
         "data-version": 'data-brick-mother-version="2.7.5-alpha.1"',
