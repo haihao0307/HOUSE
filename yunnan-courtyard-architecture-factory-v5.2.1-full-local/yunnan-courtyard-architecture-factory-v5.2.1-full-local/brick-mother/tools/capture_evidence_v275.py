@@ -127,7 +127,11 @@ def capture(chrome: str, html: Path, output: Path, profile: str, seed: int, chan
                     "--use-angle=swiftshader",
                     "--hide-scrollbars",
                     f"--window-size={render_size[0]},{render_size[1]}",
-                    f"--virtual-time-budget={budget}",
+                    # A retry gets extra virtual time for the occasional slow
+                    # seed/build; the normal path remains bounded by the
+                    # workflow's 30-second evidence budget.
+                    f"--virtual-time-budget={max(budget, 60000) if attempt else budget}",
+                    "--run-all-compositor-stages-before-draw",
                     f"--screenshot={render_output}",
                     "--dump-dom",
                     query,

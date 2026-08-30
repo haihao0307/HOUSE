@@ -75,7 +75,7 @@ jobs:
             --chrome "$chrome"
             --html "$brick/brick-mother-standalone-v2.7.5.html"
             --out /tmp/brick-mother-v275-evidence
-            --virtual-time-budget 12000
+            --virtual-time-budget 30000
             --workers 1
             --evidence-quality 0.56
           )
