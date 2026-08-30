@@ -1,14 +1,16 @@
 {
-  "schemaVersion": "1.0.0",
+  "schemaVersion": "1.1.0",
   "updatedAt": "2026-08-30",
   "purpose": "Human-reviewed literature intake for the Yunnan historic architecture production line. Records remain evidence references and are not promoted to dimensional or construction rules without stronger architectural surveys.",
   "reviewPolicy": {
     "B2_BACKGROUND": "Keep for regional context, settlement patterns, domestic-space use, family organization, terminology and weak construction clues. Do not use as a sole source for dimensions, structural assemblies, component geometry, material layers or production defaults.",
-    "promotionRule": "Promotion to A or B1 requires primary architectural measurement, scale bars or dimensions, plans plus sections/elevations, component or joint documentation, provenance, and cross-checking against another independent source."
+    "B1_REGIONAL_ARCHITECTURAL_REFERENCE": "Keep measured architectural facts for the source's exact region and building type. Sample dimensions and proportions remain case-level evidence and may not become province-wide production defaults without independent corroboration and original measured assets.",
+    "promotionRule": "Promotion to A or production rules requires primary architectural measurement, scale bars or dimensions, plans plus sections/elevations, component or joint documentation, provenance, separation of original fabric from later alterations, and cross-checking against another independent source."
   },
   "humanReview": {
     "reviewer": "project owner",
-    "decision": "Keep all six sources as background. Overall architectural depth is limited and the dominant viewpoint is humanistic, anthropological, social or contemporary-use analysis.",
+    "backgroundBatchDecision": "Keep the first six sources as background. Overall architectural depth is limited and the dominant viewpoint is humanistic, anthropological, social or contemporary-use analysis.",
+    "architectureFocusedDecision": "Keep the 2025 Yunnan–Tibet Tusi manor study and distill its useful architectural evidence. Overall value is average, so retain it as a regional measured reference without promoting it to a production standard.",
     "recordedBy": "assistant"
   },
   "records": [
@@ -76,6 +78,37 @@
       "classification": "B2_BACKGROUND",
       "retainFor": ["Shiping heyyuan component terminology", "historic core mapping", "modern ownership, infill and alteration patterns", "distinguishing original fabric from later additions"],
       "excludeFrom": ["original construction dimensions", "timber-frame and roof reconstruction", "unverified historical-state claims"]
+    },
+    {
+      "id": "YN-LIT-2025-DIQING-TUSI-MANORS",
+      "title": "A Study on the Architectural Form and Characteristics of Tusi Manors in the Yunnan–Tibet Region",
+      "year": 2025,
+      "pages": 26,
+      "sourcePlatform": "MDPI Buildings",
+      "doi": "10.3390/buildings15071134",
+      "classification": "B1_REGIONAL_ARCHITECTURAL_REFERENCE",
+      "humanAssessment": "average value; retain useful measured architectural facts with strict regional limits",
+      "geographicScope": "Tibetan-inhabited parts of Deqin County and Shangri-La City in Diqing",
+      "buildingTypeScope": "Tusi administrative-residential manors",
+      "retainFor": [
+        "field-survey method references",
+        "mountain, valley and flat-basin settlement candidates",
+        "rammed-earth enclosure with internal timber support",
+        "courtyard and setback-form typology",
+        "sample-level floor heights and height-to-width ratios",
+        "sample-level gate and window proportion ranges",
+        "flat versus sloped roof candidate relationship",
+        "vertical functional zoning and defensive features"
+      ],
+      "excludeFrom": [
+        "all-Yunnan vernacular defaults",
+        "Kunming Yikeyin or Dali Bai dwelling rules",
+        "exact timber joints",
+        "exact rammed-earth recipes",
+        "historical reconstruction without original measured drawings",
+        "production approval"
+      ],
+      "distilledKnowledgeFile": "yunnan-tibet-tusi-manor-knowledge-v1.json"
     }
   ]
 }
