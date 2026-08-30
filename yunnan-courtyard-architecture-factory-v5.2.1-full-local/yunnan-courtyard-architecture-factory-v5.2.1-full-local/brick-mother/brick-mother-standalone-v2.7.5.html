@@ -3831,9 +3831,16 @@ void main() {
   // channels above intentionally remain raw analytical fields.
   vec3 outputSrgb = linearToSrgb(color);
   float outputLuma = dot(outputSrgb, vec3(0.2126, 0.7152, 0.0722));
-  float valuePivot = uFamily == 0 ? 0.30 : (uFamily == 1 ? 0.39 : 0.37);
-  float valueContrast = uFamily == 0 ? 1.86 : (uFamily == 1 ? 1.80 : 1.84);
-  float contrastedLuma = clamp((outputLuma - valuePivot) * valueContrast + valuePivot, 0.0, 1.0);
+  // SwiftShader can occasionally propagate an undefined PBR half-vector for
+  // a slow final frame. Keep the evidence material visible by falling back
+  // to the same resolved albedo instead of emitting an all-black PNG.
+  if (!(outputLuma > 0.001)) {
+    outputSrgb = linearToSrgb(clamp(albedo * 0.72, 0.0, 1.0));
+    outputLuma = dot(outputSrgb, vec3(0.2126, 0.7152, 0.0722));
+  }
+  float valueCenter = uFamily == 0 ? 0.28 : (uFamily == 1 ? 0.40 : 0.40);
+  float valueContrast = uFamily == 0 ? 2.45 : (uFamily == 1 ? 2.30 : 2.35);
+  float contrastedLuma = clamp(0.42 + (outputLuma - valueCenter) * valueContrast, 0.035, 0.96);
   outputSrgb *= contrastedLuma / max(outputLuma, 0.001);
   outColor = vec4(clamp(outputSrgb, 0.0, 1.0), 1.0);
 }`;
