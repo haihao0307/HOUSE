@@ -82,10 +82,18 @@ def capture(chrome: str, html: Path, output: Path, profile: str, seed: int, chan
     )
     dom = output.with_suffix(".dom.html")
     log = output.with_suffix(".chrome.log")
+    target_size = (1600, 1000)
+    # Analytical channels share the exact evidence camera and framing, but
+    # their full fragment field is needlessly expensive on SwiftShader. Render
+    # those masks at half resolution and upscale the finished bitmap so every
+    # delivered artifact remains the required 1600x1000 canvas. Final material
+    # images stay native resolution.
+    render_size = target_size if channel == 0 else (800, 500)
     # Chrome serializes launches that share its default profile. A private
     # profile per evidence job keeps the requested worker parallelism real and
     # prevents one slow WebGL process from blocking the remaining captures.
-    with tempfile.TemporaryDirectory(prefix=f"brick-mother-v275-{profile}-{seed}-{channel}-") as user_data_dir:
+    with tempfile.TemporaryDirectory(prefix=f"brick-mother-v275-{profile}-{seed}-{channel}-") as user_data_dir, tempfile.TemporaryDirectory(prefix="brick-mother-v275-render-") as render_dir:
+        render_output = Path(render_dir) / "capture.png"
         command = [
             chrome,
             f"--user-data-dir={user_data_dir}",
@@ -102,18 +110,27 @@ def capture(chrome: str, html: Path, output: Path, profile: str, seed: int, chan
             "--use-gl=angle",
             "--use-angle=swiftshader",
             "--hide-scrollbars",
-            "--window-size=1600,1000",
+            f"--window-size={render_size[0]},{render_size[1]}",
             f"--virtual-time-budget={budget}",
-            f"--screenshot={output}",
+            f"--screenshot={render_output}",
             "--dump-dom",
             query,
         ]
         with dom.open("w", encoding="utf-8") as dom_file, log.open("w", encoding="utf-8") as log_file:
             subprocess.run(command, stdout=dom_file, stderr=log_file, check=True, timeout=max(600, budget // 200 + 180))
+        with Image.open(render_output) as screenshot:
+            if screenshot.size != render_size:
+                raise RuntimeError(f"screenshot dimensions invalid: {render_output} -> {screenshot.size}")
+            if screenshot.convert("RGB").getbbox() is None:
+                raise RuntimeError(f"screenshot is fully empty: {render_output}")
+            if render_size == target_size:
+                screenshot.convert("RGB").save(output, format="PNG")
+            else:
+                screenshot.convert("RGB").resize(target_size, Image.Resampling.LANCZOS).save(output, format="PNG")
     if not output.is_file() or output.stat().st_size < 4096:
         raise RuntimeError(f"screenshot file incomplete: {output}")
     with Image.open(output) as screenshot:
-        if screenshot.size != (1600, 1000):
+        if screenshot.size != target_size:
             raise RuntimeError(f"screenshot dimensions invalid: {output} -> {screenshot.size}")
         if screenshot.convert("RGB").getbbox() is None:
             raise RuntimeError(f"screenshot is fully empty: {output}")
