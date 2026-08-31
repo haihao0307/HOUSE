@@ -1,0 +1,198 @@
+name: Tiles Mother Transfer Diagnostics
+on:
+  push:
+    branches: [feature/tiles-mother-v0.1-workbench]
+    paths:
+      - .github/workflows/tiles-mother-transfer-check.yml
+      - tiles-mother/check-package.html
+      - tiles-mother/package-check.js
+      - tiles-mother/receipt-sha256.js
+      - tiles-mother/transfer-check/**
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: false
+jobs:
+  diagnose:
+    if: github.ref == 'refs/heads/feature/tiles-mother-v0.1-workbench'
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    environment:
+      name: github-pages-preview
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - name: Verify frozen workbench and streaming hash implementation
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib
+          assert hashlib.sha256(Path('tiles-mother/index.html').read_bytes()).hexdigest()=='b8debabf848ce952020fb650e96d4a77999d5b65d4197b02480dd41f35e392d3'
+          Path('tiles-mother/qa-transfer').mkdir(exist_ok=True)
+          PY
+          node --check tiles-mother/package-check.js
+          node --check tiles-mother/receipt-sha256.js
+          node - <<'JS'
+          const fs=require('fs'),vm=require('vm'),crypto=require('crypto');
+          vm.runInThisContext(fs.readFileSync('tiles-mother/receipt-sha256.js','utf8'));
+          for(const length of [0,1,63,64,65,1024,1048583]){
+            const b=crypto.randomBytes(length),h=new TilesReceiptSHA256();
+            for(let i=0;i<b.length;i+=71)h.update(b.subarray(i,i+71));
+            if(h.hex()!==crypto.createHash('sha256').update(b).digest('hex'))throw Error('SHA256 mismatch '+length);
+          }
+          console.log('Streaming SHA256 agrees with node:crypto');
+          JS
+      - name: Install real browser QA dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y fonts-noto-cjk
+          python3 -m pip install 'playwright>=1.50,<2' 'pillow>=10,<13'
+      - name: Verify complete, damaged and empty packages in Chromium
+        run: python3 tiles-mother/transfer-check/browser_qa.py
+      - name: Identify the exact currently successful Pages artifact
+        id: base
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs=require('fs'),repo=context.repo;
+            const pages=(await github.request('GET /repos/{owner}/{repo}/pages',repo)).data;
+            if(pages.build_type!=='workflow')throw Error('Unexpected Pages configuration. Refuse to change settings.');
+            const deployments=(await github.rest.repos.listDeployments({...repo,per_page:100})).data;
+            let chosen=null;
+            for(const d of deployments){
+              if(d.sha===context.sha||!['github-pages','github-pages-preview'].includes(d.environment))continue;
+              const ss=(await github.rest.repos.listDeploymentStatuses({...repo,deployment_id:d.id,per_page:5})).data;
+              if(ss[0]?.state==='success'){chosen={deployment:d,status:ss[0]};break;}
+            }
+            if(!chosen)throw Error('No proven current successful deployment.');
+            const artifacts=await github.paginate(github.rest.actions.listArtifactsForRepo,{...repo,name:'github-pages',per_page:100});
+            const artifact=artifacts.filter(a=>!a.expired&&a.workflow_run?.head_sha===chosen.deployment.sha).sort((a,b)=>b.id-a.id)[0];
+            if(!artifact)throw Error('The exact live site artifact is unavailable. No fallback to older branches.');
+            chosen.artifact=artifact;
+            fs.writeFileSync('tiles-mother/qa-transfer/base-site.json',JSON.stringify(chosen,null,2));
+            core.setOutput('runId',String(artifact.workflow_run.id));
+      - name: Download current complete public site
+        uses: actions/download-artifact@v4
+        with:
+          name: github-pages
+          run-id: ${{ steps.base.outputs.runId }}
+          github-token: ${{ github.token }}
+          path: /tmp/current-pages-transfer
+      - name: Append only three diagnostic files and preserve every other byte
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path,PurePosixPath
+          import hashlib,json,shutil,tarfile
+          root=Path('_site');root.mkdir()
+          archives=list(Path('/tmp/current-pages-transfer').rglob('*.tar'));assert len(archives)==1
+          with tarfile.open(archives[0]) as archive:
+              for m in archive.getmembers():
+                  rel=PurePosixPath(m.name)
+                  assert not rel.is_absolute() and '..' not in rel.parts,m.name
+                  dest=root/str(rel)
+                  if m.isdir():dest.mkdir(parents=True,exist_ok=True)
+                  elif m.isfile():
+                      dest.parent.mkdir(parents=True,exist_ok=True)
+                      with archive.extractfile(m) as src,dest.open('wb') as dst:shutil.copyfileobj(src,dst)
+                  else:raise AssertionError('Unexpected archive member '+m.name)
+          allowed={'tiles-mother/'+n for n in ['check-package.html','package-check.js','receipt-sha256.js']}
+          def snapshot():return {str(p.relative_to(root)):hashlib.sha256(p.read_bytes()).hexdigest() for p in root.rglob('*') if p.is_file() and str(p.relative_to(root)) not in allowed}
+          before=snapshot();assert before and 'index.html' in before and 'tiles-mother/index.html' in before
+          for rel in allowed:
+              dest=root/rel;dest.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(rel,dest)
+          after=snapshot();assert before==after,'Unrelated public files changed'
+          result={'preservedFileCount':len(before),'changedOutsideDiagnosticFiles':[],'existingWorkbenchUnchanged':True,'pagesSettingsChanged':False,'modifiedPaths':sorted(allowed),'diagnosticTotalBytes':sum((root/rel).stat().st_size for rel in allowed),'sourceReadVerified':False,'distillationComplete':False,'visualApproved':False,'productionApproved':False}
+          Path('tiles-mother/qa-transfer/site-preservation.json').write_text(json.dumps(result,indent=2))
+          print(json.dumps(result,indent=2))
+          PY
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - name: Check that no newer site appeared during assembly
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs=require('fs'),base=JSON.parse(fs.readFileSync('tiles-mother/qa-transfer/base-site.json'));
+            const ds=(await github.rest.repos.listDeployments({...context.repo,per_page:100})).data;
+            let latest=null;
+            for(const d of ds){
+              if(d.sha===context.sha||!['github-pages','github-pages-preview'].includes(d.environment))continue;
+              const ss=(await github.rest.repos.listDeploymentStatuses({...context.repo,deployment_id:d.id,per_page:5})).data;
+              if(ss[0]?.state==='success'){latest=d;break;}
+            }
+            if(!latest||latest.id!==base.deployment.id)throw Error('Concurrent newer publication detected. Refuse to overwrite.');
+      - name: Publish diagnostic entry through existing Pages environment
+        id: deployment
+        uses: actions/deploy-pages@v4
+      - name: Verify actual public MIME types and exact file hashes
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib,json,os,time,urllib.request
+          base='https://haihao0307.github.io/HOUSE/tiles-mother/'
+          report={'url':base+'check-package.html?v=1','sourceCommit':os.environ['GITHUB_SHA'],'runId':os.environ['GITHUB_RUN_ID'],'files':[],'verified':False,'sourceReadVerified':False,'distillationComplete':False,'temporaryCopiesRemoved':False,'visualApproved':False,'productionApproved':False}
+          try:
+              for name in ['check-package.html','package-check.js','receipt-sha256.js']:
+                  expected=Path('tiles-mother',name).read_bytes();row={'name':name,'expectedSHA256':hashlib.sha256(expected).hexdigest()};report['files'].append(row)
+                  for attempt in range(10):
+                      try:
+                          req=urllib.request.Request(base+name+'?v=1',headers={'Cache-Control':'no-cache','User-Agent':'TilesMother-Transfer-QA/1'})
+                          with urllib.request.urlopen(req,timeout=35) as response:
+                              data=response.read();row.update(httpStatus=response.status,contentType=response.headers.get('Content-Type',''),bytes=len(data),sha256=hashlib.sha256(data).hexdigest())
+                          assert row['httpStatus']==200 and row['sha256']==row['expectedSHA256'] and len(data)==len(expected)
+                          assert ('text/html' in row['contentType']) if name.endswith('.html') else ('javascript' in row['contentType'])
+                          row['verified']=True;break
+                      except Exception as error:
+                          row['lastError']=str(error)
+                          if attempt==9:raise
+                          time.sleep(8)
+              report['verified']=True
+          finally:Path('tiles-mother/qa-transfer/publication.json').write_text(json.dumps(report,indent=2))
+          print(json.dumps(report,indent=2))
+          PY
+      - name: Verify the actual online entry on desktop and mobile
+        run: python3 tiles-mother/transfer-check/browser_qa.py --url 'https://haihao0307.github.io/HOUSE/tiles-mother/check-package.html?v=1'
+      - name: Preserve truthful diagnostic receipts on this branch only
+        if: always()
+        env:
+          BRANCH: feature/tiles-mother-v0.1-workbench
+        run: |
+          set -euo pipefail
+          test -d tiles-mother/qa-transfer || exit 0
+          test "$(git ls-remote origin "refs/heads/$BRANCH" | cut -f1)" = "$GITHUB_SHA"
+          find tiles-mother/qa-transfer -maxdepth 1 -type f -name '*.json' -print0 | xargs -0 -r git add --
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          if ! git diff --cached --quiet;then
+            git commit -m 'test(tiles-mother): record transfer inspector browser and live publication checks'
+            git push origin "HEAD:refs/heads/$BRANCH"
+          fi
+      - name: Preserve diagnostics and screenshots even when a check fails
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tiles-mother-transfer-check-${{ github.run_id }}
+          path: |
+            tiles-mother/check-package.html
+            tiles-mother/package-check.js
+            tiles-mother/receipt-sha256.js
+            tiles-mother/qa-transfer/
+            tiles-mother/transfer-check/investigation.json
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Explain the scope of this verification
+        if: always()
+        run: |
+          echo '## Tiles Mother transfer diagnostics' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Only three local-only diagnostic page files are published. The existing workbench and every unrelated public asset are preserved.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Synthetic test packages do not prove receipt, parsing or distillation of user Yunnan references. Those states remain false.' >> "$GITHUB_STEP_SUMMARY"
+          for name in browser-report.json site-preservation.json publication.json public-browser-report.json;do
+            if test -f "tiles-mother/qa-transfer/$name";then cat "tiles-mother/qa-transfer/$name" >> "$GITHUB_STEP_SUMMARY";fi
+          done
