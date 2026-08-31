@@ -1,0 +1,198 @@
+name: Tiles Mother V0.2 Online Publication
+on:
+  push:
+    branches: [feature/tiles-mother-v0.1-workbench]
+    paths: [.github/workflows/tiles-mother-v02-publish.yml]
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: false
+jobs:
+  publish:
+    if: github.ref == 'refs/heads/feature/tiles-mother-v0.1-workbench'
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    environment:
+      name: github-pages-preview
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - name: Verify exact candidate already passed full browser QA
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib,json,shutil
+          root=Path('/tmp/tiles-v02');(root/'qa').mkdir(parents=True,exist_ok=True);(root/'source').mkdir();(root/'site').mkdir()
+          manifest=json.loads(Path('tiles-mother/v02/build-manifest.json').read_text())
+          html=Path('tiles-mother/index.html').read_bytes()
+          assert manifest['indexSHA256']=='b8debabf848ce952020fb650e96d4a77999d5b65d4197b02480dd41f35e392d3'
+          assert hashlib.sha256(html).hexdigest()==manifest['indexSHA256'] and len(html)==manifest['bytes']
+          report=json.loads(Path('tiles-mother/qa-v02/browser-report.json').read_text())
+          assert report['allPassed'] and len(report['tests'])>=95 and all(t['passed'] for t in report['tests'])
+          assert not manifest['visualApproved'] and not manifest['productionApproved']
+          for p in Path('tiles-mother/v02').glob('*'):
+              if p.is_file(): shutil.copyfile(p,root/'source'/p.name)
+          shutil.copyfile('tiles-mother/index.html',root/'site/index.html')
+          shutil.copyfile('tiles-mother/v02/build-manifest.json',root/'site/build-manifest.json')
+          shutil.copyfile('tiles-mother/qa-v02/browser-report.json',root/'qa/browser-report.json')
+          PY
+      - name: Locate the current successful complete Pages publication
+        id: base
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs=require('fs');
+            const repo=context.repo;
+            const pages=(await github.request('GET /repos/{owner}/{repo}/pages',repo)).data;
+            if(pages.build_type!=='workflow') throw new Error('Unexpected Pages configuration. No settings will be changed.');
+            const ds=(await github.rest.repos.listDeployments({...repo,per_page:100})).data;
+            let chosen=null;
+            for(const d of ds){
+              if(d.sha===context.sha || !['github-pages','github-pages-preview'].includes(d.environment)) continue;
+              const ss=(await github.rest.repos.listDeploymentStatuses({...repo,deployment_id:d.id,per_page:5})).data;
+              if(ss[0]?.state==='success'){chosen={deployment:d,status:ss[0]};break;}
+            }
+            if(!chosen) throw new Error('No current successful Pages deployment can be proven.');
+            const artifacts=await github.paginate(github.rest.actions.listArtifactsForRepo,{...repo,name:'github-pages',per_page:100});
+            const match=artifacts.filter(a=>!a.expired && a.workflow_run?.head_sha===chosen.deployment.sha).sort((a,b)=>b.id-a.id)[0];
+            if(!match) throw new Error('Exact current Pages artifact is unavailable. Refuse to rebuild from an older branch.');
+            chosen.artifact=match;chosen.pages={html_url:pages.html_url,build_type:pages.build_type};
+            fs.writeFileSync('/tmp/tiles-v02/qa/base-site.json',JSON.stringify(chosen,null,2));
+            core.setOutput('runId',String(match.workflow_run.id));
+            core.setOutput('artifactId',String(match.id));
+            core.setOutput('deploymentId',String(chosen.deployment.id));
+            core.info(JSON.stringify({deployment:chosen.deployment.id,sha:chosen.deployment.sha,artifact:match.id,run:match.workflow_run.id}));
+      - name: Restore the exact currently published Pages artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: github-pages
+          run-id: ${{ steps.base.outputs.runId }}
+          github-token: ${{ github.token }}
+          path: /tmp/current-pages
+      - name: Append only the Tiles Mother directory and verify all other files
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path,PurePosixPath
+          import hashlib,json,shutil,tarfile
+          site=Path('_site');site.mkdir()
+          tarpaths=list(Path('/tmp/current-pages').rglob('*.tar'))
+          assert len(tarpaths)==1,tarpaths
+          with tarfile.open(tarpaths[0]) as archive:
+              for m in archive.getmembers():
+                  rel=PurePosixPath(m.name)
+                  assert not rel.is_absolute() and '..' not in rel.parts,m.name
+                  target=site/str(rel)
+                  if m.isdir(): target.mkdir(parents=True,exist_ok=True)
+                  elif m.isfile():
+                      target.parent.mkdir(parents=True,exist_ok=True)
+                      with archive.extractfile(m) as src,target.open('wb') as dst: shutil.copyfileobj(src,dst)
+                  else: raise AssertionError('Unexpected archive member '+m.name)
+          def snapshot():
+              return {str(p.relative_to(site)):hashlib.sha256(p.read_bytes()).hexdigest() for p in site.rglob('*') if p.is_file() and not str(p.relative_to(site)).startswith('tiles-mother/')}
+          before=snapshot();assert before and 'index.html' in before
+          (site/'tiles-mother').mkdir(exist_ok=True)
+          for name in ['index.html','build-manifest.json']:shutil.copyfile(Path('/tmp/tiles-v02/site')/name,site/'tiles-mother'/name)
+          shutil.copyfile('tiles-mother/qa-v02/browser-report.json',site/'tiles-mother/browser-report.json')
+          after=snapshot();assert before==after,'Existing public content changed'
+          report={'outsideTilesFiles':len(before),'changedOutsideTiles':[],'originalFilesPreserved':before==after,'modifiedPrefix':'tiles-mother/','pagesSettingsChanged':False,'mainChanged':False,'ghPagesBranchChanged':False,'visualApproved':False,'productionApproved':False}
+          Path('/tmp/tiles-v02/qa/site-preservation.json').write_text(json.dumps(report,indent=2))
+          Path('/tmp/tiles-v02/qa/preserved-files-sha256.json').write_text(json.dumps(before,indent=2))
+          print(json.dumps(report,indent=2))
+          PY
+      - name: Upload preserved complete site with Tiles Mother appended
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - name: Refuse deployment if another successful site appeared during assembly
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs=require('fs');const base=JSON.parse(fs.readFileSync('/tmp/tiles-v02/qa/base-site.json'));
+            const ds=(await github.rest.repos.listDeployments({...context.repo,per_page:100})).data;
+            let latest=null;
+            for(const d of ds){
+              if(d.sha===context.sha || !['github-pages','github-pages-preview'].includes(d.environment)) continue;
+              const ss=(await github.rest.repos.listDeploymentStatuses({...context.repo,deployment_id:d.id,per_page:5})).data;
+              if(ss[0]?.state==='success'){latest=d;break;}
+            }
+            if(!latest || latest.id!==base.deployment.id) throw new Error('A newer site was published. Stop instead of overwriting concurrent work.');
+      - name: Deploy appended site through existing Pages environment
+        id: deployment
+        uses: actions/deploy-pages@v4
+      - name: Read back public HTML status, MIME and exact bytes
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib,json,os,time,urllib.request
+          url='https://haihao0307.github.io/HOUSE/tiles-mother/?v=0.2.0'
+          manifest=json.loads(Path('/tmp/tiles-v02/site/build-manifest.json').read_text())
+          result={'url':url,'sourceCommit':os.environ['GITHUB_SHA'],'workflowRun':os.environ['GITHUB_RUN_ID'],'verified':False,'visualApproved':False,'productionApproved':False}
+          try:
+              for attempt in range(12):
+                  try:
+                      request=urllib.request.Request(url,headers={'Cache-Control':'no-cache','User-Agent':'TilesMother-Public-Readback/0.2'})
+                      with urllib.request.urlopen(request,timeout=35) as response:
+                          data=response.read();result.update(httpStatus=response.status,contentType=response.headers.get('Content-Type'),bytes=len(data),sha256=hashlib.sha256(data).hexdigest())
+                      assert result['httpStatus']==200 and 'text/html' in result['contentType']
+                      assert result['sha256']==manifest['indexSHA256'] and len(data)==manifest['bytes'],result
+                      result['verified']=True;break
+                  except Exception as error:
+                      result['lastError']=str(error)
+                      if attempt==11:raise
+                      time.sleep(10)
+          finally:Path('/tmp/tiles-v02/qa/publication.json').write_text(json.dumps(result,indent=2))
+          print(json.dumps(result,indent=2))
+          PY
+      - name: Prepare real public browser verification
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y fonts-noto-cjk
+          python3 -m pip install 'playwright>=1.50,<2' 'pillow>=10,<13'
+          python3 /tmp/tiles-v02/source/make_fixtures.py
+      - name: Verify GLB, FBX, persistence and mobile on the actual public URL
+        run: python3 /tmp/tiles-v02/source/browser_qa_v02.py --quick --url 'https://haihao0307.github.io/HOUSE/tiles-mother/?v=0.2.0'
+      - name: Preserve honest publication receipt on the workbench branch
+        if: always()
+        env:
+          BRANCH: feature/tiles-mother-v0.1-workbench
+        run: |
+          set -euo pipefail
+          test -d /tmp/tiles-v02/qa || exit 0
+          test "$(git ls-remote origin "refs/heads/$BRANCH" | cut -f1)" = "$GITHUB_SHA"
+          mkdir -p tiles-mother/qa-v02
+          for name in base-site.json site-preservation.json publication.json public-browser-report.json; do
+            if test -f "/tmp/tiles-v02/qa/$name"; then cp "/tmp/tiles-v02/qa/$name" "tiles-mother/qa-v02/$name"; fi
+          done
+          git add tiles-mother/qa-v02
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          if ! git diff --cached --quiet; then
+            git commit -m 'test(tiles-mother): preserve public URL and existing-site readback evidence'
+            git push origin "HEAD:refs/heads/$BRANCH"
+          fi
+      - name: Preserve public browser evidence even on failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tiles-mother-v02-public-${{ github.run_id }}
+          path: |
+            /tmp/tiles-v02/site/
+            /tmp/tiles-v02/qa/
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Public status summary
+        if: always()
+        run: |
+          echo '## Tiles Mother V0.2 online workbench' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Expected entry: https://haihao0307.github.io/HOUSE/tiles-mother/?v=0.2.0' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Only tiles-mother/ is appended to the exact current successful site. No Pages settings or protected source branches are changed.' >> "$GITHUB_STEP_SUMMARY"
+          for name in site-preservation.json publication.json public-browser-report.json; do
+            if test -f "/tmp/tiles-v02/qa/$name"; then cat "/tmp/tiles-v02/qa/$name" >> "$GITHUB_STEP_SUMMARY"; fi
+          done
