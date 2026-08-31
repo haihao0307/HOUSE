@@ -1,0 +1,73 @@
+{
+  "schema": "tiles-mother-source-receipt-v1",
+  "recordedDate": "2026-08-31",
+  "sourceId": "yunnan-jiangwutang-tiles-001",
+  "evidenceOrigin": "user-relayed local verification receipt",
+  "sourceIdentity": {
+    "reportedLocalPath": "E:\\讲武堂瓦片精细.zip",
+    "filename": "讲武堂瓦片精细.zip",
+    "reportedBytes": 58671527,
+    "reportedSHA256": "ae5510c0e2eaec236adff0b94d978688f6c17a9412407c6c7ec54968222dd365",
+    "hashIndependentlyVerifiedByReceiver": false
+  },
+  "localReceiptClaims": {
+    "zipReadable": true,
+    "entryCount": 5,
+    "fileCount": 4,
+    "directoryCount": 1,
+    "reportedFilenames": [
+      "01.fbx",
+      "01.fbx.rsInfo",
+      "01_u1_v1_diffuse.png",
+      "01_u1_v1_normal.png"
+    ],
+    "directoryName": null,
+    "exactEntryPaths": null,
+    "entryBytesAndHashes": null,
+    "repacked": false,
+    "modified": false,
+    "committedToGit": false,
+    "publiclyPublished": false,
+    "independentlyVerifiedByReceiver": false
+  },
+  "receiverCheck": {
+    "checkedDate": "2026-08-31",
+    "checkedLocation": "/mnt/data and all subdirectories in the current conversation runtime",
+    "method": "recursive filename and exact reported byte-size search",
+    "matchingRawFileFound": false,
+    "actualSourcePath": null,
+    "actualBytes": null,
+    "actualSHA256": null,
+    "status": "LOCAL_FILE_NOT_RECEIVED",
+    "statusZh": "本地文件未接收"
+  },
+  "sourceReadVerified": false,
+  "modelParsed": false,
+  "texturesDecoded": false,
+  "distillationComplete": false,
+  "comparisonRecorded": false,
+  "temporaryCopiesRemoved": false,
+  "visualApproved": false,
+  "productionApproved": false,
+  "unresolved": [
+    "Only the local verification receipt has arrived; original bytes have not arrived.",
+    "ZIP readability and identity are user-reported, not receiver-verified.",
+    "The reported inventory contains one FBX filename; mesh count and pan/cover/ridge tile classification remain unverified.",
+    "Texture filenames alone do not establish resolution, material bindings, color space, normal convention or physical material properties.",
+    "No colors, texture statistics, geometry dimensions or roughness values have been extracted from this source."
+  ],
+  "receivingGate": {
+    "requireActualReadableBytes": true,
+    "requireExactReportedSize": true,
+    "requireExactReportedSHA256": true,
+    "receiptAloneIsNotTransferCompletion": true
+  },
+  "retention": {
+    "userKeepsOriginal": true,
+    "rawSourceMayEnterGitHistory": false,
+    "rawSourceMayBePubliclyPublished": false,
+    "cleanupEligibleNow": false,
+    "cleanupGate": "Read and verify the actual source, distill observed features, record comparison and save lightweight reusable results before deleting only explicitly tracked temporary copies."
+  },
+  "scope": "Receipt and pending-state metadata only. No source binaries, website updates or material preset changes."
+}
