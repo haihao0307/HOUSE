@@ -1,0 +1,12 @@
+{
+  "version": "0.2.0",
+  "baselineSHA256": "87ed9f2e1a4a668f8c85547a959694dab4be0c103e7bc43eb0b93b91f1c5b4ec",
+  "indexSHA256": "b8debabf848ce952020fb650e96d4a77999d5b65d4197b02480dd41f35e392d3",
+  "bytes": 2255377,
+  "runtimeVersion": {
+    "three": "0.180.0",
+    "fflate": "0.8.2"
+  },
+  "visualApproved": false,
+  "productionApproved": false
+}

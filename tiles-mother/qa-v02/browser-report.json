@@ -1,0 +1,688 @@
+{
+  "version": "0.2.0",
+  "publicURL": null,
+  "visualApproved": false,
+  "productionApproved": false,
+  "tests": [
+    {
+      "name": "entry HTTP 200",
+      "passed": true,
+      "detail": 200
+    },
+    {
+      "name": "workbench version",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "WebGL2 real context",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "all-format input",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "IndexedDB ready",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "procedural QA pan",
+      "passed": true,
+      "detail": "f993349d"
+    },
+    {
+      "name": "procedural QA cover",
+      "passed": true,
+      "detail": "a3c5d953"
+    },
+    {
+      "name": "procedural QA earthen",
+      "passed": true,
+      "detail": "0dc8b940"
+    },
+    {
+      "name": "procedural QA glazed",
+      "passed": true,
+      "detail": "b478c02f"
+    },
+    {
+      "name": "preview tile.GLB",
+      "passed": true,
+      "detail": {
+        "status": "ready",
+        "id": "8998bb65-ae88-426b-9f48-480b66abc205",
+        "kind": "model",
+        "meshes": 1,
+        "triangles": 4,
+        "vertices": 4,
+        "dimensions": [
+          1,
+          0.7,
+          0.9
+        ],
+        "unit": "m (glTF declared units)"
+      }
+    },
+    {
+      "name": "mesh present tile.GLB",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "preview tile-binary.fbx",
+      "passed": true,
+      "detail": {
+        "status": "ready",
+        "id": "d131b87d-17fd-47d1-aa0f-eebce7373695",
+        "kind": "model",
+        "meshes": 1,
+        "triangles": 4,
+        "vertices": 12,
+        "dimensions": [
+          1,
+          0.699999988079071,
+          0.9000000059604645
+        ],
+        "unit": "source units; uncalibrated"
+      }
+    },
+    {
+      "name": "mesh present tile-binary.fbx",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "preview stanford-bunny.fbx",
+      "passed": true,
+      "detail": {
+        "status": "ready",
+        "id": "454718ee-8b3a-492c-abc8-3d2a029ea529",
+        "kind": "model",
+        "meshes": 1,
+        "triangles": 30338,
+        "vertices": 91014,
+        "dimensions": [
+          50000,
+          49512.85095214844,
+          38731.195068359375
+        ],
+        "unit": "source units; uncalibrated"
+      }
+    },
+    {
+      "name": "FBX ASCII substantial mesh",
+      "passed": true,
+      "detail": 30338
+    },
+    {
+      "name": "preview tile.GLB",
+      "passed": true,
+      "detail": {
+        "status": "ready",
+        "id": "8998bb65-ae88-426b-9f48-480b66abc205",
+        "kind": "model",
+        "meshes": 1,
+        "triangles": 4,
+        "vertices": 4,
+        "dimensions": [
+          1,
+          0.7,
+          0.9
+        ],
+        "unit": "m (glTF declared units)"
+      }
+    },
+    {
+      "name": "model expands",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "reference orbit changed",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "reference zoom closer",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "real reference PNG bytes",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "reference canvas has visible content",
+      "passed": true,
+      "detail": [
+        0.9642916071067272,
+        2.166247695818209,
+        3.841403649089127
+      ]
+    },
+    {
+      "name": "reference restored to side panel",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "preview tile.obj",
+      "passed": true,
+      "detail": {
+        "status": "ready",
+        "id": "020e4afd-fad4-44b5-8dd9-e23630902d8f",
+        "kind": "model",
+        "meshes": 1,
+        "triangles": 4,
+        "vertices": 12,
+        "dimensions": [
+          1,
+          0.699999988079071,
+          0.9000000059604645
+        ],
+        "unit": "source units; uncalibrated"
+      }
+    },
+    {
+      "name": "preview tile.stl",
+      "passed": true,
+      "detail": {
+        "status": "ready",
+        "id": "570b343f-8f35-4685-ab79-7a013033b42d",
+        "kind": "model",
+        "meshes": 1,
+        "triangles": 4,
+        "vertices": 12,
+        "dimensions": [
+          1,
+          0.699999988079071,
+          0.9000000059604645
+        ],
+        "unit": "source units; uncalibrated"
+      }
+    },
+    {
+      "name": "preview tile.ply",
+      "passed": true,
+      "detail": {
+        "status": "ready",
+        "id": "b48b822e-5746-4a67-8837-2a016a57a7d2",
+        "kind": "model",
+        "meshes": 1,
+        "triangles": 4,
+        "vertices": 4,
+        "dimensions": [
+          1,
+          0.699999988079071,
+          0.9000000059604645
+        ],
+        "unit": "source units; uncalibrated"
+      }
+    },
+    {
+      "name": "preview tile.dae",
+      "passed": true,
+      "detail": {
+        "status": "ready",
+        "id": "577545c2-cdae-4646-a96e-aeb4c9a8a9d6",
+        "kind": "model",
+        "meshes": 1,
+        "triangles": 4,
+        "vertices": 12,
+        "dimensions": [
+          1,
+          0.699999988079071,
+          0.9000000059604645
+        ],
+        "unit": "source units; uncalibrated"
+      }
+    },
+    {
+      "name": "preview tile.3mf",
+      "passed": true,
+      "detail": {
+        "status": "ready",
+        "id": "d7ddf781-1bae-4785-ae24-507e36c80b26",
+        "kind": "model",
+        "meshes": 1,
+        "triangles": 4,
+        "vertices": 4,
+        "dimensions": [
+          1,
+          0.699999988079071,
+          0.9000000059604645
+        ],
+        "unit": "source units; uncalibrated"
+      }
+    },
+    {
+      "name": "preview tile.gltf",
+      "passed": true,
+      "detail": {
+        "status": "ready",
+        "id": "7e777fee-004a-453c-9312-b806cb33aa21",
+        "kind": "model",
+        "meshes": 1,
+        "triangles": 4,
+        "vertices": 4,
+        "dimensions": [
+          1,
+          0.7,
+          0.9
+        ],
+        "unit": "m (glTF declared units)"
+      }
+    },
+    {
+      "name": "folder paths retained",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "ZIP original and unpacked references retained",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "unsafe archive retained without traversal",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "unsafe archive notice shown",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "preview unknown.blend",
+      "passed": true,
+      "detail": {
+        "status": "saved",
+        "id": "969c9cf5-8d72-491a-85b5-c20ad4e80a3d",
+        "kind": "file"
+      }
+    },
+    {
+      "name": "preview malicious.html",
+      "passed": true,
+      "detail": {
+        "status": "saved",
+        "id": "fd4d253c-c9bf-4b7f-80f6-47d3aed4419a",
+        "kind": "text"
+      }
+    },
+    {
+      "name": "reference HTML remains inert",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "preview invalid.glb",
+      "passed": true,
+      "detail": {
+        "status": "error",
+        "id": "2369fc93-a66c-491d-8a89-76459502acf9",
+        "error": "Unexpected token 'h', \"this is del\"... is not valid JSON"
+      }
+    },
+    {
+      "name": "invalid model original retained",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "preview tile.GLB",
+      "passed": true,
+      "detail": {
+        "status": "ready",
+        "id": "8998bb65-ae88-426b-9f48-480b66abc205",
+        "kind": "model",
+        "meshes": 1,
+        "triangles": 4,
+        "vertices": 4,
+        "dimensions": [
+          1,
+          0.7,
+          0.9
+        ],
+        "unit": "m (glTF declared units)"
+      }
+    },
+    {
+      "name": "all references survive reload",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "preview tile.GLB",
+      "passed": true,
+      "detail": {
+        "status": "ready",
+        "id": "8998bb65-ae88-426b-9f48-480b66abc205",
+        "kind": "model",
+        "meshes": 1,
+        "triangles": 4,
+        "vertices": 4,
+        "dimensions": [
+          1,
+          0.7,
+          0.9
+        ],
+        "unit": "m (glTF declared units)"
+      }
+    },
+    {
+      "name": "reference notes survive reload",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "import leaves procedural core unchanged",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "export preserves false approvals",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "all references exported",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "SHA roundtrip tile.obj",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "SHA roundtrip model-with-assets/完整资料/notes.txt",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "SHA roundtrip invalid.glb",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "SHA roundtrip traversal.zip",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "SHA roundtrip stanford-bunny.fbx",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "SHA roundtrip tile.stl",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "SHA roundtrip tile.dae",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "SHA roundtrip model-with-assets.zip",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "SHA roundtrip 资料文件夹/tile.gltf",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "SHA roundtrip tile.GLB",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "SHA roundtrip unknown.blend",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "SHA roundtrip model-with-assets/完整资料/tile.gltf",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "SHA roundtrip tile.ply",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "SHA roundtrip materials.mtl",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "SHA roundtrip 资料文件夹/mesh.bin",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "SHA roundtrip tile-binary.fbx",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "SHA roundtrip tile.3mf",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "SHA roundtrip 资料文件夹/notes.txt",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "SHA roundtrip model-with-assets/完整资料/mesh.bin",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "SHA roundtrip malicious.html",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "collaboration import restores all files",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "import metadata tile.obj",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "import metadata model-with-assets/完整资料/notes.txt",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "import metadata invalid.glb",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "import metadata traversal.zip",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "import metadata stanford-bunny.fbx",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "import metadata tile.stl",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "import metadata tile.dae",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "import metadata model-with-assets.zip",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "import metadata 资料文件夹/tile.gltf",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "import metadata tile.GLB",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "import metadata unknown.blend",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "import metadata model-with-assets/完整资料/tile.gltf",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "import metadata tile.ply",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "import metadata materials.mtl",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "import metadata 资料文件夹/mesh.bin",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "import metadata tile-binary.fbx",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "import metadata tile.3mf",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "import metadata 资料文件夹/notes.txt",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "import metadata model-with-assets/完整资料/mesh.bin",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "import metadata malicious.html",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "imported project approval stays false",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "legacy V0.1 project accepted",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "preview tile.GLB",
+      "passed": true,
+      "detail": {
+        "status": "ready",
+        "id": "8998bb65-ae88-426b-9f48-480b66abc205",
+        "kind": "model",
+        "meshes": 1,
+        "triangles": 4,
+        "vertices": 4,
+        "dimensions": [
+          1,
+          0.7,
+          0.9
+        ],
+        "unit": "m (glTF declared units)"
+      }
+    },
+    {
+      "name": "preview tile.GLB",
+      "passed": true,
+      "detail": {
+        "status": "ready",
+        "id": "533f5000-e207-4a36-beec-6ee5635610ad",
+        "kind": "model",
+        "meshes": 1,
+        "triangles": 4,
+        "vertices": 4,
+        "dimensions": [
+          1,
+          0.7,
+          0.9
+        ],
+        "unit": "m (glTF declared units)"
+      }
+    },
+    {
+      "name": "mobile no horizontal overflow",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "mobile expanded viewer fits",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no uncaught page errors",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "name": "no console errors",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "name": "no failed requests",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "name": "no reference data sent to external services",
+      "passed": true,
+      "detail": []
+    }
+  ],
+  "pageErrors": [],
+  "consoleErrors": [],
+  "failedRequests": [],
+  "unexpectedNetworkRequests": [],
+  "allPassed": true,
+  "testedURL": "http://127.0.0.1:34985/site/index.html",
+  "browserVersion": "151.0.7922.173"
+}
