@@ -5,7 +5,6 @@ on:
     branches: [feature/tiles-mother-v0.1-workbench]
     paths:
       - .github/workflows/tiles-mother-v01-preview.yml
-      - tiles-mother/transport/**
       - tiles-mother/tools/**
       - tiles-mother/index.html
   workflow_dispatch:
@@ -28,74 +27,75 @@ jobs:
           ref: ${{ github.sha }}
           fetch-depth: 1
 
-      - name: Materialize and verify exact standalone HTML
+      - name: Verify exact standalone HTML and JavaScript syntax
         shell: bash
         run: |
           set -euo pipefail
           python3 - <<'PY'
           from pathlib import Path
-          import base64, gzip, hashlib, re
-          root=Path('tiles-mother')
-          expected='87ed9f2e1a4a668f8c85547a959694dab4be0c103e7bc43eb0b93b91f1c5b4ec'
-          checks=['493b953d1285880286b5cef1fa2d078089fb26c7e71e0882ae9118d4245c25b7','5aba01427f45df55e01217c909a57a48b51a57837131ec707bae6f7fc14ad1e5','b47ab505b323b508722b4f618a8500d86f21182113f27afe886eb7b8094e7747','ef9d913900f4e27758f17505771cf09bef5b9d1157b941239cbc155b63c85709']
-          parts=[]
-          for i, digest in enumerate(checks,1):
-              path=root/'transport'/f'part-{i:02}.b64'
-              data=path.read_bytes()
-              # Exact, audited repair of a transport transcription error. It cannot alter the locked HTML.
-              blob=hashlib.sha1(b'blob '+str(len(data)).encode()+b'\0'+data).hexdigest()
-              if i==2 and blob=='ac2358697a6f59d20e86fda18db660b71ac40d5f':
-                  s=data.decode('ascii');needle='zv3vbRn'
-                  a=s.index(needle)+len(needle);b=s.index(needle,a)+len(needle)
-                  s=(s[:a]+s[b:]).replace('x339rr46','x339r46').replace('YO4mb7df00','YO4XZ4fff00')
-                  data=s.encode('ascii')
-                  assert hashlib.sha256(data).hexdigest()==digest
-                  path.write_bytes(data)
-              assert hashlib.sha256(data).hexdigest()==digest,(path,hashlib.sha256(data).hexdigest())
-              parts.append(data.strip())
-          html=gzip.decompress(base64.b64decode(b''.join(parts),validate=True))
-          assert len(html)==77348 and hashlib.sha256(html).hexdigest()==expected
-          (root/'index.html').write_bytes(html)
+          import hashlib, re
+          html=Path('tiles-mother/index.html').read_bytes()
+          assert len(html)==77348
+          assert hashlib.sha256(html).hexdigest()=='87ed9f2e1a4a668f8c85547a959694dab4be0c103e7bc43eb0b93b91f1c5b4ec'
           for i,js in enumerate(re.findall(r'<script[^>]*>([\s\S]*?)</script>',html.decode('utf-8'))):
               Path(f'/tmp/tiles-script-{i}.js').write_text(js,encoding='utf-8')
-          print('verified',len(html),expected)
           PY
           for script in /tmp/tiles-script-*.js; do node --check "$script"; done
 
-      - name: Preserve readable source on this branch only
-        shell: bash
-        env:
-          BRANCH: feature/tiles-mother-v0.1-workbench
+      - name: Install browser dependencies and Chinese system fonts
         run: |
-          set -euo pipefail
-          test "$(git ls-remote origin "refs/heads/$BRANCH" | cut -f1)" = "$GITHUB_SHA"
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add tiles-mother/index.html tiles-mother/transport/part-02.b64
-          if ! git diff --cached --quiet; then
-            git commit -m 'feat(tiles-mother): materialize hash-verified standalone V0.1 studio'
-            git push origin "HEAD:refs/heads/$BRANCH"
-          fi
-          echo "SOURCE_HEAD=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
-
-      - name: Install browser test dependencies
-        run: python3 -m pip install 'playwright>=1.50,<2' 'pillow>=10,<13'
+          sudo apt-get update -qq
+          sudo apt-get install -y fonts-noto-cjk
+          fc-cache -f
+          python3 -m pip install 'playwright>=1.50,<2' 'pillow>=10,<13'
 
       - name: Test real WebGL2, seeds, mobile layout and reference persistence
         run: python3 tiles-mother/tools/browser_qa.py
 
-      - name: Preserve truthful browser report on this branch only
-        if: always() && env.SOURCE_HEAD != ''
+      - name: Verify the public experimental preview returns exact tested HTML
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib,json,os,time,urllib.request
+          sha=os.environ['GITHUB_SHA']
+          url=f'https://raw.githack.com/haihao0307/HOUSE/{sha}/tiles-mother/index.html'
+          expected='87ed9f2e1a4a668f8c85547a959694dab4be0c103e7bc43eb0b93b91f1c5b4ec'
+          report={'url':url,'sourceCommit':sha,'scope':'HTTP readback and SHA256. WebGL and UI tests run against the identical HTML on the runner localhost.','thirdPartyPreview':True,'githubPagesChanged':False,'visualApproved':False,'productionApproved':False,'verified':False}
+          try:
+              for attempt in range(3):
+                  try:
+                      with urllib.request.urlopen(url,timeout=40) as response:
+                          data=response.read();report.update(httpStatus=response.status,contentType=response.headers.get('Content-Type'),bytes=len(data),sha256=hashlib.sha256(data).hexdigest())
+                      assert report['httpStatus']==200 and report['sha256']==expected,report
+                      assert 'text/html' in report['contentType'],report
+                      report['verified']=True
+                      break
+                  except Exception as error:
+                      report['lastError']=str(error)
+                      if attempt==2: raise
+                      time.sleep(5)
+          finally:
+              Path('tiles-mother/qa/public-preview.json').write_text(json.dumps(report,indent=2),encoding='utf-8')
+              print(json.dumps(report,indent=2))
+          PY
+
+      - name: Preserve truthful QA and preview report on this branch only
+        if: always()
         shell: bash
         env:
           BRANCH: feature/tiles-mother-v0.1-workbench
         run: |
           set -euo pipefail
-          test -s tiles-mother/qa/browser-report.json || exit 0
-          test "$(git ls-remote origin "refs/heads/$BRANCH" | cut -f1)" = "$SOURCE_HEAD"
-          git add tiles-mother/qa/browser-report.json
+          test -d tiles-mother/qa || exit 0
+          test "$(git ls-remote origin "refs/heads/$BRANCH" | cut -f1)" = "$GITHUB_SHA"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          for file in tiles-mother/qa/browser-report.json tiles-mother/qa/public-preview.json; do
+            if test -f "$file"; then git add "$file"; fi
+          done
           if ! git diff --cached --quiet; then
-            git commit -m 'test(tiles-mother): record actual browser QA without visual approval'
+            git commit -m 'test(tiles-mother): record browser and public preview verification'
             git push origin "HEAD:refs/heads/$BRANCH"
           fi
 
@@ -115,10 +115,12 @@ jobs:
         shell: bash
         run: |
           echo '## Tiles Mother experimental workbench' >> "$GITHUB_STEP_SUMMARY"
-          echo 'Only feature/tiles-mother-v0.1-workbench was written. Main, Brick Mother and Pages were not modified.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Only feature/tiles-mother-v0.1-workbench was written. Main, Brick Mother, release and Pages were not modified.' >> "$GITHUB_STEP_SUMMARY"
           echo 'visualApproved=false; productionApproved=false. Experimental dimensions await user references.' >> "$GITHUB_STEP_SUMMARY"
-          if test -f tiles-mother/qa/browser-report.json; then
-            echo '```json' >> "$GITHUB_STEP_SUMMARY"
-            cat tiles-mother/qa/browser-report.json >> "$GITHUB_STEP_SUMMARY"
-            echo '```' >> "$GITHUB_STEP_SUMMARY"
-          fi
+          for file in tiles-mother/qa/browser-report.json tiles-mother/qa/public-preview.json; do
+            if test -f "$file"; then
+              echo '```json' >> "$GITHUB_STEP_SUMMARY"
+              cat "$file" >> "$GITHUB_STEP_SUMMARY"
+              echo '```' >> "$GITHUB_STEP_SUMMARY"
+            fi
+          done
