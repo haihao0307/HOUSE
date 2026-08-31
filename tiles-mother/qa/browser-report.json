@@ -31,7 +31,7 @@
   "families": {
     "pan": {
       "version": "0.1.0",
-      "at": "2026-08-31T05:09:09.782Z",
+      "at": "2026-08-31T05:17:44.686Z",
       "profile": "pan",
       "controls": {
         "length": 32,
@@ -108,14 +108,14 @@
       "visualApproved": false,
       "productionApproved": false,
       "canvasRGBStdDev": [
-        52.31854352061331,
-        48.29658429199409,
-        48.91713445960907
+        52.613928597184696,
+        48.53570354323035,
+        49.1604985320292
       ]
     },
     "cover": {
       "version": "0.1.0",
-      "at": "2026-08-31T05:09:11.598Z",
+      "at": "2026-08-31T05:17:46.554Z",
       "profile": "cover",
       "controls": {
         "length": 30,
@@ -192,14 +192,14 @@
       "visualApproved": false,
       "productionApproved": false,
       "canvasRGBStdDev": [
-        52.168392995618554,
-        48.46035510710406,
-        48.326722502153714
+        52.48984828961565,
+        48.719617448021985,
+        48.59702096322453
       ]
     },
     "earthen": {
       "version": "0.1.0",
-      "at": "2026-08-31T05:09:12.514Z",
+      "at": "2026-08-31T05:17:47.451Z",
       "profile": "earthen",
       "controls": {
         "length": 28,
@@ -276,14 +276,14 @@
       "visualApproved": false,
       "productionApproved": false,
       "canvasRGBStdDev": [
-        36.06646092496126,
-        62.95274657468372,
-        73.1589108370651
+        36.33270560810414,
+        62.868266895880986,
+        73.03599768168837
       ]
     },
     "glazed": {
       "version": "0.1.0",
-      "at": "2026-08-31T05:09:13.550Z",
+      "at": "2026-08-31T05:17:48.503Z",
       "profile": "glazed",
       "controls": {
         "length": 20,
@@ -360,9 +360,9 @@
       "visualApproved": false,
       "productionApproved": false,
       "canvasRGBStdDev": [
-        66.53197422316288,
-        48.118254172131394,
-        54.85998826598308
+        66.71200804351244,
+        48.35893702502444,
+        55.054135016001396
       ]
     }
   },

@@ -1,0 +1,11 @@
+{
+  "url": "https://raw.githack.com/haihao0307/HOUSE/575dbcc8779efd3aec77fe67c4b775fb9feb5025/tiles-mother/index.html",
+  "sourceCommit": "575dbcc8779efd3aec77fe67c4b775fb9feb5025",
+  "scope": "HTTP readback and SHA256. WebGL and UI tests run against the identical HTML on the runner localhost.",
+  "thirdPartyPreview": true,
+  "githubPagesChanged": false,
+  "visualApproved": false,
+  "productionApproved": false,
+  "verified": false,
+  "lastError": "HTTP Error 403: Forbidden"
+}
