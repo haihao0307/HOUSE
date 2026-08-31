@@ -1,0 +1,466 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#eeede7">
+<meta name="description" content="Tiles Mother 瓦片与瓷砖程序化工作台。参考图、三维母体、独立种子与可携带的协作记录。">
+<title>Tiles Mother · 瓦作与瓷砖实验室</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%232c3d39'/%3E%3Cpath d='M7 11q9 13 18 0v5q-9 13-18 0z' fill='%23e8dfc7'/%3E%3C/svg%3E">
+<style>
+:root{--bg:#eeede7;--panel:#f8f7f2;--ink:#27352f;--sub:#6b746d;--line:#d9ddd3;--green:#3f6658;--accent:#ad7954;--pale:#e7ede4;--warn:#906425;--radius:13px;--font:Inter,"Segoe UI","PingFang SC","Microsoft YaHei",system-ui,sans-serif;color-scheme:light}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:13px/1.5 var(--font)}button,input,select,textarea{font:inherit;color:inherit}button{cursor:pointer;border:1px solid var(--line);background:var(--panel);border-radius:7px;padding:7px 11px;transition:background .15s,border-color .15s}button:hover{background:var(--pale);border-color:#9baa9d}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,summary:focus-visible{outline:2px solid var(--green);outline-offset:2px}button.active{background:var(--green);color:#fff;border-color:var(--green)}button.primary{background:var(--green);color:white;border-color:var(--green)}button.small{padding:4px 8px;font-size:11px}button.ghost{background:transparent;border-color:transparent}button.danger{color:#9b5344}input[type=range]{accent-color:var(--green);width:100%;height:14px;margin:6px 0 1px;cursor:pointer}input[type=number],input[type=text],input[type=url],select,textarea{border:1px solid var(--line);background:#fffef9;border-radius:6px;padding:7px 8px;min-width:0}select{max-width:100%}textarea{resize:vertical;line-height:1.65}h1,h2,h3,p{margin:0}small,.muted{color:var(--sub)}.eyebrow{font-size:10px;letter-spacing:1.6px;text-transform:uppercase;color:var(--sub)}.row{display:flex;align-items:center;gap:8px}.spread{justify-content:space-between}.wrap{flex-wrap:wrap}.hidden{display:none!important}.badge{display:inline-flex;align-items:center;gap:6px;font-size:11px;background:var(--pale);padding:4px 8px;border-radius:5px;white-space:nowrap}.badge:before{content:"";width:5px;height:5px;border-radius:50%;background:#628775}.badge.pending{background:#f1e8d7;color:#87622f}.badge.pending:before{background:#b68a48}.topbar{min-height:74px;display:flex;align-items:center;justify-content:space-between;gap:15px;padding:14px 24px;border-bottom:1px solid var(--line);background:var(--panel)}.brand{display:flex;align-items:center;gap:13px;min-width:290px}.brand-icon{width:39px;height:39px;border:1px solid #aeb8aa;border-radius:10px;display:grid;place-items:center;background:#e5eadf}.brand-icon svg{width:29px}.brand h1{font-size:20px;letter-spacing:2px;font-weight:650;line-height:1.1}.brand p{font-size:11px;letter-spacing:1.5px;color:var(--sub);margin-top:5px}.top-actions{display:flex;align-items:center;gap:8px}.shell{display:grid;grid-template-columns:252px minmax(300px,1fr) 310px;gap:14px;padding:16px 18px 0;max-width:2200px;margin:auto;height:calc(100dvh - 110px);min-height:660px}.rail{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);overflow:auto;scrollbar-width:thin;scrollbar-color:#bdc5b8 transparent}.section{padding:17px 17px 15px;border-bottom:1px solid var(--line)}.section:last-child{border-bottom:0}.section-title{font-size:12px;font-weight:650;margin:3px 0 13px}.families{display:grid;grid-template-columns:1fr 1fr;gap:7px}.family{padding:10px 8px;text-align:left;border-radius:9px;display:flex;flex-direction:column;gap:4px}.family svg{width:37px;height:23px;margin-bottom:4px}.family span{font-weight:600;font-size:12px}.family small{font-size:10px;color:inherit;opacity:.7}.family.active{background:#e0e9dc;color:var(--ink);border-color:#94a891}.control{margin:11px 0}.control label{display:flex;justify-content:space-between;gap:5px;font-size:12px}.control output{color:var(--green);font-variant-numeric:tabular-nums}.inline-seed{display:grid;grid-template-columns:1fr auto;gap:7px}.inline-seed input{width:100%;font-family:ui-monospace,monospace;font-size:13px}.explain{font-size:11px;line-height:1.75;color:var(--sub)}.control-group>summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;font-weight:600}.control-group>summary:after{content:"＋";font-size:13px;color:var(--sub)}.control-group[open]>summary:after{content:"−"}.seed-grid{display:grid;grid-template-columns:1fr;gap:6px;margin-top:13px}.seed-row{display:grid;grid-template-columns:52px 1fr;gap:6px;align-items:center;font-size:11px}.seed-row input{width:100%;padding:5px 6px;font:11px ui-monospace,monospace}.middle{min-width:0;display:flex;flex-direction:column;gap:12px}.viewer{position:relative;flex:1;min-height:400px;background:#e2e4dd;border:1px solid #cfd5ca;border-radius:var(--radius);overflow:hidden}.viewer-head{position:absolute;z-index:2;top:18px;left:20px;right:18px;pointer-events:none;display:flex;justify-content:space-between;gap:10px}.specimen-title{font-size:20px;font-weight:500;letter-spacing:2px}.specimen-caption{font-size:11px;color:#778075;margin-top:4px;letter-spacing:.3px}.viewer-head button{pointer-events:auto}.viewer-chip{position:absolute;top:86px;left:20px;z-index:2;font-size:10px;color:#677763;letter-spacing:.4px}.canvas-wrap{position:absolute;inset:0}#gl{display:block;width:100%;height:100%;touch-action:none;outline:none}.viewer-foot{position:absolute;bottom:18px;left:20px;right:20px;display:flex;justify-content:space-between;align-items:flex-end;gap:12px;pointer-events:none}.view-controls{display:flex;gap:5px;pointer-events:auto;flex-wrap:wrap;max-width:74%}.view-controls button{background:#f7f8f0db;backdrop-filter:blur(6px);font-size:11px;padding:6px 9px}.view-controls button.active{background:var(--green);color:white}.orientation{font:10px ui-monospace,monospace;color:#71806c;text-align:right}.orientation strong{display:block;font-size:13px;font-weight:500}.overlay-message{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#e8eae2f0;gap:12px;text-align:center;padding:40px;z-index:5}.spinner{width:24px;height:24px;border:2px solid #b8c4b1;border-top-color:var(--green);border-radius:100%;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}.toolbar{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;background:var(--panel);padding:10px 12px;border:1px solid var(--line);border-radius:10px}.segmented{display:flex;gap:3px}.segmented button{font-size:11px;padding:6px 9px;border-color:transparent;background:transparent}.segmented button.active{background:#e0e9dc;color:var(--ink);border-color:#b6c3b0}.toolbar select{font-size:11px;padding:5px 7px}.dna-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.dna-card{border:1px solid var(--line);border-radius:9px;padding:11px 13px;background:var(--panel);cursor:pointer;position:relative;overflow:hidden}.dna-card:before{content:"";position:absolute;top:0;bottom:0;left:0;width:3px;background:#b8c4b1}.dna-card.selected{border-color:#829a7a;background:#f0f3e9}.dna-card.selected:before{background:var(--green)}.dna-card strong{font:12px ui-monospace,monospace;display:block}.dna-card small{font-size:10px}.dna-card .eyebrow{font-size:9px;letter-spacing:1px;margin-bottom:6px}.work-caption{font-size:11px;color:var(--sub);padding:0 3px 2px}.reference-rail{display:flex;flex-direction:column;min-height:0}.reference-rail .section{flex-shrink:0}.dropzone{border:1px dashed #aebca5;border-radius:10px;background:#f0f3e9;text-align:center;padding:20px 10px;cursor:pointer;transition:.15s}.dropzone:hover,.dropzone.drag{background:#e0ebd9;border-color:var(--green)}.dropzone svg{width:29px;height:29px;stroke:#698363;fill:none;stroke-width:1.3;margin-bottom:7px}.dropzone strong{display:block;font-size:12px;font-weight:500}.dropzone small{display:block;font-size:10px;margin-top:5px}.ref-count{font-size:10px;color:var(--sub)}.reference-content{padding:0 17px 17px;overflow:auto;flex:1;min-height:150px;scrollbar-width:thin}.empty{padding:24px 8px;text-align:center;color:var(--sub);font-size:11px;line-height:1.9}.ref-thumbs{display:flex;gap:6px;overflow:auto;padding:12px 0}.thumb{width:55px;min-width:55px;height:55px;padding:2px;border-radius:6px;overflow:hidden}.thumb img{width:100%;height:100%;object-fit:cover;border-radius:3px}.thumb.active{background:#7e9a70;border-color:#7e9a70}.ref-view{display:block;width:100%;padding:0;border:1px solid var(--line);background:#e7e8e1;border-radius:8px;overflow:hidden;min-height:100px}.ref-view img{display:block;width:100%;max-height:310px;object-fit:contain}.ref-meta{margin:11px 0;display:flex;gap:5px;justify-content:space-between;font-size:10px;color:var(--sub)}.note-label{display:block;font-size:11px;color:var(--sub);margin:10px 0 4px}.reference-content input,.reference-content select,.reference-content textarea{width:100%;font-size:11px}.swatches{display:flex;gap:4px;margin-top:8px;height:25px}.swatch{flex:1;border-radius:4px;border:1px solid #00000015}.hint{border-top:1px solid var(--line);padding:12px 17px;background:#f2f2e9;font-size:10px;line-height:1.75;color:#788170;border-radius:0 0 var(--radius) var(--radius)}.statusbar{display:flex;justify-content:space-between;gap:10px;padding:9px 24px;font-size:10px;color:#7b8474;max-width:2200px;margin:auto;font-variant-numeric:tabular-nums}.statusbar span:last-child{text-align:right}.toast{position:fixed;bottom:35px;left:50%;transform:translateX(-50%);max-width:min(650px,90vw);padding:11px 20px;background:#2a3c30;color:#f5f8ed;border-radius:9px;box-shadow:0 5px 25px #20301b25;z-index:30;font-size:12px;white-space:pre-line}.modal{position:fixed;inset:0;background:#1d2b2266;z-index:20;display:flex;align-items:center;justify-content:center;padding:28px;backdrop-filter:blur(4px)}.dialog{background:var(--panel);border:1px solid #c7d0c0;border-radius:16px;width:min(820px,100%);max-height:90dvh;overflow:auto;padding:25px;box-shadow:0 15px 80px #1a301833}.dialog h2{font-size:20px;font-weight:550;margin-bottom:5px}.dialog h3{font-size:13px;margin:20px 0 7px}.dialog p{font-size:12px;line-height:1.9;color:var(--sub)}.dialog .close{float:right}.knowledge-flow{display:grid;grid-template-columns:repeat(6,1fr);gap:7px;margin:20px 0}.knowledge-flow div{padding:13px 7px;text-align:center;border:1px solid var(--line);border-radius:8px;font-size:11px;background:#edf0e5}.knowledge-flow small{display:block;font-size:9px;margin-top:4px}.contract{font:11px/1.65 ui-monospace,monospace;background:#e9ede3;padding:14px;border-radius:9px;overflow:auto;white-space:pre-wrap}.evidence-warning{padding:10px 12px;background:#f0eadb;border-left:2px solid #b68a48;border-radius:4px;font-size:11px;line-height:1.85;color:#836a42;margin:15px 0}.qa-line{padding:8px 0;border-bottom:1px solid var(--line);font-size:12px;display:flex;justify-content:space-between;gap:12px}.qa-line strong{color:#3e7250;font-size:11px}.qa-line strong.fail{color:#a14b39}.lightbox-dialog{max-width:96vw;max-height:95dvh;width:1100px;background:var(--panel);padding:12px;border-radius:12px}.lightbox-stage{height:min(76dvh,800px);overflow:auto;background:#e4e5df;display:flex;align-items:center;justify-content:center;margin-top:10px}.lightbox-stage img{max-width:100%;max-height:100%;object-fit:contain}.lightbox-stage.original{display:block}.lightbox-stage.original img{max-width:none;max-height:none}.copyright{font-size:10px;color:var(--sub);margin-top:15px}.footer-note{font-size:10px;line-height:1.7;color:var(--sub);padding-top:8px}
+@media(min-width:1700px){.shell{grid-template-columns:280px minmax(300px,1fr) 345px}.section{padding:20px}.control{margin:15px 0}.family{padding:13px 10px}.reference-content{padding:0 20px 20px}.viewer-head{top:24px;left:28px}.specimen-title{font-size:25px}.viewer-chip{top:100px;left:28px}}
+@media(max-width:1150px){.shell{grid-template-columns:222px minmax(260px,1fr) 260px;gap:10px;padding:12px 12px 0}.section{padding:13px}.reference-content{padding:0 13px 13px}.topbar{padding:13px 18px}.brand{min-width:245px}.brand h1{font-size:18px}.badge{font-size:10px}.top-actions{gap:4px}.top-actions button{font-size:11px;padding:7px 8px}.viewer-head{left:15px;right:12px}.specimen-title{font-size:17px}.view-controls{max-width:100%}.orientation{display:none}.viewer-foot{left:12px;right:12px}.toolbar{padding:8px}.segmented button{padding:6px;font-size:10px}.dna-card{padding:9px}.dna-card strong{font-size:10px}.work-caption{font-size:10px}}
+@media(max-width:900px){.topbar{align-items:flex-start;flex-wrap:wrap;gap:10px}.top-actions{width:100%;justify-content:flex-end}.topbar .badge{margin-left:auto}.shell{height:auto;min-height:0;grid-template-columns:220px minmax(0,1fr);grid-template-rows:auto auto}.middle{grid-column:2;grid-row:1}.viewer{min-height:570px}.reference-rail{grid-column:1/-1;max-height:none;min-height:280px;display:grid;grid-template-columns:250px 1fr}.reference-rail>.section{border-bottom:0;border-right:1px solid var(--line)}.reference-content{min-height:180px;max-height:600px}.hint{grid-column:1/-1}.rail:not(.reference-rail){max-height:800px}.statusbar{flex-wrap:wrap}.knowledge-flow{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:600px){.topbar{padding:12px}.brand{min-width:200px;gap:9px}.brand h1{font-size:17px;letter-spacing:1.6px}.brand p{font-size:10px;letter-spacing:1px}.brand-icon{width:33px;height:33px}.topbar .badge{font-size:9px}.top-actions{justify-content:space-between;gap:4px}.top-actions button{font-size:10px;padding:7px 8px}.shell{display:flex;flex-direction:column;padding:10px 10px 0;gap:10px}.middle{order:0}.control-rail{order:1;max-height:none!important}.reference-rail{order:2;display:block}.viewer{min-height:440px}.viewer-head{top:14px;left:14px}.specimen-title{font-size:18px}.viewer-chip{top:72px;left:14px}.viewer-foot{bottom:12px}.dna-strip{gap:6px}.dna-card{padding:9px 10px}.dna-card strong{font-size:10px}.work-caption{line-height:1.65;padding:0 4px}.families{grid-template-columns:repeat(4,1fr)}.family{padding:9px 6px}.family span{font-size:11px}.family small{font-size:9px}.control-rail .section{padding:14px}.control-rail .section.controls-section{display:grid;grid-template-columns:1fr 1fr;column-gap:24px}.control-rail .section.controls-section .section-title{grid-column:1/-1}.control{margin:7px 0}.reference-rail>.section{border-right:0;border-bottom:1px solid var(--line)}.reference-content{max-height:none}.dropzone{padding:16px}.modal{padding:12px}.dialog{padding:18px}.statusbar{padding:10px 14px}.statusbar span:last-child{text-align:left}.top-actions .secondary-text{display:none}.knowledge-flow{gap:5px}.knowledge-flow div{padding:11px 6px}}
+</style>
+</head>
+<body>
+<header class="topbar">
+ <div class="brand"><div class="brand-icon"><svg viewBox="0 0 40 36" fill="none" aria-hidden="true"><path d="M5 10q15 18 30 0v6Q20 35 5 16z" stroke="#3f6658" stroke-width="1.5"/><path d="M5 10l5-5q10 12 20 0l5 5M10 5v5m20-5v5" stroke="#3f6658" stroke-width="1.2"/></svg></div><div><h1>TILES MOTHER</h1><p>瓦作与瓷砖实验室</p></div></div>
+ <span class="badge pending">V0.1 · 参考待校准</span>
+ <nav class="top-actions" aria-label="工作台操作"><button id="knowledgeBtn">字段知识</button><button id="qaBtn">检查生成</button><button id="importBtn">载入记录</button><button class="primary" id="exportBtn">保存协作记录</button></nav>
+</header>
+<main class="shell">
+<aside class="rail control-rail" aria-label="母体参数">
+ <section class="section"><div class="eyebrow">01 / Tile family</div><h2 class="section-title">选择母体</h2><div class="families" id="families"></div><p class="explain" style="margin-top:11px">各母体分别保留参数。当前为形体实验预设，等待你的实物资料校准。</p></section>
+ <section class="section"><div class="row spread"><h2 class="section-title" style="margin-bottom:9px">随机种子</h2><button id="resetProfile" class="ghost small">恢复本母体</button></div><div class="inline-seed"><input id="masterSeed" type="number" min="1" max="4294967295" step="1" aria-label="主种子"><button id="newSeed" title="生成新主种子">换一组</button></div><p class="explain" style="margin-top:8px">同参数、同种子可复现。颜色与微细节独立变化。</p></section>
+ <section class="section controls-section"><h2 class="section-title">形体 <small>单位：厘米</small></h2><div id="shapeControls" style="display:contents"></div></section>
+ <section class="section controls-section"><h2 class="section-title">材质与岁月痕迹</h2><div id="materialControls" style="display:contents"></div></section>
+ <section class="section"><details class="control-group"><summary>独立种子与色系</summary><label class="note-label" for="palette">母体色系</label><select id="palette" style="width:100%"><option value="grey">青灰陶胎</option><option value="red">暖红陶胎</option><option value="green">青绿釉</option><option value="ivory">米白釉</option></select><div class="seed-grid" id="seedGrid"></div><p class="explain" style="margin-top:10px">形体、扭曲、结构和破损参与几何；颜色、风化、微细节只更新表面。主种子变化时重新派生各层。</p></details></section>
+</aside>
+<section class="middle" aria-label="三维观察区">
+ <div class="viewer" id="viewer">
+  <div class="canvas-wrap"><canvas id="gl" tabindex="0" aria-label="三维瓦片。拖动旋转，滚轮缩放，右键平移，双击归位。"></canvas></div>
+  <div class="viewer-head"><div><div class="eyebrow" id="familyCode">TM / ROOF / PAN</div><h2 class="specimen-title" id="specimenTitle">青灰板瓦</h2><p class="specimen-caption" id="specimenCaption">程序化薄壳 · 独立陶胎 · 实体厚度</p></div><div><button id="fullscreen" class="small" title="放大观察区">展开</button></div></div>
+  <div class="viewer-chip" id="specimenMeasure"></div>
+  <div class="viewer-foot"><div class="view-controls"><button data-view="perspective" class="active">自由观察</button><button data-view="top">正面</button><button data-view="side">侧面</button><button data-view="bottom">背面</button><button id="resetView">归位</button><button id="spinBtn">旋转</button><button id="captureBtn">截图</button></div><div class="orientation"><strong id="scaleLabel">1 单位 = 1 米</strong><span>拖动旋转 · 滚轮放大</span></div></div>
+  <div class="overlay-message" id="loading"><div class="spinner"></div><span>正在构建第一块瓦片</span></div>
+  <div class="overlay-message hidden" id="fatal"><strong>三维预览未能启动</strong><p id="fatalText"></p><button onclick="location.reload()">重新打开</button><small>参考图与工作记录仍可使用。</small></div>
+ </div>
+ <div class="toolbar"><div class="segmented" id="layoutButtons"><button data-layout="single" class="active">单块精看</button><button data-layout="trio">同母体三变体</button></div><div class="row"><label for="channel" class="eyebrow" style="letter-spacing:.3px">查看</label><select id="channel"><option value="final">完整材质</option><option value="source">基础形体</option><option value="albedo">原色</option><option value="normal">法线</option><option value="cavity">孔洞事件</option><option value="roughness">粗糙度</option><option value="weather">风化遮罩</option><option value="macro">宏观色域</option><option value="meso">中观纹理</option></select></div></div>
+ <div class="dna-strip" id="dnaCards"></div><p class="work-caption" id="viewHint">独立实体几何，表面由字段生成。参考照片仅用于对照，不贴到模型上。</p>
+</section>
+<aside class="rail reference-rail" aria-label="参考资料">
+ <section class="section"><div class="row spread"><div><div class="eyebrow">02 / Reference desk</div><h2 class="section-title" style="margin-bottom:12px">把参考图放在这里</h2></div><span class="ref-count" id="refCount">0 张</span></div><div class="dropzone" id="dropzone" role="button" tabindex="0" aria-label="添加参考图片"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="4" y="6" width="24" height="21" rx="3"/><path d="m5 24 7-8 5 5 5-7 6 7M16 2v10m-4-4 4 4 4-4"/></svg><strong>点击添加，或把图片拖进来</strong><small>原图保留 · 可多选 · 可粘贴截图</small></div><input id="refFiles" type="file" accept="image/png,image/jpeg,image/webp" multiple hidden></section>
+ <div class="reference-content"><div id="emptyRefs" class="empty">先放一张瓦片或瓷砖的照片。<br>正面、背面、侧面与断口都可以。<br><br>有尺子或尺寸说明，<br>就能逐步校准厚度和弧度。</div><div id="refEditor" class="hidden"><div class="ref-thumbs" id="refThumbs"></div><button class="ref-view" id="enlargeRef" title="放大查看原图"><img id="activeRefImg" alt="当前参考图片"></button><div class="ref-meta"><span id="refDimensions"></span><span>点击图片放大</span></div><label class="note-label" for="refTitle">图片名称</label><input id="refTitle" type="text" maxlength="160"><label class="note-label" for="refType">参考类别</label><select id="refType"><option value="pan">板瓦</option><option value="cover">筒瓦</option><option value="earthen">素烧地砖</option><option value="glazed">釉面瓷砖</option><option value="unknown">其他 / 待判断</option></select><label class="note-label" for="refSource">出处 / 地区 / 年代</label><input id="refSource" type="text" maxlength="500" placeholder="照实填写，未知可留空"><label class="note-label" for="refNotes">我们要观察和修改什么？</label><textarea id="refNotes" rows="5" maxlength="6000" placeholder="例如：凹面更深；边缘更薄；背面有布纹；颜色偏冷；长32厘米……"></textarea><div class="row spread" style="margin-top:11px"><span class="badge pending">证据待核对</span><button class="small danger" id="deleteRef">移除此图</button></div></div></div>
+ <div class="hint" id="storageHint">图片和笔记保存在此浏览器，不会自动发送到对话。用“保存协作记录”带上原图和参数，再发到聊天里继续学习。请保留原始资料。</div>
+</aside>
+</main>
+<footer class="statusbar"><span id="buildStatus">正在初始化</span><span id="saveStatus">本地记录加载中</span><span>人工视觉批准：false · 生产批准：false</span></footer>
+<div id="toast" class="toast hidden" role="status"></div>
+<input id="projectFile" type="file" accept="application/json,.json" hidden>
+<div class="modal hidden" id="knowledgeModal" role="dialog" aria-modal="true" aria-labelledby="knowledgeTitle"><div class="dialog"><button class="close small" data-close="knowledgeModal">关闭</button><div class="eyebrow">Knowledge / V1.0</div><h2 id="knowledgeTitle">从砖母体，延伸到瓦作</h2><p>已读取并校验你提供的 PROCEDURAL_FIELD_KNOWLEDGE_MINI_V1.0_2026-08-30。程序复用了其种子派生、值噪波、分形叠加和坐标扭曲方法；瓦片几何采用独立的参数化薄壳。</p><div class="knowledge-flow"><div>原始依据<small>Source</small></div><div>形体增量<small>Shape</small></div><div>事件与遮罩<small>Mask</small></div><div>综合色彩<small>Color</small></div><div>材质响应<small>Render</small></div><div>检验与对照<small>QA</small></div></div><div class="evidence-warning">目前尚未收到瓦片实物参考。本页四种母体、尺寸和色系均为实验预设，不对应已确认的地区、年代或历史制式。自动检查通过后，视觉批准和生产批准仍保持 false。</div><h3>已经接入的工作方式</h3><p>宏观起伏、中尺度破损和微表面分开控制。孔洞的几何凹陷、颜色变暗与环境遮蔽共享事件；颜色和微细节的独立种子不重建几何。每种母体都有自己的参数和种子，不互相覆盖。</p><h3>参考资料如何进入生产线</h3><p>原图单独保存，用于对照和记录。照片不直接贴到瓦片上。每张图保留名称、原始像素尺寸、来源、备注与文件摘要；尺寸来源不足时继续标记 pending。单张照片的厚度、曲率与年代不会自动变成事实。</p><h3>当前范围</h3><p>本页用于单块瓦片、瓷砖及三变体比较。屋面铺设、搭接排水、滴水与勾头等构件待相应资料到位后推进。暂未接入服务器或自动图像识别；保存在浏览器里的图片需要导出后发到对话。</p><h3>数据约定</h3><pre class="contract">TilesDNA → ShapeKernel → EventFields → MaterialPreview → QA
+units: m (界面显示 cm)
+source.status: pending_reference
+shape.delta: bounded
+referencePhotoAsTexture: false
+externalMeshImported: false
+visualApproved: false
+productionApproved: false</pre><p class="copyright">方法来源：用户提供的知识包 V1.0；Brick Mother PR #15 的独立家族与 seed DNA 约定。Tiles Mother V0.1，2026-08-31。三维预览使用无外部依赖的 WebGL2。</p></div></div>
+<div class="modal hidden" id="qaModal" role="dialog" aria-modal="true" aria-labelledby="qaTitle"><div class="dialog"><button class="close small" data-close="qaModal">关闭</button><div class="eyebrow">Deterministic / Geometry</div><h2 id="qaTitle">生成检查</h2><p>检查当前母体和当前种子。数值检查与人工视觉判断分开记录。</p><div id="qaResults" style="margin-top:16px"></div><div class="evidence-warning">本检查不证明历史准确性、物理烧结过程、真实排水性能或最终视觉品质。需要参考图对照与人工批准。</div><button id="saveQA" class="small">保存检查结果</button></div></div>
+<div class="modal hidden" id="refModal" role="dialog" aria-modal="true" aria-label="参考原图"><div class="lightbox-dialog"><div class="row spread"><span id="lightboxTitle"></span><div class="row"><button id="originalRef" class="small">原始像素</button><button class="small" data-close="refModal">关闭</button></div></div><div class="lightbox-stage" id="lightboxStage"><img id="lightboxImg" alt="参考原图"></div></div></div>
+<script id="field-reference">
+'use strict';
+
+const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
+const lerp = (a, b, t) => a + (b - a) * t;
+
+function smoothstep(a, b, v) {
+  const t = clamp((v - a) / Math.max(b - a, 1e-9));
+  return t * t * (3 - 2 * t);
+}
+
+function hash32(n) {
+  n = Math.imul(n ^ (n >>> 16), 0x7feb352d);
+  n = Math.imul(n ^ (n >>> 15), 0x846ca68b);
+  return (n ^ (n >>> 16)) >>> 0;
+}
+
+function hash2(x, y, seed) {
+  const n = hash32(
+    Math.imul(x | 0, 0x1f123bb5) ^
+    Math.imul(y | 0, 0x5f356495) ^
+    (seed >>> 0)
+  );
+  return n / 4294967295;
+}
+
+function valueNoise2(x, y, seed = 1) {
+  const xi = Math.floor(x);
+  const yi = Math.floor(y);
+  const tx = x - xi;
+  const ty = y - yi;
+  const sx = tx * tx * (3 - 2 * tx);
+  const sy = ty * ty * (3 - 2 * ty);
+
+  const a = hash2(xi, yi, seed);
+  const b = hash2(xi + 1, yi, seed);
+  const c = hash2(xi, yi + 1, seed);
+  const d = hash2(xi + 1, yi + 1, seed);
+
+  return lerp(lerp(a, b, sx), lerp(c, d, sx), sy);
+}
+
+function fbm2(x, y, seed = 1, octaves = 5, lacunarity = 2.03, gain = 0.5) {
+  let sum = 0;
+  let amplitude = 0.5;
+  let frequency = 1;
+  let norm = 0;
+
+  for (let i = 0; i < octaves; i += 1) {
+    sum += valueNoise2(x * frequency, y * frequency, seed + i * 1013) * amplitude;
+    norm += amplitude;
+    amplitude *= gain;
+    frequency *= lacunarity;
+  }
+
+  return sum / Math.max(norm, 1e-9);
+}
+
+function ridged2(x, y, seed = 1, octaves = 5) {
+  let sum = 0;
+  let amplitude = 0.55;
+  let frequency = 1;
+  let norm = 0;
+
+  for (let i = 0; i < octaves; i += 1) {
+    const n = 1 - Math.abs(valueNoise2(x * frequency, y * frequency, seed + i * 809) * 2 - 1);
+    sum += n * n * amplitude;
+    norm += amplitude;
+    amplitude *= 0.48;
+    frequency *= 2.11;
+  }
+
+  return sum / Math.max(norm, 1e-9);
+}
+
+function deriveSeeds(master = 1) {
+  const base = Math.max(1, Math.round(master)) >>> 0;
+  const derive = (salt) => hash32(base ^ salt) || salt;
+
+  return Object.freeze({
+    master: base,
+    shape: derive(101),
+    warp: derive(211),
+    structure: derive(307),
+    damage: derive(401),
+    color: derive(503),
+    weather: derive(601),
+    micro: derive(701)
+  });
+}
+
+function domainWarp2(x, y, seed, strength = 0.25, scale = 0.7) {
+  const wx = fbm2(x * scale, y * scale, seed + 17, 3) - 0.5;
+  const wy = fbm2((x + 37.1) * scale, (y - 19.7) * scale, seed + 31, 3) - 0.5;
+  return [x + wx * strength, y + wy * strength];
+}
+
+function autoLevel(v, low = 0.15, high = 0.85) {
+  return clamp((v - low) / Math.max(high - low, 1e-9));
+}
+
+function clarity(v, amount = 1) {
+  const t = clamp(v);
+  const local = t * t * (3 - 2 * t);
+  return clamp(t + (t - local) * amount * 1.35);
+}
+
+function combine(a, b, mode = 'blend', ratio = 0.5) {
+  const t = clamp(ratio);
+
+  switch (mode) {
+    case 'add':
+      return clamp(a + b * t);
+    case 'subtract':
+      return clamp(a - b * t);
+    case 'multiply':
+      return clamp(lerp(a, a * b, t));
+    case 'max':
+      return lerp(a, Math.max(a, b), t);
+    case 'min':
+      return lerp(a, Math.min(a, b), t);
+    case 'screen':
+      return lerp(a, 1 - (1 - a) * (1 - b), t);
+    case 'difference':
+      return lerp(a, Math.abs(a - b), t);
+    default:
+      return lerp(a, b, t);
+  }
+}
+
+function separationMask(a, b, sharpness = 1) {
+  return smoothstep(0.02, 0.38 / Math.max(sharpness, 0.1), Math.abs(a - b));
+}
+
+function clut5(t, colors) {
+  if (!Array.isArray(colors) || colors.length !== 5) {
+    throw new Error('clut5 requires five RGB colors');
+  }
+
+  const x = clamp(t) * 4;
+  const i = Math.min(3, Math.floor(x));
+  const f = x - i;
+
+  return [
+    lerp(colors[i][0], colors[i + 1][0], f),
+    lerp(colors[i][1], colors[i + 1][1], f),
+    lerp(colors[i][2], colors[i + 1][2], f)
+  ];
+}
+
+function normalizedSplat(masks, sharpness = 2.5) {
+  const raw = masks.map((v) => Math.pow(Math.max(v, 1e-6), sharpness));
+  const total = raw.reduce((sum, v) => sum + v, 0) || 1;
+  return raw.map((v) => v / total);
+}
+
+function evaluateFields(worldX, worldY, seedBank, settings = {}) {
+  const scale = settings.worldScale ?? 0.001;
+  const x = worldX * scale;
+  const y = worldY * scale;
+
+  const [qx, qy] = domainWarp2(
+    x,
+    y,
+    seedBank.warp,
+    settings.warpStrength ?? 0.28,
+    settings.warpScale ?? 0.72
+  );
+
+  const macro = fbm2(qx * 1.2, qy * 1.2, seedBank.shape, 4);
+  const structureA = ridged2(qx * 3.2, qy * 3.2, seedBank.structure, 5);
+  const structureB = ridged2(qx * 1.65, qy * 1.65, seedBank.structure + 37, 4);
+  const structure = clarity(structureA * 0.68 + structureB * 0.32, 0.7);
+
+  const micro = ridged2(qx * 18, qy * 18, seedBank.micro, 3);
+  const weather = autoLevel(
+    fbm2(qx * 2.1, qy * 0.65, seedBank.weather, 4),
+    0.34,
+    0.84
+  );
+
+  const cavity = clamp((1 - structure) * 0.45 + micro * 0.25);
+  const protrusion = clamp(structure * 0.72 + macro * 0.28);
+  const separation = separationMask(structure, macro, 1.1);
+  const colorDriver = clarity(
+    autoLevel(
+      macro * 0.34 +
+      structure * 0.28 +
+      cavity * 0.14 +
+      weather * 0.14 +
+      separation * 0.10,
+      0.18,
+      0.84
+    ),
+    settings.colorClarity ?? 0.8
+  );
+
+  return {
+    macro,
+    structure,
+    micro,
+    weather,
+    cavity,
+    protrusion,
+    separation,
+    colorDriver
+  };
+}
+
+const api = {
+  clamp,
+  lerp,
+  smoothstep,
+  hash32,
+  valueNoise2,
+  fbm2,
+  ridged2,
+  deriveSeeds,
+  domainWarp2,
+  autoLevel,
+  clarity,
+  combine,
+  separationMask,
+  clut5,
+  normalizedSplat,
+  evaluateFields
+};
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = api;
+}
+
+if (typeof window !== 'undefined') {
+  window.ProceduralFieldReference = api;
+}
+
+</script>
+<script id="tiles-mother-app">
+'use strict';
+(()=>{
+const $=id=>document.getElementById(id), F=window.ProceduralFieldReference;
+const {clamp,lerp,hash32,valueNoise2,fbm2,domainWarp2,deriveSeeds}=F;
+const VERSION='0.1.0';
+const SOURCE=Object.freeze({package:'PROCEDURAL_FIELD_KNOWLEDGE_MINI_V1.0_2026-08-30',version:'1.0.0',referenceJS:'8fd54c74b44a6abd6fe35619a10b08b396c7c71ac57ee37e77246b4c531078a5',entriesVerified:9,brickBaseline:'54f9ae9f43c078522ac6e082c4a857e57b06fae2',status:'pending_reference'});
+const ICONS={pan:'<path d="M3 5q15 17 30 0v5q-15 17-30 0zM3 5l4-3q11 12 22 0l4 3"/>',cover:'<path d="M3 21Q18-10 33 21l-5 1Q18 0 8 22zM8 22l3-4m17 4-3-4"/>',earthen:'<path d="m3 8 19-5 12 9-20 6zM3 8v5l11 8 20-5v-4M14 18v3"/>',glazed:'<path d="m3 8 19-5 12 9-20 6zM3 8v4l11 8 20-5v-3M14 18v2M11 8l11-3 7 5"/>'};
+const PROFILE_DEFS={
+ pan:{name:'青灰板瓦',short:'板瓦',sub:'凹面薄壳',code:'TM / ROOF / PAN',caption:'程序化薄壳 · 陶胎表面 · 实体厚度',seed:32017,defaults:{length:32,width:22,thickness:1.15,curve:4.6,taper:12,warp:22,damage:18,pores:32,weather:25,richness:48,roughness:82,glaze:0,palette:'grey'}},
+ cover:{name:'青灰筒瓦',short:'筒瓦',sub:'弧面覆瓦',code:'TM / ROOF / COVER',caption:'弧形截面 · 中空背面 · 实体厚度',seed:47219,defaults:{length:30,width:16,thickness:1.05,curve:7.2,taper:9,warp:18,damage:12,pores:25,weather:28,richness:42,roughness:80,glaze:0,palette:'grey'}},
+ earthen:{name:'素烧地砖',short:'素烧地砖',sub:'无釉陶胎',code:'TM / CERAMIC / EARTHEN',caption:'参数化坯体 · 烧色变化 · 实体边缘',seed:59137,defaults:{length:28,width:28,thickness:2.2,curve:0,taper:0,warp:12,damage:14,pores:25,weather:18,richness:54,roughness:78,glaze:0,palette:'red'}},
+ glazed:{name:'釉面瓷砖',short:'釉面瓷砖',sub:'釉层与胎体',code:'TM / CERAMIC / GLAZED',caption:'表面釉层 · 独立断面胎色 · 可调反光',seed:73031,defaults:{length:20,width:20,thickness:0.9,curve:0,taper:0,warp:5,damage:5,pores:5,weather:8,richness:27,roughness:30,glaze:86,palette:'green'}}
+};
+const SHAPE=[['length','长度',10,55,.5,' cm'],['width','宽度',8,45,.5,' cm'],['thickness','厚度',.5,3.5,.05,' cm'],['curve','弧面高度',0,12,.1,' cm'],['taper','头尾收分',0,30,1,' %'],['warp','手工起伏',0,100,1,' %']];
+const MATERIAL=[['damage','崩边 / 缺损',0,80,1,' %'],['pores','孔隙深浅',0,90,1,' %'],['weather','水痕 / 风化',0,100,1,' %'],['richness','色彩层次',0,100,1,' %'],['roughness','粗糙程度',8,98,1,' %'],['glaze','釉层覆盖',0,100,1,' %']];
+const SEED_LABELS={shape:'形体',warp:'扭曲',structure:'结构',damage:'破损',color:'颜色',weather:'风化',micro:'微细节'};
+const clone=o=>JSON.parse(JSON.stringify(o));
+function newProject(){return {schema:'tiles-mother-project',version:VERSION,active:'pan',selectedChild:0,layout:'single',channel:'final',profiles:Object.fromEntries(Object.entries(PROFILE_DEFS).map(([k,p])=>[k,{controls:clone(p.defaults),seeds:{...deriveSeeds(p.seed)}}])),source:clone(SOURCE),visualApproved:false,productionApproved:false};}
+let project=newProject(), refs=[], selectedRef=null, db=null, dbReady=false, fallback=false, dirty=false, lastQA=null, geometryBuilds=0;
+const makeId=()=>window.crypto?.randomUUID?.()||'ref-'+Date.now().toString(36)+'-'+hash32(Date.now()).toString(36);
+let currentMeshes=[], renderer=null, rebuildTimer=0, saveTimer=0, toastTimer=0, userSpin=false, activeModal=null;
+const cfg=()=>project.profiles[project.active];
+function toast(s){$('toast').textContent=s;$('toast').classList.remove('hidden');clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').classList.add('hidden'),5000);}
+function safeSeed(v){const n=Number(v);return Number.isFinite(n)?Math.max(1,Math.min(4294967295,Math.round(n))):1;}
+function childSeeds(s,i){if(!i)return {...s};const result={master:hash32(s.master^(i*104729))||1};for(const [j,k] of Object.keys(SEED_LABELS).entries())result[k]=hash32(s[k]^(i*(104729+j*1009)))||1;return result;}
+function activeSeeds(){return childSeeds(cfg().seeds,project.selectedChild);}
+function makeUI(){
+ for(const [id,p] of Object.entries(PROFILE_DEFS)){const b=document.createElement('button');b.className='family';b.dataset.family=id;b.innerHTML='<svg viewBox="0 0 38 27" fill="none" stroke="currentColor" stroke-width="1.1" aria-hidden="true">'+ICONS[id]+'</svg><span>'+p.short+'</span><small>'+p.sub+'</small>';b.onclick=()=>{project.active=id;project.selectedChild=0;syncUI();scheduleBuild(true);saveSoon();};$('families').append(b);}
+ for(const [target,defs] of [['shapeControls',SHAPE],['materialControls',MATERIAL]])for(const [key,label,min,max,step,unit]of defs){const d=document.createElement('div');d.className='control';d.innerHTML='<label for="control-'+key+'"><span>'+label+'</span><output id="value-'+key+'"></output></label><input id="control-'+key+'" type="range" min="'+min+'" max="'+max+'" step="'+step+'" data-control="'+key+'">';$(target).append(d);d.querySelector('input').addEventListener('input',e=>{cfg().controls[key]=Number(e.target.value);$('value-'+key).textContent=formatValue(cfg().controls[key],step)+unit;if(['length','width','thickness','curve','taper','warp','damage','pores'].includes(key))scheduleBuild();else{renderer?.draw();updateMeta();}saveSoon();});}
+ for(const [key,label]of Object.entries(SEED_LABELS)){const d=document.createElement('label');d.className='seed-row';d.innerHTML='<span>'+label+'</span><input type="number" min="1" max="4294967295" step="1" data-seed="'+key+'" aria-label="'+label+'独立种子">';$('seedGrid').append(d);d.querySelector('input').addEventListener('change',e=>{cfg().seeds[key]=safeSeed(e.target.value);e.target.value=cfg().seeds[key];if(['shape','warp','structure','damage'].includes(key))scheduleBuild();else renderer?.draw();updateCards();saveSoon();});}
+ for(let i=0;i<3;i++){const b=document.createElement('button');b.className='dna-card';b.dataset.child=i;b.innerHTML='<div class="eyebrow">Specimen 0'+(i+1)+'</div><strong></strong><small></small>';b.onclick=()=>{project.selectedChild=i;syncUI();scheduleBuild();saveSoon();};$('dnaCards').append(b);}
+}
+function formatValue(v,step){return step<.1?Number(v).toFixed(2):step<1?Number(v).toFixed(1):String(Math.round(v));}
+function syncUI(){document.querySelectorAll('[data-family]').forEach(b=>{b.classList.toggle('active',b.dataset.family===project.active);b.setAttribute('aria-pressed',String(b.dataset.family===project.active));});for(const [key,,min,max,step,unit]of [...SHAPE,...MATERIAL]){$('control-'+key).value=cfg().controls[key];$('value-'+key).textContent=formatValue(cfg().controls[key],step)+unit;}$('masterSeed').value=cfg().seeds.master;$('palette').value=cfg().controls.palette;document.querySelectorAll('[data-seed]').forEach(i=>i.value=cfg().seeds[i.dataset.seed]);document.querySelectorAll('[data-layout]').forEach(b=>b.classList.toggle('active',b.dataset.layout===project.layout));$('channel').value=project.channel;updateMeta();updateCards();}
+function updateCards(){document.querySelectorAll('[data-child]').forEach(b=>{const i=Number(b.dataset.child);b.classList.toggle('selected',i===project.selectedChild);b.querySelector('strong').textContent='SEED '+childSeeds(cfg().seeds,i).master;b.querySelector('small').textContent=i===project.selectedChild?'当前观察':'同母体 · 独立变体';});}
+function updateMeta(){const p=PROFILE_DEFS[project.active],c=cfg().controls;$('familyCode').textContent=p.code;$('specimenTitle').textContent=p.name;$('specimenCaption').textContent=p.caption;$('specimenMeasure').textContent=c.length+' × '+c.width+' × '+c.thickness+' cm  ·  实验尺寸，待参考校准';}
+// The immutable base surface is separate from all procedural deltas. Values in meters.
+function sourcePoint(u,v,id,c){const w=c.width*.01*(1-c.taper*.01*v*.5),l=c.length*.01,h=c.curve*.01;let x=u*w*.5,y=0,z=v*l*.5;
+ if(id==='cover'){const a=u*Math.PI*.475;x=Math.sin(a)*w*.5;y=Math.cos(a)*h-h*.5;}else if(id==='pan'){y=(u*u-.5)*h;}else{y=(u*u+v*v)*h*.25;const r=.055,ax=Math.abs(u),az=Math.abs(v);if(ax>1-r&&az>1-r){const a=(ax-(1-r))/r,b=(az-(1-r))/r,m=Math.max(a,b),len=Math.hypot(a,b);x=Math.sign(x)*(1-r+a/Math.max(1,len)*m*r)*w*.5;z=Math.sign(z)*(1-r+b/Math.max(1,len)*m*r)*l*.5;}}
+ return [x,y,z];}
+function eventsFor(s){const list=[];for(let i=0;i<27;i++){const a=hash32(s.damage^Math.imul(i+1,15485863)),b=hash32(a^32452843),d=hash32(b^49979687);list.push({u:((a&65535)/65535*1.88-.94),v:((b&65535)/65535*1.88-.94),r:.022+(d&65535)/65535*.054,depth:.36+((a>>>16)/65535)*.64});}return list;}
+function shapeAt(u,v,id,c,s,events,sourceOnly=false){const p=sourcePoint(u,v,id,c);if(sourceOnly)return{p,cavity:0,delta:0};const [q,r]=domainWarp2(u*2,v*2,s.warp,.23,.74);const macro=(fbm2(q*1.5,r*1.5,s.shape,3)-.5)*c.warp*.000045;
+ const structure=(valueNoise2(q*4,r*11,s.structure)-.5)*c.warp*.000008;
+ let pit=0;for(const e of events){const du=(u-e.u)/(e.r*1.2),dv=(v-e.v)/(e.r*.85);const d=du*du+dv*dv;if(d<1)pit=Math.max(pit,(1-d)**2*e.depth);}
+ const edge=Math.max(Math.abs(u),Math.abs(v));const efield=F.smoothstep(.90,1,edge)*F.smoothstep(.49,.77,fbm2(q*5+13,r*5-9,s.damage,3));const notch=efield*c.damage*.00014;
+ p[0]-=Math.sign(u)*notch*F.smoothstep(.9,1,Math.abs(u));p[2]-=Math.sign(v)*notch*F.smoothstep(.9,1,Math.abs(v));
+ const depression=pit*c.pores*.01*c.thickness*.01*.19+efield*c.damage*.01*c.thickness*.01*.17;
+ const delta=macro+structure-depression;p[1]+=delta;return{p,cavity:clamp(pit*c.pores*.01+efield*c.damage*.006),delta};}
+function cross(a,b){return [a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];}function sub(a,b){return a.map((v,i)=>v-b[i]);}function norm(a){const l=Math.hypot(...a)||1;return a.map(v=>v/l);}function add(a,b){return a.map((v,i)=>v+b[i]);}
+function buildGeometry(id,c,s,quality=1,sourceOnly=false){const nu=quality===0?24:quality===2?88:56,nv=quality===0?32:quality===2?112:80,events=eventsFor(s),positions=[],normals=[],coords=[],cavities=[],faces=[],indices=[],deltas=[];
+ const data=[];const eps=.0007;for(let j=0;j<=nv;j++)for(let i=0;i<=nu;i++){const u=i/nu*2-1,v=j/nv*2-1;const a=shapeAt(u,v,id,c,s,events,sourceOnly),du=sub(shapeAt(u+eps,v,id,c,s,events,sourceOnly).p,shapeAt(u-eps,v,id,c,s,events,sourceOnly).p),dv=sub(shapeAt(u,v+eps,id,c,s,events,sourceOnly).p,shapeAt(u,v-eps,id,c,s,events,sourceOnly).p);const n=norm(cross(dv,du));data.push({a,n,u,v});}
+ function push(p,n,u,v,cavity,face,delta){const k=positions.length/3;positions.push(...p);normals.push(...n);coords.push(u,v);cavities.push(cavity);faces.push(face);deltas.push(delta);return k;}
+ const count=data.length;for(let side=0;side<2;side++){const sign=side===0?1:-1;for(const {a,n,u,v}of data){const t=c.thickness*.005;push(a.p.map((p,k)=>p+n[k]*t*sign),n.map(v=>v*sign),u,v,a.cavity,side===0?1:0,a.delta);}for(let j=0;j<nv;j++)for(let i=0;i<nu;i++){const a=side*count+j*(nu+1)+i,b=a+1,d=a+nu+1,e=d+1;if(side===0)indices.push(a,d,b,b,d,e);else indices.push(a,b,d,b,e,d);}}
+ const boundary=[];for(let i=0;i<=nu;i++)boundary.push(i);for(let j=1;j<=nv;j++)boundary.push(j*(nu+1)+nu);for(let i=nu-1;i>=0;i--)boundary.push(nv*(nu+1)+i);for(let j=nv-1;j>0;j--)boundary.push(j*(nu+1));
+ for(let k=0;k<boundary.length;k++){const a=boundary[k],b=boundary[(k+1)%boundary.length],p1=positions.slice(a*3,a*3+3),p2=positions.slice(b*3,b*3+3),p3=positions.slice((a+count)*3,(a+count)*3+3),p4=positions.slice((b+count)*3,(b+count)*3+3);const n=norm(cross(sub(p2,p1),sub(p3,p1)));const ai=push(p1,n,data[a].u,data[a].v,0,-1,data[a].a.delta),bi=push(p2,n,data[b].u,data[b].v,0,-1,data[b].a.delta),ci=push(p3,n,data[a].u,data[a].v,0,-1,data[a].a.delta),di=push(p4,n,data[b].u,data[b].v,0,-1,data[b].a.delta);indices.push(ai,bi,ci,bi,di,ci);}
+ return {positions:new Float32Array(positions),normals:new Float32Array(normals),coords:new Float32Array(coords),cavities:new Float32Array(cavities),faces:new Float32Array(faces),indices:new Uint32Array(indices),deltas:new Float32Array(deltas),nu,nv,count,seeds:{...s},profile:id};}
+// Tiny WebGL2 renderer. All surfaces are geometry or numerical fields, with no image texture.
+const VS=`#version 300 es
+precision highp float;
+layout(location=0) in vec3 position;layout(location=1) in vec3 normal;layout(location=2) in vec2 coord;layout(location=3) in float cavity;layout(location=4) in float face;
+uniform mat4 viewProjection;uniform vec3 offset;
+out vec3 vPosition;out vec3 vNormal;out vec2 vCoord;out float vCavity;out float vFace;
+void main(){vPosition=position+offset;vNormal=normal;vCoord=coord;vCavity=cavity;vFace=face;gl_Position=viewProjection*vec4(vPosition,1.0);}`;
+const FS=`#version 300 es
+precision highp float;precision highp int;
+in vec3 vPosition;in vec3 vNormal;in vec2 vCoord;in float vCavity;in float vFace;out vec4 frag;
+uniform vec3 eye;uniform int channel;uniform int family;uniform int palette;uniform int floorMode;uniform uint colorSeed;uniform uint weatherSeed;uniform uint microSeed;uniform uint warpSeed;
+uniform float richness;uniform float weathering;uniform float baseRough;uniform float glazing;uniform float poreAmount;
+uint hash(uint n){n=(n^(n>>16u))*0x7feb352du;n=(n^(n>>15u))*0x846ca68bu;return n^(n>>16u);}
+float hs(ivec2 p,uint s){return float(hash(uint(p.x)*0x1f123bb5u^uint(p.y)*0x5f356495u^s))/4294967295.0;}
+float noise(vec2 p,uint s){ivec2 i=ivec2(floor(p));vec2 f=fract(p);f=f*f*(3.0-2.0*f);return mix(mix(hs(i,s),hs(i+ivec2(1,0),s),f.x),mix(hs(i+ivec2(0,1),s),hs(i+ivec2(1,1),s),f.x),f.y);}
+float fbm(vec2 p,uint s){float a=.56,f=1.0,t=0.0,n=0.0;for(int i=0;i<4;i++){t+=noise(p*f,s+uint(i)*1013u)*a;n+=a;a*=.48;f*=2.03;}return t/n;}
+vec3 colorRamp(float t,int p){vec3 a,b,c,d,e;if(p==1){a=vec3(.20,.095,.065);b=vec3(.34,.155,.105);c=vec3(.50,.28,.19);d=vec3(.64,.39,.255);e=vec3(.72,.56,.39);}else if(p==2){a=vec3(.055,.155,.135);b=vec3(.11,.255,.225);c=vec3(.22,.39,.32);d=vec3(.36,.50,.37);e=vec3(.59,.65,.47);}else if(p==3){a=vec3(.36,.34,.28);b=vec3(.57,.56,.46);c=vec3(.77,.77,.67);d=vec3(.86,.85,.75);e=vec3(.94,.92,.83);}else{a=vec3(.12,.15,.16);b=vec3(.235,.275,.27);c=vec3(.36,.395,.37);d=vec3(.48,.495,.43);e=vec3(.66,.64,.53);}float z=clamp(t,0.0,1.0)*4.0;if(z<1.0)return mix(a,b,z);if(z<2.0)return mix(b,c,z-1.0);if(z<3.0)return mix(c,d,z-2.0);return mix(d,e,z-3.0);}
+void main(){
+ vec3 N=normalize(vNormal);vec3 V=normalize(eye-vPosition);if(!gl_FrontFacing)N=-N;
+ if(floorMode==1){vec2 w=vPosition.xz;float r=length(w);float fade=1.0-smoothstep(.55,1.55,r);vec2 f=abs(fract(w*10.0-.5)-.5)/max(fwidth(w*10.0),vec2(.00001));float line=1.0-min(min(f.x,f.y),1.0);float axis=1.0-min(min(abs(w.x)/max(fwidth(w.x),.00001),abs(w.y)/max(fwidth(w.y),.00001)),1.0);vec3 base=vec3(.862,.876,.835);base=mix(base,vec3(.65,.70,.61),line*.25*fade);base=mix(base,vec3(.62,.68,.58),axis*.22*fade);frag=vec4(base,1.0);return;}
+ vec2 q=vCoord*2.0;vec2 dw=vec2(fbm(q*.74,warpSeed+17u),fbm((q+vec2(37.1,-19.7))*.74,warpSeed+31u))-.5;q+=dw*.23;
+ float macro=fbm(q*1.5,colorSeed);float meso=fbm(q*4.2+vec2(13,-9),colorSeed+307u);float micro=noise(q*90.0,microSeed);float dust=smoothstep(.47,.72,fbm(q*3.0,weatherSeed+971u));
+ float flow=fbm(q*vec2(5.0,.72)+vec2(.8,-3),weatherSeed);float weather=clamp(smoothstep(.36,.72,flow)*.65+dust*.35,0.0,1.0)*weathering;
+ float pit=smoothstep(.82,.96,noise(q*52.0,microSeed+809u))*poreAmount;float cv=clamp(vCavity+pit*.20,0.0,1.0);
+ float t=clamp(.52+(macro-.5)*richness*1.85+(meso-.5)*richness*.50,0.0,1.0);float glaze=glazing*smoothstep(.80,.95,vFace)*(1.0-cv*.8)*(1.0-dust*weathering*.12);
+ vec3 albedo=colorRamp(t,palette);if(family==3&&vFace<.4)albedo=colorRamp(.51+(meso-.5)*.42,1);
+ if(family!=3&&glaze<.01&&palette>1)albedo=colorRamp(t,palette);
+ albedo=mix(albedo,albedo*vec3(.64,.70,.66),weather*.44);albedo=mix(albedo,vec3(.61,.60,.48),dust*weathering*.12);albedo*=1.0-cv*.32;
+ float microContrast=(1.0-glaze)*.022;albedo+=(micro-.5)*microContrast;
+ float rough=clamp(baseRough+(meso-.5)*.12+cv*.15-weather*.12-glaze*.42,.10,.98);
+ // Screen-space derivatives give subtle micro normal relief without touching the macro geometry.
+ float bump=(micro-.5)*.00005*(1.0-glaze)+meso*.00008;vec3 dpdx=dFdx(vPosition),dpdy=dFdy(vPosition);vec3 r1=cross(dpdy,N),r2=cross(N,dpdx);float det=dot(dpdx,r1);if(abs(det)>.0000000001)N=normalize(abs(det)*N-sign(det)*(dFdx(bump)*r1+dFdy(bump)*r2));
+ if(channel==1){albedo=vec3(.51,.57,.51);rough=.85;}if(channel==2){frag=vec4(albedo,1);return;}if(channel==3){frag=vec4(N*.5+.5,1);return;}if(channel==4){frag=vec4(vec3(cv),1);return;}if(channel==5){frag=vec4(vec3(rough),1);return;}if(channel==6){frag=vec4(vec3(weather),1);return;}if(channel==7){frag=vec4(vec3(macro),1);return;}if(channel==8){frag=vec4(vec3(meso),1);return;}
+ vec3 L=normalize(vec3(-.5,1.3,.8)),L2=normalize(vec3(.8,.6,-.7));float diffuse=max(0.0,dot(N,L)),fill=max(0.0,dot(N,L2));float hemi=N.y*.5+.5;
+ vec3 lighting=mix(vec3(.27,.30,.28),vec3(.68,.72,.69),hemi)+diffuse*.50+fill*.10;
+ vec3 H=normalize(L+V);float spec=pow(max(dot(N,H),0.0),mix(110.0,7.0,rough))*mix(.48,.035,rough);float fres=pow(1.0-max(dot(N,V),0.0),5.0)*glaze*.12;
+ vec3 col=albedo*lighting*(1.0-cv*.16)+vec3(1.0,.98,.90)*spec+vec3(.86,.92,.88)*fres;
+ frag=vec4(clamp(col,0.0,1.0),1.0);
+}`;
+function mul4(a,b){const o=new Float32Array(16);for(let c=0;c<4;c++)for(let r=0;r<4;r++){let s=0;for(let k=0;k<4;k++)s+=a[k*4+r]*b[c*4+k];o[c*4+r]=s;}return o;}
+function perspective(fov,aspect,near,far){const f=1/Math.tan(fov/2),nf=1/(near-far);return new Float32Array([f/aspect,0,0,0,0,f,0,0,0,0,(far+near)*nf,-1,0,0,2*far*near*nf,0]);}
+function lookAt(eye,target){const z=norm(sub(eye,target)),x=norm(cross([0,1,0],z)),y=cross(z,x);const dot=(a,b)=>a.reduce((s,v,i)=>s+v*b[i],0);return new Float32Array([x[0],y[0],z[0],0,x[1],y[1],z[1],0,x[2],y[2],z[2],0,-dot(x,eye),-dot(y,eye),-dot(z,eye),1]);}
+class Renderer{
+ constructor(canvas){this.canvas=canvas;const gl=this.gl=canvas.getContext('webgl2',{antialias:true,alpha:false,preserveDrawingBuffer:true});if(!gl)throw Error('此浏览器未提供 WebGL2。请使用已启用硬件加速的现代浏览器。');
+ this.program=this.programOf(VS,FS);this.uniforms={};for(const n of ['viewProjection','offset','eye','channel','family','palette','floorMode','colorSeed','weatherSeed','microSeed','warpSeed','richness','weathering','baseRough','glazing','poreAmount'])this.uniforms[n]=gl.getUniformLocation(this.program,n);this.meshes=[];this.yaw=-.57;this.pitch=.74;this.distance=.8;this.target=[0,.015,0];this.floorY=-.07;
+ const plane={positions:new Float32Array([-10,0,-10,-10,0,10,10,0,-10,10,0,10]),normals:new Float32Array([0,1,0,0,1,0,0,1,0,0,1,0]),coords:new Float32Array(8),cavities:new Float32Array(4),faces:new Float32Array(4),indices:new Uint32Array([0,1,2,2,1,3])};this.floor=this.upload(plane);this.installControls();this.resizeObserver=new ResizeObserver(()=>this.draw());this.resizeObserver.observe(canvas.parentElement);canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();showFatal('显卡上下文已中断。工作记录仍保留，请重新打开页面。');});}
+ shader(type,source){const gl=this.gl,s=gl.createShader(type);gl.shaderSource(s,source);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS)){const msg=gl.getShaderInfoLog(s);gl.deleteShader(s);throw Error(msg);}return s;}
+ programOf(v,f){const g=this.gl,p=g.createProgram(),a=this.shader(g.VERTEX_SHADER,v),b=this.shader(g.FRAGMENT_SHADER,f);g.attachShader(p,a);g.attachShader(p,b);g.linkProgram(p);g.deleteShader(a);g.deleteShader(b);if(!g.getProgramParameter(p,g.LINK_STATUS))throw Error(g.getProgramInfoLog(p));return p;}
+ upload(d){const g=this.gl,v=g.createVertexArray();g.bindVertexArray(v);const buffers=[];for(const [location,array,size]of [[0,d.positions,3],[1,d.normals,3],[2,d.coords,2],[3,d.cavities,1],[4,d.faces,1]]){const b=g.createBuffer();buffers.push(b);g.bindBuffer(g.ARRAY_BUFFER,b);g.bufferData(g.ARRAY_BUFFER,array,g.STATIC_DRAW);g.enableVertexAttribArray(location);g.vertexAttribPointer(location,size,g.FLOAT,false,0,0);}const index=g.createBuffer();buffers.push(index);g.bindBuffer(g.ELEMENT_ARRAY_BUFFER,index);g.bufferData(g.ELEMENT_ARRAY_BUFFER,d.indices,g.STATIC_DRAW);g.bindVertexArray(null);return{vao:v,buffers,count:d.indices.length,data:d,offset:[0,0,0]};}
+ dispose(m){for(const b of m.buffers)this.gl.deleteBuffer(b);this.gl.deleteVertexArray(m.vao);}
+ setMeshes(ds,fit){this.meshes.forEach(m=>this.dispose(m));this.meshes=ds.map(d=>this.upload(d));const c=cfg().controls,spacing=c.width*.014;this.meshes.forEach((m,i)=>m.offset=[this.meshes.length===1?0:(i-1)*spacing,0,0]);let minY=Infinity;for(const m of this.meshes)for(let i=1;i<m.data.positions.length;i+=3)minY=Math.min(minY,m.data.positions[i]);this.floorY=minY-.007;if(fit)this.reset();else this.draw();}
+ reset(){const c=cfg().controls,w=c.width*.01*(project.layout==='trio'?3.6:1),l=c.length*.01;this.yaw=-.48;this.pitch=.69;const rect=this.canvas.getBoundingClientRect(),aspect=Math.max(.3,rect.width/Math.max(1,rect.height));this.distance=Math.max(w/aspect*1.88,l*1.88,.42);this.target=[0,0,0];this.draw();}
+ draw(){const g=this.gl;if(g.isContextLost())return;const rect=this.canvas.getBoundingClientRect();const dpr=Math.min(window.devicePixelRatio||1,1.75);const w=Math.max(1,Math.round(rect.width*dpr)),h=Math.max(1,Math.round(rect.height*dpr));if(this.canvas.width!==w||this.canvas.height!==h){this.canvas.width=w;this.canvas.height=h;}g.viewport(0,0,w,h);g.enable(g.DEPTH_TEST);g.disable(g.CULL_FACE);g.clearColor(.862,.876,.835,1);g.clear(g.COLOR_BUFFER_BIT|g.DEPTH_BUFFER_BIT);g.useProgram(this.program);
+ const eye=[this.target[0]+this.distance*Math.cos(this.pitch)*Math.sin(this.yaw),this.target[1]+this.distance*Math.sin(this.pitch),this.target[2]+this.distance*Math.cos(this.pitch)*Math.cos(this.yaw)];this.eye=eye;const vp=mul4(perspective(.65,w/h,.005,40),lookAt(eye,this.target));const u=this.uniforms;g.uniformMatrix4fv(u.viewProjection,false,vp);g.uniform3fv(u.eye,eye);g.uniform1i(u.channel,['final','source','albedo','normal','cavity','roughness','weather','macro','meso'].indexOf(project.channel));
+ if(this.pitch>0&&project.channel==='final'){g.uniform1i(u.floorMode,1);g.uniform3fv(u.offset,[0,this.floorY,0]);g.bindVertexArray(this.floor.vao);g.drawElements(g.TRIANGLES,this.floor.count,g.UNSIGNED_INT,0);}g.uniform1i(u.floorMode,0);
+ const c=cfg().controls;g.uniform1i(u.family,Object.keys(PROFILE_DEFS).indexOf(project.active));g.uniform1i(u.palette,['grey','red','green','ivory'].indexOf(c.palette));g.uniform1f(u.richness,c.richness*.01);g.uniform1f(u.weathering,c.weather*.01);g.uniform1f(u.baseRough,c.roughness*.01);g.uniform1f(u.glazing,c.glaze*.01);g.uniform1f(u.poreAmount,c.pores*.01);
+ for(let i=0;i<this.meshes.length;i++){const m=this.meshes[i],s=childSeeds(cfg().seeds,project.layout==='trio'?i:project.selectedChild);for(const [name,key]of [['colorSeed','color'],['weatherSeed','weather'],['microSeed','micro'],['warpSeed','warp']])g.uniform1ui(u[name],s[key]>>>0);g.uniform3fv(u.offset,m.offset);g.bindVertexArray(m.vao);g.drawElements(g.TRIANGLES,m.count,g.UNSIGNED_INT,0);}g.bindVertexArray(null);document.body.dataset.tilesMotherReady='true';document.body.dataset.version=VERSION;}
+ installControls(){const cv=this.canvas;const points=new Map();let previous=null;
+ cv.addEventListener('contextmenu',e=>e.preventDefault());cv.addEventListener('pointerdown',e=>{cv.focus();cv.setPointerCapture(e.pointerId);points.set(e.pointerId,{x:e.clientX,y:e.clientY});previous=null;});
+ cv.addEventListener('pointermove',e=>{if(!points.has(e.pointerId))return;const old=points.get(e.pointerId);points.set(e.pointerId,{x:e.clientX,y:e.clientY});const dx=e.clientX-old.x,dy=e.clientY-old.y;if(points.size===2){const [a,b]=[...points.values()],d=Math.hypot(a.x-b.x,a.y-b.y);if(previous)this.distance=clamp(this.distance*previous/d,.08,5);previous=d;}else if(e.buttons===2||e.shiftKey){const factor=this.distance*.0013;this.target[0]-=dx*factor*Math.cos(this.yaw);this.target[2]+=dx*factor*Math.sin(this.yaw);this.target[1]+=dy*factor;}else{this.yaw-=dx*.008;this.pitch=clamp(this.pitch+dy*.007,-1.53,1.53);}this.draw();});
+ const end=e=>{points.delete(e.pointerId);previous=null;};cv.addEventListener('pointerup',end);cv.addEventListener('pointercancel',end);cv.addEventListener('wheel',e=>{e.preventDefault();this.distance=clamp(this.distance*Math.exp(e.deltaY*.001),.08,6);this.draw();},{passive:false});cv.addEventListener('dblclick',()=>this.reset());cv.addEventListener('keydown',e=>{if(e.key==='Home'){this.reset();e.preventDefault();}if(e.key==='+'||e.key==='='){this.distance*=.9;this.draw();}if(e.key==='-'){this.distance*=1.1;this.draw();}});}
+}
+function showFatal(msg){$('loading').classList.add('hidden');$('fatalText').textContent=String(msg);$('fatal').classList.remove('hidden');$('buildStatus').textContent='三维启动失败，参考资料功能仍可使用';document.body.dataset.tilesMotherReady='false';}
+function scheduleBuild(fit=false){clearTimeout(rebuildTimer);rebuildTimer=setTimeout(()=>rebuild(fit),90);}
+function rebuild(fit=false){if(!renderer)return;try{const start=performance.now();const c=clone(cfg().controls),s={...cfg().seeds};currentMeshes=(project.layout==='trio'?[0,1,2]:[project.selectedChild]).map(i=>buildGeometry(project.active,c,childSeeds(s,i),1,project.channel==='source'));geometryBuilds++;renderer.setMeshes(currentMeshes,fit);const tris=currentMeshes.reduce((n,m)=>n+m.indices.length/3,0);$('buildStatus').textContent='WebGL2 · '+tris.toLocaleString()+' 三角面 · '+Math.round(performance.now()-start)+' ms 构建';$('loading').classList.add('hidden');updateMeta();}catch(e){console.error(e);showFatal(e.message);}}
+function bufferHash(a){const b=new Uint8Array(a.buffer,a.byteOffset,a.byteLength);let h=2166136261;for(const n of b){h^=n;h=Math.imul(h,16777619);}return (h>>>0).toString(16).padStart(8,'0');}
+function runQA(){const id=project.active,c=clone(cfg().controls),s=activeSeeds();const a=buildGeometry(id,c,s,0),b=buildGeometry(id,c,s,0),cc=buildGeometry(id,c,{...s,color:hash32(s.color+1)},0),m=buildGeometry(id,c,{...s,micro:hash32(s.micro+1)},0),d=buildGeometry(id,c,{...s,shape:hash32(s.shape+1)},0);const h=bufferHash(a.positions);let minN=Infinity,maxN=0,minT=Infinity;for(let i=0;i<a.normals.length;i+=3){const n=Math.hypot(a.normals[i],a.normals[i+1],a.normals[i+2]);minN=Math.min(minN,n);maxN=Math.max(maxN,n);}for(let i=0;i<a.count;i++){const j=(i+a.count)*3,k=i*3;minT=Math.min(minT,Math.hypot(a.positions[j]-a.positions[k],a.positions[j+1]-a.positions[k+1],a.positions[j+2]-a.positions[k+2]));}
+ const isolation=Object.keys(PROFILE_DEFS).every(k=>k===id||project.profiles[k]!==cfg());
+ const tests=[['同输入几何确定性',h===bufferHash(b.positions)],['颜色种子不改变几何',h===bufferHash(cc.positions)],['微细节种子不改变宏观几何',h===bufferHash(m.positions)],['形体种子具有实际影响',c.warp===0||h!==bufferHash(d.positions)],['顶点与法线均为有限数',a.positions.every(Number.isFinite)&&a.normals.every(Number.isFinite)],['三角形索引全部有效',a.indices.every(i=>i<a.positions.length/3)],['法线长度正确',minN>.999&&maxN<1.001],['正反面具有实体厚度',Math.abs(minT-c.thickness*.01)<1e-5],['母体参数对象互相隔离',isolation],['人工批准保持关闭',project.visualApproved===false&&project.productionApproved===false]];
+ lastQA={version:VERSION,at:new Date().toISOString(),profile:id,controls:c,seeds:s,geometryHash:h,hashAlgorithm:'FNV-1a-32 (determinism diagnostic, not cryptographic)',triangles:a.indices.length/3,minimumThicknessM:minT,tests:tests.map(([name,passed])=>({name,passed})),allPassed:tests.every(t=>t[1]),visualApproved:false,productionApproved:false};$('qaResults').replaceChildren();for(const [label,pass]of tests){const row=document.createElement('div');row.className='qa-line';const a=document.createElement('span'),b=document.createElement('strong');a.textContent=label;b.textContent=pass?'通过':'需要检查';if(!pass)b.className='fail';row.append(a,b);$('qaResults').append(row);}return lastQA;}
+// Browser-local storage. Original blobs are never resampled or sent to a remote service.
+function openDB(){return new Promise((resolve,reject)=>{if(!window.indexedDB)return reject(Error('IndexedDB unavailable'));const r=indexedDB.open('TilesMotherStudioV01',1);r.onupgradeneeded=()=>{const d=r.result;if(!d.objectStoreNames.contains('project'))d.createObjectStore('project');if(!d.objectStoreNames.contains('refs'))d.createObjectStore('refs',{keyPath:'id'});};r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);r.onblocked=()=>reject(Error('storage blocked'));});}
+function requestDB(store,mode,fn){return new Promise((resolve,reject)=>{if(!db)return reject(Error('storage unavailable'));const tx=db.transaction(store,mode),r=fn(tx.objectStore(store));let result;r.onsuccess=()=>{result=r.result;};r.onerror=()=>reject(r.error);tx.oncomplete=()=>resolve(result);tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error||Error('storage aborted'));});}
+function stripRef(r){const {url,...rest}=r;return rest;}
+function saveSoon(){dirty=true;$('saveStatus').textContent=fallback?'当前仅保留在内存，请保存协作记录':'正在保存到此浏览器';clearTimeout(saveTimer);saveTimer=setTimeout(saveProject,500);}
+async function saveProject(){if(!db)return;try{project.visualApproved=false;project.productionApproved=false;await requestDB('project','readwrite',s=>s.put(clone(project),'current'));dirty=false;$('saveStatus').textContent='已保存到此浏览器 · '+new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'});}catch(e){fallback=true;$('saveStatus').textContent='本地空间不足，请保存协作记录';}}
+function validateProject(raw){if(!raw||raw.schema!=='tiles-mother-project'||raw.version!==VERSION)throw Error('工作记录版本不匹配。需要 Tiles Mother '+VERSION+'。');const p=newProject();if(Object.hasOwn(PROFILE_DEFS,raw.active))p.active=raw.active;p.selectedChild=[0,1,2].includes(raw.selectedChild)?raw.selectedChild:0;p.layout=['single','trio'].includes(raw.layout)?raw.layout:'single';p.channel=['final','source','albedo','normal','cavity','roughness','weather','macro','meso'].includes(raw.channel)?raw.channel:'final';for(const k of Object.keys(PROFILE_DEFS)){const r=raw.profiles?.[k];if(!r)continue;for(const [key,,min,max]of [...SHAPE,...MATERIAL]){const v=Number(r.controls?.[key]);if(Number.isFinite(v))p.profiles[k].controls[key]=clamp(v,min,max);}if(['grey','red','green','ivory'].includes(r.controls?.palette))p.profiles[k].controls.palette=r.controls.palette;for(const key of ['master',...Object.keys(SEED_LABELS)])if(r.seeds?.[key]!==undefined)p.profiles[k].seeds[key]=safeSeed(r.seeds[key]);}return p;}
+async function sha256(blob){if(!crypto?.subtle)return null;const b=await blob.arrayBuffer(),h=await crypto.subtle.digest('SHA-256',b);return Array.from(new Uint8Array(h),v=>v.toString(16).padStart(2,'0')).join('');}
+function imageMeta(blob){return new Promise((resolve,reject)=>{const url=URL.createObjectURL(blob),img=new Image();img.onload=()=>{URL.revokeObjectURL(url);if(img.naturalWidth>30000||img.naturalHeight>30000||img.naturalWidth*img.naturalHeight>150000000)return reject(Error('图片像素过大，请另外保留原图，上传合理尺寸的观察副本。'));resolve({width:img.naturalWidth,height:img.naturalHeight});};img.onerror=()=>{URL.revokeObjectURL(url);reject(Error('图片无法读取，请使用 PNG、JPEG 或 WebP。'));};img.src=url;});}
+async function addFiles(files){const fs=[...files];if(!fs.length)return;let n=0;for(const file of fs){try{if(!['image/png','image/jpeg','image/webp'].includes(file.type))throw Error('仅接收 PNG、JPEG 和 WebP 图片。');if(file.size>30*1024*1024)throw Error('单张图片请控制在 30 MB 以内。');if(refs.length>=40)throw Error('本工作台最多保存 40 张参考图。');if(refs.reduce((n,r)=>n+r.blob.size,0)+file.size>160*1024*1024)throw Error('参考图总量超过 160 MB，请先保存协作记录。');const meta=await imageMeta(file),hash=await sha256(file);if(hash&&refs.some(r=>r.sha256===hash)){toast('这张原图已经在参考区了。');continue;}const record={id:makeId(),title:file.name||'粘贴参考图.png',filename:file.name||'clipboard.png',mime:file.type,size:file.size,blob:file,width:meta.width,height:meta.height,sha256:hash,type:project.active,source:'',notes:'',status:'pending',createdAt:new Date().toISOString()};if(db){try{await requestDB('refs','readwrite',s=>s.put(record));}catch(e){fallback=true;toast('本地保存失败，原图暂留内存。请保存协作记录。');}}record.url=URL.createObjectURL(file);refs.push(record);selectedRef=record.id;n++;}catch(e){toast(e.message);}}renderRefs();if(n)toast('已加入 '+n+' 张原图。可在右侧填写尺寸与观察笔记。');$('refFiles').value='';}
+function activeRef(){return refs.find(r=>r.id===selectedRef)||refs[0];}
+function renderRefs(){const r=activeRef();$('refCount').textContent=refs.length+' 张';$('emptyRefs').classList.toggle('hidden',!!r);$('refEditor').classList.toggle('hidden',!r);$('refThumbs').replaceChildren();if(!r)return;selectedRef=r.id;for(const item of refs){const b=document.createElement('button');b.className='thumb'+(r.id===item.id?' active':'');b.title=item.title;const img=document.createElement('img');img.src=item.url;img.alt=item.title;b.append(img);b.onclick=()=>{selectedRef=item.id;renderRefs();};$('refThumbs').append(b);}$('activeRefImg').src=r.url;$('activeRefImg').alt=r.title;$('refDimensions').textContent=r.width+' × '+r.height+' px · '+(r.size/1024/1024).toFixed(2)+' MB';$('refTitle').value=r.title;$('refType').value=r.type;$('refSource').value=r.source;$('refNotes').value=r.notes;}
+let noteTimer=0;function editRef(){const r=activeRef();if(!r)return;r.title=$('refTitle').value;r.type=$('refType').value;r.source=$('refSource').value;r.notes=$('refNotes').value;clearTimeout(noteTimer);noteTimer=setTimeout(async()=>{if(db)try{await requestDB('refs','readwrite',s=>s.put(stripRef(r)));$('saveStatus').textContent='参考笔记已保存在此浏览器';}catch(e){toast('参考笔记暂留内存，请保存协作记录。');}},350);}
+function download(blob,name){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);}
+function blobData(blob){return new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=()=>reject(r.error);r.readAsDataURL(blob);});}
+async function exportProject(){try{$('exportBtn').disabled=true;$('exportBtn').textContent='正在打包原图';const images=[];for(const r of refs){const {blob,url,...meta}=r;images.push({...meta,dataURL:await blobData(blob)});}const data={schema:'tiles-mother-collaboration',version:VERSION,exportedAt:new Date().toISOString(),project:clone(project),referenceImages:images,qa:lastQA,sourcePackage:SOURCE,privacy:'User-selected reference files included without resizing. No automatic server sync.'};download(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),'Tiles_Mother_Work_Record_'+new Date().toISOString().slice(0,10)+'.json');toast('已保存参数、笔记和原图。把这个记录发到对话里即可继续。');}catch(e){toast('记录保存失败：'+e.message);}finally{$('exportBtn').disabled=false;$('exportBtn').textContent='保存协作记录';}}
+function decodeDataURL(s){if(typeof s!=='string'||!/^data:image\/(png|jpeg|webp);base64,/.test(s))throw Error('参考记录包含不支持的图片编码。');const idx=s.indexOf(','),type=s.slice(5,s.indexOf(';'));const bin=atob(s.slice(idx+1));if(bin.length>30*1024*1024)throw Error('参考图片超过大小上限。');return new Blob([Uint8Array.from(bin,c=>c.charCodeAt(0))],{type});}
+async function importProject(file){try{if(file.size>230*1024*1024)throw Error('工作记录文件过大。');const data=JSON.parse(await file.text());if(data.schema!=='tiles-mother-collaboration')throw Error('这份文件不属于 Tiles Mother 协作记录。');const next=validateProject(data.project);if(!Array.isArray(data.referenceImages)||data.referenceImages.length>40)throw Error('参考图数量不正确。');const imported=[];let total=0;for(const r of data.referenceImages){const blob=decodeDataURL(r.dataURL);total+=blob.size;if(total>160*1024*1024)throw Error('原图总量过大。');const meta=await imageMeta(blob),h=await sha256(blob);if(r.sha256&&h&&r.sha256!==h)throw Error('参考原图校验不符，未载入。');imported.push({id:makeId(),title:String(r.title||'参考图').slice(0,160),filename:String(r.filename||'reference').slice(0,160),mime:blob.type,size:blob.size,blob,...meta,sha256:h,type:Object.hasOwn(PROFILE_DEFS,r.type)?r.type:'unknown',source:String(r.source||'').slice(0,500),notes:String(r.notes||'').slice(0,6000),status:'pending',createdAt:r.createdAt||new Date().toISOString()});}
+ if(!confirm('载入记录会替换当前母体参数，并合并参考图片。继续吗？'))return;project=next;for(const r of imported){if(r.sha256&&refs.some(x=>x.sha256===r.sha256))continue;if(refs.length>=40)throw Error('合并后的参考图超过 40 张，请先清理。');if(db)await requestDB('refs','readwrite',s=>s.put(r));r.url=URL.createObjectURL(r.blob);refs.push(r);}selectedRef=refs.at(-1)?.id;syncUI();rebuild(true);renderRefs();saveSoon();toast('工作记录已载入。人工批准继续保持 false。');}catch(e){toast('未能完整载入：'+e.message);}finally{$('projectFile').value='';}}
+function openModal(id){activeModal=id;$(id).classList.remove('hidden');$(id).querySelector('button')?.focus();}function closeModal(id){$(id).classList.add('hidden');activeModal=null;}
+function wire(){
+ $('newSeed').onclick=()=>{const bank=new Uint32Array(1);crypto.getRandomValues(bank);cfg().seeds={...deriveSeeds(bank[0]||1)};syncUI();scheduleBuild();saveSoon();};$('masterSeed').onchange=e=>{cfg().seeds={...deriveSeeds(safeSeed(e.target.value))};syncUI();scheduleBuild();saveSoon();};$('resetProfile').onclick=()=>{const p=PROFILE_DEFS[project.active];if(confirm('恢复这个母体的实验参数？参考图片和笔记会保留。')){cfg().controls=clone(p.defaults);cfg().seeds={...deriveSeeds(p.seed)};syncUI();rebuild(true);saveSoon();}};
+ $('palette').onchange=e=>{cfg().controls.palette=e.target.value;renderer?.draw();saveSoon();};document.querySelectorAll('[data-layout]').forEach(b=>b.onclick=()=>{project.layout=b.dataset.layout;syncUI();scheduleBuild(true);saveSoon();});$('channel').onchange=e=>{const old=project.channel;project.channel=e.target.value;if(old==='source'||project.channel==='source')scheduleBuild();else renderer?.draw();saveSoon();};
+ document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>{if(!renderer)return;userSpin=false;$('spinBtn').classList.remove('active');document.querySelectorAll('[data-view]').forEach(x=>x.classList.toggle('active',x===b));const view=b.dataset.view;if(view==='perspective'){renderer.reset();return;}renderer.target=[0,0,0];renderer.yaw=view==='side'?Math.PI*.5:0;renderer.pitch=view==='top'?1.53:view==='bottom'?-1.53:.05;renderer.draw();});$('resetView').onclick=()=>{renderer?.reset();document.querySelectorAll('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view==='perspective'));};
+ $('spinBtn').onclick=()=>{userSpin=!userSpin;$('spinBtn').classList.toggle('active',userSpin);if(userSpin)animate();};let spinTime=0;function animate(t){if(!userSpin)return;if(spinTime&&renderer){renderer.yaw+=Math.min((t-spinTime)*.00022,.022);renderer.draw();}spinTime=t||0;requestAnimationFrame(animate);}
+ $('captureBtn').onclick=()=>{if(!renderer)return;renderer.draw();$('gl').toBlob(b=>{if(b)download(b,'Tiles_Mother_'+project.active+'_seed_'+activeSeeds().master+'.png');else toast('截图生成失败，请重试。');},'image/png');};$('fullscreen').onclick=async()=>{try{if(document.fullscreenElement)await document.exitFullscreen();else await $('viewer').requestFullscreen();}catch(e){toast('当前浏览器不支持全屏，可使用浏览器缩放。');}};document.addEventListener('fullscreenchange',()=>{$('fullscreen').textContent=document.fullscreenElement?'收起':'展开';renderer?.draw();});
+ $('knowledgeBtn').onclick=()=>openModal('knowledgeModal');$('qaBtn').onclick=()=>{runQA();openModal('qaModal');};$('saveQA').onclick=()=>{if(lastQA)download(new Blob([JSON.stringify(lastQA,null,2)],{type:'application/json'}),'Tiles_Mother_QA.json');};document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>closeModal(b.dataset.close));document.querySelectorAll('.modal').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)closeModal(m.id);}));document.addEventListener('keydown',e=>{if(e.key==='Escape'&&activeModal)closeModal(activeModal);});
+ $('dropzone').onclick=()=>$('refFiles').click();$('dropzone').onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();$('refFiles').click();}};$('refFiles').onchange=e=>addFiles(e.target.files);document.addEventListener('dragover',e=>{if([...e.dataTransfer.types].includes('Files'))e.preventDefault();});document.addEventListener('drop',e=>{if(e.dataTransfer.files.length){e.preventDefault();$('dropzone').classList.remove('drag');addFiles(e.dataTransfer.files);}});$('dropzone').addEventListener('dragenter',()=>$('dropzone').classList.add('drag'));$('dropzone').addEventListener('dragleave',()=>$('dropzone').classList.remove('drag'));document.addEventListener('paste',e=>{const images=[...(e.clipboardData?.items||[])].filter(x=>x.kind==='file'&&x.type.startsWith('image/')).map(x=>x.getAsFile()).filter(Boolean);if(images.length){e.preventDefault();addFiles(images);}});
+ for(const id of ['refTitle','refType','refSource','refNotes'])$(id).addEventListener('input',editRef);
+ $('deleteRef').onclick=async()=>{const r=activeRef();if(!r||!confirm('从此浏览器移除这张参考图和对应笔记？已导出的记录不受影响。'))return;clearTimeout(noteTimer);if(db)try{await requestDB('refs','readwrite',s=>s.delete(r.id));}catch(e){toast('本地删除失败，请稍后重试。');return;}URL.revokeObjectURL(r.url);refs=refs.filter(x=>x.id!==r.id);selectedRef=refs[0]?.id;renderRefs();};
+ $('enlargeRef').onclick=()=>{const r=activeRef();if(!r)return;$('lightboxImg').src=r.url;$('lightboxImg').alt=r.title;$('lightboxTitle').textContent=r.title+' · '+r.width+' × '+r.height+' px';$('lightboxStage').classList.remove('original');$('originalRef').textContent='原始像素';openModal('refModal');};$('originalRef').onclick=()=>{const is=$('lightboxStage').classList.toggle('original');$('originalRef').textContent=is?'适合窗口':'原始像素';};$('exportBtn').onclick=exportProject;$('importBtn').onclick=()=>$('projectFile').click();$('projectFile').onchange=e=>{if(e.target.files[0])importProject(e.target.files[0]);};
+}
+async function init(){makeUI();wire();try{db=await openDB();dbReady=true;const saved=await requestDB('project','readonly',s=>s.get('current'));if(saved)project=validateProject(saved);const rs=await requestDB('refs','readonly',s=>s.getAll());refs=(rs||[]).filter(r=>r.blob instanceof Blob).map(r=>({...r,url:URL.createObjectURL(r.blob)}));selectedRef=refs[0]?.id;$('saveStatus').textContent='本地记录已载入';}catch(e){fallback=true;$('saveStatus').textContent='当前仅保留在内存，请保存协作记录';$('storageHint').textContent='此浏览器未能启用本地保存。图片和笔记暂留当前页面，请在关闭前保存协作记录。不会自动发送到对话。';}syncUI();renderRefs();try{renderer=new Renderer($('gl'));rebuild(true);}catch(e){console.error(e);showFatal(e.message);}
+ window.TilesMother={version:VERSION,source:SOURCE,getProject:()=>clone(project),getRefs:()=>refs.map(({blob,url,...r})=>clone(r)),getGeometryHashes:()=>currentMeshes.map(g=>bufferHash(g.positions)),getGeometryBuilds:()=>geometryBuilds,runQA,buildGeometry,sourcePoint,deriveSeeds,childSeeds,setProfile:id=>{if(!Object.hasOwn(PROFILE_DEFS,id))throw Error('unknown profile');project.active=id;project.selectedChild=0;syncUI();rebuild(true);saveSoon();},setSeed:(key,value)=>{if(key==='master')cfg().seeds={...deriveSeeds(safeSeed(value))};else if(Object.hasOwn(SEED_LABELS,key))cfg().seeds[key]=safeSeed(value);else throw Error('unknown seed');syncUI();if(['master','shape','warp','structure','damage'].includes(key))rebuild();else renderer?.draw();saveSoon();},setControl:(key,value)=>{const def=[...SHAPE,...MATERIAL].find(d=>d[0]===key);if(!def)throw Error('unknown control');cfg().controls[key]=clamp(Number(value),def[2],def[3]);syncUI();if(['length','width','thickness','curve','taper','warp','damage','pores'].includes(key))rebuild();else renderer?.draw();saveSoon();},setLayout:l=>{if(!['single','trio'].includes(l))throw Error('unknown layout');project.layout=l;syncUI();rebuild(true);},getCamera:()=>renderer?{yaw:renderer.yaw,pitch:renderer.pitch,distance:renderer.distance,target:[...renderer.target]}:null,getStorage:()=>({dbReady,fallback,referenceCount:refs.length}),save:saveProject};
+ document.body.dataset.appInitialized='true';
+}
+init();
+})();
+</script>
+</body></html>
