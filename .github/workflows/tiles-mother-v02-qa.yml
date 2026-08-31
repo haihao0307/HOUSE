@@ -1,0 +1,115 @@
+name: Tiles Mother V0.2 Reference QA
+on:
+  push:
+    branches: [feature/tiles-mother-v0.1-workbench]
+    paths:
+      - .github/workflows/tiles-mother-v02-qa.yml
+      - tiles-mother/v02/**
+      - tiles-mother/v02-transport/**
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: tiles-mother-v02-reference-qa
+  cancel-in-progress: false
+jobs:
+  qa:
+    if: github.ref == 'refs/heads/feature/tiles-mother-v0.1-workbench'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - name: Materialize byte-checked readable source and frozen V0.1 core
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import base64,hashlib,json,lzma,shutil
+          root=Path('/tmp/tiles-v02');src=root/'source';src.mkdir(parents=True,exist_ok=True)
+          parts=sorted(Path('tiles-mother/v02-transport').glob('part-*.b64'))
+          assert len(parts)==4
+          data=base64.b64decode(''.join(p.read_text().strip() for p in parts),validate=True)
+          assert hashlib.sha256(data).hexdigest()=='9c34bc7b2c3f0a6b71c217f8b640d8354aa9b983990bc53960c5f3cb820ca1a5'
+          for name,text in json.loads(lzma.decompress(data)).items():
+              assert '/' not in name and '\\' not in name
+              override=Path('tiles-mother/v02')/name
+              (src/name).write_text(override.read_text() if override.is_file() else text,encoding='utf-8')
+          baseline=Path('tiles-mother/v02/baseline-v01.html')
+          if not baseline.exists(): baseline=Path('tiles-mother/index.html')
+          assert hashlib.sha256(baseline.read_bytes()).hexdigest()=='87ed9f2e1a4a668f8c85547a959694dab4be0c103e7bc43eb0b93b91f1c5b4ec'
+          shutil.copyfile(baseline,root/'baseline.html')
+          PY
+      - name: Restore pinned reference parser toolchain
+        uses: actions/download-artifact@v4
+        with:
+          name: tiles-mother-v02-toolchain
+          run-id: 33365829878
+          github-token: ${{ github.token }}
+          path: /tmp/tiles-v02/toolchain
+      - name: Verify dependencies and build self-contained HTML
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib,json
+          r=Path('/tmp/tiles-v02/toolchain')
+          for name,m in json.loads((r/'manifest.json').read_text())['files'].items():
+              data=(r/name).read_bytes()
+              assert len(data)==m['bytes'] and hashlib.sha256(data).hexdigest()==m['sha256'],name
+          PY
+          python3 /tmp/tiles-v02/source/build_v02.py --baseline /tmp/tiles-v02/baseline.html --runtime /tmp/tiles-v02/toolchain --out /tmp/tiles-v02/site/index.html
+          python3 /tmp/tiles-v02/source/make_fixtures.py
+          python3 -m py_compile /tmp/tiles-v02/source/*.py
+          node --check /tmp/tiles-v02/source/reference-desk.js
+      - name: Install browser test dependencies and Chinese fonts
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y fonts-noto-cjk
+          python3 -m pip install 'playwright>=1.50,<2' 'pillow>=10,<13'
+      - name: Real browser multiformat, storage, safety and mobile QA
+        id: browser
+        run: python3 /tmp/tiles-v02/source/browser_qa_v02.py
+      - name: Preserve readable source and truthful reports on working branch only
+        if: always()
+        env:
+          BRANCH: feature/tiles-mother-v0.1-workbench
+          BROWSER_OUTCOME: ${{ steps.browser.outcome }}
+        run: |
+          set -euo pipefail
+          test -f /tmp/tiles-v02/source/reference-desk.js || exit 0
+          test "$(git ls-remote origin "refs/heads/$BRANCH" | cut -f1)" = "$GITHUB_SHA"
+          mkdir -p tiles-mother/v02 tiles-mother/qa-v02
+          cp /tmp/tiles-v02/source/*.* tiles-mother/v02/
+          cp /tmp/tiles-v02/baseline.html tiles-mother/v02/baseline-v01.html
+          if test -f /tmp/tiles-v02/site/build-manifest.json; then cp /tmp/tiles-v02/site/build-manifest.json tiles-mother/v02/build-manifest.json; fi
+          if test -f /tmp/tiles-v02/qa/browser-report.json; then cp /tmp/tiles-v02/qa/browser-report.json tiles-mother/qa-v02/browser-report.json; fi
+          git add tiles-mother/v02 tiles-mother/qa-v02
+          if test "$BROWSER_OUTCOME" = success; then
+            cp /tmp/tiles-v02/site/index.html tiles-mother/index.html
+            git add tiles-mother/index.html
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          if ! git diff --cached --quiet; then
+            git commit -m "test(tiles-mother): preserve V0.2 source and real browser outcome $BROWSER_OUTCOME"
+            git push origin "HEAD:refs/heads/$BRANCH"
+          fi
+      - name: Preserve candidate and evidence even on failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tiles-mother-v02-candidate-${{ github.run_id }}
+          path: |
+            /tmp/tiles-v02/site/
+            /tmp/tiles-v02/qa/
+            /tmp/tiles-v02/source/
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Report testing scope
+        if: always()
+        run: |
+          echo '## Tiles Mother V0.2 reference acceptance' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Only the existing Tiles Mother feature branch is written. No publication in this QA workflow.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'visualApproved=false; productionApproved=false. Import support is separate from historical accuracy.' >> "$GITHUB_STEP_SUMMARY"
+          if test -f /tmp/tiles-v02/qa/browser-report.json; then cat /tmp/tiles-v02/qa/browser-report.json >> "$GITHUB_STEP_SUMMARY"; fi
