@@ -1,0 +1,157 @@
+{
+  "schemaVersion": "1.0.0",
+  "artifactRole": "non-runtime-knowledge-index",
+  "title": "建筑蓝图与总体系 V1",
+  "updatedAt": "2026-08-31",
+  "repositoryBaseline": {
+    "repository": "haihao0307/HOUSE",
+    "branch": "feature/yunnan-component-studio-v1",
+    "pr": 13,
+    "commit": "b1bacf6040dfde8acd223234c24325e5b494c993",
+    "appRoot": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local"
+  },
+  "scope": {
+    "work": "knowledge-organization-only",
+    "periodFocus": {"startYear": 1940, "endYear": 1945},
+    "directionConfirmedByUser": true,
+    "implementationApproved": false,
+    "runtimeIntegrated": false,
+    "humanVisualApproved": false,
+    "productionApproved": false,
+    "noNewProductionDimensions": true,
+    "existingFilesModified": false,
+    "fullPdfReuploadPerformed": false
+  },
+  "interpretationPolicy": {
+    "claimKinds": ["source-reported", "visible-in-source", "user-observation", "user-project-requirement", "legacy-project-convention", "project-framework-proposal", "independently-verified"],
+    "preserve": ["original-term", "original-value-and-unit", "source-location", "source-date-and-target-period", "scope", "uncertainty", "conflicts", "derivation"],
+    "missingValue": null,
+    "missingValueMustNotBecomeZero": true,
+    "historicalUnitConversionNeedsEvidence": true,
+    "publicationQualityIsNotInferredFromPlatform": true,
+    "retentionDoesNotImplyValidation": true,
+    "sameDoiOrHashDoesNotIncreaseIndependentEvidence": true,
+    "secondaryCitationsDoNotCountAsReadPrimarySources": true,
+    "runtimePolicyEnforcementImplemented": false
+  },
+  "knowledgeLayers": [
+    {"id": "common-language", "label": "共同术语", "role": "记录建筑概念及读图口径；不设全中国统一地方尺寸"},
+    {"id": "regional-practice", "label": "地方做法", "role": "地点、年代、匠作、类型和用途分别取证"},
+    {"id": "named-case", "label": "具体建筑", "role": "保存具名案例、对象、图纸和调查状态；未知身份保持待核"}
+  ],
+  "sources": [
+    {"id": "R01", "kind": "repository-data", "repositoryPath": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/data/system_v5_2_1.json", "revision": "b1bacf6040dfde8acd223234c24325e5b494c993", "use": "旧系统主题、对象ID及声明的证据状态；没有新测量"},
+    {"id": "R02", "kind": "repository-document", "repositoryPath": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/docs/SYSTEM_ARCHITECTURE.md", "revision": "b1bacf6040dfde8acd223234c24325e5b494c993", "use": "原架构与依赖顺序"},
+    {"id": "R03", "kind": "repository-handoff", "repositoryPath": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/knowledge-handoff/v5.5.1/ARCHITECTURAL_WORLD_KNOWLEDGE.md", "revision": "b1bacf6040dfde8acd223234c24325e5b494c993", "use": "既有知识记录，具体做法仍需按案例核对"},
+    {"id": "R04", "kind": "curated-user-decisions", "repositoryPath": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/knowledge-handoff/v5.5.1/CONVERSATION_DECISIONS.md", "revision": "b1bacf6040dfde8acd223234c24325e5b494c993", "use": "既有用户决策的整理记录"},
+    {"id": "R05", "kind": "archive-status", "repositoryPath": "reference-library/yunnan/v1/BINARY_ARCHIVE_STATUS.md", "revision": "b1bacf6040dfde8acd223234c24325e5b494c993", "use": "原文件状态按基线记录；未补传"},
+    {"id": "R06", "kind": "literature-registry", "repositoryPath": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/component-studio/data/knowledge/yunnan-architecture-literature-registry-v1.json", "revision": "b1bacf6040dfde8acd223234c24325e5b494c993", "use": "九来源总表schemaVersion1.3.0，类别不改变"},
+    {"id": "R07", "kind": "support-record", "repositoryPath": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/component-studio/data/knowledge/bai-traditional-timber-hbim-support-v1.json", "revision": "b1bacf6040dfde8acd223234c24325e5b494c993", "use": "白族方法支持，禁止默认生产采用"},
+    {"id": "R08", "kind": "support-record", "repositoryPath": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/component-studio/data/knowledge/yunnan-courtyard-spatial-database-support-v1.json", "revision": "b1bacf6040dfde8acd223234c24325e5b494c993", "use": "字段及口径支持，原始数据库未取得"},
+    {"id": "R09", "kind": "support-record", "repositoryPath": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/component-studio/data/knowledge/yunnan-tibet-tusi-manor-knowledge-v1.json", "revision": "b1bacf6040dfde8acd223234c24325e5b494c993", "use": "迪庆个案的作者报告，不推广"},
+    {"id": "R10", "kind": "review-addendum", "repositoryPath": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/component-studio/data/knowledge/yunnan-literature-support-review-20260831.json", "revision": "b1bacf6040dfde8acd223234c24325e5b494c993", "use": "重复来源、低权重与表文矛盾记录"}
+  ],
+  "userDecisions": [
+    {"id": "U01", "basis": "current-conversation", "kind": "user-project-requirement", "summary": "本窗口负责建筑蓝图与总体系，各母体后续对接。"},
+    {"id": "U02", "basis": "current-conversation", "kind": "user-project-requirement", "summary": "优先建筑测绘、尺寸、间架、构造与材料；文献先由用户判断，再限定使用。"},
+    {"id": "U03", "basis": "current-conversation", "kind": "user-observation-and-project-requirement", "summary": "参考墙的主体控制、收分、洞口闭合、墙顶和石土衔接、抹灰与纤维要一起理解。", "geographicGeneralizationApproved": false},
+    {"id": "U04", "basis": "current-conversation", "kind": "user-project-requirement", "summary": "三材质家族分别控制，多尺度复合变化，微观尺度和构件尺度分开。", "materialRecipeVerified": false},
+    {"id": "U05", "basis": "current-conversation", "kind": "user-project-requirement", "summary": "只整理知识。未来按同一建筑身份、轴网、标高、部位和证据衔接专业线。"}
+  ],
+  "readingStages": [
+    {"id": "TOPIC-01", "legacyStageId": "L01", "label": "证据与年代", "question": "资料来自哪里，记录什么时期和什么对象？", "basisRefs": ["R01"], "workflowImplemented": false},
+    {"id": "TOPIC-02", "legacyStageId": "L02", "label": "场地与主轴", "question": "街巷、入口、地面基准与排水去向如何联系？", "basisRefs": ["R01"], "workflowImplemented": false},
+    {"id": "TOPIC-03", "legacyStageId": "L03", "label": "院落拓扑", "question": "哪些独立房屋和边界围合哪些院落？", "basisRefs": ["R01"], "workflowImplemented": false},
+    {"id": "TOPIC-04", "legacyStageId": "L04", "label": "间架与柱网", "question": "面阔与进深怎样分段，结构间数和房间数是否分开？", "basisRefs": ["R01"], "workflowImplemented": false},
+    {"id": "TOPIC-05", "legacyStageId": "L05", "label": "地基与墙脚", "question": "墙与柱分别怎样落地，与地面是什么关系？", "basisRefs": ["R01"], "workflowImplemented": false},
+    {"id": "TOPIC-06", "legacyStageId": "L06", "label": "一层平面", "question": "房间、洞口、交通和排水边界是什么？", "basisRefs": ["R01"], "workflowImplemented": false},
+    {"id": "TOPIC-07", "legacyStageId": "L07", "label": "楼面与二层", "question": "楼面支承、楼梯与上层空间如何衔接？", "basisRefs": ["R01"], "workflowImplemented": false},
+    {"id": "TOPIC-08", "legacyStageId": "L08", "label": "立面等级", "question": "各屋檐、屋脊、开口和内外界面怎样对应？", "basisRefs": ["R01"], "workflowImplemented": false},
+    {"id": "TOPIC-09", "legacyStageId": "L09", "label": "控制剖面", "question": "各层标高、檩位、出檐和廊厦如何联系？", "basisRefs": ["R01"], "workflowImplemented": false},
+    {"id": "TOPIC-10", "legacyStageId": "L10", "label": "木构装配", "question": "构件支承、接合与装配关系的证据是什么？", "basisRefs": ["R01"], "workflowImplemented": false},
+    {"id": "TOPIC-11", "legacyStageId": "L11", "label": "屋面与瓦作", "question": "坡面、基层、瓦列、搭接和脊檐如何对接？", "basisRefs": ["R01"], "workflowImplemented": false},
+    {"id": "TOPIC-12", "legacyStageId": "L12", "label": "门窗运动", "question": "洞口、框、扇、枢轴与通行如何分开记录？", "basisRefs": ["R01"], "workflowImplemented": false},
+    {"id": "TOPIC-13", "legacyStageId": "L13", "label": "历史状态", "question": "原构、维修、加建和目标表现期怎样区分？", "basisRefs": ["R01"], "workflowImplemented": false},
+    {"id": "TOPIC-14", "legacyStageId": "L14", "label": "三维装配与验收", "question": "每个对象能否追溯蓝图与资料，哪些尚待批准？", "basisRefs": ["R01"], "workflowImplemented": false}
+  ],
+  "conceptSeparations": [
+    {"id": "TERM-01", "items": ["结构间数", "房间数量", "房间用途"], "basisRefs": ["U02"], "ruleKind": "recording-policy"},
+    {"id": "TERM-02", "items": ["面阔轴距", "进深分段", "柱数", "构架榀数"], "basisRefs": ["R01", "U02"], "ruleKind": "recording-policy"},
+    {"id": "TERM-03", "items": ["轴线尺寸", "构件外包尺寸", "净通行尺寸"], "basisRefs": ["U03", "U05"], "ruleKind": "project-framework-proposal"},
+    {"id": "TERM-04", "items": ["地面高程", "楼面标高", "层高", "净高", "檐口高度", "最高点高度"], "basisRefs": ["R01", "R08"], "ruleKind": "recording-policy"},
+    {"id": "TERM-05", "items": ["真实墙体主体", "有证据的材料分层", "显示辅助背板"], "basisRefs": ["U03"], "ruleKind": "recording-policy"},
+    {"id": "TERM-06", "items": ["土坯", "夯土", "烧结砖", "砌筑石材", "砌缝材料", "抹灰"], "basisRefs": ["U03", "U04"], "ruleKind": "recording-policy"},
+    {"id": "TERM-07", "items": ["建造时间", "调查拍摄时间", "修缮加建时间", "目标表现时间"], "basisRefs": ["R01", "U02"], "ruleKind": "recording-policy"},
+    {"id": "TERM-08", "items": ["族属标签", "居住者身份", "建造传统", "地点", "建筑类型"], "basisRefs": ["R06", "U02"], "ruleKind": "recording-policy"}
+  ],
+  "caseCrosswalk": [
+    {"id": "BRANCH-CENTRAL-YUNNAN-YIKEYIN", "role": "legacy-typology", "statusAsRecorded": "measuredCaseAvailable", "scope": "旧系统滇中紧凑合院", "basisRefs": ["R01"], "newVerification": false},
+    {"id": "BRANCH-WESTERN-YUNNAN-NAXI", "role": "legacy-typology", "statusAsRecorded": "planGrammarAvailableMetricPending", "scope": "旧系统纳西院落支系", "basisRefs": ["R01"], "newVerification": false},
+    {"id": "CASE-YUNNAN-THREE-BAY-FRONT-GALLERY-2F", "role": "legacy-measured-case", "statusAsRecorded": "measuredCaseAvailableAttributionPending", "attribution": null, "basisRefs": ["R01"], "newVerification": false},
+    {"id": "REFERENCE-TUANJIE-001", "role": "scanned-reference", "scope": "院落、分组、入口和地形参考", "basisRefs": ["R01", "R04"], "newVerification": false},
+    {"id": "REFERENCE-DALI-001", "role": "scanned-reference", "scope": "屋面层级与可见材料参考", "basisRefs": ["R01", "R04"], "newVerification": false},
+    {"id": "REFERENCE-HAOSI1-WULONG-001", "role": "scanned-reference", "scope": "瓦墙、表面与洞口参考", "basisRefs": ["R01", "R04"], "newVerification": false}
+  ],
+  "lockedLegacyBranches": ["BRANCH-BAI", "BRANCH-YI"],
+  "literatureCrosswalk": [
+    {"id": "L01", "registrySourceId": "YN-LIT-1992-NAXI-01", "doi": "10.20803/jusokennen.19.0_117", "classificationAsRegistered": "B2_BACKGROUND", "pdfPages": 19, "knowledgeUse": "地方背景与案例线索", "priority": "low", "productionApproved": false, "basisRefs": ["R06"]},
+    {"id": "L02", "registrySourceId": "YN-LIT-1994-NAXI-02", "doi": "10.20803/jusokennen.20.0_99", "classificationAsRegistered": "B2_BACKGROUND", "pdfPages": 18, "knowledgeUse": "永宁住宅与使用背景", "priority": "low", "productionApproved": false, "basisRefs": ["R06"]},
+    {"id": "L03", "registrySourceId": "YN-LIT-1999-DALI-RENLIYI", "doi": "10.3130/aija.64.167_2", "classificationAsRegistered": "B2_BACKGROUND", "pdfPages": 8, "knowledgeUse": "仁里邑住生活与更新", "priority": "low", "productionApproved": false, "basisRefs": ["R06"]},
+    {"id": "L04", "registrySourceId": "YN-LIT-1999-MENGLIAN-DAI", "doi": null, "classificationAsRegistered": "B2_BACKGROUND", "pdfPages": 7, "knowledgeUse": "孟连住居空间层级", "priority": "low", "productionApproved": false, "basisRefs": ["R06"]},
+    {"id": "L05", "registrySourceId": "YN-LIT-2023-LEJU-YIKEYIN", "doi": "10.3130/aija.88.165", "classificationAsRegistered": "B2_BACKGROUND", "pdfPages": 8, "knowledgeUse": "乐居新住宅与传统空间变化", "priority": "low", "productionApproved": false, "basisRefs": ["R06"]},
+    {"id": "L06", "registrySourceId": "YN-LIT-2026-SHIPING-HEYUAN", "doi": "10.3130/aija.91.1576", "classificationAsRegistered": "B2_BACKGROUND", "pdfPages": 10, "knowledgeUse": "石屏居住、所有和改修", "priority": "low", "productionApproved": false, "basisRefs": ["R06"]},
+    {"id": "L07", "registrySourceId": "YN-LIT-2024-BAI-TIMBER-HBIM", "doi": "10.3390/buildings14071960", "classificationAsRegistered": "B1_SUPPORTING_METHOD_REFERENCE", "pdfPages": 26, "knowledgeUse": "构件对象、属性、关系与方法", "priority": "low", "productionApproved": false, "basisRefs": ["R06"]},
+    {"id": "L08", "registrySourceId": "YN-LIT-2023-COURTYARD-SPATIAL-DATABASE", "doi": "10.3390/buildings13122956", "classificationAsRegistered": "B1_SUPPORTING_METHOD_REFERENCE", "pdfPages": 19, "knowledgeUse": "字段定义与CAD/GIS编号关联", "priority": "low", "productionApproved": false, "basisRefs": ["R06"]},
+    {"id": "L09", "registrySourceId": "YN-LIT-2025-DIQING-TUSI-MANORS", "doi": "10.3390/buildings15071134", "classificationAsRegistered": "B1_REGIONAL_ARCHITECTURAL_REFERENCE", "pdfPages": 26, "knowledgeUse": "迪庆土司建筑案例比较", "priority": "low", "productionApproved": false, "basisRefs": ["R06"]}
+  ],
+  "modules": [
+    {"id": "knowledge-blueprint", "label": "建筑蓝图", "knowledgeResponsibility": "建筑身份、案例、院落、间架、共同轴网和标高", "frameworkRoleRecorded": true, "runtimeIntegrationPerformedThisRound": false, "versionPinnedForIntegration": null, "integrationApproved": false},
+    {"id": "foundation-site", "label": "场地与基础", "knowledgeResponsibility": "局部地面、基础、墙脚与柱础", "frameworkRoleRecorded": true, "runtimeIntegrationPerformedThisRound": false, "versionPinnedForIntegration": null, "integrationApproved": false},
+    {"id": "timber-structure", "label": "木构", "knowledgeResponsibility": "柱梁枋檩椽、支承、接合与装配", "frameworkRoleRecorded": true, "runtimeIntegrationPerformedThisRound": false, "versionPinnedForIntegration": null, "integrationApproved": false},
+    {"id": "roof-form", "label": "屋顶与基层", "knowledgeResponsibility": "屋面单位、承托、坡面、脊檐和排水", "frameworkRoleRecorded": true, "runtimeIntegrationPerformedThisRound": false, "versionPinnedForIntegration": null, "integrationApproved": false},
+    {"id": "tilework", "label": "瓦作", "knowledgeResponsibility": "瓦件、铺设、搭接与收边", "frameworkRoleRecorded": true, "runtimeIntegrationPerformedThisRound": false, "versionPinnedForIntegration": null, "integrationApproved": false},
+    {"id": "walls", "label": "墙体", "knowledgeResponsibility": "主体、砌筑、抹灰、洞口与墙顶收口", "frameworkRoleRecorded": true, "runtimeIntegrationPerformedThisRound": false, "versionPinnedForIntegration": null, "integrationApproved": false},
+    {"id": "openings", "label": "门窗", "knowledgeResponsibility": "洞口、框、扇、开启与净通行", "frameworkRoleRecorded": true, "runtimeIntegrationPerformedThisRound": false, "versionPinnedForIntegration": null, "integrationApproved": false},
+    {"id": "timber-surface", "label": "木材表面", "knowledgeResponsibility": "纹理方向、加工痕迹、材料状态与损伤", "frameworkRoleRecorded": true, "runtimeIntegrationPerformedThisRound": false, "versionPinnedForIntegration": null, "integrationApproved": false}
+  ],
+  "externalMotherLinks": [
+    {"name": "Brick Mother", "connectsTo": ["walls", "knowledge-blueprint"], "role": "独立砌筑单元生产线", "version": null, "status": "awaiting-future-handoff-alignment"},
+    {"name": "Tiles Mother", "aliasesAsSpoken": ["tile mother", "Tile Mother"], "connectsTo": ["tilework", "roof-form", "knowledge-blueprint"], "role": "独立瓦母体及瓦作知识", "version": null, "status": "awaiting-future-handoff-alignment"}
+  ],
+  "interfaceTopics": [
+    {"id": "IF-01", "label": "门洞与墙体", "moduleIds": ["knowledge-blueprint", "walls", "openings", "timber-structure"], "record": ["洞口边界", "墙厚收分", "框占位", "净通行", "侧壁与门头收口"], "status": "concept-only"},
+    {"id": "IF-02", "label": "石墙脚与土墙", "moduleIds": ["knowledge-blueprint", "foundation-site", "walls"], "record": ["局部地面", "交界线", "砌筑高度", "接合证据"], "status": "concept-only"},
+    {"id": "IF-03", "label": "木架与墙体", "moduleIds": ["timber-structure", "walls"], "record": ["接触或嵌入", "支承或避让", "构造证据", "受力角色证据"], "status": "concept-only"},
+    {"id": "IF-04", "label": "屋架屋面与瓦作", "moduleIds": ["knowledge-blueprint", "timber-structure", "roof-form", "tilework"], "record": ["承托", "檩椽", "基层", "瓦列搭接", "脊檐收口", "排水目标"], "status": "concept-only"},
+    {"id": "IF-05", "label": "构件与表面", "moduleIds": ["walls", "tilework", "timber-structure", "timber-surface"], "record": ["材料家族", "纹理或加工方向", "物理尺度", "暴露部位", "种子允许变化范围"], "status": "concept-only"}
+  ],
+  "futureSharedFields": ["caseId", "buildingId", "componentId", "hostPartId", "sourceVersion", "targetPeriod", "originalUnits", "unitConversionBasis", "coordinateBasis", "axisRefs", "datumRefs", "boundaryRefs", "supportRefs", "evidenceRefs", "allowedVariation", "unresolvedIssues"],
+  "commonCoordinateConventionSet": false,
+  "evidenceGaps": [
+    {"id": "GAP-01", "topic": "具名案例的完整平立剖和尺寸链", "status": "open", "affectedTopics": ["TOPIC-03", "TOPIC-04", "TOPIC-08", "TOPIC-09"]},
+    {"id": "GAP-02", "topic": "柱梁枋檩椽及榫卯节点原图", "status": "open", "affectedTopics": ["TOPIC-10"]},
+    {"id": "GAP-03", "topic": "墙心、墙层、石基、收分和洞口截面", "status": "open", "affectedTopics": ["TOPIC-05", "TOPIC-06", "TOPIC-12"]},
+    {"id": "GAP-04", "topic": "瓦件实测、组合、铺设及脊檐收边", "status": "open", "affectedTopics": ["TOPIC-11"]},
+    {"id": "GAP-05", "topic": "材料配方、工艺、细节尺度与风化成因", "status": "open", "affectedTopics": ["TOPIC-10", "TOPIC-11", "TOPIC-13"]},
+    {"id": "GAP-06", "topic": "1940至1945年状态与后期改造分离", "status": "open", "affectedTopics": ["TOPIC-01", "TOPIC-13"]},
+    {"id": "GAP-07", "topic": "旧记录中来源等级和适用范围的冲突", "status": "open", "affectedTopics": ["TOPIC-01", "TOPIC-14"]},
+    {"id": "GAP-08", "topic": "原图版归档与完整原始调查数据获取", "status": "open", "affectedTopics": ["TOPIC-01"]},
+    {"id": "GAP-09", "topic": "专业线交接版本、坐标、接口和证据状态", "status": "deferred-to-integration", "affectedTopics": ["TOPIC-14"]},
+    {"id": "GAP-10", "topic": "年报标年与出版日期及译名口径", "status": "open", "affectedTopics": ["TOPIC-01", "TOPIC-04"]}
+  ],
+  "knownSourceIssues": [
+    {"id": "ISSUE-COURTYARD-RATIOS", "sourceRef": "L08", "pdfPage": 8, "preserve": ["B1d = B1b / B1a", "B1e = B1a / (B1a + B1b)"], "resolved": false, "basisRefs": ["R08"]},
+    {"id": "ISSUE-TUSI-TABLE-TEXT", "sourceRef": "L09", "pdfPage": 12, "reviewRecordRef": "R10", "resolved": false},
+    {"id": "ISSUE-BIBLIOGRAPHIC-YEARS", "sourceRefs": ["L01", "L02"], "preserveRegistryIds": true, "resolved": false},
+    {"id": "ISSUE-OLD-SOURCE-GRADES", "sourceRef": "L07", "assessment": "旧汇编可能含较高等级和跨地区采用，后续按结论逐项核验。", "runtimeMigrationPerformed": false, "resolved": false}
+  ],
+  "maintenance": {
+    "scopeOfNewEvidence": "case-and-claim-level",
+    "recordSupersession": true,
+    "neverSilentlyRepairSource": true,
+    "independentCorroborationRequiredBeforeProductionAdoption": true,
+    "newSourceSearchPerformed": false,
+    "newSourceSearchPolicy": "非中文网站的原始馆藏或研究来源；候选先交用户判断。"
+  },
+  "deliverableFiles": ["README.md", "SOURCES_AND_CASES.md", "MOTHER_LINE_CONNECTIONS.md", "knowledge-framework-v1.json"]
+}
