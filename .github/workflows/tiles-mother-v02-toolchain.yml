@@ -1,0 +1,90 @@
+name: Tiles Mother V0.2 Toolchain
+on:
+  push:
+    branches: [feature/tiles-mother-v0.1-workbench]
+    paths: [.github/workflows/tiles-mother-v02-toolchain.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  prepare:
+    if: github.ref == 'refs/heads/feature/tiles-mother-v0.1-workbench'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Build pinned local reference runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/tiles-runtime/out/vendor /tmp/tiles-runtime/out/fixtures
+          cd /tmp/tiles-runtime
+          npm init -y >/dev/null
+          npm install --save-exact three@0.180.0 esbuild@0.25.9 fflate@0.8.2
+          cat > entry.js <<'JS'
+          export * from 'three';
+          export { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+          export { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+          export { FBXLoader } from 'three/addons/loaders/FBXLoader.js';
+          export { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
+          export { MTLLoader } from 'three/addons/loaders/MTLLoader.js';
+          export { STLLoader } from 'three/addons/loaders/STLLoader.js';
+          export { PLYLoader } from 'three/addons/loaders/PLYLoader.js';
+          export { ColladaLoader } from 'three/addons/loaders/ColladaLoader.js';
+          export { ThreeMFLoader } from 'three/addons/loaders/3MFLoader.js';
+          export { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
+          export { KTX2Loader } from 'three/addons/loaders/KTX2Loader.js';
+          export { TGALoader } from 'three/addons/loaders/TGALoader.js';
+          export { DDSLoader } from 'three/addons/loaders/DDSLoader.js';
+          export { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
+          export * as archive from 'fflate';
+          JS
+          node_modules/.bin/esbuild entry.js --bundle --format=iife --global-name=TilesReferenceRuntime --minify --target=es2020 --legal-comments=eof --outfile=out/reference-runtime.js
+          cp node_modules/three/LICENSE out/THREE-LICENSE.txt
+          cp node_modules/fflate/LICENSE out/FFLATE-LICENSE.txt
+          cp package-lock.json out/package-lock.json
+          cp -R node_modules/three/examples/jsm/libs/draco out/vendor/
+          cp -R node_modules/three/examples/jsm/libs/basis out/vendor/
+          curl -fL --retry 2 https://raw.githubusercontent.com/mrdoob/three.js/r180/examples/models/fbx/stanford-bunny.fbx -o out/fixtures/stanford-bunny.fbx
+          curl -fL --retry 2 https://raw.githubusercontent.com/mrdoob/three.js/r180/examples/models/fbx/cube.fbx -o out/fixtures/cube.fbx || rm -f out/fixtures/cube.fbx
+          python3 - <<'PY'
+          import pathlib,hashlib,json
+          root=pathlib.Path('out')
+          entries={str(p.relative_to(root)):{'bytes':p.stat().st_size,'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in root.rglob('*') if p.is_file()}
+          (root/'manifest.json').write_text(json.dumps({'three':'0.180.0','fflate':'0.8.2','esbuild':'0.25.9','files':entries},indent=2))
+          PY
+      - name: Read existing Pages publication without changing settings
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const repo = context.repo;
+            const result = {};
+            for (const [key,route,params] of [
+              ['pages','GET /repos/{owner}/{repo}/pages',repo],
+              ['deployments','GET /repos/{owner}/{repo}/deployments',{...repo,per_page:10}],
+              ['artifacts','GET /repos/{owner}/{repo}/actions/artifacts',{...repo,name:'github-pages',per_page:30}]
+            ]) {
+              try { result[key] = (await github.request(route,params)).data; }
+              catch(error) { result[key] = {error:error.message,status:error.status}; }
+            }
+            if(Array.isArray(result.deployments)) {
+              for(const d of result.deployments.slice(0,5)) {
+                try {d.statuses=(await github.rest.repos.listDeploymentStatuses({...repo,deployment_id:d.id,per_page:5})).data;}
+                catch(error){d.statusError=error.message;}
+              }
+            }
+            fs.mkdirSync('/tmp/tiles-runtime/out',{recursive:true});
+            fs.writeFileSync('/tmp/tiles-runtime/out/publication-inspection.json',JSON.stringify(result,null,2));
+      - name: Preserve toolchain files
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tiles-mother-v02-toolchain
+          path: /tmp/tiles-runtime/out/
+          retention-days: 7
+          if-no-files-found: error
