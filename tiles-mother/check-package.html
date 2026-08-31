@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="no-referrer"><meta name="theme-color" content="#eeede7">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'unsafe-inline'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<link rel="icon" href="data:,">
+<title>Tiles Mother · 协作包检查</title>
+<style>
+:root{color-scheme:light;font-family:"Segoe UI","Microsoft YaHei",system-ui,sans-serif;color:#293b33;background:#eeede7}*{box-sizing:border-box}body{margin:0;font-size:15px;line-height:1.7}main{max-width:1060px;margin:0 auto;padding:38px 24px 60px}header{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:26px}a{color:#3b6553}h1{font-size:32px;line-height:1.3;margin:6px 0 15px}h2{font-size:19px;margin:0 0 12px}p{margin:10px 0}.eyebrow{font-size:12px;letter-spacing:2px;color:#66756c}.muted{color:#66756c}.card{padding:26px;background:#faf9f4;border:1px solid #d5dbd1;border-radius:16px;margin:20px 0}.drop{border:2px dashed #8ba290;border-radius:13px;padding:30px 18px;text-align:center;background:#f1f5ec;cursor:pointer}.drop:hover,.drop.drag{background:#e5eddf}.drop:focus-visible,button:focus-visible,a:focus-visible{outline:3px solid #426b55;outline-offset:4px}.drop strong{display:block;font-size:21px}button{font:inherit;padding:10px 16px;border:1px solid #b1c1b2;border-radius:8px;background:#fffef9;cursor:pointer;color:inherit}button.primary{background:#3e6351;color:white;border-color:#3e6351}button:disabled{opacity:.5;cursor:default}.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px}.hidden{display:none!important}progress{width:100%;height:16px;accent-color:#3e6351}.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.metric{background:#eef2e9;padding:14px;border-radius:10px}.metric strong{display:block;font-size:24px}.status{border-left:4px solid #78967b;padding:12px 16px;background:#eef3e8;white-space:pre-wrap}.status.warn{border-color:#b48843;background:#f8f0df}.status.fail{border-color:#ac6255;background:#faece6}.table-wrap{overflow-x:auto;margin:16px 0}table{border-collapse:collapse;width:100%;font-size:13px}th,td{text-align:left;padding:11px 8px;border-bottom:1px solid #dce1d7;vertical-align:top}td:first-child{word-break:break-word;min-width:150px}th{color:#68766c}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#edf0e8;padding:14px;border-radius:9px;font-size:13px}.notice{font-size:13px;color:#66756c}.label{display:inline-block;padding:3px 10px;border:1px solid #c7d2c4;border-radius:20px;font-size:12px}#progressText{overflow-wrap:anywhere}footer{font-size:13px;color:#69766c}@media(max-width:600px){main{padding:22px 16px}header{align-items:flex-start}h1{font-size:26px}.card{padding:18px}.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.metric strong{font-size:21px}.drop strong{font-size:18px}}
+</style>
+<script src="receipt-sha256.js" defer></script><script src="package-check.js" defer></script>
+</head>
+<body><main>
+<header><div><div class="eyebrow">TILES MOTHER / TRANSFER CHECK</div><span class="label">协作包检查 V1</span></div><a href="./?v=0.2.0">返回瓦片工作台</a></header>
+<h1>先确认包里有什么，<br>再交接给我学习。</h1>
+<p class="muted">检查你已经导出的协作 ZIP：模型与贴图是否实际在包内、大小是否一致、文件校验是否通过。</p>
+<section class="card"><div id="drop" class="drop" role="button" tabindex="0" aria-label="选择已有的 Tiles Mother 协作 ZIP"><strong>把原来的协作 ZIP 拖到这里</strong><p>或点一下选择文件，不用重新生成大包。</p><span class="notice">只在你的浏览器读取；不会上传模型，不会修改或删除原件。</span></div><input type="file" id="packageFile" accept=".zip,application/zip" hidden>
+<div id="progressArea" class="hidden"><p id="progressText" role="status" aria-live="polite"></p><progress id="progress" max="1" value="0"></progress><button id="cancel">停止检查并保留原件</button></div>
+<p class="notice">本页可检查 V0.2 导出的协作包和普通 ZIP 的目录。聊天端是否收到、模型能否解析、材质是否完成学习，各自单独确认。</p></section>
+<section class="card hidden" id="results"><h2 id="resultTitle">检查结果</h2><div class="metrics"><div class="metric"><span>整个包</span><strong id="packageSize"></strong></div><div class="metric"><span>参考文件</span><strong id="referenceCount"></strong></div><div class="metric"><span>模型文件</span><strong id="modelCount"></strong></div><div class="metric"><span>图片 / 贴图文件</span><strong id="imageCount"></strong></div></div>
+<p id="conclusion" class="status"></p><p id="warnings" class="notice"></p><div class="actions"><button class="primary" id="saveReport">保存小型检查报告</button><button id="copySummary">复制检查摘要</button></div><p class="notice">把检查报告发到聊天即可继续定位。报告包含文件名、大小、校验结果和来源笔记，不包含模型、贴图或压缩包的原始内容。</p>
+<details><summary>逐文件结果</summary><div class="table-wrap"><table><thead><tr><th>文件</th><th>大小</th><th>完整性</th></tr></thead><tbody id="fileRows"></tbody></table></div></details><details><summary>交接摘要</summary><pre id="summary"></pre></details>
+<p class="status warn">本机完整性通过后，仍需聊天端收到原文件并完成学习。任何检查报告都不会自动授权删除尚未蒸馏的资料。</p></section>
+<footer>SHA256 与 CRC32 用于完整性核对；不会把测试模型登记为云南参考，不会自动批准材质。<br>人工视觉批准：未通过。生产批准：未通过。</footer>
+</main></body></html>
