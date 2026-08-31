@@ -1,0 +1,53 @@
+{
+  "schema": "tiles-mother-transfer-investigation",
+  "checkedOn": "2026-08-31",
+  "sourceReadVerified": false,
+  "distillationComplete": false,
+  "temporaryCopiesRemoved": false,
+  "visualApproved": false,
+  "productionApproved": false,
+  "userSourceFiles": [
+    {"fileName": "Tiles_Mother_V02_Work_Record_2026-08-31.zip", "uploadRecordVisible": true, "actualBytesAccessibleInThisRuntime": false, "bytes": null, "sha256": null},
+    {"fileName": "Tiles_Mother_V02_Work_Record_2026-08-31(1).zip", "uploadRecordVisible": true, "actualBytesAccessibleInThisRuntime": false, "bytes": null, "sha256": null}
+  ],
+  "attachmentDiagnosis": {
+    "exactPathsAndRuntimeDirectoryChecked": true,
+    "fileSearchAlsoChecked": true,
+    "sourceZipDirectoryRead": false,
+    "upstreamUploadServiceLogsAvailable": false,
+    "specificFailureCause": "unknown",
+    "interpretation": "The attachment records exist, but this analysis runtime has no corresponding readable source payload. This does not prove user error, a corrupt archive, a format restriction, or a size-limit violation."
+  },
+  "existingWorkbenchCode": {
+    "sourceCommit": "411a5033816e2544a70df432ef89c7529f619609",
+    "sourcePath": "tiles-mother/v02/reference-desk.js",
+    "exportsOriginalBlobBytes": true,
+    "exportTotalSizeGuardPresent": false,
+    "storesInputZipAndExpandedFilesTogether": true,
+    "referenceTotalLimitBytes": 2147483648,
+    "importZipLimitBytes": 536870912,
+    "unpackedZipLimitBytes": 805306368,
+    "risks": ["Large exports can exceed the workbench's own ZIP import limit.", "The original archive and extracted files can duplicate bytes in the next export.", "The sender has no receiver acknowledgment or actual study receipt."],
+    "specificUserPackageAffected": "not established",
+    "originalWorkbenchExportChangedInThisTask": false
+  },
+  "independentZipReadback": {
+    "scope": "Previously generated browser QA data only, not user Yunnan tile references",
+    "artifactId": 9749009262,
+    "innerPath": "qa/collaboration-roundtrip.zip",
+    "packageBytes": 8096862,
+    "packageSHA256": "6bd39f59b2d637ac66ca9b97d445ee2bac66d00011f43273b4ab88b8af8f3b04",
+    "referenceCount": 20,
+    "allCRCChecksPassed": true,
+    "allOriginalByteSizesMatch": true,
+    "allOriginalSHA256Match": true
+  },
+  "diagnosticEntry": {
+    "path": "tiles-mother/check-package.html",
+    "purpose": "Inspect the user's existing ZIP locally and export a small metadata-only report without re-uploading or deleting source assets.",
+    "reportsSenderIntegritySeparatelyFromChatReceipt": true,
+    "reportsModelParsingSeparatelyFromFileIntegrity": true,
+    "sourceDataUploaded": false,
+    "allowsSourceDeletion": false
+  }
+}
