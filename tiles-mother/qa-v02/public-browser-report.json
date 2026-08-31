@@ -1,0 +1,315 @@
+{
+  "version": "0.2.0",
+  "publicURL": "https://haihao0307.github.io/HOUSE/tiles-mother/?v=0.2.0",
+  "visualApproved": false,
+  "productionApproved": false,
+  "tests": [
+    {
+      "name": "entry HTTP 200",
+      "passed": true,
+      "detail": 200
+    },
+    {
+      "name": "workbench version",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "WebGL2 real context",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "all-format input",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "IndexedDB ready",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "procedural QA pan",
+      "passed": true,
+      "detail": "f993349d"
+    },
+    {
+      "name": "procedural QA cover",
+      "passed": true,
+      "detail": "a3c5d953"
+    },
+    {
+      "name": "procedural QA earthen",
+      "passed": true,
+      "detail": "0dc8b940"
+    },
+    {
+      "name": "procedural QA glazed",
+      "passed": true,
+      "detail": "b478c02f"
+    },
+    {
+      "name": "preview tile.GLB",
+      "passed": true,
+      "detail": {
+        "status": "ready",
+        "id": "34aade2a-1aee-465f-b87c-d5fa71a52d7a",
+        "kind": "model",
+        "meshes": 1,
+        "triangles": 4,
+        "vertices": 4,
+        "dimensions": [
+          1,
+          0.7,
+          0.9
+        ],
+        "unit": "m (glTF declared units)"
+      }
+    },
+    {
+      "name": "mesh present tile.GLB",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "preview tile-binary.fbx",
+      "passed": true,
+      "detail": {
+        "status": "ready",
+        "id": "a789af89-410c-4513-9e75-5c6032c5bced",
+        "kind": "model",
+        "meshes": 1,
+        "triangles": 4,
+        "vertices": 12,
+        "dimensions": [
+          1,
+          0.699999988079071,
+          0.9000000059604645
+        ],
+        "unit": "source units; uncalibrated"
+      }
+    },
+    {
+      "name": "mesh present tile-binary.fbx",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "preview tile.GLB",
+      "passed": true,
+      "detail": {
+        "status": "ready",
+        "id": "34aade2a-1aee-465f-b87c-d5fa71a52d7a",
+        "kind": "model",
+        "meshes": 1,
+        "triangles": 4,
+        "vertices": 4,
+        "dimensions": [
+          1,
+          0.7,
+          0.9
+        ],
+        "unit": "m (glTF declared units)"
+      }
+    },
+    {
+      "name": "model expands",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "reference orbit changed",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "reference zoom closer",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "real reference PNG bytes",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "reference canvas has visible content",
+      "passed": true,
+      "detail": [
+        0.9642916071067272,
+        2.166247695818209,
+        3.841403649089127
+      ]
+    },
+    {
+      "name": "reference restored to side panel",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "preview tile.GLB",
+      "passed": true,
+      "detail": {
+        "status": "ready",
+        "id": "34aade2a-1aee-465f-b87c-d5fa71a52d7a",
+        "kind": "model",
+        "meshes": 1,
+        "triangles": 4,
+        "vertices": 4,
+        "dimensions": [
+          1,
+          0.7,
+          0.9
+        ],
+        "unit": "m (glTF declared units)"
+      }
+    },
+    {
+      "name": "all references survive reload",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "preview tile.GLB",
+      "passed": true,
+      "detail": {
+        "status": "ready",
+        "id": "34aade2a-1aee-465f-b87c-d5fa71a52d7a",
+        "kind": "model",
+        "meshes": 1,
+        "triangles": 4,
+        "vertices": 4,
+        "dimensions": [
+          1,
+          0.7,
+          0.9
+        ],
+        "unit": "m (glTF declared units)"
+      }
+    },
+    {
+      "name": "reference notes survive reload",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "import leaves procedural core unchanged",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "export preserves false approvals",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "all references exported",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "SHA roundtrip tile.GLB",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "SHA roundtrip tile-binary.fbx",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "collaboration import restores all files",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "import metadata tile.GLB",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "import metadata tile-binary.fbx",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "imported project approval stays false",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "preview tile.GLB",
+      "passed": true,
+      "detail": {
+        "status": "ready",
+        "id": "34aade2a-1aee-465f-b87c-d5fa71a52d7a",
+        "kind": "model",
+        "meshes": 1,
+        "triangles": 4,
+        "vertices": 4,
+        "dimensions": [
+          1,
+          0.7,
+          0.9
+        ],
+        "unit": "m (glTF declared units)"
+      }
+    },
+    {
+      "name": "preview tile.GLB",
+      "passed": true,
+      "detail": {
+        "status": "ready",
+        "id": "329e212e-1a5e-47e9-9443-46d77a0bd16e",
+        "kind": "model",
+        "meshes": 1,
+        "triangles": 4,
+        "vertices": 4,
+        "dimensions": [
+          1,
+          0.7,
+          0.9
+        ],
+        "unit": "m (glTF declared units)"
+      }
+    },
+    {
+      "name": "mobile no horizontal overflow",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "mobile expanded viewer fits",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no uncaught page errors",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "name": "no console errors",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "name": "no failed requests",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "name": "no reference data sent to external services",
+      "passed": true,
+      "detail": []
+    }
+  ],
+  "pageErrors": [],
+  "consoleErrors": [],
+  "failedRequests": [],
+  "unexpectedNetworkRequests": [],
+  "allPassed": true,
+  "testedURL": "https://haihao0307.github.io/HOUSE/tiles-mother/?v=0.2.0",
+  "browserVersion": "151.0.7922.173"
+}
