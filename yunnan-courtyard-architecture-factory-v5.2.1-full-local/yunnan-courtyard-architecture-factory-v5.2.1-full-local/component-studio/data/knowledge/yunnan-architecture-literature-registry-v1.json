@@ -1,19 +1,26 @@
 {
-  "schemaVersion": "1.2.0",
-  "updatedAt": "2026-08-30",
+  "schemaVersion": "1.3.0",
+  "updatedAt": "2026-08-31",
   "purpose": "Human-reviewed literature intake for the Yunnan historic architecture production line. Records remain evidence references and are not promoted to dimensional or construction rules without stronger architectural surveys.",
   "reviewPolicy": {
     "B2_BACKGROUND": "Keep for regional context, settlement patterns, domestic-space use, family organization, terminology and weak construction clues. Do not use as a sole source for dimensions, structural assemblies, component geometry, material layers or production defaults.",
     "B1_REGIONAL_ARCHITECTURAL_REFERENCE": "Keep measured architectural facts for the source's exact region and building type. Sample dimensions and proportions remain case-level evidence and may not become province-wide production defaults without independent corroboration and original measured assets.",
     "B1_SUPPORTING_METHOD_REFERENCE": "Keep useful architectural decomposition, component ontology, dependency logic, assembly sequence and typology leads. Do not promote the source's dimensions, joints, authenticity claims or generated examples to production defaults when primary measured provenance and validation assets are incomplete.",
-    "promotionRule": "Promotion to A or production rules requires primary architectural measurement, scale bars or dimensions, plans plus sections/elevations, component or joint documentation, provenance, separation of original fabric from later alterations, and cross-checking against another independent source."
+    "promotionRule": "Promotion to A or production rules requires primary architectural measurement, scale bars or dimensions, plans plus sections/elevations, component or joint documentation, provenance, separation of original fabric from later alterations, and cross-checking against another independent source.",
+    "retentionAndDeduplication": "Retention approval is not validation or production approval. Low-priority supporting references remain non-normative. Reuploads of the same DOI and SHA256 do not add independent sources or confidence; paper-reported case counts are not project-acquired complete survey sets."
   },
   "humanReview": {
     "reviewer": "project owner",
     "backgroundBatchDecision": "Keep the first six sources as background. Overall architectural depth is limited and the dominant viewpoint is humanistic, anthropological, social or contemporary-use analysis.",
     "architectureFocusedDecision": "Keep the 2025 Yunnan–Tibet Tusi manor study and distill its useful architectural evidence. Overall value is average, so retain it as a regional measured reference without promoting it to a production standard.",
     "methodSupportDecision": "Keep the 2024 Bai timber HBIM paper as a rough supporting point. Retain its component, dependency and assembly concepts while waiting for more complete measured architectural evidence from the project owner.",
-    "recordedBy": "assistant"
+    "recordedBy": "assistant",
+    "latestSupportingIntake": {
+      "date": "2026-08-31",
+      "assessment": "The courtyard database and reuploaded Tusi manor papers have limited value; retain as low-priority supporting references.",
+      "reviewFile": "yunnan-literature-support-review-20260831.json",
+      "productionApproved": false
+    }
   },
   "records": [
     {
@@ -144,7 +151,7 @@
       "sourcePlatform": "MDPI Buildings",
       "doi": "10.3390/buildings15071134",
       "classification": "B1_REGIONAL_ARCHITECTURAL_REFERENCE",
-      "humanAssessment": "average value; retain useful measured architectural facts with strict regional limits",
+      "humanAssessment": "limited value; keep as low-priority support for the exact region and building type; latest retention does not validate the paper",
       "geographicScope": "Tibetan-inhabited parts of Deqin County and Shangri-La City in Diqing",
       "buildingTypeScope": "Tusi administrative-residential manors",
       "retainFor": [
@@ -165,7 +172,22 @@
         "historical reconstruction without original measured drawings",
         "production approval"
       ],
-      "distilledKnowledgeFile": "yunnan-tibet-tusi-manor-knowledge-v1.json"
+      "distilledKnowledgeFile": "yunnan-tibet-tusi-manor-knowledge-v1.json",
+      "evidencePriority": "low",
+      "retentionApproved": true,
+      "productionRuleStatus": "support-only",
+      "humanVisualApproved": false,
+      "productionApproved": false,
+      "sourcePdfSha256": "e2ed306467af564bb656ff833f19a965d926503ef540693b423d29310962801f",
+      "independentSourceCount": 1,
+      "reviewAddendum": "yunnan-literature-support-review-20260831.json",
+      "latestUpload": {
+        "name": "04_Yunnan_Tibet_Tusi_Manors_Architectural_Form_2025(2).pdf",
+        "bytes": 55022522,
+        "sha256": "e2ed306467af564bb656ff833f19a965d926503ef540693b423d29310962801f",
+        "duplicateOf": "04_Yunnan_Tibet_Tusi_Manors_Architectural_Form_2025(1).pdf",
+        "additionalIndependentEvidenceCount": 0
+      }
     },
     {
       "id": "YN-LIT-2024-BAI-TIMBER-HBIM",
@@ -195,6 +217,43 @@
         "production approval"
       ],
       "distilledKnowledgeFile": "bai-traditional-timber-hbim-support-v1.json"
+    },
+    {
+      "id": "YN-LIT-2023-COURTYARD-SPATIAL-DATABASE",
+      "title": "A Data-Driven Method for Constructing the Spatial Database of Traditional Villages—A Case Study of Courtyard Residential Typologies in Yunnan, China",
+      "year": 2023,
+      "pages": 19,
+      "sourcePlatform": "MDPI Buildings",
+      "doi": "10.3390/buildings13122956",
+      "classification": "B1_SUPPORTING_METHOD_REFERENCE",
+      "evidencePriority": "low",
+      "humanAssessment": "limited value; retain data-organization methods and regional context only",
+      "retentionApproved": true,
+      "productionRuleStatus": "support-only",
+      "humanVisualApproved": false,
+      "productionApproved": false,
+      "geographicScope": "The five selected villages named in the article, not all Yunnan settlements",
+      "buildingTypeScope": "Author-selected courtyard residential typologies",
+      "retainFor": [
+        "nineteen field labels and their source definitions",
+        "author-reported five-village selection and typology search leads",
+        "CAD and GIS object-identifier linkage",
+        "measurement, vectorization and attribute-annotation workflow"
+      ],
+      "excludeFrom": [
+        "claiming acquisition of the complete 432-building database",
+        "canonical regional typology or ethnic attribution",
+        "bay counts, column grids, component dimensions and joint generation",
+        "wall-layer or tilework defaults",
+        "1940s historical-state reconstruction without primary evidence",
+        "production approval"
+      ],
+      "sourceReportedSampleCount": 432,
+      "originalSurveyDatasetObtained": false,
+      "independentSourceCount": 1,
+      "sourcePdfSha256": "2d463d5d4814906cfde0b9a65a23fb4b36906c6fbb93a82e57e6ae2bb220895e",
+      "distilledKnowledgeFile": "yunnan-courtyard-spatial-database-support-v1.json",
+      "reviewAddendum": "yunnan-literature-support-review-20260831.json"
     }
   ]
 }
