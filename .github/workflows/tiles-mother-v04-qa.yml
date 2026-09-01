@@ -1,0 +1,139 @@
+name: Tiles Mother V0.4 Relief Lighting Roof Time QA
+
+on:
+  push:
+    branches: [feature/tiles-mother-v0.1-workbench]
+    paths:
+      - .github/workflows/tiles-mother-v04-qa.yml
+      - tiles-mother/v04/**
+      - tiles-mother/knowledge/jiangwutang-001/material-candidate-v0.4.json
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tiles-mother-v04-qa
+  cancel-in-progress: false
+
+jobs:
+  qa:
+    if: github.ref == 'refs/heads/feature/tiles-mother-v0.1-workbench'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+
+      - name: Verify bounded source scope and syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f tiles-mother/v04/index.html
+          test -f tiles-mother/v04/operators.js
+          test -f tiles-mother/v04/viewer.js
+          test -f tiles-mother/v04/browser-qa.py
+          test -f tiles-mother/v04/test-v04.mjs
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib,json
+          root=Path('tiles-mother/v04')
+          forbidden=['讲武堂瓦片精细.zip','01.fbx','01_u1_v1_diffuse.png','01_u1_v1_normal.png']
+          runtime=b''.join(p.read_bytes() for p in root.iterdir() if p.is_file() and p.suffix in {'.html','.js','.mjs','.json','.css'})
+          for name in forbidden:
+              assert name.encode('utf-8') not in runtime,name
+          report={
+              'version':'0.4.0',
+              'sourceCommit':'${{ github.sha }}',
+              'indexBytes':(root/'index.html').stat().st_size,
+              'indexSHA256':hashlib.sha256((root/'index.html').read_bytes()).hexdigest(),
+              'rawSourceInRuntime':False,
+              'visualApproved':False,
+              'productionApproved':False,
+              'distillationComplete':False,
+          }
+          (root/'qa-build.json').write_text(json.dumps(report,indent=2),encoding='utf-8')
+          print(json.dumps(report,indent=2))
+          PY
+          node --check tiles-mother/v04/operators.js
+          node --check tiles-mother/v04/viewer.js
+          node --check tiles-mother/v04/knowledge-panel.js
+
+      - name: Run deterministic operator and history tests
+        run: node tiles-mother/v04/test-v04.mjs
+
+      - name: Install real browser QA dependencies
+        run: |
+          python3 -m pip install 'playwright>=1.50,<2' 'pillow>=10,<13' 'numpy>=1.26,<3'
+          python3 -m playwright install --with-deps chromium
+
+      - name: Run WebGL2 relief lighting and roof-time QA
+        run: |
+          rm -rf tiles-mother/v04/qa
+          python3 tiles-mother/v04/browser-qa.py \
+            --site tiles-mother/v04 \
+            --out tiles-mother/v04/qa
+
+      - name: Verify truthful QA receipt
+        if: always()
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import json,sys
+          path=Path('tiles-mother/v04/qa/browser-report.json')
+          if not path.is_file():
+              print('browser report missing')
+              sys.exit(1)
+          report=json.loads(path.read_text(encoding='utf-8'))
+          assert report['version']=='0.4.0'
+          assert report['visualApproved'] is False
+          assert report['productionApproved'] is False
+          assert report['allPassed'] is True,report.get('error')
+          assert not report['errors'],report['errors']
+          assert not report['failedRequests'],report['failedRequests']
+          names={item['name'] for item in report['tests'] if item.get('passed')}
+          required={
+              'actual WebGL2',
+              'pan geometry actually displaced',
+              'cover geometry actually displaced',
+              'lights visibly affect render',
+              'one controller reaches 15 tiles',
+              'all roof tiles receive same physical time',
+              'rewind restores actual geometry',
+              'mobile no horizontal overflow',
+          }
+          assert required <= names,sorted(required-names)
+          assert len(report['screenshots'])>=14,len(report['screenshots'])
+          print(json.dumps({'tests':len(report['tests']),'screenshots':len(report['screenshots']),'browser':report.get('browserVersion')},indent=2))
+          PY
+
+      - name: Upload real browser evidence even on failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tiles-mother-v04-qa-${{ github.sha }}
+          path: |
+            tiles-mother/v04/qa/
+            tiles-mother/v04/qa-build.json
+            tiles-mother/v04/CHECKSUMS.sha256
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Report scope
+        if: always()
+        shell: bash
+        run: |
+          echo '## Tiles Mother V0.4 study QA' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Scope: Tiles Mother V0.4 study only. No main, Brick Mother, release asset, Pages setting or other Mother was modified.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Raw Jiangwutang FBX, textures and ZIP are absent from runtime.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'visualApproved=false; productionApproved=false; distillationComplete=false.' >> "$GITHUB_STEP_SUMMARY"
+          for file in tiles-mother/v04/qa-build.json tiles-mother/v04/qa/browser-report.json; do
+            if test -f "$file"; then
+              echo '```json' >> "$GITHUB_STEP_SUMMARY"
+              cat "$file" >> "$GITHUB_STEP_SUMMARY"
+              echo '```' >> "$GITHUB_STEP_SUMMARY"
+            fi
+          done
