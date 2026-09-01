@@ -2,12 +2,12 @@
   "version": "0.4.0",
   "baseCommit": "f55949d3d2c03f58951856e8d4e384f3b831d3ea",
   "baseSHA256": "43e5a6d2e0121da469b07d2e5452829e5c00ba4e2440aa65930776fab6184887",
-  "bytes": 2296397,
-  "indexSHA256": "00ca328d79c6c681ab6175a4e6340399ecc72381efd4fa63cbaac7e05c71b11a",
+  "bytes": 2296765,
+  "indexSHA256": "cb70c7711a22ee1a6fc93cfe671cdf5fdd6f0d94d2d46ec927a0de48633a4882",
   "sources": {
     "operators.js": {
-      "bytes": 9884,
-      "sha256": "528432ea705636aa1b8709928cd0dfb3960c39bac5b393fc5160ee189751fc79"
+      "bytes": 10252,
+      "sha256": "b02cab74bcf02891842b83e6a46a6b6611d96b4f488176b82cbc6c4caefe4ef8"
     },
     "studio.js": {
       "bytes": 10456,

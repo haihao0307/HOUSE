@@ -8,21 +8,325 @@
     {
       "name": "pan real relief exceeds 1mm candidate",
       "passed": true,
-      "detail": 0.004042901511249097
+      "detail": 0.0046527847167571485
     },
     {
       "name": "pan thickness floor",
       "passed": true,
-      "detail": 0.008841869570521145
+      "detail": 0.008598420261444703
     },
     {
-      "name": "unhandled",
-      "passed": false,
-      "error": "TypeError: Cannot read properties of undefined (reading 'every')"
+      "name": "pan finite positions and normals",
+      "passed": true
+    },
+    {
+      "name": "pan recomputed unit geometry normals",
+      "passed": true
+    },
+    {
+      "name": "pan closed two-manifold indexed shell",
+      "passed": true
+    },
+    {
+      "name": "pan all declared details sampled",
+      "passed": true
+    },
+    {
+      "name": "pan pore causes real vertex displacement",
+      "passed": true,
+      "detail": 0.0018974794074892998
+    },
+    {
+      "name": "pan pore cause controls cavity field",
+      "passed": true
+    },
+    {
+      "name": "pan forming cause changes real geometry",
+      "passed": true
+    },
+    {
+      "name": "pan color stream isolated from geometry",
+      "passed": true
+    },
+    {
+      "name": "pan optical micro stream isolated from mesh",
+      "passed": true
+    },
+    {
+      "name": "pan stable entity identity changes child",
+      "passed": true
+    },
+    {
+      "name": "pan drying lowers moisture",
+      "passed": true
+    },
+    {
+      "name": "pan drying does not heal damage",
+      "passed": true
+    },
+    {
+      "name": "pan water budget accounted",
+      "passed": true,
+      "detail": {
+        "input": 5.730882286521877,
+        "evaporation": 3.181418099097289,
+        "drainage": 1.8712559281328327,
+        "stored": 0.6782082592917551,
+        "residual": 0,
+        "unit": "normalized water capacity"
+      }
+    },
+    {
+      "name": "pan replay exact",
+      "passed": true
+    },
+    {
+      "name": "pan display 15fps selects same physical state",
+      "passed": true
+    },
+    {
+      "name": "pan display 30fps selects same physical state",
+      "passed": true
+    },
+    {
+      "name": "pan display 60fps selects same physical state",
+      "passed": true
+    },
+    {
+      "name": "pan rain off disables wetness and damage",
+      "passed": true
+    },
+    {
+      "name": "pan shared history respects exposure",
+      "passed": true
+    },
+    {
+      "name": "cover deterministic mesh",
+      "passed": true
+    },
+    {
+      "name": "cover real relief exceeds 1mm candidate",
+      "passed": true,
+      "detail": 0.004347614255591552
+    },
+    {
+      "name": "cover thickness floor",
+      "passed": true,
+      "detail": 0.007889987846097362
+    },
+    {
+      "name": "cover finite positions and normals",
+      "passed": true
+    },
+    {
+      "name": "cover recomputed unit geometry normals",
+      "passed": true
+    },
+    {
+      "name": "cover closed two-manifold indexed shell",
+      "passed": true
+    },
+    {
+      "name": "cover all declared details sampled",
+      "passed": true
+    },
+    {
+      "name": "cover pore causes real vertex displacement",
+      "passed": true,
+      "detail": 0.001808803528547287
+    },
+    {
+      "name": "cover pore cause controls cavity field",
+      "passed": true
+    },
+    {
+      "name": "cover forming cause changes real geometry",
+      "passed": true
+    },
+    {
+      "name": "cover color stream isolated from geometry",
+      "passed": true
+    },
+    {
+      "name": "cover optical micro stream isolated from mesh",
+      "passed": true
+    },
+    {
+      "name": "cover stable entity identity changes child",
+      "passed": true
+    },
+    {
+      "name": "cover drying lowers moisture",
+      "passed": true
+    },
+    {
+      "name": "cover drying does not heal damage",
+      "passed": true
+    },
+    {
+      "name": "cover water budget accounted",
+      "passed": true,
+      "detail": {
+        "input": 6.964834934325519,
+        "evaporation": 3.8510820542339568,
+        "drainage": 2.302089110827922,
+        "stored": 0.8116637692636448,
+        "residual": -4.6629367034256575e-15,
+        "unit": "normalized water capacity"
+      }
+    },
+    {
+      "name": "cover replay exact",
+      "passed": true
+    },
+    {
+      "name": "cover display 15fps selects same physical state",
+      "passed": true
+    },
+    {
+      "name": "cover display 30fps selects same physical state",
+      "passed": true
+    },
+    {
+      "name": "cover display 60fps selects same physical state",
+      "passed": true
+    },
+    {
+      "name": "cover rain off disables wetness and damage",
+      "passed": true
+    },
+    {
+      "name": "cover shared history respects exposure",
+      "passed": true
+    },
+    {
+      "name": "reject invalid core input",
+      "passed": true
+    },
+    {
+      "name": "reject invalid core input",
+      "passed": true
+    },
+    {
+      "name": "reject invalid core input",
+      "passed": true
+    },
+    {
+      "name": "reject invalid core input",
+      "passed": true
+    },
+    {
+      "name": "reject invalid core input",
+      "passed": true
     }
   ],
-  "summaries": [],
-  "allPassed": false,
+  "summaries": [
+    {
+      "profile": "pan",
+      "hash": "b24adcc1c97debbc71a5326192831e0cb0d495863766ddc502c7b8b8a9be76cd",
+      "metrics": {
+        "minThickness": 0.008598420261444703,
+        "minimumAllowedThickness": 0.006325000000000001,
+        "topPeakToValley": 0.0046527847167571485,
+        "hitMap": {
+          "p0": 48,
+          "p1": 26,
+          "p2": 17,
+          "p3": 15,
+          "p4": 42,
+          "p5": 20,
+          "p6": 34,
+          "p7": 37,
+          "p8": 26,
+          "p9": 13,
+          "p10": 20,
+          "p11": 23,
+          "p12": 31,
+          "p13": 19,
+          "p14": 31,
+          "p15": 17,
+          "p16": 7,
+          "p17": 21,
+          "p18": 16,
+          "p19": 20,
+          "p20": 24,
+          "p21": 18,
+          "f0": 142,
+          "f1": 116,
+          "f2": 62,
+          "f3": 102,
+          "f4": 64,
+          "f5": 74,
+          "f6": 63,
+          "d0": 111,
+          "d1": 129,
+          "d2": 101,
+          "d3": 151,
+          "d4": 150,
+          "d5": 92,
+          "d6": 90,
+          "d7": 148,
+          "d8": 56
+        },
+        "throughHoles": false,
+        "undercuts": false,
+        "scaleCalibration": "experimental_not_measured"
+      }
+    },
+    {
+      "profile": "cover",
+      "hash": "cfa352876e3483a53e256cc1a99e075bcf90329aaf2a2697875205ef0cd3cdf5",
+      "metrics": {
+        "minThickness": 0.007889987846097362,
+        "minimumAllowedThickness": 0.005775000000000001,
+        "topPeakToValley": 0.004347614255591552,
+        "hitMap": {
+          "p0": 43,
+          "p1": 24,
+          "p2": 16,
+          "p3": 29,
+          "p4": 25,
+          "p5": 18,
+          "p6": 31,
+          "p7": 14,
+          "p8": 9,
+          "p9": 40,
+          "p10": 12,
+          "p11": 32,
+          "p12": 30,
+          "p13": 30,
+          "p14": 11,
+          "p15": 21,
+          "p16": 29,
+          "p17": 24,
+          "p18": 12,
+          "p19": 37,
+          "p20": 44,
+          "p21": 27,
+          "f0": 155,
+          "f1": 58,
+          "f2": 80,
+          "f3": 82,
+          "f4": 131,
+          "f5": 77,
+          "f6": 76,
+          "d0": 105,
+          "d1": 168,
+          "d2": 170,
+          "d3": 161,
+          "d4": 162,
+          "d5": 68,
+          "d6": 140,
+          "d7": 172,
+          "d8": 104
+        },
+        "throughHoles": false,
+        "undercuts": false,
+        "scaleCalibration": "experimental_not_measured"
+      }
+    }
+  ],
+  "allPassed": true,
   "visualApproved": false,
   "productionApproved": false
 }

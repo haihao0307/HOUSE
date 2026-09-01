@@ -1,0 +1,54 @@
+{
+  "version": "0.4.0",
+  "tests": [
+    {
+      "name": "HTTP 200",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "served exact built bytes",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "V0.4 enabled",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "real WebGL2 canvas",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "source reference database ready",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "pan builtin geometry checks",
+      "passed": false,
+      "detail": null
+    }
+  ],
+  "pageErrors": [],
+  "consoleErrors": [
+    "Failed to load resource: the server responded with a status of 404 (File not found)"
+  ],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:42505/v03/jiangwutang-material.js",
+      "failure": "net::ERR_ABORTED"
+    }
+  ],
+  "screenshots": [],
+  "visualApproved": false,
+  "productionApproved": false,
+  "allPassed": false,
+  "url": "http://127.0.0.1:42505/index.html",
+  "indexSHA256": "cb70c7711a22ee1a6fc93cfe671cdf5fdd6f0d94d2d46ec927a0de48633a4882",
+  "browserVersion": "140.0.7339.16",
+  "error": "pan builtin geometry checks",
+  "traceback": "Traceback (most recent call last):\n  File \"/home/runner/work/HOUSE/HOUSE/tiles-mother/v04/browser_qa.py\", line 41, in <module>\n    q=pg.evaluate('TilesMother.runQA()');check(family+' builtin geometry checks',q['allPassed'])\n                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/work/HOUSE/HOUSE/tiles-mother/v04/browser_qa.py\", line 10, in check\n    if not v:raise AssertionError(n)\n             ^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: pan builtin geometry checks\n"
+}
