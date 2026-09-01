@@ -1,0 +1,153 @@
+name: Tiles Mother V0.4 Lean Three Runtime
+
+on:
+  push:
+    branches: [feature/tiles-mother-v0.1-workbench]
+    paths:
+      - .github/workflows/tiles-mother-v04-runtime.yml
+      - tiles-mother/v04/viewer.js
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: tiles-mother-v04-runtime
+  cancel-in-progress: false
+
+jobs:
+  build:
+    if: github.ref == 'refs/heads/feature/tiles-mother-v0.1-workbench'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Build a bounded offline runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          work=/tmp/tiles-v04-runtime
+          rm -rf "$work"
+          mkdir -p "$work"
+          cd "$work"
+          npm init -y >/dev/null
+          npm install --save-exact three@0.180.0 esbuild@0.25.9
+          cat > entry.js <<'JS'
+          import {
+            ACESFilmicToneMapping,
+            Box3,
+            BufferAttribute,
+            BufferGeometry,
+            Color,
+            DirectionalLight,
+            DoubleSide,
+            Group,
+            HemisphereLight,
+            Mesh,
+            MeshBasicMaterial,
+            MeshDepthMaterial,
+            MeshNormalMaterial,
+            MeshStandardMaterial,
+            NoToneMapping,
+            PCFSoftShadowMap,
+            PerspectiveCamera,
+            PlaneGeometry,
+            Scene,
+            SRGBColorSpace,
+            Vector3,
+            WebGLRenderer
+          } from 'three';
+          import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+          globalThis.TMThree = Object.freeze({
+            ACESFilmicToneMapping,
+            Box3,
+            BufferAttribute,
+            BufferGeometry,
+            Color,
+            DirectionalLight,
+            DoubleSide,
+            Group,
+            HemisphereLight,
+            Mesh,
+            MeshBasicMaterial,
+            MeshDepthMaterial,
+            MeshNormalMaterial,
+            MeshStandardMaterial,
+            NoToneMapping,
+            OrbitControls,
+            PCFSoftShadowMap,
+            PerspectiveCamera,
+            PlaneGeometry,
+            Scene,
+            SRGBColorSpace,
+            Vector3,
+            WebGLRenderer
+          });
+          JS
+          ./node_modules/.bin/esbuild entry.js \
+            --bundle \
+            --format=iife \
+            --target=es2020 \
+            --minify \
+            --legal-comments=eof \
+            --outfile=three-runtime.js
+          cp node_modules/three/LICENSE THREE-LICENSE.txt
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib,json
+          runtime=Path('three-runtime.js')
+          receipt={
+            'schema':'tiles-mother-v04-runtime-build',
+            'threeVersion':'0.180.0',
+            'esbuildVersion':'0.25.9',
+            'bytes':runtime.stat().st_size,
+            'sha256':hashlib.sha256(runtime.read_bytes()).hexdigest(),
+            'runtimeNetworkDependencies':[],
+            'rawReferenceAssetsIncluded':False,
+            'visualApproved':False,
+            'productionApproved':False,
+          }
+          Path('runtime-build.json').write_text(json.dumps(receipt,indent=2),encoding='utf-8')
+          print(json.dumps(receipt,indent=2))
+          assert runtime.stat().st_size < 900_000
+          PY
+          cd "$GITHUB_WORKSPACE"
+          cp "$work/three-runtime.js" tiles-mother/v04/three-runtime.js
+          cp "$work/THREE-LICENSE.txt" tiles-mother/v04/THREE-LICENSE.txt
+          cp "$work/runtime-build.json" tiles-mother/v04/runtime-build.json
+          node --check tiles-mother/v04/three-runtime.js
+
+      - name: Commit the generated runtime only when the branch is unchanged
+        shell: bash
+        env:
+          BRANCH: feature/tiles-mother-v0.1-workbench
+        run: |
+          set -euo pipefail
+          test "$(git ls-remote origin "refs/heads/$BRANCH" | cut -f1)" = "$GITHUB_SHA"
+          git add tiles-mother/v04/three-runtime.js tiles-mother/v04/THREE-LICENSE.txt tiles-mother/v04/runtime-build.json
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          if ! git diff --cached --quiet; then
+            git commit -m 'build(tiles-mother): add lean pinned V0.4 Three runtime'
+            git push origin "HEAD:refs/heads/$BRANCH"
+          fi
+
+      - name: Upload runtime receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tiles-mother-v04-runtime-${{ github.sha }}
+          path: |
+            tiles-mother/v04/runtime-build.json
+            tiles-mother/v04/THREE-LICENSE.txt
+          if-no-files-found: warn
+          retention-days: 14
