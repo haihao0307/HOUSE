@@ -34,7 +34,7 @@
     }
   ],
   "configPath": "tiles-mother/knowledge/jiangwutang-001/material-candidate-v0.5.json",
-  "configSHA256": "cc4ca9fd68dead1a10a96657495f4c5472166e3cedd0f2c8460cd4106398b41c",
+  "configSHA256": "b67e626bb7e120288f84cf6a93afa14d653dead7570c97fdc378169be8a01af5",
   "runtimeSourceDependencies": [
     "first-party V0.4 renderer and storage/import workflow",
     "first-party V0.5 geometry, roof and state adapters"
@@ -46,5 +46,8 @@
   "policySchemaAndValidatorIdentity": "not_received",
   "visualApproved": false,
   "productionApproved": false,
-  "distillationComplete": false
+  "distillationComplete": false,
+  "sourceCommit": "635cc270f1c4805b730ad873a79df621639b18b7",
+  "workflowRun": "33573133667",
+  "publicPath": "tiles-mother/"
 }

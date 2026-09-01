@@ -19088,11 +19088,11 @@
       "passed": true,
       "detail": [
         {
-          "id": "c8eb265d-0432-4fb5-8a5c-eff8248fcfb4",
+          "id": "526234dd-8162-4cd3-9164-8ef620a9c686",
           "title": "tile.GLB",
           "filename": "tile.GLB",
           "relativePath": "tile.GLB",
-          "bundleId": "29d73620-29eb-4ac8-a216-5c82e688f860",
+          "bundleId": "6f205775-fa9e-449d-8b4c-3a32abc0e4b3",
           "mime": "model/gltf-binary",
           "size": 800,
           "sha256": "9d150cf7552e33d92f1a75e0468eb7ae81e77b881cac815b23341665a747a2d3",
@@ -19101,15 +19101,15 @@
           "source": "",
           "notes": "",
           "status": "pending",
-          "createdAt": "2026-09-01T11:25:07.891Z",
+          "createdAt": "2026-09-01T23:58:14.791Z",
           "persisted": true
         },
         {
-          "id": "5a15d2b8-b603-48ab-8b6c-205be61fc09c",
+          "id": "9de8b53a-a5de-444c-91a3-f09480b4f4ed",
           "title": "tile-binary.fbx",
           "filename": "tile-binary.fbx",
           "relativePath": "tile-binary.fbx",
-          "bundleId": "29d73620-29eb-4ac8-a216-5c82e688f860",
+          "bundleId": "6f205775-fa9e-449d-8b4c-3a32abc0e4b3",
           "mime": "application/octet-stream",
           "size": 1160,
           "sha256": "a231bd63d1255a55fb6e4f64e52eaf23ec605900bd362008d989ebf5d13178c9",
@@ -19118,7 +19118,7 @@
           "source": "",
           "notes": "",
           "status": "pending",
-          "createdAt": "2026-09-01T11:25:07.893Z",
+          "createdAt": "2026-09-01T23:58:14.793Z",
           "persisted": true
         }
       ]
@@ -19167,38 +19167,38 @@
   "screenshots": [
     {
       "path": "roof-studio-v05.jpg",
-      "bytes": 168045,
-      "sha256": "088762b4a2eb306bc8522b5fabc66dfd8f725ff1d8d3c21ce9329211d8ba875e"
+      "bytes": 163149,
+      "sha256": "b0b9ec88530d26232dcf8940a8f6db36b692539bbc47ebec9dfdd71feddf684f"
     },
     {
       "path": "roof-neutral-v05.jpg",
-      "bytes": 158984,
-      "sha256": "b88f32455878f0c120d3e2a6b6a552f91ae194e4d5c3c91ae95343938b684fcf"
+      "bytes": 154345,
+      "sha256": "a72dca920240fce64b5384a323ae23a991c18b5b0322971d78b0240bf6c484db"
     },
     {
       "path": "side-edge-v05.jpg",
-      "bytes": 171274,
-      "sha256": "3e8922118a44bffb89bf54a9c0af762c7fe2a5ab5bae29369ffc47749b8b7147"
+      "bytes": 166434,
+      "sha256": "bd80a327f859fa4f9b707106dd88051fca1cd1b4937882d1f8a77785f9e3c7b8"
     },
     {
       "path": "cover-seam-v05.jpg",
-      "bytes": 196516,
-      "sha256": "a9783b7b6c9fe1bfc83363a5484045cec8d3d06520eed891e1a6c9f4f1dabda3"
+      "bytes": 191823,
+      "sha256": "1df630d7c0d5021cce26777353364f59947406d77329795a52658abd1f5e49d8"
     },
     {
       "path": "cover-variants-v05.jpg",
-      "bytes": 165711,
-      "sha256": "3a93d5b025679884e7f76ff8135bdbeab8d21e2854eb389c4439642096230366"
+      "bytes": 160322,
+      "sha256": "169a7fa4a0e8e095bdf2d440d9ccefb74d733d272d1f49329222b65750faa7ac"
     },
     {
       "path": "roof-after-history-v05.jpg",
-      "bytes": 164435,
-      "sha256": "83d945d5dbe81f92e54f12c568235b1f0abd4b1a97f8c6d1cb917e930029b112"
+      "bytes": 159501,
+      "sha256": "6a07d7be16b2f4df9e86d6d1e3e960cc61156be1a310dc0575a04dfb8617d638"
     },
     {
       "path": "mobile-v05.jpg",
-      "bytes": 167570,
-      "sha256": "728c54c8d5bf3574e1cda5d1452ab8cd62d08a0049aa1d285d024b80846de416"
+      "bytes": 160294,
+      "sha256": "d718a0b9336db4796101de86e4296bba78b5696c5ee8fd0b8a91f0462b0f07c8"
     }
   ],
   "pageErrors": [],
@@ -19208,8 +19208,8 @@
   "visualApproved": false,
   "productionApproved": false,
   "allPassed": true,
-  "testedURL": "http://127.0.0.1:61183/index.html",
-  "browserVersion": "152.0.7977.65",
+  "testedURL": "http://127.0.0.1:44061/index.html",
+  "browserVersion": "151.0.7922.173",
   "panVariants": [
     {
       "child": 0,
