@@ -2,8 +2,8 @@
   "version": "0.4.0",
   "baseCommit": "f55949d3d2c03f58951856e8d4e384f3b831d3ea",
   "baseSHA256": "43e5a6d2e0121da469b07d2e5452829e5c00ba4e2440aa65930776fab6184887",
-  "bytes": 2298528,
-  "indexSHA256": "673ccc7350d03ba8c70a590df077aa78e94468eb10d89f539b30924b20c3a444",
+  "bytes": 2299042,
+  "indexSHA256": "b976c5a032e37c8f457a6f15218a43b9a8e511cd243dec89e03ce35dfd0ffa5b",
   "legacyHelperSHA256": "7a6ce022a21cf15f42a65bd7ec618474cbf97c620fa06d548f6ce163841cf6a0",
   "sources": {
     "operators.js": {
@@ -11,8 +11,8 @@
       "sha256": "b02cab74bcf02891842b83e6a46a6b6611d96b4f488176b82cbc6c4caefe4ef8"
     },
     "studio.js": {
-      "bytes": 10456,
-      "sha256": "c00a526fc48eb871a8091bc1dba7db14d96a137e0a63446d671e2474fde0b576"
+      "bytes": 10970,
+      "sha256": "5990611a23c9e553b1cfb0cdc761d6f9164d5db7bdc9484a11f3c68a77df6056"
     },
     "integration.js": {
       "bytes": 15195,
@@ -28,7 +28,5 @@
   "policySchemaAndValidatorIdentity": "not_received",
   "rawSourceInRuntime": false,
   "visualApproved": false,
-  "productionApproved": false,
-  "sourceCommit": "d2e9b154ff1bf5109964d9524eb964cb82be32eb",
-  "workflowRun": "33469872022"
+  "productionApproved": false
 }

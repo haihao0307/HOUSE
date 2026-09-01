@@ -29,7 +29,52 @@
     {
       "name": "pan builtin geometry checks",
       "passed": true,
-      "detail": null
+      "detail": [
+        {
+          "name": "同输入几何确定性",
+          "passed": true
+        },
+        {
+          "name": "颜色种子不改变几何",
+          "passed": true
+        },
+        {
+          "name": "微细节种子不改变宏观几何",
+          "passed": true
+        },
+        {
+          "name": "形体种子具有实际影响",
+          "passed": true
+        },
+        {
+          "name": "顶点与法线均为有限数",
+          "passed": true
+        },
+        {
+          "name": "三角形索引全部有效",
+          "passed": true
+        },
+        {
+          "name": "法线长度正确",
+          "passed": true
+        },
+        {
+          "name": "正反面具有实体厚度",
+          "passed": true
+        },
+        {
+          "name": "母体参数对象互相隔离",
+          "passed": true
+        },
+        {
+          "name": "V0.3 候选生成器可复核",
+          "passed": true
+        },
+        {
+          "name": "人工批准保持关闭",
+          "passed": true
+        }
+      ]
     },
     {
       "name": "pan measured generated relief present",
@@ -131,7 +176,52 @@
     {
       "name": "cover builtin geometry checks",
       "passed": true,
-      "detail": null
+      "detail": [
+        {
+          "name": "同输入几何确定性",
+          "passed": true
+        },
+        {
+          "name": "颜色种子不改变几何",
+          "passed": true
+        },
+        {
+          "name": "微细节种子不改变宏观几何",
+          "passed": true
+        },
+        {
+          "name": "形体种子具有实际影响",
+          "passed": true
+        },
+        {
+          "name": "顶点与法线均为有限数",
+          "passed": true
+        },
+        {
+          "name": "三角形索引全部有效",
+          "passed": true
+        },
+        {
+          "name": "法线长度正确",
+          "passed": true
+        },
+        {
+          "name": "正反面具有实体厚度",
+          "passed": true
+        },
+        {
+          "name": "母体参数对象互相隔离",
+          "passed": true
+        },
+        {
+          "name": "V0.3 候选生成器可复核",
+          "passed": true
+        },
+        {
+          "name": "人工批准保持关闭",
+          "passed": true
+        }
+      ]
     },
     {
       "name": "cover measured generated relief present",
@@ -276,12 +366,57 @@
       "detail": null
     },
     {
+      "name": "GLB and FBX fixtures available",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GLB and FBX both received",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "tile.GLB preview actual mesh",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "tile-binary.fbx preview actual mesh",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "collaboration CRC roundtrip",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "V0.4 history included in existing collaboration export",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "original source bytes preserved in export",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "V0.4 collaboration import retains history",
+      "passed": true,
+      "detail": null
+    },
+    {
       "name": "time and mode persist after reload",
       "passed": true,
       "detail": null
     },
     {
       "name": "approval remains false",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "reference files persist after reload",
       "passed": true,
       "detail": null
     },
@@ -321,8 +456,17 @@
   "failedRequests": [],
   "screenshots": [
     {
+      "path": "startup.jpg",
+      "bytes": 169396,
+      "nativeCanvas": {
+        "width": 925,
+        "height": 688
+      },
+      "upscaled": false
+    },
+    {
       "path": "pan-neutral.jpg",
-      "bytes": 167206,
+      "bytes": 165224,
       "nativeCanvas": {
         "width": 925,
         "height": 688
@@ -331,7 +475,7 @@
     },
     {
       "path": "pan-studio.jpg",
-      "bytes": 168492,
+      "bytes": 169598,
       "nativeCanvas": {
         "width": 925,
         "height": 688
@@ -340,7 +484,16 @@
     },
     {
       "path": "pan-geometry.jpg",
-      "bytes": 142803,
+      "bytes": 144809,
+      "nativeCanvas": {
+        "width": 925,
+        "height": 688
+      },
+      "upscaled": false
+    },
+    {
+      "path": "pan-relief-closeup.jpg",
+      "bytes": 149443,
       "nativeCanvas": {
         "width": 925,
         "height": 688
@@ -349,7 +502,7 @@
     },
     {
       "path": "pan-trio.jpg",
-      "bytes": 164035,
+      "bytes": 163737,
       "nativeCanvas": {
         "width": 925,
         "height": 688
@@ -358,7 +511,7 @@
     },
     {
       "path": "cover-neutral.jpg",
-      "bytes": 158397,
+      "bytes": 156519,
       "nativeCanvas": {
         "width": 925,
         "height": 688
@@ -367,7 +520,7 @@
     },
     {
       "path": "cover-studio.jpg",
-      "bytes": 159478,
+      "bytes": 159845,
       "nativeCanvas": {
         "width": 925,
         "height": 688
@@ -376,7 +529,16 @@
     },
     {
       "path": "cover-geometry.jpg",
-      "bytes": 142333,
+      "bytes": 143823,
+      "nativeCanvas": {
+        "width": 925,
+        "height": 688
+      },
+      "upscaled": false
+    },
+    {
+      "path": "cover-relief-closeup.jpg",
+      "bytes": 148033,
       "nativeCanvas": {
         "width": 925,
         "height": 688
@@ -385,7 +547,7 @@
     },
     {
       "path": "cover-trio.jpg",
-      "bytes": 176112,
+      "bytes": 176028,
       "nativeCanvas": {
         "width": 925,
         "height": 688
@@ -394,7 +556,7 @@
     },
     {
       "path": "roof-dry.jpg",
-      "bytes": 175092,
+      "bytes": 171937,
       "nativeCanvas": {
         "width": 925,
         "height": 688
@@ -403,7 +565,7 @@
     },
     {
       "path": "roof-after-history.jpg",
-      "bytes": 173623,
+      "bytes": 168540,
       "nativeCanvas": {
         "width": 925,
         "height": 688
@@ -412,7 +574,7 @@
     },
     {
       "path": "roof-moisture-diagnostic.jpg",
-      "bytes": 145098,
+      "bytes": 145097,
       "nativeCanvas": {
         "width": 925,
         "height": 688
@@ -421,7 +583,7 @@
     },
     {
       "path": "mobile-studio.jpg",
-      "bytes": 57512,
+      "bytes": 57841,
       "nativeCanvas": {
         "width": 368,
         "height": 438
@@ -432,8 +594,9 @@
   "visualApproved": false,
   "productionApproved": false,
   "allPassed": true,
-  "url": "http://127.0.0.1:46079/index.html",
-  "indexSHA256": "673ccc7350d03ba8c70a590df077aa78e94468eb10d89f539b30924b20c3a444",
+  "referenceRegression": "passed_actual_file_roundtrip",
+  "url": "http://127.0.0.1:34079/index.html",
+  "indexSHA256": "b976c5a032e37c8f457a6f15218a43b9a8e511cd243dec89e03ce35dfd0ffa5b",
   "browserVersion": "140.0.7339.16",
   "roofInitial": {
     "hashes": [
