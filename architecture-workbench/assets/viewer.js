@@ -17,7 +17,8 @@ export async function createViewer(container,policy,build){
  const scene=new THREE.Scene();scene.background=new THREE.Color(0xe7e9df);scene.add(sourceRoot);
  const renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,preserveDrawingBuffer:true,powerPreference:'high-performance'});
  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.5));renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1;renderer.shadowMap.enabled=false;renderer.localClippingEnabled=true;
- renderer.domElement.style.position='absolute';renderer.domElement.style.inset='0';container.append(renderer.domElement);
+ renderer.domElement.style.position='absolute';renderer.domElement.style.inset='0';renderer.domElement.style.zIndex='0';container.append(renderer.domElement);
+ for(const overlay of container.querySelectorAll('.view-nav,.canvas-hint'))overlay.style.zIndex='2';
  window.addEventListener('hashchange',()=>window.__BLUEPRINT_WORKBENCH__?.showPage(location.hash.slice(1)||'overview'));
  const camera=new THREE.PerspectiveCamera(39,1,0.1,300);
  const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.dampingFactor=.08;controls.minDistance=5;controls.maxDistance=65;controls.maxPolarAngle=Math.PI*.49;
