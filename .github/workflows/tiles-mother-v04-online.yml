@@ -1,0 +1,212 @@
+name: Tiles Mother V0.4 Online
+on:
+  push:
+    branches: [feature/tiles-mother-v0.1-workbench]
+    paths: [.github/workflows/tiles-mother-v04-online.yml]
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: false
+jobs:
+  publish:
+    if: github.ref == 'refs/heads/feature/tiles-mother-v0.1-workbench'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    environment:
+      name: github-pages-preview
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - name: Require successful exact candidate run
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const run=(await github.rest.actions.getWorkflowRun({...context.repo,run_id:33470243550})).data;
+            if(run.conclusion!=='success' || run.head_sha!=='9d8a4b510a26746c659b6e41bf548812ec8da4ed') throw Error('Candidate has not passed');
+      - uses: actions/download-artifact@v4
+        with:
+          name: tiles-v04-candidate-33470243550
+          run-id: 33470243550
+          github-token: ${{ github.token }}
+          path: /tmp/v04-candidate
+      - name: Verify tested bytes, current source identity, real import tests and CPU results
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib,json,shutil,os
+          inputs=Path('/tmp/v04-candidate');matches=list(inputs.rglob('site/index.html'));assert len(matches)==1,matches
+          index=matches[0];manifest=json.loads(index.with_name('build-manifest.json').read_text());qa=index.parent.parent/'qa'
+          assert manifest['version']=='0.4.0'
+          assert manifest['indexSHA256']=='b976c5a032e37c8f457a6f15218a43b9a8e511cd243dec89e03ce35dfd0ffa5b'
+          assert hashlib.sha256(index.read_bytes()).hexdigest()==manifest['indexSHA256'] and index.stat().st_size==manifest['bytes']
+          for name,m in manifest['sources'].items():
+              data=(Path('tiles-mother/v04')/name).read_bytes()
+              assert hashlib.sha256(data).hexdigest()==m['sha256'] and len(data)==m['bytes'],name
+          report=json.loads((qa/'browser-report.json').read_text());core=json.loads((qa/'core-report.json').read_text())
+          assert report['allPassed'] and len(report['tests'])>=53 and all(t['passed'] for t in report['tests'])
+          assert report['indexSHA256']==manifest['indexSHA256'] and report['referenceRegression']=='passed_actual_file_roundtrip'
+          assert core['allPassed'] and len(core['tests'])>=49 and all(t['passed'] for t in core['tests'])
+          assert not manifest['rawSourceInRuntime'] and not manifest['visualApproved'] and not manifest['productionApproved']
+          root=Path('/tmp/tiles-v04-release');(root/'site').mkdir(parents=True);(root/'qa').mkdir()
+          shutil.copyfile(index,root/'site/index.html');shutil.copyfile(index.with_name('build-manifest.json'),root/'site/build-manifest.json')
+          for name in ['browser-report.json','core-report.json']:shutil.copyfile(qa/name,root/'qa'/('candidate-'+name))
+          for f in qa.glob('*.jpg'):shutil.copyfile(f,root/'qa'/('candidate-'+f.name))
+          receipt={'version':'0.4.0','candidateCommit':'9d8a4b510a26746c659b6e41bf548812ec8da4ed','candidateRun':33470243550,'deploymentCommit':os.environ['GITHUB_SHA'],'deploymentRun':os.environ['GITHUB_RUN_ID'],'indexSHA256':manifest['indexSHA256'],'bytes':manifest['bytes'],'baselineBytes':2260555,'runtimeByteIncrease':manifest['bytes']-2260555,'rawSourceInRuntime':False,'fullPolicyRuntimeAdoption':False,'policyVersionRead':'1.0.0','distillationComplete':False,'visualApproved':False,'productionApproved':False,'unresolved':['Source dimensions, roughness and history rates are not physically calibrated.','Real shallow pits are implemented; through holes and undercuts are not.','28-tile sample is a relationship study, not approved architectural construction.','Shared policy schema and validator exact identities remain unavailable.','Reference fidelity, microdetail and mobile framing need further visual acceptance.']}
+          (root/'qa/release-receipt.json').write_text(json.dumps(receipt,indent=2))
+          PY
+      - name: Find exact current successful complete Pages artifact
+        id: base
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs=require('fs'),repo=context.repo;
+            const pages=(await github.request('GET /repos/{owner}/{repo}/pages',repo)).data;
+            if(pages.build_type!=='workflow') throw Error('Pages configuration differs; no settings will be changed');
+            const deployments=(await github.rest.repos.listDeployments({...repo,per_page:100})).data;
+            let current=null;
+            for(const d of deployments){
+              if(d.sha===context.sha || !['github-pages','github-pages-preview'].includes(d.environment))continue;
+              const statuses=(await github.rest.repos.listDeploymentStatuses({...repo,deployment_id:d.id,per_page:5})).data;
+              if(statuses[0]?.state==='success'){current={deployment:d,status:statuses[0]};break;}
+            }
+            if(!current)throw Error('Cannot prove currently published site');
+            const artifacts=await github.paginate(github.rest.actions.listArtifactsForRepo,{...repo,name:'github-pages',per_page:100});
+            const artifact=artifacts.filter(a=>!a.expired&&a.workflow_run?.head_sha===current.deployment.sha).sort((a,b)=>b.id-a.id)[0];
+            if(!artifact)throw Error('Current site artifact unavailable; refuse reconstruction from stale source');
+            current.artifact=artifact;
+            fs.writeFileSync('/tmp/tiles-v04-release/qa/base-site.json',JSON.stringify(current,null,2));
+            core.setOutput('runId',String(artifact.workflow_run.id));
+      - uses: actions/download-artifact@v4
+        with:
+          name: github-pages
+          run-id: ${{ steps.base.outputs.runId }}
+          github-token: ${{ github.token }}
+          path: /tmp/current-pages
+      - name: Overlay only Tiles Mother and preserve every other published byte
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path,PurePosixPath
+          import tarfile,shutil,hashlib,json
+          site=Path('_site');site.mkdir();archives=list(Path('/tmp/current-pages').rglob('*.tar'));assert len(archives)==1
+          with tarfile.open(archives[0]) as archive:
+              for m in archive.getmembers():
+                  p=PurePosixPath(m.name);assert not p.is_absolute() and '..' not in p.parts,m.name
+                  target=site/str(p)
+                  if m.isdir():target.mkdir(parents=True,exist_ok=True)
+                  elif m.isfile():
+                      target.parent.mkdir(parents=True,exist_ok=True)
+                      with archive.extractfile(m) as src,target.open('wb') as dst:shutil.copyfileobj(src,dst)
+                  else:raise AssertionError('Unexpected archive member '+m.name)
+          def snapshot():return {str(p.relative_to(site)):hashlib.sha256(p.read_bytes()).hexdigest() for p in site.rglob('*') if p.is_file() and not str(p.relative_to(site)).startswith('tiles-mother/')}
+          before=snapshot();assert before and 'index.html' in before
+          target=site/'tiles-mother';(target/'v04').mkdir(parents=True,exist_ok=True)
+          shutil.copyfile('/tmp/tiles-v04-release/site/index.html',target/'index.html')
+          shutil.copyfile('/tmp/tiles-v04-release/site/build-manifest.json',target/'v04/build-manifest.json')
+          for name in ['operators.js','studio.js','integration.js','STUDY.md']:
+              shutil.copyfile(Path('tiles-mother/v04')/name,target/'v04'/name)
+          shutil.copyfile('/tmp/tiles-v04-release/qa/release-receipt.json',target/'v04/release-receipt.json')
+          after=snapshot();assert before==after,'Unrelated public files changed'
+          report={'modifiedPrefix':'tiles-mother/','outsideTilesFiles':len(before),'changedOutsideTiles':[],'originalFilesPreserved':True,'pagesSettingsChanged':False,'mainChanged':False,'brickBranchChanged':False,'frozenAssetsChanged':False}
+          Path('/tmp/tiles-v04-release/qa/site-preservation.json').write_text(json.dumps(report,indent=2))
+          PY
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - name: Check publication race before deployment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs=require('fs'),base=JSON.parse(fs.readFileSync('/tmp/tiles-v04-release/qa/base-site.json'));
+            const deployments=(await github.rest.repos.listDeployments({...context.repo,per_page:100})).data;
+            let latest=null;
+            for(const d of deployments){
+              if(d.sha===context.sha || !['github-pages','github-pages-preview'].includes(d.environment))continue;
+              const statuses=(await github.rest.repos.listDeploymentStatuses({...context.repo,deployment_id:d.id,per_page:5})).data;
+              if(statuses[0]?.state==='success'){latest=d;break;}
+            }
+            if(latest?.id!==base.deployment.id)throw Error('Another site changed; refuse overwrite');
+      - name: Deploy preserved site with tested Tiles candidate
+        id: deployment
+        uses: actions/deploy-pages@v4
+      - name: Verify actual public HTTP MIME bytes and identity
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib,json,urllib.request,time,os
+          url='https://haihao0307.github.io/HOUSE/tiles-mother/?v=0.4.0';root=Path('/tmp/tiles-v04-release')
+          expected=json.loads((root/'site/build-manifest.json').read_text());r={'url':url,'version':'0.4.0','deploymentCommit':os.environ['GITHUB_SHA'],'workflowRun':os.environ['GITHUB_RUN_ID'],'verified':False,'visualApproved':False,'productionApproved':False}
+          try:
+              for attempt in range(15):
+                  try:
+                      req=urllib.request.Request(url,headers={'Cache-Control':'no-cache','User-Agent':'TilesMother-0.4-Readback'})
+                      with urllib.request.urlopen(req,timeout=30) as response:
+                          data=response.read();r.update(httpStatus=response.status,contentType=response.headers.get('Content-Type'),bytes=len(data),sha256=hashlib.sha256(data).hexdigest())
+                      assert r['httpStatus']==200 and 'text/html' in r['contentType'] and r['sha256']==expected['indexSHA256'] and r['bytes']==expected['bytes']
+                      r['verified']=True;break
+                  except Exception as e:
+                      r['lastError']=str(e)
+                      if attempt==14:raise
+                      time.sleep(8)
+          finally:(root/'qa/publication.json').write_text(json.dumps(r,indent=2))
+          PY
+      - name: Prepare actual public browser regression
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y fonts-noto-cjk
+          python3 -m pip install 'playwright==1.55.0' 'pillow==11.3.0'
+          python3 -m playwright install --with-deps chromium
+          python3 tiles-mother/v02/make_fixtures.py
+      - name: Full public browser check including imported file byte roundtrip
+        id: publicqa
+        run: python3 tiles-mother/v04/browser_qa.py --site /tmp/tiles-v04-release/site --out /tmp/tiles-v04-release/public-qa --url 'https://haihao0307.github.io/HOUSE/tiles-mother/?v=0.4.0'
+      - name: Preserve current online identity and evidence on this branch only
+        if: always()
+        env:
+          BRANCH: feature/tiles-mother-v0.1-workbench
+          PUBLIC_OUTCOME: ${{ steps.publicqa.outcome }}
+        run: |
+          set -euo pipefail
+          test -d /tmp/tiles-v04-release/qa || exit 0
+          test "$(git ls-remote origin "refs/heads/$BRANCH" | cut -f1)" = "$GITHUB_SHA"
+          mkdir -p tiles-mother/qa-v04
+          for name in publication.json site-preservation.json release-receipt.json; do
+            if test -f "/tmp/tiles-v04-release/qa/$name"; then cp "/tmp/tiles-v04-release/qa/$name" "tiles-mother/qa-v04/$name"; fi
+          done
+          if test -f /tmp/tiles-v04-release/public-qa/browser-report.json; then cp /tmp/tiles-v04-release/public-qa/browser-report.json tiles-mother/qa-v04/public-browser-report.json; fi
+          git add tiles-mother/qa-v04
+          if test "$PUBLIC_OUTCOME" = success; then
+            cp /tmp/tiles-v04-release/site/index.html tiles-mother/index.html
+            cp /tmp/tiles-v04-release/site/build-manifest.json tiles-mother/v04/build-manifest.json
+            for name in pan-studio.jpg cover-studio.jpg pan-geometry.jpg cover-geometry.jpg roof-after-history.jpg roof-moisture-diagnostic.jpg mobile-studio.jpg; do cp "/tmp/tiles-v04-release/public-qa/$name" "tiles-mother/qa-v04/$name"; done
+            git add tiles-mother/index.html tiles-mother/v04/build-manifest.json tiles-mother/qa-v04
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          if ! git diff --cached --quiet; then
+            git commit -m 'test(tiles-mother): archive actual V0.4 online workbench and public evidence'
+            git push origin "HEAD:refs/heads/$BRANCH"
+          fi
+      - name: Preserve small public evidence even on failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tiles-v04-public-${{ github.run_id }}
+          path: |
+            /tmp/tiles-v04-release/site/
+            /tmp/tiles-v04-release/qa/
+            /tmp/tiles-v04-release/public-qa/
+          if-no-files-found: warn
+          retention-days: 14
+      - name: Report publication scope
+        if: always()
+        run: |
+          echo '## Tiles Mother V0.4 integrated research candidate' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Exact tested bytes; no other Mother assets changed. Full policy adoption incomplete. All ages and process rates illustrative. visualApproved=false; productionApproved=false.' >> "$GITHUB_STEP_SUMMARY"
+          for name in publication.json site-preservation.json release-receipt.json; do test ! -f "/tmp/tiles-v04-release/qa/$name" || cat "/tmp/tiles-v04-release/qa/$name" >> "$GITHUB_STEP_SUMMARY"; done
