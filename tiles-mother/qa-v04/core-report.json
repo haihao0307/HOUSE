@@ -1,0 +1,28 @@
+{
+  "version": "0.4.0",
+  "tests": [
+    {
+      "name": "pan deterministic mesh",
+      "passed": true
+    },
+    {
+      "name": "pan real relief exceeds 1mm candidate",
+      "passed": true,
+      "detail": 0.004042901511249097
+    },
+    {
+      "name": "pan thickness floor",
+      "passed": true,
+      "detail": 0.008841869570521145
+    },
+    {
+      "name": "unhandled",
+      "passed": false,
+      "error": "TypeError: Cannot read properties of undefined (reading 'every')"
+    }
+  ],
+  "summaries": [],
+  "allPassed": false,
+  "visualApproved": false,
+  "productionApproved": false
+}
