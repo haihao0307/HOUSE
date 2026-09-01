@@ -49,13 +49,22 @@ jobs:
               text=text.replace("change('async function init(){'",additions+"change('async function init(){'")
           path.write_text(text,encoding='utf-8',newline='\n')
           PY
-      - name: Restore exact V0.3 baseline without editing frozen input
+      - name: Restore exact V0.3 baseline and assemble isolated candidate site
         run: |
+          set -euo pipefail
           mkdir -p /tmp/tiles-v04/site /tmp/tiles-v04/qa
           git fetch --depth=1 origin f55949d3d2c03f58951856e8d4e384f3b831d3ea
           git show f55949d3d2c03f58951856e8d4e384f3b831d3ea:tiles-mother/index.html > /tmp/tiles-v04/base.html
           python3 tiles-mother/v04/build.py --base /tmp/tiles-v04/base.html --out /tmp/tiles-v04/site/index.html
+          # V0.4 deliberately keeps the verified V0.3 color-family generator as
+          # a small frozen dependency.  Copy the exact repository file into the
+          # isolated candidate root so browser QA exercises the same relative
+          # URL that the eventual versioned Pages route will serve.
+          mkdir -p /tmp/tiles-v04/site/v03
+          cp tiles-mother/v03/jiangwutang-material.js /tmp/tiles-v04/site/v03/jiangwutang-material.js
+          test "$(sha256sum tiles-mother/v03/jiangwutang-material.js | cut -d' ' -f1)" = "$(sha256sum /tmp/tiles-v04/site/v03/jiangwutang-material.js | cut -d' ' -f1)"
           for path in /tmp/tiles-v04/site/check-*.js; do node --check "$path"; done
+          node --check /tmp/tiles-v04/site/v03/jiangwutang-material.js
       - name: Check actual geometry, isolated causes, history replay and accounting
         env:
           QA_OUT: /tmp/tiles-v04/qa/core-report.json
@@ -95,8 +104,7 @@ jobs:
         with:
           name: tiles-v04-candidate-${{ github.run_id }}
           path: |
-            /tmp/tiles-v04/site/index.html
-            /tmp/tiles-v04/site/build-manifest.json
+            /tmp/tiles-v04/site/
             /tmp/tiles-v04/qa/
             tiles-mother/v04/
           retention-days: 7
