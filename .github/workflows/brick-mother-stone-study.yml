@@ -1,0 +1,114 @@
+name: Brick Mother Stone Surface Study
+on:
+  push:
+    branches: [feature/brick-mother-v2.0-composite-material-dna]
+    paths:
+      - '**/brick-mother/stone-study.html'
+      - '**/brick-mother/stone-response-study.js'
+      - '.github/workflows/brick-mother-stone-study.yml'
+permissions:
+  contents: read
+concurrency:
+  group: brick-mother-stone-study
+  cancel-in-progress: false
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+      - name: Install browser test helpers
+        run: python3 -m pip install --quiet playwright pillow
+      - name: Validate study source and frozen core
+        run: |
+          set -euo pipefail
+          brick='yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother'
+          node --check "$brick/stone-response-study.js"
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          test -z "$(git diff --name-only 54f9ae9f43c078522ac6e082c4a857e57b06fae2 HEAD -- "$brick/brick-mother-geometry-v2.js" "$brick/brick-mother-renderer-v2.js" "$brick/brick-mother-app-v2.js" "$brick/data/brick-material-profiles-v2.json" "$brick/releases/v1.0")"
+      - name: Capture native pixels and test public URL
+        run: |
+          mkdir -p /tmp/stone-study-evidence
+          python3 -u - <<'PY'
+          import hashlib, json, os, shutil, threading, time, traceback
+          from pathlib import Path
+          from functools import partial
+          from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
+          from PIL import Image, ImageStat
+          from playwright.sync_api import sync_playwright
+          base=Path('yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother')
+          out=Path('/tmp/stone-study-evidence')
+          head=os.environ['GITHUB_SHA']
+          public=f'https://raw.githack.com/haihao0307/HOUSE/{head}/{base.as_posix()}/stone-study.html'
+          report={'head':head,'sourceGeometryHead':'54f9ae9f43c078522ac6e082c4a857e57b06fae2','viewport':[1440,1000],'deviceScaleFactor':1,'imageResampling':False,'publicUrl':public,'visualApproved':False,'productionApproved':False,'passed':False,'frames':[],'errors':[],'failedRequests':[]}
+          server=ThreadingHTTPServer(('127.0.0.1',8875),partial(SimpleHTTPRequestHandler,directory=str(base.resolve())))
+          threading.Thread(target=server.serve_forever,daemon=True).start()
+          try:
+            with sync_playwright() as p:
+              chrome=shutil.which('google-chrome') or shutil.which('chromium')
+              browser=p.chromium.launch(executable_path=chrome,headless=True,args=['--no-sandbox','--enable-webgl','--ignore-gpu-blocklist','--enable-unsafe-swiftshader','--use-gl=angle','--use-angle=swiftshader'])
+              page=browser.new_page(viewport={'width':1440,'height':1000},device_scale_factor=1)
+              page.on('pageerror',lambda e:report['errors'].append(str(e)))
+              page.on('requestfailed',lambda r:report['failedRequests'].append({'url':r.url,'failure':r.failure}))
+              page.goto('http://127.0.0.1:8875/stone-study.html',wait_until='load')
+              page.wait_for_function("document.documentElement.dataset.studyReady==='true'",timeout=90000)
+              page.wait_for_function('window.__STONE_STUDY_RENDERER__.drawCount>0',timeout=30000)
+              for kind in range(4):
+                page.locator(f'[data-kind="{kind}"]').click()
+                page.evaluate('window.__STONE_STUDY_RENDERER__.draw();window.__STONE_STUDY_RENDERER__.gl.finish()')
+                path=out/f'stone-{kind}-final.png'
+                page.locator('#canvas').screenshot(path=str(path))
+                image=Image.open(path).convert('RGB')
+                pixels=[v for v in image.getdata() if max(v)>12]
+                assert len(pixels)>image.width*image.height*.1, 'Empty material'
+                mean=[sum(v[c] for v in pixels)/len(pixels) for c in range(3)]
+                report['frames'].append({'kind':kind,'file':path.name,'size':list(image.size),'meanOccupiedSRGB255':mean,'sha256':hashlib.sha256(path.read_bytes()).hexdigest()})
+              assert len(set(r['sha256'] for r in report['frames']))==4
+              original=page.evaluate('window.__STONE_STUDY_RENDERER__.meshes[0].mesh.positions.length')
+              page.locator('[data-kind="2"]').click()
+              for channel in (1,3,4,8):
+                page.locator(f'[data-debug="{channel}"]').click()
+                page.evaluate('window.__STONE_STUDY_RENDERER__.draw();window.__STONE_STUDY_RENDERER__.gl.finish()')
+                page.locator('#canvas').screenshot(path=str(out/f'granite-channel-{channel}.png'))
+              page.locator('[data-debug="0"]').click()
+              page.locator('#wet').evaluate("e=>{e.value='0.7';e.dispatchEvent(new Event('input',{bubbles:true}))}")
+              assert page.evaluate('window.__STONE_STUDY_RENDERER__.meshes[0].mesh.positions.length')==original
+              page.evaluate('window.__STONE_STUDY_RENDERER__.draw();window.__STONE_STUDY_RENDERER__.gl.finish()')
+              page.locator('#canvas').screenshot(path=str(out/'granite-wet.png'))
+              page.locator('#wet').evaluate("e=>{e.value='0';e.dispatchEvent(new Event('input',{bubbles:true}))}")
+              report['state']=page.evaluate('window.__STONE_STUDY__')
+              report['glError']=page.evaluate('window.__STONE_STUDY_RENDERER__.gl.getError()')
+              page.screenshot(path=str(out/'workspace.png'))
+              report['localPassed']=not report['errors'] and report['glError']==0
+              # Check the actual public page independently. No local response interception.
+              pub=browser.new_page(viewport={'width':1440,'height':1000},device_scale_factor=1)
+              response=pub.goto(public,wait_until='load',timeout=90000)
+              report['publicHttpStatus']=response.status if response else None
+              pub.wait_for_function("document.documentElement.dataset.studyReady==='true'",timeout=90000)
+              pub.wait_for_function('window.__STONE_STUDY_RENDERER__.drawCount>0',timeout=30000)
+              pub.evaluate('window.__STONE_STUDY_RENDERER__.draw();window.__STONE_STUDY_RENDERER__.gl.finish()')
+              pub.screenshot(path=str(out/'public-workspace.png'))
+              report['publicState']=pub.evaluate('window.__STONE_STUDY__')
+              report['publicPassed']=report['publicHttpStatus']==200
+              report['passed']=report['localPassed'] and report['publicPassed']
+              browser.close()
+          except Exception:
+            report['exception']=traceback.format_exc()
+            print(report['exception'])
+          finally:
+            server.shutdown()
+            (out/'qa-report.json').write_text(json.dumps(report,ensure_ascii=False,indent=2))
+            for name in ('stone-study.html','stone-response-study.js'):
+              shutil.copy2(base/name,out/name)
+          if not report['passed']:
+            raise SystemExit('Stone study browser or public gate failed; inspect retained report')
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: stone-study-s1-${{ github.sha }}
+          path: /tmp/stone-study-evidence/
+          if-no-files-found: error
