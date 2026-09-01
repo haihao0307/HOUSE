@@ -322,7 +322,7 @@
   "screenshots": [
     {
       "path": "pan-neutral.jpg",
-      "bytes": 167206,
+      "bytes": 167205,
       "nativeCanvas": {
         "width": 925,
         "height": 688
@@ -331,7 +331,7 @@
     },
     {
       "path": "pan-studio.jpg",
-      "bytes": 168492,
+      "bytes": 168488,
       "nativeCanvas": {
         "width": 925,
         "height": 688
@@ -340,7 +340,7 @@
     },
     {
       "path": "pan-geometry.jpg",
-      "bytes": 142803,
+      "bytes": 142804,
       "nativeCanvas": {
         "width": 925,
         "height": 688
@@ -349,7 +349,7 @@
     },
     {
       "path": "pan-trio.jpg",
-      "bytes": 164035,
+      "bytes": 164041,
       "nativeCanvas": {
         "width": 925,
         "height": 688
@@ -358,7 +358,7 @@
     },
     {
       "path": "cover-neutral.jpg",
-      "bytes": 158397,
+      "bytes": 158324,
       "nativeCanvas": {
         "width": 925,
         "height": 688
@@ -367,7 +367,7 @@
     },
     {
       "path": "cover-studio.jpg",
-      "bytes": 159478,
+      "bytes": 159472,
       "nativeCanvas": {
         "width": 925,
         "height": 688
@@ -376,7 +376,7 @@
     },
     {
       "path": "cover-geometry.jpg",
-      "bytes": 142333,
+      "bytes": 142265,
       "nativeCanvas": {
         "width": 925,
         "height": 688
@@ -385,7 +385,7 @@
     },
     {
       "path": "cover-trio.jpg",
-      "bytes": 176112,
+      "bytes": 176102,
       "nativeCanvas": {
         "width": 925,
         "height": 688
@@ -394,7 +394,7 @@
     },
     {
       "path": "roof-dry.jpg",
-      "bytes": 175092,
+      "bytes": 175048,
       "nativeCanvas": {
         "width": 925,
         "height": 688
@@ -403,7 +403,7 @@
     },
     {
       "path": "roof-after-history.jpg",
-      "bytes": 173623,
+      "bytes": 173612,
       "nativeCanvas": {
         "width": 925,
         "height": 688
@@ -412,7 +412,7 @@
     },
     {
       "path": "roof-moisture-diagnostic.jpg",
-      "bytes": 145098,
+      "bytes": 145091,
       "nativeCanvas": {
         "width": 925,
         "height": 688
@@ -432,7 +432,7 @@
   "visualApproved": false,
   "productionApproved": false,
   "allPassed": true,
-  "url": "http://127.0.0.1:46079/index.html",
+  "url": "https://haihao0307.github.io/HOUSE/tiles-mother/?v=0.4.0",
   "indexSHA256": "673ccc7350d03ba8c70a590df077aa78e94468eb10d89f539b30924b20c3a444",
   "browserVersion": "140.0.7339.16",
   "roofInitial": {

@@ -1,0 +1,16 @@
+{
+  "allowedWrites": [
+    "tiles-mother/index.html",
+    "tiles-mother/v04/build-manifest.json"
+  ],
+  "preservedFiles": 305,
+  "changedOutsideAllowed": [],
+  "pagesSettingsChanged": false,
+  "otherMotherAssetsChanged": false,
+  "mainChanged": false,
+  "oldEntryBytes": 2260555,
+  "newEntryBytes": 2298528,
+  "entryDeltaBytes": 37973,
+  "visualApproved": false,
+  "productionApproved": false
+}

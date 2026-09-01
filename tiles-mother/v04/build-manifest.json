@@ -2,8 +2,9 @@
   "version": "0.4.0",
   "baseCommit": "f55949d3d2c03f58951856e8d4e384f3b831d3ea",
   "baseSHA256": "43e5a6d2e0121da469b07d2e5452829e5c00ba4e2440aa65930776fab6184887",
-  "bytes": 2296765,
-  "indexSHA256": "cb70c7711a22ee1a6fc93cfe671cdf5fdd6f0d94d2d46ec927a0de48633a4882",
+  "bytes": 2298528,
+  "indexSHA256": "673ccc7350d03ba8c70a590df077aa78e94468eb10d89f539b30924b20c3a444",
+  "legacyHelperSHA256": "7a6ce022a21cf15f42a65bd7ec618474cbf97c620fa06d548f6ce163841cf6a0",
   "sources": {
     "operators.js": {
       "bytes": 10252,
@@ -18,8 +19,8 @@
       "sha256": "b5cc7ee8c88825746885cda42bdda6a090e199566ec6748aee79579facaef51f"
     },
     "build.py": {
-      "bytes": 6091,
-      "sha256": "afff96de405b598cf9119246bd4c2cf7b4c50a847bdcedc7538163ffd5ad64aa"
+      "bytes": 6809,
+      "sha256": "11e4439b5f3edfea3c927704770c9b2ea84d9ddfc56423612474aeaa18072bcf"
     }
   },
   "policyVersionRead": "1.0.0",
@@ -27,5 +28,7 @@
   "policySchemaAndValidatorIdentity": "not_received",
   "rawSourceInRuntime": false,
   "visualApproved": false,
-  "productionApproved": false
+  "productionApproved": false,
+  "sourceCommit": "d2e9b154ff1bf5109964d9524eb964cb82be32eb",
+  "workflowRun": "33469872022"
 }
