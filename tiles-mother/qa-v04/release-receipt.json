@@ -1,0 +1,24 @@
+{
+  "version": "0.4.0",
+  "candidateCommit": "9d8a4b510a26746c659b6e41bf548812ec8da4ed",
+  "candidateRun": 33470243550,
+  "deploymentCommit": "de693f9cb6ae68969568bc54803f235d1531895b",
+  "deploymentRun": "33470631430",
+  "indexSHA256": "b976c5a032e37c8f457a6f15218a43b9a8e511cd243dec89e03ce35dfd0ffa5b",
+  "bytes": 2299042,
+  "baselineBytes": 2260555,
+  "runtimeByteIncrease": 38487,
+  "rawSourceInRuntime": false,
+  "fullPolicyRuntimeAdoption": false,
+  "policyVersionRead": "1.0.0",
+  "distillationComplete": false,
+  "visualApproved": false,
+  "productionApproved": false,
+  "unresolved": [
+    "Source dimensions, roughness and history rates are not physically calibrated.",
+    "Real shallow pits are implemented; through holes and undercuts are not.",
+    "28-tile sample is a relationship study, not approved architectural construction.",
+    "Shared policy schema and validator exact identities remain unavailable.",
+    "Reference fidelity, microdetail and mobile framing need further visual acceptance."
+  ]
+}
