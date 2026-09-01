@@ -1,0 +1,11 @@
+{
+  "schema": "tiles-mother-v04-runtime-build",
+  "threeVersion": "0.180.0",
+  "esbuildVersion": "0.25.9",
+  "bytes": 509711,
+  "sha256": "0285c9b9bca353ed3b0935728517e6100f3732a6e63bee3d8142b810ba2922c0",
+  "runtimeNetworkDependencies": [],
+  "rawReferenceAssetsIncluded": false,
+  "visualApproved": false,
+  "productionApproved": false
+}
