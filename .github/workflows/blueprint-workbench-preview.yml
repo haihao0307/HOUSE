@@ -42,15 +42,16 @@ jobs:
           assert all(not p.startswith(('tiles-mother/','brick-mother/')) for p in files)
           json.dump({'base':base,'sourceCommit':os.environ['GITHUB_SHA'],'changedFiles':files,'changedOtherMotherFiles':[],'frozenAssetsChanged':False,'authoritativeTruthChanged':False},open(os.environ['QA']+'/scope.json','w'),indent=2)
           PY
-      - name: Read full repository rules and run unchanged baseline validation
+      - name: Read repository rules and validate unchanged baseline
         run: |
           cat "$APP/AGENTS.md" "$APP/README.md" "$APP/PROJECT_STATE.md" "$APP/docs/SYSTEM_ARCHITECTURE.md" "$APP/data/core/legacy_rejection_ledger_v5_2_1.json" > "$QA/read-baseline.txt"
           cd "$APP" && python3 tools/validate.py > "$QA/legacy-validation.txt" 2>&1
-      - name: Build owned workbench and check scripts
+      - name: Build owned preflight and execute actual geometry audit
         run: |
-          python3 architecture-workbench/tools/build.py --app-root "$APP" --repository-root .
-          for file in architecture-workbench/assets/*.js; do node --check "$file"; done
-          python3 -m py_compile architecture-workbench/tools/*.py
+          python3 architecture-workbench/tools/build_first.py --app-root "$APP" --repository-root .
+          for file in architecture-workbench/assets/*.js architecture-workbench/first-building/*.js architecture-workbench/first-building/*.mjs; do node --check "$file"; done
+          python3 -m py_compile architecture-workbench/tools/*.py architecture-workbench/first-building/*.py
+          cp architecture-workbench/first-building/data/audit.json "$QA/architecture-audit.json"
       - name: Find exact successful current site
         id: base
         uses: actions/github-script@v7
@@ -74,7 +75,7 @@ jobs:
           run-id: ${{ steps.base.outputs.runId }}
           github-token: ${{ github.token }}
           path: /tmp/current-blueprint-site
-      - name: Restore current site and append only architecture-workbench
+      - name: Preserve current site outside owned directory
         run: |
           python3 - <<'PY'
           from pathlib import Path,PurePosixPath
@@ -92,16 +93,13 @@ jobs:
                   else:raise ValueError('Unsafe site archive entry '+m.name)
           def snap():return {str(p.relative_to(site)):hashlib.sha256(p.read_bytes()).hexdigest() for p in site.rglob('*') if p.is_file() and not str(p.relative_to(site)).startswith('architecture-workbench/')}
           before=snap();assert 'index.html' in before
-          build_path=Path('architecture-workbench/data/build.json')
-          build=json.loads(build_path.read_text())
+          build_path=Path('architecture-workbench/data/build.json');build=json.loads(build_path.read_text())
           base_record=json.loads(Path(os.environ['QA'],'base-site.json').read_text())
           build['initialObservedPublicationRun']=build['basePublicationRun']
           build['basePublicationRun']=base_record['artifact']['workflow_run']['id']
-          build['baseDeploymentSha']=base_record['deployment']['sha']
-          build['baseDeploymentId']=base_record['deployment']['id']
+          build['baseDeploymentSha']=base_record['deployment']['sha'];build['baseDeploymentId']=base_record['deployment']['id']
           build_path.write_text(json.dumps(build,ensure_ascii=False,indent=2)+'\n')
-          manifest_path=Path('architecture-workbench/file-manifest.json')
-          manifest=json.loads(manifest_path.read_text())
+          manifest_path=Path('architecture-workbench/file-manifest.json');manifest=json.loads(manifest_path.read_text())
           manifest['files']['data/build.json']=hashlib.sha256(build_path.read_bytes()).hexdigest()
           manifest_path.write_text(json.dumps(manifest,ensure_ascii=False,indent=2)+'\n')
           for d in build['dependencies']:assert hashlib.sha256((site/d['path']).read_bytes()).hexdigest()==d['sha256'],d['path']
@@ -109,7 +107,7 @@ jobs:
           if dest.exists():shutil.rmtree(dest)
           shutil.copytree('architecture-workbench',dest,ignore=shutil.ignore_patterns('__pycache__'))
           after=snap();assert before==after
-          report={'outsideOwnedFiles':len(before),'unchangedOutsideOwned':before==after,'changedOutsideOwned':[],'onlyPrefix':'architecture-workbench/','pagesSettingsChanged':False,'visualApproved':False,'productionApproved':False}
+          report={'outsideOwnedFiles':len(before),'unchangedOutsideOwned':True,'changedOutsideOwned':[],'onlyPrefix':'architecture-workbench/','pagesSettingsChanged':False,'visualApproved':False,'productionApproved':False}
           Path(os.environ['QA'],'site-preservation.json').write_text(json.dumps(report,indent=2))
           Path(os.environ['QA'],'preserved-files.json').write_text(json.dumps(before,indent=2))
           PY
@@ -119,17 +117,20 @@ jobs:
           sudo apt-get install -y fonts-noto-cjk
           python3 -m pip install playwright==1.57.0 pillow==11.3.0
           python3 -m playwright install chromium --with-deps
-      - name: Test staged actual workbench
-        run: python3 architecture-workbench/tools/browser_qa.py --site _site --output "$QA/staged" --expected-sha "$GITHUB_SHA"
-      - name: Attach current staged QA without promoting approval
+      - name: Test first-building preflight in staged browser
+        run: python3 architecture-workbench/first-building/browser_qa.py --site _site --output "$QA/staged" --expected-sha "$GITHUB_SHA"
+      - name: Regress retained knowledge workspace with unchanged test suite
+        run: python3 architecture-workbench/tools/archive_qa.py --site _site --output "$QA/archive-staged" --expected-sha "$GITHUB_SHA"
+      - name: Attach staged evidence without granting approval
         run: |
           mkdir -p _site/architecture-workbench/evidence
           cp "$QA/staged/browser-report.json" _site/architecture-workbench/evidence/staged-browser-report.json
+          cp "$QA/archive-staged/browser-report.json" _site/architecture-workbench/evidence/archive-browser-report.json
           cp "$QA/site-preservation.json" _site/architecture-workbench/evidence/site-preservation.json
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site
-      - name: Check publication has not changed during testing
+      - name: Check concurrent publication and branch advancement
         uses: actions/github-script@v7
         with:
           script: |
@@ -142,30 +143,33 @@ jobs:
       - name: Publish preserved complete site
         id: deployment
         uses: actions/deploy-pages@v4
-      - name: Verify exact public HTML, build and resources
+      - name: Read back exact public artifact bytes
         run: |
           python3 - <<'PY'
           from pathlib import Path
-          import hashlib,json,os,time,urllib.request
+          import json,os,time,urllib.request
           base='https://haihao0307.github.io/HOUSE/architecture-workbench/'
-          report={'base':base,'sourceCommit':os.environ['GITHUB_SHA'],'files':[],'verified':False}
+          names=['index.html','workspace.html','first-building/index.html','first-building/viewer.js','first-building/data/audit.json','assets/guards.js','data/build.json','data/knowledge-snapshot.json','data/MOTHER_UNIFIED_POLICY_V1.0.0.json']
+          report={'base':base,'sourceCommit':os.environ['GITHUB_SHA'],'files':names,'verified':False}
           try:
               for attempt in range(24):
                   try:
-                      for rel in ['index.html','assets/workbench.js','assets/viewer.js','assets/guards.js','assets/workbench.css','data/build.json','data/knowledge-snapshot.json','data/MOTHER_UNIFIED_POLICY_V1.0.0.json']:
-                          req=urllib.request.Request(base+rel+'?build='+os.environ['GITHUB_SHA'],headers={'Cache-Control':'no-cache','User-Agent':'ArchitectureBlueprint-QA/0.1'})
+                      for rel in names:
+                          req=urllib.request.Request(base+rel+'?build='+os.environ['GITHUB_SHA'],headers={'Cache-Control':'no-cache','User-Agent':'ArchitectureBlueprint-QA/0.2'})
                           with urllib.request.urlopen(req,timeout=30) as r:data=r.read();status=r.status
-                          expect=Path('_site/architecture-workbench',rel).read_bytes();assert status==200 and data==expect,rel
-                      report['verified']=True;report['files']=['index.html','assets/workbench.js','assets/viewer.js','assets/guards.js','assets/workbench.css','data/build.json','data/knowledge-snapshot.json','data/MOTHER_UNIFIED_POLICY_V1.0.0.json'];break
+                          assert status==200 and data==Path('_site/architecture-workbench',rel).read_bytes(),rel
+                      report['verified']=True;break
                   except Exception as e:
                       report['lastError']=str(e)
                       if attempt==23:raise
                       time.sleep(5)
           finally:Path(os.environ['QA'],'public-readback.json').write_text(json.dumps(report,indent=2))
           PY
-      - name: Test actual public workbench
-        run: python3 architecture-workbench/tools/browser_qa.py --url "https://haihao0307.github.io/HOUSE/architecture-workbench/?build=$GITHUB_SHA" --output "$QA/public" --expected-sha "$GITHUB_SHA"
-      - name: Preserve all results including failures
+      - name: Test actual public first-building workbench
+        run: python3 architecture-workbench/first-building/browser_qa.py --url "https://haihao0307.github.io/HOUSE/architecture-workbench/?build=$GITHUB_SHA" --output "$QA/public" --expected-sha "$GITHUB_SHA"
+      - name: Test retained public knowledge workspace
+        run: python3 architecture-workbench/tools/archive_qa.py --url "https://haihao0307.github.io/HOUSE/architecture-workbench/workspace.html?build=$GITHUB_SHA" --output "$QA/archive-public" --expected-sha "$GITHUB_SHA"
+      - name: Preserve results including failures
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -174,14 +178,15 @@ jobs:
             ${{ env.QA }}/
             architecture-workbench/data/build.json
             architecture-workbench/file-manifest.json
+            architecture-workbench/first-building/data/audit.json
           if-no-files-found: error
           retention-days: 30
       - name: Summary
         if: always()
         run: |
-          echo '## Architecture blueprint workbench V0.1.0' >> "$GITHUB_STEP_SUMMARY"
+          echo '## Architecture blueprint preflight V0.2.0' >> "$GITHUB_STEP_SUMMARY"
           echo 'https://haihao0307.github.io/HOUSE/architecture-workbench/' >> "$GITHUB_STEP_SUMMARY"
-          echo 'Only architecture-workbench/ changes in the published site. Visual and production approval remain false.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Preflight and error detection only. New historic building incomplete; human and production approvals remain false.' >> "$GITHUB_STEP_SUMMARY"
           for f in "$QA/site-preservation.json" "$QA/staged/browser-report.json" "$QA/public-readback.json" "$QA/public/browser-report.json"; do
             if test -f "$f"; then cat "$f" >> "$GITHUB_STEP_SUMMARY"; fi
           done

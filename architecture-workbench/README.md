@@ -1,31 +1,31 @@
-# 云南建筑总工作台 V0.1.0
+# 云南建筑总工作台 V0.2.0
 
-所属：建筑蓝图与总体系。知识框架：V1。共同方法：Mother V1.0.0。
+所属：建筑蓝图与总体系。共同规则：Mother V1.0.0，原JSON保持不变。当前默认入口进入 first-building/ 首栋建筑预审，旧工作台保留在 workspace.html。
 
-入口为 `architecture-workbench/index.html`，由专用的保留全站发布流程加入现有公开网站。整个目录可以由 `tools/build.py` 在精确源提交上重建。`file-manifest.json` 记录产物文件的哈希。
+用户已撤回旧整栋作为后续母版的用途。本轮将旧生成器保留为只读失败样本，默认页面不加载它。仅对原生成器的实际北墙顶点与主屋面基层作独立检测，形成可重复的错误拦截；没有修补并重新包装旧房屋。
 
-本版实现六个工作区：总览、建筑知识、案例资料、专业入口、共同方法与验收、资料与笔记。既有总装候选使用原 `threejs/YunnanCourtyardProduction.js` 及原材质与屋面文件，只新增观察适配器，不修改原模型算法、专业默认参数或冻结文件。这里显示的是旧总装研究候选，各新 Mother 尚未合装。
+## 当前能力
 
-中性、工作室、法线诊断使用同一对象；灯组独立控制；剖切只影响渲染。对象真实几何、实例矩阵与材料源值的指纹用于检查灯光与相机切换的隔离性。所有尺寸继续保留旧候选来源，未获得新的实测认证。
+首栋的尺寸记录、轴网和标高控制图；旧错误的明确选看；中性、工作室、法线诊断；平移、旋转、缩放和复位；实际查错结果及证据缺口；有效观察参数导出。
 
-接收的统一方法按十七节组织提要，§12.1 JSON 原值保持。规则原文件按固定哈希加载，领域记录与灯光设置使用独立的严格字段检查。本地保护器明确标记为工作台 V0.1.0，官方 Schema、上游校验器和原 MD 字节仍未取得；本版未宣称完整规范接入。
+候选来自原三开间前廊个案的结构化记录。该记录当前缺少四份原图回核，原登记为用户提供的二手图，建筑身份、精确剖面及构件截面仍待核。图中线面只是图纸控制辅助，不表示已经建好柱、梁、楼面或屋顶。算术闭合不等于测绘可靠，查错程序通过不等于建筑合格。
 
-附件保存到独立的浏览器 IndexedDB，笔记保存到独立 localStorage。它们不写入其他工作台、不自动上传 GitHub、不触发生成参数更新。研究记录导出包含笔记及附件身份清单，不包含附件二进制。导入未知字段、错误版本或伪造批准会拒绝。旧工作台的状态管理未在本轮修改。
+新栋完整几何、真实安装节点、全排水、承载安全、历史演化及跨Mother总装尚未实现。visualApproved=false，productionApproved=false。
 
-完整对象演化、形成历史、环境历史、过程标定与跨 Mother 状态交换仍未实现。界面无虚假的时间、湿度或年龄滑杆。人工视觉批准与生产批准继续为 false。
+## 构建与验证
 
-## 验证
+`python architecture-workbench/tools/build_first.py --app-root <既有工程根目录> --repository-root <仓库根目录>`
 
-`python tools/build.py --app-root <既有工程根目录>`
+先运行既有知识数据构建，再运行 first-building/run-audit.mjs。源文件哈希不匹配即停止。最终更新构建身份、当前审查数据哈希和所有自有产物的清单。VERSION、CHANGELOG.md、PROJECT_STATE.md均为本工作台独立版本，不改其他生产线版本。
 
-`python tools/browser_qa.py --site <完整站点目录> --output evidence/staged --expected-sha <精确提交>`
+`python architecture-workbench/first-building/browser_qa.py --site <完整站点目录> --output <证据目录> --expected-sha <提交>`
 
-`python tools/browser_qa.py --url <公开入口> --output evidence/public --expected-sha <精确提交>`
+`python architecture-workbench/first-building/browser_qa.py --url <真实公开入口> --output <证据目录> --expected-sha <提交>`
 
-测试输出浏览器日志、资源失败、桌面与手机证据、三模式像素、实际源指纹、严格导入和批准隔离结果。自动通过不会授予用户视觉批准。
+两端独立执行实际触控或鼠标操作，测试观察模式、源几何指纹、完整入镜、导出和批准状态。tools/archive_qa.py为保留的workspace.html选择入口，并调用原tools/browser_qa.py的完整测试，原测试算法未改。
 
-## 发布边界
+## 保护范围与缺口
 
-只覆盖公开站点的 `architecture-workbench/` 前缀，其他路径以逐文件 SHA256 验证不变。源分支保持 `feature/yunnan-component-studio-v1`，PR #13 保持 Draft。代码提交使用 skip-ci，避免触发旧的全站覆盖发布；专用 `preview/architecture-workbench-*` 预览分支引用的 create 事件仅触发本工作台校验和发布。该引用只标识研究预览，不代表正式版本批准。
+发布仍仅更新 architecture-workbench/ 前缀。专用工作流从最新成功Pages部署提取完整站点，叠加本线产物，逐文件验证其他路径不变，并在部署前再次核对并行发布状态及本分支HEAD。禁止用旧站点包覆盖其他Mother更新。
 
-不更改 main、gh-pages、Pages 设置、其他 Mother 源码、冻结资产或实测真值。部署前再次核对当前成功发布身份，变化时阻断，禁止覆盖并行成果。
+共同规则的本地哈希为80aef698e30a6378e25d6eeb7c6ee67c1df24e6ae96faef5f4df4ef62d19c8d3。官方Schema、上游校验器和原MD原始字节仍待接收。本轮属于预审及观察入口的局部实现，未宣告共同演化运行时全部接入。
