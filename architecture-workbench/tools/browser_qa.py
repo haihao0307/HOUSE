@@ -36,6 +36,7 @@ def main():
    if args.expected_sha:check('exact_source_commit',build['sourceCommit']==args.expected_sha)
    check('nine_sources',page.locator('[data-source]').count()==9);check('fourteen_topics',page.locator('[data-topic]').count()==14)
    initial=page.evaluate('window.__BLUEPRINT_WORKBENCH__.viewer.baselineFingerprint');report['sourceFingerprint']=initial
+   check('desktop_overview_fully_in_view',page.evaluate('window.__BLUEPRINT_WORKBENCH__.viewer.snapshot().frameBounds.fullyInView'))
    check('actual_mesh_geometry_present',page.evaluate('window.__BLUEPRINT_WORKBENCH__.viewer.snapshot().sourceStats.triangleCount>100000'))
    for mode in ['neutral_inspection','studio_beauty','diagnostic']:
     page.click(f'[data-mode="{mode}"]');page.wait_for_timeout(800)
@@ -55,7 +56,7 @@ def main():
    for nav in ['knowledge','sources','mothers','method','intake']:
     page.click(f'[data-page="{nav}"]');check('navigation_'+nav,page.locator('#'+nav).is_visible());check('layout_'+nav,page.evaluate('document.documentElement.scrollWidth<=innerWidth'))
    page.click('[data-page="sources"]');page.fill('#sourceSearch','432');check('search_filter',page.locator('[data-source]').count()==1);page.fill('#sourceSearch','');page.locator('[data-source]').first.click();check('source_details',page.locator('#reader').is_visible());page.click('#closeReader')
-   page.click('[data-page="knowledge"]');page.click('#readBlueprint');page.wait_for_selector('#reader[open]');check('blueprint_document_loaded',page.locator('#readerBody').inner_text().find('间数')>=0);page.click('#closeReader')
+   page.click('[data-page="knowledge"]');page.click('#readBlueprint');page.wait_for_selector('#reader[open]');check('blueprint_document_loaded',page.locator('#readerBody').inner_text().find('间数')>=0);page.click('#closeReader');page.click('.brand');page.wait_for_function("window.__BLUEPRINT_WORKBENCH__.activePage==='overview'");check('brand_returns_home',page.locator('#overview').is_visible())
    page.click('[data-page="intake"]');page.fill('#notes','QA 独立浏览器测试笔记');page.click('#saveNotes')
    page.set_input_files('#fileInput',{'name':'qa-research-note.txt','mimeType':'text/plain','buffer':b'QA local-only attachment; no repository upload.'});page.wait_for_selector('[data-attachment]');check('attachment_receipt_only',page.locator('#intakeList').inner_text().find('已接收')>=0)
    with page.expect_download() as d:page.click('#exportButton')
@@ -70,6 +71,7 @@ def main():
    mp.on('pageerror',lambda e:me.append(str(e)));mp.on('console',lambda e:me.append(e.text) if e.type=='error' else None);mp.on('requestfailed',lambda r:mf.append(r.url))
    mr=mp.goto(url,wait_until='domcontentloaded',timeout=90000);mp.wait_for_function('window.__BLUEPRINT_WORKBENCH__?.ready',timeout=120000);check('mobile_html_and_boot',mr.status==200)
    check('mobile_no_horizontal_overflow',mp.evaluate('document.documentElement.scrollWidth<=innerWidth'))
+   check('mobile_overview_fully_in_view',mp.evaluate('window.__BLUEPRINT_WORKBENCH__.viewer.snapshot().frameBounds.fullyInView'));mobile_view=mp.evaluate('window.__BLUEPRINT_WORKBENCH__.viewer.snapshot()');check('mobile_native_pixels',min(mobile_view['nativePixelSize'])>=300);report['mobileVisibleSnapshot']=mobile_view
    mp.screenshot(path=str(out/'mobile-overview.png'),full_page=True);mp.click('[data-mode="studio_beauty"]');check('mobile_mode_switch',mp.evaluate('window.__BLUEPRINT_WORKBENCH__.viewer.snapshot().presentationMode')=='studio_beauty');mp.click('[data-mode="diagnostic"]');mp.screenshot(path=str(out/'mobile-diagnostic.png'),full_page=True)
    mp.click('#menuButton');mp.click('[data-page="sources"]');check('mobile_navigation',mp.locator('#sources').is_visible());check('mobile_sources_fit',mp.evaluate('document.documentElement.scrollWidth<=innerWidth'))
    report['mobile']={'consoleAndPageErrors':me,'failedRequests':mf,'snapshot':mp.evaluate('window.__BLUEPRINT_WORKBENCH__.viewer.snapshot()'),'viewport':[390,844]};check('mobile_console_clean',not me,me);check('mobile_requests_clean',not mf,mf)

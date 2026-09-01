@@ -92,7 +92,18 @@ jobs:
                   else:raise ValueError('Unsafe site archive entry '+m.name)
           def snap():return {str(p.relative_to(site)):hashlib.sha256(p.read_bytes()).hexdigest() for p in site.rglob('*') if p.is_file() and not str(p.relative_to(site)).startswith('architecture-workbench/')}
           before=snap();assert 'index.html' in before
-          build=json.loads(Path('architecture-workbench/data/build.json').read_text())
+          build_path=Path('architecture-workbench/data/build.json')
+          build=json.loads(build_path.read_text())
+          base_record=json.loads(Path(os.environ['QA'],'base-site.json').read_text())
+          build['initialObservedPublicationRun']=build['basePublicationRun']
+          build['basePublicationRun']=base_record['artifact']['workflow_run']['id']
+          build['baseDeploymentSha']=base_record['deployment']['sha']
+          build['baseDeploymentId']=base_record['deployment']['id']
+          build_path.write_text(json.dumps(build,ensure_ascii=False,indent=2)+'\n')
+          manifest_path=Path('architecture-workbench/file-manifest.json')
+          manifest=json.loads(manifest_path.read_text())
+          manifest['files']['data/build.json']=hashlib.sha256(build_path.read_bytes()).hexdigest()
+          manifest_path.write_text(json.dumps(manifest,ensure_ascii=False,indent=2)+'\n')
           for d in build['dependencies']:assert hashlib.sha256((site/d['path']).read_bytes()).hexdigest()==d['sha256'],d['path']
           dest=site/'architecture-workbench'
           if dest.exists():shutil.rmtree(dest)
