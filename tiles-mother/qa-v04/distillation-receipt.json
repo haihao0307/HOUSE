@@ -1,0 +1,91 @@
+{
+  "motherId": "Tiles Mother",
+  "version": "0.4.0",
+  "repository": "haihao0307/HOUSE",
+  "branch": "feature/tiles-mother-v0.1-workbench",
+  "auditedRepositoryHead": "a4cd4c97460c4195d41c04328a76882755f0b0e8",
+  "candidateCommit": "9d8a4b510a26746c659b6e41bf548812ec8da4ed",
+  "deploymentCommit": "de693f9cb6ae68969568bc54803f235d1531895b",
+  "url": "https://haihao0307.github.io/HOUSE/tiles-mother/?v=0.4.0",
+  "indexSHA256": "b976c5a032e37c8f457a6f15218a43b9a8e511cd243dec89e03ce35dfd0ffa5b",
+  "runtimeBytes": 2299042,
+  "runtimeIncreaseFromV03Bytes": 38487,
+  "rawSourceInRuntime": false,
+  "originalLargeTexturesInRuntime": false,
+  "referenceBasis": {
+    "originalZipSHA256": "ae5510c0e2eaec236adff0b94d978688f6c17a9412407c6c7ec54968222dd365",
+    "rawBytesReadBy": "Codex on the user's local machine, documented in the existing Jiangwutang analysis",
+    "chatReceiverReadOriginalZip": false,
+    "receiverInspected": ["knowledge/jiangwutang-001/analysis.json", "knowledge/jiangwutang-001/diffuse-effective-crop.png", "knowledge/jiangwutang-001/initial-fbx-model-contact-sheet.png", "V0.3 baseline browser screenshots"],
+    "diffuseNativeCropSHA256": "4e54e4d83dda4b737ecb6456d3118b2c87a7bd47ab7704f5d74ce21f583c03cc"
+  },
+  "donorKnowledge": {
+    "brickReadOnlyCommit": "b25508b8b57d45f9333286ab7b883644181039e7",
+    "functionsStudied": ["buildFormationEvents", "applyFormationEventSDF", "buildDamage"],
+    "adaptation": "New thin-shell operators with stable events, clustered shallow cavities, irregular rims, forming drag marks and separate back-face relief. No whole Brick runtime was merged.",
+    "externalMethodReferences": [
+      "https://experienceleague.adobe.com/en/docs/substance-3d-designer/using/substance-graphs/nodes-reference-for-substance-graphs/atomic-nodes/directional-warp",
+      "https://dev.epicgames.com/documentation/metahuman/metahuman-custom-lighting-scenarios-and-render-settings-in-unreal-engine"
+    ]
+  },
+  "runtimeEntryPoints": {
+    "geometryAndEvents": "tiles-mother/v04/operators.js: tile, events, field, mesh",
+    "history": "tiles-mother/v04/operators.js: evolve",
+    "surfaceAndLights": "tiles-mother/v04/studio.js: material, Studio.draw",
+    "workbench": "tiles-mother/v04/integration.js: makeMesh04, meshes04, studyRebuild, validateStudy, attachStudyAPI",
+    "build": "tiles-mother/v04/build.py",
+    "study": "tiles-mother/v04/STUDY.md"
+  },
+  "tests": {
+    "candidateRun": 33470243550,
+    "cpuPassed": 49,
+    "cpuTotal": 49,
+    "candidateBrowserPassed": 53,
+    "candidateBrowserTotal": 53,
+    "publicRun": 33470631430,
+    "publicBrowserPassed": 53,
+    "publicBrowserTotal": 53,
+    "referenceRegression": "passed_actual_file_roundtrip",
+    "publicConsoleErrors": [],
+    "publicPageErrors": [],
+    "publicFailedRequests": [],
+    "httpStatus": 200,
+    "publicBodyMatchesCandidate": true,
+    "browser": "Chromium 140.0.7339.16, software WebGL2 on Actions runner",
+    "crossGPUExactImageIdentityClaimed": false
+  },
+  "evidence": {
+    "core": "tiles-mother/qa-v04/core-report.json",
+    "candidate": "tiles-mother/qa-v04/browser-report.json",
+    "public": "tiles-mother/qa-v04/public-browser-report.json",
+    "publication": "tiles-mother/qa-v04/publication.json",
+    "sitePreservation": "tiles-mother/qa-v04/site-preservation.json",
+    "publicArtifact": 9786451234,
+    "screenshotsPostUpscaled": false
+  },
+  "preservation": {
+    "unchangedPublicFilesOutsideTiles": 291,
+    "otherMotherSourcesChanged": false,
+    "sourceZipRemoved": false,
+    "userDiskChanged": false,
+    "receiverTemporaryPublishedSiteCacheFreedBytes": 146716610
+  },
+  "policyVersionRead": "1.0.0",
+  "policySha256": null,
+  "schemaSha256": null,
+  "validatorSha256": null,
+  "fullPolicyRuntimeAdoption": false,
+  "unresolvedItems": [
+    "Exact raw reference geometry heights, physical dimensions and optical properties remain uncalibrated.",
+    "Fine edge/section grain, local mottling and mobile framing still need visual refinement.",
+    "The current closed surface supports shallow geometric pits; through holes, overhangs and undercuts are unsupported.",
+    "The 28-tile sample shares time and history; it is not an approved construction layout or full roof generator.",
+    "Wet/dry rates, exposure factors and accumulated damage are illustrative_not_calibrated, not real aging predictions.",
+    "Studio controls separate enable, intensity and approximate Kelvin color; direction currently has group rotation rather than independent per-light angle UI.",
+    "The common strict schema and validator identity and complete shared-policy entry gates are still missing.",
+    "Complete old-project migration, all reference formats and performance across target devices have not all been independently verified in this turn."
+  ],
+  "distillationComplete": false,
+  "visualApproved": false,
+  "productionApproved": false
+}
