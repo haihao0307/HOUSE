@@ -53,7 +53,7 @@
       "passed": true,
       "detail": {
         "version": "0.3.0",
-        "at": "2026-09-01T01:53:07.053Z",
+        "at": "2026-09-01T01:57:02.848Z",
         "profile": "pan",
         "materialPreset": "jiangwutang-v03",
         "materialCandidate": {
@@ -196,7 +196,7 @@
       "passed": true,
       "detail": {
         "version": "0.3.0",
-        "at": "2026-09-01T01:53:19.527Z",
+        "at": "2026-09-01T01:57:14.244Z",
         "profile": "cover",
         "materialPreset": "jiangwutang-v03",
         "materialCandidate": {
@@ -383,7 +383,7 @@
     "pan": {
       "qa": {
         "version": "0.3.0",
-        "at": "2026-09-01T01:53:07.053Z",
+        "at": "2026-09-01T01:57:02.848Z",
         "profile": "pan",
         "materialPreset": "jiangwutang-v03",
         "materialCandidate": {
@@ -519,7 +519,7 @@
     "cover": {
       "qa": {
         "version": "0.3.0",
-        "at": "2026-09-01T01:53:19.527Z",
+        "at": "2026-09-01T01:57:14.244Z",
         "profile": "cover",
         "materialPreset": "jiangwutang-v03",
         "materialCandidate": {
@@ -656,35 +656,35 @@
   "screenshots": [
     {
       "path": "tiles-mother/qa-v03/pan-trio-v03.jpg",
-      "bytes": 143528
+      "bytes": 143445
     },
     {
       "path": "tiles-mother/qa-v03/pan-albedo-v03.jpg",
-      "bytes": 123457
+      "bytes": 123439
     },
     {
       "path": "tiles-mother/qa-v03/pan-final-v03.jpg",
-      "bytes": 134039
+      "bytes": 133863
     },
     {
       "path": "tiles-mother/qa-v03/cover-trio-v03.jpg",
-      "bytes": 143272
+      "bytes": 143149
     },
     {
       "path": "tiles-mother/qa-v03/cover-albedo-v03.jpg",
-      "bytes": 120385
+      "bytes": 120211
     },
     {
       "path": "tiles-mother/qa-v03/cover-final-v03.jpg",
-      "bytes": 130032
+      "bytes": 129846
     },
     {
       "path": "tiles-mother/qa-v03/pan-legacy-v02-compare.jpg",
-      "bytes": 132744
+      "bytes": 132623
     },
     {
       "path": "tiles-mother/qa-v03/mobile-v03.jpg",
-      "bytes": 123731
+      "bytes": 123692
     }
   ],
   "pageErrors": [],
