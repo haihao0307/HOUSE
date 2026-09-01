@@ -21,6 +21,8 @@ from PIL import Image
 
 
 BASELINE_NORMAL = np.array([128, 128, 255], dtype=np.uint8)
+LOCKED_ZIP_BYTES = 58671527
+LOCKED_ZIP_SHA256 = "ae5510c0e2eaec236adff0b94d978688f6c17a9412407c6c7ec54968222dd365"
 
 
 def sha256_file(path: Path) -> str:
@@ -31,16 +33,28 @@ def sha256_file(path: Path) -> str:
     return h.hexdigest()
 
 
+def git_artifact_bytes(path: Path) -> bytes:
+    """Return the bytes represented by a Git blob under core.autocrlf=true."""
+    data = path.read_bytes()
+    return data.replace(b"\r\n", b"\n") if path.suffix.lower() in {".json", ".md", ".py", ".js"} else data
+
+
+def git_artifact_digest(path: Path) -> dict:
+    data = git_artifact_bytes(path)
+    return {"path": path.name, "bytes": len(data), "sha256": hashlib.sha256(data).hexdigest()}
+
+
 def archive_evidence(path: Path):
     rows = []
     bad = None
     with zipfile.ZipFile(path, "r") as z:
         bad = z.testzip()
         for info in z.infolist():
+            digest = hashlib.sha256()
             if not info.is_dir():
                 with z.open(info, "r") as stream:
-                    while stream.read(1024 * 1024):
-                        pass
+                    for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+                        digest.update(chunk)
             rows.append({
                 "path": info.filename,
                 "compressedBytes": info.compress_size,
@@ -48,6 +62,7 @@ def archive_evidence(path: Path):
                 "crc32": f"{info.CRC:08x}",
                 "isDirectory": info.is_dir(),
                 "readOK": True,
+                "sha256": digest.hexdigest() if not info.is_dir() else None,
             })
     return rows, bad
 
@@ -116,6 +131,29 @@ def quantized_colors(pixels: np.ndarray, weights: np.ndarray | None = None, limi
     return out
 
 
+def weighted_percentile(values: np.ndarray, weights: np.ndarray, percentile: float) -> float:
+    """Return a deterministic discrete weighted percentile.
+
+    The selected value is the first sorted sample whose cumulative positive
+    weight reaches percentile/100 of the total. This is intentional: the
+    source-weighted summaries represent sampled triangle colors, not a
+    continuous interpolation between unobserved colors.
+    """
+    values = np.asarray(values, dtype=np.float64).reshape(-1)
+    weights = np.asarray(weights, dtype=np.float64).reshape(-1)
+    if len(values) != len(weights) or len(values) == 0:
+        raise ValueError("weighted_percentile requires equally sized non-empty arrays")
+    if not np.all(np.isfinite(weights)) or np.any(weights < 0) or float(weights.sum()) <= 0:
+        raise ValueError("weighted_percentile requires finite non-negative weights with positive sum")
+    if not 0 <= percentile <= 100:
+        raise ValueError("percentile must be between 0 and 100")
+    order = np.argsort(values, kind="stable")
+    cumulative = np.cumsum(weights[order])
+    target = float(percentile) / 100.0 * float(cumulative[-1])
+    index = int(np.searchsorted(cumulative, target, side="left"))
+    return float(values[order[min(index, len(order) - 1)]])
+
+
 def rgb_summary(pixels: np.ndarray, weights: np.ndarray | None = None):
     if len(pixels) == 0:
         return {"count": 0}
@@ -131,14 +169,32 @@ def rgb_summary(pixels: np.ndarray, weights: np.ndarray | None = None):
         wmean = (p * w).sum(axis=0) / max(total, 1e-12)
         std = np.sqrt((((p - wmean) ** 2) * w).sum(axis=0) / max(total, 1e-12))
         mean = wmean
+    if weights is None:
+        percentiles = [
+            [float(v) for v in np.percentile(p, q, axis=0)]
+            for q in (5, 50, 95)
+        ]
+        percentile_method = "unweighted numpy.percentile over samples"
+    else:
+        percentiles = [
+            [weighted_percentile(p[:, channel], weights, q) for channel in range(3)]
+            for q in (5, 50, 95)
+        ]
+        percentile_method = "discrete weighted percentile over samples; weights are 3D triangle areas"
     return {
         "count": int(len(pixels)),
         "weight": total,
         "mean": [float(v) for v in mean],
         "std": [float(v) for v in std],
-        "p05": [float(v) for v in np.percentile(p, 5, axis=0)],
-        "p50": [float(v) for v in np.percentile(p, 50, axis=0)],
-        "p95": [float(v) for v in np.percentile(p, 95, axis=0)],
+        "p05": percentiles[0],
+        "p50": percentiles[1],
+        "p95": percentiles[2],
+        "percentileMethod": percentile_method,
+        "unweightedPercentiles": {
+            "p05": [float(v) for v in np.percentile(p, 5, axis=0)],
+            "p50": [float(v) for v in np.percentile(p, 50, axis=0)],
+            "p95": [float(v) for v in np.percentile(p, 95, axis=0)],
+        } if weights is not None else None,
         "min": [int(v) for v in p.min(axis=0)],
         "max": [int(v) for v in p.max(axis=0)],
     }
@@ -351,6 +407,7 @@ def area_weighted_surface_samples(points, uvs, image: Image.Image):
 
 
 def normal_effective_stats(image: Image.Image, coverage: np.ndarray):
+    original = np.asarray(image)
     arr = np.asarray(image.convert("RGB"))
     mask = coverage > 0
     full = arr.reshape(-1, 3)
@@ -401,7 +458,8 @@ def normal_effective_stats(image: Image.Image, coverage: np.ndarray):
         },
         "nativeSpatialVariationEffectiveUv": native_grid_variation(arr, mask),
         "nativeDirectionalityEffectiveUv": native_gradient(arr, mask),
-        "alpha": {"present": False, "handling": "normal image is RGB; no alpha channel to include or exclude"},
+        "alpha": alpha_summary(original, mask),
+        "analysisConversion": {"originalMode": image.mode, "modeUsedForNormalStatistics": "RGB", "reason": "normal vectors are decoded from RGB; original alpha is measured separately and does not expand or shrink the UV mask"},
     }
 
 
@@ -420,6 +478,18 @@ def main():
     args = ap.parse_args()
     args.out_dir.mkdir(parents=True, exist_ok=True)
 
+    if not args.zip_path.is_file():
+        raise RuntimeError(f"source ZIP is not readable: {args.zip_path}")
+    actual_zip_bytes = args.zip_path.stat().st_size
+    actual_zip_sha256 = sha256_file(args.zip_path)
+    if actual_zip_bytes != LOCKED_ZIP_BYTES or actual_zip_sha256 != LOCKED_ZIP_SHA256:
+        raise RuntimeError(
+            "source identity validation failed; refusing to write a successful analysis "
+            f"(bytes={actual_zip_bytes}, sha256={actual_zip_sha256})"
+        )
+    if not args.prior_json.is_file() or not args.mesh_json.is_file():
+        raise RuntimeError("prior analysis or parsed mesh JSON is not readable")
+
     prior = json.loads(args.prior_json.read_text(encoding="utf-8"))
     mesh = json.loads(args.mesh_json.read_text(encoding="utf-8"))
     gd = mesh["geometryData"][0]
@@ -430,12 +500,32 @@ def main():
     rsinfo = source_asset / "01.fbx.rsInfo"
     diffuse_path = source_asset / "01_u1_v1_diffuse.png"
     normal_path = source_asset / "01_u1_v1_normal.png"
+    for required in (fbx, rsinfo, diffuse_path, normal_path):
+        if not required.is_file():
+            raise RuntimeError(f"extracted source file is not readable: {required}")
     diffuse = Image.open(diffuse_path)
     diffuse.load()
     normal = Image.open(normal_path)
     normal.load()
+    diffuse_original_format, diffuse_original_mode = diffuse.format, diffuse.mode
+    normal_original_format, normal_original_mode = normal.format, normal.mode
 
     archive_rows, bad = archive_evidence(args.zip_path)
+    if bad is not None:
+        raise RuntimeError(f"ZIP CRC validation failed for {bad}; refusing to write success")
+    if not all(row["readOK"] for row in archive_rows):
+        raise RuntimeError("one or more ZIP entries were not readable; refusing to write success")
+    expected_source = {
+        "01.fbx": fbx,
+        "01.fbx.rsInfo": rsinfo,
+        "01_u1_v1_diffuse.png": diffuse_path,
+        "01_u1_v1_normal.png": normal_path,
+    }
+    archive_by_name = {Path(row["path"]).name: row for row in archive_rows}
+    for name, path in expected_source.items():
+        row = archive_by_name.get(name)
+        if row is None or row["uncompressedBytes"] != path.stat().st_size or row["sha256"] != sha256_file(path):
+            raise RuntimeError(f"extracted source does not match ZIP entry size: {name}")
     diffuse_cov = raster_uv_coverage(uvs, diffuse.width, diffuse.height)
     normal_cov = raster_uv_coverage(uvs, normal.width, normal.height)
     diffuse_color, diffuse_arr, diffuse_mask = effective_color_stats(diffuse, diffuse_cov)
@@ -463,15 +553,24 @@ def main():
     out = {
         "schema": "tiles-mother-jiangwutang-effective-analysis-v2",
         "analysisDate": "2026-09-01",
+        "analysisContract": {
+            "sourceIdentityFailure": "abort before writing a success analysis",
+            "zipCrcOrEntryReadFailure": "abort before writing a success analysis",
+            "imageDecodeFailure": "abort before writing a success analysis",
+            "effectiveRegion": "native-resolution union of actual FBX UV triangle coverage; coverage zero is excluded",
+            "lineEndingForGitArtifacts": "LF in Git blobs; local checkout may show CRLF because core.autocrlf is enabled",
+            "normalFileMode": normal_original_mode,
+            "normalAnalysisMode": "RGB",
+        },
         "sourceIntegrity": {
             "originalZip": str(args.zip_path),
-            "originalZipBytes": args.zip_path.stat().st_size,
-            "originalZipSHA256": sha256_file(args.zip_path),
-            "lockedBytes": 58671527,
-            "lockedSHA256": "ae5510c0e2eaec236adff0b94d978688f6c17a9412407c6c7ec54968222dd365",
-            "matchesLockedIdentity": args.zip_path.stat().st_size == 58671527 and sha256_file(args.zip_path) == "ae5510c0e2eaec236adff0b94d978688f6c17a9412407c6c7ec54968222dd365",
-            "zipCRCCheck": "passed" if bad is None else f"failed:{bad}",
-            "allEntriesRead": bad is None,
+            "originalZipBytes": actual_zip_bytes,
+            "originalZipSHA256": actual_zip_sha256,
+            "lockedBytes": LOCKED_ZIP_BYTES,
+            "lockedSHA256": LOCKED_ZIP_SHA256,
+            "matchesLockedIdentity": True,
+            "zipCRCCheck": "passed",
+            "allEntriesRead": True,
             "originalModified": False,
         },
         "archiveDirectory": archive_rows,
@@ -483,18 +582,18 @@ def main():
             "uvVerticesOutside01": out_vertices,
             "trianglesWithAnyUvOutside01": out_triangles,
             "diffuse": {"image": diffuse_path.name, "sizePx": [diffuse.width, diffuse.height], "coverage": overlap_summary(diffuse_cov), "invalidHandling": "coverage==0 excluded; covered dark/black RGB is retained as observed material texel"},
-            "normal": {"image": normal_path.name, "sizePx": [normal.width, normal.height], "coverage": overlap_summary(normal_cov), "invalidHandling": "coverage==0 excluded; RGB normal pixels inside coverage retained without height conversion"},
+            "normal": {"image": normal_path.name, "sizePx": [normal.width, normal.height], "coverage": overlap_summary(normal_cov), "invalidHandling": "coverage==0 excluded; RGB channels from the original image are used for normal statistics after an explicit RGB conversion; original alpha is reported separately and is not used to expand or shrink the UV mask"},
             "uvOverlap": {"note": "coverage counts are retained; overlap statistics are reported per texture and are not collapsed into unique surface area"},
-            "boundaryFill": {"method": "no fill or dilation; pixels outside union mask are invalid and reported separately", "diffuseAlphaOutsideMask": diffuse_color["alpha"]["outsideEffectiveUv"], "normalHasAlpha": False},
+            "boundaryFill": {"method": "no fill or dilation; pixels outside union mask are invalid and reported separately", "diffuseAlphaOutsideMask": diffuse_color["alpha"]["outsideEffectiveUv"], "normalAlphaOutsideMask": normal_stats["alpha"]["outsideEffectiveUv"], "normalHasAlpha": normal_original_mode.endswith("A")},
         },
         "diffuseEffectiveRegion": {
-            "imageMetadata": {"file": diffuse_path.name, "bytes": diffuse_path.stat().st_size, "sha256": sha256_file(diffuse_path), "format": diffuse.format, "mode": diffuse.mode, "sizePx": [diffuse.width, diffuse.height]},
+            "imageMetadata": {"file": diffuse_path.name, "bytes": diffuse_path.stat().st_size, "sha256": sha256_file(diffuse_path), "format": diffuse_original_format, "mode": diffuse_original_mode, "sizePx": [diffuse.width, diffuse.height], "analysisConversion": {"mode": "RGB", "reason": "RGB-only color statistics and area-weighted samples"}},
             "statistics": diffuse_color,
             "surfaceAreaWeightedTriangleCentroidSamples": diffuse_area_weighted,
             "crop": {"diffuseNativePixelCoordinates": [x0, y0, x1, y1], "normalNativePixelCoordinates": [normal_x0, normal_y0, normal_x1, normal_y1], "uvApprox": [x0 / (diffuse.width - 1), 1 - y1 / (diffuse.height - 1), x1 / (diffuse.width - 1), 1 - y0 / (diffuse.height - 1)], "selection": "1024px native window maximizing effective-mask fraction multiplied by native luminance standard deviation"},
         },
         "normalEffectiveRegion": {
-            "imageMetadata": {"file": normal_path.name, "bytes": normal_path.stat().st_size, "sha256": sha256_file(normal_path), "format": normal.format, "mode": normal.mode, "sizePx": [normal.width, normal.height]},
+            "imageMetadata": {"file": normal_path.name, "bytes": normal_path.stat().st_size, "sha256": sha256_file(normal_path), "format": normal_original_format, "mode": normal_original_mode, "sizePx": [normal.width, normal.height], "analysisConversion": {"mode": "RGB", "reason": "normal decode statistics only; alpha is not synthesized"}},
             "statistics": normal_stats,
             "crop": {"diffuseNativePixelCoordinates": [x0, y0, x1, y1], "normalNativePixelCoordinates": [normal_x0, normal_y0, normal_x1, normal_y1], "selectionInheritedFromDiffuseWindow": True},
         },
@@ -560,11 +659,11 @@ def main():
             {"path": normal_path.name, "bytes": normal_path.stat().st_size, "sha256": sha256_file(normal_path)},
         ],
         "repoArtifacts": [
-            {"path": "analysis.json", "bytes": analysis_path.stat().st_size, "sha256": sha256_file(analysis_path)},
-            {"path": diffuse_crop_path.name, "bytes": diffuse_crop_path.stat().st_size, "sha256": sha256_file(diffuse_crop_path)},
-            {"path": normal_crop_path.name, "bytes": normal_crop_path.stat().st_size, "sha256": sha256_file(normal_crop_path)},
-            {"path": diffuse_mask_path.name, "bytes": diffuse_mask_path.stat().st_size, "sha256": sha256_file(diffuse_mask_path)},
-            {"path": normal_mask_path.name, "bytes": normal_mask_path.stat().st_size, "sha256": sha256_file(normal_mask_path)},
+            git_artifact_digest(analysis_path),
+            git_artifact_digest(diffuse_crop_path),
+            git_artifact_digest(normal_crop_path),
+            git_artifact_digest(diffuse_mask_path),
+            git_artifact_digest(normal_mask_path),
         ],
         "rawSourceInRepo": False,
         "completeLargeTexturesInRepo": False,

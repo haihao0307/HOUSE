@@ -1,0 +1,100 @@
+{
+  "schema": "tiles-mother-jiangwutang-material-candidate-v0.3",
+  "version": "0.3.0",
+  "source": {
+    "analysis": "tiles-mother/knowledge/jiangwutang-001/analysis.json",
+    "sourceReceipt": "tiles-mother/JIANGWUTANG_SOURCE_RECEIPT.json",
+    "runtimeDoesNotLoad": ["01.fbx", "01_u1_v1_diffuse.png", "01_u1_v1_normal.png", "讲武堂瓦片精细.zip"]
+  },
+  "observed": {
+    "effectiveDiffuseMeanRgb": [88.77632586382653, 78.94135764042197, 71.98049008289803],
+    "surfaceAreaWeightedDiffuseMeanRgb": [88.98905698731622, 79.22202321344146, 72.27299258621896],
+    "effectiveDiffuseStdRgb": [45.11482175867486, 44.34434314613236, 48.08453561244093],
+    "effectiveLuminanceBandsSrgbCode": {
+      "darkBelow48": 0.2690804727891328,
+      "midDark48To128": 0.5604836379063431,
+      "midLight128To192": 0.1704349035303301,
+      "lightAtLeast192": 9.857741940285545e-7
+    },
+    "imageColorGrouping": {
+      "warmCandidateRMinusBAbove8": 0.5600076404071865,
+      "neutralCandidateAbsRMinusBAtMost8": 0.32522520915088926,
+      "coolCandidateRMinusBBelowMinus8": 0.11476715044192422,
+      "note": "image RGB grouping only; not a material-temperature measurement"
+    },
+    "nativeSpatialVariation": {
+      "blockNeighbourMeanDeltaRgbAt8Px": [7.542, 8.016],
+      "blockNeighbourMeanDeltaRgbAt32Px": [10.688, 13.017],
+      "blockNeighbourMeanDeltaRgbAt128Px": [16.796, 24.416],
+      "singlePixelGradientMeanAtXAndY": [4.361, 4.457],
+      "singlePixelGradientXDivY": 0.9786,
+      "scaleUnit": "source image pixels only; not millimetres"
+    },
+    "normal": {
+      "originalFileMode": "RGBA",
+      "analysisMode": "RGB",
+      "fullFrameExact128128255Fraction": 0.9872216,
+      "effectiveUvExact128128255Fraction": 0.9932326823167708,
+      "effectiveUvPixels": 3879676,
+      "effectiveUvTiltP50DegreesUnderSignedDecode": 0.317752,
+      "note": "normal directional detail only; no physical height is recovered"
+    }
+  },
+  "candidateParameters": {
+    "coordinateDomain": {
+      "space": "stable normalized object-local surface coordinates vCoord (u,v)",
+      "cameraIndependent": true,
+      "uvOrWorldDrift": "none; camera and object transforms do not enter the noise domain"
+    },
+    "pan": {
+      "macroFrequency": 1.35,
+      "mottleFrequency": 4.2,
+      "grainFrequency": 76.0,
+      "weatherAxis": [1.0, 0.97],
+      "weatherAxisBasis": "near-isotropic native X/Y gradient ratio 0.9786; not a manufacturing direction",
+      "roughnessCandidateRange": [0.76, 0.92],
+      "weakMicroRelief": 0.18,
+      "microReliefOff": 0.0,
+      "colorRampSrgbCodeCandidates": {
+        "coolNeutral": [[26, 32, 35], [56, 66, 67], [82, 88, 86], [116, 118, 108], [152, 148, 132]],
+        "warmOxide": [[35, 26, 22], [66, 50, 40], [96, 73, 58], [130, 100, 78], [164, 132, 100]]
+      }
+    },
+    "cover": {
+      "macroFrequency": 1.15,
+      "mottleFrequency": 3.7,
+      "grainFrequency": 68.0,
+      "weatherAxis": [1.0, 0.97],
+      "weatherAxisBasis": "same source observation; no confirmed forming direction",
+      "roughnessCandidateRange": [0.75, 0.91],
+      "weakMicroRelief": 0.18,
+      "microReliefOff": 0.0,
+      "colorRampSrgbCodeCandidates": {
+        "coolNeutral": [[24, 30, 33], [54, 64, 65], [80, 86, 84], [114, 116, 106], [150, 146, 130]],
+        "warmOxide": [[34, 25, 21], [64, 49, 39], [94, 72, 57], [128, 98, 76], [162, 130, 98]]
+      }
+    }
+  },
+  "seedRelationship": {
+    "masterDerivationSalts": {"shape": 101, "warp": 211, "structure": 307, "damage": 401, "color": 503, "weather": 601, "micro": 701},
+    "variantRule": "existing childSeeds derives three child specimens from each mother's independent seed bank",
+    "geometryInvariantForColorAndMicroSeeds": true,
+    "motherBanksAreIndependent": true
+  },
+  "unknownOrNotFilled": [
+    "The merged FBX does not verify semantic boundaries or real dimensions for pan, cover or user-called top-tile.",
+    "The candidate ramp does not recover a true base color; diffuse may contain baked shadow, occlusion and reflection.",
+    "Roughness values are visual candidate parameters only, not measurements.",
+    "The weak micro-relief scalar is a renderer candidate, not a physical height or displacement.",
+    "Normal tangent basis, green-channel handedness and renderer strength remain unvalidated.",
+    "No physical pore size, grain size, clay composition, firing history or weathering age is inferred."
+  ],
+  "status": {
+    "sourceReadVerified": true,
+    "featureExtractionComplete": true,
+    "programmaticReplicationComplete": false,
+    "comparisonRecorded": false,
+    "visualApproved": false,
+    "productionApproved": false
+  }
+}

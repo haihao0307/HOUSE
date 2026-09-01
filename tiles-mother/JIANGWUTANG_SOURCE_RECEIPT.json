@@ -45,6 +45,16 @@
   "texturesDecoded": true,
   "featureExtractionComplete": true,
   "comparisonRecorded": true,
+  "j1MaterialCandidate": {
+    "version": "0.3.0",
+    "candidateAvailable": true,
+    "localBrowserQA": "passed",
+    "publicBrowserQA": "pending_until_controlled_publication",
+    "programmaticReplicationComplete": false,
+    "visualApproved": false,
+    "productionApproved": false,
+    "evidence": "qa-v03/browser-report.json"
+  },
   "programmaticReplicationComplete": false,
   "distillationComplete": false,
   "temporaryCopiesRemoved": false,
@@ -65,5 +75,19 @@
     "cleanupEligibleNow": false,
     "cleanupGate": "After review and procedural comparison, delete only the explicitly recorded temporary extracted copy; never delete the user's E: original."
   },
-  "scope": "Local source verification, native UV effective-region analysis, texture/normal statistics, and lightweight evidence only. No workbench, material preset, Pages setting or main branch changes."
+  "history": [
+    {
+      "recordedDate": "2026-08-31",
+      "status": "SOURCE_NOT_RECEIVED",
+      "sourceReadVerified": false,
+      "note": "Earlier chat-side receipt preserved; this historical state does not describe the later local E: source read."
+    }
+  ],
+  "chatHandoff": {
+    "rawSourceReceivedByChat": false,
+    "lightweightAnalysisAvailable": true,
+    "status": "LOCAL_ANALYSIS_READY_RAW_SOURCE_NOT_TRANSFERRED",
+    "note": "The chat-side handoff contains lightweight analysis only; the original ZIP bytes were not transferred to another chat window."
+  },
+  "scope": "Local source verification, native UV effective-region analysis, texture/normal statistics, lightweight evidence, and a V0.3 procedural material candidate on the Tiles Mother feature branch. No raw-source transfer, main branch, Brick Mother, frozen release asset or Pages setting change."
 }

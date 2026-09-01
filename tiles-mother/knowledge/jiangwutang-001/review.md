@@ -35,7 +35,7 @@
 - Normal：`3,879,676 / 6,250,000 = 62.074816%` 有效像素；`2,370,324` 个像素排除。
 - 两张贴图的原生像素覆盖最大计数均为 1，重叠有效像素比例为 0；这只说明原生纹理像素没有重复覆盖，不否定真实几何的搭接。
 - Diffuse 是 RGBA，但全图无 alpha=0 像素，有效区 100% alpha=255；无效区也主要是不透明像素。因此黑/暗色无效区不能按透明瓦面计入，且本分析将其完全排除。
-- Normal 是 RGB、无 alpha；覆盖外不参与法线统计。
+- Normal 原文件是 RGBA；法线解码统计显式转换为 RGB，原始 alpha 单独报告；覆盖外不参与法线统计。
 
 ## Normal 有效区域复核
 
@@ -69,3 +69,18 @@ Diffuse 中的暗部、边缘高亮、遮蔽和反光可能已经烘入贴图；
 `sourceReadVerified=true`；`modelParsed=true`；`texturesDecoded=true`；`featureExtractionComplete=true`；`comparisonRecorded=true`；`programmaticReplicationComplete=false`；`distillationComplete=false`；`temporaryCopiesRemoved=false`；`visualApproved=false`；`productionApproved=false`。
 
 临时解包副本保留在本机临时目录，等审查和程序化对照完成后再按明确清单清理；用户 E 盘原件不在清理范围。
+
+## J1 / V0.3 首个可视候选
+
+本机 Codex 已验证源文件并完成分析；本节记录的是接入工作台的程序化候选，不是人工视觉批准或生产批准。
+
+- 观测值：有效 UV 区域的 Diffuse 原始文件为 `RGBA`、7,000×7,000；Normal 原始文件也为 `RGBA`、2,500×2,500。Normal 统计显式转换为 `RGB`，有效区域 alpha 100% 为 255；原始全图 alpha 的 1..254 比例为 `0.00159872`，不参与 UV 区域扩张或收缩。
+- 统计口径：未加权有效区域 RGB 的 p05/p50/p95 保留在 `statistics.effectiveUvRegion`；三角形中心面积权重摘要现在使用离散加权分位数，并同时保存 `unweightedPercentiles`。合成数据回归测试位于 `test_weighted_stats.py`。
+- 颜色候选：保留多档冷灰、暖褐色域和噪声混合，不把总体均值铺成统一底色；暖/中性/冷比例只作为总体约束，不是每块瓦的覆盖率。Diffuse 暗部、接缝、遮蔽和反光无法从包内可靠分离，仍标为未知。
+- 肌理候选：使用稳定的归一化母体局部坐标，分离宏观色域、中观斑驳边界、细颗粒/微纹、局部风化与反光/粗糙候选。图像 8/32/128 px 只用于相对尺度排序，未换算物理尺寸；X/Y 梯度比 `0.9786` 只支持近似各向同性候选，不命名制造方向。
+- 法线候选：原 Normal 有效区精确 `[128,128,255]` 占 `99.323268%`，全图占 `98.722160%`；候选不把近乎平坦法线解释成实物完全光滑，也不由 Diffuse 或 Normal 生成真实高度。微凹凸默认弱值，可置零关闭。
+- 母体范围：工作台继续分别使用板瓦 `pan` 与筒瓦 `cover` 的实验几何；用户称作“顶瓦”的语义边界仍未由合并 FBX 确认。V0.3 只影响显式选择的板瓦/筒瓦候选，素烧地砖和釉面瓷砖保留 V0.2 逻辑。
+
+候选配置和生成器：`material-candidate-v0.3.json`、`v03/jiangwutang-material.js`。候选粗糙度、微凹凸标量和颜色分档均是有依据的程序化待校准参数，不是实测物理属性。`visualApproved=false`、`productionApproved=false`。
+
+本机真实浏览器核验：`qa-v03/browser-report.json`；板瓦、筒瓦各三变体截图与原色/完整光照/旧 V0.2 对照位于 `qa-v03/`。V0.3 内建 QA、WebGL2、相机交互、刷新持久化和移动端布局均通过；公开 URL 核验仍待受控发布完成。

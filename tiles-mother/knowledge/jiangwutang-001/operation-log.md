@@ -35,7 +35,7 @@ Date: 2026-09-01, Asia/Shanghai
 - No thumbnail, padding, dilation, erosion, alpha expansion, inpainting or hand-edited mask was used.
 - Diffuse RGB statistics retain covered dark/black texels as observed image data; pixels outside the mesh UV union are excluded.
 - Diffuse alpha is reported separately. The effective region is entirely opaque; the outside region is also mostly opaque, so alpha does not define the UV boundary.
-- Normal is RGB with no alpha. The `[128,128,255]` check uses exact equality and separate per-channel ±1 and ±2 tolerances.
+- Normal source mode is RGBA. The analysis converts it explicitly to RGB for normal decoding, reports alpha separately, and uses exact equality plus separate per-channel ±1 and ±2 tolerances for `[128,128,255]`.
 - Native block summaries use 8, 32 and 128 pixel blocks; all source pixels are first read at native resolution. These are image-space scales, not real-world dimensions.
 - Surface-area weighting samples one native diffuse texel at each triangle UV centroid and weights it by the loaded 3D triangle area. This reduces UV stretch bias but is not a per-pixel surface integral.
 - The local evidence crop is raw source pixels selected from a 1024×1024 diffuse window with high effective-mask fraction and high native luminance variation. Its exact diffuse and corresponding normal coordinates are recorded in `analysis.json`.
@@ -45,3 +45,11 @@ Date: 2026-09-01, Asia/Shanghai
 `sourceReadVerified=true`; `modelParsed=true`; `texturesDecoded=true`; `featureExtractionComplete=true`; `comparisonRecorded=true`; `programmaticReplicationComplete=false`; `distillationComplete=false`; `temporaryCopiesRemoved=false`; `visualApproved=false`; `productionApproved=false`.
 
 The local temporary source copy remains until review and programmatic comparison are complete. Only the user's explicit E: original is the long-term source of truth; it is outside any cleanup scope.
+
+## J1 correction and candidate material
+
+- The actual Normal PNG was read as RGBA. The analysis now records the original file mode and an explicit RGB conversion mode separately; alpha is measured independently. It is not correct to describe the original file as RGB/no-alpha.
+- The weighted RGB summary now uses a deterministic discrete weighted percentile when triangle-area weights are provided. `test_weighted_stats.py` checks a synthetic distribution whose weighted median differs from its unweighted median.
+- Source identity, ZIP CRC/stream reads, extracted entry size/hash and PNG decode are validated before the analysis JSON is written. A failure exits without a success-state JSON.
+- V0.3 uses only derived observations and first-party procedural code. It does not load the original FBX, full Diffuse, full Normal or ZIP at runtime. The UI keeps a legacy V0.2 material fallback and leaves visual/production approval false.
+- Real local Chrome QA passed from `v03/browser_qa_v03.py`: both roof families have three distinct variants, camera operations preserve geometry hashes, albedo/final channels render, V0.2 fallback remains selectable, reload preserves V0.3 state, and mobile WebGL2 has no horizontal overflow. Evidence is under `qa-v03/`; public readback remains a separate pending gate.

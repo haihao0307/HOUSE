@@ -1,6 +1,15 @@
 {
   "schema": "tiles-mother-jiangwutang-effective-analysis-v2",
   "analysisDate": "2026-09-01",
+  "analysisContract": {
+    "sourceIdentityFailure": "abort before writing a success analysis",
+    "zipCrcOrEntryReadFailure": "abort before writing a success analysis",
+    "imageDecodeFailure": "abort before writing a success analysis",
+    "effectiveRegion": "native-resolution union of actual FBX UV triangle coverage; coverage zero is excluded",
+    "lineEndingForGitArtifacts": "LF in Git blobs; local checkout may show CRLF because core.autocrlf is enabled",
+    "normalFileMode": "RGBA",
+    "normalAnalysisMode": "RGB"
+  },
   "sourceIntegrity": {
     "originalZip": "E:\\讲武堂瓦片精细.zip",
     "originalZipBytes": 58671527,
@@ -19,7 +28,8 @@
       "uncompressedBytes": 0,
       "crc32": "00000000",
       "isDirectory": true,
-      "readOK": true
+      "readOK": true,
+      "sha256": null
     },
     {
       "path": "讲武堂瓦片精细/01.fbx",
@@ -27,7 +37,8 @@
       "uncompressedBytes": 349088,
       "crc32": "577c80f3",
       "isDirectory": false,
-      "readOK": true
+      "readOK": true,
+      "sha256": "74053fe0a5978bd43e2d83dede03007a732bb3c4e625915161ecc1bbe56da3f9"
     },
     {
       "path": "讲武堂瓦片精细/01.fbx.rsInfo",
@@ -35,7 +46,8 @@
       "uncompressedBytes": 2246,
       "crc32": "9e84bbfa",
       "isDirectory": false,
-      "readOK": true
+      "readOK": true,
+      "sha256": "028e3f022cffa7c9ef8b51e64ef22d417cc716b55aab49ff23ba8724436489cb"
     },
     {
       "path": "讲武堂瓦片精细/01_u1_v1_diffuse.png",
@@ -43,7 +55,8 @@
       "uncompressedBytes": 58273168,
       "crc32": "745e00ac",
       "isDirectory": false,
-      "readOK": true
+      "readOK": true,
+      "sha256": "ad6917cba05c4e6de7319efa85bd088f6e5c4c2bc0b2c296896ab48a2301db61"
     },
     {
       "path": "讲武堂瓦片精细/01_u1_v1_normal.png",
@@ -51,7 +64,8 @@
       "uncompressedBytes": 96199,
       "crc32": "c207fdfa",
       "isDirectory": false,
-      "readOK": true
+      "readOK": true,
+      "sha256": "1839a0763e6342ce5bfd3ee98b7c7282a0aeb88f30925312fa78c23aa68dc5ee"
     }
   ],
   "fbx": {
@@ -273,22 +287,6 @@
     ]
   },
   "rsInfo": {
-    "file": "01.fbx.rsInfo",
-    "bytes": 2246,
-    "fileSHA256": "028e3f022cffa7c9ef8b51e64ef22d417cc716b55aab49ff23ba8724436489cb",
-    "selectedFields": {
-      "exportBinary": "1",
-      "exportVertices": "1",
-      "exportVertexNormals": "1",
-      "exportTriangles": "1",
-      "exportMaterials": "1",
-      "exportToOneTexture": "0",
-      "embedTextures": "0",
-      "oneTextureMaxSide": "8192",
-      "normalSpace": "2",
-      "tileType": "0"
-    },
-    "rawPreservedInTempAnalysis": true,
     "coordinateAndUnitFields": {
       "globalCoordinateSystem": "+proj=geocent +ellps=WGS84 +no_defs",
       "globalCoordinateSystemName": "local:1 - Euclidean",
@@ -366,7 +364,7 @@
         "fractionEffectivePixelsWithOverlapGt1": 0.0,
         "pixelsOutsideEffectiveUv": 2370324
       },
-      "invalidHandling": "coverage==0 excluded; RGB normal pixels inside coverage retained without height conversion"
+      "invalidHandling": "coverage==0 excluded; RGB channels from the original image are used for normal statistics after an explicit RGB conversion; original alpha is reported separately and is not used to expand or shrink the UV mask"
     },
     "uvOverlap": {
       "note": "coverage counts are retained; overlap statistics are reported per texture and are not collapsed into unique surface area"
@@ -382,7 +380,16 @@
         "fractionSemitransparent1to254": 0.0015076156077855484,
         "fractionOpaqueEq255": 0.9984923843922144
       },
-      "normalHasAlpha": false
+      "normalAlphaOutsideMask": {
+        "pixels": 2370324,
+        "min": 229,
+        "max": 255,
+        "mean": 254.94517711502732,
+        "fractionTransparentEq0": 0.0,
+        "fractionSemitransparent1to254": 0.004215457464886657,
+        "fractionOpaqueEq255": 0.9957845425351134
+      },
+      "normalHasAlpha": true
     }
   },
   "diffuseEffectiveRegion": {
@@ -395,7 +402,11 @@
       "sizePx": [
         7000,
         7000
-      ]
+      ],
+      "analysisConversion": {
+        "mode": "RGB",
+        "reason": "RGB-only color statistics and area-weighted samples"
+      }
     },
     "statistics": {
       "fullFrame": {
@@ -426,6 +437,8 @@
           140.0,
           140.0
         ],
+        "percentileMethod": "unweighted numpy.percentile over samples",
+        "unweightedPercentiles": null,
         "min": [
           0,
           0,
@@ -465,6 +478,8 @@
           144.0,
           146.0
         ],
+        "percentileMethod": "unweighted numpy.percentile over samples",
+        "unweightedPercentiles": null,
         "min": [
           0,
           0,
@@ -754,20 +769,38 @@
           47.87009217014186
         ],
         "p05": [
-          0.0,
-          0.0,
+          6.0,
+          2.0,
           0.0
         ],
         "p50": [
-          83.0,
-          69.0,
-          58.0
+          94.0,
+          81.0,
+          74.0
         ],
         "p95": [
-          149.0,
-          140.0,
-          142.0
+          152.0,
+          144.0,
+          146.0
         ],
+        "percentileMethod": "discrete weighted percentile over samples; weights are 3D triangle areas",
+        "unweightedPercentiles": {
+          "p05": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "p50": [
+            83.0,
+            69.0,
+            58.0
+          ],
+          "p95": [
+            149.0,
+            140.0,
+            142.0
+          ]
+        },
         "min": [
           0,
           0,
@@ -991,7 +1024,11 @@
       "sizePx": [
         2500,
         2500
-      ]
+      ],
+      "analysisConversion": {
+        "mode": "RGB",
+        "reason": "normal decode statistics only; alpha is not synthesized"
+      }
     },
     "statistics": {
       "fullFrame": {
@@ -1105,8 +1142,41 @@
         "interpretation": "native image-gradient anisotropy only; not a claim about manufacturing direction"
       },
       "alpha": {
-        "present": false,
-        "handling": "normal image is RGB; no alpha channel to include or exclude"
+        "present": true,
+        "channel": "A",
+        "full": {
+          "pixels": 6250000,
+          "min": 229,
+          "max": 255,
+          "mean": 254.97920832,
+          "fractionTransparentEq0": 0.0,
+          "fractionSemitransparent1to254": 0.00159872,
+          "fractionOpaqueEq255": 0.99840128
+        },
+        "effectiveUv": {
+          "pixels": 3879676,
+          "min": 255,
+          "max": 255,
+          "mean": 255.0,
+          "fractionTransparentEq0": 0.0,
+          "fractionSemitransparent1to254": 0.0,
+          "fractionOpaqueEq255": 1.0
+        },
+        "outsideEffectiveUv": {
+          "pixels": 2370324,
+          "min": 229,
+          "max": 255,
+          "mean": 254.94517711502732,
+          "fractionTransparentEq0": 0.0,
+          "fractionSemitransparent1to254": 0.004215457464886657,
+          "fractionOpaqueEq255": 0.9957845425351134
+        },
+        "handling": "alpha is reported but not used to expand or shrink the UV mask; RGB statistics include all UV-covered pixels"
+      },
+      "analysisConversion": {
+        "originalMode": "RGBA",
+        "modeUsedForNormalStatistics": "RGB",
+        "reason": "normal vectors are decoded from RGB; original alpha is measured separately and does not expand or shrink the UV mask"
       }
     },
     "crop": {

@@ -1,0 +1,21 @@
+{
+  "schema": "tiles-mother-v03-build-manifest",
+  "version": "0.3.0",
+  "baseCommit": "b6a9d0be3acdf3d9f5a633acec12fcf7cc2e32c1",
+  "baseIndexSHA256": "b8debabf848ce952020fb650e96d4a77999d5b65d4197b02480dd41f35e392d3",
+  "patchSHA256": "4f765084e992646474270f1d47c9b8eddc7979cf04bc5c5b9f110912ad10b071",
+  "indexPath": "tiles-mother/index.html",
+  "indexSHA256": "43e5a6d2e0121da469b07d2e5452829e5c00ba4e2440aa65930776fab6184887",
+  "bytes": 2260555,
+  "generatorPath": "tiles-mother/v03/jiangwutang-material.js",
+  "generatorSHA256": "7a6ce022a21cf15f42a65bd7ec618474cbf97c620fa06d548f6ce163841cf6a0",
+  "configPath": "tiles-mother/knowledge/jiangwutang-001/material-candidate-v0.3.json",
+  "configSHA256": "8a22f3061e77f691446548d887cd4f385d890b67ff03c6aa0ba6c6dbf1a12fed",
+  "runtimeSourceDependencies": [
+    "first-party V0.3 generator only"
+  ],
+  "rawSourceInRuntime": false,
+  "completeLargeTexturesInRuntime": false,
+  "visualApproved": false,
+  "productionApproved": false
+}

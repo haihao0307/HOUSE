@@ -1,0 +1,697 @@
+{
+  "schema": "tiles-mother-v03-browser-report",
+  "version": "0.3.0",
+  "publicURL": null,
+  "testedSourceSHA256": "43e5a6d2e0121da469b07d2e5452829e5c00ba4e2440aa65930776fab6184887",
+  "manifestIndexSHA256": "43e5a6d2e0121da469b07d2e5452829e5c00ba4e2440aa65930776fab6184887",
+  "visualApproved": false,
+  "productionApproved": false,
+  "tests": [
+    {
+      "name": "deterministic build manifest matches working candidate",
+      "passed": true,
+      "detail": {
+        "actual": "43e5a6d2e0121da469b07d2e5452829e5c00ba4e2440aa65930776fab6184887",
+        "manifest": "43e5a6d2e0121da469b07d2e5452829e5c00ba4e2440aa65930776fab6184887"
+      }
+    },
+    {
+      "name": "runtime does not depend on raw source",
+      "passed": true
+    },
+    {
+      "name": "entry HTTP 200",
+      "passed": true,
+      "detail": 200
+    },
+    {
+      "name": "workbench version",
+      "passed": true
+    },
+    {
+      "name": "V0.3 generator loaded",
+      "passed": true
+    },
+    {
+      "name": "WebGL2 real context",
+      "passed": true
+    },
+    {
+      "name": "IndexedDB ready",
+      "passed": true
+    },
+    {
+      "name": "V0.2 fallback is visible",
+      "passed": true
+    },
+    {
+      "name": "old V0.2 QA evidence remains",
+      "passed": true
+    },
+    {
+      "name": "pan built-in QA",
+      "passed": true,
+      "detail": {
+        "version": "0.3.0",
+        "at": "2026-09-01T01:39:22.974Z",
+        "profile": "pan",
+        "materialPreset": "jiangwutang-v03",
+        "materialCandidate": {
+          "profile": "pan",
+          "macroFrequency": 1.35,
+          "mottleFrequency": 4.2,
+          "grainFrequency": 76,
+          "weatherAxis": [
+            1,
+            0.97
+          ],
+          "temperatureBias": 0.12,
+          "microRelief": 0.18,
+          "roughness": 0.82,
+          "seeds": {
+            "color": 2838339726,
+            "weather": 2390557077,
+            "micro": 3084848613
+          }
+        },
+        "controls": {
+          "length": 32,
+          "width": 22,
+          "thickness": 1.15,
+          "curve": 4.6,
+          "taper": 12,
+          "warp": 22,
+          "damage": 18,
+          "pores": 32,
+          "weather": 25,
+          "richness": 58,
+          "mottle": 54,
+          "grain": 28,
+          "temperature": 12,
+          "microRelief": 18,
+          "roughness": 82,
+          "glaze": 0,
+          "palette": "grey"
+        },
+        "seeds": {
+          "master": 32017,
+          "shape": 1756441431,
+          "warp": 648265587,
+          "structure": 2190058820,
+          "damage": 1408510364,
+          "color": 2838339726,
+          "weather": 2390557077,
+          "micro": 3084848613
+        },
+        "geometryHash": "f993349d",
+        "hashAlgorithm": "FNV-1a-32 (determinism diagnostic, not cryptographic)",
+        "triangles": 3296,
+        "minimumThicknessM": 0.011499996031528261,
+        "tests": [
+          {
+            "name": "同输入几何确定性",
+            "passed": true
+          },
+          {
+            "name": "颜色种子不改变几何",
+            "passed": true
+          },
+          {
+            "name": "微细节种子不改变宏观几何",
+            "passed": true
+          },
+          {
+            "name": "形体种子具有实际影响",
+            "passed": true
+          },
+          {
+            "name": "顶点与法线均为有限数",
+            "passed": true
+          },
+          {
+            "name": "三角形索引全部有效",
+            "passed": true
+          },
+          {
+            "name": "法线长度正确",
+            "passed": true
+          },
+          {
+            "name": "正反面具有实体厚度",
+            "passed": true
+          },
+          {
+            "name": "母体参数对象互相隔离",
+            "passed": true
+          },
+          {
+            "name": "V0.3 候选生成器可复核",
+            "passed": true
+          },
+          {
+            "name": "人工批准保持关闭",
+            "passed": true
+          }
+        ],
+        "allPassed": true,
+        "visualApproved": false,
+        "productionApproved": false
+      }
+    },
+    {
+      "name": "pan uses V0.3 candidate",
+      "passed": true
+    },
+    {
+      "name": "pan source approval flags remain false",
+      "passed": true
+    },
+    {
+      "name": "pan color seed does not change geometry",
+      "passed": true
+    },
+    {
+      "name": "pan micro seed does not change geometry",
+      "passed": true
+    },
+    {
+      "name": "pan shape seed changes geometry",
+      "passed": true
+    },
+    {
+      "name": "pan has three distinct browser variants",
+      "passed": true,
+      "detail": [
+        "7f0fe12b",
+        "83378bc7",
+        "44366485"
+      ]
+    },
+    {
+      "name": "pan camera changes without texture/geometry drift",
+      "passed": true
+    },
+    {
+      "name": "cover built-in QA",
+      "passed": true,
+      "detail": {
+        "version": "0.3.0",
+        "at": "2026-09-01T01:39:27.967Z",
+        "profile": "cover",
+        "materialPreset": "jiangwutang-v03",
+        "materialCandidate": {
+          "profile": "cover",
+          "macroFrequency": 1.15,
+          "mottleFrequency": 3.7,
+          "grainFrequency": 68,
+          "weatherAxis": [
+            1,
+            0.97
+          ],
+          "temperatureBias": 0.1,
+          "microRelief": 0.18,
+          "roughness": 0.8,
+          "seeds": {
+            "color": 788906106,
+            "weather": 2586096020,
+            "micro": 1838961204
+          }
+        },
+        "controls": {
+          "length": 30,
+          "width": 16,
+          "thickness": 1.05,
+          "curve": 7.2,
+          "taper": 9,
+          "warp": 18,
+          "damage": 12,
+          "pores": 25,
+          "weather": 28,
+          "richness": 52,
+          "mottle": 50,
+          "grain": 24,
+          "temperature": 10,
+          "microRelief": 18,
+          "roughness": 80,
+          "glaze": 0,
+          "palette": "grey"
+        },
+        "seeds": {
+          "master": 47219,
+          "shape": 3922208617,
+          "warp": 952256979,
+          "structure": 217443890,
+          "damage": 2618502617,
+          "color": 788906106,
+          "weather": 2586096020,
+          "micro": 1838961204
+        },
+        "geometryHash": "a3c5d953",
+        "hashAlgorithm": "FNV-1a-32 (determinism diagnostic, not cryptographic)",
+        "triangles": 3296,
+        "minimumThicknessM": 0.010499993103437326,
+        "tests": [
+          {
+            "name": "同输入几何确定性",
+            "passed": true
+          },
+          {
+            "name": "颜色种子不改变几何",
+            "passed": true
+          },
+          {
+            "name": "微细节种子不改变宏观几何",
+            "passed": true
+          },
+          {
+            "name": "形体种子具有实际影响",
+            "passed": true
+          },
+          {
+            "name": "顶点与法线均为有限数",
+            "passed": true
+          },
+          {
+            "name": "三角形索引全部有效",
+            "passed": true
+          },
+          {
+            "name": "法线长度正确",
+            "passed": true
+          },
+          {
+            "name": "正反面具有实体厚度",
+            "passed": true
+          },
+          {
+            "name": "母体参数对象互相隔离",
+            "passed": true
+          },
+          {
+            "name": "V0.3 候选生成器可复核",
+            "passed": true
+          },
+          {
+            "name": "人工批准保持关闭",
+            "passed": true
+          }
+        ],
+        "allPassed": true,
+        "visualApproved": false,
+        "productionApproved": false
+      }
+    },
+    {
+      "name": "cover uses V0.3 candidate",
+      "passed": true
+    },
+    {
+      "name": "cover source approval flags remain false",
+      "passed": true
+    },
+    {
+      "name": "cover color seed does not change geometry",
+      "passed": true
+    },
+    {
+      "name": "cover micro seed does not change geometry",
+      "passed": true
+    },
+    {
+      "name": "cover shape seed changes geometry",
+      "passed": true
+    },
+    {
+      "name": "cover has three distinct browser variants",
+      "passed": true,
+      "detail": [
+        "9f289443",
+        "d071a9a1",
+        "6a145b66"
+      ]
+    },
+    {
+      "name": "cover camera changes without texture/geometry drift",
+      "passed": true
+    },
+    {
+      "name": "V0.2 fallback actually selects legacy renderer",
+      "passed": true
+    },
+    {
+      "name": "V0.3 project survives reload",
+      "passed": true
+    },
+    {
+      "name": "candidate selection survives reload",
+      "passed": true
+    },
+    {
+      "name": "seed edit survives reload",
+      "passed": true
+    },
+    {
+      "name": "mobile WebGL2 ready",
+      "passed": true
+    },
+    {
+      "name": "mobile no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "no uncaught page errors",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "name": "no console errors",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "name": "no failed requests",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "name": "no unexpected external requests",
+      "passed": true,
+      "detail": []
+    }
+  ],
+  "families": {
+    "pan": {
+      "qa": {
+        "version": "0.3.0",
+        "at": "2026-09-01T01:39:22.974Z",
+        "profile": "pan",
+        "materialPreset": "jiangwutang-v03",
+        "materialCandidate": {
+          "profile": "pan",
+          "macroFrequency": 1.35,
+          "mottleFrequency": 4.2,
+          "grainFrequency": 76,
+          "weatherAxis": [
+            1,
+            0.97
+          ],
+          "temperatureBias": 0.12,
+          "microRelief": 0.18,
+          "roughness": 0.82,
+          "seeds": {
+            "color": 2838339726,
+            "weather": 2390557077,
+            "micro": 3084848613
+          }
+        },
+        "controls": {
+          "length": 32,
+          "width": 22,
+          "thickness": 1.15,
+          "curve": 4.6,
+          "taper": 12,
+          "warp": 22,
+          "damage": 18,
+          "pores": 32,
+          "weather": 25,
+          "richness": 58,
+          "mottle": 54,
+          "grain": 28,
+          "temperature": 12,
+          "microRelief": 18,
+          "roughness": 82,
+          "glaze": 0,
+          "palette": "grey"
+        },
+        "seeds": {
+          "master": 32017,
+          "shape": 1756441431,
+          "warp": 648265587,
+          "structure": 2190058820,
+          "damage": 1408510364,
+          "color": 2838339726,
+          "weather": 2390557077,
+          "micro": 3084848613
+        },
+        "geometryHash": "f993349d",
+        "hashAlgorithm": "FNV-1a-32 (determinism diagnostic, not cryptographic)",
+        "triangles": 3296,
+        "minimumThicknessM": 0.011499996031528261,
+        "tests": [
+          {
+            "name": "同输入几何确定性",
+            "passed": true
+          },
+          {
+            "name": "颜色种子不改变几何",
+            "passed": true
+          },
+          {
+            "name": "微细节种子不改变宏观几何",
+            "passed": true
+          },
+          {
+            "name": "形体种子具有实际影响",
+            "passed": true
+          },
+          {
+            "name": "顶点与法线均为有限数",
+            "passed": true
+          },
+          {
+            "name": "三角形索引全部有效",
+            "passed": true
+          },
+          {
+            "name": "法线长度正确",
+            "passed": true
+          },
+          {
+            "name": "正反面具有实体厚度",
+            "passed": true
+          },
+          {
+            "name": "母体参数对象互相隔离",
+            "passed": true
+          },
+          {
+            "name": "V0.3 候选生成器可复核",
+            "passed": true
+          },
+          {
+            "name": "人工批准保持关闭",
+            "passed": true
+          }
+        ],
+        "allPassed": true,
+        "visualApproved": false,
+        "productionApproved": false
+      },
+      "baselineGeometryHashes": [
+        "7f0fe12b"
+      ],
+      "threeVariantGeometryHashes": [
+        "7f0fe12b",
+        "83378bc7",
+        "44366485"
+      ],
+      "cameraBefore": {
+        "yaw": -0.48,
+        "pitch": 0.69,
+        "distance": 0.6016,
+        "target": [
+          0,
+          0,
+          0
+        ]
+      },
+      "cameraAfter": {
+        "yaw": -1.1199999999999999,
+        "pitch": 0.8859999999999997,
+        "distance": 0.533571334729042,
+        "target": [
+          0,
+          0,
+          0
+        ]
+      }
+    },
+    "cover": {
+      "qa": {
+        "version": "0.3.0",
+        "at": "2026-09-01T01:39:27.967Z",
+        "profile": "cover",
+        "materialPreset": "jiangwutang-v03",
+        "materialCandidate": {
+          "profile": "cover",
+          "macroFrequency": 1.15,
+          "mottleFrequency": 3.7,
+          "grainFrequency": 68,
+          "weatherAxis": [
+            1,
+            0.97
+          ],
+          "temperatureBias": 0.1,
+          "microRelief": 0.18,
+          "roughness": 0.8,
+          "seeds": {
+            "color": 788906106,
+            "weather": 2586096020,
+            "micro": 1838961204
+          }
+        },
+        "controls": {
+          "length": 30,
+          "width": 16,
+          "thickness": 1.05,
+          "curve": 7.2,
+          "taper": 9,
+          "warp": 18,
+          "damage": 12,
+          "pores": 25,
+          "weather": 28,
+          "richness": 52,
+          "mottle": 50,
+          "grain": 24,
+          "temperature": 10,
+          "microRelief": 18,
+          "roughness": 80,
+          "glaze": 0,
+          "palette": "grey"
+        },
+        "seeds": {
+          "master": 47219,
+          "shape": 3922208617,
+          "warp": 952256979,
+          "structure": 217443890,
+          "damage": 2618502617,
+          "color": 788906106,
+          "weather": 2586096020,
+          "micro": 1838961204
+        },
+        "geometryHash": "a3c5d953",
+        "hashAlgorithm": "FNV-1a-32 (determinism diagnostic, not cryptographic)",
+        "triangles": 3296,
+        "minimumThicknessM": 0.010499993103437326,
+        "tests": [
+          {
+            "name": "同输入几何确定性",
+            "passed": true
+          },
+          {
+            "name": "颜色种子不改变几何",
+            "passed": true
+          },
+          {
+            "name": "微细节种子不改变宏观几何",
+            "passed": true
+          },
+          {
+            "name": "形体种子具有实际影响",
+            "passed": true
+          },
+          {
+            "name": "顶点与法线均为有限数",
+            "passed": true
+          },
+          {
+            "name": "三角形索引全部有效",
+            "passed": true
+          },
+          {
+            "name": "法线长度正确",
+            "passed": true
+          },
+          {
+            "name": "正反面具有实体厚度",
+            "passed": true
+          },
+          {
+            "name": "母体参数对象互相隔离",
+            "passed": true
+          },
+          {
+            "name": "V0.3 候选生成器可复核",
+            "passed": true
+          },
+          {
+            "name": "人工批准保持关闭",
+            "passed": true
+          }
+        ],
+        "allPassed": true,
+        "visualApproved": false,
+        "productionApproved": false
+      },
+      "baselineGeometryHashes": [
+        "9f289443"
+      ],
+      "threeVariantGeometryHashes": [
+        "9f289443",
+        "d071a9a1",
+        "6a145b66"
+      ],
+      "cameraBefore": {
+        "yaw": -0.48,
+        "pitch": 0.69,
+        "distance": 0.564,
+        "target": [
+          0,
+          0,
+          0
+        ]
+      },
+      "cameraAfter": {
+        "yaw": -1.1199999999999999,
+        "pitch": 0.8859999999999997,
+        "distance": 0.5002231263084768,
+        "target": [
+          0,
+          0,
+          0
+        ]
+      }
+    }
+  },
+  "screenshots": [
+    {
+      "path": "tiles-mother\\qa-v03\\pan-trio-v03.jpg",
+      "bytes": 145540
+    },
+    {
+      "path": "tiles-mother\\qa-v03\\pan-albedo-v03.jpg",
+      "bytes": 125508
+    },
+    {
+      "path": "tiles-mother\\qa-v03\\pan-final-v03.jpg",
+      "bytes": 135988
+    },
+    {
+      "path": "tiles-mother\\qa-v03\\cover-trio-v03.jpg",
+      "bytes": 145189
+    },
+    {
+      "path": "tiles-mother\\qa-v03\\cover-albedo-v03.jpg",
+      "bytes": 122405
+    },
+    {
+      "path": "tiles-mother\\qa-v03\\cover-final-v03.jpg",
+      "bytes": 132008
+    },
+    {
+      "path": "tiles-mother\\qa-v03\\pan-legacy-v02-compare.jpg",
+      "bytes": 134769
+    },
+    {
+      "path": "tiles-mother\\qa-v03\\mobile-v03.jpg",
+      "bytes": 124841
+    }
+  ],
+  "pageErrors": [],
+  "consoleErrors": [],
+  "failedRequests": [],
+  "unexpectedNetworkRequests": [],
+  "allPassed": true,
+  "testedURL": "http://127.0.0.1:51464/tiles-mother/index.html",
+  "browserVersion": "151.0.7922.174"
+}

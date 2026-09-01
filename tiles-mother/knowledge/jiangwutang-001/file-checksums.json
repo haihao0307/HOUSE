@@ -1,96 +1,60 @@
 {
-  "schema": "tiles-mother-jiangwutang-file-checksums-v2",
-  "generatedDate": "2026-09-01",
-  "artifacts": [
+  "schema": "tiles-mother-jiangwutang-file-checksums-v1",
+  "sourceFiles": [
     {
-      "path": "tiles-mother/knowledge/jiangwutang-001/analysis.json",
-      "bytes": 34908,
-      "sha256": "4edf8526c40d3c3ba3b6dd0145af3826b09fc23aee04ed9a9100af459e8c0639"
+      "path": "E:\\讲武堂瓦片精细.zip",
+      "bytes": 58671527,
+      "sha256": "ae5510c0e2eaec236adff0b94d978688f6c17a9412407c6c7ec54968222dd365"
     },
     {
-      "path": "tiles-mother/knowledge/jiangwutang-001/analyze_effective_regions.py",
-      "bytes": 31182,
-      "sha256": "8b47b18303e6c8d35580a04597b43fb710ebada619bf0f51dfcaefc62b982890"
+      "path": "01.fbx",
+      "bytes": 349088,
+      "sha256": "74053fe0a5978bd43e2d83dede03007a732bb3c4e625915161ecc1bbe56da3f9"
     },
     {
-      "path": "tiles-mother/knowledge/jiangwutang-001/diffuse-effective-crop.png",
+      "path": "01.fbx.rsInfo",
+      "bytes": 2246,
+      "sha256": "028e3f022cffa7c9ef8b51e64ef22d417cc716b55aab49ff23ba8724436489cb"
+    },
+    {
+      "path": "01_u1_v1_diffuse.png",
+      "bytes": 58273168,
+      "sha256": "ad6917cba05c4e6de7319efa85bd088f6e5c4c2bc0b2c296896ab48a2301db61"
+    },
+    {
+      "path": "01_u1_v1_normal.png",
+      "bytes": 96199,
+      "sha256": "1839a0763e6342ce5bfd3ee98b7c7282a0aeb88f30925312fa78c23aa68dc5ee"
+    }
+  ],
+  "repoArtifacts": [
+    {
+      "path": "analysis.json",
+      "bytes": 36606,
+      "sha256": "8573ee2ae32bd06cf390e35b1f46901fa384e4a94b65af5addf18fcb15684c08"
+    },
+    {
+      "path": "diffuse-effective-crop.png",
       "bytes": 1218012,
       "sha256": "4e54e4d83dda4b737ecb6456d3118b2c87a7bd47ab7704f5d74ce21f583c03cc"
     },
     {
-      "path": "tiles-mother/knowledge/jiangwutang-001/diffuse-uv-coverage-mask.png",
-      "bytes": 183790,
-      "sha256": "68d1a6d2cd3214cbe8a48425f2ac76f48d17f579fb34f05fb36d976dbf13a8d3"
-    },
-    {
-      "path": "tiles-mother/knowledge/jiangwutang-001/initial-analysis.json",
-      "bytes": 24087,
-      "sha256": "0d9f2dd2dee84ea57e2e8b0dbabe36ab060b5647171ee082bfab2ab0c58dfca7"
-    },
-    {
-      "path": "tiles-mother/knowledge/jiangwutang-001/initial-diffuse-uv-overlay.png",
-      "bytes": 1507403,
-      "sha256": "94743eee709fe4e22f880720d466eb1a940a15a0df12e2c9b425c472275be7f1"
-    },
-    {
-      "path": "tiles-mother/knowledge/jiangwutang-001/initial-fbx-model-contact-sheet.png",
-      "bytes": 213777,
-      "sha256": "7cb5ddbe1ad17eedb364b2e5b07c70667d5f47501bada5483630ab2a97c6ea71"
-    },
-    {
-      "path": "tiles-mother/knowledge/jiangwutang-001/initial-review.md",
-      "bytes": 3964,
-      "sha256": "3325e4eb2faff5e91d44012e41cc4221ee4d4ff7db0f29d9e9614b6cde369c22"
-    },
-    {
-      "path": "tiles-mother/knowledge/jiangwutang-001/initial-source-receipt.json",
-      "bytes": 2977,
-      "sha256": "76bea0d19962fbedc30de0b64781aaa079bbcf29345fdc502816617b0c84d004"
-    },
-    {
-      "path": "tiles-mother/knowledge/jiangwutang-001/initial-texture-evidence.png",
-      "bytes": 391160,
-      "sha256": "b9e5fbcb0baeaa9fa9c6a79a14df83ed4315a148c0c12f7a62801633f6e1a6cb"
-    },
-    {
-      "path": "tiles-mother/knowledge/jiangwutang-001/normal-effective-crop.png",
+      "path": "normal-effective-crop.png",
       "bytes": 2871,
       "sha256": "858e191fabc791f749c2b532ab6ebc490da694e81a57c1d630d681e1c980b845"
     },
     {
-      "path": "tiles-mother/knowledge/jiangwutang-001/normal-uv-coverage-mask.png",
+      "path": "diffuse-uv-coverage-mask.png",
+      "bytes": 183790,
+      "sha256": "68d1a6d2cd3214cbe8a48425f2ac76f48d17f579fb34f05fb36d976dbf13a8d3"
+    },
+    {
+      "path": "normal-uv-coverage-mask.png",
       "bytes": 182663,
       "sha256": "cc3ef58dbffcc387ea106dfbdd76f50a1b0bd3be8b8e18f0a3e77ef30d96044b"
-    },
-    {
-      "path": "tiles-mother/knowledge/jiangwutang-001/operation-log.md",
-      "bytes": 3474,
-      "sha256": "3012af1555f71b0430b14a60b2a6bc43cb88244fe34dd2a24583866fc42d994a"
-    },
-    {
-      "path": "tiles-mother/knowledge/jiangwutang-001/package.json",
-      "bytes": 135,
-      "sha256": "e4b04b1660c49843c20d828b2e607f43f4ebf85d28b257ffe6824d436faf9680"
-    },
-    {
-      "path": "tiles-mother/knowledge/jiangwutang-001/parse_fbx.mjs",
-      "bytes": 5123,
-      "sha256": "658c55597eb6f496e860e4c6397c5cdfeeae5c9775ad7de54c05740ab562f036"
-    },
-    {
-      "path": "tiles-mother/knowledge/jiangwutang-001/review.md",
-      "bytes": 6033,
-      "sha256": "3b8132a92f04e5709d2972a2c71cc448827df585ede87793b119a8f88c996c1f"
-    },
-    {
-      "path": "tiles-mother/JIANGWUTANG_SOURCE_RECEIPT.json",
-      "bytes": 3227,
-      "sha256": "904976691a6a44133ae4ffbf51b3410ed01b6a191095c946f920556655861c67"
     }
   ],
   "rawSourceInRepo": false,
   "completeLargeTexturesInRepo": false,
-  "rawZipInRepo": false,
-  "rawSourcePubliclyPublished": false,
   "selfHashExcluded": true
 }
