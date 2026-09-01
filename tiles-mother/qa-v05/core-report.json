@@ -1,0 +1,149 @@
+{
+  "schema": "tiles-mother-v05-core-report",
+  "version": "0.5.0",
+  "tests": [
+    {
+      "name": "pan V0.5 finite and non-degenerate",
+      "passed": true,
+      "detail": {
+        "vertexCount": 4714,
+        "triangleCount": 8688,
+        "faceCounts": {
+          "surfaceTop": 4160,
+          "surfaceBack": 4160,
+          "edge": 368,
+          "unknown": 0
+        },
+        "degenerateTriangles": 0,
+        "minNormalLength": 0.9999999624663733,
+        "maxNormalLength": 1.0000000394055197,
+        "boundaryEdges": 736,
+        "closedByIndexedIncidence": false,
+        "boundaryEdgesBySpatialPosition": 0,
+        "overSharedEdgesBySpatialPosition": 0,
+        "closedBySpatialIncidence": true,
+        "edgeNormalSpace": "local thickness axis; edge normals are separately assigned",
+        "topologyNote": "top/back normals are not averaged into edge normals"
+      }
+    },
+    {
+      "name": "pan thickness and spatial closure",
+      "passed": true,
+      "detail": {
+        "thickness": 0.009102487586031273,
+        "indexedClosure": false,
+        "spatialClosure": true
+      }
+    },
+    {
+      "name": "pan edge ring has separate face group",
+      "passed": true,
+      "detail": {
+        "surfaceTop": 4160,
+        "surfaceBack": 4160,
+        "edge": 368,
+        "unknown": 0
+      }
+    },
+    {
+      "name": "pan color and micro seeds do not alter geometry",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "pan shape seed alters geometry",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "cover V0.5 finite and non-degenerate",
+      "passed": true,
+      "detail": {
+        "vertexCount": 4714,
+        "triangleCount": 8688,
+        "faceCounts": {
+          "surfaceTop": 4160,
+          "surfaceBack": 4160,
+          "edge": 368,
+          "unknown": 0
+        },
+        "degenerateTriangles": 0,
+        "minNormalLength": 0.9999999581215732,
+        "maxNormalLength": 1.0000000382806487,
+        "boundaryEdges": 736,
+        "closedByIndexedIncidence": false,
+        "boundaryEdgesBySpatialPosition": 0,
+        "overSharedEdgesBySpatialPosition": 0,
+        "closedBySpatialIncidence": true,
+        "edgeNormalSpace": "local thickness axis; edge normals are separately assigned",
+        "topologyNote": "top/back normals are not averaged into edge normals"
+      }
+    },
+    {
+      "name": "cover thickness and spatial closure",
+      "passed": true,
+      "detail": {
+        "thickness": 0.009179518355604408,
+        "indexedClosure": false,
+        "spatialClosure": true
+      }
+    },
+    {
+      "name": "cover edge ring has separate face group",
+      "passed": true,
+      "detail": {
+        "surfaceTop": 4160,
+        "surfaceBack": 4160,
+        "edge": 368,
+        "unknown": 0
+      }
+    },
+    {
+      "name": "cover color and micro seeds do not alter geometry",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "cover shape seed alters geometry",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "28 tile roof composition",
+      "passed": true,
+      "detail": {
+        "contacts": 36,
+        "roles": [
+          "front-pan",
+          "pan",
+          "back-pan",
+          "front-cover",
+          "cover",
+          "back-cover"
+        ]
+      }
+    },
+    {
+      "name": "roof contact method is surface sampled",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "families and variants stay isolated",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "unified clock is deterministic and approval stays closed",
+      "passed": true,
+      "detail": null
+    }
+  ],
+  "allPassed": true,
+  "visualApproved": false,
+  "productionApproved": false,
+  "limitations": [
+    "Triangle incidence and spatial welding do not prove every global self-intersection is absent.",
+    "Physical scale, roughness, true height and historical fit remain uncalibrated."
+  ]
+}

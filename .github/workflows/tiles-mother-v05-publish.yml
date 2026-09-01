@@ -1,0 +1,236 @@
+name: Tiles Mother V0.5 Candidate Publication
+on:
+  push:
+    branches: [feature/tiles-mother-v0.1-workbench]
+    paths:
+      - .github/workflows/tiles-mother-v05-publish.yml
+      - tiles-mother/index.html
+      - tiles-mother/v05/**
+      - tiles-mother/knowledge/jiangwutang-001/material-candidate-v0.5.json
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: false
+jobs:
+  publish:
+    if: github.ref == 'refs/heads/feature/tiles-mother-v0.1-workbench'
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    environment:
+      name: github-pages-preview
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+      - name: Build the V0.5 candidate from this checkout
+        run: |
+          set -euo pipefail
+          rm -rf /tmp/tm-v05
+          mkdir -p /tmp/tm-v05/candidate/tiles-mother /tmp/tm-v05/local-qa /tmp/tm-v05/public-qa
+          python3 tiles-mother/v05/build.py \
+            --out /tmp/tm-v05/candidate/tiles-mother/index.html \
+            --manifest /tmp/tm-v05/candidate/tiles-mother/v05/build-manifest.json
+          cp tiles-mother/v05/profile.js tiles-mother/v05/geometry-operators.js tiles-mother/v05/roof-joints.js tiles-mother/v05/studio.js tiles-mother/v05/integration.js /tmp/tm-v05/candidate/tiles-mother/v05/
+          mkdir -p /tmp/tm-v05/candidate/tiles-mother/knowledge/jiangwutang-001
+          cp tiles-mother/knowledge/jiangwutang-001/material-candidate-v0.5.json /tmp/tm-v05/candidate/tiles-mother/knowledge/jiangwutang-001/
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib,json,os
+          root=Path('/tmp/tm-v05/candidate/tiles-mother')
+          manifest=root/'v05/build-manifest.json'
+          data=json.loads(manifest.read_text())
+          data['sourceCommit']=os.environ['GITHUB_SHA']
+          data['workflowRun']=os.environ['GITHUB_RUN_ID']
+          data['publicPath']='tiles-mother/'
+          data['rawSourceInRuntime']=False
+          data['completeLargeTexturesInRuntime']=False
+          data['visualApproved']=False
+          data['productionApproved']=False
+          data['distillationComplete']=False
+          assert hashlib.sha256((root/'index.html').read_bytes()).hexdigest()==data['indexSHA256']
+          manifest.write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n')
+          forbidden=('讲武堂瓦片精细.zip','01.fbx','01_u1_v1_diffuse.png','01_u1_v1_normal.png')
+          for p in root.rglob('*'):
+              if p.is_file(): assert not any(x in p.read_text(errors='ignore') for x in forbidden),p
+          PY
+      - name: Verify V0.5 core and browser candidate before deployment
+        run: |
+          set -euo pipefail
+          node --check tiles-mother/v05/profile.js
+          node --check tiles-mother/v05/geometry-operators.js
+          node --check tiles-mother/v05/roof-joints.js
+          node --check tiles-mother/v05/studio.js
+          node --check tiles-mother/v05/integration.js
+          node tiles-mother/v05/test_core.cjs
+      - name: Install locked browser evidence dependencies
+        run: |
+          set -euo pipefail
+          python3 -m pip install 'playwright==1.55.0' 'pillow==11.3.0'
+          python3 -m playwright install --with-deps chromium
+          python3 tiles-mother/v02/make_fixtures.py
+      - name: Run full real browser candidate QA
+        run: python3 tiles-mother/v05/browser_qa.py --site /tmp/tm-v05/candidate/tiles-mother --out /tmp/tm-v05/local-qa --fixtures tiles-mother/fixtures
+      - name: Fail closed on candidate QA and approvals
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+          report=json.loads((Path('/tmp/tm-v05/local-qa')/'browser-report.json').read_text())
+          assert report['allPassed'] and all(t['passed'] for t in report['tests'])
+          assert not report.get('visualApproved',False) and not report.get('productionApproved',False)
+          core=json.loads((Path('tiles-mother/qa-v05')/'core-report.json').read_text())
+          assert core['allPassed'] and not core['visualApproved'] and not core['productionApproved']
+          PY
+          test "$(git ls-remote origin refs/heads/feature/tiles-mother-v0.1-workbench | cut -f1)" = "$GITHUB_SHA"
+      - name: Locate the exact currently successful Pages artifact
+        id: base
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs=require('fs'),repo=context.repo;
+            const pages=(await github.request('GET /repos/{owner}/{repo}/pages',repo)).data;
+            if(pages.build_type!=='workflow') throw Error('Unexpected Pages configuration; no settings changed.');
+            const deployments=await github.paginate(github.rest.repos.listDeployments,{...repo,per_page:100});
+            let chosen;
+            for(const d of deployments){
+              if(d.sha===context.sha || !['github-pages','github-pages-preview'].includes(d.environment)) continue;
+              const statuses=(await github.rest.repos.listDeploymentStatuses({...repo,deployment_id:d.id,per_page:5})).data;
+              if(statuses[0]?.state==='success'){chosen={deployment:d,status:statuses[0]};break;}
+            }
+            if(!chosen) throw Error('No current successful deployment can be proven.');
+            const artifacts=await github.paginate(github.rest.actions.listArtifactsForRepo,{...repo,name:'github-pages',per_page:100});
+            const match=artifacts.filter(a=>!a.expired&&a.workflow_run?.head_sha===chosen.deployment.sha).sort((a,b)=>b.id-a.id)[0];
+            if(!match) throw Error('Exact published artifact unavailable; refuse an older branch fallback.');
+            chosen.artifact=match;
+            fs.writeFileSync('/tmp/tm-v05/base-site.json',JSON.stringify(chosen,null,2));
+            core.setOutput('runId',String(match.workflow_run.id));
+      - name: Restore the complete current public site
+        uses: actions/download-artifact@v4
+        with:
+          name: github-pages
+          run-id: ${{ steps.base.outputs.runId }}
+          github-token: ${{ github.token }}
+          path: /tmp/tm-v05/current-pages
+      - name: Overlay only the tested Tiles Mother V0.5 files
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path,PurePosixPath
+          import hashlib,json,shutil,tarfile
+          site=Path('/tmp/tm-v05/full-site');site.mkdir()
+          tars=list(Path('/tmp/tm-v05/current-pages').rglob('*.tar'));assert len(tars)==1
+          with tarfile.open(tars[0]) as archive:
+              for member in archive.getmembers():
+                  rel=PurePosixPath(member.name)
+                  assert not rel.is_absolute() and '..' not in rel.parts
+                  dest=site/str(rel)
+                  if member.isdir(): dest.mkdir(parents=True,exist_ok=True)
+                  elif member.isfile():
+                      dest.parent.mkdir(parents=True,exist_ok=True)
+                      with archive.extractfile(member) as src,dest.open('wb') as dst: shutil.copyfileobj(src,dst)
+                  else: raise AssertionError('Unsafe tar member '+member.name)
+          allowed={'tiles-mother/index.html','tiles-mother/v05/profile.js','tiles-mother/v05/geometry-operators.js','tiles-mother/v05/roof-joints.js','tiles-mother/v05/studio.js','tiles-mother/v05/integration.js','tiles-mother/v05/build-manifest.json','tiles-mother/knowledge/jiangwutang-001/material-candidate-v0.5.json'}
+          def snapshot(): return {str(p.relative_to(site)):hashlib.sha256(p.read_bytes()).hexdigest() for p in site.rglob('*') if p.is_file() and str(p.relative_to(site)) not in allowed}
+          before=snapshot();assert 'tiles-mother/index.html' in before
+          candidate=Path('/tmp/tm-v05/candidate/tiles-mother')
+          for rel in allowed:
+              src=candidate/rel.removeprefix('tiles-mother/')
+              dest=site/rel;dest.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(src,dest)
+          assert snapshot()==before,'Untargeted public files changed'
+          receipt={'allowedWrites':sorted(allowed),'preservedFiles':len(before),'changedOutsideAllowed':[],'pagesSettingsChanged':False,'otherMotherAssetsChanged':False,'mainChanged':False,'visualApproved':False,'productionApproved':False,'distillationComplete':False}
+          Path('/tmp/tm-v05/site-preservation.json').write_text(json.dumps(receipt,indent=2)+'\n')
+          Path('/tmp/tm-v05/preserved-file-hashes.json').write_text(json.dumps(before,indent=2)+'\n')
+          PY
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: /tmp/tm-v05/full-site
+      - name: Reject changed source branch or newer public deployment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs=require('fs'),base=JSON.parse(fs.readFileSync('/tmp/tm-v05/base-site.json'));
+            const head=(await github.rest.repos.getBranch({...context.repo,branch:'feature/tiles-mother-v0.1-workbench'})).data.commit.sha;
+            if(head!==context.sha) throw Error('Source branch advanced. Refuse stale publication.');
+            const deployments=await github.paginate(github.rest.repos.listDeployments,{...context.repo,per_page:100});
+            let latest;
+            for(const d of deployments){
+              if(d.sha===context.sha || !['github-pages','github-pages-preview'].includes(d.environment)) continue;
+              const statuses=(await github.rest.repos.listDeploymentStatuses({...context.repo,deployment_id:d.id,per_page:5})).data;
+              if(statuses[0]?.state==='success'){latest=d;break;}
+            }
+            if(!latest || latest.id!==base.deployment.id) throw Error('Newer site detected. Refuse overwrite.');
+      - name: Publish the tested complete site
+        id: deployment
+        uses: actions/deploy-pages@v4
+      - name: Read back public HTML identity
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib,json,os,time,urllib.request
+          url='https://haihao0307.github.io/HOUSE/tiles-mother/?v=0.5.0'
+          manifest=json.loads((Path('/tmp/tm-v05/candidate/tiles-mother/v05')/'build-manifest.json').read_text())
+          result={'url':url,'version':'0.5.0','sourceCommit':os.environ['GITHUB_SHA'],'workflowRun':os.environ['GITHUB_RUN_ID'],'verified':False,'visualApproved':False,'productionApproved':False,'distillationComplete':False}
+          for attempt in range(15):
+              try:
+                  with urllib.request.urlopen(urllib.request.Request(url,headers={'Cache-Control':'no-cache','User-Agent':'TilesMother-v05-readback'}),timeout=35) as response:
+                      data=response.read();result.update(httpStatus=response.status,contentType=response.headers.get('Content-Type'),bytes=len(data),sha256=hashlib.sha256(data).hexdigest())
+                  assert result['httpStatus']==200 and 'text/html' in result['contentType'] and result['sha256']==manifest['indexSHA256'] and len(data)==manifest['bytes']
+                  result['verified']=True;break
+              except Exception as error:
+                  result['lastError']=str(error)
+                  if attempt==14: raise
+                  time.sleep(8)
+          Path('/tmp/tm-v05/publication.json').write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n')
+          PY
+      - name: Actual public browser verification
+        run: python3 tiles-mother/v05/browser_qa.py --site /tmp/tm-v05/candidate/tiles-mother --out /tmp/tm-v05/public-qa --url 'https://haihao0307.github.io/HOUSE/tiles-mother/?v=0.5.0' --fixtures tiles-mother/fixtures
+      - name: Preserve V0.5 receipts and evidence on the work branch
+        if: always()
+        run: |
+          set -euo pipefail
+          test "$(git ls-remote origin refs/heads/feature/tiles-mother-v0.1-workbench | cut -f1)" = "$GITHUB_SHA" || exit 0
+          mkdir -p tiles-mother/qa-v05
+          cp /tmp/tm-v05/candidate/tiles-mother/v05/build-manifest.json tiles-mother/v05/build-manifest.json
+          for name in browser-report.json core-report.json; do if test -f "/tmp/tm-v05/local-qa/$name"; then cp "/tmp/tm-v05/local-qa/$name" "tiles-mother/qa-v05/$name"; fi; done
+          for name in publication.json site-preservation.json; do if test -f "/tmp/tm-v05/$name"; then cp "/tmp/tm-v05/$name" "tiles-mother/qa-v05/$name"; fi; done
+          if test -f /tmp/tm-v05/public-qa/browser-report.json; then cp /tmp/tm-v05/public-qa/browser-report.json tiles-mother/qa-v05/public-browser-report.json; fi
+          for name in roof-studio-v05.jpg roof-neutral-v05.jpg side-edge-v05.jpg cover-seam-v05.jpg cover-variants-v05.jpg roof-after-history-v05.jpg mobile-v05.jpg; do if test -f "/tmp/tm-v05/local-qa/$name"; then cp "/tmp/tm-v05/local-qa/$name" "tiles-mother/qa-v05/$name"; fi; done
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+          p=Path('/tmp/tm-v05/publication.json');b=Path('/tmp/tm-v05/public-qa/browser-report.json')
+          if p.exists() and b.exists():
+              assert json.loads(p.read_text()).get('verified') and json.loads(b.read_text()).get('allPassed')
+          PY
+          git add tiles-mother/index.html tiles-mother/v05 tiles-mother/qa-v05
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          if ! git diff --cached --quiet; then git commit -m 'test(tiles-mother): record V0.5 public browser evidence'; git push origin HEAD:refs/heads/feature/tiles-mother-v0.1-workbench; fi
+      - name: Keep candidate evidence even when publication fails
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tiles-mother-v05-candidate-${{ github.run_id }}
+          path: |
+            /tmp/tm-v05/candidate/
+            /tmp/tm-v05/local-qa/
+            /tmp/tm-v05/public-qa/
+            /tmp/tm-v05/publication.json
+            /tmp/tm-v05/site-preservation.json
+          retention-days: 14
+          if-no-files-found: warn
+      - name: V0.5 candidate scope and approval summary
+        if: always()
+        run: |
+          echo '## Tiles Mother V0.5 geometry and material candidate' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Only the existing Tiles Mother entry was overlaid; all other Mothers, main, frozen assets, and Pages settings were preserved.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'visualApproved=false; productionApproved=false; distillationComplete=false.' >> "$GITHUB_STEP_SUMMARY"

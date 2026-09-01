@@ -1,0 +1,72 @@
+{
+  "schema": "tiles-mother-jiangwutang-material-candidate-v0.5",
+  "version": "0.5.0",
+  "source": {
+    "analysis": "tiles-mother/knowledge/jiangwutang-001/analysis.json",
+    "receipt": "tiles-mother/JIANGWUTANG_SOURCE_RECEIPT.json",
+    "runtimeSourceDependencies": [],
+    "rawSourceInRuntime": false
+  },
+  "observed": {
+    "diffuseMeanRgb": [88.7763, 78.9414, 71.9805],
+    "warmNeutralCoolFractions": [0.5600, 0.3252, 0.1148],
+    "normal": {
+      "originalFileMode": "RGBA",
+      "analysisMode": "RGB",
+      "fullFrameExactBaselineFraction": 0.9872216,
+      "effectiveUvExactBaselineFraction": 0.9932326823,
+      "effectiveUvPixels": 3879676,
+      "physicalHeightRecovered": false
+    },
+    "geometry": {
+      "mergedMeshCount": 1,
+      "triangleCount": 9508,
+      "semanticTileBoundaries": "unknown",
+      "panCoverClassification": "inferred only from repeated flat and curved forms",
+      "sourceUnits": "FBX file units; no metre/centimetre conversion verified"
+    }
+  },
+  "candidateParameters": {
+    "families": {
+      "pan": {"macroFrequency": 1.35, "mesoFrequency": 4.2, "grainFrequency": 76, "microRelief": 0.18, "roughness": 0.82, "basis": "observed scale ordering; relief and roughness require visual calibration"},
+      "cover": {"macroFrequency": 1.15, "mesoFrequency": 3.7, "grainFrequency": 68, "microRelief": 0.18, "roughness": 0.80, "basis": "observed scale ordering; relief and roughness require visual calibration"}
+    },
+    "geometry": {
+      "roofId": "jiangwutang-roof-001",
+      "layout": "4 rows x 4 pans plus 4 rows x 3 cover seams = 28 candidate tiles",
+      "panStepFractionOfWidth": 0.86,
+      "rowStepFractionOfLength": 0.79,
+      "slopeAngleRadians": -0.19,
+      "coverSeatDrop": -0.0185,
+      "coverSeatDropBasis": "candidate local-fit offset derived from the procedural curve relation; not a recovered height",
+      "edgePartition": "top, back and independent thickness-axis edge vertex ring",
+      "source": "experimental controls, not measured historical fit"
+    },
+    "display": {"modes": ["neutral_inspection", "studio_beauty", "diagnostic"], "microReliefDefault": "weak and switchable; no physical height claimed", "exposure": 1, "colorManagement": "existing V0.4 Three.js display path"}
+  },
+  "seedRelationship": {
+    "entityId": "jiangwutang-roof-001/<family>/r<row>/c<col-or-seam>",
+    "processId": "tiles-mother-v0.5-candidate",
+    "stableAcrossCamera": true,
+    "familyBanksIndependent": true,
+    "sameGeometryForColorAndMicroSeed": true
+  },
+  "unknownOrNotFilled": [
+    "Exact source semantic board, barrel and user-called top-tile boundaries.",
+    "Real dimensions, thickness tolerance, historical lap, drainage clearance and slope.",
+    "Diffuse dark regions cannot be separated into pigment, baked shadow, occlusion and reflection.",
+    "Roughness, physical pore size, true bump height, tangent handedness and normal strength.",
+    "V0.5 contact distances are visual candidate evidence, not production fit approval."
+  ],
+  "status": {
+    "sourceReadVerified": true,
+    "featureExtractionComplete": true,
+    "runtimeImplemented": true,
+    "browserQaPassed": true,
+    "publicReadbackVerified": false,
+    "referenceComparisonRecorded": true,
+    "distillationComplete": false,
+    "visualApproved": false,
+    "productionApproved": false
+  }
+}

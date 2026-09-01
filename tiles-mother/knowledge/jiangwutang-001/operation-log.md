@@ -53,3 +53,12 @@ The local temporary source copy remains until review and programmatic comparison
 - Source identity, ZIP CRC/stream reads, extracted entry size/hash and PNG decode are validated before the analysis JSON is written. A failure exits without a success-state JSON.
 - V0.3 uses only derived observations and first-party procedural code. It does not load the original FBX, full Diffuse, full Normal or ZIP at runtime. The UI keeps a legacy V0.2 material fallback and leaves visual/production approval false.
 - Real local and public Chrome QA passed from `v03/browser_qa_v03.py`: both roof families have three distinct variants, camera operations preserve geometry hashes, albedo/final channels render, V0.2 fallback remains selectable, reload preserves V0.3 state, and mobile WebGL2 has no horizontal overflow. Public readback is recorded in `qa-v03/publication.json` and `qa-v03/public-browser-report.json`; visual and production approval remain false.
+
+## J1 V0.5 candidate implementation
+
+- Remote branch was re-read before implementation and fast-forwarded to `f7650361b7b783745b47154848dc0974705855c8`; no force push or history rewrite was used.
+- The V0.5 build is generated deterministically from the exact V0.4 entry blob at `f7650361b7b783745b47154848dc0974705855c8`, then adds only first-party V0.5 modules and configuration. The original E: source identity remains 58,671,527 bytes with SHA256 `ae5510c0e2eaec236adff0b94d978688f6c17a9412407c6c7ec54968222dd365`.
+- `test_core.cjs` passed 14 tests with 28 roof records and 36 surface contact records. The browser run passed 35 checks in real Chromium with WebGL2; it also checked V0.2 fallback, import/storage/CRC roundtrip, reload, mobile layout, no page/console/request errors, and seven evidence screenshots.
+- Contact correction: cover centers are placed on the pan seam; cover-seat evidence samples the generated cover underside against pan top-surface bands. The measured nearest distances are candidate evidence only. Front/back longitudinal fits remain clearance evidence and are not historical validation.
+- Browser QA is now `true` in the V0.5 candidate status. Public readback remains `false` until the controlled Pages workflow completes and the published HTML/modules are read back by HTTP and browser.
+- Governance remains truthful: policy version `1.0.0` was read, exact shared schema/validator identity was not received, and no Brick Mother baseline object was modified or claimed as revalidated.

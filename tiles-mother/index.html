@@ -4,7 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#eeede7">
 <meta name="description" content="Tiles Mother 瓦片与瓷砖程序化工作台。讲武堂来源材质候选、GLB、FBX、多格式参考资料、三维母体与完整协作包。">
-<title>Tiles Mother V0.4 · 立体瓦面与共享岁月</title>
+<title>Tiles Mother V0.5 · 讲武堂几何与材质候选</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%232c3d39'/%3E%3Cpath d='M7 11q9 13 18 0v5q-9 13-18 0z' fill='%23e8dfc7'/%3E%3C/svg%3E">
 <style>
 :root{--bg:#eeede7;--panel:#f8f7f2;--ink:#27352f;--sub:#6b746d;--line:#d9ddd3;--green:#3f6658;--accent:#ad7954;--pale:#e7ede4;--warn:#906425;--radius:13px;--font:Inter,"Segoe UI","PingFang SC","Microsoft YaHei",system-ui,sans-serif;color-scheme:light}
@@ -19,11 +19,12 @@
 
 </style>
 <style id="tm-v04-style">.study-canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;outline:none}#gl-legacy{position:absolute;inset:0;width:100%;height:100%}.study-panel select{width:100%}.study-panel .explain{margin-top:8px;font-size:10px}.study-panel details{margin:14px 0}.study-panel summary{cursor:pointer}#studyStatus{color:#866137;font-size:10px;line-height:1.7}#diagnosticLegend{padding:8px;background:#e9ece7;border-radius:6px}.viewer-chip{max-width:80%;line-height:1.6}.shell{grid-template-columns:255px minmax(330px,1fr) 290px}.viewer-head,.viewer-chip{color:#303c3e}.viewer-head .eyebrow,.specimen-caption{color:#626f73}@media(max-width:1000px){.shell{grid-template-columns:225px minmax(280px,1fr)}.reference-rail{grid-column:1/-1}}@media(max-width:600px){.shell{display:flex}.study-panel{order:0}.viewer-chip{font-size:9px;top:78px}.viewer{min-height:440px}}input:disabled,select:disabled{opacity:.45}</style>
+<style id="tm-v05-style">#v05Panel{border-top:1px solid #c7c9c4;padding-top:12px}.v05-panel .row{gap:6px}.v05-panel button.active{background:#6e5946;color:#fff}.v05-panel output{float:right;color:#76634e}.v05-panel .explain{font-size:10px;line-height:1.55}.v05-panel select{width:100%}.v05-panel details{margin-top:8px}.v05-panel label{margin:5px 0}.v05-panel input[type=range]{width:100%}@media(max-width:600px){#v05Panel{order:-1}}</style>
 </head>
 <body>
 <header class="topbar">
  <div class="brand"><div class="brand-icon"><svg viewBox="0 0 40 36" fill="none" aria-hidden="true"><path d="M5 10q15 18 30 0v6Q20 35 5 16z" stroke="#3f6658" stroke-width="1.5"/><path d="M5 10l5-5q10 12 20 0l5 5M10 5v5m20-5v5" stroke="#3f6658" stroke-width="1.2"/></svg></div><div><h1>TILES MOTHER</h1><p>瓦作与瓷砖实验室</p></div></div>
- <span class="badge pending">V0.4 · 立体瓦面研究候选</span>
+ <span class="badge pending">V0.5 · 讲武堂材质候选</span>
  <nav class="top-actions" aria-label="工作台操作"><button id="jumpRefs">放入资料</button><button id="knowledgeBtn">字段知识</button><button id="qaBtn">检查生成</button><button id="importBtn">载入记录</button><button class="primary" id="exportBtn">保存协作包</button></nav>
 </header>
 <main class="shell">
@@ -44,7 +45,7 @@
   <div class="overlay-message hidden" id="fatal"><strong>三维预览未能启动</strong><p id="fatalText"></p><button onclick="location.reload()">重新打开</button><small>参考资料与协作包仍可使用。</small></div>
  </div>
   <div class="toolbar"><div class="segmented" id="layoutButtons"><button data-layout="single" class="active">单块精看</button><button data-layout="trio">同母体三变体</button></div><div class="row"><label for="channel" class="eyebrow" style="letter-spacing:.3px">查看</label><select id="channel"><option value="final">完整光照</option><option value="source">基础形体</option><option value="albedo">原色观察</option><option value="normal">法线</option><option value="cavity">孔洞事件</option><option value="roughness">粗糙度</option><option value="weather">风化遮罩</option><option value="macro">宏观色域</option><option value="meso">中观纹理</option></select></div></div>
-  <div class="dna-strip" id="dnaCards"></div><p class="work-caption" id="viewHint">V0.4 使用真实起伏网格和共享湿润历史。尺寸、微结构和时间响应均为待校准候选。</p>
+  <div class="dna-strip" id="dnaCards"></div><p class="work-caption" id="viewHint">V0.5 使用真实网格、独立种子和候选屋面关系。尺寸、微结构和时间响应均为待校准候选。</p>
 </section>
 <aside class="rail reference-rail" aria-label="参考资料">
  <section class="section"><div class="row spread"><div><div class="eyebrow">02 / Reference desk</div><h2 class="section-title" style="margin-bottom:12px">你的模型与参考资料</h2></div><span class="ref-count" id="refCount">0 份</span></div>
@@ -4365,14 +4366,19 @@ class Studio{
 root.TilesStudyStudio=Studio;
 })(globalThis);
 </script>
+<script src="v05/profile.js?v=0.5.0"></script>
+<script src="v05/geometry-operators.js?v=0.5.0"></script>
+<script src="v05/roof-joints.js?v=0.5.0"></script>
+<script src="v05/studio.js?v=0.5.0"></script>
+<script src="v05/integration.js?v=0.5.0"></script>
 <script id="tiles-mother-app">
 'use strict';
 (()=>{
 const $=id=>document.getElementById(id), F=window.ProceduralFieldReference;
  const {clamp,lerp,hash32,valueNoise2,fbm2,domainWarp2,deriveSeeds}=F;
  const JIANGWUTANG=window.TilesMotherJiangwutang;
- const VERSION='0.4.0';
- const SOURCE=Object.freeze({package:'TILES_THIN_SHELL_EVOLUTION_V0.4',version:'0.4.0',analysis:'knowledge/jiangwutang-001/analysis.json',config:'knowledge/jiangwutang-001/material-candidate-v0.3.json',generator:'v04/operators.js',renderer:'v04/studio.js',adapter:'v04/integration.js',historyCalibration:'illustrative_not_calibrated',legacyFallback:'V0.2 procedural material remains selectable',status:'LOCAL_SOURCE_READ_VERIFIED',sourceReadVerified:true,visualApproved:false,productionApproved:false});
+ const VERSION='0.5.0';
+ const SOURCE=Object.freeze({package:'TILES_THIN_SHELL_EVOLUTION_V0.5',version:'0.5.0',analysis:'knowledge/jiangwutang-001/analysis.json',config:'knowledge/jiangwutang-001/material-candidate-v0.5.json',generator:'v05/geometry-operators.js',renderer:'v04/studio.js',adapter:'v05/integration.js',historyCalibration:'illustrative_not_calibrated',legacyFallback:'V0.2 procedural material remains selectable',status:'LOCAL_SOURCE_READ_VERIFIED',sourceReadVerified:true,visualApproved:false,productionApproved:false});
 const ICONS={pan:'<path d="M3 5q15 17 30 0v5q-15 17-30 0zM3 5l4-3q11 12 22 0l4 3"/>',cover:'<path d="M3 21Q18-10 33 21l-5 1Q18 0 8 22zM8 22l3-4m17 4-3-4"/>',earthen:'<path d="m3 8 19-5 12 9-20 6zM3 8v5l11 8 20-5v-4M14 18v3"/>',glazed:'<path d="m3 8 19-5 12 9-20 6zM3 8v4l11 8 20-5v-3M14 18v2M11 8l11-3 7 5"/>'};
 const PROFILE_DEFS={
  pan:{name:'青灰板瓦',short:'板瓦',sub:'凹面薄壳',code:'TM / ROOF / PAN',caption:'程序化薄壳 · 讲武堂 V0.3 候选 · 实体厚度',seed:32017,defaults:{length:32,width:22,thickness:1.15,curve:4.6,taper:12,warp:22,damage:18,pores:32,weather:25,richness:58,mottle:54,grain:28,temperature:12,microRelief:18,roughness:82,glaze:0,palette:'grey'}},
@@ -4384,7 +4390,7 @@ const SHAPE=[['length','长度',10,55,.5,' cm'],['width','宽度',8,45,.5,' cm']
 const MATERIAL=[['damage','崩边 / 缺损',0,80,1,' %'],['pores','孔隙深浅',0,90,1,' %'],['weather','局部风化',0,100,1,' %'],['richness','宏观色域',0,100,1,' %'],['mottle','中观斑驳边界',0,100,1,' %'],['grain','细颗粒 / 微纹',0,100,1,' %'],['temperature','冷 ↔ 暖候选',-100,100,1,' %'],['microRelief','微凹凸候选',0,100,1,' %'],['roughness','反光 / 粗糙候选',8,98,1,' %'],['glaze','釉层覆盖',0,100,1,' %']];
 const SEED_LABELS={shape:'形体',warp:'扭曲',structure:'结构',damage:'破损',color:'颜色',weather:'风化',micro:'微细节'};
 const clone=o=>JSON.parse(JSON.stringify(o));
-function newProject(){return {schema:'tiles-mother-project',version:VERSION,active:'pan',selectedChild:0,layout:'single',channel:'final',materialPreset:'relief-v04',study:studyDefaults(),profiles:Object.fromEntries(Object.entries(PROFILE_DEFS).map(([k,p])=>[k,{controls:clone(p.defaults),seeds:{...deriveSeeds(p.seed)}}])),source:clone(SOURCE),visualApproved:false,productionApproved:false};}
+function newProject(){return {schema:'tiles-mother-project',version:VERSION,active:'pan',selectedChild:0,layout:'single',channel:'final',materialPreset:'jiangwutang-v05',v05:{enabled:true,view:'roof',mode:'studio_beauty',focus:'all',layers:{macro:true,meso:true,micro:true,weather:true},physicalTime:0,solverStep:21600,displayTime:0},study:studyDefaults(),profiles:Object.fromEntries(Object.entries(PROFILE_DEFS).map(([k,p])=>[k,{controls:clone(p.defaults),seeds:{...deriveSeeds(p.seed)}}])),source:clone(SOURCE),visualApproved:false,productionApproved:false};}
 let project=newProject(), refs=[], selectedRef=null, db=null, dbReady=false, fallback=false, dirty=false, lastQA=null, geometryBuilds=0;
 const makeId=()=>window.crypto?.randomUUID?.()||'ref-'+Date.now().toString(36)+'-'+hash32(Date.now()).toString(36);
 let currentMeshes=[], renderer=null, rebuildTimer=0, saveTimer=0, toastTimer=0, userSpin=false, activeModal=null;
@@ -4524,7 +4530,7 @@ function refMetadata(r){const {blob,url,persisted,...meta}=r;return clone(meta);
 function storageStatus(){const volatile=refs.filter(x=>!x.persisted).length;$('storageHint').textContent=volatile||!db?'有 '+(volatile||refs.length)+' 份资料暂留内存。请保存协作包并保留原文件，关闭页面前不要清理浏览器。资料不会自动发送到聊天。':'原文件与笔记保存在当前浏览器，不会自动上传到服务器或聊天。用“保存协作包”携带原文件、参数和笔记；清除浏览器数据会清除本地资料。';$('storageHint').classList.toggle('storage-warning',!!volatile||!db);}
 function saveSoon(){dirty=true;$('saveStatus').textContent=fallback?'请保留协作包备份':'正在保存到此浏览器';clearTimeout(saveTimer);saveTimer=setTimeout(saveProject,500);}
 async function saveProject(){if(!db)return;try{project.visualApproved=false;project.productionApproved=false;await requestDB('project','readwrite',s=>s.put(clone(project),'current'));dirty=false;$('saveStatus').textContent='已保存到此浏览器 · '+new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'});}catch(e){fallback=true;$('saveStatus').textContent='本地空间不足，请保存协作包';}storageStatus();}
-function validateProject(raw){if(!raw||raw.schema!=='tiles-mother-project'||!['0.1.0','0.2.0','0.3.0','0.4.0'].includes(raw.version))throw Error('无法识别协作记录版本。支持 V0.1 至 V0.4。');const p=newProject();if(Object.hasOwn(PROFILE_DEFS,raw.active))p.active=raw.active;p.selectedChild=[0,1,2].includes(raw.selectedChild)?raw.selectedChild:0;p.layout=['single','trio','roof'].includes(raw.layout)?raw.layout:'single';p.channel=['final','source','albedo','normal','cavity','roughness','weather','macro','meso','relief','wetness','damage','wire'].includes(raw.channel)?raw.channel:'final';p.study=validateStudy(raw.study);p.materialPreset=raw.version==='0.4.0'&&['relief-v04','legacy-v02','jiangwutang-v03'].includes(raw.materialPreset)?raw.materialPreset:'relief-v04';for(const k of Object.keys(PROFILE_DEFS)){const r=raw.profiles?.[k];if(!r)continue;for(const [key,,min,max]of [...SHAPE,...MATERIAL]){const v=Number(r.controls?.[key]);if(Number.isFinite(v))p.profiles[k].controls[key]=clamp(v,min,max);}if(['grey','red','green','ivory'].includes(r.controls?.palette))p.profiles[k].controls.palette=r.controls.palette;for(const key of ['master',...Object.keys(SEED_LABELS)])if(r.seeds?.[key]!==undefined)p.profiles[k].seeds[key]=safeSeed(r.seeds[key]);}return p;}
+function validateProject(raw){if(!raw||raw.schema!=='tiles-mother-project'||!['0.1.0','0.2.0','0.3.0','0.4.0','0.5.0'].includes(raw.version))throw Error('无法识别协作记录版本。支持 V0.1 至 V0.5。');const p=newProject();if(raw.v05&&typeof raw.v05==='object'){p.v05={...p.v05,...raw.v05,layers:{...p.v05.layers,...(raw.v05.layers||{})}};}if(Object.hasOwn(PROFILE_DEFS,raw.active))p.active=raw.active;p.selectedChild=[0,1,2].includes(raw.selectedChild)?raw.selectedChild:0;p.layout=['single','trio','roof'].includes(raw.layout)?raw.layout:'single';p.channel=['final','source','albedo','normal','cavity','roughness','weather','macro','meso','relief','wetness','damage','wire'].includes(raw.channel)?raw.channel:'final';p.study=validateStudy(raw.study);p.materialPreset=['jiangwutang-v05','relief-v04','legacy-v02','jiangwutang-v03'].includes(raw.materialPreset)?raw.materialPreset:'relief-v04';for(const k of Object.keys(PROFILE_DEFS)){const r=raw.profiles?.[k];if(!r)continue;for(const [key,,min,max]of [...SHAPE,...MATERIAL]){const v=Number(r.controls?.[key]);if(Number.isFinite(v))p.profiles[k].controls[key]=clamp(v,min,max);}if(['grey','red','green','ivory'].includes(r.controls?.palette))p.profiles[k].controls.palette=r.controls.palette;for(const key of ['master',...Object.keys(SEED_LABELS)])if(r.seeds?.[key]!==undefined)p.profiles[k].seeds[key]=safeSeed(r.seeds[key]);}return p;}
  /* Streaming SHA-256 avoids materializing very large reference files just to hash them. */
 class RefSHA256 {
  constructor(){this.h=new Uint32Array([0x6a09e667,0xbb67ae85,0x3c6ef372,0xa54ff53a,0x510e527f,0x9b05688c,0x1f83d9ab,0x5be0cd19]);this.buffer=new Uint8Array(64);this.used=0;this.length=0;this.w=new Uint32Array(64);}
@@ -4671,6 +4677,7 @@ function rebuild(fit=false){return studyRebuild(fit);}
 
 async function init(){makeUI();wire();setupStudyUI();try{db=await openDB();dbReady=true;const saved=await requestDB('project','readonly',s=>s.get('current'));if(saved)project=validateProject(saved);const rs=await requestDB('refs','readonly',s=>s.getAll());refs=(rs||[]).filter(r=>r.blob instanceof Blob).map(normalizeRef);selectedRef=refs[0]?.id;$('saveStatus').textContent='本地记录已载入';}catch(e){fallback=true;$('saveStatus').textContent='当前仅保留在内存，请保存协作包';$('storageHint').textContent='此浏览器未能启用本地保存。原文件和笔记暂留当前页面，请在关闭前保存协作包。不会自动发送到对话。';}syncUI();renderRefs();try{renderer=new Renderer($('gl'));rebuild(true);}catch(e){console.error(e);showFatal(e.message);}
  window.TilesMother={version:VERSION,source:SOURCE,getProject:()=>clone(project),getRefs:()=>refs.map(({blob,url,...r})=>clone(r)),getGeometryHashes:()=>currentMeshes.map(g=>bufferHash(g.positions)),getGeometryBuilds:()=>geometryBuilds,runQA,buildGeometry,sourcePoint,deriveSeeds,childSeeds,setProfile:id=>{if(!Object.hasOwn(PROFILE_DEFS,id))throw Error('unknown profile');project.active=id;project.selectedChild=0;syncUI();rebuild(true);saveSoon();},setSeed:(key,value)=>{if(key==='master')cfg().seeds={...deriveSeeds(safeSeed(value))};else if(Object.hasOwn(SEED_LABELS,key))cfg().seeds[key]=safeSeed(value);else throw Error('unknown seed');syncUI();if((['master','shape','warp','structure','damage'].includes(key)||(studyActive()&&key==='weather')))rebuild();else renderer?.draw();saveSoon();},setControl:(key,value)=>{const def=[...SHAPE,...MATERIAL].find(d=>d[0]===key);if(!def)throw Error('unknown control');cfg().controls[key]=clamp(Number(value),def[2],def[3]);syncUI();if(['length','width','thickness','curve','taper','warp','damage','pores'].includes(key))rebuild();else renderer?.draw();saveSoon();},setLayout:l=>{if(!['single','trio','roof'].includes(l))throw Error('unknown layout');project.layout=l;syncUI();rebuild(true);},getCamera:()=>renderer?{yaw:renderer.yaw,pitch:renderer.pitch,distance:renderer.distance,target:[...renderer.target]}:null,getStorage:()=>({dbReady,fallback,referenceCount:refs.length}),save:saveProject};
+ window.TilesMotherV05?.connect({app:window.TilesMother,renderer,project,saveSoon});
  attachReferenceAPI();attachStudyAPI();
  document.body.dataset.appInitialized='true';
 }

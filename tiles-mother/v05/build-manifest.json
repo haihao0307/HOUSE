@@ -1,0 +1,50 @@
+{
+  "schema": "tiles-mother-v05-build-manifest",
+  "version": "0.5.0",
+  "baseCommit": "f7650361b7b783745b47154848dc0974705855c8",
+  "baseIndexSHA256": "b976c5a032e37c8f457a6f15218a43b9a8e511cd243dec89e03ce35dfd0ffa5b",
+  "indexPath": "tiles-mother/index.html",
+  "indexSHA256": "ee4a936df04f571791ce8d47ab7efce8c9e6842e7f87814f8a63b8dc4967cdf2",
+  "bytes": 2300129,
+  "runtimeModules": [
+    {
+      "path": "tiles-mother/v05/profile.js",
+      "bytes": 2408,
+      "sha256": "fc20e3e83906aed98453c08a8bcd92d6f965a36b885f930ecb1e6dc10c6ea418"
+    },
+    {
+      "path": "tiles-mother/v05/geometry-operators.js",
+      "bytes": 12672,
+      "sha256": "3461e0b4f961ba6d8f3e9f25371bed5b0299d3646593dec40b0e54ec5914e03d"
+    },
+    {
+      "path": "tiles-mother/v05/roof-joints.js",
+      "bytes": 9075,
+      "sha256": "14868e9deae16ba5576e1e09395bf4eef99182b1df15bb16a028eac0eda0e3e9"
+    },
+    {
+      "path": "tiles-mother/v05/studio.js",
+      "bytes": 1831,
+      "sha256": "30d16da80da442ac0682f4938c6f10229d1f19b28f52a2f119594e22b6fbb336"
+    },
+    {
+      "path": "tiles-mother/v05/integration.js",
+      "bytes": 14124,
+      "sha256": "a0963e4dceae6d31da55990a35cd008cc3fc33d0a3ce2308e1eb4381d6551a93"
+    }
+  ],
+  "configPath": "tiles-mother/knowledge/jiangwutang-001/material-candidate-v0.5.json",
+  "configSHA256": "cc4ca9fd68dead1a10a96657495f4c5472166e3cedd0f2c8460cd4106398b41c",
+  "runtimeSourceDependencies": [
+    "first-party V0.4 renderer and storage/import workflow",
+    "first-party V0.5 geometry, roof and state adapters"
+  ],
+  "rawSourceInRuntime": false,
+  "completeLargeTexturesInRuntime": false,
+  "legacyV02V03V04FallbackPreserved": true,
+  "policyVersionRead": "1.0.0",
+  "policySchemaAndValidatorIdentity": "not_received",
+  "visualApproved": false,
+  "productionApproved": false,
+  "distillationComplete": false
+}

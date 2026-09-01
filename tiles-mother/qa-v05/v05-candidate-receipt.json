@@ -1,0 +1,58 @@
+{
+  "schema": "tiles-mother-jiangwutang-v05-candidate-receipt",
+  "version": "0.5.0",
+  "source": {
+    "localReadVerified": true,
+    "chatRawSourceReceived": false,
+    "lightweightAnalysisInRepository": true,
+    "originalBytes": 58671527,
+    "originalSHA256": "ae5510c0e2eaec236adff0b94d978688f6c17a9412407c6c7ec54968222dd365",
+    "rawSourceInGit": false,
+    "rawSourcePublic": false
+  },
+  "build": {
+    "baseCommit": "f7650361b7b783745b47154848dc0974705855c8",
+    "processId": "tiles-mother-v0.5-candidate",
+    "indexPath": "tiles-mother/index.html",
+    "generator": "tiles-mother/v05/geometry-operators.js",
+    "adapter": "tiles-mother/v05/integration.js",
+    "runtimeUsesOriginalFBXOrCompleteTextures": false
+  },
+  "geometryAndFit": {
+    "roofId": "jiangwutang-roof-001",
+    "tileCount": 28,
+    "panCount": 16,
+    "coverCount": 12,
+    "contactRecordCount": 36,
+    "contactMethod": "generated surface bands; cover underside against pan top surface; not bbox-only",
+    "coverSeatNearestDistanceRangeMetres": [0.0038502687, 0.0063578802],
+    "contactStatus": "candidate evidence only",
+    "frontBackLongitudinalFit": "candidate-clearance; not validated"
+  },
+  "verification": {
+    "coreTests": 14,
+    "corePassed": true,
+    "browserTests": 35,
+    "browserPassed": true,
+    "screenshots": 7,
+    "realWebGL2": true,
+    "publicReadbackVerified": false,
+    "visualApproved": false,
+    "productionApproved": false,
+    "distillationComplete": false
+  },
+  "governance": {
+    "policyVersionRead": "1.0.0",
+    "policySchemaAndValidatorIdentity": "not_received",
+    "brickMotherBaselineIdentity": "not_available_in_this_worktree",
+    "otherMothersModified": false,
+    "pagesSettingsChanged": false
+  },
+  "unknownOrNotFilled": [
+    "real source units and dimensions",
+    "semantic board, barrel and user-called top-tile boundaries",
+    "historical lap, drainage clearance and front/back fit",
+    "base-color versus baked shadow, occlusion and reflection separation",
+    "roughness, pore size, true bump height, tangent handedness and normal strength"
+  ]
+}

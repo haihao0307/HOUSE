@@ -84,3 +84,16 @@ Diffuse 中的暗部、边缘高亮、遮蔽和反光可能已经烘入贴图；
 候选配置和生成器：`material-candidate-v0.3.json`、`v03/jiangwutang-material.js`。候选粗糙度、微凹凸标量和颜色分档均是有依据的程序化待校准参数，不是实测物理属性。`visualApproved=false`、`productionApproved=false`。
 
 本机与公开真实浏览器核验：`qa-v03/browser-report.json`、`qa-v03/public-browser-report.json`；板瓦、筒瓦各三变体截图与原色/完整光照/旧 V0.2 对照位于 `qa-v03/`。V0.3 内建 QA、WebGL2、相机交互、刷新持久化和移动端布局均通过；公开 URL 已完成 HTTP、字节哈希和浏览器回读，批准仍保持关闭。
+
+## J1 / V0.5 几何与材质可视候选
+
+本节记录 2026-09-01 在既有工作台上的增量实现。它复用现有 V0.4 Three.js 显示与资料/协作记录流程，仅在 `jiangwutang-v05` 预设启用；V0.2/V0.3/V0.4 回退仍保留。原始 ZIP、FBX、完整 Diffuse 和 Normal 没有成为运行时依赖，也没有进入 Git 或网页。
+
+- 生成器：`v05/profile.js`、`v05/geometry-operators.js`、`v05/roof-joints.js`、`v05/studio.js`、`v05/integration.js`。观测值、候选参数和未知项分别保存在 `material-candidate-v0.5.json`；粗糙度、微凹凸、覆盖步距、坡度和筒瓦座接落差都是候选值，不是实测物理恢复。
+- 几何：每个母体生成真实厚度的 top/back surface 与独立边缘顶点环；板瓦和筒瓦分别建模。28 瓦屋面样方为 4×4 板瓦加 4×3 筒瓦盖缝，角色明确包含 front/back。索引边界因独立边环而存在，但空间焊接闭合；三角形无退化，厚度满足候选下限。
+- 接缝：板瓦横向搭接与筒瓦盖缝使用原生生成网格的表面采样，不使用 bbox-only。筒瓦座接采样使用生成筒瓦的 underside band 对板瓦 top-surface band；本地回归中最近距离约 0.0039–0.0064 m，均只记为 `candidate-contact`。前后向搭接仍为 `candidate-clearance`，不可宣称已完成历史施工拟合。
+- 交互：单瓦/28 瓦屋面、`neutral_inspection`/`studio_beauty`/`diagnostic` 三模式、统一物理时间与可回放历史、四层开关、相机稳定局部坐标、三种板瓦种子和独立筒瓦种子已接入。原色/完整光照仍沿用同一个 V0.4 Three.js 显示路径，避免双重颜色空间转换。
+- 本地证据：`qa-v05/browser-report.json` 35 项真实 Chromium/WebGL2 检查全通过，7 张截图保留在 `qa-v05/`。截图只作对照证据；全景允许缩小，局部截图保留实际浏览器输出。`visualApproved=false`、`productionApproved=false`。
+- 治理：已读取仓库现有 V0.4/V0.5 工作流与 `AGENTS.md`。共同政策版本记录为 `1.0.0`，但统一 Schema/validator 的精确身份仍未收到；Brick Mother baseline 的可读取对象也未在本工作树中，因此不把它们伪记为已核验。
+
+剩余未知项：真实尺寸/单位、瓦件语义边界（含用户称“顶瓦”）、历史搭接与排水间隙、基础色与烘入阴影/遮蔽/反光的分离、粗糙度、孔隙真实尺寸、真实凹凸高度、法线切线手性与强度，以及筒瓦前后向搭接的视觉校准。V0.5 只达到可观察研究候选，不是生产资产。
