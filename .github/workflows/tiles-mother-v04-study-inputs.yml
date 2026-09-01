@@ -1,0 +1,35 @@
+name: Tiles Mother V0.4 Study Inputs
+on:
+  push:
+    branches: [feature/tiles-mother-v0.1-workbench]
+    paths: [.github/workflows/tiles-mother-v04-study-inputs.yml]
+permissions:
+  contents: read
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Collect small existing reference evidence only
+        run: |
+          mkdir -p /tmp/tiles-study/reference /tmp/tiles-study/baseline
+          p=tiles-mother/knowledge/jiangwutang-001
+          for name in diffuse-effective-crop.png normal-effective-crop.png initial-fbx-model-contact-sheet.png initial-texture-evidence.png analysis.json; do cp "$p/$name" /tmp/tiles-study/reference/; done
+          cp tiles-mother/qa-v03/pan-final-v03.jpg tiles-mother/qa-v03/cover-final-v03.jpg /tmp/tiles-study/baseline/
+          git fetch --depth=1 origin b25508b8b57d45f9333286ab7b883644181039e7
+          base=yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother
+          git show b25508b8b57d45f9333286ab7b883644181039e7:$base/brick-mother-geometry-v2.js > /tmp/tiles-study/brick-geometry-study.js
+          git show b25508b8b57d45f9333286ab7b883644181039e7:$base/docs/BRICK_MOTHER_V27_VISUAL_TRUTH_SPEC.md > /tmp/tiles-study/brick-study.md
+          python3 - <<'PY'
+          import pathlib,hashlib,json
+          root=pathlib.Path('/tmp/tiles-study')
+          files={str(p.relative_to(root)):{'bytes':p.stat().st_size,'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in root.rglob('*') if p.is_file()}
+          assert sum(p['bytes'] for p in files.values())<3*1024*1024
+          (root/'manifest.json').write_text(json.dumps(files,indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tiles-v04-study-inputs
+          path: /tmp/tiles-study/
+          retention-days: 3
