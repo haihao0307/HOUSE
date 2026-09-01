@@ -14,31 +14,31 @@ vec4 scell(vec3 p){vec3 ip=floor(p),fp=fract(p);float md=100.;vec3 id=vec3(0);fo
 StoneSample stoneFields(vec3 pos){
  vec3 seed=seedVector(uColorSeed,.071);vec3 p=pos*sSurface.x;
  vec3 q=p+vec3(sf(p*.8+seed),sf(p*.8+seed+7.),sf(p*.8+seed+19.))*.25;
- float broad=sf(q*1.35+seed),patch=sf(q*3.2+seed+11.);
+ float broad=sf(q*1.35+seed),region=sf(q*3.2+seed+11.);
  float grain=valueNoise3(q*49.+seed),weather=sf(q*2.2+seedVector(uWeatherSeed,.09));
  float phase=q.y*5.7+q.x*.82+q.z*.41+sf(q*1.8+seed)*1.25;
  float bands=.5+.5*sin(phase*6.28318);
  float line=abs(sin((q.x*.84+q.y*.37+q.z*.51+sf(q*1.7+seed)*.44)*12.));
  float aa=max(fwidth(line),.008);
- float vein=(1.-smoothstep(.028,.064+aa,line))*smoothstep(.34,.63,patch);
+ float vein=(1.-smoothstep(.028,.064+aa,line))*smoothstep(.34,.63,region);
  float pits=pow(max(0.,(sf(q*19.+seedVector(uPoreSeed,.061))-.57)/.43),2.);
  vec4 crystal=scell(q*13.+seed);float mineral=0.;float h=0.;float rough=.75;vec3 col=vec3(.4);
  if(sKind==0){
   col=mix(vec3(.26,.31,.32),vec3(.57,.59,.55),smoothstep(.24,.73,broad));
   col=mix(col,vec3(.49,.40,.29),smoothstep(.57,.76,weather)*.65);
   mineral=vein*sSurface.y;col=mix(col,vec3(.83,.81,.70),mineral*.90);
-  rough=mix(.79,.43,mineral);h=(broad-.5)*.018+(patch-.5)*.007+vein*.004-pits*.025;
+  rough=mix(.79,.43,mineral);h=(broad-.5)*.018+(region-.5)*.007+vein*.004-pits*.025;
  }else if(sKind==1){
   float strata=sf(vec3(q.x*1.4,phase*1.8,q.z*1.4)+seed);
   col=mix(vec3(.34,.21,.13),vec3(.75,.58,.36),smoothstep(.24,.76,strata*.64+broad*.36));
-  col=mix(col,vec3(.48,.27,.15),pow(bands,9.)*smoothstep(.30,.64,patch)*.43);
+  col=mix(col,vec3(.48,.27,.15),pow(bands,9.)*smoothstep(.30,.64,region)*.43);
   mineral=smoothstep(.80,.93,crystal.z)*sSurface.y;
   col=mix(col,vec3(.85,.76,.60),mineral*.46);rough=.87-mineral*.11;
   h=(strata-.5)*.015+sin(phase*6.28318)*.0025+(grain-.5)*.0007-pits*.011;
  }else if(sKind==2){
   float a=smoothstep(.28,.34,crystal.x),b=smoothstep(.62,.68,crystal.x);
   col=mix(vec3(.18,.20,.20),vec3(.67,.66,.59),a);
-  col=mix(col,vec3(.73,.49,.41),b*.83);col*=.80+.29*patch;
+  col=mix(col,vec3(.73,.49,.41),b*.83);col*=.80+.29*region;
   mineral=(1.-a*.7)*sSurface.y;rough=mix(.66,.28,mineral);
   h=(crystal.y-.5)*.003+(broad-.5)*.009+(grain-.5)*.00035-pits*.007;
  }else{
