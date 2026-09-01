@@ -49,7 +49,16 @@
     "version": "0.3.0",
     "candidateAvailable": true,
     "localBrowserQA": "passed",
-    "publicBrowserQA": "pending_until_controlled_publication",
+    "publicBrowserQA": "passed",
+    "publicReadback": {
+      "url": "https://haihao0307.github.io/HOUSE/tiles-mother/?v=0.3.0",
+      "workflowRun": "33460369968",
+      "httpStatus": 200,
+      "contentType": "text/html; charset=utf-8",
+      "bytes": 2260555,
+      "sha256": "43e5a6d2e0121da469b07d2e5452829e5c00ba4e2440aa65930776fab6184887",
+      "browserQA": "passed"
+    },
     "programmaticReplicationComplete": false,
     "visualApproved": false,
     "productionApproved": false,

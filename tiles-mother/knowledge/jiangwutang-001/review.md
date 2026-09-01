@@ -83,4 +83,4 @@ Diffuse 中的暗部、边缘高亮、遮蔽和反光可能已经烘入贴图；
 
 候选配置和生成器：`material-candidate-v0.3.json`、`v03/jiangwutang-material.js`。候选粗糙度、微凹凸标量和颜色分档均是有依据的程序化待校准参数，不是实测物理属性。`visualApproved=false`、`productionApproved=false`。
 
-本机真实浏览器核验：`qa-v03/browser-report.json`；板瓦、筒瓦各三变体截图与原色/完整光照/旧 V0.2 对照位于 `qa-v03/`。V0.3 内建 QA、WebGL2、相机交互、刷新持久化和移动端布局均通过；公开 URL 核验仍待受控发布完成。
+本机与公开真实浏览器核验：`qa-v03/browser-report.json`、`qa-v03/public-browser-report.json`；板瓦、筒瓦各三变体截图与原色/完整光照/旧 V0.2 对照位于 `qa-v03/`。V0.3 内建 QA、WebGL2、相机交互、刷新持久化和移动端布局均通过；公开 URL 已完成 HTTP、字节哈希和浏览器回读，批准仍保持关闭。
