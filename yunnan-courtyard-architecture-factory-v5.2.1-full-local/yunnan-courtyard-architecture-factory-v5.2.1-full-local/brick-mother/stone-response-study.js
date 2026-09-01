@@ -1,5 +1,5 @@
 'use strict';
-const STUDY_VERSION='stone-response-s1.0';
+const STUDY_VERSION='stone-response-s1.1';
 const PARAMS=new URLSearchParams(location.search);
 const settings={kind:Math.max(0,Math.min(3,Number(PARAMS.get('stone')??0))),scale:1,mineral:.7,chroma:1,rough:0,wet:0,relief:1,angle:-30,exposure:1};
 const names=['青灰石灰岩','暖色砂岩','花岗岩','蓝灰板岩'];
@@ -18,11 +18,12 @@ StoneSample stoneFields(vec3 pos){
  float grain=valueNoise3(q*49.+seed),weather=sf(q*2.2+seedVector(uWeatherSeed,.09));
  float phase=q.y*5.7+q.x*.82+q.z*.41+sf(q*1.8+seed)*1.25;
  float bands=.5+.5*sin(phase*6.28318);
- float line=abs(sin((q.x*.84+q.y*.37+q.z*.51+sf(q*1.7+seed)*.44)*12.));
+ float line=abs(q.x*.64+q.y*.35+q.z*.40+(sf(q*1.8+seed)-.5)*1.4-.4);
  float aa=max(fwidth(line),.008);
- float vein=(1.-smoothstep(.028,.064+aa,line))*smoothstep(.34,.63,region);
+ float vein=(1.-smoothstep(.006,.018+aa,line))*smoothstep(.34,.63,region);
  float pits=pow(max(0.,(sf(q*19.+seedVector(uPoreSeed,.061))-.57)/.43),2.);
- vec4 crystal=scell(q*13.+seed);float mineral=0.;float h=0.;float rough=.75;vec3 col=vec3(.4);
+ vec3 granular=q+vec3(sf(q*8.+seed),sf(q*8.+seed+13.),sf(q*8.+seed+29.))*.035;
+ vec4 crystal=scell(granular*31.+seed);float mineral=0.;float h=0.;float rough=.75;vec3 col=vec3(.4);
  if(sKind==0){
   col=mix(vec3(.26,.31,.32),vec3(.57,.59,.55),smoothstep(.24,.73,broad));
   col=mix(col,vec3(.49,.40,.29),smoothstep(.57,.76,weather)*.65);
@@ -36,16 +37,16 @@ StoneSample stoneFields(vec3 pos){
   col=mix(col,vec3(.85,.76,.60),mineral*.46);rough=.87-mineral*.11;
   h=(strata-.5)*.015+sin(phase*6.28318)*.0025+(grain-.5)*.0007-pits*.011;
  }else if(sKind==2){
-  float a=smoothstep(.28,.34,crystal.x),b=smoothstep(.62,.68,crystal.x);
-  col=mix(vec3(.18,.20,.20),vec3(.67,.66,.59),a);
-  col=mix(col,vec3(.73,.49,.41),b*.83);col*=.80+.29*region;
+  float a=smoothstep(.14,.24,crystal.x),b=smoothstep(.70,.80,crystal.x);
+  col=mix(vec3(.19,.21,.22),vec3(.65,.66,.62),a);
+  col=mix(col,vec3(.66,.49,.43),b*.69);col*=.84+.22*region;col*=.90+.20*grain;
   mineral=(1.-a*.7)*sSurface.y;rough=mix(.66,.28,mineral);
-  h=(crystal.y-.5)*.003+(broad-.5)*.009+(grain-.5)*.00035-pits*.007;
+  h=(sf(granular*31.+seed)-.5)*.0012+(broad-.5)*.009+(grain-.5)*.00035-pits*.007;
  }else{
   float cleavage=sf(vec3(q.x*1.8,phase*2.8,q.z*1.8)+seed);
   col=mix(vec3(.10,.15,.19),vec3(.30,.37,.40),smoothstep(.20,.78,cleavage*.58+broad*.42));
   col=mix(col,vec3(.47,.33,.20),smoothstep(.60,.77,weather)*.67);
-  mineral=vein*sSurface.y;col=mix(col,vec3(.57,.61,.57),mineral*.51);
+  mineral=vein*sSurface.y*.4;col=mix(col,vec3(.57,.61,.57),mineral*.51);
   rough=.48+cleavage*.17-mineral*.19;
   h=(cleavage-.5)*.009+(broad-.5)*.012+sin(phase*6.28318)*.0018-pits*.01;
  }
