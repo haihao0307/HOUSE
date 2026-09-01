@@ -1,0 +1,8 @@
+{
+  "name": "tiles-mother-local-fbx-analysis",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "three": "0.180.0"
+  }
+}

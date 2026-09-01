@@ -1,0 +1,1182 @@
+{
+  "schema": "tiles-mother-jiangwutang-effective-analysis-v2",
+  "analysisDate": "2026-09-01",
+  "sourceIntegrity": {
+    "originalZip": "E:\\讲武堂瓦片精细.zip",
+    "originalZipBytes": 58671527,
+    "originalZipSHA256": "ae5510c0e2eaec236adff0b94d978688f6c17a9412407c6c7ec54968222dd365",
+    "lockedBytes": 58671527,
+    "lockedSHA256": "ae5510c0e2eaec236adff0b94d978688f6c17a9412407c6c7ec54968222dd365",
+    "matchesLockedIdentity": true,
+    "zipCRCCheck": "passed",
+    "allEntriesRead": true,
+    "originalModified": false
+  },
+  "archiveDirectory": [
+    {
+      "path": "讲武堂瓦片精细/",
+      "compressedBytes": 0,
+      "uncompressedBytes": 0,
+      "crc32": "00000000",
+      "isDirectory": true,
+      "readOK": true
+    },
+    {
+      "path": "讲武堂瓦片精细/01.fbx",
+      "compressedBytes": 327001,
+      "uncompressedBytes": 349088,
+      "crc32": "577c80f3",
+      "isDirectory": false,
+      "readOK": true
+    },
+    {
+      "path": "讲武堂瓦片精细/01.fbx.rsInfo",
+      "compressedBytes": 873,
+      "uncompressedBytes": 2246,
+      "crc32": "9e84bbfa",
+      "isDirectory": false,
+      "readOK": true
+    },
+    {
+      "path": "讲武堂瓦片精细/01_u1_v1_diffuse.png",
+      "compressedBytes": 58270838,
+      "uncompressedBytes": 58273168,
+      "crc32": "745e00ac",
+      "isDirectory": false,
+      "readOK": true
+    },
+    {
+      "path": "讲武堂瓦片精细/01_u1_v1_normal.png",
+      "compressedBytes": 71733,
+      "uncompressedBytes": 96199,
+      "crc32": "c207fdfa",
+      "isDirectory": false,
+      "readOK": true
+    }
+  ],
+  "fbx": {
+    "file": "01.fbx",
+    "fileBytes": 349088,
+    "fileSHA256": "74053fe0a5978bd43e2d83dede03007a732bb3c4e625915161ecc1bbe56da3f9",
+    "header": "Kaydara FBX Binary  \u0000",
+    "scene": {
+      "name": null,
+      "children": 1,
+      "objectCount": 1
+    },
+    "objects": [
+      {
+        "name": "01",
+        "type": "Mesh",
+        "parent": null,
+        "visible": true,
+        "vertices": 28524,
+        "indexed": false,
+        "indexCount": 0,
+        "triangles": 9508,
+        "hasNormals": true,
+        "normalComponents": 3,
+        "hasUV": true,
+        "uvComponents": 2,
+        "positionRange": {
+          "min": [
+            -15.583524703979492,
+            -17.403181076049805,
+            0.4646186828613281
+          ],
+          "max": [
+            21.21312713623047,
+            13.838035583496094,
+            7.313505172729492
+          ]
+        },
+        "normalRange": {
+          "min": [
+            -0.9999951720237732,
+            -1,
+            -1
+          ],
+          "max": [
+            0.9999389052391052,
+            0.9998735785484314,
+            0.9999037384986877
+          ]
+        },
+        "uvRange": {
+          "min": [
+            0.0001220703125,
+            0.00012787117157131433
+          ],
+          "max": [
+            0.9998740553855896,
+            0.9871824979782104
+          ]
+        },
+        "morphTargets": [],
+        "bounds": {
+          "min": {
+            "x": -15.583524703979492,
+            "y": -17.403181076049805,
+            "z": 0.4646186828613281
+          },
+          "max": {
+            "x": 21.21312713623047,
+            "y": 13.838035583496094,
+            "z": 7.313505172729492
+          },
+          "radius": 23.830285227832384
+        },
+        "groups": [
+          {
+            "start": 0,
+            "count": 28524,
+            "materialIndex": 0
+          }
+        ],
+        "materials": [
+          {
+            "name": "01_u1_v1",
+            "type": "MeshPhongMaterial",
+            "color": {
+              "r": 1,
+              "g": 1,
+              "b": 1
+            },
+            "roughness": null,
+            "metalness": null,
+            "opacity": 1,
+            "transparent": false,
+            "hasMap": true,
+            "mapUserData": {
+              "externalFileName": "01_u1_v1_diffuse.png",
+              "externalPath": "C:\\Users\\Administrator\\AppData\\Local\\Temp\\tiles-mother-analysis-20260901\\source\\讲武堂瓦片精细\\01_u1_v1_diffuse.png"
+            },
+            "normalMap": true,
+            "normalMapUserData": {
+              "externalFileName": "01_u1_v1_normal.png",
+              "externalPath": "C:\\Users\\Administrator\\AppData\\Local\\Temp\\tiles-mother-analysis-20260901\\source\\讲武堂瓦片精细\\01_u1_v1_normal.png"
+            },
+            "bumpMap": false,
+            "bumpMapUserData": null,
+            "displacementMap": false,
+            "displacementMapUserData": null
+          }
+        ]
+      }
+    ],
+    "totals": {
+      "meshObjects": 1,
+      "vertices": 28524,
+      "triangles": 9508,
+      "normalBearingMeshes": 1,
+      "uvBearingMeshes": 1,
+      "materialSlots": 1,
+      "mappedMaterialSlots": 1
+    },
+    "geometryMetrics": {
+      "vertexCountAsLoaded": 28524,
+      "triangleCount": 9508,
+      "uniquePositionCountRounded6dp": 4900,
+      "boundsMin": [
+        -15.583524703979492,
+        -17.403181076049805,
+        0.4646186828613281
+      ],
+      "boundsMax": [
+        21.21312713623047,
+        13.838035583496094,
+        7.313505172729492
+      ],
+      "dimensionsInFileUnits": [
+        36.79665184020996,
+        31.2412166595459,
+        6.848886489868164
+      ],
+      "surfaceAreaInFileUnitsSquared": 1860.0040070809928,
+      "degenerateTriangleFractionAreaLt1e-10": 0.0,
+      "uvMin": [
+        0.0001220703125,
+        0.00012787117157131433
+      ],
+      "uvMax": [
+        0.9998740553855896,
+        0.9871824979782104
+      ],
+      "uvBoundingCoverageFraction": 0.9868098225255151,
+      "exportedVsGeometricFaceNormalDot": {
+        "mean": 0.9449901677778226,
+        "p05": 0.7591501732384728,
+        "p50": 0.9879706107992291,
+        "p95": 0.9997966029139104,
+        "fractionBelowZero": 0.0008413967185527977
+      },
+      "disconnectedGeometricComponentsRounded5dp": {
+        "count": 2,
+        "components": [
+          {
+            "triangleCount": 2,
+            "boundsMin": [
+              -15.116950035095215,
+              -1.9948904514312744,
+              2.2527122497558594
+            ],
+            "boundsMax": [
+              -15.110432624816895,
+              -1.9849746227264404,
+              2.2625961303710938
+            ],
+            "centroid": [
+              -15.113521099090576,
+              -1.990150769551595,
+              2.2565313975016275
+            ]
+          },
+          {
+            "triangleCount": 9506,
+            "boundsMin": [
+              -15.583524703979492,
+              -17.403181076049805,
+              0.4646186828613281
+            ],
+            "boundsMax": [
+              21.21312713623047,
+              13.838035583496094,
+              7.313505172729492
+            ],
+            "centroid": [
+              2.5322420497769307,
+              -1.3871944705451846,
+              3.9094933189393695
+            ]
+          }
+        ],
+        "note": "component count is based on shared rounded positions in the loaded triangle mesh; it is geometric connectivity, not a semantic瓦件 label"
+      },
+      "note": "file units are reported as-is; no real-world scale was supplied"
+    },
+    "materialTextureLinks": [
+      {
+        "meshObject": "01",
+        "material": "01_u1_v1",
+        "materialType": "MeshPhongMaterial",
+        "diffuseMap": {
+          "externalFileName": "01_u1_v1_diffuse.png",
+          "externalPath": "C:\\Users\\Administrator\\AppData\\Local\\Temp\\tiles-mother-analysis-20260901\\source\\讲武堂瓦片精细\\01_u1_v1_diffuse.png"
+        },
+        "normalMap": {
+          "externalFileName": "01_u1_v1_normal.png",
+          "externalPath": "C:\\Users\\Administrator\\AppData\\Local\\Temp\\tiles-mother-analysis-20260901\\source\\讲武堂瓦片精细\\01_u1_v1_normal.png"
+        },
+        "roughnessDirectlyPresent": false,
+        "displacementMapDirectlyPresent": false
+      }
+    ]
+  },
+  "rsInfo": {
+    "file": "01.fbx.rsInfo",
+    "bytes": 2246,
+    "fileSHA256": "028e3f022cffa7c9ef8b51e64ef22d417cc716b55aab49ff23ba8724436489cb",
+    "selectedFields": {
+      "exportBinary": "1",
+      "exportVertices": "1",
+      "exportVertexNormals": "1",
+      "exportTriangles": "1",
+      "exportMaterials": "1",
+      "exportToOneTexture": "0",
+      "embedTextures": "0",
+      "oneTextureMaxSide": "8192",
+      "normalSpace": "2",
+      "tileType": "0"
+    },
+    "rawPreservedInTempAnalysis": true,
+    "coordinateAndUnitFields": {
+      "globalCoordinateSystem": "+proj=geocent +ellps=WGS84 +no_defs",
+      "globalCoordinateSystemName": "local:1 - Euclidean",
+      "exportCoordinateSystemType": "0",
+      "transformToModel16Values": [
+        0.120066524653035,
+        -0.992765852972615,
+        0.0,
+        0.0,
+        0.992765852972615,
+        0.120066524653035,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "settingsScale": "1 1 1",
+      "normalSpace": "2",
+      "normalRange": "0",
+      "normalFlip": "0 0 0",
+      "tileType": "0",
+      "exportToOneTexture": "0",
+      "embedTextures": "0",
+      "oneTextureMaxSide": "8192",
+      "units": null,
+      "unitsNote": "no real-world unit field found; dimensions remain in FBX file units"
+    }
+  },
+  "effectiveUvCoverage": {
+    "definition": "native-resolution union mask of the actual loaded FBX triangle UVs; no thumbnail, padding, alpha expansion or manual paint",
+    "uvDirection": {
+      "u": "left-to-right image X",
+      "v": "top-to-bottom image Y via y=(1-v)*(height-1)",
+      "basis": "FBXLoader/Three UV convention used for analysis"
+    },
+    "uvVerticesOutside01": 0,
+    "trianglesWithAnyUvOutside01": 0,
+    "diffuse": {
+      "image": "01_u1_v1_diffuse.png",
+      "sizePx": [
+        7000,
+        7000
+      ],
+      "coverage": {
+        "fullImagePixels": 49000000,
+        "effectiveUvPixels": 30432933,
+        "effectiveUvFraction": 0.6210802653061225,
+        "maxTriangleOverlap": 1,
+        "meanTriangleCoverageCountOnEffectivePixels": 1.0,
+        "p95TriangleCoverageCount": 1.0,
+        "fractionEffectivePixelsWithOverlapGt1": 0.0,
+        "pixelsOutsideEffectiveUv": 18567067
+      },
+      "invalidHandling": "coverage==0 excluded; covered dark/black RGB is retained as observed material texel"
+    },
+    "normal": {
+      "image": "01_u1_v1_normal.png",
+      "sizePx": [
+        2500,
+        2500
+      ],
+      "coverage": {
+        "fullImagePixels": 6250000,
+        "effectiveUvPixels": 3879676,
+        "effectiveUvFraction": 0.62074816,
+        "maxTriangleOverlap": 1,
+        "meanTriangleCoverageCountOnEffectivePixels": 1.0,
+        "p95TriangleCoverageCount": 1.0,
+        "fractionEffectivePixelsWithOverlapGt1": 0.0,
+        "pixelsOutsideEffectiveUv": 2370324
+      },
+      "invalidHandling": "coverage==0 excluded; RGB normal pixels inside coverage retained without height conversion"
+    },
+    "uvOverlap": {
+      "note": "coverage counts are retained; overlap statistics are reported per texture and are not collapsed into unique surface area"
+    },
+    "boundaryFill": {
+      "method": "no fill or dilation; pixels outside union mask are invalid and reported separately",
+      "diffuseAlphaOutsideMask": {
+        "pixels": 18567067,
+        "min": 230,
+        "max": 255,
+        "mean": 254.98039841187625,
+        "fractionTransparentEq0": 0.0,
+        "fractionSemitransparent1to254": 0.0015076156077855484,
+        "fractionOpaqueEq255": 0.9984923843922144
+      },
+      "normalHasAlpha": false
+    }
+  },
+  "diffuseEffectiveRegion": {
+    "imageMetadata": {
+      "file": "01_u1_v1_diffuse.png",
+      "bytes": 58273168,
+      "sha256": "ad6917cba05c4e6de7319efa85bd088f6e5c4c2bc0b2c296896ab48a2301db61",
+      "format": "PNG",
+      "mode": "RGBA",
+      "sizePx": [
+        7000,
+        7000
+      ]
+    },
+    "statistics": {
+      "fullFrame": {
+        "count": 49000000,
+        "weight": 49000000.0,
+        "mean": [
+          77.36829591836735,
+          68.05944655102041,
+          61.40920740816327
+        ],
+        "std": [
+          43.906243421888135,
+          42.7215282296851,
+          45.47188364814258
+        ],
+        "p05": [
+          6.0,
+          3.0,
+          0.0
+        ],
+        "p50": [
+          75.0,
+          64.0,
+          56.0
+        ],
+        "p95": [
+          147.0,
+          140.0,
+          140.0
+        ],
+        "min": [
+          0,
+          0,
+          0
+        ],
+        "max": [
+          215,
+          216,
+          231
+        ]
+      },
+      "effectiveUvRegion": {
+        "count": 30432933,
+        "weight": 30432933.0,
+        "mean": [
+          88.77632586382653,
+          78.94135764042197,
+          71.98049008289803
+        ],
+        "std": [
+          45.11482175867486,
+          44.34434314613236,
+          48.08453561244093
+        ],
+        "p05": [
+          5.0,
+          2.0,
+          0.0
+        ],
+        "p50": [
+          94.0,
+          82.0,
+          75.0
+        ],
+        "p95": [
+          151.0,
+          144.0,
+          146.0
+        ],
+        "min": [
+          0,
+          0,
+          0
+        ],
+        "max": [
+          215,
+          216,
+          231
+        ]
+      },
+      "dominantQuantizedColorsEffectiveUv": [
+        {
+          "rgbBinCenter": [
+            8,
+            8,
+            8
+          ],
+          "weightFraction": 0.07488167505905527,
+          "weight": 2278869.0
+        },
+        {
+          "rgbBinCenter": [
+            136,
+            136,
+            136
+          ],
+          "weightFraction": 0.039731398876342285,
+          "weight": 1209143.0
+        },
+        {
+          "rgbBinCenter": [
+            120,
+            120,
+            120
+          ],
+          "weightFraction": 0.03413335152415313,
+          "weight": 1038778.0
+        },
+        {
+          "rgbBinCenter": [
+            104,
+            104,
+            104
+          ],
+          "weightFraction": 0.027847792389908657,
+          "weight": 847490.0
+        },
+        {
+          "rgbBinCenter": [
+            24,
+            8,
+            8
+          ],
+          "weightFraction": 0.02631235050528978,
+          "weight": 800762.0
+        },
+        {
+          "rgbBinCenter": [
+            152,
+            152,
+            152
+          ],
+          "weightFraction": 0.02563328352216331,
+          "weight": 780096.0
+        },
+        {
+          "rgbBinCenter": [
+            88,
+            88,
+            88
+          ],
+          "weightFraction": 0.024519720133448854,
+          "weight": 746207.0
+        },
+        {
+          "rgbBinCenter": [
+            136,
+            120,
+            120
+          ],
+          "weightFraction": 0.022660484285231396,
+          "weight": 689625.0
+        },
+        {
+          "rgbBinCenter": [
+            72,
+            72,
+            72
+          ],
+          "weightFraction": 0.022607449633592663,
+          "weight": 688011.0
+        },
+        {
+          "rgbBinCenter": [
+            136,
+            120,
+            104
+          ],
+          "weightFraction": 0.02216789292047533,
+          "weight": 674634.0
+        },
+        {
+          "rgbBinCenter": [
+            40,
+            40,
+            40
+          ],
+          "weightFraction": 0.021066520272627027,
+          "weight": 641116.0
+        },
+        {
+          "rgbBinCenter": [
+            40,
+            24,
+            8
+          ],
+          "weightFraction": 0.020877185909093942,
+          "weight": 635354.0
+        }
+      ],
+      "brightnessEffectiveUv": {
+        "thresholdsSrgbCode": [
+          48,
+          128,
+          192
+        ],
+        "bands": [
+          {
+            "name": "dark",
+            "thresholdSrgbCode": [
+              0,
+              48
+            ],
+            "weightFraction": 0.2690804727891328,
+            "samples": 8188908
+          },
+          {
+            "name": "midDark",
+            "thresholdSrgbCode": [
+              48,
+              128
+            ],
+            "weightFraction": 0.5604836379063431,
+            "samples": 17057161
+          },
+          {
+            "name": "midLight",
+            "thresholdSrgbCode": [
+              128,
+              192
+            ],
+            "weightFraction": 0.1704349035303301,
+            "samples": 5186834
+          },
+          {
+            "name": "light",
+            "thresholdSrgbCode": [
+              192,
+              256
+            ],
+            "weightFraction": 9.857741940285545e-07,
+            "samples": 30
+          }
+        ],
+        "luminanceMean": 80.52969720648593,
+        "luminanceStd": 44.254503763187145
+      },
+      "warmCoolEffectiveUv": {
+        "thresholdRgbRMinusB": 8,
+        "bands": [
+          {
+            "name": "warmCandidate",
+            "weightFraction": 0.5600076404071865,
+            "samples": 17042675
+          },
+          {
+            "name": "neutralCandidate",
+            "weightFraction": 0.32522520915088926,
+            "samples": 9897557
+          },
+          {
+            "name": "coolCandidate",
+            "weightFraction": 0.11476715044192422,
+            "samples": 3492701
+          }
+        ],
+        "note": "candidate image-color grouping; not a material-temperature measurement"
+      },
+      "nativeSpatialVariationEffectiveUv": [
+        {
+          "blockSizeNativePx": 8,
+          "usableNativeExtentPx": [
+            7000,
+            7000
+          ],
+          "validBlocks": 505241,
+          "meanBlockRgbStd": 45.19091423233643,
+          "meanNeighborAbsDiffX": 7.542101860046387,
+          "meanNeighborAbsDiffY": 8.015661239624023
+        },
+        {
+          "blockSizeNativePx": 32,
+          "usableNativeExtentPx": [
+            6976,
+            6976
+          ],
+          "validBlocks": 35969,
+          "meanBlockRgbStd": 44.069321721717806,
+          "meanNeighborAbsDiffX": 10.687703132629395,
+          "meanNeighborAbsDiffY": 13.016786575317383
+        },
+        {
+          "blockSizeNativePx": 128,
+          "usableNativeExtentPx": [
+            6912,
+            6912
+          ],
+          "validBlocks": 2609,
+          "meanBlockRgbStd": 39.95289929677512,
+          "meanNeighborAbsDiffX": 16.795753479003906,
+          "meanNeighborAbsDiffY": 24.416324615478516
+        }
+      ],
+      "nativeDirectionalityEffectiveUv": {
+        "resolutionNativePx": [
+          7000,
+          7000
+        ],
+        "meanAbsGradientX": 4.3610687255859375,
+        "meanAbsGradientY": 4.456640720367432,
+        "xOverY": 0.9785551493202677,
+        "validHorizontalPairs": 30311103,
+        "validVerticalPairs": 30280544,
+        "interpretation": "native image-gradient anisotropy only; not a claim about manufacturing direction"
+      },
+      "alpha": {
+        "present": true,
+        "channel": "A",
+        "full": {
+          "pixels": 49000000,
+          "min": 230,
+          "max": 255,
+          "mean": 254.99257257142858,
+          "fractionTransparentEq0": 0.0,
+          "fractionSemitransparent1to254": 0.000571265306122449,
+          "fractionOpaqueEq255": 0.9994287346938775
+        },
+        "effectiveUv": {
+          "pixels": 30432933,
+          "min": 255,
+          "max": 255,
+          "mean": 255.0,
+          "fractionTransparentEq0": 0.0,
+          "fractionSemitransparent1to254": 0.0,
+          "fractionOpaqueEq255": 1.0
+        },
+        "outsideEffectiveUv": {
+          "pixels": 18567067,
+          "min": 230,
+          "max": 255,
+          "mean": 254.98039841187625,
+          "fractionTransparentEq0": 0.0,
+          "fractionSemitransparent1to254": 0.0015076156077855484,
+          "fractionOpaqueEq255": 0.9984923843922144
+        },
+        "handling": "alpha is reported but not used to expand or shrink the UV mask; RGB statistics include all UV-covered pixels"
+      },
+      "maskRule": "union of native-resolution FBX UV triangle rasterization; invalid/outside pixels excluded from effective-region statistics"
+    },
+    "surfaceAreaWeightedTriangleCentroidSamples": {
+      "sampling": "one nearest native texel at each FBX triangle UV centroid",
+      "weight": "3D triangle area in FBX file units squared",
+      "trianglesSampled": 9508,
+      "totalSurfaceAreaWeight": 1860.0040070809928,
+      "rgb": {
+        "count": 9508,
+        "weight": 1860.0040070809928,
+        "mean": [
+          88.98905698731622,
+          79.22202321344146,
+          72.27299258621896
+        ],
+        "std": [
+          44.773004893899774,
+          44.092807540822,
+          47.87009217014186
+        ],
+        "p05": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "p50": [
+          83.0,
+          69.0,
+          58.0
+        ],
+        "p95": [
+          149.0,
+          140.0,
+          142.0
+        ],
+        "min": [
+          0,
+          0,
+          0
+        ],
+        "max": [
+          179,
+          173,
+          185
+        ]
+      },
+      "dominantQuantizedColors": [
+        {
+          "rgbBinCenter": [
+            8,
+            8,
+            8
+          ],
+          "weightFraction": 0.07758131410069971,
+          "weight": 144.3015551019106
+        },
+        {
+          "rgbBinCenter": [
+            136,
+            136,
+            136
+          ],
+          "weightFraction": 0.038869324831546356,
+          "weight": 72.29709993920896
+        },
+        {
+          "rgbBinCenter": [
+            120,
+            120,
+            120
+          ],
+          "weightFraction": 0.033678271277382876,
+          "weight": 62.64171952749286
+        },
+        {
+          "rgbBinCenter": [
+            88,
+            88,
+            88
+          ],
+          "weightFraction": 0.026195342748595158,
+          "weight": 48.72344247924702
+        },
+        {
+          "rgbBinCenter": [
+            24,
+            8,
+            8
+          ],
+          "weightFraction": 0.024760157763691188,
+          "weight": 46.05399265642316
+        },
+        {
+          "rgbBinCenter": [
+            104,
+            104,
+            104
+          ],
+          "weightFraction": 0.02460084267762418,
+          "weight": 45.757665957950074
+        },
+        {
+          "rgbBinCenter": [
+            72,
+            72,
+            72
+          ],
+          "weightFraction": 0.023984248731939214,
+          "weight": 44.61079874823416
+        },
+        {
+          "rgbBinCenter": [
+            136,
+            120,
+            120
+          ],
+          "weightFraction": 0.02355240857702382,
+          "weight": 43.80757432967305
+        },
+        {
+          "rgbBinCenter": [
+            136,
+            120,
+            104
+          ],
+          "weightFraction": 0.022624883494898704,
+          "weight": 42.082373960252205
+        },
+        {
+          "rgbBinCenter": [
+            152,
+            152,
+            152
+          ],
+          "weightFraction": 0.02225935799384077,
+          "weight": 41.40249506359416
+        },
+        {
+          "rgbBinCenter": [
+            56,
+            56,
+            56
+          ],
+          "weightFraction": 0.021026222303321313,
+          "weight": 39.108857737953386
+        },
+        {
+          "rgbBinCenter": [
+            40,
+            24,
+            8
+          ],
+          "weightFraction": 0.02092824824197378,
+          "weight": 38.92662559125698
+        }
+      ],
+      "brightness": {
+        "thresholdsSrgbCode": [
+          48,
+          128,
+          192
+        ],
+        "bands": [
+          {
+            "name": "dark",
+            "thresholdSrgbCode": [
+              0,
+              48
+            ],
+            "weightFraction": 0.26125279716860755,
+            "samples": 3174
+          },
+          {
+            "name": "midDark",
+            "thresholdSrgbCode": [
+              48,
+              128
+            ],
+            "weightFraction": 0.5713126985769492,
+            "samples": 5147
+          },
+          {
+            "name": "midLight",
+            "thresholdSrgbCode": [
+              128,
+              192
+            ],
+            "weightFraction": 0.16743450425444317,
+            "samples": 1187
+          },
+          {
+            "name": "light",
+            "thresholdSrgbCode": [
+              192,
+              256
+            ],
+            "weightFraction": 0.0,
+            "samples": 0
+          }
+        ],
+        "luminanceMean": 80.796774481763,
+        "luminanceStd": 43.98901076379015
+      },
+      "warmCool": {
+        "thresholdRgbRMinusB": 8,
+        "bands": [
+          {
+            "name": "warmCandidate",
+            "weightFraction": 0.5623426547692846,
+            "samples": 5503
+          },
+          {
+            "name": "neutralCandidate",
+            "weightFraction": 0.32380941409147035,
+            "samples": 3014
+          },
+          {
+            "name": "coolCandidate",
+            "weightFraction": 0.11384793113924511,
+            "samples": 991
+          }
+        ],
+        "note": "candidate image-color grouping; not a material-temperature measurement"
+      },
+      "limitation": "area weighting reduces UV-stretch bias but one texel sample per triangle is still an approximation; it is not a per-pixel surface integral"
+    },
+    "crop": {
+      "diffuseNativePixelCoordinates": [
+        5376,
+        5632,
+        6400,
+        6656
+      ],
+      "normalNativePixelCoordinates": [
+        1920,
+        2011,
+        2286,
+        2377
+      ],
+      "uvApprox": [
+        0.768109729961423,
+        0.04900700100014288,
+        0.9144163451921703,
+        0.19531361623089016
+      ],
+      "selection": "1024px native window maximizing effective-mask fraction multiplied by native luminance standard deviation"
+    }
+  },
+  "normalEffectiveRegion": {
+    "imageMetadata": {
+      "file": "01_u1_v1_normal.png",
+      "bytes": 96199,
+      "sha256": "1839a0763e6342ce5bfd3ee98b7c7282a0aeb88f30925312fa78c23aa68dc5ee",
+      "format": "PNG",
+      "mode": "RGBA",
+      "sizePx": [
+        2500,
+        2500
+      ]
+    },
+    "statistics": {
+      "fullFrame": {
+        "pixels": 6250000,
+        "exactBaselineRgb128128255": 6170135,
+        "exactBaselineFraction": 0.9872216,
+        "toleranceDefinition": "per-channel absolute RGB distance <= N from [128,128,255]",
+        "tolerance1Pixels": 6214843,
+        "tolerance1Fraction": 0.99437488,
+        "tolerance2Pixels": 6223286,
+        "tolerance2Fraction": 0.99572576,
+        "anyNonBaselinePixels": 79865,
+        "anyNonBaselineFraction": 0.0127784
+      },
+      "effectiveUvRegion": {
+        "pixels": 3879676,
+        "exactBaselineRgb128128255": 3853421,
+        "exactBaselineFraction": 0.9932326823167708,
+        "toleranceDefinition": "per-channel absolute RGB distance <= N from [128,128,255]",
+        "tolerance1Pixels": 3865317,
+        "tolerance1Fraction": 0.9962989177446776,
+        "tolerance2Pixels": 3866803,
+        "tolerance2Fraction": 0.9966819394196835,
+        "anyNonBaselinePixels": 26255,
+        "anyNonBaselineFraction": 0.006767317683229218
+      },
+      "effectiveUvRegionFractionOfFullImage": 0.62074816,
+      "validPixelCount": 3879676,
+      "decodedSignedNormalAssumption": {
+        "meanXYZ": [
+          0.003920384682714939,
+          0.0041201128624379635,
+          0.9999269843101501
+        ],
+        "p50TiltDegrees": 0.31775182485580444,
+        "p95TiltDegrees": 0.31775182485580444,
+        "p99TiltDegrees": 0.31775182485580444,
+        "maxTiltDegrees": 115.1391830444336,
+        "deltaRgbP50": 0.0,
+        "deltaRgbP95": 0.0,
+        "deltaRgbMax": 232.38975524902344,
+        "tiltBinsDegrees": [
+          {
+            "range": "0-1",
+            "fraction": 0.9964097517421557
+          },
+          {
+            "range": "1-2",
+            "fraction": 0.0005616448383834114
+          },
+          {
+            "range": "2-5",
+            "fraction": 0.0010199305302813946
+          },
+          {
+            "range": "5-10",
+            "fraction": 0.0009433777459767259
+          },
+          {
+            "range": "10+",
+            "fraction": 0.0010652951432026797
+          }
+        ],
+        "note": "normal map directional detail only; no height reconstruction or physical bump amplitude is inferred"
+      },
+      "nativeSpatialVariationEffectiveUv": [
+        {
+          "blockSizeNativePx": 8,
+          "usableNativeExtentPx": [
+            2496,
+            2496
+          ],
+          "validBlocks": 69948,
+          "meanBlockRgbStd": 0.9126686343873534,
+          "meanNeighborAbsDiffX": 0.04079113528132439,
+          "meanNeighborAbsDiffY": 0.026393111795186996
+        },
+        {
+          "blockSizeNativePx": 32,
+          "usableNativeExtentPx": [
+            2496,
+            2496
+          ],
+          "validBlocks": 5194,
+          "meanBlockRgbStd": 0.6215326966200777,
+          "meanNeighborAbsDiffX": 0.056404419243335724,
+          "meanNeighborAbsDiffY": 0.049722347408533096
+        },
+        {
+          "blockSizeNativePx": 128,
+          "usableNativeExtentPx": [
+            2432,
+            2432
+          ],
+          "validBlocks": 345,
+          "meanBlockRgbStd": 0.21945387194508315,
+          "meanNeighborAbsDiffX": 0.0447818860411644,
+          "meanNeighborAbsDiffY": 0.05116982012987137
+        }
+      ],
+      "nativeDirectionalityEffectiveUv": {
+        "resolutionNativePx": [
+          2500,
+          2500
+        ],
+        "meanAbsGradientX": 0.012435766868293285,
+        "meanAbsGradientY": 0.007182357832789421,
+        "xOverY": 1.7314323732967773,
+        "validHorizontalPairs": 3836783,
+        "validVerticalPairs": 3826021,
+        "interpretation": "native image-gradient anisotropy only; not a claim about manufacturing direction"
+      },
+      "alpha": {
+        "present": false,
+        "handling": "normal image is RGB; no alpha channel to include or exclude"
+      }
+    },
+    "crop": {
+      "diffuseNativePixelCoordinates": [
+        5376,
+        5632,
+        6400,
+        6656
+      ],
+      "normalNativePixelCoordinates": [
+        1920,
+        2011,
+        2286,
+        2377
+      ],
+      "selectionInheritedFromDiffuseWindow": true
+    }
+  },
+  "bakedLightingAndPhysicalSeparation": {
+    "observed": "Diffuse RGB contains dark/light/color variation in the effective UV region; the normal map is separately bound and nearly flat.",
+    "notSeparableFromPackage": [
+      "baked ambient occlusion versus base color",
+      "baked cast/contact shadow versus dark pigment",
+      "specular/reflection versus light diffuse patch",
+      "true roughness"
+    ],
+    "rule": "these signals remain observed or unknown; no base-color, roughness or height recovery is claimed"
+  },
+  "evidenceClassification": {
+    "directlyObserved": [
+      "Source ZIP bytes, SHA256, central-directory CRC and every entry were rechecked locally.",
+      "FBX is parsed as one mesh/material; the existing FBX parse and material bindings are preserved in the analysis.",
+      "Diffuse and normal effective regions are native-resolution UV triangle unions, with outside pixels excluded and overlaps measured.",
+      "Normal full-frame and effective-region exact/tolerance counts are measured from raw RGB pixels.",
+      "Diffuse color, brightness, warm/cool candidate bands, native spatial scales and native X/Y gradients are measured inside the effective UV mask.",
+      "Diffuse surface-area-weighted samples use loaded FBX 3D triangle areas and native texels at UV centroids."
+    ],
+    "inferredWithBasis": [
+      "The model image is visually consistent with a combined roof-tile patch containing repeated flat and curved forms; exact board/tube/top-tile semantics are not encoded.",
+      "Diffuse dark/light variation may include baked lighting or occlusion as well as pigment; the package cannot reliably separate them.",
+      "The normal map carries only sparse, low-amplitude directional detail under the stated decode assumption; this is not a measured physical height."
+    ],
+    "unknownOrNotFilled": [
+      "No verified semantic label for板瓦、筒瓦 or user-called顶瓦.",
+      "No real-world unit or dimensional scale; FBX dimensions remain file units.",
+      "No measured roughness, base-color recovery, height/displacement or physical bump amplitude.",
+      "Normal tangent basis, green-channel handedness and renderer-specific strength are unvalidated.",
+      "No manufacturing direction, firing history, clay composition or provenance can be established from this package alone."
+    ]
+  },
+  "state": {
+    "sourceReadVerified": true,
+    "modelParsed": true,
+    "texturesDecoded": true,
+    "featureExtractionComplete": true,
+    "comparisonRecorded": true,
+    "programmaticReplicationComplete": false,
+    "distillationComplete": false,
+    "temporaryCopiesRemoved": false,
+    "visualApproved": false,
+    "productionApproved": false
+  },
+  "artifacts": {
+    "analysisJson": "tiles-mother/knowledge/jiangwutang-001/analysis.json",
+    "review": "tiles-mother/knowledge/jiangwutang-001/review.md",
+    "operationLog": "tiles-mother/knowledge/jiangwutang-001/operation-log.md",
+    "effectiveDiffuseCrop": "tiles-mother/knowledge/jiangwutang-001/diffuse-effective-crop.png",
+    "effectiveNormalCrop": "tiles-mother/knowledge/jiangwutang-001/normal-effective-crop.png",
+    "diffuseCoverageMask": "tiles-mother/knowledge/jiangwutang-001/diffuse-uv-coverage-mask.png",
+    "normalCoverageMask": "tiles-mother/knowledge/jiangwutang-001/normal-uv-coverage-mask.png",
+    "initialAnalysisPreserved": "tiles-mother/knowledge/jiangwutang-001/initial-analysis.json"
+  }
+}

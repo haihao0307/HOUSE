@@ -1,73 +1,69 @@
 {
-  "schema": "tiles-mother-source-receipt-v1",
-  "recordedDate": "2026-08-31",
+  "schema": "tiles-mother-source-receipt-v2",
+  "recordedDate": "2026-09-01",
   "sourceId": "yunnan-jiangwutang-tiles-001",
-  "evidenceOrigin": "user-relayed local verification receipt",
+  "evidenceOrigin": "local source bytes independently read by Codex on the user's machine",
   "sourceIdentity": {
     "reportedLocalPath": "E:\\讲武堂瓦片精细.zip",
     "filename": "讲武堂瓦片精细.zip",
     "reportedBytes": 58671527,
     "reportedSHA256": "ae5510c0e2eaec236adff0b94d978688f6c17a9412407c6c7ec54968222dd365",
-    "hashIndependentlyVerifiedByReceiver": false
+    "hashIndependentlyVerifiedByReceiver": true
   },
   "localReceiptClaims": {
     "zipReadable": true,
     "entryCount": 5,
     "fileCount": 4,
     "directoryCount": 1,
-    "reportedFilenames": [
-      "01.fbx",
-      "01.fbx.rsInfo",
-      "01_u1_v1_diffuse.png",
-      "01_u1_v1_normal.png"
+    "exactEntryPaths": [
+      "讲武堂瓦片精细/01.fbx",
+      "讲武堂瓦片精细/01.fbx.rsInfo",
+      "讲武堂瓦片精细/01_u1_v1_diffuse.png",
+      "讲武堂瓦片精细/01_u1_v1_normal.png"
     ],
-    "directoryName": null,
-    "exactEntryPaths": null,
-    "entryBytesAndHashes": null,
+    "entryBytesAndCRCRecorded": true,
+    "entrySHA256Manifest": "knowledge/jiangwutang-001/file-checksums.json",
     "repacked": false,
     "modified": false,
     "committedToGit": false,
     "publiclyPublished": false,
-    "independentlyVerifiedByReceiver": false
+    "independentlyVerifiedByReceiver": true
   },
   "receiverCheck": {
-    "checkedDate": "2026-08-31",
-    "checkedLocation": "/mnt/data and all subdirectories in the current conversation runtime",
-    "method": "recursive filename and exact reported byte-size search",
-    "matchingRawFileFound": false,
-    "actualSourcePath": null,
-    "actualBytes": null,
-    "actualSHA256": null,
-    "status": "LOCAL_FILE_NOT_RECEIVED",
-    "statusZh": "本地文件未接收"
+    "checkedDate": "2026-09-01",
+    "checkedLocation": "E:\\讲武堂瓦片精细.zip plus a local temporary extracted copy",
+    "method": "native ZIP CRC/stream read, Three.js FBXLoader parse, Pillow native-resolution PNG decode",
+    "matchingRawFileFound": true,
+    "actualSourcePath": "E:\\讲武堂瓦片精细.zip",
+    "actualBytes": 58671527,
+    "actualSHA256": "ae5510c0e2eaec236adff0b94d978688f6c17a9412407c6c7ec54968222dd365",
+    "status": "LOCAL_SOURCE_READ_VERIFIED",
+    "statusZh": "本机源文件已读取并核验"
   },
-  "sourceReadVerified": false,
-  "modelParsed": false,
-  "texturesDecoded": false,
+  "sourceReadVerified": true,
+  "modelParsed": true,
+  "texturesDecoded": true,
+  "featureExtractionComplete": true,
+  "comparisonRecorded": true,
+  "programmaticReplicationComplete": false,
   "distillationComplete": false,
-  "comparisonRecorded": false,
   "temporaryCopiesRemoved": false,
   "visualApproved": false,
   "productionApproved": false,
   "unresolved": [
-    "Only the local verification receipt has arrived; original bytes have not arrived.",
-    "ZIP readability and identity are user-reported, not receiver-verified.",
-    "The reported inventory contains one FBX filename; mesh count and pan/cover/ridge tile classification remain unverified.",
-    "Texture filenames alone do not establish resolution, material bindings, color space, normal convention or physical material properties.",
-    "No colors, texture statistics, geometry dimensions or roughness values have been extracted from this source."
+    "The FBX has one merged mesh named 01; exact board-tile, barrel-tile and user-called top-tile semantic boundaries remain unverified.",
+    "No real-world unit or scale was found; dimensions remain in FBX file units.",
+    "Diffuse dark/light variation may combine base color with baked lighting, occlusion or reflection; reliable separation was not possible.",
+    "No measured roughness, base-color recovery, height/displacement or physical bump amplitude is claimed.",
+    "Normal tangent basis, green-channel handedness and renderer strength remain unvalidated.",
+    "The lightweight research result is recorded; procedural replication is not complete."
   ],
-  "receivingGate": {
-    "requireActualReadableBytes": true,
-    "requireExactReportedSize": true,
-    "requireExactReportedSHA256": true,
-    "receiptAloneIsNotTransferCompletion": true
-  },
   "retention": {
     "userKeepsOriginal": true,
     "rawSourceMayEnterGitHistory": false,
     "rawSourceMayBePubliclyPublished": false,
     "cleanupEligibleNow": false,
-    "cleanupGate": "Read and verify the actual source, distill observed features, record comparison and save lightweight reusable results before deleting only explicitly tracked temporary copies."
+    "cleanupGate": "After review and procedural comparison, delete only the explicitly recorded temporary extracted copy; never delete the user's E: original."
   },
-  "scope": "Receipt and pending-state metadata only. No source binaries, website updates or material preset changes."
+  "scope": "Local source verification, native UV effective-region analysis, texture/normal statistics, and lightweight evidence only. No workbench, material preset, Pages setting or main branch changes."
 }
