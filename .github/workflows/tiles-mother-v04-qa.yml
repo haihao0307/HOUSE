@@ -40,15 +40,18 @@ jobs:
           from pathlib import Path
           import hashlib,json
           root=Path('tiles-mother/v04')
-          forbidden=['讲武堂瓦片精细.zip','01.fbx','01_u1_v1_diffuse.png','01_u1_v1_normal.png']
-          runtime=b''.join(p.read_bytes() for p in root.iterdir() if p.is_file() and p.suffix in {'.html','.js','.mjs','.json','.css'})
-          for name in forbidden:
-              assert name.encode('utf-8') not in runtime,name
+          forbidden_names={'讲武堂瓦片精细.zip','01.fbx','01_u1_v1_diffuse.png','01_u1_v1_normal.png'}
+          present=[str(p) for p in root.rglob('*') if p.is_file() and p.name in forbidden_names]
+          assert not present,present
+          large=[str(p) for p in root.rglob('*') if p.is_file() and p.stat().st_size>8*1024*1024]
+          assert not large,large
           report={
               'version':'0.4.0',
               'sourceCommit':'${{ github.sha }}',
               'indexBytes':(root/'index.html').stat().st_size,
               'indexSHA256':hashlib.sha256((root/'index.html').read_bytes()).hexdigest(),
+              'rawSourceFilesPresent':present,
+              'unexpectedLargeRuntimeFiles':large,
               'rawSourceInRuntime':False,
               'visualApproved':False,
               'productionApproved':False,
@@ -128,7 +131,7 @@ jobs:
         run: |
           echo '## Tiles Mother V0.4 study QA' >> "$GITHUB_STEP_SUMMARY"
           echo 'Scope: Tiles Mother V0.4 study only. No main, Brick Mother, release asset, Pages setting or other Mother was modified.' >> "$GITHUB_STEP_SUMMARY"
-          echo 'Raw Jiangwutang FBX, textures and ZIP are absent from runtime.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Raw Jiangwutang FBX, textures and ZIP are absent from runtime. Source identity strings are retained for traceability.' >> "$GITHUB_STEP_SUMMARY"
           echo 'visualApproved=false; productionApproved=false; distillationComplete=false.' >> "$GITHUB_STEP_SUMMARY"
           for file in tiles-mother/v04/qa-build.json tiles-mother/v04/qa/browser-report.json; do
             if test -f "$file"; then
