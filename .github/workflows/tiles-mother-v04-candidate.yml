@@ -1,0 +1,110 @@
+name: Tiles Mother V0.4 Candidate
+on:
+  push:
+    branches: [feature/tiles-mother-v0.1-workbench]
+    paths:
+      - .github/workflows/tiles-mother-v04-candidate.yml
+      - tiles-mother/v04-transport/**
+      - tiles-mother/v04/**
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: tiles-mother-v04-candidate
+  cancel-in-progress: false
+jobs:
+  candidate:
+    if: github.ref == 'refs/heads/feature/tiles-mother-v0.1-workbench'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - name: Materialize exact source with explicit local compatibility fixes
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import base64,hashlib,json,lzma
+          parts=sorted(Path('tiles-mother/v04-transport').glob('part-*.b64'))
+          data=base64.b64decode(''.join(p.read_text().strip() for p in parts),validate=True)
+          assert hashlib.sha256(data).hexdigest()=='f8e2ce8167e6419f50270b986a25c120ae714e4357c9f1bf1f8ec0d84d3c3cf0'
+          root=Path('tiles-mother/v04');root.mkdir(exist_ok=True)
+          for name,text in json.loads(lzma.decompress(data)).items():
+              assert '/' not in name and '\\' not in name
+              target=root/name
+              if not target.exists():target.write_text(text,encoding='utf-8',newline='\n')
+          # Bootstrap corrections are persisted below as readable source.
+          path=root/'studio.js';text=path.read_text()
+          text=text.replace("const background=mode==='studio_beauty'?0xd4d2cc:0xe0e1df;", "const background=project.channel==='final'&&mode==='studio_beauty'?0xd4d2cc:0xe0e1df;")
+          path.write_text(text,encoding='utf-8',newline='\n')
+          path=root/'build.py';text=path.read_text()
+          if 'TILES_THIN_SHELL_EVOLUTION_V0.4' not in text:
+              additions='''change("package:'JIANGWUTANG_MATERIAL_CANDIDATE_V0.3',version:'0.3.0'", "package:'TILES_THIN_SHELL_EVOLUTION_V0.4',version:'0.4.0'")
+          change("generator:'v03/jiangwutang-material.js'", "generator:'v04/operators.js',renderer:'v04/studio.js',adapter:'v04/integration.js',historyCalibration:'illustrative_not_calibrated'")
+          change("['shape','warp','structure','damage'].includes(key)", "(['shape','warp','structure','damage'].includes(key)||(studyActive()&&key==='weather'))")
+          change("['master','shape','warp','structure','damage'].includes(key)", "(['master','shape','warp','structure','damage'].includes(key)||(studyActive()&&key==='weather'))")
+          change('Tiles_Mother_V02_Work_Record_', 'Tiles_Mother_V04_Work_Record_')
+          '''
+              text=text.replace("change('async function init(){'",additions+"change('async function init(){'")
+          path.write_text(text,encoding='utf-8',newline='\n')
+          PY
+      - name: Restore exact V0.3 baseline without editing frozen input
+        run: |
+          mkdir -p /tmp/tiles-v04/site /tmp/tiles-v04/qa
+          git fetch --depth=1 origin f55949d3d2c03f58951856e8d4e384f3b831d3ea
+          git show f55949d3d2c03f58951856e8d4e384f3b831d3ea:tiles-mother/index.html > /tmp/tiles-v04/base.html
+          python3 tiles-mother/v04/build.py --base /tmp/tiles-v04/base.html --out /tmp/tiles-v04/site/index.html
+          for path in /tmp/tiles-v04/site/check-*.js; do node --check "$path"; done
+      - name: Check actual geometry, isolated causes, history replay and accounting
+        env:
+          QA_OUT: /tmp/tiles-v04/qa/core-report.json
+        run: node tiles-mother/v04/test_core.js
+      - name: Install browser and Chinese fonts
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y fonts-noto-cjk
+          python3 -m pip install 'playwright==1.55.0' 'pillow==11.3.0'
+          python3 -m playwright install --with-deps chromium
+          python3 tiles-mother/v02/make_fixtures.py
+      - name: Real WebGL2 materials, three lighting modes, roof history and reference regression
+        run: python3 tiles-mother/v04/browser_qa.py --site /tmp/tiles-v04/site --out /tmp/tiles-v04/qa
+      - name: Preserve readable implementation and actual result without publishing
+        if: always()
+        env:
+          BRANCH: feature/tiles-mother-v0.1-workbench
+        run: |
+          set -euo pipefail
+          test -f tiles-mother/v04/operators.js || exit 0
+          test "$(git ls-remote origin "refs/heads/$BRANCH" | cut -f1)" = "$GITHUB_SHA"
+          mkdir -p tiles-mother/qa-v04
+          if test -f /tmp/tiles-v04/site/build-manifest.json; then cp /tmp/tiles-v04/site/build-manifest.json tiles-mother/v04/build-manifest.json; fi
+          for name in core-report.json browser-report.json; do
+            if test -f "/tmp/tiles-v04/qa/$name"; then cp "/tmp/tiles-v04/qa/$name" "tiles-mother/qa-v04/$name"; fi
+          done
+          git add tiles-mother/v04 tiles-mother/qa-v04
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          if ! git diff --cached --quiet; then
+            git commit -m 'test(tiles-mother): preserve V0.4 candidate source and truthful browser results'
+            git push origin "HEAD:refs/heads/$BRANCH"
+          fi
+      - name: Upload candidate and visual evidence even on failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tiles-v04-candidate-${{ github.run_id }}
+          path: |
+            /tmp/tiles-v04/site/index.html
+            /tmp/tiles-v04/site/build-manifest.json
+            /tmp/tiles-v04/qa/
+            tiles-mother/v04/
+          retention-days: 7
+          if-no-files-found: warn
+      - name: Report scope
+        if: always()
+        run: |
+          echo '## Tiles Mother V0.4 candidate only' >> "$GITHUB_STEP_SUMMARY"
+          echo 'No main, other Mother, frozen asset, Pages setting or public index changed.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Research geometry and time parameters are illustrative. Full common-policy runtime adoption remains incomplete. visualApproved=false; productionApproved=false.' >> "$GITHUB_STEP_SUMMARY"
+          for path in /tmp/tiles-v04/qa/core-report.json /tmp/tiles-v04/qa/browser-report.json; do test ! -f "$path" || cat "$path" >> "$GITHUB_STEP_SUMMARY"; done
