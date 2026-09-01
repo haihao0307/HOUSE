@@ -5,7 +5,16 @@ p=argparse.ArgumentParser();p.add_argument('--base',required=True);p.add_argumen
 root=Path(__file__).resolve().parent
 base=Path(a.base).read_bytes();basehash=hashlib.sha256(base).hexdigest()
 assert basehash=='43e5a6d2e0121da469b07d2e5452829e5c00ba4e2440aa65930776fab6184887','unexpected V0.3 baseline'
-html=base.decode();pattern=r'(<script id="tiles-mother-app">)([\s\S]*?)(</script>)';m=re.search(pattern,html);assert m
+html=base.decode()
+# Preserve the real V0.3 helper without a relative URL that breaks a self-contained candidate.
+# Missing helper previously made the inherited QA report a false geometry failure.
+legacy_path=root.parent/'v03/jiangwutang-material.js'
+legacy=legacy_path.read_bytes()
+assert hashlib.sha256(legacy).hexdigest()=='7a6ce022a21cf15f42a65bd7ec618474cbf97c620fa06d548f6ce163841cf6a0','unexpected legacy helper'
+legacy_tag='<script src="v03/jiangwutang-material.js"></script>'
+assert html.count(legacy_tag)==1,'legacy dependency marker changed'
+html=html.replace(legacy_tag,'<script id="tm-v03-compatibility">'+legacy.decode().replace('</script','<\\/script')+'</script>')
+pattern=r'(<script id="tiles-mother-app">)([\s\S]*?)(</script>)';m=re.search(pattern,html);assert m
 app=m.group(2)
 def change(old,new):
  global app
@@ -43,7 +52,7 @@ html=html.replace('独立实体几何；“原色观察”显示候选 albedo，
 css='''<style id="tm-v04-style">.study-canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;outline:none}#gl-legacy{position:absolute;inset:0;width:100%;height:100%}.study-panel select{width:100%}.study-panel .explain{margin-top:8px;font-size:10px}.study-panel details{margin:14px 0}.study-panel summary{cursor:pointer}#studyStatus{color:#866137;font-size:10px;line-height:1.7}#diagnosticLegend{padding:8px;background:#e9ece7;border-radius:6px}.viewer-chip{max-width:80%;line-height:1.6}.shell{grid-template-columns:255px minmax(330px,1fr) 290px}.viewer-head,.viewer-chip{color:#303c3e}.viewer-head .eyebrow,.specimen-caption{color:#626f73}@media(max-width:1000px){.shell{grid-template-columns:225px minmax(280px,1fr)}.reference-rail{grid-column:1/-1}}@media(max-width:600px){.shell{display:flex}.study-panel{order:0}.viewer-chip{font-size:9px;top:78px}.viewer{min-height:440px}}input:disabled,select:disabled{opacity:.45}</style>'''
 html=html.replace('</head>',css+'\n</head>')
 out=Path(a.out);out.parent.mkdir(parents=True,exist_ok=True);out.write_bytes(html.encode())
-manifest={'version':'0.4.0','baseCommit':'f55949d3d2c03f58951856e8d4e384f3b831d3ea','baseSHA256':basehash,'bytes':out.stat().st_size,'indexSHA256':hashlib.sha256(out.read_bytes()).hexdigest(),'sources':{name:{'bytes':(root/name).stat().st_size,'sha256':hashlib.sha256((root/name).read_bytes()).hexdigest()} for name in ['operators.js','studio.js','integration.js','build.py']},'policyVersionRead':'1.0.0','fullPolicyRuntimeAdoption':False,'policySchemaAndValidatorIdentity':'not_received','rawSourceInRuntime':False,'visualApproved':False,'productionApproved':False}
+manifest={'version':'0.4.0','baseCommit':'f55949d3d2c03f58951856e8d4e384f3b831d3ea','baseSHA256':basehash,'bytes':out.stat().st_size,'indexSHA256':hashlib.sha256(out.read_bytes()).hexdigest(),'legacyHelperSHA256':hashlib.sha256(legacy).hexdigest(),'sources':{name:{'bytes':(root/name).stat().st_size,'sha256':hashlib.sha256((root/name).read_bytes()).hexdigest()} for name in ['operators.js','studio.js','integration.js','build.py']},'policyVersionRead':'1.0.0','fullPolicyRuntimeAdoption':False,'policySchemaAndValidatorIdentity':'not_received','rawSourceInRuntime':False,'visualApproved':False,'productionApproved':False}
 (out.parent/'build-manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
 for i,js in enumerate(re.findall(r'<script(?: id="(?:tm-v04-[^"]+|tiles-mother-app)")>([\s\S]*?)</script>',html)):(out.parent/f'check-{i}.js').write_text(js)
 print(json.dumps(manifest,indent=2))
