@@ -44,12 +44,24 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p /tmp/stone-form-v31-review
+          python3 - <<'PY'
+          from pathlib import Path
+          root=Path('private-review/brick-mother-stone-form-v31')
+          source=root/'brick-mother-stone-form-v3.1.0.html'
+          text=source.read_text()
+          bootstrap="""<script>
+          (()=>{const native=window.requestAnimationFrame.bind(window);window.requestAnimationFrame=callback=>{if(document.documentElement.dataset.workbenchReady==='true')return native(callback);return setTimeout(()=>callback(performance.now()),16);};})();
+          </script>\n"""
+          marker='<script src="./stone-form-geometry-v31.js"></script>'
+          assert marker in text
+          (root/'brick-mother-stone-form-v3.1.0-qa.html').write_text(text.replace(marker,bootstrap+marker,1))
+          PY
           python3 -m http.server 8765 --bind 127.0.0.1 --directory "$REVIEW_ROOT" >/tmp/stone-form-v31-server.log 2>&1 &
           server_pid=$!
           trap 'kill "$server_pid" 2>/dev/null || true' EXIT
           ready=0
           for attempt in $(seq 1 60); do
-            if curl -fsS http://127.0.0.1:8765/brick-mother-stone-form-v3.1.0.html >/dev/null; then ready=1; break; fi
+            if curl -fsS http://127.0.0.1:8765/brick-mother-stone-form-v3.1.0-qa.html >/dev/null; then ready=1; break; fi
             sleep 1
           done
           test "$ready" = 1
@@ -60,8 +72,8 @@ jobs:
               stem="family-${family}-${view}"
               light=studio
               if [ "$view" = hero ]; then light=raking; fi
-              url="http://127.0.0.1:8765/brick-mother-stone-form-v3.1.0.html?family=${family}&view=${view}&light=${light}&qa=private-review&head=${GITHUB_SHA}"
-              timeout 240s "$chrome" \
+              url="http://127.0.0.1:8765/brick-mother-stone-form-v3.1.0-qa.html?family=${family}&view=${view}&light=${light}&qa=private-review&head=${GITHUB_SHA}"
+              timeout 210s "$chrome" \
                 --headless=new \
                 --no-sandbox \
                 --disable-dev-shm-usage \
@@ -73,7 +85,7 @@ jobs:
                 --use-angle=swiftshader \
                 --hide-scrollbars \
                 --window-size=1600,1000 \
-                --virtual-time-budget=150000 \
+                --virtual-time-budget=60000 \
                 --screenshot="/tmp/stone-form-v31-review/${stem}.png" \
                 --dump-dom \
                 "$url" \
