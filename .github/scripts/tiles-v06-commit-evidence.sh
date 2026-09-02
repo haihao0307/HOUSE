@@ -3,7 +3,7 @@ set -euo pipefail
 BRANCH=feature/tiles-mother-v0.1-workbench
 test "$(git ls-remote origin refs/heads/$BRANCH | cut -f1)" = "$GITHUB_SHA"
 mkdir -p tiles-mother/qa-v06 tiles-mother/v06
-cp /tmp/tm-v06/candidate/tiles-mother/index.html tiles-mother/index.html
+cp /tmp/tm-v06/candidate/tiles-mother/index.html tiles-mother/v06/index.html
 cp /tmp/tm-v06/candidate/tiles-mother/v06/build-manifest.json tiles-mother/v06/build-manifest.json
 cp /tmp/tm-v06/local-qa/core-report.json tiles-mother/qa-v06/core-report.json
 cp /tmp/tm-v06/local-qa/browser-report.json tiles-mother/qa-v06/browser-report.json
@@ -18,7 +18,7 @@ shopt -s nullglob
 parts=(tiles-mother/v06/bootstrap-v06.tar.gz.b64.part-*)
 if test "${#parts[@]}" -gt 0; then git rm "${parts[@]}"; fi
 git add \
-  tiles-mother/index.html tiles-mother/README.md \
+  tiles-mother/README.md \
   tiles-mother/v06 tiles-mother/qa-v06 \
   tiles-mother/knowledge/jiangwutang-001/material-candidate-v0.6.json \
   tiles-mother/knowledge/jiangwutang-001/review.md \
