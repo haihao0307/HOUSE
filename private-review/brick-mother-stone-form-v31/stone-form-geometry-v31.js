@@ -18,6 +18,7 @@ class RNG{
   next(){let x=this.s;x^=x<<13;x^=x>>>17;x^=x<<5;this.s=x>>>0;return this.s/4294967296;}
   range(a,b){return mix(a,b,this.next());}
   int(a,b){return Math.floor(this.range(a,b+1));}
+  pick(arr){return arr[Math.floor(this.next()*arr.length)%arr.length];}
 }
 
 function hashInt(x,y,z,seed){let h=(Math.imul(x,374761393)^Math.imul(y,668265263)^Math.imul(z,2147483647)^Math.imul(seed|0,1274126177))|0;h=Math.imul(h^(h>>>13),1274126177);return((h^(h>>>16))>>>0)/4294967295;}
@@ -33,109 +34,116 @@ function ridged3(x,y,z,seed,oct=4){let value=0,amp=.55,freq=1,total=0;for(let i=
 
 function sdRoundBox(p,b,r){const qx=Math.abs(p.x)-b.x+r,qy=Math.abs(p.y)-b.y+r,qz=Math.abs(p.z)-b.z+r;const ox=Math.max(qx,0),oy=Math.max(qy,0),oz=Math.max(qz,0);return Math.hypot(ox,oy,oz)+Math.min(Math.max(qx,Math.max(qy,qz)),0)-r;}
 function sdEllipsoid(p,c,r){const q=v3((p.x-c.x)/r.x,(p.y-c.y)/r.y,(p.z-c.z)/r.z);return(len(q)-1)*Math.min(r.x,r.y,r.z);}
+function sdEllipsoidY(p,c,r,a){const q=rotateY(sub(p,c),-a);return sdEllipsoid(q,v3(0,0,0),r);}
 function sdCapsule(p,a,b,r){const pa=sub(p,a),ba=sub(b,a),h=clamp(dot(pa,ba)/Math.max(dot(ba,ba),1e-8),0,1);return len(sub(pa,mul(ba,h)))-r;}
 function smax(a,b,k){const h=clamp(.5+.5*(a-b)/k,0,1);return mix(b,a,h)+k*h*(1-h);}
+function smin(a,b,k){return -smax(-a,-b,k);}
 function opSubtract(a,b){return Math.max(a,-b);}
 function rotateY(p,a){const c=Math.cos(a),s=Math.sin(a);return v3(c*p.x-s*p.z,p.y,s*p.x+c*p.z);}
 
 function createAshlarField(seed,controls,scale=1){
-  const R=new RNG(seed^0x2f6e2b1),b=v3(1.48*scale,.40*scale,.93*scale),r=mix(.035,.085,controls.edge)*scale;
-  const yaw=R.range(-.018,.018)*controls.form,leanX=R.range(-.018,.018)*controls.form,leanZ=R.range(-.018,.018)*controls.form;
-  const chips=[];
-  const corners=[[-1,-1],[-1,1],[1,-1],[1,1]];
+  const R=new RNG(seed^0x2f6e2b1),b=v3(1.48*scale,.41*scale,.93*scale),r=mix(.018,.052,controls.edge)*scale;
+  const yaw=R.range(-.016,.016)*controls.form,leanX=R.range(-.014,.014)*controls.form,leanZ=R.range(-.014,.014)*controls.form;
+  const chips=[],corners=[[-1,-1],[-1,1],[1,-1],[1,1]];
   for(let i=0;i<2+Math.round(controls.fracture*2);i++){
-    const c=corners.splice(R.int(0,corners.length-1),1)[0],upper=R.next()<.70;
-    chips.push({c:v3(c[0]*(b.x-R.range(.02,.07)*scale),upper?b.y*R.range(.70,1.02):-b.y*R.range(.72,1.02),c[1]*(b.z-R.range(.02,.07)*scale)),r:v3(R.range(.11,.22)*scale,R.range(.07,.15)*scale,R.range(.10,.21)*scale),seed:R.int(1,999999)});
+    const c=corners.splice(R.int(0,corners.length-1),1)[0],upper=R.next()<.72;
+    chips.push({c:v3(c[0]*(b.x-R.range(.018,.060)*scale),upper?b.y*R.range(.72,1.02):-b.y*R.range(.74,1.02),c[1]*(b.z-R.range(.018,.060)*scale)),r:v3(R.range(.085,.175)*scale,R.range(.055,.120)*scale,R.range(.080,.165)*scale),seed:R.int(1,999999)});
   }
   const sdf=p0=>{
     let p=rotateY(p0,yaw);p=v3(p.x+leanX*p.y,p.y,p.z+leanZ*p.y);
-    const wx=fbm3(p.y*.45,p.z*.45,p.x*.18,seed+71,3)*controls.form*.012*scale;
-    const wz=fbm3(p.x*.45,p.y*.45,p.z*.18,seed+83,3)*controls.form*.010*scale;
+    const wx=fbm3(p.y*.44,p.z*.44,p.x*.16,seed+71,3)*controls.form*.010*scale;
+    const wz=fbm3(p.x*.44,p.y*.44,p.z*.16,seed+83,3)*controls.form*.009*scale;
     const q=v3(p.x+wx,p.y,p.z+wz);
     let d=sdRoundBox(q,b,r);
     const side=Math.max(smoothstep(.42,.96,Math.abs(q.x)/b.x),smoothstep(.42,.96,Math.abs(q.z)/b.z));
-    const top=smoothstep(.55,.98,Math.abs(q.y)/b.y);
-    const broad=fbm3(q.x*.72,q.y*.58,q.z*.72,seed+137,4);
-    const chisel=ridged3(q.x*3.6,q.y*3.0,q.z*3.6,seed+199,3)-.58;
-    d+=(broad*.016+chisel*.004*side*(1-top))*scale*controls.relief;
-    for(const chip of chips){const irr=fbm3(q.x*5.5,q.y*5.5,q.z*5.5,chip.seed,3)*.018*scale*controls.fracture;const rr=v3(Math.max(.02,chip.r.x+irr),Math.max(.02,chip.r.y+irr*.65),Math.max(.02,chip.r.z+irr));d=opSubtract(d,sdEllipsoid(q,chip.c,rr));}
+    const top=smoothstep(.56,.98,Math.abs(q.y)/b.y);
+    const broad=fbm3(q.x*.66,q.y*.52,q.z*.66,seed+137,4);
+    const chisel=ridged3(q.x*3.2,q.y*2.7,q.z*3.2,seed+199,3)-.59;
+    d+=(broad*.014+chisel*.0038*side*(1-top))*scale*controls.relief;
+    for(const chip of chips){const irr=fbm3(q.x*5.2,q.y*5.2,q.z*5.2,chip.seed,3)*.014*scale*controls.fracture;const rr=v3(Math.max(.018,chip.r.x+irr),Math.max(.018,chip.r.y+irr*.65),Math.max(.018,chip.r.z+irr));d=opSubtract(d,sdEllipsoid(q,chip.c,rr));}
     return d;
   };
-  return{family:0,sdf,bounds:v3(b.x+.32*scale,b.y+.28*scale,b.z+.32*scale),meta:{b,chips}};
+  return{family:0,sdf,bounds:v3(b.x+.30*scale,b.y+.26*scale,b.z+.30*scale),meta:{b,chips}};
 }
 
 function createRubbleField(seed,controls,scale=1){
-  const R=new RNG(seed^0x9e3779b9),h=mix(.70,.88,controls.form)*scale,hx=mix(1.27,1.46,controls.form)*scale,hz=mix(.96,1.12,controls.form)*scale,center=v3(R.range(-.08,.08)*scale,0,R.range(-.07,.07)*scale);
-  const planes=[];
-  planes.push({n:v3(0,-1,0),d:0,kind:2});
-  const topN=norm(v3(R.range(-.10,.12)*controls.form,1,R.range(-.11,.10)*controls.form));planes.push({n:topN,d:dot(topN,v3(center.x,h,center.z)),kind:1});
+  const R=new RNG(seed^0x9e3779b9),h=mix(.72,.90,controls.form)*scale,hx=mix(1.26,1.47,controls.form)*scale,hz=mix(.94,1.14,controls.form)*scale,center=v3(R.range(-.10,.10)*scale,0,R.range(-.08,.08)*scale);
+  const planes=[{n:v3(0,-1,0),d:0,kind:2}];
+  const topN=norm(v3(R.range(-.08,.10)*controls.form,1,R.range(-.09,.09)*controls.form));planes.push({n:topN,d:dot(topN,v3(center.x,h,center.z)),kind:1});
   const sides=9+Math.round(controls.form*2),offset=R.range(0,Math.PI*2);
   for(let i=0;i<sides;i++){
-    const a=offset+i*Math.PI*2/sides+R.range(-.055,.055),ex=1/Math.sqrt((Math.cos(a)**2)/(hx*hx)+(Math.sin(a)**2)/(hz*hz)),rad=ex*R.range(.91,1.075),ny=R.range(-.22,.22)*controls.form;
-    const n=norm(v3(Math.cos(a),ny,Math.sin(a))),p=v3(center.x+Math.cos(a)*rad,h*R.range(.32,.64),center.z+Math.sin(a)*rad);planes.push({n,d:dot(n,p),kind:3});
+    const a=offset+i*Math.PI*2/sides+R.range(-.065,.065),ex=1/Math.sqrt((Math.cos(a)**2)/(hx*hx)+(Math.sin(a)**2)/(hz*hz)),rad=ex*R.range(.90,1.075),ny=R.range(-.16,.18)*controls.form;
+    const n=norm(v3(Math.cos(a),ny,Math.sin(a))),p=v3(center.x+Math.cos(a)*rad,h*R.range(.35,.62),center.z+Math.sin(a)*rad);planes.push({n,d:dot(n,p),kind:3});
   }
   const cuts=[];
-  for(let i=0;i<2+Math.round(controls.fracture*3);i++){
-    const a=offset+R.range(0,Math.PI*2),rad=R.range(.69,.84)/Math.sqrt((Math.cos(a)**2)/(hx*hx)+(Math.sin(a)**2)/(hz*hz)),ny=R.range(-.65,.68),n=norm(v3(Math.cos(a),ny,Math.sin(a))),p=v3(center.x+Math.cos(a)*rad,h*R.range(.38,.80),center.z+Math.sin(a)*rad);cuts.push({n,d:dot(n,p),kind:4});
+  for(let i=0;i<Math.round(controls.fracture*1.8);i++){
+    const a=offset+R.range(0,Math.PI*2),rad=R.range(.80,.91)/Math.sqrt((Math.cos(a)**2)/(hx*hx)+(Math.sin(a)**2)/(hz*hz)),ny=R.range(-.24,.34),n=norm(v3(Math.cos(a),ny,Math.sin(a))),p=v3(center.x+Math.cos(a)*rad,h*R.range(.42,.76),center.z+Math.sin(a)*rad);cuts.push({n,d:dot(n,p),kind:4});
+  }
+  const spalls=[];
+  for(let i=0;i<1+Math.round(controls.fracture*1.5);i++){
+    const a=offset+R.range(0,Math.PI*2),support=1/Math.sqrt((Math.cos(a)**2)/(hx*hx)+(Math.sin(a)**2)/(hz*hz));
+    spalls.push({a,c:v3(center.x+Math.cos(a)*support*R.range(.985,1.025),h*R.range(.20,.78),center.z+Math.sin(a)*support*R.range(.985,1.025)),r:v3(R.range(.055,.095)*scale,R.range(.10,.18)*scale,R.range(.16,.28)*scale),seed:R.int(1,999999)});
   }
   const sdf=p=>{
-    const roundK=mix(.012,.038,controls.edge)*scale;let d=-1e9;for(const pl of planes){const pd=dot(pl.n,p)-pl.d;d=d<-1e8?pd:smax(d,pd,roundK);}for(const pl of cuts){const pd=dot(pl.n,p)-pl.d;d=smax(d,pd,roundK*.46);}
-    const sideGate=smoothstep(.25,.95,Math.hypot(p.x-center.x,p.z-center.z)/Math.max(hx,hz));
-    const topGate=smoothstep(.35,.95,p.y/Math.max(h,.001));
-    const macro=fbm3(p.x*.72,p.y*.62,p.z*.72,seed+271,4);
-    const rugged=ridged3(p.x*2.15,p.y*1.85,p.z*2.15,seed+337,3)-.58;
-    d+=(macro*.030+rugged*.010*(.35+.65*sideGate))*scale*controls.relief*(.68+.32*topGate);
+    const roundK=mix(.009,.025,controls.edge)*scale;let d=-1e9;
+    for(const pl of planes){const pd=dot(pl.n,p)-pl.d;d=d<-1e8?pd:smax(d,pd,roundK);}
+    for(const pl of cuts){const pd=dot(pl.n,p)-pl.d;d=smax(d,pd,roundK*.38);}
+    const sideGate=smoothstep(.28,.96,Math.hypot(p.x-center.x,p.z-center.z)/Math.max(hx,hz)),topGate=smoothstep(.38,.94,p.y/Math.max(h,.001));
+    const macro=fbm3(p.x*.64,p.y*.57,p.z*.64,seed+271,4),rugged=ridged3(p.x*1.95,p.y*1.72,p.z*1.95,seed+337,3)-.60;
+    d+=(macro*.026+rugged*.007*(.28+.72*sideGate))*scale*controls.relief*(.72+.28*topGate);
+    for(const sp of spalls){const irr=fbm3(p.x*5.2,p.y*5.2,p.z*5.2,sp.seed,2)*.010*scale*controls.fracture;const rr=v3(Math.max(.022,sp.r.x+irr*.45),Math.max(.030,sp.r.y+irr*.75),Math.max(.040,sp.r.z+irr));d=opSubtract(d,sdEllipsoidY(p,sp.c,rr,sp.a));}
     return d;
   };
-  return{family:1,sdf,bounds:v3(hx+.34*scale,h+.28*scale,hz+.34*scale),meta:{planes,cuts,h,hx,hz}};
+  return{family:1,sdf,bounds:v3(hx+.36*scale,h+.30*scale,hz+.36*scale),meta:{planes,cuts,spalls,h,hx,hz}};
 }
 
 function createFlagstoneField(seed,controls,scale=1){
-  const R=new RNG(seed^0x85ebca6b),h=mix(.21,.30,controls.form)*scale,hx=mix(1.45,1.68,controls.form)*scale,hz=mix(.90,1.10,controls.form)*scale;
-  const sides=12+Math.round(controls.form*3),offset=R.range(0,Math.PI*2),planes=[];
+  const R=new RNG(seed^0x85ebca6b),h=mix(.23,.34,controls.form)*scale,hx=mix(1.43,1.72,controls.form)*scale,hz=mix(.88,1.12,controls.form)*scale;
+  const sides=9+Math.round(controls.form*3),offset=R.range(0,Math.PI*2),planes=[];
   for(let i=0;i<sides;i++){
-    const a=offset+i*Math.PI*2/sides+R.range(-.045,.045),ex=1/Math.sqrt((Math.cos(a)**2)/(hx*hx)+(Math.sin(a)**2)/(hz*hz)),rad=ex*R.range(.89,1.085),n=v3(Math.cos(a),0,Math.sin(a));planes.push({n,d:rad});
+    const a=offset+i*Math.PI*2/sides+R.range(-.075,.075),ex=1/Math.sqrt((Math.cos(a)**2)/(hx*hx)+(Math.sin(a)**2)/(hz*hz)),rad=ex*R.range(.84,1.12),n=v3(Math.cos(a),0,Math.sin(a));planes.push({n,d:rad});
   }
-  const notches=[];for(let i=0;i<2+Math.round(controls.fracture*2);i++){const a=offset+R.range(0,Math.PI*2),n=v3(Math.cos(a),0,Math.sin(a)),ex=1/Math.sqrt((Math.cos(a)**2)/(hx*hx)+(Math.sin(a)**2)/(hz*hz)),rad=ex*R.range(.70,.86);notches.push({n,d:rad});}
-  const slopeX=R.range(-.025,.025)*controls.form,slopeZ=R.range(-.020,.020)*controls.form;
-  const shelves=[];
-  for(let i=0;i<1+Math.round(controls.fracture);i++){
-    const a=R.range(0,Math.PI*2),t=v3(-Math.sin(a),0,Math.cos(a)),n=v3(Math.cos(a),0,Math.sin(a)),c=v3(n.x*hx*R.range(.72,.90),h*R.range(.28,.68),n.z*hz*R.range(.72,.90));
-    shelves.push({a:add(c,mul(t,-R.range(.16,.30)*scale)),b:add(c,mul(t,R.range(.16,.30)*scale)),r:R.range(.035,.060)*scale,seed:R.int(1,999999)});
+  const notches=[];for(let i=0;i<1+Math.round(controls.fracture*1.4);i++){const a=offset+R.range(0,Math.PI*2),n=v3(Math.cos(a),0,Math.sin(a)),ex=1/Math.sqrt((Math.cos(a)**2)/(hx*hx)+(Math.sin(a)**2)/(hz*hz)),rad=ex*R.range(.72,.88);notches.push({n,d:rad});}
+  const slopeX=R.range(-.040,.040)*controls.form,slopeZ=R.range(-.034,.034)*controls.form;
+  const delams=[];
+  for(let i=0;i<1+Math.round(controls.fracture*.8);i++){
+    const a=R.range(0,Math.PI*2),t=v3(-Math.sin(a),0,Math.cos(a)),n=v3(Math.cos(a),0,Math.sin(a)),c=v3(n.x*hx*R.range(.72,.90),h*R.range(.22,.58),n.z*hz*R.range(.72,.90));
+    delams.push({a:add(c,mul(t,-R.range(.16,.32)*scale)),b:add(c,mul(t,R.range(.16,.32)*scale)),r:R.range(.030,.052)*scale,seed:R.int(1,999999)});
   }
   const sdf=p=>{
     let side=-1e9;for(const pl of planes)side=Math.max(side,dot(pl.n,p)-pl.d);for(const pl of notches)side=Math.max(side,dot(pl.n,p)-pl.d);
-    const topY=h+slopeX*p.x+slopeZ*p.z+fbm3(p.x*.55,p.z*.55,1.7,seed+421,3)*.018*scale*controls.form;
-    const bottomY=fbm3(p.x*.72,p.z*.72,3.9,seed+457,2)*.004*scale;
+    const topY=h+slopeX*p.x+slopeZ*p.z+fbm3(p.x*.48,p.z*.48,1.7,seed+421,3)*.020*scale*controls.form;
+    const bottomY=fbm3(p.x*.66,p.z*.66,3.9,seed+457,2)*.004*scale;
     let d=Math.max(side,Math.max(p.y-topY,bottomY-p.y));
-    const edgeGate=smoothstep(-.24,.04,side);
-    const broad=fbm3(p.x*.84,p.y*1.1,p.z*.84,seed+509,4);
-    const grain=ridged3(p.x*3.0,p.y*2.0,p.z*3.0,seed+571,3)-.58;
-    d+=(broad*.014+grain*.004*edgeGate)*scale*controls.relief;
-    for(const sh of shelves){const irr=fbm3(p.x*6,p.y*6,p.z*6,sh.seed,2)*.008*scale;d=opSubtract(d,sdCapsule(p,sh.a,sh.b,Math.max(.012,sh.r+irr)));}
+    const edgeGate=smoothstep(-.24,.035,side),broad=fbm3(p.x*.70,p.y*.90,p.z*.70,seed+509,4),grain=ridged3(p.x*2.35,p.y*1.6,p.z*2.35,seed+571,3)-.61;
+    d+=(broad*.008+grain*.0012*edgeGate)*scale*controls.relief;
+    for(const sh of delams){const irr=fbm3(p.x*5.4,p.y*5.4,p.z*5.4,sh.seed,2)*.006*scale;d=opSubtract(d,sdCapsule(p,sh.a,sh.b,Math.max(.010,sh.r+irr)));}
     return d;
   };
-  return{family:2,sdf,bounds:v3(hx+.34*scale,h+.24*scale,hz+.34*scale),meta:{planes,notches,shelves,h,hx,hz}};
+  return{family:2,sdf,bounds:v3(hx+.36*scale,h+.28*scale,hz+.36*scale),meta:{planes,notches,delams,h,hx,hz}};
 }
 
 function createCobbleField(seed,controls,scale=1){
-  const R=new RNG(seed^0xc2b2ae35),r=v3(R.range(1.22,1.42)*scale,R.range(.55,.68)*scale,R.range(.86,1.04)*scale),center=v3(R.range(-.04,.04)*scale,r.y*.88,R.range(-.04,.04)*scale),yaw=R.range(-.20,.20),chips=[];
-  for(let i=0;i<(controls.fracture>.25?1+Math.round(controls.fracture*1.5):0);i++){
-    const n=norm(v3(R.range(-1,1),R.range(-.05,.62),R.range(-1,1))),support=Math.sqrt((n.x*r.x)**2+(n.y*r.y)**2+(n.z*r.z)**2),depth=R.range(.045,.095)*scale*(.55+controls.fracture);chips.push({n,d:dot(n,center)+support-depth,strength:R.range(.82,.98)});
-  }
+  const R=new RNG(seed^0xc2b2ae35),r=v3(R.range(1.18,1.42)*scale,R.range(.57,.76)*scale,R.range(.86,1.08)*scale),center=v3(R.range(-.05,.05)*scale,r.y*.88,R.range(-.05,.05)*scale),yaw=R.range(-.24,.24);
+  const sideSign=R.next()<.5?-1:1,lobeCenter=v3(sideSign*r.x*R.range(.24,.34),r.y*R.range(-.06,.14),r.z*R.range(-.18,.20)),lobeRadius=v3(r.x*R.range(.62,.78),r.y*R.range(.70,.90),r.z*R.range(.64,.82));
+  const shoulderCenter=v3(-sideSign*r.x*R.range(.20,.30),r.y*R.range(.24,.42),-r.z*R.range(.14,.28)),shoulderRadius=v3(r.x*R.range(.48,.66),r.y*R.range(.46,.66),r.z*R.range(.50,.68));
+  const flatA=R.range(0,Math.PI*2),flatN=norm(v3(Math.cos(flatA),R.range(-.06,.12),Math.sin(flatA))),flatSupport=Math.sqrt((flatN.x*r.x)**2+(flatN.y*r.y)**2+(flatN.z*r.z)**2)*R.range(.91,.97);
+  const chips=[];for(let i=0;i<(controls.fracture>.25?1+Math.round(controls.fracture):0);i++){const n=norm(v3(R.range(-1,1),R.range(.12,.74),R.range(-1,1))),support=Math.sqrt((n.x*r.x)**2+(n.y*r.y)**2+(n.z*r.z)**2),c=add(center,mul(n,support*R.range(.90,.98)));chips.push({c,r:v3(R.range(.07,.14)*scale,R.range(.045,.10)*scale,R.range(.07,.14)*scale),seed:R.int(1,999999)});}
   const sdf=p0=>{
-    let p=rotateY(sub(p0,center),yaw);p=v3(p.x+p.y*(.10+.08*controls.form)+p.z*p.z*.020/scale,p.y,p.z+p.x*p.y*.026/scale+p.y*p.y*.018/scale);
-    const warp=v3(fbm3(p.y*.72,p.z*.72,p.x*.25,seed+613,3),fbm3(p.x*.72,p.z*.72,p.y*.25,seed+641,3),fbm3(p.x*.72,p.y*.72,p.z*.25,seed+673,3));
-    const q=v3(p.x+warp.x*.055*scale*controls.form,p.y+warp.y*.030*scale*controls.form,p.z+warp.z*.048*scale*controls.form);
+    let p=rotateY(sub(p0,center),yaw);p=v3(p.x+p.y*(.10+.10*controls.form)+p.z*p.z*.018/scale,p.y,p.z+p.x*p.y*.030/scale+p.y*p.y*.020/scale);
+    const warp=v3(fbm3(p.y*.62,p.z*.62,p.x*.22,seed+613,3),fbm3(p.x*.62,p.z*.62,p.y*.22,seed+641,3),fbm3(p.x*.62,p.y*.62,p.z*.22,seed+673,3));
+    const q=v3(p.x+warp.x*.070*scale*controls.form,p.y+warp.y*.040*scale*controls.form,p.z+warp.z*.060*scale*controls.form);
     let d=sdEllipsoid(q,v3(0,0,0),r);
-    const radial=Math.max(Math.abs(q.x)/r.x,Math.abs(q.y)/r.y,Math.abs(q.z)/r.z);
-    const broad=fbm3(q.x*.72,q.y*.72,q.z*.72,seed+719,4),fine=fbm3(q.x*2.9,q.y*2.9,q.z*2.9,seed+751,3);
-    d+=(broad*.050+fine*.009)*scale*controls.relief*smoothstep(.20,1.10,radial);
-    const bottomPlane=-p0.y;d=smax(d,bottomPlane,mix(.035,.075,controls.edge)*scale);
-    for(const ch of chips){const pd=dot(ch.n,p0)-ch.d;if(pd>0)d=Math.max(d,pd*ch.strength);}
+    d=smin(d,sdEllipsoid(q,lobeCenter,lobeRadius),mix(.10,.19,controls.edge)*scale);
+    d=smin(d,sdEllipsoid(q,shoulderCenter,shoulderRadius),mix(.07,.14,controls.edge)*scale);
+    const radial=Math.max(Math.abs(q.x)/r.x,Math.abs(q.y)/r.y,Math.abs(q.z)/r.z),broad=fbm3(q.x*.60,q.y*.60,q.z*.60,seed+719,4),fine=fbm3(q.x*2.45,q.y*2.45,q.z*2.45,seed+751,3);
+    d+=(broad*.052+fine*.007)*scale*controls.relief*smoothstep(.15,1.08,radial);
+    d=smax(d,-p0.y,mix(.030,.070,controls.edge)*scale);
+    d=smax(d,dot(flatN,sub(p0,center))-flatSupport,mix(.055,.11,controls.edge)*scale);
+    for(const ch of chips){const irr=fbm3(p0.x*5.5,p0.y*5.5,p0.z*5.5,ch.seed,2)*.008*scale;d=opSubtract(d,sdEllipsoid(p0,ch.c,v3(ch.r.x+irr,ch.r.y+irr*.8,ch.r.z+irr)));}
     return d;
   };
-  return{family:3,sdf,bounds:v3(r.x+.30*scale,r.y*1.90+.25*scale,r.z+.30*scale),meta:{r,center,chips}};
+  return{family:3,sdf,bounds:v3(r.x+.38*scale,r.y*2.0+.30*scale,r.z+.38*scale),meta:{r,center,lobeCenter,lobeRadius,shoulderCenter,shoulderRadius,chips}};
 }
 
 function createField(family,seed,controls,scale=1){if(family===0)return createAshlarField(seed,controls,scale);if(family===1)return createRubbleField(seed,controls,scale);if(family===2)return createFlagstoneField(seed,controls,scale);return createCobbleField(seed,controls,scale);}
@@ -153,7 +161,7 @@ function polygonizeTetra(points,values,sdf,epsilon,positions,normals,maxVertices
 }
 function buildMesh(family,seed,controlsInput={},quality=1,scale=1){
   const controls={form:controlsInput.form??.55,fracture:controlsInput.fracture??.42,edge:controlsInput.edge??.35,relief:controlsInput.relief??.45,weather:controlsInput.weather??.4,rough:controlsInput.rough??.8};
-  const field=createField(family,seed,controls,scale),b=field.bounds,size=v3(b.x*2,b.y*2,b.z*2),longest=Math.max(size.x,size.y,size.z),target=Math.max(24,Math.round(58*quality)),nx=Math.max(18,Math.round(target*size.x/longest)),ny=Math.max(14,Math.round(target*size.y/longest)),nz=Math.max(18,Math.round(target*size.z/longest)),min=v3(-b.x,-.18*scale,-b.z),step=v3(size.x/(nx-1),size.y/(ny-1),size.z/(nz-1)),grid=new Float32Array(nx*ny*nz),gi=(x,y,z)=>x+nx*(y+ny*z);
+  const field=createField(family,seed,controls,scale),b=field.bounds,size=v3(b.x*2,b.y*2,b.z*2),longest=Math.max(size.x,size.y,size.z),target=Math.max(24,Math.round(64*quality)),nx=Math.max(18,Math.round(target*size.x/longest)),ny=Math.max(14,Math.round(target*size.y/longest)),nz=Math.max(18,Math.round(target*size.z/longest)),min=v3(-b.x,-.18*scale,-b.z),step=v3(size.x/(nx-1),size.y/(ny-1),size.z/(nz-1)),grid=new Float32Array(nx*ny*nz),gi=(x,y,z)=>x+nx*(y+ny*z);
   for(let z=0;z<nz;z++)for(let y=0;y<ny;y++)for(let x=0;x<nx;x++)grid[gi(x,y,z)]=field.sdf(v3(min.x+x*step.x,min.y+y*step.y,min.z+z*step.z));
   const positions=[],normals=[],cp=new Array(8),cv=new Array(8),epsilon=Math.min(step.x,step.y,step.z)*.34,maxVertices=450000;
   for(let z=0;z<nz-1;z++)for(let y=0;y<ny-1;y++)for(let x=0;x<nx-1;x++){

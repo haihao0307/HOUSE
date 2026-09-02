@@ -24,6 +24,7 @@ const $=s=>document.querySelector(s);
 const $$=s=>[...document.querySelectorAll(s)];
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const mix=(a,b,t)=>a+(b-a)*t;
+const v3=(x=0,y=0,z=0)=>[x,y,z];
 const add=(a,b)=>[a[0]+b[0],a[1]+b[1],a[2]+b[2]];
 const sub=(a,b)=>[a[0]-b[0],a[1]-b[1],a[2]-b[2]];
 const muls=(a,s)=>[a[0]*s,a[1]*s,a[2]*s];
@@ -88,37 +89,66 @@ float G_Smith(float NoV,float NoL,float a){float a2=a*a;float gv=NoL*sqrt(NoV*No
 vec3 F_Schlick(vec3 f0,float VoH){return f0+(1.0-f0)*pow(1.0-VoH,5.0);}
 vec3 brdf(vec3 base,float rough,float metal,vec3 N,vec3 V,vec3 L,vec3 lc,float intensity){float NoL=max(dot(N,L),0.0),NoV=max(dot(N,V),.001);if(NoL<=0.0)return vec3(0);vec3 H=normalize(V+L);float NoH=max(dot(N,H),0.0),VoH=max(dot(V,H),0.0),a=max(.045,rough*rough);vec3 f0=mix(vec3(.04),base,metal),F=F_Schlick(f0,VoH);float D=D_GGX(NoH,a),G=G_Smith(NoV,NoL,a);vec3 spec=D*G*F,kd=(1.0-F)*(1.0-metal);return(kd*base/PI+spec)*lc*intensity*NoL;}
 void stoneMaterial(vec3 p,vec3 N,out vec3 c,out float rough,out float height,out float ao){
- vec3 seed=vec3(uSeed*.0113,uSeed*.0197,uSeed*.0311),warp=vec3(fbm(p*.42+seed+vec3(7,1,3)),fbm(p*.42+seed+vec3(2,9,5)),fbm(p*.42+seed+vec3(6,4,11)))-.5;
- vec3 q=p+warp*.16;float macro=fbm(q*.58+seed),macro2=fbm(q*.92+seed*1.7+vec3(3.4,-6.2,1.7)),meso=fbm(q*2.55+seed*2.1),fine=fbm(q*10.8+seed*4.0),ridge=ridged(q*3.2+seed*2.7),cells=worley(q*6.2+seed).x;
- float side=1.0-smoothstep(.68,.94,abs(N.y)),top=smoothstep(.35,.90,N.y),underside=1.0-smoothstep(-.62,.16,N.y),edge=clamp(length(fwidth(N))*3.8,0.0,1.0);
- height=(meso-.5)*.027+(fine-.5)*.006;rough=clamp(uRoughness+(fine-.5)*.065,0.18,.98);ao=1.0;
+ vec3 seed=vec3(uSeed*.0113,uSeed*.0197,uSeed*.0311);
+ vec3 warp=vec3(fbm(p*.34+seed+vec3(7,1,3)),fbm(p*.34+seed+vec3(2,9,5)),fbm(p*.34+seed+vec3(6,4,11)))-.5;
+ vec3 q=p+warp*.20;
+ float macroA=fbm(q*.48+seed),macroB=fbm(q*.78+seed*1.37+vec3(3.4,-6.2,1.7)),macroC=fbm(q*1.22+seed*1.91+vec3(-7.2,2.6,4.1));
+ float mesoA=fbm(q*2.35+seed*2.31),mesoB=ridged(q*3.15+seed*2.77),fine=fbm(q*11.5+seed*4.07),grit=valueNoise(q*31.0+seed*6.13);
+ vec2 cells=worley(q*7.8+seed*1.71),cellsMed=worley(q*3.65+seed*2.23);
+ float side=1.0-smoothstep(.66,.93,abs(N.y)),top=smoothstep(.30,.91,N.y),underside=1.0-smoothstep(-.65,.18,N.y);
+ float broadDriver=clamp(macroA*.48+macroB*.27+macroC*.15+mesoB*.10,0.0,1.0);
+ float broadScale=mix(.70,1.46,smoothstep(.13,.88,broadDriver));
+ float mineral=(1.0-smoothstep(.055,.145,cells.x))*smoothstep(.54,.88,macroC*.55+mesoA*.45);
+ float darkGrain=(1.0-smoothstep(.038,.105,cells.x))*smoothstep(.73,.94,mesoB);
+ float poreTiny=smoothstep(.948,.993,valueNoise(q*27.0+seed*5.3))*smoothstep(.56,.88,macroB);
+ float poreMedium=(1.0-smoothstep(.085,.185,cellsMed.x))*smoothstep(.68,.91,macroC*.45+mesoB*.55);
+ float cavity=clamp(poreTiny*.42+poreMedium*.70,0.0,1.0);
+ height=(macroB-.5)*.036+(mesoA-.5)*.022+(mesoB-.5)*.017+(fine-.5)*.005-cavity*.020;
+ rough=clamp(uRoughness+(fine-.5)*.07+(mesoB-.5)*.045+cavity*.16,0.18,.98);ao=1.0-cavity*.15;
  if(uFamily==0){
-   vec3 cool=vec3(.125,.145,.143),mid=vec3(.285,.278,.245),warm=vec3(.405,.330,.230);c=mix(cool,mid,smoothstep(.12,.86,macro));c=mix(c,warm,smoothstep(.70,.94,macro2)*.30);
-   vec2 uv=surfaceUV(p,N);float toolLine=1.0-smoothstep(.018,.065,abs(fract((uv.x*6.8+uv.y*.72+valueNoise(vec3(uv*1.5,uSeed*.01))*.42))-.5));float toolGate=side*smoothstep(.52,.83,ridge)*smoothstep(.25,.76,macro2);float tool=toolLine*toolGate*.40;c*=1.0-tool*.13;height-=tool*.010;
-   float mineral=smoothstep(.84,.965,meso)*smoothstep(.38,.83,macro);c=mix(c,vec3(.51,.47,.38),mineral*.26);float wash=top*smoothstep(.55,.88,macro2)*uWeather;c=mix(c,vec3(.43,.43,.39),wash*.16);rough+=tool*.06;
+   vec3 deep=vec3(.105,.108,.098),cool=vec3(.205,.218,.210),mid=vec3(.355,.340,.300),warm=vec3(.505,.410,.285),pale=vec3(.610,.565,.470);
+   c=mix(deep,mid,smoothstep(.08,.88,macroA));c=mix(c,cool,(1.0-smoothstep(.34,.60,macroB))*.42);c=mix(c,warm,smoothstep(.68,.92,macroB)*.36);c=mix(c,pale,mineral*.32);
+   vec2 uv=surfaceUV(p,N);float stroke=1.0-smoothstep(.012,.062,abs(fract(uv.x*7.2+uv.y*.62+valueNoise(vec3(uv*1.65,uSeed*.013))*.45)-.5));float tool=stroke*side*smoothstep(.50,.82,mesoB)*smoothstep(.30,.80,macroC)*.46;
+   c*=1.0-tool*.15;height-=tool*.010;rough+=tool*.08;
+   float calcite=1.0-smoothstep(.012,.055,abs(fbm(q*2.05+seed*3.2)-.505));calcite*=smoothstep(.60,.86,macroC)*side*.52;c=mix(c,pale,calcite*.24);height+=calcite*.008;
+   float dirt=underside*smoothstep(.52,.84,macroB)*uWeather;c=mix(c,deep,dirt*.34);
  }else if(uFamily==1){
-   vec3 deep=vec3(.105,.120,.118),mid=vec3(.255,.250,.221),warm=vec3(.405,.292,.170),cold=vec3(.150,.190,.195);c=mix(deep,mid,smoothstep(.08,.90,macro));c=mix(c,warm,smoothstep(.72,.94,macro2)*.34*uWeather);c=mix(c,cold,smoothstep(.78,.96,fbm(q*1.25-seed))*.20);
-   float faceTone=clamp(dot(N,normalize(vec3(.61,.21,-.76)))*.5+.5,0.0,1.0);c*=mix(.88,1.10,faceTone*.55+macro*.45);
-   float seamLine=abs(fbm(q*.86+seed*1.4)-.515),seamGate=smoothstep(.58,.84,macro2)*side,seam=(1.0-smoothstep(.010,.042,seamLine))*seamGate;c=mix(c,vec3(.075,.082,.080),seam*.42);height-=seam*.014;ao-=seam*.08;
-   float exposed=top*smoothstep(.60,.90,ridge);c=mix(c,vec3(.42,.39,.31),exposed*.13);
+   vec3 deep=vec3(.070,.077,.073),cool=vec3(.150,.175,.174),mid=vec3(.315,.300,.260),warm=vec3(.470,.330,.185),pale=vec3(.575,.535,.435),olive=vec3(.260,.285,.225);
+   c=mix(deep,mid,smoothstep(.07,.91,macroA));c=mix(c,cool,(1.0-smoothstep(.30,.58,macroB))*.34);c=mix(c,warm,smoothstep(.70,.94,macroB)*.38*uWeather);c=mix(c,olive,smoothstep(.72,.94,macroC)*.24);c=mix(c,pale,mineral*.27);
+   float faceTone=clamp(dot(N,normalize(vec3(.62,.17,-.76)))*.5+.5,0.0,1.0);c*=mix(.80,1.18,faceTone*.58+macroA*.42);
+   float vein=1.0-smoothstep(.010,.052,abs(fbm(q*1.72+seed*3.65)-.512));vein*=smoothstep(.54,.84,macroC)*.72;c=mix(c,pale,vein*.27);height+=vein*.010;
+   float rust=smoothstep(.70,.92,macroC*.46+mesoB*.54)*smoothstep(.42,.88,side+.15)*uWeather;c=mix(c,warm,rust*.26);
+   float bruise=side*smoothstep(.75,.94,mesoA)*smoothstep(.45,.82,macroB);c=mix(c,deep,bruise*.25);rough+=bruise*.08;
  }else if(uFamily==2){
-   vec3 deep=vec3(.090,.112,.122),mid=vec3(.215,.248,.252),warm=vec3(.345,.283,.205),pale=vec3(.410,.425,.405);c=mix(deep,mid,smoothstep(.08,.91,macro));c=mix(c,warm,smoothstep(.76,.95,macro2)*.20);vec2 dir=normalize(vec2(.91,.42));float along=dot(p.xz,dir);float bedding=fbm(vec3(along*1.55,p.y*.26,dot(p.xz,vec2(-dir.y,dir.x))*.34)+seed*.7);c*=mix(.84,1.13,bedding);
-   float localGate=smoothstep(.57,.80,fbm(q*.72+vec3(9.1,-2.7,4.3)+seed))*side;float warpY=(fbm(q*.92+seed*1.9)-.5)*.035;float s1=1.0-smoothstep(.008,.026,abs(p.y-.105-warpY)),s2=1.0-smoothstep(.007,.023,abs(p.y-.198+warpY*.65));float seam=max(s1*localGate,s2*localGate*smoothstep(.69,.86,macro2));c=mix(c,vec3(.055,.065,.070),seam*.62);height-=seam*.016;ao-=seam*.12;
-   float flake=side*smoothstep(.86,.965,ridge)*smoothstep(.45,.84,macro2);c=mix(c,pale,flake*.18);rough+=seam*.07;
+   vec3 deep=vec3(.060,.075,.083),blue=vec3(.135,.175,.188),mid=vec3(.265,.290,.282),warm=vec3(.420,.325,.220),pale=vec3(.520,.510,.450),rust=vec3(.385,.195,.090);
+   c=mix(deep,mid,smoothstep(.08,.90,macroA));c=mix(c,blue,(1.0-smoothstep(.33,.61,macroB))*.50);c=mix(c,warm,smoothstep(.72,.94,macroC)*.22);
+   vec2 dir=normalize(vec2(.91,.42)),crossDir=vec2(-dir.y,dir.x);float along=dot(p.xz,dir),across=dot(p.xz,crossDir);
+   float bedding=fbm(vec3(along*1.45,p.y*.22,across*.30)+seed*.73);c*=mix(.76,1.27,smoothstep(.15,.88,bedding));
+   float region=smoothstep(.58,.83,fbm(q*.68+seed*1.8+vec3(9.1,-2.7,4.3)))*side;
+   float warpY=(fbm(q*.86+seed*2.2)-.5)*.040;float s1=1.0-smoothstep(.007,.027,abs(p.y-.103-warpY)),s2=1.0-smoothstep(.006,.024,abs(p.y-.205+warpY*.62));float seam=max(s1*region,s2*region*smoothstep(.70,.88,macroB));
+   c=mix(c,deep,seam*.72);height-=seam*.022;ao-=seam*.14;rough+=seam*.09;
+   float exposed=side*smoothstep(.84,.965,mesoB)*smoothstep(.46,.84,macroC);c=mix(c,pale,exposed*.20);
+   float oxide=side*smoothstep(.72,.91,macroC*.50+mesoA*.50)*smoothstep(.50,.84,region)*uWeather;c=mix(c,rust,oxide*.25);
  }else{
-   vec3 deep=vec3(.080,.100,.105),mid=vec3(.235,.245,.230),warm=vec3(.405,.285,.165),cool=vec3(.125,.210,.225),cream=vec3(.475,.420,.315);c=mix(deep,mid,smoothstep(.05,.93,macro));c=mix(c,warm,smoothstep(.76,.95,macro2)*.31);c=mix(c,cool,smoothstep(.80,.97,meso)*.22);float fleck=smoothstep(.88,.965,1.0-cells)*smoothstep(.52,.86,macro);c=mix(c,cream,fleck*.20);
-   float wet=(1.0-smoothstep(.08,.48,p.y))*smoothstep(.48,.86,macro2)*uWeather;c*=1.0-wet*.22;rough-=wet*.22;float polish=smoothstep(.55,.92,top+edge*.34);rough-=polish*.07;height=(meso-.5)*.018+(fine-.5)*.004;
+   vec3 deep=vec3(.060,.078,.080),cool=vec3(.130,.190,.198),mid=vec3(.255,.265,.245),warm=vec3(.455,.315,.175),cream=vec3(.560,.485,.350),olive=vec3(.235,.275,.215);
+   c=mix(deep,mid,smoothstep(.05,.93,macroA));c=mix(c,warm,smoothstep(.72,.94,macroB)*.34);c=mix(c,cool,(1.0-smoothstep(.38,.68,macroC))*.32);c=mix(c,olive,smoothstep(.78,.95,mesoA)*.24);c=mix(c,cream,mineral*.24);
+   float fleck=smoothstep(.86,.965,1.0-cells.x)*smoothstep(.52,.86,macroC);c=mix(c,cream,fleck*.18);
+   float wet=(1.0-smoothstep(.08,.52,p.y))*smoothstep(.48,.86,macroB)*uWeather;c=mix(c,deep,wet*.42);rough-=wet*.24;
+   float polish=smoothstep(.46,.90,top+side*.18)*(1.0-cavity);rough-=polish*.10;height=(mesoA-.5)*.017+(fine-.5)*.004-cavity*.007;
  }
- float poreGate=smoothstep(.52,.84,macro2),pore=smoothstep(.955,.991,valueNoise(q*23.0+seed*3.7))*poreGate*(uFamily==3?.35:1.0);c*=1.0-pore*.15*uWeather;height-=pore*.007;ao-=pore*.05;
- float dust=top*smoothstep(.72,.94,ridge)*uWeather;c=mix(c,c*vec3(1.08,1.05,.98),dust*.12);c=mix(c,c*vec3(.78,.81,.82),underside*.10*uWeather);ao*=1.0-underside*.10;c*=mix(.93,1.07,fine*.42+macro*.58);c*=1.0+uTint*.08;
- rough=clamp(rough,0.18,.98);ao=clamp(ao,0.58,1.0);
+ c*=broadScale;
+ c=mix(c,vec3(.018,.020,.019),cavity*.58);
+ c=mix(c,c*vec3(1.08,1.055,.99),top*smoothstep(.73,.94,mesoB)*uWeather*.13);
+ c=mix(c,c*vec3(.70,.75,.77),underside*.12*uWeather);
+ c*=mix(.94,1.06,fine);
+ rough=clamp(rough,0.18,.98);ao=clamp(ao,0.52,1.0);c=clamp(c*(.98+uTint*.10),vec3(.008),vec3(.92));
 }
 vec3 aces(vec3 x){float a=2.51,b=.03,c=2.43,d=.59,e=.14;return clamp((x*(a*x+b))/(x*(c*x+d)+e),0.0,1.0);}
 void main(){
  vec3 N=normalize(vNormal),V=normalize(uCamera-vWorld),base;float rough,metal,height=0.0,ao=1.0,emissive=0.0;
- if(uKind==0){vec3 p=vLocal/max(uObjectScale,.001);stoneMaterial(p,N,base,rough,height,ao);N=perturb(N,height,mix(.08,.52,uRelief));metal=0.0;}
+ if(uKind==0){vec3 p=vLocal/max(uObjectScale,.001);stoneMaterial(p,N,base,rough,height,ao);N=perturb(N,height,mix(.10,.68,uRelief));metal=0.0;}
  else if(uKind==1){float n=fbm(vLocal*6.2+vec3(uSeed*.01));base=mix(vec3(.018,.022,.025),vec3(.065,.072,.076),n);height=(n-.5)*.014;N=perturb(N,height,.26);rough=.24;metal=.76;ao=.92;}
- else if(uKind==2){float floorMask=smoothstep(.72,.98,N.y),g=smoothstep(.03,.98,gl_FragCoord.y/uResolution.y),n=fbm(vWorld*.12);vec3 bg=mix(vec3(.008,.012,.018),vec3(.052,.050,.045),g)+n*.0035;float pool=exp(-.045*dot(vWorld.xz-vec2(.25,0),vWorld.xz-vec2(.25,0)));bg+=pool*vec3(.010,.008,.006);float sh=shadowPCF(N,normalize(uKeyDir));bg*=mix(1.0,.50+.50*sh,floorMask);float horizon=smoothstep(-3.1,-1.2,vWorld.z)*(1.0-floorMask);bg+=horizon*vec3(.010,.012,.014);bg=pow(aces(bg*uExposure*1.75),vec3(1.0/2.2));outColor=vec4(bg,1);return;}
+ else if(uKind==2){float floorMask=smoothstep(.72,.98,N.y),g=smoothstep(.03,.98,gl_FragCoord.y/uResolution.y),n=fbm(vWorld*.12);vec3 bg=mix(vec3(.006,.009,.014),vec3(.036,.038,.039),g)+n*.0035;float pool=exp(-.045*dot(vWorld.xz-vec2(.25,0),vWorld.xz-vec2(.25,0)));bg+=pool*vec3(.010,.008,.006);float sh=shadowPCF(N,normalize(uKeyDir));bg*=mix(1.0,.50+.50*sh,floorMask);float horizon=smoothstep(-3.1,-1.2,vWorld.z)*(1.0-floorMask);bg+=horizon*vec3(.010,.012,.014);bg=pow(aces(bg*uExposure*1.75),vec3(1.0/2.2));outColor=vec4(bg,1);return;}
  else{base=vec3(.64,.39,.13);rough=.23;metal=.45;emissive=.24;}
  vec3 Lk=normalize(uKeyDir),Lf=normalize(uFillDir),Lr=normalize(uRimDir);float sh=shadowPCF(N,Lk);vec3 col=brdf(base,rough,metal,N,V,Lk,uKeyColor,uKeyIntensity)*sh;col+=brdf(base,rough,metal,N,V,Lf,uFillColor,uFillIntensity);col+=brdf(base,rough,metal,N,V,Lr,uRimColor,uRimIntensity);
  float hemi=clamp(N.y*.5+.5,0.0,1.0);vec3 env=mix(uGroundColor,uSkyColor,hemi),R=reflect(-V,N),envR=mix(uGroundColor,uSkyColor,clamp(R.y*.5+.5,0.0,1.0)),f0=mix(vec3(.04),base,metal),F=F_Schlick(f0,max(dot(N,V),0.0));col+=base*(env+vec3(.060,.052,.043))*uAmbientIntensity*(1.0-metal)*(.36+.34*(1.0-rough))*ao;col+=envR*F*uAmbientIntensity*(.16+.52*(1.0-rough))*ao;float rim=pow(1.0-max(dot(N,V),0.0),3.0);col+=uRimColor*rim*uRimIntensity*.052*(uKind==0?1.0:.45);col+=base*emissive+vec3(.12,.075,.030)*uSelected*.025;col=pow(aces(col*uExposure),vec3(1.0/2.2));outColor=vec4(col,1);
@@ -152,34 +182,33 @@ const families=[
 const state={family:0,seed:8231,form:.48,fracture:.38,edge:.30,relief:.38,weather:.36,rough:.82,lightAngle:-36,lightMode:'studio',auto:false,piece:'all'};
 let stones=[],triangleTotal=0,rebuildToken=0,rebuildTimer=0,shadowDirty=true;
 function clearStones(){for(const s of stones)destroyGeometry(s.geo);stones=[];}
-function frame(){return new Promise(resolve=>requestAnimationFrame(()=>resolve()));}
 function setProgress(p,text){if(loadingBar)loadingBar.style.width=(p*100).toFixed(0)+'%';if(loadingText)loadingText.textContent=text;}
-async function rebuildStones(initial=false){
- const token=++rebuildToken;clearTimeout(rebuildTimer);if(initial&&loading)loading.classList.remove('hidden');setProgress(.06,'BUILDING FORM ENVELOPE');await frame();
+function rebuildStones(initial=false){
+ const token=++rebuildToken;clearTimeout(rebuildTimer);if(initial&&loading)loading.classList.remove('hidden');setProgress(.06,'BUILDING FORM ENVELOPE');
  try{
-  clearStones();triangleTotal=0;const f=state.family,baseSeed=state.seed,mobile=innerWidth<760,heroQ=mobile?.68:.88,miniQ=mobile?.38:.50;
+  clearStones();triangleTotal=0;const f=state.family,baseSeed=state.seed,mobile=innerWidth<760,qa=new URLSearchParams(location.search).has('qa'),heroQ=mobile?.56:(qa?.62:.72),miniQ=mobile?.30:(qa?.32:.38);
   const heroData=Geometry.buildMesh(f,baseSeed,state,heroQ,1);if(token!==rebuildToken)return;const hero=gpuGeometry(heroData);triangleTotal+=hero.triangles;
-  const heroRot=f===0?[.012,-.34,.004]:f===1?[.018,-.42,-.010]:f===2?[.020,-.28,.010]:[.012,-.38,-.012];stones.push(object(hero,[-.78,floorY+.358,0],heroRot,[1,1,1],0,{family:f,seed:baseSeed,tint:.02,selected:1,objectScale:1}));setProgress(.42,'PRIMARY FORM COMPLETE');await frame();
+  const heroRot=f===0?[.012,-.34,.004]:f===1?[.018,-.42,-.010]:f===2?[.020,-.28,.010]:[.012,-.38,-.012];stones.push(object(hero,[-.78,floorY+.358,0],heroRot,[1,1,1],0,{family:f,seed:baseSeed,tint:.02,selected:1,objectScale:1}));setProgress(.46,'PRIMARY FORM COMPLETE');
   const rots=[[.045,.38,-.020],[-.022,-.54,.030],[.032,.66,-.030]],scales=[.43,.39,.45];
-  for(let i=0;i<3;i++){const seed=baseSeed+(i+1)*1067,variant={...state,form:clamp(state.form+(i-1)*.07,0,1),fracture:clamp(state.fracture+(i===1?.06:-.025),0,1),edge:clamp(state.edge+(i-1)*.045,0,1)},data=Geometry.buildMesh(f,seed,variant,miniQ,scales[i]);if(token!==rebuildToken)return;const geo=gpuGeometry(data);triangleTotal+=geo.triangles;stones.push(object(geo,[miniPos[i][0],floorY+miniHeights[i]+.012,miniPos[i][1]],rots[i],[1,1,1],0,{family:f,seed,tint:(i-1)*.18,objectScale:scales[i]}));setProgress(.56+i*.13,'BUILDING CHILD '+(i+1));await frame();}
-  $('#triangleCount').textContent=Math.round(triangleTotal).toLocaleString('en-US')+' TRI';$('#familyName').textContent=families[f].name;$('#familyRule').textContent=families[f].rule;shadowDirty=true;document.documentElement.dataset.workbenchReady='true';document.documentElement.dataset.stoneFormVersion='3.1.0-alpha.1';showHint('已生成 '+families[f].name+' · '+state.seed,800);setProgress(1,'STONE FORM READY');await frame();setTimeout(()=>{if(token===rebuildToken){loading.classList.add('hidden');document.documentElement.dataset.visualReady='true';}},220);
+  for(let i=0;i<3;i++){const seed=baseSeed+(i+1)*1067,variant={...state,form:clamp(state.form+(i-1)*.07,0,1),fracture:clamp(state.fracture+(i===1?.06:-.025),0,1),edge:clamp(state.edge+(i-1)*.045,0,1)},data=Geometry.buildMesh(f,seed,variant,miniQ,scales[i]);if(token!==rebuildToken)return;const geo=gpuGeometry(data);triangleTotal+=geo.triangles;stones.push(object(geo,[miniPos[i][0],floorY+miniHeights[i]+.012,miniPos[i][1]],rots[i],[1,1,1],0,{family:f,seed,tint:(i-1)*.18,objectScale:scales[i]}));setProgress(.60+i*.12,'BUILDING CHILD '+(i+1));}
+  $('#triangleCount').textContent=Math.round(triangleTotal).toLocaleString('en-US')+' TRI';$('#familyName').textContent=families[f].name;$('#familyRule').textContent=families[f].rule;shadowDirty=true;document.documentElement.dataset.workbenchReady='true';document.documentElement.dataset.stoneFormVersion='3.2.0-alpha.1';document.documentElement.dataset.visualReady='true';showHint('已生成 '+families[f].name+' · '+state.seed,800);setProgress(1,'STONE FORM READY');setTimeout(()=>{if(token===rebuildToken)loading.classList.add('hidden');},140);
  }catch(error){fail('形面生成失败',error);}
 }
 function scheduleRebuild(){clearTimeout(rebuildTimer);rebuildTimer=setTimeout(()=>rebuildStones(false),180);}
 
-const shadowSize=innerWidth<760?1024:1536,shadowFBO=gl.createFramebuffer(),shadowTex=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,shadowTex);gl.texImage2D(gl.TEXTURE_2D,0,gl.DEPTH_COMPONENT24,shadowSize,shadowSize,0,gl.DEPTH_COMPONENT,gl.UNSIGNED_INT,null);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);gl.bindFramebuffer(gl.FRAMEBUFFER,shadowFBO);gl.framebufferTexture2D(gl.FRAMEBUFFER,gl.DEPTH_ATTACHMENT,gl.TEXTURE_2D,shadowTex,0);gl.drawBuffers([gl.NONE]);gl.readBuffer(gl.NONE);if(gl.checkFramebufferStatus(gl.FRAMEBUFFER)!==gl.FRAMEBUFFER_COMPLETE)console.warn('shadow framebuffer incomplete');gl.bindFramebuffer(gl.FRAMEBUFFER,null);
+const shadowSize=1024,shadowFBO=gl.createFramebuffer(),shadowTex=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,shadowTex);gl.texImage2D(gl.TEXTURE_2D,0,gl.DEPTH_COMPONENT24,shadowSize,shadowSize,0,gl.DEPTH_COMPONENT,gl.UNSIGNED_INT,null);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);gl.bindFramebuffer(gl.FRAMEBUFFER,shadowFBO);gl.framebufferTexture2D(gl.FRAMEBUFFER,gl.DEPTH_ATTACHMENT,gl.TEXTURE_2D,shadowTex,0);gl.drawBuffers([gl.NONE]);gl.readBuffer(gl.NONE);if(gl.checkFramebufferStatus(gl.FRAMEBUFFER)!==gl.FRAMEBUFFER_COMPLETE)console.warn('shadow framebuffer incomplete');gl.bindFramebuffer(gl.FRAMEBUFFER,null);
 
 const camera={yaw:.72,pitch:.34,radius:9.35,target:[.42,-.18,0],goalYaw:.72,goalPitch:.34,goalRadius:9.35,goalTarget:[.42,-.18,0]};
 function cameraEye(){const cp=Math.cos(camera.pitch);return[camera.target[0]+Math.sin(camera.yaw)*cp*camera.radius,camera.target[1]+Math.sin(camera.pitch)*camera.radius,camera.target[2]+Math.cos(camera.yaw)*cp*camera.radius];}
 function setView(piece){state.piece=piece;$$('.view-btn[data-piece]').forEach(b=>b.classList.toggle('active',b.dataset.piece===piece));if(piece==='hero'){camera.goalTarget=[-.78,-.34,0];camera.goalRadius=4.75;camera.goalYaw=.61;camera.goalPitch=.27;}else if(piece==='mini'){camera.goalTarget=[2.34,-.46,0];camera.goalRadius=5.45;camera.goalYaw=.84;camera.goalPitch=.31;}else{camera.goalTarget=[.42,-.18,0];camera.goalRadius=9.35;camera.goalYaw=.72;camera.goalPitch=.34;}}
 function resetCamera(){setView('all');showHint('视角已复位',650);}
-const lights={studio:{key:[1.0,.75,.52,3.35],fill:[.30,.45,.72,.92],rim:[.47,.66,1.0,1.46],sky:[.13,.17,.21],ground:[.025,.021,.019],ambient:1.42,exposure:1.08,height:9.4},neutral:{key:[.97,.98,1.0,2.72],fill:[.62,.69,.79,.86],rim:[.82,.89,1.0,.76],sky:[.16,.18,.20],ground:[.046,.044,.041],ambient:1.52,exposure:1.00,height:10.4},raking:{key:[1.0,.64,.38,4.10],fill:[.17,.28,.48,.45],rim:[.35,.58,1.0,1.88],sky:[.09,.13,.18],ground:[.019,.016,.015],ambient:1.02,exposure:1.05,height:3.8}};
+const lights={studio:{key:[1.0,.82,.66,3.65],fill:[.36,.45,.56,.56],rim:[.55,.68,.88,.94],sky:[.115,.135,.155],ground:[.028,.023,.019],ambient:1.20,exposure:1.12,height:9.2},neutral:{key:[.98,.99,1.0,2.92],fill:[.58,.63,.70,.62],rim:[.80,.86,.96,.62],sky:[.15,.16,.17],ground:[.045,.042,.038],ambient:1.38,exposure:1.03,height:10.2},raking:{key:[1.0,.70,.47,4.35],fill:[.22,.29,.38,.32],rim:[.38,.54,.78,1.18],sky:[.08,.105,.14],ground:[.018,.015,.014],ambient:.88,exposure:1.10,height:3.7}};
 let lightVP=mat4Identity(),keyDir=[.3,.8,.5],keyPos=[4,9,4];
 function updateLight(){const p=lights[state.lightMode],a=state.lightAngle*Math.PI/180,r=8.6;keyPos=[Math.sin(a)*r,p.height,Math.cos(a)*r];keyDir=norm(sub(keyPos,[0,-.25,0]));const lv=mat4LookAt(keyPos,[0,-.25,0],[0,1,0]),lp=mat4Ortho(-6.8,6.8,-5.7,6.8,1,25);lightVP=mat4Multiply(lp,lv);}
 function setVec3(loc,a){if(loc)gl.uniform3f(loc,a[0],a[1],a[2]);}
-function drawObject(o,depth=false,vp=null){gl.bindVertexArray(o.geo.vao);if(depth){gl.uniformMatrix4fv(DU.uModel,false,o.model);gl.uniformMatrix4fv(DU.uLightVP,false,lightVP);}else{gl.uniformMatrix4fv(U.uModel,false,o.model);gl.uniformMatrix4fv(U.uViewProj,false,vp);gl.uniformMatrix4fv(U.uLightVP,false,lightVP);gl.uniform1f(U.uSeed,o.seed);gl.uniform1i(U.uFamily,o.family);gl.uniform1i(U.uKind,o.kind);gl.uniform1f(U.uTint,o.tint);gl.uniform1f(U.uSelected,o.selected);gl.uniform1f(U.uObjectScale,o.objectScale);}if(o.geo.indexed)gl.drawElements(gl.TRIANGLES,o.geo.count,gl.UNSIGNED_INT,0);else gl.drawArrays(gl.TRIANGLES,0,o.geo.count);}
+function drawObject(o,depth=false,vp=null,eye=null){gl.bindVertexArray(o.geo.vao);if(depth){gl.uniformMatrix4fv(DU.uModel,false,o.model);gl.uniformMatrix4fv(DU.uLightVP,false,lightVP);}else{gl.uniformMatrix4fv(U.uModel,false,o.model);gl.uniformMatrix4fv(U.uViewProj,false,vp);gl.uniformMatrix4fv(U.uLightVP,false,lightVP);gl.uniform1f(U.uSeed,o.seed);gl.uniform1i(U.uFamily,o.family);gl.uniform1i(U.uKind,o.kind);gl.uniform1f(U.uTint,o.tint);gl.uniform1f(U.uSelected,o.selected);gl.uniform1f(U.uObjectScale,o.objectScale);}if(o.geo.indexed)gl.drawElements(gl.TRIANGLES,o.geo.count,gl.UNSIGNED_INT,0);else gl.drawArrays(gl.TRIANGLES,0,o.geo.count);}
 function renderShadow(){gl.bindFramebuffer(gl.FRAMEBUFFER,shadowFBO);gl.viewport(0,0,shadowSize,shadowSize);gl.colorMask(false,false,false,false);gl.clearDepth(1);gl.clear(gl.DEPTH_BUFFER_BIT);gl.useProgram(depthProgram);gl.enable(gl.DEPTH_TEST);gl.enable(gl.CULL_FACE);gl.cullFace(gl.BACK);gl.enable(gl.POLYGON_OFFSET_FILL);gl.polygonOffset(2.0,4.0);for(const o of[...fixed,...stones])if(o.cast)drawObject(o,true);gl.disable(gl.POLYGON_OFFSET_FILL);gl.colorMask(true,true,true,true);gl.bindFramebuffer(gl.FRAMEBUFFER,null);}
-function renderMain(vp,eye){const w=canvas.width,h=canvas.height;gl.viewport(0,0,w,h);gl.clearColor(.005,.007,.010,1);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);gl.useProgram(mainProgram);gl.enable(gl.DEPTH_TEST);gl.depthFunc(gl.LEQUAL);gl.enable(gl.CULL_FACE);gl.cullFace(gl.BACK);gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,shadowTex);gl.uniform1i(U.uShadowMap,0);setVec3(U.uCamera,eye);const p=lights[state.lightMode],fillDir=norm([-keyDir[0]*.75,.34,-keyDir[2]*.75]),rimDir=norm([keyDir[2]*.82,.54,-keyDir[0]*.82]);setVec3(U.uKeyDir,keyDir);setVec3(U.uKeyColor,p.key);gl.uniform1f(U.uKeyIntensity,p.key[3]);setVec3(U.uFillDir,fillDir);setVec3(U.uFillColor,p.fill);gl.uniform1f(U.uFillIntensity,p.fill[3]);setVec3(U.uRimDir,rimDir);setVec3(U.uRimColor,p.rim);gl.uniform1f(U.uRimIntensity,p.rim[3]);setVec3(U.uSkyColor,p.sky);setVec3(U.uGroundColor,p.ground);gl.uniform1f(U.uAmbientIntensity,p.ambient);gl.uniform2f(U.uResolution,w,h);gl.uniform1f(U.uExposure,p.exposure);gl.uniform1f(U.uRelief,state.relief);gl.uniform1f(U.uWeather,state.weather);gl.uniform1f(U.uRoughness,state.rough);for(const o of fixed)drawObject(o,false,vp);for(const o of stones)drawObject(o,false,vp);gl.bindVertexArray(null);}
+function renderMain(vp,eye){const w=canvas.width,h=canvas.height;gl.viewport(0,0,w,h);gl.clearColor(.005,.007,.010,1);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);gl.useProgram(mainProgram);gl.enable(gl.DEPTH_TEST);gl.depthFunc(gl.LEQUAL);gl.enable(gl.CULL_FACE);gl.cullFace(gl.BACK);gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,shadowTex);gl.uniform1i(U.uShadowMap,0);setVec3(U.uCamera,eye);const p=lights[state.lightMode],fillDir=norm([-keyDir[0]*.75,.34,-keyDir[2]*.75]),rimDir=norm([keyDir[2]*.82,.54,-keyDir[0]*.82]);setVec3(U.uKeyDir,keyDir);setVec3(U.uKeyColor,p.key);gl.uniform1f(U.uKeyIntensity,p.key[3]);setVec3(U.uFillDir,fillDir);setVec3(U.uFillColor,p.fill);gl.uniform1f(U.uFillIntensity,p.fill[3]);setVec3(U.uRimDir,rimDir);setVec3(U.uRimColor,p.rim);gl.uniform1f(U.uRimIntensity,p.rim[3]);setVec3(U.uSkyColor,p.sky);setVec3(U.uGroundColor,p.ground);gl.uniform1f(U.uAmbientIntensity,p.ambient);gl.uniform2f(U.uResolution,w,h);gl.uniform1f(U.uExposure,p.exposure);gl.uniform1f(U.uRelief,state.relief);gl.uniform1f(U.uWeather,state.weather);gl.uniform1f(U.uRoughness,state.rough);for(const o of fixed)drawObject(o,false,vp,eye);for(const o of stones)drawObject(o,false,vp,eye);gl.bindVertexArray(null);}
 let last=performance.now(),fpsFrames=0,fpsTime=last;
 function resize(){const area=innerWidth*innerHeight,scale=area>2600000?.72:area>1200000?.86:1,dpr=Math.min(devicePixelRatio||1,1.65)*scale,w=Math.max(2,Math.floor(innerWidth*dpr)),h=Math.max(2,Math.floor(innerHeight*dpr));document.documentElement.dataset.renderScale=scale.toFixed(2);if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h;shadowDirty=true;}}
 function animate(now){resize();const dt=Math.min(.05,(now-last)/1000);last=now;if(state.auto)camera.goalYaw+=dt*.17;camera.yaw=mix(camera.yaw,camera.goalYaw,1-Math.exp(-dt*10));camera.pitch=mix(camera.pitch,camera.goalPitch,1-Math.exp(-dt*10));camera.radius=mix(camera.radius,camera.goalRadius,1-Math.exp(-dt*9));camera.target=lerp3(camera.target,camera.goalTarget,1-Math.exp(-dt*9));updateLight();const eye=cameraEye(),view=mat4LookAt(eye,camera.target,[0,1,0]),proj=mat4Perspective(35*Math.PI/180,canvas.width/canvas.height,.05,60),vp=mat4Multiply(proj,view);if(shadowDirty){renderShadow();shadowDirty=false;}renderMain(vp,eye);fpsFrames++;if(now-fpsTime>1000){document.documentElement.dataset.fps=String(Math.round(fpsFrames*1000/(now-fpsTime)));fpsFrames=0;fpsTime=now;}requestAnimationFrame(animate);}
@@ -196,6 +225,6 @@ $$('.view-btn[data-piece]').forEach(b=>b.addEventListener('click',()=>setView(b.
 function setLight(mode){state.lightMode=mode;shadowDirty=true;$$('.light-btn').forEach(b=>b.classList.toggle('active',b.dataset.light===mode));showHint({studio:'棚拍光',neutral:'中性检查光',raking:'掠射细节光'}[mode],650);}$$('.light-btn').forEach(b=>b.addEventListener('click',()=>setLight(b.dataset.light)));$('#panelToggle').addEventListener('click',()=>$('#controls').classList.toggle('open'));
 let hintTimer;function showHint(text,ms=900){const h=$('#hint');h.textContent=text;h.classList.add('flash');clearTimeout(hintTimer);hintTimer=setTimeout(()=>{h.classList.remove('flash');h.textContent='拖动旋转 · 滚轮缩放 · 右键平移 · R 重置视角';},ms);}
 
-const params=new URLSearchParams(location.search);if(params.has('family')){const i=clamp(parseInt(params.get('family'),10)||0,0,3);state.family=i;Object.assign(state,families[i]);$$('.family-btn').forEach((b,j)=>b.classList.toggle('active',j===i));}if(['studio','neutral','raking'].includes(params.get('light')))setLight(params.get('light'));syncControls();if(params.get('view')==='hero')setView('hero');else if(params.get('view')==='mini')setView('mini');requestAnimationFrame(animate);rebuildStones(true);
-document.documentElement.dataset.brickMotherStoneFormReady='true';window.__BRICK_MOTHER_STONE_WORKBENCH__={version:'3.1.0-alpha.1',sourceLineage:'BRICK_MOTHER_V2.7.5',family:()=>state.family,seed:()=>state.seed,state,visualApproved:false,productionApproved:false};
+const params=new URLSearchParams(location.search);if(params.has('family')){const i=clamp(parseInt(params.get('family'),10)||0,0,3);state.family=i;Object.assign(state,families[i]);$$('.family-btn').forEach((b,j)=>b.classList.toggle('active',j===i));}if(['studio','neutral','raking'].includes(params.get('light')))setLight(params.get('light'));syncControls();if(params.get('view')==='hero')setView('hero');else if(params.get('view')==='mini')setView('mini');rebuildStones(true);requestAnimationFrame(animate);
+document.documentElement.dataset.brickMotherStoneFormReady='true';window.__BRICK_MOTHER_STONE_WORKBENCH__={version:'3.2.0-alpha.1',sourceLineage:'BRICK_MOTHER_V2.7.5',family:()=>state.family,seed:()=>state.seed,state,visualApproved:false,productionApproved:false};
 })();
