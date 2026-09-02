@@ -1,0 +1,66 @@
+eather;height-=pore*.004;
+ float crackLine=abs(fbm(sp*.86+vec3(7.1,2.6,-4.8))-.515),crackGate=smoothstep(.74,.90,fbm(sp*.26+vec3(-3.8,6.1,2.4)));
+ float crack=(1.0-smoothstep(.004,.018,crackLine))*crackGate*mix(.10,.82,uWeather)*(uFamily==3?.08:1.0);
+ c*=1.0-crack*.30;height-=crack*.011;ao-=crack*.07;
+ float underside=1.0-smoothstep(-.72,.20,N0.y);c*=1.0-underside*.09*uWeather;ao*=1.0-underside*.10;
+ c*=mix(.965,1.035,fine*mix(.25,.62,poreGate));return c*(.96+uTint*.095);
+}
+vec3 aces(vec3 x){float a=2.51,b=.03,c=2.43,d=.59,e=.14;return clamp((x*(a*x+b))/(x*(c*x+d)+e),0.0,1.0);}
+void main(){
+ vec3 N=normalize(vNormal),V=normalize(uCamera-vWorld),base;float rough,metal,height=0.0,roughMod=0.0,ao=1.0,emissive=0.0;
+ if(uKind==0){base=stoneColor(vLocal,height,roughMod,ao);N=perturb(N,height,mix(.06,.48,uRelief));rough=clamp(uRoughness+roughMod-uWeather*.045,.16,.98);metal=0.0;}
+ else if(uKind==1){float n=fbm(vLocal*7.0+vec3(uSeed));base=mix(vec3(.026,.031,.035),vec3(.075,.083,.088),n);height=(n-.5)*.018;N=perturb(N,height,.36);rough=.26;metal=.72;ao=.92;}
+ else if(uKind==2){float g=smoothstep(-1.4,4.8,vWorld.y),n=fbm(vWorld*.18);base=mix(vec3(.030,.035,.040),vec3(.105,.108,.105),g*.72)+n*.005;rough=.94;metal=0.0;ao=1.0;emissive=.16;}
+ else {base=vec3(.78,.48,.20);rough=.24;metal=.35;emissive=.45;}
+ vec3 Lk=normalize(uKeyDir),Lf=normalize(uFillDir),Lr=normalize(uRimDir);if(uKind==2){float floorMask=(1.0-smoothstep(-1.53,-1.34,vWorld.y))*smoothstep(-3.3,-2.25,vWorld.z);float g=smoothstep(.06,.98,gl_FragCoord.y/uResolution.y);vec3 bg=mix(vec3(.010,.014,.020),vec3(.050,.053,.052),g);float pool=exp(-.052*dot(vWorld.xz-vec2(.25,.0),vWorld.xz-vec2(.25,.0)));bg+=pool*vec3(.012,.010,.008);vec2 off=-normalize(uKeyDir.xz)*.38;vec2 q0=(vWorld.xz-(vec2(-.88,0.0)+off))/vec2(1.78,1.38);vec2 q1=(vWorld.xz-(vec2(2.05,-1.48)+off*.55))/vec2(.82,.66);vec2 q2=(vWorld.xz-(vec2(3.03,0.0)+off*.55))/vec2(.82,.66);vec2 q3=(vWorld.xz-(vec2(1.98,1.50)+off*.55))/vec2(.82,.66);float contact=.30*exp(-dot(q0,q0)*2.0)+.17*exp(-dot(q1,q1)*2.5)+.17*exp(-dot(q2,q2)*2.5)+.17*exp(-dot(q3,q3)*2.5);bg*=1.0-floorMask*clamp(contact,0.0,.48);bg=aces(bg*uExposure*1.52);bg=pow(bg,vec3(1.0/2.2));outColor=vec4(bg,1.0);return;}float sh=shadowPCF(N,Lk);
+ vec3 col=brdfLight(base,rough,metal,N,V,Lk,uKeyColor,uKeyIntensity)*sh;
+ col+=brdfLight(base,rough,metal,N,V,Lf,uFillColor,uFillIntensity);
+ col+=brdfLight(base,rough,metal,N,V,Lr,uRimColor,uRimIntensity);
+ float hemi=clamp(N.y*.5+.5,0.0,1.0);vec3 env=mix(uGroundColor,uSkyColor,hemi);vec3 R=reflect(-V,N);vec3 envR=mix(uGroundColor,uSkyColor,clamp(R.y*.5+.5,0.0,1.0));vec3 f0=mix(vec3(.04),base,metal),F=F_Schlick(f0,max(dot(N,V),0.0));
+ col+=base*(env+vec3(.090,.078,.062))*uAmbientIntensity*(1.0-metal)*(.38+.32*(1.0-rough))*ao;col+=envR*F*uAmbientIntensity*(.17+.5*(1.0-rough))*ao;
+ float rim=pow(1.0-max(dot(N,V),0.0),3.2);col+=uRimColor*rim*uRimIntensity*.055*(uKind==0?1.0:.45);
+ col+=base*emissive;col+=vec3(.14,.085,.035)*uSelected*.035;
+ col=aces(col*uExposure);col=pow(col,vec3(1.0/2.2));outColor=vec4(col,1.0);
+}`;
+const depthVS=`#version 300 es
+precision highp float;layout(location=0) in vec3 aPosition;uniform mat4 uModel;uniform mat4 uLightVP;void main(){gl_Position=uLightVP*uModel*vec4(aPosition,1.0);}`;
+const depthFS=`#version 300 es
+precision highp float;void main(){}`;
+let mainProgram,depthProgram;
+try{mainProgram=makeProgram(mainVS,mainFS);depthProgram=makeProgram(depthVS,depthFS);}catch(e){console.error(e);document.getElementById('error').innerHTML='<div><b>着色器启动失败</b><span style="font-size:11px;color:#9da4a8">'+String(e.message).replace(/[<>]/g,'')+'</span></div>';document.getElementById('error').style.display='grid';document.getElementById('loading').classList.add('hidden');return;}
+
+function locations(program,names){const o={};for(const n of names)o[n]=gl.getUniformLocation(program,n);return o;}
+const U=locations(mainProgram,['uModel','uViewProj','uLightVP','uShadowMap','uCamera','uKeyDir','uKeyColor','uKeyIntensity','uFillDir','uFillColor','uFillIntensity','uRimDir','uRimColor','uRimIntensity','uSkyColor','uGroundColor','uAmbientIntensity','uResolution','uExposure','uSeed','uRelief','uWeather','uRoughness','uTint','uFamily','uKind','uSelected']);
+const DU=locations(depthProgram,['uModel','uLightVP']);
+function gpuGeometry(data){
+  const vao=gl.createVertexArray();gl.bindVertexArray(vao);
+  const pb=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,pb);gl.bufferData(gl.ARRAY_BUFFER,data.positions,gl.STATIC_DRAW);gl.enableVertexAttribArray(0);gl.vertexAttribPointer(0,3,gl.FLOAT,false,0,0);
+  const nb=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,nb);gl.bufferData(gl.ARRAY_BUFFER,data.normals,gl.STATIC_DRAW);gl.enableVertexAttribArray(1);gl.vertexAttribPointer(1,3,gl.FLOAT,false,0,0);
+  const ib=gl.createBuffer();gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,ib);gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,data.indices,gl.STATIC_DRAW);gl.bindVertexArray(null);
+  return{vao,count:data.indices.length,buffers:[pb,nb,ib]};
+}
+function destroyGeometry(g){if(!g)return;for(const b of g.buffers)gl.deleteBuffer(b);gl.deleteVertexArray(g.vao);}
+function obj(geo,p,r,s,kind,opts={}){return{geo,model:mat4TRS(p,r,s),kind,family:opts.family??0,seed:opts.seed??0,tint:opts.tint??0,selected:opts.selected??0,cast:opts.cast!==false};}
+
+const floorY=-1.56;
+const fixed=[];
+const cyclo=gpuGeometry(makeCyclorama());fixed.push(obj(cyclo,[0,0,0],[0,0,0],[1,1,1],2,{cast:false}));
+const pedHero=gpuGeometry(makeBeveledCylinder(1.64,.34,88,.09));fixed.push(obj(pedHero,[-.88,floorY,0],[0,0,0],[1,1,1],1,{seed:31}));
+const pedMini=gpuGeometry(makeBeveledCylinder(.70,.23,64,.058));const miniPos=[[2.05,-1.48],[3.03,.0],[1.98,1.50]],miniHeights=[.23,.30,.26];
+for(let i=0;i<3;i++)fixed.push(obj(pedMini,[miniPos[i][0],floorY,miniPos[i][1]],[0,0,0],[1,miniHeights[i]/.23,1],1,{seed:50+i}));
+const ring=gpuGeometry(makeAnnulus(1.48,1.55,100));fixed.push(obj(ring,[-.88,floorY+.346,0],[0,0,0],[1,1,1],3,{seed:0,cast:false,selected:1}));
+
+const families=[
+ {name:'规则石材',seed:8231,form:.52,fracture:.36,edge:.28,relief:.42,weather:.38,rough:.82,rule:'承重面稳定 · 錾修侧面 · 局部崩角'},
+ {name:'半规则毛石',seed:9298,form:.72,fracture:.58,edge:.42,relief:.54,weather:.52,rough:.86,rule:'偏心体量 · 多面断口 · 稳定落座'},
+ {name:'片石',seed:10365,form:.66,fracture:.52,edge:.34,relief:.40,weather:.56,rough:.90,rule:'单一主层理 · 薄板厚度 · 局部沿层破裂'},
+ {name:'卵石',seed:11642,form:.55,fracture:.32,edge:.72,relief:.30,weather:.45,rough:.52,rule:'磨圆独立 · 稳定底面 · 局部碰撞伤'}
+];
+const state={family:0,seed:8231,form:.52,fracture:.36,edge:.28,relief:.42,weather:.38,rough:.82,lightAngle:-34,lightMode:'studio',auto:false,piece:'all'};
+let stones=[],triangleTotal=0,rebuildTimer=0;
+function clearStones(){for(const s of stones)destroyGeometry(s.geo);stones=[];}
+function rebuildStones(){
+  clearTimeout(rebuildTimer);clearStones();triangleTotal=0;
+  const f=state.family,baseSeed=state.seed,heroData=makeStoneGeometry(f,baseSeed,state,true,1),hero=gpuGeometry(heroData);triangleTotal+=hero.count/3;
+  const heroRot=f===0?[.012,-.36,.006]:f===1?[.025,-.44,-.018]:f===2?[.020,-.28,.012]:[.015,-.38,-.018];
+  stones.push(obj(hero,[-.88,floorY+.356,0],heroRot,[1,1,1],0,{family:f,seed:baseSeed,tint:.0
