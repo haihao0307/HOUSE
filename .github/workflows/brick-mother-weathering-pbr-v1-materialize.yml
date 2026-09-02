@@ -29,7 +29,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Reassemble and verify payload
+      - name: Reassemble, verify and patch payload
         shell: bash
         run: |
           set -euo pipefail
@@ -39,6 +39,15 @@ jobs:
           tar -tzf /tmp/brick-mother-weathering-pbr-v1.tar.gz
           tar -xzf /tmp/brick-mother-weathering-pbr-v1.tar.gz -C .
           git restore .github/workflows/brick-mother-pages-preview.yml
+          python3 - <<'PY'
+          from pathlib import Path
+          path=Path('yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/brick-mother-realtime-weathering-pbr-v1.js')
+          text=path.read_text(encoding='utf-8')
+          old="setProgress(1,'PBR WEATHERING READY');await nextFrame();setTimeout(()=>{if(token===rebuildToken){loading.classList.add('hidden');document.documentElement.dataset.visualReady='true';$('#runtimeLabel').textContent=state.playing?'实时运行':'已暂停';}},240);"
+          new="setProgress(1,'PBR WEATHERING READY');setTimeout(()=>{if(token===rebuildToken){loading.classList.add('hidden');document.documentElement.dataset.visualReady='true';$('#runtimeLabel').textContent=state.playing?'实时运行':'已暂停';}},240);"
+          assert old in text
+          path.write_text(text.replace(old,new,1),encoding='utf-8')
+          PY
 
       - name: Validate preserved core and new runtime
         shell: bash
@@ -59,6 +68,7 @@ jobs:
           grep -q "uDielectricF0" "$BRICK_ROOT/brick-mother-realtime-weathering-pbr-v1.js"
           grep -q "dataset.metalness='0'" "$BRICK_ROOT/brick-mother-realtime-weathering-pbr-v1.js"
           grep -q "dataset.dielectricF0='0.04'" "$BRICK_ROOT/brick-mother-realtime-weathering-pbr-v1.js"
+          ! grep -q "PBR WEATHERING READY');await nextFrame();setTimeout" "$BRICK_ROOT/brick-mother-realtime-weathering-pbr-v1.js"
 
       - name: Commit materialized workbench
         shell: bash
@@ -75,6 +85,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "Realtime weathering PBR workbench already materialized"
           else
-            git commit -m "feat(brick): add realtime weathering PBR 3D workbench"
+            git commit -m "fix(brick): complete realtime weathering visual initialization"
             git push origin "HEAD:$TARGET_BRANCH"
           fi
