@@ -1,0 +1,20 @@
+{
+  "allowedWrites": [
+    "tiles-mother/index.html",
+    "tiles-mother/knowledge/jiangwutang-001/material-candidate-v0.5.json",
+    "tiles-mother/v05/build-manifest.json",
+    "tiles-mother/v05/geometry-operators.js",
+    "tiles-mother/v05/integration.js",
+    "tiles-mother/v05/profile.js",
+    "tiles-mother/v05/roof-joints.js",
+    "tiles-mother/v05/studio.js"
+  ],
+  "preservedFiles": 326,
+  "changedOutsideAllowed": [],
+  "pagesSettingsChanged": false,
+  "otherMotherAssetsChanged": false,
+  "mainChanged": false,
+  "visualApproved": false,
+  "productionApproved": false,
+  "distillationComplete": false
+}

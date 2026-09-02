@@ -1,0 +1,14 @@
+{
+  "url": "https://haihao0307.github.io/HOUSE/tiles-mother/?v=0.5.0",
+  "version": "0.5.0",
+  "sourceCommit": "ddc45488cd3041901ce5134f98a6af7b87b05afe",
+  "workflowRun": "33574371982",
+  "verified": true,
+  "visualApproved": false,
+  "productionApproved": false,
+  "distillationComplete": false,
+  "httpStatus": 200,
+  "contentType": "text/html; charset=utf-8",
+  "bytes": 2300129,
+  "sha256": "ee4a936df04f571791ce8d47ab7efce8c9e6842e7f87814f8a63b8dc4967cdf2"
+}
