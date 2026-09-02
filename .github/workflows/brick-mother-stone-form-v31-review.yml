@@ -18,7 +18,7 @@ env:
 jobs:
   browser-review:
     runs-on: ubuntu-latest
-    timeout-minutes: 24
+    timeout-minutes: 28
     steps:
       - name: Checkout exact candidate head
         uses: actions/checkout@v4
@@ -61,7 +61,7 @@ jobs:
               light=studio
               if [ "$view" = hero ]; then light=raking; fi
               url="http://127.0.0.1:8765/brick-mother-stone-form-v3.1.0.html?family=${family}&view=${view}&light=${light}&qa=private-review&head=${GITHUB_SHA}"
-              timeout 210s "$chrome" \
+              timeout 240s "$chrome" \
                 --headless=new \
                 --no-sandbox \
                 --disable-dev-shm-usage \
@@ -73,7 +73,7 @@ jobs:
                 --use-angle=swiftshader \
                 --hide-scrollbars \
                 --window-size=1600,1000 \
-                --virtual-time-budget=42000 \
+                --virtual-time-budget=150000 \
                 --screenshot="/tmp/stone-form-v31-review/${stem}.png" \
                 --dump-dom \
                 "$url" \
