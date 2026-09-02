@@ -51,6 +51,7 @@ jobs:
           path=Path('docs/brick-mother/BRICK_MOTHER_REALTIME_WEATHERING_PBR_DNA_V1.0.md')
           path.write_text(path.read_text().rstrip()+'\n')
           PY
+          git restore --source=HEAD -- .github/workflows/brick-mother-pages-preview.yml
 
       - name: Validate preserved core and PBR contract
         shell: bash
@@ -125,7 +126,6 @@ jobs:
             "$BRICK_ROOT/brick-mother-realtime-weathering-pbr-v1.js" \
             "$BRICK_ROOT/BRICK_MOTHER_REALTIME_WEATHERING_PBR_BUILD.json" \
             "$BRICK_ROOT/workbench.html" \
-            ".github/workflows/brick-mother-pages-preview.yml" \
             "docs/brick-mother/BRICK_MOTHER_REALTIME_WEATHERING_PBR_DNA_V1.0.md" \
             "docs/brick-mother/BRICK_MOTHER_REALTIME_WEATHERING_PBR_DNA_V1.0.json"
           if git diff --cached --quiet; then
