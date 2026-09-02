@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="dark">
-<meta name="description" content="Brick Mother 综合工作台。完整保留 V2.7.5 三材质核心，并接入实时风化 PBR、砌筑石形态与岩性研究。">
+<meta name="description" content="Brick Mother 综合工作台。完整保留 V2.7.5 三材质核心，并接入实时风化 PBR V1.1、砌筑石形态与岩性研究。">
 <title>Brick Mother 综合工作台</title>
 <link rel="icon" href="data:,">
 <style>
@@ -38,8 +38,8 @@ main{position:relative;min-width:0;min-height:0;background:#000}.panel{position:
 </head>
 <body>
 <header>
-  <div class="brand"><div class="mark">BM</div><div class="copy"><strong>BRICK MOTHER 综合工作台</strong><span>三材质核心完整保留 · 实时风化 PBR 与砌筑石形态独立接入</span></div></div>
-  <div class="state"><i></i><span>核心 V2.7.5 已恢复</span></div>
+  <div class="brand"><div class="mark">BM</div><div class="copy"><strong>BRICK MOTHER 综合工作台</strong><span>三材质核心完整保留 · 实时风化 PBR V1.1 与砌筑石形态独立接入</span></div></div>
+  <div class="state"><i></i><span>核心 V2.7.5 已保留</span></div>
 </header>
 <nav aria-label="工作台分区">
   <button class="tab on" data-view="core">核心三材质 V2.7.5</button>
@@ -54,9 +54,9 @@ main{position:relative;min-width:0;min-height:0;background:#000}.panel{position:
     <div class="loading"><div><div class="spinner"></div>正在载入三材质核心</div></div>
     <iframe title="Brick Mother 核心三材质 V2.7.5" src="./brick-mother-standalone-v2.7.5.html?v=20260902-restored" allow="fullscreen"></iframe>
   </section>
-  <section class="panel" id="weathering" data-url="./brick-mother-realtime-weathering-pbr-v1.0.0.html?v=20260902-pbr-weathering-v11">
-    <div class="loading"><div><div class="spinner"></div>正在载入实时风化 PBR 工作台</div></div>
-    <iframe title="Brick Mother 实时风化与 PBR 三维工作台" data-src="./brick-mother-realtime-weathering-pbr-v1.0.0.html?v=20260902-pbr-weathering-v11" allow="fullscreen"></iframe>
+  <section class="panel" id="weathering" data-url="./brick-mother-realtime-weathering-pbr-v1.1.0.html?v=20260902-pbr-v11a3">
+    <div class="loading"><div><div class="spinner"></div>正在载入实时风化 PBR V1.1 工作台</div></div>
+    <iframe title="Brick Mother 实时风化与 PBR V1.1 三维工作台" data-src="./brick-mother-realtime-weathering-pbr-v1.1.0.html?v=20260902-pbr-v11a3" allow="fullscreen"></iframe>
   </section>
   <section class="panel" id="masonry" data-url="./brick-mother-stone-masonry-v2.8.0-alpha.html?v=20260902-runtime-fix">
     <div class="loading"><div><div class="spinner"></div>正在载入砌筑石形态分区</div></div>
@@ -81,7 +81,7 @@ main{position:relative;min-width:0;min-height:0;background:#000}.panel{position:
     if(!frame.src) frame.src=frame.dataset.src;
     const done=()=>panel.querySelector('.loading')?.classList.add('hidden');
     frame.addEventListener('load',done,{once:true});
-    setTimeout(done,6000);
+    setTimeout(done,9000);
   }
   function select(id,writeHash=true){
     const panel=document.getElementById(id)||document.getElementById('core');
@@ -95,11 +95,11 @@ main{position:relative;min-width:0;min-height:0;background:#000}.panel{position:
   tabs.forEach(tab=>tab.addEventListener('click',()=>select(tab.dataset.view)));
   const core=document.querySelector('#core iframe');
   core.addEventListener('load',()=>document.querySelector('#core .loading')?.classList.add('hidden'),{once:true});
-  setTimeout(()=>document.querySelector('#core .loading')?.classList.add('hidden'),6000);
+  setTimeout(()=>document.querySelector('#core .loading')?.classList.add('hidden'),9000);
   select(location.hash.slice(1)||'core',false);
   window.addEventListener('hashchange',()=>select(location.hash.slice(1)||'core',false));
   document.documentElement.dataset.brickMotherWorkbenchReady='true';
-  window.__BRICK_MOTHER_WORKBENCH__={version:'3.0.0-alpha.1',corePreserved:'2.7.5',weatheringRuntime:'1.1.0-alpha.1',masonryRuntime:'20260902-runtime-fix',sections:['core','weathering','masonry','lithology','v26'],visualApproved:false,productionApproved:false};
+  window.__BRICK_MOTHER_WORKBENCH__={version:'3.1.0-alpha.3',corePreserved:'2.7.5',weatheringRuntime:'1.1.0-alpha.3',pbrChannels:16,masonryRuntime:'20260902-runtime-fix',sections:['core','weathering','masonry','lithology','v26'],visualApproved:false,productionApproved:false};
 })();
 </script>
 </body>
