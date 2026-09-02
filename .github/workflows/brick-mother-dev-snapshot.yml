@@ -14,6 +14,8 @@ permissions:
 env:
   BRICK_ROOT: yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother
   STONE_REVIEW_ROOT: private-review/brick-mother-stone-form-v33
+  STONE_V34_ROOT: private-review/brick-mother-stone-form-v34
+  PBR_REVIEW_ROOT: private-review/brick-mother-weathering-pbr-v1
 
 jobs:
   snapshot:
@@ -30,12 +32,20 @@ jobs:
           test -d "$BRICK_ROOT"
           test -s "$BRICK_ROOT/brick-mother-standalone-v2.7.5.html"
           test -s "$BRICK_ROOT/workbench.html"
+          test -s "$BRICK_ROOT/brick-mother-realtime-weathering-pbr-v1.0.0.html"
+          test -s "$BRICK_ROOT/brick-mother-realtime-weathering-pbr-v1.css"
+          test -s "$BRICK_ROOT/brick-mother-realtime-weathering-pbr-v1.js"
+          test -s "$BRICK_ROOT/brick-mother-weathering-geometry-v1.js"
+          node --check "$BRICK_ROOT/brick-mother-realtime-weathering-pbr-v1.js"
+          node --check "$BRICK_ROOT/brick-mother-weathering-geometry-v1.js"
           test -d "$STONE_REVIEW_ROOT"
           test -s "$STONE_REVIEW_ROOT/brick-mother-stone-form-v3.3.0.html"
           test -s "$STONE_REVIEW_ROOT/stone-form-geometry-v33.js"
           test -s "$STONE_REVIEW_ROOT/stone-form-runtime-v33.js"
           node --check "$STONE_REVIEW_ROOT/stone-form-geometry-v33.js"
           node --check "$STONE_REVIEW_ROOT/stone-form-runtime-v33.js"
+          test -d "$STONE_V34_ROOT/payload"
+          test -d "$PBR_REVIEW_ROOT/payload"
           test "$(git hash-object "$BRICK_ROOT/brick-mother-standalone-v2.7.5.html")" = "7b10389cb9367f7423619262820883cc94b07a61"
 
       - name: Upload current Brick Mother development source
@@ -45,8 +55,13 @@ jobs:
           path: |
             ${{ env.BRICK_ROOT }}
             ${{ env.STONE_REVIEW_ROOT }}
+            ${{ env.STONE_V34_ROOT }}
+            ${{ env.PBR_REVIEW_ROOT }}
+            docs/brick-mother/BRICK_MOTHER_REALTIME_WEATHERING_PBR_DNA_V1.0.md
+            docs/brick-mother/BRICK_MOTHER_REALTIME_WEATHERING_PBR_DNA_V1.0.json
             .github/workflows/brick-mother-pages-preview.yml
             .github/workflows/brick-mother-stone-form-v33-materialize-review.yml
+            .github/workflows/brick-mother-weathering-pbr-v1-materialize.yml
           compression-level: 1
           if-no-files-found: error
           retention-days: 3
