@@ -7,7 +7,7 @@
 <meta name="description" content="Brick Mother 砌筑石形态工作台。规则石、半规则毛石、片石与卵石独立生成。">
 <title>Brick Mother 砌筑石形态工作台 V2.8.0 Alpha</title>
 <link rel="icon" href="data:,">
-<link rel="stylesheet" href="./brick-mother-stone-masonry-v2.8.0-alpha.css?v=20260902-restored">
+<link rel="stylesheet" href="./brick-mother-stone-masonry-v2.8.0-alpha.css?v=20260902-runtime-fix">
 </head>
 <body>
 <canvas id="gl" aria-label="Brick Mother 石材三维工作台"></canvas>
@@ -42,26 +42,62 @@
 <div class="loading" id="loading"><div class="loader"><div class="loader-ring"></div><span>BUILDING STONE FIELD</span></div></div>
 <div class="error" id="error"><div><b>当前浏览器无法启动 WebGL2</b>请使用最新版 Chrome、Edge、Safari 或 Firefox 打开。</div></div>
 <script>
-Promise.all([
-  './brick-mother-stone-masonry-v2.8.0-alpha.part1.txt?v=20260902-restored',
-  './brick-mother-stone-masonry-v2.8.0-alpha.part2.txt?v=20260902-restored',
-  './brick-mother-stone-masonry-v2.8.0-alpha.part3.txt?v=20260902-restored',
-  './brick-mother-stone-masonry-v2.8.0-alpha.part4.txt?v=20260902-restored',
-  './brick-mother-stone-masonry-v2.8.0-alpha.part5.txt?v=20260902-restored',
-  './brick-mother-stone-masonry-v2.8.0-alpha.part6.txt?v=20260902-restored'
-].map(url => fetch(url, {cache:'no-store'}).then(response => {
-  if (!response.ok) throw new Error('运行时读取失败 ' + response.status);
-  return response.text();
-}))).then(parts => {
-  const script=document.createElement('script');
-  script.src=URL.createObjectURL((new Blob([parts.join('')],{type:'text/javascript'}));
-  script.onload=()=>URL.revokeObjectURL(script.src);
-  document.body.appendChild(script);
-}).catch(error => {
-  const target=document.getElementById('error');
-  if(target){target.style.display='grid';target.innerHTML='<div><b>砌筑石运行时启动失败</b>'+error.message+'</div>';}
-  console.error(error);
-});
+(() => {
+  'use strict';
+  const loading=document.getElementById('loading');
+  const errorPanel=document.getElementById('error');
+  let failed=false;
+  const fail=(error) => {
+    if(failed) return;
+    failed=true;
+    const message=error && error.message ? error.message : String(error || '未知错误');
+    loading?.classList.add('hidden');
+    if(errorPanel){
+      errorPanel.style.display='grid';
+      errorPanel.innerHTML='<div><b>砌筑石运行时启动失败</b><span style="display:block;font-size:11px;color:#9da4a8">'+message.replace(/[<>]/g,'')+'</span></div>';
+    }
+    document.documentElement.dataset.brickMotherStoneError=message.slice(0,180);
+    console.error(error);
+  };
+  window.addEventListener('error',(event)=>{
+    if(event.error || event.message) fail(event.error || new Error(event.message));
+  });
+  window.addEventListener('unhandledrejection',(event)=>{
+    fail(event.reason instanceof Error ? event.reason : new Error(String(event.reason)));
+  });
+
+  const urls=[
+    './brick-mother-stone-masonry-v2.8.0-alpha.part1.txt?v=20260902-runtime-fix',
+    './brick-mother-stone-masonry-v2.8.0-alpha.part2.txt?v=20260902-runtime-fix',
+    './brick-mother-stone-masonry-v2.8.0-alpha.part3.txt?v=20260902-runtime-fix',
+    './brick-mother-stone-masonry-v2.8.0-alpha.part4.txt?v=20260902-runtime-fix',
+    './brick-mother-stone-masonry-v2.8.0-alpha.part5.txt?v=20260902-runtime-fix',
+    './brick-mother-stone-masonry-v2.8.0-alpha.part6.txt?v=20260902-runtime-fix'
+  ];
+
+  Promise.all(urls.map((url) => fetch(url,{cache:'no-store'}).then((response) => {
+    if(!response.ok) throw new Error('运行时读取失败 '+response.status+' '+url);
+    return response.text();
+  }))).then((parts) => {
+    const objectUrl=URL.createObjectURL(new Blob([parts.join('\n')],{type:'text/javascript'}));
+    const script=document.createElement('script');
+    script.src=objectUrl;
+    script.async=false;
+    script.onload=() => {
+      URL.revokeObjectURL(objectUrl);
+      setTimeout(() => {
+        if(!failed && document.documentElement.dataset.brickMotherStoneReady!=='true'){
+          fail(new Error('运行时已载入，但工作台未完成初始化'));
+        }
+      },5000);
+    };
+    script.onerror=() => {
+      URL.revokeObjectURL(objectUrl);
+      fail(new Error('浏览器拒绝执行砌筑石运行时'));
+    };
+    document.body.appendChild(script);
+  }).catch(fail);
+})();
 </script>
 </body>
 </html>
