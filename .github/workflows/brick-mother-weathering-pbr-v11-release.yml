@@ -95,7 +95,7 @@ jobs:
           grep -q "dataset.heightRole='low-frequency-silhouette'" "$stage/brick-mother-realtime-weathering-pbr-v1.1.js"
           grep -q "dataset.normalRole='high-frequency-detail'" "$stage/brick-mother-realtime-weathering-pbr-v1.1.js"
 
-      - name: Materialize source and deployment workflow
+      - name: Materialize source files
         shell: bash
         run: |
           set -euo pipefail
@@ -107,21 +107,19 @@ jobs:
           install -m 0644 "$stage/brick-mother-realtime-weathering-pbr-v1.1.0.html" "$BRICK_ROOT/brick-mother-realtime-weathering-pbr-v1.1.0.html"
           install -m 0644 "$stage/BRICK_MOTHER_REALTIME_WEATHERING_PBR_BUILD_V1.1.json" "$BRICK_ROOT/BRICK_MOTHER_REALTIME_WEATHERING_PBR_BUILD_V1.1.json"
           install -m 0644 "$stage/workbench.html" "$BRICK_ROOT/workbench.html"
-          install -m 0644 "$stage/brick-mother-pages-preview.yml" .github/workflows/brick-mother-pages-preview.yml
           test "$(git hash-object "$BRICK_ROOT/brick-mother-standalone-v2.7.5.html")" = "$PRESERVED_CORE_BLOB"
           node --check "$BRICK_ROOT/brick-mother-stone-form-geometry-v3.5.js"
           node --check "$BRICK_ROOT/brick-mother-weathering-geometry-v1.1.js"
           node --check "$BRICK_ROOT/brick-mother-realtime-weathering-pbr-v1.1.js"
           python3 -m json.tool "$BRICK_ROOT/BRICK_MOTHER_REALTIME_WEATHERING_PBR_BUILD_V1.1.json" >/dev/null
 
-      - name: Commit and append to current remote head
+      - name: Commit and append source to current remote head
         shell: bash
         run: |
           set -euo pipefail
           git config user.name "Brick Mother Automation"
           git config user.email "actions@users.noreply.github.com"
           git add \
-            .github/workflows/brick-mother-pages-preview.yml \
             "$BRICK_ROOT/brick-mother-stone-form-geometry-v3.5.js" \
             "$BRICK_ROOT/brick-mother-weathering-geometry-v1.1.js" \
             "$BRICK_ROOT/brick-mother-realtime-weathering-pbr-v1.1.js" \
@@ -130,7 +128,7 @@ jobs:
             "$BRICK_ROOT/BRICK_MOTHER_REALTIME_WEATHERING_PBR_BUILD_V1.1.json" \
             "$BRICK_ROOT/workbench.html"
           if git diff --cached --quiet; then
-            echo "Exact realtime PBR V1.1 release already materialized."
+            echo "Exact realtime PBR V1.1 source already materialized."
             exit 0
           fi
           git commit -m "feat(brick): integrate realtime PBR weathering workbench v1.1"
@@ -142,10 +140,10 @@ jobs:
             node --check "$BRICK_ROOT/brick-mother-weathering-geometry-v1.1.js"
             node --check "$BRICK_ROOT/brick-mother-realtime-weathering-pbr-v1.1.js"
             if git push origin "HEAD:$TARGET_BRANCH"; then
-              echo "Release appended successfully on attempt $attempt."
+              echo "Source appended successfully on attempt $attempt."
               exit 0
             fi
             sleep $((attempt * 3))
           done
-          echo "Unable to append release after four normal fast-forward attempts." >&2
+          echo "Unable to append source after four normal fast-forward attempts." >&2
           exit 1
