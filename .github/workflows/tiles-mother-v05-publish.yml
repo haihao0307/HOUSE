@@ -139,7 +139,7 @@ jobs:
                   else: raise AssertionError('Unsafe tar member '+member.name)
           allowed={'tiles-mother/index.html','tiles-mother/v05/profile.js','tiles-mother/v05/geometry-operators.js','tiles-mother/v05/roof-joints.js','tiles-mother/v05/studio.js','tiles-mother/v05/integration.js','tiles-mother/v05/build-manifest.json','tiles-mother/knowledge/jiangwutang-001/material-candidate-v0.5.json'}
           def snapshot(): return {str(p.relative_to(site)):hashlib.sha256(p.read_bytes()).hexdigest() for p in site.rglob('*') if p.is_file() and str(p.relative_to(site)) not in allowed}
-          before=snapshot();assert 'tiles-mother/index.html' in before
+          before=snapshot();assert before and (site/'tiles-mother/index.html').is_file()
           candidate=Path('/tmp/tm-v05/candidate/tiles-mother')
           for rel in allowed:
               src=candidate/rel.removeprefix('tiles-mother/')
