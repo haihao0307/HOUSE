@@ -15,131 +15,185 @@ permissions:
   id-token: write
 
 concurrency:
-  group: pages
+  group: brick-mother-pages
   cancel-in-progress: true
+
+env:
+  BRICK_ROOT: yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother
+  PRESERVED_CORE_BLOB: 7b10389cb9367f7423619262820883cc94b07a61
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 28
     steps:
       - name: Checkout exact branch head
         uses: actions/checkout@v4
 
-      - name: Validate preserved core and added stone section
+      - name: Validate preserved core and PBR runtime
         shell: bash
         run: |
           set -euo pipefail
-          root="yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother"
-          page="$root/brick-mother-stone-masonry-v2.8.0-alpha.html"
-          test -s "$root/brick-mother-standalone-v2.7.5.html"
-          test -s "$root/brick-mother-standalone-v2.6.html"
-          test -s "$root/stone-study.html"
-          test -s "$page"
-          test -s "$root/brick-mother-stone-masonry-v2.8.0-alpha.css"
-          test -s "$root/brick-mother-stone-masonry-v2.8.0-alpha.part1.txt"
-          test -s "$root/brick-mother-stone-masonry-v2.8.0-alpha.part2.txt"
-          test -s "$root/brick-mother-stone-masonry-v2.8.0-alpha.part3.txt"
-          test -s "$root/brick-mother-stone-masonry-v2.8.0-alpha.part4.txt"
-          test -s "$root/brick-mother-stone-masonry-v2.8.0-alpha.part5.txt"
-          test -s "$root/brick-mother-stone-masonry-v2.8.0-alpha.part6.txt"
+          root="$BRICK_ROOT"
           test -s "$root/workbench.html"
+          test -s "$root/brick-mother-standalone-v2.7.5.html"
+          test -s "$root/brick-mother-stone-masonry-v2.8.0-alpha.html"
+          test -s "$root/brick-mother-realtime-weathering-pbr-v1.0.0.html"
+          test -s "$root/brick-mother-realtime-weathering-pbr-v1.css"
+          test -s "$root/brick-mother-weathering-geometry-v1.js"
+          test -s "$root/brick-mother-realtime-weathering-pbr-v1.js"
+          test "$(git hash-object "$root/brick-mother-standalone-v2.7.5.html")" = "$PRESERVED_CORE_BLOB"
           grep -q "核心三材质 V2.7.5" "$root/workbench.html"
+          grep -q "PBR 实时风化" "$root/workbench.html"
+          grep -q 'id="weathering"' "$root/workbench.html"
           grep -q "砌筑石形态" "$root/workbench.html"
-          grep -q "V2.6 高变化保留线" "$root/workbench.html"
-          grep -q "规则石材" "$page"
-          grep -q "半规则毛石" "$page"
-          grep -q "片石" "$page"
-          grep -q "卵石" "$page"
-          node --check "$root/brick-mother-gaea-kernel-v1.js"
-          node --check "$root/brick-mother-geometry-v2.js"
-          node --check "$root/brick-mother-renderer-v2.js"
-          node --check "$root/brick-mother-app-v2.js"
-          cat "$root/brick-mother-stone-masonry-v2.8.0-alpha.part1.txt" \
-              "$root/brick-mother-stone-masonry-v2.8.0-alpha.part2.txt" \
-              "$root/brick-mother-stone-masonry-v2.8.0-alpha.part3.txt" \
-              "$root/brick-mother-stone-masonry-v2.8.0-alpha.part4.txt" \
-              "$root/brick-mother-stone-masonry-v2.8.0-alpha.part5.txt" \
-              "$root/brick-mother-stone-masonry-v2.8.0-alpha.part6.txt" \
-              > /tmp/brick-mother-stone-masonry-v2.8.0-alpha.js
-          node --check /tmp/brick-mother-stone-masonry-v2.8.0-alpha.js
-          python3 - "$page" <<'PY'
-          from pathlib import Path
-          import re
-          import sys
+          grep -q "Base Color" "$root/brick-mother-realtime-weathering-pbr-v1.0.0.html"
+          grep -q "Roughness" "$root/brick-mother-realtime-weathering-pbr-v1.0.0.html"
+          grep -q "PBR Safe" "$root/brick-mother-realtime-weathering-pbr-v1.0.0.html"
+          grep -q "uDielectricF0" "$root/brick-mother-realtime-weathering-pbr-v1.js"
+          grep -q "dataset.metalness='0'" "$root/brick-mother-realtime-weathering-pbr-v1.js"
+          grep -q "dataset.dielectricF0='0.04'" "$root/brick-mother-realtime-weathering-pbr-v1.js"
+          node --check "$root/brick-mother-weathering-geometry-v1.js"
+          node --check "$root/brick-mother-realtime-weathering-pbr-v1.js"
 
-          text=Path(sys.argv[1]).read_text(encoding='utf-8')
-          scripts=re.findall(r'<script(?:\s[^>]*)?>(.*?)</script>', text, flags=re.I|re.S)
-          assert len(scripts) == 1, len(scripts)
-          Path('/tmp/brick-mother-masonry-inline-loader.js').write_text(scripts[0], encoding='utf-8')
-          assert "URL.createObjectURL(new Blob" in scripts[0]
-          assert "script.onerror" in scripts[0]
-          assert "brickMotherStoneError" in scripts[0]
-          PY
-          node --check /tmp/brick-mother-masonry-inline-loader.js
-
-      - name: Browser QA masonry runtime before deployment
+      - name: Browser QA six material families
         shell: bash
         run: |
           set -euo pipefail
-          root="yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother"
-          chrome="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)"
-          test -n "$chrome"
-          python3 -m http.server 8765 --bind 127.0.0.1 --directory "$root" > /tmp/brick-masonry-server.log 2>&1 &
+          root="$BRICK_ROOT"
+          out=/tmp/brick-weathering-family-qa
+          mkdir -p "$out"
+          python3 -m http.server 8765 --bind 127.0.0.1 --directory "$root" > "$out/server.log" 2>&1 &
           server_pid=$!
           trap 'kill "$server_pid" 2>/dev/null || true' EXIT
-          for attempt in $(seq 1 30); do
-            curl -fsS http://127.0.0.1:8765/brick-mother-stone-masonry-v2.8.0-alpha.html >/dev/null && break
+          ready=0
+          for attempt in $(seq 1 45); do
+            if curl -fsS http://127.0.0.1:8765/brick-mother-realtime-weathering-pbr-v1.0.0.html >/dev/null; then ready=1; break; fi
             sleep 1
           done
-          timeout 180s "$chrome" \
-            --headless=new \
-            --no-sandbox \
-            --disable-dev-shm-usage \
-            --disable-background-networking \
-            --enable-webgl \
-            --ignore-gpu-blocklist \
-            --enable-unsafe-swiftshader \
-            --use-gl=angle \
-            --use-angle=swiftshader \
-            --hide-scrollbars \
-            --window-size=1440,900 \
-            --virtual-time-budget=30000 \
-            --screenshot=/tmp/brick-masonry-browser.png \
-            --dump-dom \
-            "http://127.0.0.1:8765/brick-mother-stone-masonry-v2.8.0-alpha.html?qa=$GITHUB_SHA" \
-            > /tmp/brick-masonry-browser.dom.html \
-            2> /tmp/brick-masonry-browser.chrome.log
-          grep -q 'data-brick-mother-stone-ready="true"' /tmp/brick-masonry-browser.dom.html
-          grep -q 'data-workbench-ready="true"' /tmp/brick-masonry-browser.dom.html
-          grep -q 'class="loading hidden"' /tmp/brick-masonry-browser.dom.html
-          ! grep -q 'data-brick-mother-stone-error=' /tmp/brick-masonry-browser.dom.html
-          test -s /tmp/brick-masonry-browser.png
-          test "$(wc -c < /tmp/brick-masonry-browser.png)" -gt 70000
+          test "$ready" = 1
+          chrome="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)"
+          test -n "$chrome"
+          for family in 0 1 2 3 4 5; do
+            light=studio
+            if [ "$family" -eq 3 ] || [ "$family" -eq 4 ]; then light=raking; fi
+            url="http://127.0.0.1:8765/brick-mother-realtime-weathering-pbr-v1.0.0.html?family=${family}&channel=0&light=${light}&freeze=1&qa=1&build=$GITHUB_SHA"
+            timeout 210s "$chrome" \
+              --headless=new \
+              --no-sandbox \
+              --disable-dev-shm-usage \
+              --disable-background-networking \
+              --enable-webgl \
+              --ignore-gpu-blocklist \
+              --enable-unsafe-swiftshader \
+              --use-gl=angle \
+              --use-angle=swiftshader \
+              --hide-scrollbars \
+              --window-size=1000,625 \
+              --virtual-time-budget=70000 \
+              --screenshot="$out/family-${family}.png" \
+              --dump-dom \
+              "$url" \
+              > "$out/family-${family}.dom.html" \
+              2> "$out/family-${family}.chrome.log"
+            dom="$out/family-${family}.dom.html"
+            png="$out/family-${family}.png"
+            grep -q 'data-brick-mother-weathering-ready="true"' "$dom"
+            grep -q 'data-workbench-ready="true"' "$dom"
+            grep -q 'data-visual-ready="true"' "$dom"
+            grep -q 'data-runtime-version="1.0.0-alpha.1"' "$dom"
+            grep -q 'data-metalness="0"' "$dom"
+            grep -q 'data-dielectric-f0="0.04"' "$dom"
+            ! grep -q 'data-runtime-failure="true"' "$dom"
+            test -s "$png"
+            test "$(wc -c < "$png")" -gt 45000
+          done
+
+      - name: Browser QA PBR diagnostic channels
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="$BRICK_ROOT"
+          out=/tmp/brick-weathering-channel-qa
+          mkdir -p "$out"
+          python3 -m http.server 8766 --bind 127.0.0.1 --directory "$root" > "$out/server.log" 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          ready=0
+          for attempt in $(seq 1 45); do
+            if curl -fsS http://127.0.0.1:8766/brick-mother-realtime-weathering-pbr-v1.0.0.html >/dev/null; then ready=1; break; fi
+            sleep 1
+          done
+          test "$ready" = 1
+          chrome="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)"
+          test -n "$chrome"
+          for channel in 1 2 3 4 5 6 7 8 9 10; do
+            url="http://127.0.0.1:8766/brick-mother-realtime-weathering-pbr-v1.0.0.html?family=3&channel=${channel}&light=neutral&freeze=1&qa=1&build=$GITHUB_SHA"
+            timeout 210s "$chrome" \
+              --headless=new \
+              --no-sandbox \
+              --disable-dev-shm-usage \
+              --disable-background-networking \
+              --enable-webgl \
+              --ignore-gpu-blocklist \
+              --enable-unsafe-swiftshader \
+              --use-gl=angle \
+              --use-angle=swiftshader \
+              --hide-scrollbars \
+              --window-size=800,500 \
+              --virtual-time-budget=70000 \
+              --screenshot="$out/channel-${channel}.png" \
+              --dump-dom \
+              "$url" \
+              > "$out/channel-${channel}.dom.html" \
+              2> "$out/channel-${channel}.chrome.log"
+            dom="$out/channel-${channel}.dom.html"
+            png="$out/channel-${channel}.png"
+            grep -q 'data-visual-ready="true"' "$dom"
+            grep -q 'data-metalness="0"' "$dom"
+            grep -q 'data-dielectric-f0="0.04"' "$dom"
+            ! grep -q 'data-runtime-failure="true"' "$dom"
+            test -s "$png"
+            test "$(wc -c < "$png")" -gt 18000
+          done
           python3 - <<'PY'
           from pathlib import Path
-          import struct
-          data=Path('/tmp/brick-masonry-browser.png').read_bytes()
-          assert data[:8] == b'\x89PNG\r\n\x1a\n'
-          width,height=struct.unpack('>II',data[16:24])
-          assert (width,height) == (1440,900), (width,height)
-          print({'screenshotBytes':len(data),'size':[width,height]})
+          import hashlib, json, os, struct
+          rows=[]
+          for root in [Path('/tmp/brick-weathering-family-qa'),Path('/tmp/brick-weathering-channel-qa')]:
+              for p in sorted(root.glob('*.png')):
+                  data=p.read_bytes()
+                  assert data[:8] == b'\x89PNG\r\n\x1a\n'
+                  width,height=struct.unpack('>II',data[16:24])
+                  rows.append({'file':p.name,'bytes':len(data),'sha256':hashlib.sha256(data).hexdigest(),'width':width,'height':height})
+          assert len(rows)==16,len(rows)
+          Path('/tmp/brick-weathering-manifest.json').write_text(json.dumps({
+              'head':os.environ['GITHUB_SHA'],
+              'runtime':'1.0.0-alpha.1',
+              'familyViews':6,
+              'diagnosticViews':10,
+              'metalness':0,
+              'dielectricF0':0.04,
+              'screenshots':rows,
+              'visualApproved':False,
+              'productionApproved':False
+          },indent=2)+'\n')
           PY
 
-      - name: Upload masonry browser QA
+      - name: Upload PBR browser QA
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: brick-mother-masonry-browser-${{ github.sha }}
+          name: brick-mother-weathering-pbr-browser-${{ github.sha }}
           path: |
-            /tmp/brick-masonry-browser.png
-            /tmp/brick-masonry-browser.dom.html
-            /tmp/brick-masonry-browser.chrome.log
-            /tmp/brick-masonry-server.log
+            /tmp/brick-weathering-family-qa
+            /tmp/brick-weathering-channel-qa
+            /tmp/brick-weathering-manifest.json
           compression-level: 1
           if-no-files-found: ignore
+          retention-days: 7
 
-      - name: Assemble complete public site
+      - name: Assemble public site
         shell: bash
         run: |
           set -euo pipefail
@@ -173,39 +227,36 @@ jobs:
 
   verify-public:
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 15
     needs: deploy
     steps:
-      - name: Verify live Brick Mother files
+      - name: Verify public files
         shell: bash
         env:
           BASE_URL: https://haihao0307.github.io/HOUSE/brick-mother
         run: |
           set -euo pipefail
           ok=0
-          for attempt in $(seq 1 30); do
+          for attempt in $(seq 1 36); do
             if curl -fsSL --retry 2 --retry-delay 2 "$BASE_URL/workbench.html?build=$GITHUB_SHA" -o /tmp/workbench.html \
               && grep -q "核心三材质 V2.7.5" /tmp/workbench.html \
-              && grep -q "砌筑石形态" /tmp/workbench.html \
+              && grep -q "PBR 实时风化" /tmp/workbench.html \
+              && curl -fsSL --retry 2 --retry-delay 2 "$BASE_URL/brick-mother-realtime-weathering-pbr-v1.0.0.html?build=$GITHUB_SHA" -o /tmp/weathering.html \
+              && grep -q "实时风化与 PBR" /tmp/weathering.html \
+              && grep -q "PBR Safe" /tmp/weathering.html \
+              && curl -fsSL --retry 2 --retry-delay 2 "$BASE_URL/brick-mother-realtime-weathering-pbr-v1.js?build=$GITHUB_SHA" -o /tmp/weathering.js \
+              && grep -q "1.0.0-alpha.1" /tmp/weathering.js \
+              && grep -q "uDielectricF0" /tmp/weathering.js \
               && curl -fsSL --retry 2 --retry-delay 2 "$BASE_URL/brick-mother-standalone-v2.7.5.html?build=$GITHUB_SHA" -o /tmp/core.html \
-              && grep -q "Brick Mother V2.7" /tmp/core.html \
-              && curl -fsSL --retry 2 --retry-delay 2 "$BASE_URL/brick-mother-stone-masonry-v2.8.0-alpha.html?build=$GITHUB_SHA" -o /tmp/masonry.html \
-              && grep -q "规则石材" /tmp/masonry.html \
-              && grep -q "半规则毛石" /tmp/masonry.html \
-              && grep -q "片石" /tmp/masonry.html \
-              && grep -q "卵石" /tmp/masonry.html \
-              && grep -q "URL.createObjectURL(new Blob" /tmp/masonry.html; then
+              && grep -q "Brick Mother V2.7" /tmp/core.html; then
               ok=1
               break
             fi
             sleep 10
           done
           test "$ok" = 1
-          printf 'workbench=%s bytes\n' "$(wc -c < /tmp/workbench.html)"
-          printf 'core=%s bytes\n' "$(wc -c < /tmp/core.html)"
-          printf 'masonry=%s bytes\n' "$(wc -c < /tmp/masonry.html)"
 
-      - name: Verify live masonry runtime in Chromium
+      - name: Verify live PBR runtime in Chromium
         shell: bash
         env:
           BASE_URL: https://haihao0307.github.io/HOUSE/brick-mother
@@ -213,7 +264,7 @@ jobs:
           set -euo pipefail
           chrome="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)"
           test -n "$chrome"
-          timeout 180s "$chrome" \
+          timeout 210s "$chrome" \
             --headless=new \
             --no-sandbox \
             --disable-dev-shm-usage \
@@ -224,16 +275,32 @@ jobs:
             --use-gl=angle \
             --use-angle=swiftshader \
             --hide-scrollbars \
-            --window-size=1440,900 \
-            --virtual-time-budget=30000 \
-            --screenshot=/tmp/live-brick-masonry.png \
+            --window-size=1000,625 \
+            --virtual-time-budget=70000 \
+            --screenshot=/tmp/live-brick-weathering.png \
             --dump-dom \
-            "$BASE_URL/brick-mother-stone-masonry-v2.8.0-alpha.html?build=$GITHUB_SHA" \
-            > /tmp/live-brick-masonry.dom.html \
-            2> /tmp/live-brick-masonry.chrome.log
-          grep -q 'data-brick-mother-stone-ready="true"' /tmp/live-brick-masonry.dom.html
-          grep -q 'data-workbench-ready="true"' /tmp/live-brick-masonry.dom.html
-          grep -q 'class="loading hidden"' /tmp/live-brick-masonry.dom.html
-          ! grep -q 'data-brick-mother-stone-error=' /tmp/live-brick-masonry.dom.html
-          test -s /tmp/live-brick-masonry.png
-          test "$(wc -c < /tmp/live-brick-masonry.png)" -gt 70000
+            "$BASE_URL/brick-mother-realtime-weathering-pbr-v1.0.0.html?family=3&channel=0&light=raking&freeze=1&qa=1&build=$GITHUB_SHA" \
+            > /tmp/live-brick-weathering.dom.html \
+            2> /tmp/live-brick-weathering.chrome.log
+          grep -q 'data-brick-mother-weathering-ready="true"' /tmp/live-brick-weathering.dom.html
+          grep -q 'data-workbench-ready="true"' /tmp/live-brick-weathering.dom.html
+          grep -q 'data-visual-ready="true"' /tmp/live-brick-weathering.dom.html
+          grep -q 'data-runtime-version="1.0.0-alpha.1"' /tmp/live-brick-weathering.dom.html
+          grep -q 'data-metalness="0"' /tmp/live-brick-weathering.dom.html
+          grep -q 'data-dielectric-f0="0.04"' /tmp/live-brick-weathering.dom.html
+          ! grep -q 'data-runtime-failure="true"' /tmp/live-brick-weathering.dom.html
+          test -s /tmp/live-brick-weathering.png
+          test "$(wc -c < /tmp/live-brick-weathering.png)" -gt 45000
+
+      - name: Upload live PBR evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: live-brick-mother-weathering-pbr-${{ github.sha }}
+          path: |
+            /tmp/live-brick-weathering.png
+            /tmp/live-brick-weathering.dom.html
+            /tmp/live-brick-weathering.chrome.log
+          compression-level: 1
+          if-no-files-found: ignore
+          retention-days: 7
