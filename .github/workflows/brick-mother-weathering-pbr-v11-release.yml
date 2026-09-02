@@ -93,7 +93,7 @@ jobs:
           grep -q "BrickMotherStoneFormGeometryV35" "$stage/brick-mother-weathering-geometry-v1.1.js"
           grep -q "dataset.aoScope='diffuse-ambient-only'" "$stage/brick-mother-realtime-weathering-pbr-v1.1.js"
           grep -q "dataset.heightRole='low-frequency-silhouette'" "$stage/brick-mother-realtime-weathering-pbr-v1.1.js"
-          grep -q "dataset.normalRole='high-frequency-surface'" "$stage/brick-mother-realtime-weathering-pbr-v1.1.js"
+          grep -q "dataset.normalRole='high-frequency-detail'" "$stage/brick-mother-realtime-weathering-pbr-v1.1.js"
 
       - name: Materialize source and deployment workflow
         shell: bash
