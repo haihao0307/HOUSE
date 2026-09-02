@@ -1,0 +1,219 @@
+name: Tiles Mother V0.6 AAA Workbench
+
+on:
+  push:
+    branches: [feature/tiles-mother-v0.1-workbench]
+    paths:
+      - .github/workflows/tiles-mother-v06-publish.yml
+      - .github/scripts/tiles-v06-*.py
+      - .github/scripts/tiles-v06-*.sh
+      - tiles-mother/v06/bootstrap-v06.tar.gz.b64.part-*
+      - tiles-mother/v06/**
+      - tiles-mother/knowledge/jiangwutang-001/material-candidate-v0.6.json
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    if: "${{ github.event_name == 'workflow_dispatch' || !startsWith(github.event.head_commit.message, 'test(tiles-mother): publish V0.6') }}"
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    environment:
+      name: github-pages-preview
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Check out exact source commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+
+      - name: Restore and verify V0.6 source bootstrap
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf /tmp/tm-v06
+          mkdir -p /tmp/tm-v06/candidate/tiles-mother/v06 /tmp/tm-v06/local-qa /tmp/tm-v06/public-qa
+          cat tiles-mother/v06/bootstrap-v06.tar.gz.b64.part-* | base64 --decode > /tmp/tm-v06/bootstrap.tar.gz
+          echo '6079c4564164d06e651c92d05a72cf517489b2aad131c1168174a7242bc4d55a  /tmp/tm-v06/bootstrap.tar.gz' | sha256sum -c -
+          python3 - <<'PY'
+          from pathlib import Path, PurePosixPath
+          import tarfile
+          archive = Path('/tmp/tm-v06/bootstrap.tar.gz')
+          with tarfile.open(archive) as tf:
+              for member in tf.getmembers():
+                  rel = PurePosixPath(member.name)
+                  assert not rel.is_absolute() and '..' not in rel.parts, member.name
+          PY
+          tar -xzf /tmp/tm-v06/bootstrap.tar.gz
+          test -f tiles-mother/v06/profile.js
+          test -f tiles-mother/v06/render-studio.js
+          test -f tiles-mother/v06/browser_qa.py
+
+      - name: Upgrade and build deterministic V0.6 candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 tiles-mother/v06/upgrade_index.py \
+            --source tiles-mother/index.html \
+            --out /tmp/tm-v06/candidate/tiles-mother/index.html
+          cp tiles-mother/v06/profile.js \
+             tiles-mother/v06/geometry-operators.js \
+             tiles-mother/v06/roof-joints.js \
+             tiles-mother/v06/studio.js \
+             tiles-mother/v06/render-studio.js \
+             tiles-mother/v06/integration.js \
+             /tmp/tm-v06/candidate/tiles-mother/v06/
+          mkdir -p /tmp/tm-v06/candidate/tiles-mother/knowledge/jiangwutang-001
+          cp tiles-mother/knowledge/jiangwutang-001/material-candidate-v0.6.json \
+             /tmp/tm-v06/candidate/tiles-mother/knowledge/jiangwutang-001/
+          python3 tiles-mother/v06/build.py \
+            --source /tmp/tm-v06/candidate/tiles-mother/index.html \
+            --out /tmp/tm-v06/candidate/tiles-mother/index.html \
+            --manifest /tmp/tm-v06/candidate/tiles-mother/v06/build-manifest.json
+          python3 - <<'PY'
+          from pathlib import Path
+          import json, os
+          path = Path('/tmp/tm-v06/candidate/tiles-mother/v06/build-manifest.json')
+          data = json.loads(path.read_text())
+          data.update(sourceCommit=os.environ['GITHUB_SHA'], workflowRun=os.environ['GITHUB_RUN_ID'], publicPath='tiles-mother/')
+          data.update(visualApproved=False, productionApproved=False, distillationComplete=False)
+          path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + '\n')
+          PY
+
+      - name: Run V0.6 core checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          for file in profile.js geometry-operators.js roof-joints.js studio.js render-studio.js integration.js; do
+            node --check "tiles-mother/v06/$file"
+          done
+          node tiles-mother/v06/test_core.cjs
+          cp tiles-mother/qa-v06/core-report.json /tmp/tm-v06/local-qa/core-report.json
+
+      - name: Install pinned browser evidence runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m pip install 'playwright==1.55.0' 'pillow==11.3.0'
+          python3 -m playwright install --with-deps chromium
+
+      - name: Run local real-browser V0.6 QA
+        run: python3 tiles-mother/v06/browser_qa.py --site /tmp/tm-v06/candidate/tiles-mother --out /tmp/tm-v06/local-qa
+
+      - name: Fail closed on QA and approval state
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+          root = Path('/tmp/tm-v06/local-qa')
+          core = json.loads((root/'core-report.json').read_text())
+          browser = json.loads((root/'browser-report.json').read_text())
+          assert core['allPassed'] and browser['allPassed']
+          assert len(core['tests']) == 24
+          assert not core['visualApproved'] and not core['productionApproved']
+          assert not browser['visualApproved'] and not browser['productionApproved']
+          PY
+          test "$(git ls-remote origin refs/heads/feature/tiles-mother-v0.1-workbench | cut -f1)" = "$GITHUB_SHA"
+
+      - name: Locate exact current successful Pages artifact
+        id: base
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const repo = context.repo;
+            const pages = (await github.request('GET /repos/{owner}/{repo}/pages', repo)).data;
+            if (pages.build_type !== 'workflow') throw Error('Unexpected Pages configuration.');
+            const deployments = await github.paginate(github.rest.repos.listDeployments, {...repo, per_page: 100});
+            let chosen;
+            for (const deployment of deployments) {
+              if (deployment.sha === context.sha || !['github-pages','github-pages-preview'].includes(deployment.environment)) continue;
+              const statuses = (await github.rest.repos.listDeploymentStatuses({...repo, deployment_id: deployment.id, per_page: 5})).data;
+              if (statuses[0]?.state === 'success') { chosen = {deployment, status: statuses[0]}; break; }
+            }
+            if (!chosen) throw Error('No successful Pages deployment can be proven.');
+            const artifacts = await github.paginate(github.rest.actions.listArtifactsForRepo, {...repo, name: 'github-pages', per_page: 100});
+            const match = artifacts.filter(a => !a.expired && a.workflow_run?.head_sha === chosen.deployment.sha).sort((a,b) => b.id-a.id)[0];
+            if (!match) throw Error('Exact current Pages artifact is unavailable.');
+            chosen.artifact = match;
+            fs.writeFileSync('/tmp/tm-v06/base-site.json', JSON.stringify(chosen, null, 2));
+            core.setOutput('run_id', String(match.workflow_run.id));
+
+      - name: Restore complete current public site
+        uses: actions/download-artifact@v4
+        with:
+          name: github-pages
+          run-id: ${{ steps.base.outputs.run_id }}
+          github-token: ${{ github.token }}
+          path: /tmp/tm-v06/current-pages
+
+      - name: Overlay only tested Tiles Mother V0.6 files
+        run: python3 .github/scripts/tiles-v06-overlay.py
+
+      - name: Upload preserved complete site
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: /tmp/tm-v06/full-site
+
+      - name: Reject stale branch or concurrent Pages publication
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const base = JSON.parse(fs.readFileSync('/tmp/tm-v06/base-site.json'));
+            const head = (await github.rest.repos.getBranch({...context.repo, branch: 'feature/tiles-mother-v0.1-workbench'})).data.commit.sha;
+            if (head !== context.sha) throw Error('Source branch advanced.');
+            const deployments = await github.paginate(github.rest.repos.listDeployments, {...context.repo, per_page: 100});
+            let latest;
+            for (const deployment of deployments) {
+              if (deployment.sha === context.sha || !['github-pages','github-pages-preview'].includes(deployment.environment)) continue;
+              const statuses = (await github.rest.repos.listDeploymentStatuses({...context.repo, deployment_id: deployment.id, per_page: 5})).data;
+              if (statuses[0]?.state === 'success') { latest = deployment; break; }
+            }
+            if (!latest || latest.id !== base.deployment.id) throw Error('A newer public site appeared.');
+
+      - name: Publish V0.6 workbench
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: Verify exact public HTML bytes
+        run: python3 .github/scripts/tiles-v06-readback.py
+
+      - name: Run actual public browser verification
+        run: python3 tiles-mother/v06/browser_qa.py --site /tmp/tm-v06/candidate/tiles-mother --out /tmp/tm-v06/public-qa --url 'https://haihao0307.github.io/HOUSE/tiles-mother/?v=0.6.0'
+
+      - name: Preserve source and public evidence on work branch
+        run: bash .github/scripts/tiles-v06-commit-evidence.sh
+
+      - name: Upload V0.6 evidence artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tiles-mother-v06-aaa-${{ github.run_id }}
+          path: |
+            /tmp/tm-v06/candidate/
+            /tmp/tm-v06/local-qa/
+            /tmp/tm-v06/public-qa/
+            /tmp/tm-v06/publication.json
+            /tmp/tm-v06/site-preservation.json
+          retention-days: 30
+          if-no-files-found: warn
+
+      - name: V0.6 status summary
+        if: always()
+        run: |
+          echo '## Tiles Mother V0.6 AAA workbench' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Final displaced normals, tangents, independent edge sections, actual back seating and drainage diagnostics are enabled.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'visualApproved=false; productionApproved=false; distillationComplete=false.' >> "$GITHUB_STEP_SUMMARY"
