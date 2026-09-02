@@ -50,7 +50,7 @@ jobs:
           source=root/'brick-mother-stone-form-v3.1.0.html'
           text=source.read_text()
           bootstrap="""<script>
-          (()=>{const native=window.requestAnimationFrame.bind(window);window.requestAnimationFrame=callback=>{if(document.documentElement.dataset.workbenchReady==='true')return native(callback);return setTimeout(()=>callback(performance.now()),16);};})();
+          (()=>{const native=window.requestAnimationFrame.bind(window);window.requestAnimationFrame=callback=>{if(document.documentElement.dataset.visualReady==='true')return native(callback);return setTimeout(()=>callback(performance.now()),16);};})();
           </script>\n"""
           marker='<script src="./stone-form-geometry-v31.js"></script>'
           assert marker in text
