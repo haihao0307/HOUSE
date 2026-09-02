@@ -36,11 +36,13 @@ function rectangleFootprint(seed,form,scale=1){
   return area(pts)<0?pts.slice().reverse():pts;
 }
 `;
-  const start=shell.lastIndexOf('<script>');
-  const end=shell.lastIndexOf('</script>');
+  const openTag='<script>';
+  const closeTag='<'+ '/script>';
+  const start=shell.lastIndexOf(openTag);
+  const end=shell.lastIndexOf(closeTag);
   if(start<0||end<start)throw new Error('candidate shell script boundary missing');
   const runtime=compatibility+'\n'+chunks.join('');
-  const combined=shell.slice(0,start)+'<script>'+runtime.replace(/<\/script/gi,'<\\/script')+'<\/script>'+shell.slice(end+9);
+  const combined=shell.slice(0,start)+openTag+runtime+closeTag+shell.slice(end+closeTag.length);
   document.open();document.write(combined);document.close();
 })().catch(error=>{document.documentElement.dataset.runtimeFailure='true';document.body.innerHTML='<div>'+String(error.message).replace(/[<>]/g,'')+'</div>';console.error(error);});
 </script>
