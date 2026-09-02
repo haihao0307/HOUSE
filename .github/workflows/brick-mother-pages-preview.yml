@@ -1,0 +1,89 @@
+name: Deploy Brick Mother Online Workbench
+
+on:
+  push:
+    branches:
+      - feature/brick-mother-v2.0-composite-material-dna
+    paths:
+      - ".github/workflows/brick-mother-pages-preview.yml"
+      - "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact branch head
+        uses: actions/checkout@v4
+
+      - name: Validate preserved core and added stone section
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother"
+          test -s "$root/brick-mother-standalone-v2.7.5.html"
+          test -s "$root/brick-mother-standalone-v2.6.html"
+          test -s "$root/stone-study.html"
+          test -s "$root/brick-mother-stone-masonry-v2.8.0-alpha.html"
+          test -s "$root/brick-mother-stone-masonry-v2.8.0-alpha.css"
+          test -s "$root/brick-mother-stone-masonry-v2.8.0-alpha.part1.txt"
+          test -s "$root/brick-mother-stone-masonry-v2.8.0-alpha.part2.txt"
+          test -s "$root/brick-mother-stone-masonry-v2.8.0-alpha.part3.txt"
+          test -s "$root/brick-mother-stone-masonry-v2.8.0-alpha.part4.txt"
+          test -s "$root/brick-mother-stone-masonry-v2.8.0-alpha.part5.txt"
+          test -s "$root/brick-mother-stone-masonry-v2.8.0-alpha.part6.txt"
+          test -s "$root/workbench.html"
+          grep -q "核心三材质 V2.7.5" "$root/workbench.html"
+          grep -q "砌筑石形态" "$root/workbench.html"
+          grep -q "V2.6 高变化保留线" "$root/workbench.html"
+          grep -q "规则石材" "$root/brick-mother-stone-masonry-v2.8.0-alpha.html"
+          grep -q "半规则毛石" "$root/brick-mother-stone-masonry-v2.8.0-alpha.html"
+          grep -q "片石" "$root/brick-mother-stone-masonry-v2.8.0-alpha.html"
+          grep -q "卵石" "$root/brick-mother-stone-masonry-v2.8.0-alpha.html"
+          node --check "$root/brick-mother-gaea-kernel-v1.js"
+          node --check "$root/brick-mother-geometry-v2.js"
+          node --check "$root/brick-mother-renderer-v2.js"
+          node --check "$root/brick-mother-app-v2.js"
+          cat "$root/brick-mother-stone-masonry-v2.8.0-alpha.part1.txt" "$root/brick-mother-stone-masonry-v2.8.0-alpha.part2.txt" "$root/brick-mother-stone-masonry-v2.8.0-alpha.part3.txt" "$root/brick-mother-stone-masonry-v2.8.0-alpha.part4.txt" "$root/brick-mother-stone-masonry-v2.8.0-alpha.part5.txt" "$root/brick-mother-stone-masonry-v2.8.0-alpha.part6.txt" > /tmp/brick-mother-stone-masonry-v2.8.0-alpha.js
+          node --check /tmp/brick-mother-stone-masonry-v2.8.0-alpha.js
+
+      - name: Assemble complete public site
+        shell: bash
+        run: |
+          set -euo pipefail
+          src="yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local"
+          mkdir -p _site
+          cp -R "$src"/. _site/
+          rm -rf _site/references-private _site/release _site/.git _site/.github
+          rm -f _site/assets/models/YN_TUANJIE_001_EDITABLE_HIGH.glb
+          touch _site/.nojekyll
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
