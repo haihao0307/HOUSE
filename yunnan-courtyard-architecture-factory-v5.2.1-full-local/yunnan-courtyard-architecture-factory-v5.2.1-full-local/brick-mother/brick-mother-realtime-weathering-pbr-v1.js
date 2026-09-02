@@ -152,7 +152,7 @@ const families=[
 const state={family:0,seed:5045,form:.48,fracture:.48,edge:.42,relief:.56,rough:.78,porosity:.54,hardness:.70,age:18,rain:.38,drying:.42,dust:.28,salt:.12,bio:.10,abrasion:.16,lightMode:'studio',lightAngle:-34,viewMode:0,piece:'all',auto:false,playing:true,simSpeed:1,simTime:0,rainPulse:0,cycles:0,lastWetHigh:false,freeze:false};
 const weather={wet:.12,retained:.10,deposit:.08,leach:.015,salt:.01,bio:.008,abrasion:.018};
 let stones=[],triangleTotal=0,rebuildToken=0,rebuildTimer=0,shadowDirty=true;
-const nextFrame=()=>new Promise(resolve=>requestAnimationFrame(()=>resolve()));
+const nextFrame=()=>new Promise(resolve=>qaMode?setTimeout(resolve,16):requestAnimationFrame(()=>resolve()));
 function setProgress(p,text){if(loadingBar)loadingBar.style.width=(p*100).toFixed(0)+'%';if(loadingText)loadingText.textContent=text;}
 function clearStones(){for(const s of stones)destroyGeometry(s.geo);stones=[];}
 async function rebuildStones(initial=false){
