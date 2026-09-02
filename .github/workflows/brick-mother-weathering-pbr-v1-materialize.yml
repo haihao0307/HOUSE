@@ -43,10 +43,14 @@ jobs:
           from pathlib import Path
           path=Path('yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/brick-mother-realtime-weathering-pbr-v1.js')
           text=path.read_text(encoding='utf-8')
-          old="setProgress(1,'PBR WEATHERING READY');await nextFrame();setTimeout(()=>{if(token===rebuildToken){loading.classList.add('hidden');document.documentElement.dataset.visualReady='true';$('#runtimeLabel').textContent=state.playing?'实时运行':'已暂停';}},240);"
-          new="setProgress(1,'PBR WEATHERING READY');setTimeout(()=>{if(token===rebuildToken){loading.classList.add('hidden');document.documentElement.dataset.visualReady='true';$('#runtimeLabel').textContent=state.playing?'实时运行':'已暂停';}},240);"
-          assert old in text
-          path.write_text(text.replace(old,new,1),encoding='utf-8')
+          old_frame="const nextFrame=()=>new Promise(resolve=>requestAnimationFrame(()=>resolve()));"
+          new_frame="const nextFrame=()=>new Promise(resolve=>qaMode?setTimeout(resolve,16):requestAnimationFrame(()=>resolve()));"
+          old_ready="setProgress(1,'PBR WEATHERING READY');await nextFrame();setTimeout(()=>{if(token===rebuildToken){loading.classList.add('hidden');document.documentElement.dataset.visualReady='true';$('#runtimeLabel').textContent=state.playing?'实时运行':'已暂停';}},240);"
+          new_ready="setProgress(1,'PBR WEATHERING READY');setTimeout(()=>{if(token===rebuildToken){loading.classList.add('hidden');document.documentElement.dataset.visualReady='true';$('#runtimeLabel').textContent=state.playing?'实时运行':'已暂停';}},240);"
+          assert old_frame in text
+          assert old_ready in text
+          text=text.replace(old_frame,new_frame,1).replace(old_ready,new_ready,1)
+          path.write_text(text,encoding='utf-8')
           PY
 
       - name: Validate preserved core and new runtime
@@ -68,6 +72,7 @@ jobs:
           grep -q "uDielectricF0" "$BRICK_ROOT/brick-mother-realtime-weathering-pbr-v1.js"
           grep -q "dataset.metalness='0'" "$BRICK_ROOT/brick-mother-realtime-weathering-pbr-v1.js"
           grep -q "dataset.dielectricF0='0.04'" "$BRICK_ROOT/brick-mother-realtime-weathering-pbr-v1.js"
+          grep -q "qaMode?setTimeout(resolve,16)" "$BRICK_ROOT/brick-mother-realtime-weathering-pbr-v1.js"
           ! grep -q "PBR WEATHERING READY');await nextFrame();setTimeout" "$BRICK_ROOT/brick-mother-realtime-weathering-pbr-v1.js"
 
       - name: Commit materialized workbench
@@ -85,6 +90,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "Realtime weathering PBR workbench already materialized"
           else
-            git commit -m "fix(brick): complete realtime weathering visual initialization"
+            git commit -m "fix(brick): stabilize realtime weathering QA initialization"
             git push origin "HEAD:$TARGET_BRANCH"
           fi
