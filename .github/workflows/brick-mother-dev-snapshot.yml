@@ -1,0 +1,40 @@
+name: Brick Mother Development Source Snapshot
+
+on:
+  push:
+    branches:
+      - feature/brick-mother-v2.0-composite-material-dna
+    paths:
+      - ".github/workflows/brick-mother-dev-snapshot.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  BRICK_ROOT: yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout exact head
+        uses: actions/checkout@v4
+
+      - name: Verify source root
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -d "$BRICK_ROOT"
+          test -s "$BRICK_ROOT/brick-mother-standalone-v2.7.5.html"
+          test -s "$BRICK_ROOT/workbench.html"
+
+      - name: Upload Brick Mother source
+        uses: actions/upload-artifact@v4
+        with:
+          name: brick-mother-dev-source-${{ github.sha }}
+          path: ${{ env.BRICK_ROOT }}
+          compression-level: 1
+          if-no-files-found: error
+          retention-days: 3
