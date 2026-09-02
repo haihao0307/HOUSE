@@ -73,18 +73,18 @@ jobs:
           python3 -m http.server 8765 --bind 127.0.0.1 --directory "$REVIEW_ROOT" >/tmp/stone-form-v32-server.log 2>&1 &
           server_pid=$!
           trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          ready=0
           for attempt in $(seq 1 60); do
-            curl -fsS http://127.0.0.1:8765/brick-mother-stone-form-v3.2.0-qa.html >/dev/null && break
+            if curl -fsS http://127.0.0.1:8765/brick-mother-stone-form-v3.2.0-qa.html >/dev/null; then ready=1; break; fi
             sleep 1
           done
+          test "$ready" = 1
           chrome="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)"
           test -n "$chrome"
           for family in 0 1 2 3; do
-            for view in all hero; do
-              stem="family-${family}-${view}"
-              light=studio
-              if [ "$view" = hero ]; then light=raking; fi
-              url="http://127.0.0.1:8765/brick-mother-stone-form-v3.2.0-qa.html?family=${family}&view=${view}&light=${light}&qa=private-v32&head=${GITHUB_SHA}"
+            for light in studio raking; do
+              stem="family-${family}-${light}"
+              url="http://127.0.0.1:8765/brick-mother-stone-form-v3.2.0-qa.html?family=${family}&view=all&light=${light}&qa=private-v32&head=${GITHUB_SHA}"
               timeout 210s "$chrome" \
                 --headless=new \
                 --no-sandbox \
