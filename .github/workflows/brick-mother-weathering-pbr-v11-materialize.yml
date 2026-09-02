@@ -46,6 +46,11 @@ jobs:
           echo "$PAYLOAD_SHA256  /tmp/brick-mother-weathering-pbr-v11.tar.gz" | sha256sum --check --strict
           tar -tzf /tmp/brick-mother-weathering-pbr-v11.tar.gz
           tar -xzf /tmp/brick-mother-weathering-pbr-v11.tar.gz -C .
+          python3 - <<'PY'
+          from pathlib import Path
+          path=Path('docs/brick-mother/BRICK_MOTHER_REALTIME_WEATHERING_PBR_DNA_V1.0.md')
+          path.write_text(path.read_text().rstrip()+'\n')
+          PY
 
       - name: Validate preserved core and PBR contract
         shell: bash
