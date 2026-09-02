@@ -13,7 +13,7 @@ permissions:
 
 env:
   BRICK_ROOT: yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother
-  STONE_REVIEW_ROOT: private-review/brick-mother-stone-form-v31
+  STONE_REVIEW_ROOT: private-review/brick-mother-stone-form-v33
 
 jobs:
   snapshot:
@@ -31,11 +31,12 @@ jobs:
           test -s "$BRICK_ROOT/brick-mother-standalone-v2.7.5.html"
           test -s "$BRICK_ROOT/workbench.html"
           test -d "$STONE_REVIEW_ROOT"
-          test -s "$STONE_REVIEW_ROOT/brick-mother-stone-form-v3.1.0.html"
-          test -s "$STONE_REVIEW_ROOT/stone-form-geometry-v31.js"
-          test -s "$STONE_REVIEW_ROOT/stone-form-runtime-v31.js"
-          node --check "$STONE_REVIEW_ROOT/stone-form-geometry-v31.js"
-          node --check "$STONE_REVIEW_ROOT/stone-form-runtime-v31.js"
+          test -s "$STONE_REVIEW_ROOT/brick-mother-stone-form-v3.3.0.html"
+          test -s "$STONE_REVIEW_ROOT/stone-form-geometry-v33.js"
+          test -s "$STONE_REVIEW_ROOT/stone-form-runtime-v33.js"
+          node --check "$STONE_REVIEW_ROOT/stone-form-geometry-v33.js"
+          node --check "$STONE_REVIEW_ROOT/stone-form-runtime-v33.js"
+          test "$(git hash-object "$BRICK_ROOT/brick-mother-standalone-v2.7.5.html")" = "7b10389cb9367f7423619262820883cc94b07a61"
 
       - name: Upload current Brick Mother development source
         uses: actions/upload-artifact@v4
@@ -45,7 +46,7 @@ jobs:
             ${{ env.BRICK_ROOT }}
             ${{ env.STONE_REVIEW_ROOT }}
             .github/workflows/brick-mother-pages-preview.yml
-            .github/workflows/brick-mother-stone-form-v32-materialize-review.yml
+            .github/workflows/brick-mother-stone-form-v33-materialize-review.yml
           compression-level: 1
           if-no-files-found: error
           retention-days: 3
