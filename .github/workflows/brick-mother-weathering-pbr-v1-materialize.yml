@@ -38,6 +38,7 @@ jobs:
           test "$actual" = "$PAYLOAD_SHA256"
           tar -tzf /tmp/brick-mother-weathering-pbr-v1.tar.gz
           tar -xzf /tmp/brick-mother-weathering-pbr-v1.tar.gz -C .
+          git restore .github/workflows/brick-mother-pages-preview.yml
 
       - name: Validate preserved core and new runtime
         shell: bash
@@ -58,7 +59,6 @@ jobs:
           grep -q "uDielectricF0" "$BRICK_ROOT/brick-mother-realtime-weathering-pbr-v1.js"
           grep -q "dataset.metalness='0'" "$BRICK_ROOT/brick-mother-realtime-weathering-pbr-v1.js"
           grep -q "dataset.dielectricF0='0.04'" "$BRICK_ROOT/brick-mother-realtime-weathering-pbr-v1.js"
-          grep -q "PBR 实时风化" .github/workflows/brick-mother-pages-preview.yml
 
       - name: Commit materialized workbench
         shell: bash
@@ -71,8 +71,7 @@ jobs:
             "$BRICK_ROOT/brick-mother-realtime-weathering-pbr-v1.0.0.html" \
             "$BRICK_ROOT/brick-mother-realtime-weathering-pbr-v1.css" \
             "$BRICK_ROOT/brick-mother-weathering-geometry-v1.js" \
-            "$BRICK_ROOT/brick-mother-realtime-weathering-pbr-v1.js" \
-            .github/workflows/brick-mother-pages-preview.yml
+            "$BRICK_ROOT/brick-mother-realtime-weathering-pbr-v1.js"
           if git diff --cached --quiet; then
             echo "Realtime weathering PBR workbench already materialized"
           else
