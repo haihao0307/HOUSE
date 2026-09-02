@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<title>Brick Mother Stone Form V2.9 Private Bundle</title>
+<style>html,body{width:100%;height:100%;margin:0;background:#07090b;color:#aaa;font:12px/1.5 system-ui;display:grid;place-items:center}.wait{letter-spacing:.12em}</style>
+</head>
+<body><div class="wait">ASSEMBLING STONE FORM DNA</div>
+<script>
+(async()=>{
+  const base='brick-mother-stone-form-v2.9.0.html';
+  const parts=[1,2,3,4,5,6].map(i=>'stone-form-v29.part'+i+'.txt');
+  const responses=await Promise.all([base,...parts].map(url=>fetch(url,{cache:'no-store'})));
+  for(const response of responses)if(!response.ok)throw new Error('fetch '+response.status+' '+response.url);
+  const shell=await responses[0].text();
+  const chunks=await Promise.all(responses.slice(1).map(response=>response.text()));
+  const compatibility=String.raw`
+window.addEventListener('error',event=>{
+  document.documentElement.dataset.runtimeFailure='true';
+  const target=document.getElementById('error');
+  if(target){target.style.display='grid';target.innerHTML='<div><b>石材形体运行时错误</b><span>'+String(event.message||'unknown').replace(/[<>]/g,'')+'</span></div>';}
+  const loading=document.getElementById('loading');if(loading)loading.classList.add('hidden');
+});
+function shiftBottom(pos){let minY=Infinity;for(let i=1;i<pos.length;i+=3)minY=Math.min(minY,pos[i]);for(let i=1;i<pos.length;i+=3)pos[i]-=minY;}
+function addVertex(arr,p,kind=0){arr.pos.push(p[0],p[1],p[2]);arr.kind.push(kind);return arr.pos.length/3-1;}
+function rectangleFootprint(seed,form,scale=1){
+  const rngLocal=input=>{let s=(input>>>0)||1;return()=>{s=(s+0x6D2B79F5)>>>0;let t=s;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296;};};
+  const gauss=(i,c,n,width)=>{let d=Math.abs(i-c);d=Math.min(d,n-d);return Math.exp(-(d*d)/(2*width*width));};
+  const area=poly=>{let a=0;for(let i=0;i<poly.length;i++){const p=poly[i],q=poly[(i+1)%poly.length];a+=p[0]*q[1]-q[0]*p[1];}return a*.5;};
+  const R=rngLocal(seed+11),hx=1.48*scale,hz=.92*scale,ch=.18*scale;
+  let pts=[[-hx+ch,-hz],[hx-ch,-hz],[hx,-hz+ch],[hx,-.20*hz],[hx,hz-ch],[hx-ch,hz],[.18*hx,hz],[-hx+ch,hz],[-hx,hz-ch],[-hx,.18*hz],[-hx,-hz+ch]];
+  pts=pts.map(p=>{const tang=(R()-.5)*.026*scale*form,normal=(R()-.5)*.018*scale*form;let x=p[0],z=p[1];const l=Math.hypot(x/hx,z/hz)||1;x+=normal*x/l+tang*(-z)/Math.max(hx,hz);z+=normal*z/l+tang*x/Math.max(hx,hz);return[x,z];});
+  const chips=1+Math.floor(form*.9);for(let c=0;c<chips;c++){const ci=Math.floor(R()*pts.length);for(let i=0;i<pts.length;i++){const g=gauss(i,ci,pts.length,.55),x=pts[i][0],z=pts[i][1];pts[i]=[x*(1-.055*g*(.5+form)),z*(1-.055*g*(.5+form))];}}
+  return area(pts)<0?pts.slice().reverse():pts;
+}
+`;
+  const start=shell.lastIndexOf('<script>');
+  const end=shell.lastIndexOf('</script>');
+  if(start<0||end<start)throw new Error('candidate shell script boundary missing');
+  const runtime=compatibility+'\n'+chunks.join('');
+  const combined=shell.slice(0,start)+'<script>'+runtime.replace(/<\/script/gi,'<\\/script')+'<\/script>'+shell.slice(end+9);
+  document.open();document.write(combined);document.close();
+})().catch(error=>{document.documentElement.dataset.runtimeFailure='true';document.body.innerHTML='<div>'+String(error.message).replace(/[<>]/g,'')+'</div>';console.error(error);});
+</script>
+</body>
+</html>
