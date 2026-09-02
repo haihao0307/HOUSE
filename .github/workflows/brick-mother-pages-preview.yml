@@ -87,3 +87,35 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+  verify-public:
+    runs-on: ubuntu-latest
+    needs: deploy
+    steps:
+      - name: Verify live Brick Mother workbench
+        shell: bash
+        env:
+          BASE_URL: https://haihao0307.github.io/HOUSE/brick-mother
+        run: |
+          set -euo pipefail
+          ok=0
+          for attempt in $(seq 1 30); do
+            if curl -fsSL --retry 2 --retry-delay 2 "$BASE_URL/workbench.html?build=$GITHUB_SHA" -o /tmp/workbench.html \
+              && grep -q "核心三材质 V2.7.5" /tmp/workbench.html \
+              && grep -q "砌筑石形态" /tmp/workbench.html \
+              && curl -fsSL --retry 2 --retry-delay 2 "$BASE_URL/brick-mother-standalone-v2.7.5.html?build=$GITHUB_SHA" -o /tmp/core.html \
+              && grep -q "Brick Mother V2.7" /tmp/core.html \
+              && curl -fsSL --retry 2 --retry-delay 2 "$BASE_URL/brick-mother-stone-masonry-v2.8.0-alpha.html?build=$GITHUB_SHA" -o /tmp/masonry.html \
+              && grep -q "规则石材" /tmp/masonry.html \
+              && grep -q "半规则毛石" /tmp/masonry.html \
+              && grep -q "片石" /tmp/masonry.html \
+              && grep -q "卵石" /tmp/masonry.html; then
+              ok=1
+              break
+            fi
+            sleep 10
+          done
+          test "$ok" = 1
+          printf 'workbench=%s bytes\n' "$(wc -c < /tmp/workbench.html)"
+          printf 'core=%s bytes\n' "$(wc -c < /tmp/core.html)"
+          printf 'masonry=%s bytes\n' "$(wc -c < /tmp/masonry.html)"
