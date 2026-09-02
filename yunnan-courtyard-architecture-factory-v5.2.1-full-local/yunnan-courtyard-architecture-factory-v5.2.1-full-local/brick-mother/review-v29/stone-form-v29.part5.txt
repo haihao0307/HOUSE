@@ -1,0 +1,60 @@
+4,selected:1}));
+  const rots=[[.055,.38,-.025],[-.025,-.54,.035],[.035,.66,-.035]],scales=[.43,.39,.45];
+  for(let i=0;i<3;i++){
+    const seed=baseSeed+(i+1)*1067,variant={...state,form:clamp(state.form+(i-1)*.08,0,1),fracture:clamp(state.fracture+(i===1?.07:-.03),0,1),edge:clamp(state.edge+(i-1)*.05,0,1)},data=makeStoneGeometry(f,seed,variant,false,scales[i]),geo=gpuGeometry(data);triangleTotal+=geo.count/3;
+    stones.push(obj(geo,[miniPos[i][0],floorY+miniHeights[i]+.012,miniPos[i][1]],rots[i],[1,1,1],0,{family:f,seed,tint:(i-1)*.18,selected:0}));
+  }
+  $('#triangleCount').textContent=Math.round(triangleTotal).toLocaleString('en-US')+' TRI';
+  const rule=$('#familyRule');if(rule)rule.textContent=families[f].rule;
+  document.documentElement.dataset.workbenchReady='true';document.documentElement.dataset.stoneFormVersion='2.9.0-alpha.1';shadowDirty=true;
+  showHint('已生成 '+families[f].name+' · '+state.seed,700);
+}
+function scheduleRebuild(){clearTimeout(rebuildTimer);rebuildTimer=setTimeout(rebuildStones,110);}
+
+const SHADOW=1024,shadowFBO=gl.createFramebuffer(),shadowTex=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,shadowTex);gl.texImage2D(gl.TEXTURE_2D,0,gl.DEPTH_COMPONENT24,SHADOW,SHADOW,0,gl.DEPTH_COMPONENT,gl.UNSIGNED_INT,null);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);gl.bindFramebuffer(gl.FRAMEBUFFER,shadowFBO);gl.framebufferTexture2D(gl.FRAMEBUFFER,gl.DEPTH_ATTACHMENT,gl.TEXTURE_2D,shadowTex,0);gl.drawBuffers([gl.NONE]);gl.readBuffer(gl.NONE);if(gl.checkFramebufferStatus(gl.FRAMEBUFFER)!==gl.FRAMEBUFFER_COMPLETE)console.warn('Shadow framebuffer incomplete');gl.bindFramebuffer(gl.FRAMEBUFFER,null);
+
+const camera={yaw:.72,pitch:.34,radius:9.85,target:[.45,-.12,0],goalYaw:.72,goalPitch:.34,goalRadius:9.85,goalTarget:[.45,-.12,0]};
+function cameraEye(){const cp=Math.cos(camera.pitch);return[camera.target[0]+Math.sin(camera.yaw)*cp*camera.radius,camera.target[1]+Math.sin(camera.pitch)*camera.radius,camera.target[2]+Math.cos(camera.yaw)*cp*camera.radius];}
+function setView(piece){state.piece=piece;$$('.view-btn[data-piece]').forEach(b=>b.classList.toggle('active',b.dataset.piece===piece));
+  if(piece==='hero'){camera.goalTarget=[-.88,-.25,0];camera.goalRadius=5.15;camera.goalYaw=.62;camera.goalPitch=.29;}
+  else if(piece==='mini'){camera.goalTarget=[2.38,-.40,0];camera.goalRadius=5.95;camera.goalYaw=.86;camera.goalPitch=.34;}
+  else{camera.goalTarget=[.45,-.12,0];camera.goalRadius=9.85;camera.goalYaw=.72;camera.goalPitch=.34;}
+}
+function resetCamera(){setView('all');showHint('视角已复位',650);}
+
+const lightPresets={
+ studio:{key:[1.0,.76,.53,3.15],fill:[.28,.43,.68,.86],rim:[.50,.66,1.0,1.40],sky:[.14,.17,.20],ground:[.030,.024,.020],ambient:1.48,exposure:1.03,height:9.6},
+ neutral:{key:[.96,.97,1.0,2.65],fill:[.62,.67,.74,.82],rim:[.86,.90,1.0,.72],sky:[.16,.17,.18],ground:[.050,.047,.043],ambient:1.52,exposure:1.00,height:10.6},
+ raking:{key:[1.0,.66,.40,3.95],fill:[.18,.28,.46,.42],rim:[.38,.62,1.0,1.82],sky:[.10,.14,.18],ground:[.022,.018,.016],ambient:1.08,exposure:1.02,height:4.2}
+};
+let lightVP=mat4Identity(),keyDir=[.3,.8,.5],keyPos=[4,9,4],shadowDirty=true;
+function updateLight(){const p=lightPresets[state.lightMode],a=state.lightAngle*Math.PI/180,r=8.5;keyPos=[Math.sin(a)*r,p.height,Math.cos(a)*r];keyDir=norm(sub(keyPos,[0,-.2,0]));const lv=mat4LookAt(keyPos,[0,-.3,0],[0,1,0]),lp=mat4Ortho(-6.7,6.7,-5.6,6.6,1.0,24);lightVP=mat4Multiply(lp,lv);}
+
+function setVec3(loc,a){gl.uniform3f(loc,a[0],a[1],a[2]);}
+function drawObject(o,program,depth=false,viewProj=null,eye=null){
+  gl.bindVertexArray(o.geo.vao);
+  if(depth){gl.uniformMatrix4fv(DU.uModel,false,o.model);gl.uniformMatrix4fv(DU.uLightVP,false,lightVP);}
+  else{
+    gl.uniformMatrix4fv(U.uModel,false,o.model);gl.uniformMatrix4fv(U.uViewProj,false,viewProj);gl.uniformMatrix4fv(U.uLightVP,false,lightVP);
+    gl.uniform1f(U.uSeed,o.seed);gl.uniform1i(U.uFamily,o.family);gl.uniform1i(U.uKind,o.kind);gl.uniform1f(U.uTint,o.tint);gl.uniform1f(U.uSelected,o.selected);
+  }
+  gl.drawElements(gl.TRIANGLES,o.geo.count,gl.UNSIGNED_INT,0);
+}
+function renderShadow(){
+  gl.bindFramebuffer(gl.FRAMEBUFFER,shadowFBO);gl.viewport(0,0,SHADOW,SHADOW);gl.colorMask(false,false,false,false);gl.clearDepth(1);gl.clear(gl.DEPTH_BUFFER_BIT);gl.useProgram(depthProgram);gl.enable(gl.DEPTH_TEST);gl.enable(gl.CULL_FACE);gl.cullFace(gl.BACK);gl.enable(gl.POLYGON_OFFSET_FILL);gl.polygonOffset(2.2,4.0);
+  for(const o of [...fixed,...stones])if(o.cast)drawObject(o,depthProgram,true);gl.disable(gl.POLYGON_OFFSET_FILL);gl.colorMask(true,true,true,true);gl.bindFramebuffer(gl.FRAMEBUFFER,null);
+}
+function renderMain(viewProj,eye){
+  const w=canvas.width,h=canvas.height;gl.viewport(0,0,w,h);gl.clearColor(.0065,.008,.0105,1);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);gl.useProgram(mainProgram);gl.enable(gl.DEPTH_TEST);gl.depthFunc(gl.LEQUAL);gl.enable(gl.CULL_FACE);gl.cullFace(gl.BACK);
+  gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,shadowTex);gl.uniform1i(U.uShadowMap,0);gl.uniformMatrix4fv(U.uViewProj,false,viewProj);gl.uniformMatrix4fv(U.uLightVP,false,lightVP);setVec3(U.uCamera,eye);
+  const p=lightPresets[state.lightMode],fillDir=norm([-keyDir[0]*.72,.34,-keyDir[2]*.72]),rimDir=norm([keyDir[2]*.8,.54,-keyDir[0]*.8]);setVec3(U.uKeyDir,keyDir);setVec3(U.uKeyColor,p.key);gl.uniform1f(U.uKeyIntensity,p.key[3]);setVec3(U.uFillDir,fillDir);setVec3(U.uFillColor,p.fill);gl.uniform1f(U.uFillIntensity,p.fill[3]);setVec3(U.uRimDir,rimDir);setVec3(U.uRimColor,p.rim);gl.uniform1f(U.uRimIntensity,p.rim[3]);setVec3(U.uSkyColor,p.sky);setVec3(U.uGroundColor,p.ground);gl.uniform1f(U.uAmbientIntensity,p.ambient);gl.uniform2f(U.uResolution,w,h);gl.uniform1f(U.uExposure,p.exposure);gl.uniform1f(U.uRelief,state.relief);gl.uniform1f(U.uWeather,state.weather);gl.uniform1f(U.uRoughness,state.rough);
+  for(const o of fixed)drawObject(o,mainProgram,false,viewProj,eye);for(const o of stones)drawObject(o,mainProgram,false,viewProj,eye);gl.bindVertexArray(null);
+}
+
+let last=performance.now(),fpsFrames=0,fpsTime=last;
+function resize(){const area=innerWidth*innerHeight,scale=area>2600000?.72:area>1200000?.88:1.0,dpr=Math.min(window.devicePixelRatio||1,1.7)*scale,w=Math.max(2,Math.floor(innerWidth*dpr)),h=Math.max(2,Math.floor(innerHeight*dpr));document.documentElement.dataset.renderScale=scale.toFixed(2);if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h;}}
+function animate(now){
+  resize();const dt=Math.min(.05,(now-last)/1000);last=now;
+  if(state.auto)camera.goalYaw+=dt*.17;
+  camera.yaw=mix(camera.yaw,camera.goalYaw,1-Math.exp(-dt*10));camera.pitch=mix(camera.pitch,camera.goalPitch,1-Math.exp(-dt*10));camera.radius=mix(camera.radius,camera.goalRadius,1-Math.exp(-dt*9));camera.target=lerp3(camera.target,camera.goalTarget,1-Math.exp(-dt*9));
+  updateLight();const eye=cameraEye(),view=mat4LookAt(eye,camera.target,[0,1,0]),proj=mat4Perspective(37*Math.PI/180,canvas.width/canvas.height,.05,60),vp=mat4Multiply(pro
