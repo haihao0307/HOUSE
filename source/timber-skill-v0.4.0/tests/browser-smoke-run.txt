@@ -1,5 +1,0 @@
-Browser visual smoke status: skipped-environment
-Validation time: 2026-08-20 10:59 UTC
-Chromium: Chromium 144.0.7559.96 built on Debian GNU/Linux 13 (trixie)
-
-The standalone page was prepared for WebGL2 browser validation. The container's software WebGL/EGL path did not complete a stable screenshot run, so no screenshot or visual-pass claim is included. Static JavaScript, WebGL structure, shader contracts, axis mapping, random seeds, material presets and deployment files were validated by npm run validate.
