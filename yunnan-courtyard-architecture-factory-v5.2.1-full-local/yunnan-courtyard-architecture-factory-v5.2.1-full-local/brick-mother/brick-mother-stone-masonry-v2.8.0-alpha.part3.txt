@@ -1,0 +1,47 @@
+uniform vec3 uFillDir;uniform vec3 uFillColor;uniform float uFillIntensity;
+uniform vec3 uRimDir;uniform vec3 uRimColor;uniform float uRimIntensity;
+uniform vec3 uSkyColor;uniform vec3 uGroundColor;uniform float uAmbientIntensity;
+uniform vec2 uResolution;uniform float uExposure;uniform float uSeed;uniform float uRelief;uniform float uWeather;uniform float uRoughness;uniform float uTint;
+uniform int uFamily;uniform int uKind;uniform float uSelected;
+const float PI=3.14159265359;
+float hash31(vec3 p){p=fract(p*.1031);p+=dot(p,p.yzx+33.33);return fract((p.x+p.y)*p.z);}
+float noise3(vec3 p){vec3 i=floor(p),f=fract(p);f=f*f*(3.0-2.0*f);return mix(mix(mix(hash31(i+vec3(0,0,0)),hash31(i+vec3(1,0,0)),f.x),mix(hash31(i+vec3(0,1,0)),hash31(i+vec3(1,1,0)),f.x),f.y),mix(mix(hash31(i+vec3(0,0,1)),hash31(i+vec3(1,0,1)),f.x),mix(hash31(i+vec3(0,1,1)),hash31(i+vec3(1,1,1)),f.x),f.y),f.z);}
+float fbm(vec3 p){float s=0.0,a=.55;mat3 m=mat3(.00,.80,.60,-.80,.36,-.48,-.60,-.48,.64);for(int i=0;i<4;i++){s+=a*noise3(p);p=m*p*2.03+vec3(1.7,-2.1,.9);a*=.49;}return s/1.016;}
+float shadowPCF(vec3 N,vec3 L){vec3 sc=vShadow.xyz/vShadow.w;sc=sc*.5+.5;if(sc.z<=0.0||sc.z>=1.0||any(lessThan(sc.xy,vec2(0)))||any(greaterThan(sc.xy,vec2(1))))return 1.0;vec2 texel=1.0/vec2(textureSize(uShadowMap,0));float bias=max(.00065*(1.0-dot(N,L)),.00016),sum=0.0;for(int x=-1;x<=1;x++)for(int y=-1;y<=1;y++){float d=texture(uShadowMap,sc.xy+vec2(x,y)*texel*1.75).r;sum+=sc.z-bias<=d?1.0:0.0;}return sum/9.0;}
+vec3 perturb(vec3 N,float h,float strength){vec3 dp1=dFdx(vWorld),dp2=dFdy(vWorld);float dh1=dFdx(h),dh2=dFdy(h);vec3 r1=cross(dp2,N),r2=cross(N,dp1);float det=dot(dp1,r1);vec3 grad=sign(det)*(dh1*r1+dh2*r2);return normalize(abs(det)*N-grad*strength);}
+float D_GGX(float NoH,float a){float a2=a*a,d=NoH*NoH*(a2-1.0)+1.0;return a2/(PI*d*d+1e-5);}
+float G_Smith(float NoV,float NoL,float a){float a2=a*a;float gv=NoL*sqrt(NoV*NoV*(1.0-a2)+a2);float gl=NoV*sqrt(NoL*NoL*(1.0-a2)+a2);return .5/(gv+gl+1e-5);}
+vec3 F_Schlick(vec3 f0,float VoH){return f0+(1.0-f0)*pow(1.0-VoH,5.0);}
+vec3 brdfLight(vec3 base,float rough,float metal,vec3 N,vec3 V,vec3 L,vec3 lc,float li){float NoL=max(dot(N,L),0.0),NoV=max(dot(N,V),.001);if(NoL<=0.0)return vec3(0);vec3 H=normalize(V+L);float NoH=max(dot(N,H),0.0),VoH=max(dot(V,H),0.0),a=max(.045,rough*rough);vec3 f0=mix(vec3(.04),base,metal),F=F_Schlick(f0,VoH);float D=D_GGX(NoH,a),G=G_Smith(NoV,NoL,a);vec3 spec=D*G*F;vec3 kd=(1.0-F)*(1.0-metal);return (kd*base/PI+spec)*lc*li*NoL;}
+vec3 stoneColor(vec3 p,out float height,out float roughMod,out float ao){
+ vec3 sp=p+vec3(uSeed*.013,uSeed*.007,uSeed*.019);float macro=fbm(sp*.72),meso=fbm(sp*3.25+6.7),fine=fbm(sp*14.0-3.2);height=(meso-.5)*.044+(fine-.5)*.012;roughMod=(fine-.5)*.09;ao=1.0;
+ vec3 c;
+ if(uFamily==0){
+   vec3 a=vec3(.195,.152,.092),b=vec3(.485,.350,.205),cool=vec3(.175,.198,.192);c=mix(a,b,smoothstep(.18,.82,macro));
+   float band=.5+.5*sin((p.y+fbm(sp*1.2)*.10)*18.0);c=mix(c,c*vec3(.76,.80,.84),band*.14);c*=mix(.88,1.10,meso);
+   float mineral=smoothstep(.84,.96,meso);c=mix(c,vec3(.49,.42,.30),mineral*.28);
+   float tool=smoothstep(.93,.985,.5+.5*sin(p.z*48.0+noise3(sp*4.0)*4.0))*smoothstep(.24,.72,abs(p.x));c*=1.0-tool*.018;
+ }else if(uFamily==1){
+   vec3 a=vec3(.145,.138,.118),b=vec3(.385,.300,.205),warm=vec3(.43,.235,.105);c=mix(a,b,smoothstep(.08,.9,macro));
+   float vein=1.0-smoothstep(.015,.09,abs(fbm(sp*1.38+vec3(2.3,-1.7,5.1))-.52));c=mix(c,vec3(.48,.42,.32),vein*.34);
+   float oxid=smoothstep(.73,.93,fbm(sp*2.1-8.0));c=mix(c,warm,oxid*.22*uWeather);height+=vein*.035;
+ }else if(uFamily==2){
+   vec3 a=vec3(.125,.088,.052),b=vec3(.365,.245,.128),grey=vec3(.22,.235,.23);c=mix(a,b,smoothstep(.1,.88,macro));
+   float bands=.5+.5*sin((p.y+noise3(sp*1.7)*.028)*43.0);float fineBands=.5+.5*sin(p.y*96.0+noise3(sp*4.0)*2.0);c*=mix(.72,1.12,bands*.7+fineBands*.3);
+   float seam=1.0-smoothstep(.018,.105,abs(fract((p.y+noise3(sp*.9)*.055)*7.5)-.5));c=mix(c,grey,seam*.45);height+=bands*.035+seam*.025;
+ }else{
+   vec3 a=vec3(.090,.098,.096),b=vec3(.300,.218,.138),cool=vec3(.15,.225,.238);c=mix(a,b,smoothstep(.1,.9,macro));c=mix(c,cool,smoothstep(.76,.94,meso)*.34);
+   float fleck=smoothstep(.87,.97,fine);c=mix(c,vec3(.66,.61,.49),fleck*.38);height=(meso-.5)*.025+(fine-.5)*.008;roughMod-=.12;
+ }
+ c*=mix(.94,1.06,fine);float pore=smoothstep(.935,.992,noise3(sp*24.0+vec3(1.7,-4.2,8.1)));c*=1.0-pore*.10*uWeather;height-=pore*.006;
+ float crackA=abs(noise3(sp*.62+vec3(7.1,2.6,-4.8))-.51);float crackGate=smoothstep(.64,.84,noise3(sp*.23+vec3(-3.8,6.1,2.4)));float crack=(1.0-smoothstep(.004,.020,crackA))*crackGate*mix(.18,1.0,uWeather)*(uFamily==3?.10:1.0);c*=1.0-crack*.38;height-=crack*.022;ao-=crack*.08;
+ float underside=1.0-smoothstep(-.65,.3,normalize(vNormal).y);c*=1.0-underside*.11*uWeather;ao*=1.0-underside*.12;
+ c=mix(c,c*vec3(.80,.82,.83),uWeather*.08);return c*(.92+uTint*.12);
+}
+vec3 aces(vec3 x){float a=2.51,b=.03,c=2.43,d=.59,e=.14;return clamp((x*(a*x+b))/(x*(c*x+d)+e),0.0,1.0);}
+void main(){
+ vec3 N=normalize(vNormal),V=normalize(uCamera-vWorld),base;float rough,metal,height=0.0,roughMod=0.0,ao=1.0,emissive=0.0;
+ if(uKind==0){base=stoneColor(vLocal,height,roughMod,ao);N=perturb(N,height,mix(.06,.48,uRelief));rough=clamp(uRoughness+roughMod-uWeather*.045,.16,.98);metal=0.0;}
+ else if(uKind==1){float n=fbm(vLocal*7.0+vec3(uSeed));base=mix(vec3(.026,.031,.035),vec3(.075,.083,.088),n);height=(n-.5)*.018;N=perturb(N,height,.36);rough=.26;metal=.72;ao=.92;}
+ else if(uKind==2){float g=smoothstep(-1.4,4.8,vWorld.y),n=fbm(vWorld*.18);base=mix(vec3(.030,.035,.040),vec3(.105,.108,.105),g*.72)+n*.005;rough=.94;metal=0.0;ao=1.0;emissive=.16;}
+ else {base=vec3(.78,.48,.20);rough=.24;metal=.35;emissive=.45;}

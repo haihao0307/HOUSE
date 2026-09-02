@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<meta name="description" content="Brick Mother 砌筑石形态工作台。规则石、半规则毛石、片石与卵石独立生成。">
+<title>Brick Mother 砌筑石形态工作台 V2.8.0 Alpha</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="./brick-mother-stone-masonry-v2.8.0-alpha.css?v=20260902-restored">
+</head>
+<body>
+<canvas id="gl" aria-label="Brick Mother 石材三维工作台"></canvas>
+<div class="vignette"></div><div class="grain"></div>
+<div class="topbar">
+  <div class="brand"><div class="mark">BM</div><div class="brand-copy"><strong>BRICK MOTHER</strong><span>MASONRY STONE SHAPE LAB · V2.8 ALPHA</span></div></div>
+  <div class="status"><i></i><span>新增形态分区 · 视觉批准等待中</span></div>
+</div>
+<div class="hint" id="hint">拖动旋转 · 滚轮缩放 · 右键平移 · R 重置视角</div>
+<nav class="family-rail" aria-label="石材家族">
+  <div class="rail-title">石材家族</div>
+  <button class="family-btn active" data-family="0"><span class="index">01</span><span><b>规则石材</b><small>条石 · 方石 · 切割石</small></span></button>
+  <button class="family-btn" data-family="1"><span class="index">02</span><span><b>半规则毛石</b><small>承重面 · 修整边 · 毛面</small></span></button>
+  <button class="family-btn" data-family="2"><span class="index">03</span><span><b>片石</b><small>层板 · 沿层破裂 · 薄片</small></span></button>
+  <button class="family-btn" data-family="3"><span class="index">04</span><span><b>卵石</b><small>水磨圆化 · 混合粒径</small></span></button>
+</nav>
+<button class="panel-toggle" id="panelToggle" aria-label="打开参数">☰</button>
+<aside class="control-panel" id="controls">
+  <div class="panel-head"><strong>观察参数</strong><span>LIVE</span></div>
+  <div class="seed-row"><div class="seed-box"><span>种子</span><b id="seedValue">8231</b></div><button class="icon-btn" id="newSeed">换一组</button></div>
+  <div class="control"><label><span>形态变化</span><output id="shapeOut">0.58</output></label><input id="shape" type="range" min="0" max="1" step="0.01" value="0.58"></div>
+  <div class="control"><label><span>表面起伏</span><output id="reliefOut">0.72</output></label><input id="relief" type="range" min="0" max="1" step="0.01" value="0.72"></div>
+  <div class="control"><label><span>风化程度</span><output id="weatherOut">0.46</output></label><input id="weather" type="range" min="0" max="1" step="0.01" value="0.46"></div>
+  <div class="control"><label><span>粗糙度</span><output id="roughOut">0.76</output></label><input id="rough" type="range" min="0.18" max="1" step="0.01" value="0.76"></div>
+  <div class="control"><label><span>主光方向</span><output id="lightOut">−32°</output></label><input id="lightAngle" type="range" min="-90" max="70" step="1" value="-32"></div>
+</aside>
+<div class="meta"><div class="meta-main"><strong id="familyName">规则石材</strong><span id="triangleCount">0 TRI</span></div><div class="meta-sub"><span>4 个独立展座</span><span>程序化几何</span><span>无外部贴图</span></div></div>
+<div class="viewbar">
+  <button class="view-btn active" data-piece="all">全景</button><button class="view-btn" data-piece="hero">主样本</button><button class="view-btn" data-piece="mini">小样组</button><span class="view-divider"></span><button class="view-btn" id="autoRotate">转台</button><button class="view-btn" id="resetView">复位</button>
+</div>
+<div class="lightbar"><button class="light-btn active" data-light="studio">棚拍</button><button class="light-btn" data-light="neutral">中性</button><button class="light-btn" data-light="raking">掠射</button></div>
+<div class="loading" id="loading"><div class="loader"><div class="loader-ring"></div><span>BUILDING STONE FIELD</span></div></div>
+<div class="error" id="error"><div><b>当前浏览器无法启动 WebGL2</b>请使用最新版 Chrome、Edge、Safari 或 Firefox 打开。</div></div>
+<script>
+Promise.all([
+  './brick-mother-stone-masonry-v2.8.0-alpha.part1.txt?v=20260902-restored',
+  './brick-mother-stone-masonry-v2.8.0-alpha.part2.txt?v=20260902-restored',
+  './brick-mother-stone-masonry-v2.8.0-alpha.part3.txt?v=20260902-restored',
+  './brick-mother-stone-masonry-v2.8.0-alpha.part4.txt?v=20260902-restored',
+  './brick-mother-stone-masonry-v2.8.0-alpha.part5.txt?v=20260902-restored',
+  './brick-mother-stone-masonry-v2.8.0-alpha.part6.txt?v=20260902-restored'
+].map(url => fetch(url, {cache:'no-store'}).then(response => {
+  if (!response.ok) throw new Error('运行时读取失败 ' + response.status);
+  return response.text();
+}))).then(parts => {
+  const script=document.createElement('script');
+  script.src=URL.createObjectURL((new Blob([parts.join('')],{type:'text/javascript'}));
+  script.onload=()=>URL.revokeObjectURL(script.src);
+  document.body.appendChild(script);
+}).catch(error => {
+  const target=document.getElementById('error');
+  if(target){target.style.display='grid';target.innerHTML='<div><b>砌筑石运行时启动失败</b>'+error.message+'</div>';}
+  console.error(error);
+});
+</script>
+</body>
+</html>
