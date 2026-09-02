@@ -1,0 +1,46 @@
+{
+  "schema": "tiles-mother-handoff-contract-v1",
+  "handoffDate": "2026-09-02",
+  "packageName": "Tiles_Mother_Full_Handoff_2026-09-02_v0.5.0.zip",
+  "packageVersion": "0.5.0",
+  "repository": "haihao0307/HOUSE",
+  "branch": "feature/tiles-mother-v0.1-workbench",
+  "prePackageRemoteHead": "24569631df06f1507e7ec325c05cb7806cbc7d81",
+  "releaseTag": "tiles-mother-v0.5.0-full-handoff-2026-09-02",
+  "onlineEntry": "https://haihao0307.github.io/HOUSE/tiles-mother/",
+  "firstRead": "repository/tiles-mother/handoff/2026-09-02/START_HERE.md",
+  "included": {
+    "completeTilesMotherTree": true,
+    "tilesMotherWorkflows": true,
+    "selfContainedRuntime": true,
+    "readableSourcesV01ThroughV05": true,
+    "knowledgeRecords": true,
+    "localBrowserEvidence": true,
+    "publicBrowserEvidence": true,
+    "newChatBootstrap": true,
+    "fileManifestSha256": true
+  },
+  "excludedOriginalSources": {
+    "jiangwutangZip": true,
+    "jiangwutangFbx": true,
+    "completeDiffuseTexture": true,
+    "completeNormalTexture": true,
+    "reason": "Original reference bytes remain external and are not runtime dependencies. Identity and distilled evidence are retained in the knowledge records."
+  },
+  "approval": {
+    "visualApproved": false,
+    "productionApproved": false,
+    "distillationComplete": false
+  },
+  "gitRules": {
+    "fastForwardOnly": true,
+    "forcePushForbidden": true,
+    "historyRewriteForbidden": true,
+    "mainModificationForbidden": true,
+    "brickMotherModificationForbidden": true,
+    "otherMotherModificationForbidden": true,
+    "pagesSettingsModificationForbidden": true
+  },
+  "nextMilestone": "V0.6 geometry-normal-edge-profile-contact-time closure",
+  "runtimeSourceOfTruth": "PACKAGE_STATE.json.sourceCommit"
+}

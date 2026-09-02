@@ -1,0 +1,199 @@
+name: Tiles Mother Full Handoff Package
+
+on:
+  push:
+    branches:
+      - feature/tiles-mother-v0.1-workbench
+    paths:
+      - .github/workflows/tiles-mother-full-handoff.yml
+      - tiles-mother/handoff/2026-09-02/**
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: tiles-mother-full-handoff-v050
+  cancel-in-progress: false
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    env:
+      PACKAGE_BASENAME: Tiles_Mother_Full_Handoff_2026-09-02_v0.5.0
+      RELEASE_TAG: tiles-mother-v0.5.0-full-handoff-2026-09-02
+
+    steps:
+      - name: Check out exact source commit
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify branch and source identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          test "$GITHUB_REF_NAME" = "feature/tiles-mother-v0.1-workbench"
+          test -f tiles-mother/index.html
+          test -f tiles-mother/AGENTS.md
+          test -f tiles-mother/v05/build-manifest.json
+          test -f tiles-mother/v05/geometry-operators.js
+          test -f tiles-mother/v05/roof-joints.js
+          test -f tiles-mother/qa-v05/public-browser-report.json
+
+      - name: Assemble complete handoff tree
+        shell: bash
+        run: |
+          set -euo pipefail
+          STAGING="$RUNNER_TEMP/$PACKAGE_BASENAME"
+          DIST="$GITHUB_WORKSPACE/dist"
+          rm -rf "$STAGING" "$DIST"
+          mkdir -p "$STAGING/repository/.github/workflows" "$DIST"
+
+          cp -a tiles-mother "$STAGING/repository/"
+          find .github/workflows -maxdepth 1 -type f \( -name 'tiles-mother*.yml' -o -name 'tiles-mother*.yaml' \) -print0 \
+            | sort -z \
+            | xargs -0 -r cp -t "$STAGING/repository/.github/workflows"
+          test ! -e "$STAGING/repository/.git"
+
+          export STAGING
+          python3 - <<'PY'
+          import json
+          import os
+          import pathlib
+          import subprocess
+          from datetime import datetime, timezone
+
+          staging = pathlib.Path(os.environ["STAGING"])
+          repo = pathlib.Path.cwd()
+          tile_root = staging / "repository" / "tiles-mother"
+          files = [p for p in tile_root.rglob("*") if p.is_file()]
+          state = {
+              "schema": "tiles-mother-full-handoff-state-v1",
+              "packageVersion": "0.5.0",
+              "packageKind": "complete_restart_handoff",
+              "generatedAtUTC": datetime.now(timezone.utc).isoformat(),
+              "repository": os.environ["GITHUB_REPOSITORY"],
+              "branch": os.environ["GITHUB_REF_NAME"],
+              "sourceCommit": os.environ["GITHUB_SHA"],
+              "sourceTree": subprocess.check_output(["git", "rev-parse", "HEAD^{tree}"], text=True).strip(),
+              "onlineEntry": "https://haihao0307.github.io/HOUSE/tiles-mother/",
+              "releaseTag": os.environ["RELEASE_TAG"],
+              "includedScope": [
+                  "complete tiles-mother directory",
+                  "all Tiles Mother GitHub Actions workflows",
+                  "self-contained runnable HTML",
+                  "V0.1 through V0.5 readable source and fallbacks",
+                  "knowledge records and lightweight evidence",
+                  "local and public browser QA evidence",
+                  "handoff and new-chat bootstrap instructions"
+              ],
+              "tileMotherFileCount": len(files),
+              "tileMotherBytes": sum(p.stat().st_size for p in files),
+              "rawJiangwutangZipIncluded": False,
+              "rawJiangwutangFbxIncluded": False,
+              "completeOriginalTexturesIncluded": False,
+              "visualApproved": False,
+              "productionApproved": False,
+              "distillationComplete": False
+          }
+          (staging / "PACKAGE_STATE.json").write_text(
+              json.dumps(state, ensure_ascii=False, indent=2) + "\n",
+              encoding="utf-8"
+          )
+          PY
+
+          (
+            cd "$STAGING"
+            find . -type f ! -name FILE_MANIFEST.sha256 -print0 \
+              | sort -z \
+              | xargs -0 sha256sum
+          ) > "$STAGING/FILE_MANIFEST.sha256"
+
+          FILE_COUNT="$(find "$STAGING" -type f | wc -l | tr -d ' ')"
+          TOTAL_BYTES="$(du -sb "$STAGING" | cut -f1)"
+          cat > "$STAGING/PACKAGE_README.txt" <<EOF
+          Tiles Mother complete restart handoff
+          Source repository: $GITHUB_REPOSITORY
+          Source branch: $GITHUB_REF_NAME
+          Source commit: $GITHUB_SHA
+          Included files: $FILE_COUNT
+          Uncompressed bytes: $TOTAL_BYTES
+          First file to read: repository/tiles-mother/handoff/2026-09-02/START_HERE.md
+          Visual approval: false
+          Production approval: false
+          EOF
+
+          (
+            cd "$RUNNER_TEMP"
+            zip -X -q -r "$DIST/$PACKAGE_BASENAME.zip" "$PACKAGE_BASENAME"
+          )
+          sha256sum "$DIST/$PACKAGE_BASENAME.zip" > "$DIST/$PACKAGE_BASENAME.zip.sha256"
+
+          cat > "$DIST/RELEASE_NOTES.md" <<EOF
+          # Tiles Mother V0.5 full handoff
+
+          Source branch: \`$GITHUB_REF_NAME\`
+
+          Source commit: \`$GITHUB_SHA\`
+
+          This package contains the complete \`tiles-mother/\` production-line tree, Tiles Mother workflows, runnable page, readable source, knowledge records, QA evidence, handoff instructions and a full SHA256 file manifest.
+
+          Approval state remains closed: \`visualApproved=false\`, \`productionApproved=false\`, \`distillationComplete=false\`.
+          EOF
+
+          test -s "$DIST/$PACKAGE_BASENAME.zip"
+          test -s "$DIST/$PACKAGE_BASENAME.zip.sha256"
+          unzip -t "$DIST/$PACKAGE_BASENAME.zip" >/dev/null
+
+      - name: Upload workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Tiles_Mother_Full_Handoff_2026-09-02_v0.5.0
+          path: |
+            dist/Tiles_Mother_Full_Handoff_2026-09-02_v0.5.0.zip
+            dist/Tiles_Mother_Full_Handoff_2026-09-02_v0.5.0.zip.sha256
+            dist/RELEASE_NOTES.md
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Publish GitHub prerelease assets
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          ZIP="dist/$PACKAGE_BASENAME.zip"
+          SUM="dist/$PACKAGE_BASENAME.zip.sha256"
+          if gh release view "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release upload "$RELEASE_TAG" "$ZIP" "$SUM" --clobber --repo "$GITHUB_REPOSITORY"
+            gh release edit "$RELEASE_TAG" \
+              --target "$GITHUB_SHA" \
+              --title "Tiles Mother V0.5 Full Handoff 2026-09-02" \
+              --notes-file dist/RELEASE_NOTES.md \
+              --prerelease \
+              --repo "$GITHUB_REPOSITORY"
+          else
+            gh release create "$RELEASE_TAG" \
+              "$ZIP" "$SUM" \
+              --target "$GITHUB_SHA" \
+              --title "Tiles Mother V0.5 Full Handoff 2026-09-02" \
+              --notes-file dist/RELEASE_NOTES.md \
+              --prerelease \
+              --repo "$GITHUB_REPOSITORY"
+          fi
+
+      - name: Record package result
+        shell: bash
+        run: |
+          set -euo pipefail
+          {
+            echo "## Tiles Mother full handoff"
+            echo
+            echo "Source commit: \`$GITHUB_SHA\`"
+            echo
+            echo "Release tag: \`$RELEASE_TAG\`"
+            echo
+            echo "Package SHA256: \`$(cut -d' ' -f1 dist/$PACKAGE_BASENAME.zip.sha256)\`"
+          } >> "$GITHUB_STEP_SUMMARY"
