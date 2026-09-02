@@ -174,6 +174,8 @@ TSL 图分为四层：
 9. Cavity
 10. Fresh Fracture
 11. PBR Safe Color
+12. Weather Delta
+13. Fresnel
 
 灯光提供棚拍、中性、掠射、阴天和高对比户外环境。资产必须在多种光照下保持可信。
 
@@ -195,3 +197,19 @@ TSL 图分为四层：
 ## 10. 当前执行结论
 
 现有 Brick Mother V2.7.5 三材质核心继续冻结保留。新的砌筑石系统在私有候选中接入本规则，完成中性光、掠射光、多通道和时间演化验证后，才允许替换公开工作台的砌筑石分区。
+## 11. V1.1 三维工作台落地
+
+V1.1 将上述知识转为实时可交互的 HTML 三维工作台，并新增净材与风化屏幕分界对照。分界左侧保持同一形体、同一种子和同一灯光下的净材基线，分界右侧显示实时风化结果，用于排除相机、几何和照明差异对判断的干扰。
+
+实现约束：
+
+1. WeatherMix 在 0 至 1 范围内连续控制风化结果。
+2. CompareSplit 在画面 25% 至 75% 范围内移动。
+3. 对照模式只改变材质演化权重，不改变形体、相机、光照、种子和几何拓扑。
+4. Weather Delta 显示湿润、沉积、盐析、生物附着和磨蚀共同造成的材质变化强度。
+5. Fresnel 显示固定介电 F0 与观察角共同形成的反射响应。
+6. Base Color 继续以 sRGB 输入并在着色前转换到线性空间。
+7. Roughness、AO、Height、Wetness、Runoff、Cavity、Fracture 和 Weather Delta 全部按线性数据处理。
+8. AO 只衰减环境漫反射，不压暗直接高光和环境镜面项。
+9. Height 负责低频与中频轮廓起伏，Normal 负责高频微表面。
+10. visualApproved 与 productionApproved 在用户确认前保持 false。

@@ -4,18 +4,18 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="dark">
-<meta name="description" content="Brick Mother 实时风化与 PBR 三维工作台。烧结砖、土坯、规则石、毛石、片石、卵石共享物理可信的材质与环境演化内核。">
-<title>Brick Mother 实时风化 PBR 工作台 V1.0</title>
+<meta name="description" content="Brick Mother 实时风化与 PBR 三维工作台 V1.1。六类砌筑材料共享形体信号、环境状态、材质响应与物理可信 PBR 输出。">
+<title>Brick Mother 实时风化 PBR 工作台 V1.1</title>
 <link rel="icon" href="data:,">
-<link rel="stylesheet" href="./brick-mother-realtime-weathering-pbr-v1.css?v=20260902">
+<link rel="stylesheet" href="./brick-mother-realtime-weathering-pbr-v1.css?v=20260902-pbr-v11">
 </head>
 <body>
 <canvas id="gl" aria-label="Brick Mother 实时风化与 PBR 三维工作台"></canvas>
 <div class="vignette"></div><div class="grain"></div>
 <header class="topbar">
-  <div class="brand"><div class="mark">BM</div><div class="brand-copy"><strong>BRICK MOTHER</strong><span>REALTIME WEATHERING × PBR LAB · V1.0</span></div></div>
+  <div class="brand"><div class="mark">BM</div><div class="brand-copy"><strong>BRICK MOTHER</strong><span>REALTIME WEATHERING × PBR LAB · V1.1</span></div></div>
   <div class="graph" aria-label="知识内核"><span>形体信号</span><i></i><span>风化状态</span><i></i><span>材质响应</span><i></i><span>PBR 输出</span></div>
-  <div class="runtime-state"><i></i><span id="runtimeLabel">初始化</span><b>F0 0.04</b><b>METAL 0</b></div>
+  <div class="runtime-state"><i></i><span id="runtimeLabel">初始化</span><b>F0 0.04</b><b>METAL 0</b><b>sRGB + LINEAR</b></div>
 </header>
 
 <nav class="family-rail" aria-label="材质家族">
@@ -36,11 +36,18 @@
     <button class="action" id="rainPulse">降雨脉冲</button>
     <button class="action" id="resetWeather">清零</button>
   </div>
+  <div class="compare-row">
+    <button class="action primary" id="compareMode">净材 / 风化对照</button>
+    <button class="action" id="fullWeather">整体验证</button>
+  </div>
   <div class="preset-row" aria-label="情境预设">
     <button class="preset active" data-preset="balanced">平衡</button><button class="preset" data-preset="monsoon">雨季</button><button class="preset" data-preset="dry">干季</button><button class="preset" data-preset="century">百年</button>
   </div>
   <div class="seed-row"><div class="seed-box"><span>母种子</span><b id="seedValue">5045</b></div><button class="action" id="newSeed">换种子</button></div>
   <div class="control"><label><span>年代</span><output id="ageOut">18 年</output></label><input id="age" type="range" min="0" max="120" step="1" value="18"></div>
+  <div class="control"><label><span>风化混合</span><output id="weatherMixOut">1.00</output></label><input id="weatherMix" type="range" min="0" max="1" step="0.01" value="1"></div>
+  <div class="control compare-control"><label><span>对照分界</span><output id="compareSplitOut">50%</output></label><input id="compareSplit" type="range" min="0.25" max="0.75" step="0.01" value="0.50"></div>
+  <div class="control"><label><span>演化速度</span><output id="simSpeedOut">1.00×</output></label><input id="simSpeed" type="range" min="0.10" max="4" step="0.05" value="1"></div>
   <div class="control"><label><span>降雨</span><output id="rainOut">0.38</output></label><input id="rain" type="range" min="0" max="1" step="0.01" value="0.38"></div>
   <div class="control"><label><span>干燥</span><output id="dryingOut">0.42</output></label><input id="drying" type="range" min="0" max="1" step="0.01" value="0.42"></div>
   <div class="control"><label><span>积尘</span><output id="dustOut">0.28</output></label><input id="dust" type="range" min="0" max="1" step="0.01" value="0.28"></div>
@@ -60,6 +67,17 @@
     <div class="control"><label><span>断裂强度</span><output id="fractureOut">0.42</output></label><input id="fracture" type="range" min="0" max="1" step="0.01" value="0.42"></div>
     <div class="control"><label><span>边缘演化</span><output id="edgeOut">0.34</output></label><input id="edge" type="range" min="0" max="1" step="0.01" value="0.34"></div>
   </details>
+  <details class="pbr-contract" open>
+    <summary>PBR 物理约束</summary>
+    <div class="contract-grid">
+      <span><b>Base Color</b><em>sRGB · 30–240</em></span>
+      <span><b>数据通道</b><em>LINEAR</em></span>
+      <span><b>介电 F0</b><em>0.04</em></span>
+      <span><b>Metalness</b><em>0</em></span>
+      <span><b>AO</b><em>仅环境漫反射</em></span>
+      <span><b>Height / Normal</b><em>低中频 / 高频</em></span>
+    </div>
+  </details>
 </aside>
 
 <section class="state-card" aria-label="风化状态">
@@ -75,17 +93,18 @@
 </section>
 
 <div class="diagnostic-bar" aria-label="诊断通道">
-  <button class="diag active" data-view="0">最终</button><button class="diag" data-view="1">Base Color</button><button class="diag" data-view="2">Roughness</button><button class="diag" data-view="3">Normal</button><button class="diag" data-view="4">Height</button><button class="diag" data-view="5">AO</button><button class="diag" data-view="6">Wetness</button><button class="diag" data-view="7">Runoff</button><button class="diag" data-view="8">Cavity</button><button class="diag" data-view="9">Fracture</button><button class="diag" data-view="10">PBR Safe</button>
+  <button class="diag active" data-view="0">最终</button><button class="diag" data-view="1">Base Color</button><button class="diag" data-view="2">Roughness</button><button class="diag" data-view="3">Normal</button><button class="diag" data-view="4">Height</button><button class="diag" data-view="5">AO</button><button class="diag" data-view="6">Wetness</button><button class="diag" data-view="7">Runoff</button><button class="diag" data-view="8">Cavity</button><button class="diag" data-view="9">Fracture</button><button class="diag" data-view="10">PBR Safe</button><button class="diag" data-view="11">Weather Δ</button><button class="diag" data-view="12">Fresnel</button>
 </div>
 
 <div class="viewbar"><button class="view-btn active" data-piece="all">全景</button><button class="view-btn" data-piece="hero">主样本</button><button class="view-btn" data-piece="mini">小样组</button><span></span><button class="view-btn" id="autoRotate">转台</button><button class="view-btn" id="resetView">复位</button></div>
 <div class="lightbar"><button class="light-btn active" data-light="studio">棚拍</button><button class="light-btn" data-light="neutral">中性</button><button class="light-btn" data-light="raking">掠射</button><button class="light-btn" data-light="overcast">阴天</button><button class="light-btn" data-light="outdoor">户外</button></div>
 <div class="hint" id="hint">拖动旋转 · 滚轮缩放 · 右键平移 · R 复位 · L 切换灯光</div>
+<div class="compare-labels active" id="compareLabels"><span>净材基线</span><span>实时风化</span><i id="compareDivider"></i></div>
 
 <div class="loading" id="loading"><div class="loader"><div class="loader-ring"></div><span id="loadingText">BUILDING MATERIAL DNA</span><div class="loading-progress"><i id="loadingBar"></i></div></div></div>
 <div class="error" id="error"><div><b>Brick Mother 实时风化工作台启动失败</b><span id="errorText">请使用最新版 Chrome、Edge、Safari 或 Firefox。</span></div></div>
 
-<script src="./brick-mother-weathering-geometry-v1.js?v=20260902"></script>
-<script src="./brick-mother-realtime-weathering-pbr-v1.js?v=20260902"></script>
+<script src="./brick-mother-weathering-geometry-v1.js?v=20260902-pbr-v11"></script>
+<script src="./brick-mother-realtime-weathering-pbr-v1.js?v=20260902-pbr-v11"></script>
 </body>
 </html>

@@ -1,6 +1,6 @@
 {
   "schema": "brick-mother-realtime-weathering-pbr-build-v1",
-  "runtime": "1.0.0-alpha.1",
+  "runtime": "1.1.0-alpha.1",
   "materialFamilies": [
     "fired-clay",
     "adobe",
@@ -20,7 +20,9 @@
     "runoff",
     "cavity",
     "fracture",
-    "pbr-safe"
+    "pbr-safe",
+    "weather-delta",
+    "fresnel"
   ],
   "metalness": 0,
   "dielectricF0": 0.04,
@@ -29,5 +31,21 @@
   "qaInitialization": "deterministic-timeout",
   "coreV275Blob": "7b10389cb9367f7423619262820883cc94b07a61",
   "visualApproved": false,
-  "productionApproved": false
+  "productionApproved": false,
+  "comparisonMode": "clean-vs-weathered-screen-split",
+  "weatheringMixRange": [
+    0,
+    1
+  ],
+  "compareSplitRange": [
+    0.25,
+    0.75
+  ],
+  "aoPolicy": "diffuse-only",
+  "heightFrequency": "low-mid",
+  "normalFrequency": "high",
+  "baseColorSafeRangeSRGB": [
+    30,
+    240
+  ]
 }

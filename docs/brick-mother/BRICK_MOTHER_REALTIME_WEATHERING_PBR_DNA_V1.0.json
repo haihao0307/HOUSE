@@ -101,18 +101,78 @@
     "duplicateHighFrequencyAcrossChannels": false
   },
   "signals": {
-    "exposure": {"range": [0, 1]},
-    "cavity": {"range": [0, 1]},
-    "upwardness": {"range": [0, 1]},
-    "underside": {"range": [0, 1]},
-    "contact": {"range": [0, 1]},
-    "runoff": {"range": [0, 1]},
-    "freshFracture": {"range": [0, 1]},
-    "abrasion": {"range": [0, 1]},
-    "wetness": {"range": [0, 1]},
-    "retainedMoisture": {"range": [0, 1]},
-    "deposit": {"range": [0, 1]},
-    "leaching": {"range": [0, 1]}
+    "exposure": {
+      "range": [
+        0,
+        1
+      ]
+    },
+    "cavity": {
+      "range": [
+        0,
+        1
+      ]
+    },
+    "upwardness": {
+      "range": [
+        0,
+        1
+      ]
+    },
+    "underside": {
+      "range": [
+        0,
+        1
+      ]
+    },
+    "contact": {
+      "range": [
+        0,
+        1
+      ]
+    },
+    "runoff": {
+      "range": [
+        0,
+        1
+      ]
+    },
+    "freshFracture": {
+      "range": [
+        0,
+        1
+      ]
+    },
+    "abrasion": {
+      "range": [
+        0,
+        1
+      ]
+    },
+    "wetness": {
+      "range": [
+        0,
+        1
+      ]
+    },
+    "retainedMoisture": {
+      "range": [
+        0,
+        1
+      ]
+    },
+    "deposit": {
+      "range": [
+        0,
+        1
+      ]
+    },
+    "leaching": {
+      "range": [
+        0,
+        1
+      ]
+    }
   },
   "processModel": {
     "deterministic": true,
@@ -183,21 +243,64 @@
   },
   "familyProfiles": {
     "ashlar": {
-      "shapeRules": ["buildingModule", "bearingFaces", "dressedFaces", "selectiveCornerLoss"],
-      "weatheringRules": ["toolWear", "edgeImpact", "contactSoiling", "verticalRunoff", "topDust", "localSalt"]
+      "shapeRules": [
+        "buildingModule",
+        "bearingFaces",
+        "dressedFaces",
+        "selectiveCornerLoss"
+      ],
+      "weatheringRules": [
+        "toolWear",
+        "edgeImpact",
+        "contactSoiling",
+        "verticalRunoff",
+        "topDust",
+        "localSalt"
+      ]
     },
     "rubble": {
-      "shapeRules": ["stableBottom", "eccentricMass", "primaryFractureFaces", "secondarySpalls"],
-      "weatheringRules": ["cavityRetention", "mortarContactRing", "fractureRunoff", "localizedBiofilm"]
+      "shapeRules": [
+        "stableBottom",
+        "eccentricMass",
+        "primaryFractureFaces",
+        "secondarySpalls"
+      ],
+      "weatheringRules": [
+        "cavityRetention",
+        "mortarContactRing",
+        "fractureRunoff",
+        "localizedBiofilm"
+      ]
     },
     "flagstone": {
-      "shapeRules": ["irregularFootprint", "singleBeddingDirection", "continuousThicknessField", "localDelamination"],
-      "weatheringRules": ["topWetFilm", "interlayerRetention", "edgeFreezeThaw", "saltPrecipitation"],
+      "shapeRules": [
+        "irregularFootprint",
+        "singleBeddingDirection",
+        "continuousThicknessField",
+        "localDelamination"
+      ],
+      "weatheringRules": [
+        "topWetFilm",
+        "interlayerRetention",
+        "edgeFreezeThaw",
+        "saltPrecipitation"
+      ],
       "continuousEquidistantCircumferentialBandsForbidden": true
     },
     "cobble": {
-      "shapeRules": ["asymmetricParentRock", "waterWornAxis", "differentialRounding", "stableContactPatch", "localImpactScars"],
-      "weatheringRules": ["waterPolish", "undersideMudFilm", "longTermWetDarkening", "localizedBiofilm"]
+      "shapeRules": [
+        "asymmetricParentRock",
+        "waterWornAxis",
+        "differentialRounding",
+        "stableContactPatch",
+        "localImpactScars"
+      ],
+      "weatheringRules": [
+        "waterPolish",
+        "undersideMudFilm",
+        "longTermWetDarkening",
+        "localizedBiofilm"
+      ]
     }
   },
   "workbenchControls": [
@@ -250,5 +353,55 @@
       "productionApproved": false,
       "humanApprovalRequired": true
     }
+  },
+  "runtimeImplementation": {
+    "version": "1.1.0-alpha.1",
+    "delivery": "direct-online-html-3d-workbench",
+    "comparison": {
+      "mode": "same-asset-screen-split",
+      "weatherMix": [
+        0,
+        1
+      ],
+      "splitRange": [
+        0.25,
+        0.75
+      ],
+      "geometryInvariant": true,
+      "cameraInvariant": true,
+      "lightingInvariant": true,
+      "seedInvariant": true
+    },
+    "diagnostics": [
+      "final",
+      "base-color",
+      "roughness",
+      "normal",
+      "height",
+      "ambient-occlusion",
+      "wetness",
+      "runoff",
+      "cavity",
+      "fracture",
+      "pbr-safe",
+      "weather-delta",
+      "fresnel"
+    ],
+    "colorManagement": {
+      "baseColor": "sRGB",
+      "dataChannels": "linear",
+      "baseColorSafeRangeSRGB": [
+        30,
+        240
+      ]
+    },
+    "aoPolicy": "diffuse-only",
+    "frequencyDivision": {
+      "geometry": "macro silhouette and structural breaks",
+      "height": "low-mid frequency relief",
+      "normal": "high frequency micro-surface"
+    },
+    "visualApproved": false,
+    "productionApproved": false
   }
 }
