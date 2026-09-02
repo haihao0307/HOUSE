@@ -13,6 +13,7 @@ permissions:
 
 env:
   BRICK_ROOT: yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother
+  STONE_V31_ROOT: private-review/brick-mother-stone-form-v31
   STONE_REVIEW_ROOT: private-review/brick-mother-stone-form-v33
   STONE_V34_ROOT: private-review/brick-mother-stone-form-v34
   PBR_REVIEW_ROOT: private-review/brick-mother-weathering-pbr-v1
@@ -38,6 +39,9 @@ jobs:
           test -s "$BRICK_ROOT/brick-mother-weathering-geometry-v1.js"
           node --check "$BRICK_ROOT/brick-mother-realtime-weathering-pbr-v1.js"
           node --check "$BRICK_ROOT/brick-mother-weathering-geometry-v1.js"
+          test -d "$STONE_V31_ROOT"
+          test -s "$STONE_V31_ROOT/stone-form-geometry-v31.js"
+          test -s "$STONE_V31_ROOT/stone-form-runtime-v31.js"
           test -d "$STONE_REVIEW_ROOT"
           test -s "$STONE_REVIEW_ROOT/brick-mother-stone-form-v3.3.0.html"
           test -s "$STONE_REVIEW_ROOT/stone-form-geometry-v33.js"
@@ -48,12 +52,13 @@ jobs:
           test -d "$PBR_REVIEW_ROOT/payload"
           test "$(git hash-object "$BRICK_ROOT/brick-mother-standalone-v2.7.5.html")" = "7b10389cb9367f7423619262820883cc94b07a61"
 
-      - name: Upload current Brick Mother development source
+      - name: Upload complete Brick Mother development source
         uses: actions/upload-artifact@v4
         with:
-          name: brick-mother-current-source-${{ github.sha }}
+          name: brick-mother-complete-current-source-${{ github.sha }}
           path: |
             ${{ env.BRICK_ROOT }}
+            ${{ env.STONE_V31_ROOT }}
             ${{ env.STONE_REVIEW_ROOT }}
             ${{ env.STONE_V34_ROOT }}
             ${{ env.PBR_REVIEW_ROOT }}
@@ -62,6 +67,7 @@ jobs:
             .github/workflows/brick-mother-pages-preview.yml
             .github/workflows/brick-mother-stone-form-v33-materialize-review.yml
             .github/workflows/brick-mother-weathering-pbr-v1-materialize.yml
+            .github/workflows/brick-mother-dev-snapshot.yml
           compression-level: 1
           if-no-files-found: error
           retention-days: 3
