@@ -1,4 +1,4 @@
-,d);}return{positions:new Float32Array(pos),normals:new Float32Array(normals),indices:new Uint32Array(idx)};
+}return{positions:new Float32Array(pos),normals:new Float32Array(normals),indices:new Uint32Array(idx)};
 }
 function makeCyclorama(){
   const width=60,xSeg=1,profiles=[];
