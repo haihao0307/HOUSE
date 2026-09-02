@@ -96,6 +96,12 @@
     "overcast",
     "outdoor"
   ],
+  "delivery": {
+    "primaryArtifact": "direct online HTML 3D workbench",
+    "downloadRequired": false,
+    "staticImageGeneration": false,
+    "deploymentRefresh": "2026-09-02-v11-clean-pages"
+  },
   "externalTextures": false,
   "externalModels": false,
   "visualApproved": false,
