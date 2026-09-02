@@ -1,0 +1,119 @@
+name: Brick Mother Stone Form V3.1 Private Review
+
+on:
+  push:
+    branches:
+      - feature/brick-mother-v2.0-composite-material-dna
+    paths:
+      - ".github/workflows/brick-mother-stone-form-v31-review.yml"
+      - "private-review/brick-mother-stone-form-v31/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  REVIEW_ROOT: private-review/brick-mother-stone-form-v31
+
+jobs:
+  browser-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 24
+    steps:
+      - name: Checkout exact candidate head
+        uses: actions/checkout@v4
+
+      - name: Validate candidate source
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s "$REVIEW_ROOT/brick-mother-stone-form-v3.1.0.html"
+          test -s "$REVIEW_ROOT/stone-form-geometry-v31.js"
+          test -s "$REVIEW_ROOT/stone-form-runtime-v31.js"
+          node --check "$REVIEW_ROOT/stone-form-geometry-v31.js"
+          node --check "$REVIEW_ROOT/stone-form-runtime-v31.js"
+          grep -q "四家族独立形成语法" "$REVIEW_ROOT/brick-mother-stone-form-v3.1.0.html"
+          grep -q "3.1.0-alpha.1" "$REVIEW_ROOT/stone-form-runtime-v31.js"
+          grep -q "createAshlarField" "$REVIEW_ROOT/stone-form-geometry-v31.js"
+          grep -q "createRubbleField" "$REVIEW_ROOT/stone-form-geometry-v31.js"
+          grep -q "createFlagstoneField" "$REVIEW_ROOT/stone-form-geometry-v31.js"
+          grep -q "createCobbleField" "$REVIEW_ROOT/stone-form-geometry-v31.js"
+
+      - name: Capture eight browser views
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/stone-form-v31-review
+          python3 -m http.server 8765 --bind 127.0.0.1 --directory "$REVIEW_ROOT" >/tmp/stone-form-v31-server.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          ready=0
+          for attempt in $(seq 1 60); do
+            if curl -fsS http://127.0.0.1:8765/brick-mother-stone-form-v3.1.0.html >/dev/null; then ready=1; break; fi
+            sleep 1
+          done
+          test "$ready" = 1
+          chrome="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)"
+          test -n "$chrome"
+          for family in 0 1 2 3; do
+            for view in all hero; do
+              stem="family-${family}-${view}"
+              light=studio
+              if [ "$view" = hero ]; then light=raking; fi
+              url="http://127.0.0.1:8765/brick-mother-stone-form-v3.1.0.html?family=${family}&view=${view}&light=${light}&qa=private-review&head=${GITHUB_SHA}"
+              timeout 210s "$chrome" \
+                --headless=new \
+                --no-sandbox \
+                --disable-dev-shm-usage \
+                --disable-background-networking \
+                --enable-webgl \
+                --ignore-gpu-blocklist \
+                --enable-unsafe-swiftshader \
+                --use-gl=angle \
+                --use-angle=swiftshader \
+                --hide-scrollbars \
+                --window-size=1600,1000 \
+                --virtual-time-budget=42000 \
+                --screenshot="/tmp/stone-form-v31-review/${stem}.png" \
+                --dump-dom \
+                "$url" \
+                > "/tmp/stone-form-v31-review/${stem}.dom.html" \
+                2> "/tmp/stone-form-v31-review/${stem}.chrome.log"
+              dom="/tmp/stone-form-v31-review/${stem}.dom.html"
+              png="/tmp/stone-form-v31-review/${stem}.png"
+              grep -q 'data-brick-mother-stone-form-ready="true"' "$dom"
+              grep -q 'data-workbench-ready="true"' "$dom"
+              grep -q 'data-visual-ready="true"' "$dom"
+              grep -q 'data-stone-form-version="3.1.0-alpha.1"' "$dom"
+              ! grep -q 'data-runtime-failure="true"' "$dom"
+              test -s "$png"
+              test "$(wc -c < "$png")" -gt 90000
+            done
+          done
+          python3 - <<'PY'
+          from pathlib import Path
+          import json, os, struct
+          root=Path('/tmp/stone-form-v31-review')
+          rows=[]
+          for p in sorted(root.glob('*.png')):
+              data=p.read_bytes()
+              assert data[:8] == b'\x89PNG\r\n\x1a\n'
+              width,height=struct.unpack('>II',data[16:24])
+              assert (width,height)==(1600,1000),(p.name,width,height)
+              rows.append({'file':p.name,'bytes':len(data),'width':width,'height':height})
+          assert len(rows)==8,len(rows)
+          manifest={'head':os.environ['GITHUB_SHA'],'candidate':'3.1.0-alpha.1','screenshots':rows,'privateVisualReview':True,'visualApproved':False,'productionApproved':False}
+          (root/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
+          PY
+
+      - name: Upload private review evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: brick-mother-stone-form-v31-review-${{ github.sha }}
+          path: |
+            /tmp/stone-form-v31-review
+            /tmp/stone-form-v31-server.log
+          compression-level: 1
+          if-no-files-found: error
+          retention-days: 7
