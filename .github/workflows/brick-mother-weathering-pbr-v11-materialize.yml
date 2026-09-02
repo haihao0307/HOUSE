@@ -86,14 +86,20 @@ jobs:
 
           root=Path('yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother')
           build=json.loads((root/'BRICK_MOTHER_REALTIME_WEATHERING_PBR_BUILD.json').read_text())
-          assert build['runtimeVersion']=='1.1.0-alpha.1'
-          assert build['pbr']['metalness']==0
-          assert build['pbr']['dielectricF0']==0.04
-          assert build['pbr']['baseColorSpace']=='sRGB'
-          assert build['pbr']['dataChannelSpace']=='linear'
-          assert build['pbr']['aoPolicy']=='diffuse-only'
-          assert build['pbr']['baseColorSafeRangeSRGB']==[30,240]
-          assert build['diagnosticCount']==13
+          assert build['runtime']=='1.1.0-alpha.1'
+          assert build['metalness']==0
+          assert build['dielectricF0']==0.04
+          assert build['baseColorSpace']=='sRGB'
+          assert build['dataChannelSpace']=='linear'
+          assert build['aoPolicy']=='diffuse-only'
+          assert build['heightFrequency']=='low-mid'
+          assert build['normalFrequency']=='high'
+          assert build['baseColorSafeRangeSRGB']==[30,240]
+          assert len(build['diagnosticChannels'])==13
+          assert build['diagnosticChannels'][-2:]==['weather-delta','fresnel']
+          assert build['comparisonMode']=='clean-vs-weathered-screen-split'
+          assert build['visualApproved'] is False
+          assert build['productionApproved'] is False
 
           class IdParser(HTMLParser):
               def __init__(self):
