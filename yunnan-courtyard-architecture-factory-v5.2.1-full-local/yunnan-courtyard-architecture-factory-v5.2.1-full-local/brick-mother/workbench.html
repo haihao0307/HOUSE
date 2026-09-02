@@ -38,7 +38,7 @@ main{position:relative;min-width:0;min-height:0;background:#000}.panel{position:
 </head>
 <body>
 <header>
-  <div class="brand"><div class="mark">BM</div><div class="copy"><strong>BRICK MOTHER 综合工作台</strong><span>三杒质核心完整保留 · 砌筑石形态作为独立新增分区</span></div></div>
+  <div class="brand"><div class="mark">BM</div><div class="copy"><strong>BRICK MOTHER 综合工作台</strong><span>三材质核心完整保留 · 砌筑石形态作为独立新增分区</span></div></div>
   <div class="state"><i></i><span>核心 V2.7.5 已恢复</span></div>
 </header>
 <nav aria-label="工作台分区">
@@ -53,9 +53,9 @@ main{position:relative;min-width:0;min-height:0;background:#000}.panel{position:
     <div class="loading"><div><div class="spinner"></div>正在载入三材质核心</div></div>
     <iframe title="Brick Mother 核心三材质 V2.7.5" src="./brick-mother-standalone-v2.7.5.html?v=20260902-restored" allow="fullscreen"></iframe>
   </section>
-  <section class="panel" id="masonry" data-url="./brick-mother-stone-masonry-v2.8.0-alpha.html?v=20260902-restored">
+  <section class="panel" id="masonry" data-url="./brick-mother-stone-masonry-v2.8.0-alpha.html?v=20260902-runtime-fix">
     <div class="loading"><div><div class="spinner"></div>正在载入砌筑石形态分区</div></div>
-    <iframe title="规则与不规则砌筑石形态" data-src="./brick-mother-stone-masonry-v2.8.0-alpha.html?v=20260902-restored" allow="fullscreen"></iframe>
+    <iframe title="规则与不规则砌筑石形态" data-src="./brick-mother-stone-masonry-v2.8.0-alpha.html?v=20260902-runtime-fix" allow="fullscreen"></iframe>
   </section>
   <section class="panel" id="lithology" data-url="./stone-study.html?v=20260902-restored">
     <div class="loading"><div><div class="spinner"></div>正在载入石材岩性响应</div></div>
@@ -94,7 +94,7 @@ main{position:relative;min-width:0;min-height:0;background:#000}.panel{position:
   select(location.hash.slice(1)||'core',false);
   window.addEventListener('hashchange',()=>select(location.hash.slice(1)||'core',false));
   document.documentElement.dataset.brickMotherWorkbenchReady='true';
-  window.__BRICK_MOTHER_WORKBENCH__={version:'2.8.0-alpha.1',corePreserved:'2.7.5',sections:['core','masonry','lithology','v26'],visualApproved:false,productionApproved:false};
+  window.__BRICK_MOTHER_WORKBENCH__={version:'2.8.0-alpha.2',corePreserved:'2.7.5',masonryRuntime:'20260902-runtime-fix',sections:['core','masonry','lithology','v26'],visualApproved:false,productionApproved:false};
 })();
 </script>
 </body>
