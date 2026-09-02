@@ -1,4 +1,4 @@
-name: Deploy Brick Mother Online Workbench
+name: Deploy Brick Mother Online Workbench V2.11
 
 on:
   push:
@@ -25,7 +25,7 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 28
+    timeout-minutes: 38
     steps:
       - name: Checkout exact branch head
         uses: actions/checkout@v4
@@ -38,23 +38,52 @@ jobs:
           test -s "$root/workbench.html"
           test -s "$root/brick-mother-standalone-v2.7.5.html"
           test -s "$root/brick-mother-stone-masonry-v2.8.0-alpha.html"
-          test -s "$root/brick-mother-realtime-weathering-pbr-v1.0.0.html"
-          test -s "$root/brick-mother-realtime-weathering-pbr-v1.css"
-          test -s "$root/brick-mother-weathering-geometry-v1.js"
-          test -s "$root/brick-mother-realtime-weathering-pbr-v1.js"
+          test -s "$root/brick-mother-realtime-weathering-pbr-v1.1.0.html"
+          test -s "$root/brick-mother-realtime-weathering-pbr-v1.1.css"
+          test -s "$root/brick-mother-weathering-geometry-v1.1.js"
+          test -s "$root/brick-mother-realtime-weathering-pbr-v1.1.js"
+          test -s "$root/brick-mother-stone-form-geometry-v3.5.js"
+          test -s "$root/BRICK_MOTHER_REALTIME_WEATHERING_PBR_BUILD_V1.1.json"
           test "$(git hash-object "$root/brick-mother-standalone-v2.7.5.html")" = "$PRESERVED_CORE_BLOB"
           grep -q "核心三材质 V2.7.5" "$root/workbench.html"
           grep -q "PBR 实时风化" "$root/workbench.html"
           grep -q 'id="weathering"' "$root/workbench.html"
+          grep -q "brick-mother-realtime-weathering-pbr-v1.1.0.html" "$root/workbench.html"
+          grep -q "weatheringRuntime:'1.1.0-alpha.3'" "$root/workbench.html"
+          grep -q "pbrChannels:16" "$root/workbench.html"
           grep -q "砌筑石形态" "$root/workbench.html"
-          grep -q "Base Color" "$root/brick-mother-realtime-weathering-pbr-v1.0.0.html"
-          grep -q "Roughness" "$root/brick-mother-realtime-weathering-pbr-v1.0.0.html"
-          grep -q "PBR Safe" "$root/brick-mother-realtime-weathering-pbr-v1.0.0.html"
-          grep -q "uDielectricF0" "$root/brick-mother-realtime-weathering-pbr-v1.js"
-          grep -q "dataset.metalness='0'" "$root/brick-mother-realtime-weathering-pbr-v1.js"
-          grep -q "dataset.dielectricF0='0.04'" "$root/brick-mother-realtime-weathering-pbr-v1.js"
-          node --check "$root/brick-mother-weathering-geometry-v1.js"
-          node --check "$root/brick-mother-realtime-weathering-pbr-v1.js"
+          grep -q "Base Color" "$root/brick-mother-realtime-weathering-pbr-v1.1.0.html"
+          grep -q "Roughness" "$root/brick-mother-realtime-weathering-pbr-v1.1.0.html"
+          grep -q "PBR Safe" "$root/brick-mother-realtime-weathering-pbr-v1.1.0.html"
+          grep -q "uDielectricF0" "$root/brick-mother-realtime-weathering-pbr-v1.1.js"
+          grep -q "dataset.baseColorSpace='sRGB'" "$root/brick-mother-realtime-weathering-pbr-v1.1.js"
+          grep -q "dataset.dataChannelSpace='linear'" "$root/brick-mother-realtime-weathering-pbr-v1.1.js"
+          grep -q "dataset.aoScope='diffuse-ambient-only'" "$root/brick-mother-realtime-weathering-pbr-v1.1.js"
+          grep -q "BrickMotherStoneFormGeometryV35" "$root/brick-mother-weathering-geometry-v1.1.js"
+          python3 -m json.tool "$root/BRICK_MOTHER_REALTIME_WEATHERING_PBR_BUILD_V1.1.json" >/dev/null
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          data=json.loads((Path(os.environ['BRICK_ROOT'])/'BRICK_MOTHER_REALTIME_WEATHERING_PBR_BUILD_V1.1.json').read_text())
+          assert data['runtimeVersion']=='1.1.0-alpha.3'
+          assert data['rendering']['brdf']=='GGX'
+          assert data['rendering']['energyConserving'] is True
+          assert data['rendering']['metalness']==0
+          assert data['rendering']['dielectricF0']==0.04
+          assert data['rendering']['baseColorSpace']=='sRGB'
+          assert data['rendering']['dataChannelSpace']=='linear'
+          assert data['rendering']['aoScope']=='diffuse ambient only'
+          assert len(data['materialFamilies'])==6
+          assert len(data['diagnosticChannels'])==16
+          assert data['preservedCore']['gitBlob']==os.environ['PRESERVED_CORE_BLOB']
+          assert data['visualApproved'] is False
+          assert data['productionApproved'] is False
+          PY
+          grep -q "dataset.metalness='0'" "$root/brick-mother-realtime-weathering-pbr-v1.1.js"
+          grep -q "dataset.dielectricF0='0.04'" "$root/brick-mother-realtime-weathering-pbr-v1.1.js"
+          node --check "$root/brick-mother-stone-form-geometry-v3.5.js"
+          node --check "$root/brick-mother-weathering-geometry-v1.1.js"
+          node --check "$root/brick-mother-realtime-weathering-pbr-v1.1.js"
 
       - name: Browser QA six material families
         shell: bash
@@ -68,7 +97,7 @@ jobs:
           trap 'kill "$server_pid" 2>/dev/null || true' EXIT
           ready=0
           for attempt in $(seq 1 45); do
-            if curl -fsS http://127.0.0.1:8765/brick-mother-realtime-weathering-pbr-v1.0.0.html >/dev/null; then ready=1; break; fi
+            if curl -fsS http://127.0.0.1:8765/brick-mother-realtime-weathering-pbr-v1.1.0.html >/dev/null; then ready=1; break; fi
             sleep 1
           done
           test "$ready" = 1
@@ -77,7 +106,7 @@ jobs:
           for family in 0 1 2 3 4 5; do
             light=studio
             if [ "$family" -eq 3 ] || [ "$family" -eq 4 ]; then light=raking; fi
-            url="http://127.0.0.1:8765/brick-mother-realtime-weathering-pbr-v1.0.0.html?family=${family}&channel=0&light=${light}&freeze=1&qa=1&build=$GITHUB_SHA"
+            url="http://127.0.0.1:8765/brick-mother-realtime-weathering-pbr-v1.1.0.html?family=${family}&channel=0&light=${light}&freeze=1&qa=1&build=$GITHUB_SHA"
             timeout 210s "$chrome" \
               --headless=new \
               --no-sandbox \
@@ -101,9 +130,13 @@ jobs:
             grep -q 'data-brick-mother-weathering-ready="true"' "$dom"
             grep -q 'data-workbench-ready="true"' "$dom"
             grep -q 'data-visual-ready="true"' "$dom"
-            grep -q 'data-runtime-version="1.0.0-alpha.1"' "$dom"
+            grep -q 'data-runtime-version="1.1.0-alpha.3"' "$dom"
             grep -q 'data-metalness="0"' "$dom"
             grep -q 'data-dielectric-f0="0.04"' "$dom"
+            grep -q 'data-base-color-space="sRGB"' "$dom"
+            grep -q 'data-data-channel-space="linear"' "$dom"
+            grep -q 'data-ao-scope="diffuse-ambient-only"' "$dom"
+            grep -q 'data-pbr-channels="16"' "$dom"
             ! grep -q 'data-runtime-failure="true"' "$dom"
             test -s "$png"
             test "$(wc -c < "$png")" -gt 45000
@@ -121,14 +154,14 @@ jobs:
           trap 'kill "$server_pid" 2>/dev/null || true' EXIT
           ready=0
           for attempt in $(seq 1 45); do
-            if curl -fsS http://127.0.0.1:8766/brick-mother-realtime-weathering-pbr-v1.0.0.html >/dev/null; then ready=1; break; fi
+            if curl -fsS http://127.0.0.1:8766/brick-mother-realtime-weathering-pbr-v1.1.0.html >/dev/null; then ready=1; break; fi
             sleep 1
           done
           test "$ready" = 1
           chrome="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)"
           test -n "$chrome"
-          for channel in 1 2 3 4 5 6 7 8 9 10; do
-            url="http://127.0.0.1:8766/brick-mother-realtime-weathering-pbr-v1.0.0.html?family=3&channel=${channel}&light=neutral&freeze=1&qa=1&build=$GITHUB_SHA"
+          for channel in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
+            url="http://127.0.0.1:8766/brick-mother-realtime-weathering-pbr-v1.1.0.html?family=3&channel=${channel}&light=neutral&freeze=1&qa=1&build=$GITHUB_SHA"
             timeout 210s "$chrome" \
               --headless=new \
               --no-sandbox \
@@ -152,6 +185,10 @@ jobs:
             grep -q 'data-visual-ready="true"' "$dom"
             grep -q 'data-metalness="0"' "$dom"
             grep -q 'data-dielectric-f0="0.04"' "$dom"
+            grep -q 'data-base-color-space="sRGB"' "$dom"
+            grep -q 'data-data-channel-space="linear"' "$dom"
+            grep -q 'data-ao-scope="diffuse-ambient-only"' "$dom"
+            grep -q 'data-pbr-channels="16"' "$dom"
             ! grep -q 'data-runtime-failure="true"' "$dom"
             test -s "$png"
             test "$(wc -c < "$png")" -gt 18000
@@ -166,14 +203,18 @@ jobs:
                   assert data[:8] == b'\x89PNG\r\n\x1a\n'
                   width,height=struct.unpack('>II',data[16:24])
                   rows.append({'file':p.name,'bytes':len(data),'sha256':hashlib.sha256(data).hexdigest(),'width':width,'height':height})
-          assert len(rows)==16,len(rows)
+          assert len(rows)==21,len(rows)
           Path('/tmp/brick-weathering-manifest.json').write_text(json.dumps({
               'head':os.environ['GITHUB_SHA'],
-              'runtime':'1.0.0-alpha.1',
+              'runtime':'1.1.0-alpha.3',
               'familyViews':6,
-              'diagnosticViews':10,
+              'diagnosticViews':16,
+              'capturedDiagnosticViews':15,
               'metalness':0,
               'dielectricF0':0.04,
+              'baseColorSpace':'sRGB',
+              'dataChannelSpace':'linear',
+              'aoScope':'diffuse-ambient-only',
               'screenshots':rows,
               'visualApproved':False,
               'productionApproved':False
@@ -241,12 +282,21 @@ jobs:
             if curl -fsSL --retry 2 --retry-delay 2 "$BASE_URL/workbench.html?build=$GITHUB_SHA" -o /tmp/workbench.html \
               && grep -q "核心三材质 V2.7.5" /tmp/workbench.html \
               && grep -q "PBR 实时风化" /tmp/workbench.html \
-              && curl -fsSL --retry 2 --retry-delay 2 "$BASE_URL/brick-mother-realtime-weathering-pbr-v1.0.0.html?build=$GITHUB_SHA" -o /tmp/weathering.html \
+              && curl -fsSL --retry 2 --retry-delay 2 "$BASE_URL/brick-mother-realtime-weathering-pbr-v1.1.0.html?build=$GITHUB_SHA" -o /tmp/weathering.html \
               && grep -q "实时风化与 PBR" /tmp/weathering.html \
               && grep -q "PBR Safe" /tmp/weathering.html \
-              && curl -fsSL --retry 2 --retry-delay 2 "$BASE_URL/brick-mother-realtime-weathering-pbr-v1.js?build=$GITHUB_SHA" -o /tmp/weathering.js \
-              && grep -q "1.0.0-alpha.1" /tmp/weathering.js \
+              && curl -fsSL --retry 2 --retry-delay 2 "$BASE_URL/brick-mother-realtime-weathering-pbr-v1.1.js?build=$GITHUB_SHA" -o /tmp/weathering.js \
+              && grep -q "1.1.0-alpha.3" /tmp/weathering.js \
               && grep -q "uDielectricF0" /tmp/weathering.js \
+              && curl -fsSL --retry 2 --retry-delay 2 "$BASE_URL/brick-mother-weathering-geometry-v1.1.js?build=$GITHUB_SHA" -o /tmp/weathering-geometry.js \
+              && grep -q "BrickMotherStoneFormGeometryV35" /tmp/weathering-geometry.js \
+              && curl -fsSL --retry 2 --retry-delay 2 "$BASE_URL/brick-mother-stone-form-geometry-v3.5.js?build=$GITHUB_SHA" -o /tmp/stone-form-geometry.js \
+              && grep -q "BrickMotherStoneFormGeometryV35" /tmp/stone-form-geometry.js \
+              && curl -fsSL --retry 2 --retry-delay 2 "$BASE_URL/brick-mother-realtime-weathering-pbr-v1.1.css?build=$GITHUB_SHA" -o /tmp/weathering.css \
+              && grep -q "diagnostic-bar" /tmp/weathering.css \
+              && curl -fsSL --retry 2 --retry-delay 2 "$BASE_URL/BRICK_MOTHER_REALTIME_WEATHERING_PBR_BUILD_V1.1.json?build=$GITHUB_SHA" -o /tmp/weathering-build.json \
+              && python3 -m json.tool /tmp/weathering-build.json >/dev/null \
+              && grep -q '"runtimeVersion": "1.1.0-alpha.3"' /tmp/weathering-build.json \
               && curl -fsSL --retry 2 --retry-delay 2 "$BASE_URL/brick-mother-standalone-v2.7.5.html?build=$GITHUB_SHA" -o /tmp/core.html \
               && grep -q "Brick Mother V2.7" /tmp/core.html; then
               ok=1
@@ -279,15 +329,22 @@ jobs:
             --virtual-time-budget=70000 \
             --screenshot=/tmp/live-brick-weathering.png \
             --dump-dom \
-            "$BASE_URL/brick-mother-realtime-weathering-pbr-v1.0.0.html?family=3&channel=0&light=raking&freeze=1&qa=1&build=$GITHUB_SHA" \
+            "$BASE_URL/brick-mother-realtime-weathering-pbr-v1.1.0.html?family=3&channel=0&light=raking&freeze=1&qa=1&build=$GITHUB_SHA" \
             > /tmp/live-brick-weathering.dom.html \
             2> /tmp/live-brick-weathering.chrome.log
           grep -q 'data-brick-mother-weathering-ready="true"' /tmp/live-brick-weathering.dom.html
           grep -q 'data-workbench-ready="true"' /tmp/live-brick-weathering.dom.html
           grep -q 'data-visual-ready="true"' /tmp/live-brick-weathering.dom.html
-          grep -q 'data-runtime-version="1.0.0-alpha.1"' /tmp/live-brick-weathering.dom.html
+          grep -q 'data-runtime-version="1.1.0-alpha.3"' /tmp/live-brick-weathering.dom.html
           grep -q 'data-metalness="0"' /tmp/live-brick-weathering.dom.html
           grep -q 'data-dielectric-f0="0.04"' /tmp/live-brick-weathering.dom.html
+          grep -q 'data-base-color-space="sRGB"' /tmp/live-brick-weathering.dom.html
+          grep -q 'data-data-channel-space="linear"' /tmp/live-brick-weathering.dom.html
+          grep -q 'data-ao-scope="diffuse-ambient-only"' /tmp/live-brick-weathering.dom.html
+          grep -q 'data-height-role="low-frequency-silhouette"' /tmp/live-brick-weathering.dom.html
+          grep -q 'data-normal-role="high-frequency-detail"' /tmp/live-brick-weathering.dom.html
+          grep -q 'data-geometry-grammar="BrickMotherStoneFormGeometryV35"' /tmp/live-brick-weathering.dom.html
+          grep -q 'data-pbr-channels="16"' /tmp/live-brick-weathering.dom.html
           ! grep -q 'data-runtime-failure="true"' /tmp/live-brick-weathering.dom.html
           test -s /tmp/live-brick-weathering.png
           test "$(wc -c < /tmp/live-brick-weathering.png)" -gt 45000
