@@ -1,0 +1,194 @@
+name: Brick Mother Stone Form V3.3 Materialize Review
+
+on:
+  push:
+    branches:
+      - feature/brick-mother-v2.0-composite-material-dna
+    paths:
+      - ".github/workflows/brick-mother-stone-form-v33-materialize-review.yml"
+      - "private-review/brick-mother-stone-form-v33/payload/**"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  REVIEW_ROOT: private-review/brick-mother-stone-form-v33
+  CORE_ROOT: yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother
+
+jobs:
+  materialize-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout exact payload head
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Materialize exact V3.3 candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import base64
+          import hashlib
+          import zlib
+
+          root = Path('private-review/brick-mother-stone-form-v33')
+          payload = root / 'payload'
+          geometry = zlib.decompress(base64.b64decode((payload / 'geometry.b64').read_text().strip()))
+          runtime = zlib.decompress(base64.b64decode(
+              (payload / 'runtime.1.b64').read_text().strip() +
+              (payload / 'runtime.2.b64').read_text().strip()
+          ))
+          page = zlib.decompress(base64.b64decode((payload / 'html.b64').read_text().strip()))
+
+          expected = {
+              'geometry': '9e04b0199e97ac745cc94bb2e55947fba0d2d8890e996cd29cbc071dba6d401f',
+              'runtime': '435b5d96cebd54379218be99888c2a62ba7776b7f8e1882bd0833ad6bf232ce2',
+              'page': '9f8e2163ae86578d632015f40a2a94cc4c5a7248c67652c0232b491ac5c08756',
+          }
+          actual = {
+              'geometry': hashlib.sha256(geometry).hexdigest(),
+              'runtime': hashlib.sha256(runtime).hexdigest(),
+              'page': hashlib.sha256(page).hexdigest(),
+          }
+          assert actual == expected, (actual, expected)
+
+          root.mkdir(parents=True, exist_ok=True)
+          (root / 'stone-form-geometry-v33.js').write_bytes(geometry)
+          (root / 'stone-form-runtime-v33.js').write_bytes(runtime)
+          (root / 'brick-mother-stone-form-v3.3.0.html').write_bytes(page)
+          PY
+
+          node --check "$REVIEW_ROOT/stone-form-geometry-v33.js"
+          node --check "$REVIEW_ROOT/stone-form-runtime-v33.js"
+          grep -q "BrickMotherStoneFormGeometryV33" "$REVIEW_ROOT/stone-form-geometry-v33.js"
+          grep -q "3.3.0-alpha.1" "$REVIEW_ROOT/stone-form-runtime-v33.js"
+          grep -q "V3.3 HIGH FIDELITY" "$REVIEW_ROOT/brick-mother-stone-form-v3.3.0.html"
+          grep -q "stone-form-geometry-v33.js" "$REVIEW_ROOT/brick-mother-stone-form-v3.3.0.html"
+          grep -q "stone-form-runtime-v33.js" "$REVIEW_ROOT/brick-mother-stone-form-v3.3.0.html"
+          test "$(git hash-object "$CORE_ROOT/brick-mother-standalone-v2.7.5.html")" = "7b10389cb9367f7423619262820883cc94b07a61"
+
+      - name: Capture private V3.3 visual evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/stone-form-v33-review
+          python3 -m http.server 8765 --bind 127.0.0.1 --directory "$REVIEW_ROOT" >/tmp/stone-form-v33-server.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+
+          ready=0
+          for attempt in $(seq 1 60); do
+            if curl -fsS http://127.0.0.1:8765/brick-mother-stone-form-v3.3.0.html >/dev/null; then
+              ready=1
+              break
+            fi
+            sleep 1
+          done
+          test "$ready" = 1
+
+          chrome="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)"
+          test -n "$chrome"
+
+          for family in 0 1 2 3; do
+            for light in studio raking; do
+              stem="family-${family}-${light}"
+              url="http://127.0.0.1:8765/brick-mother-stone-form-v3.3.0.html?family=${family}&view=all&light=${light}&qa=private-v33&head=${GITHUB_SHA}"
+              timeout 210s "$chrome" \
+                --headless=new \
+                --no-sandbox \
+                --disable-dev-shm-usage \
+                --disable-background-networking \
+                --enable-webgl \
+                --ignore-gpu-blocklist \
+                --enable-unsafe-swiftshader \
+                --use-gl=angle \
+                --use-angle=swiftshader \
+                --hide-scrollbars \
+                --window-size=1600,1000 \
+                --virtual-time-budget=60000 \
+                --screenshot="/tmp/stone-form-v33-review/${stem}.png" \
+                --dump-dom \
+                "$url" \
+                > "/tmp/stone-form-v33-review/${stem}.dom.html" \
+                2> "/tmp/stone-form-v33-review/${stem}.chrome.log"
+
+              dom="/tmp/stone-form-v33-review/${stem}.dom.html"
+              png="/tmp/stone-form-v33-review/${stem}.png"
+              grep -q 'data-brick-mother-stone-form-ready="true"' "$dom"
+              grep -q 'data-workbench-ready="true"' "$dom"
+              grep -q 'data-visual-ready="true"' "$dom"
+              grep -q 'data-stone-form-version="3.3.0-alpha.1"' "$dom"
+              ! grep -q 'data-runtime-failure="true"' "$dom"
+              test -s "$png"
+              test "$(wc -c < "$png")" -gt 100000
+            done
+          done
+
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib
+          import json
+          import os
+          import struct
+
+          root = Path('/tmp/stone-form-v33-review')
+          rows = []
+          for path in sorted(root.glob('*.png')):
+              data = path.read_bytes()
+              assert data[:8] == b'\x89PNG\r\n\x1a\n'
+              width, height = struct.unpack('>II', data[16:24])
+              assert (width, height) == (1600, 1000), (path.name, width, height)
+              rows.append({
+                  'file': path.name,
+                  'bytes': len(data),
+                  'sha256': hashlib.sha256(data).hexdigest(),
+                  'width': width,
+                  'height': height,
+              })
+          assert len(rows) == 8, len(rows)
+          manifest = {
+              'payloadHead': os.environ['GITHUB_SHA'],
+              'candidate': '3.3.0-alpha.1',
+              'familyCount': 4,
+              'lightingModes': ['studio', 'raking'],
+              'screenshots': rows,
+              'privateVisualReview': True,
+              'visualApproved': False,
+              'productionApproved': False,
+          }
+          (root / 'manifest.json').write_text(json.dumps(manifest, indent=2) + '\n')
+          PY
+
+      - name: Commit exact materialized candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "Brick Mother Automation"
+          git config user.email "actions@users.noreply.github.com"
+          git add \
+            "$REVIEW_ROOT/stone-form-geometry-v33.js" \
+            "$REVIEW_ROOT/stone-form-runtime-v33.js" \
+            "$REVIEW_ROOT/brick-mother-stone-form-v3.3.0.html"
+          if git diff --cached --quiet; then
+            echo "candidate already materialized"
+          else
+            git commit -m "feat(brick): materialize private stone form v3.3 candidate"
+            git push origin HEAD:feature/brick-mother-v2.0-composite-material-dna
+          fi
+
+      - name: Upload private V3.3 review evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: brick-mother-stone-form-v33-review-${{ github.sha }}
+          path: |
+            /tmp/stone-form-v33-review
+            /tmp/stone-form-v33-server.log
+          compression-level: 1
+          if-no-files-found: error
+          retention-days: 7
