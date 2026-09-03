@@ -1,0 +1,21 @@
+{
+  "version": "0.8.2",
+  "format": "lzma-base64-utf8-template",
+  "htmlSha256": "46803939052e42018b118959b7b36b941b537692562d4bdc73e140b34a90a3e2",
+  "htmlBytes": 1164002,
+  "templateSha256": "5d0c7cc760068f7906afab6143fb3221e35ec70900d13f2a8d19a1b924bfc857",
+  "archiveSha256": "6b19e3d8ab81fa84d49882f0c8d5f30b0bda250eb9a1f53d1f53d1ebb2e92d004120a",
+  "vendorSha256": "4c10e68b2a90aeb43f8b81715114e4c0de14ad7e79ac918ccef0a7bb0b9db771",
+  "vendorSourceCommit": "41232fedf53f9e07b40756c7aedfc97c1afcfde7",
+  "vendorSourcePath": "tiles-mother/index.html",
+  "parts": [
+    {"name": "part-00.b64", "bytes": 12000, "sha256": "4f944402faa721ecc917400f3e42a4cc2a2beb0ef1b3195dd1518951255b3e17"},
+    {"name": "part-01.b64", "bytes": 12000, "sha256": "35977014d69d972ed5e144bd7f55aa86350028624d7970b40f72431101f1632c"},
+    {"name": "part-02.b64", "bytes": 12000, "sha256": "c1af7b3a7e1ab2b357468f42241ee78b12bfd2a61bf02c66fbb7f958f1b0f367"},
+    {"name": "part-03.b64", "bytes": 12000, "sha256": "4551698dce083be01222ce640cf9711a5a59309eabd7f910cffe587cdd642b45"},
+    {"name": "part-04.b64", "bytes": 9488, "sha256": "de56b3f4701d59dca88f2c6954aea445fee752674033aee182f71f040e30d7fd"}
+  ],
+  "visualApproved": false,
+  "productionApproved": false,
+  "distillationComplete": false
+}
