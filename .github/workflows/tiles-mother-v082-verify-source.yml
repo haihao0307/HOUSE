@@ -2,7 +2,7 @@ name: Tiles Mother V082 Verified Source and Preview
 on:
   push:
     branches: [feature/tiles-mother-v0.1-workbench]
-    paths: [.github/workflows/tiles-mother-v082-verify-source.yml]
+    paths: [.github/workflows/tiles-mother-v082-verify-source.yml, tiles-mother/v082/browser_verify.py]
   workflow_dispatch:
 permissions:
   contents: write
@@ -32,9 +32,7 @@ jobs:
         run: |
           set -euo pipefail
           python3 -m http.server 8765 --bind 127.0.0.1 --directory . >/tmp/tiles082-server.log 2>&1 &
-          xvfb-run -a python3 tiles-mother/v082/browser_verify.py \
-            --url http://127.0.0.1:8765/tiles-mother/v082/index.html \
-            --html tiles-mother/v082/index.html --out tiles-mother/v082/qa-ci
+          xvfb-run -a python3 tiles-mother/v082/browser_verify.py --url http://127.0.0.1:8765/tiles-mother/v082/index.html --html tiles-mother/v082/index.html --out tiles-mother/v082/qa-ci
       - name: Preserve verified source on the existing work branch
         run: |
           set -euo pipefail
@@ -82,9 +80,7 @@ jobs:
       - name: Verify actual public preview browser
         if: steps.preview_bytes.outcome == 'success'
         continue-on-error: true
-        run: |
-          xvfb-run -a python3 tiles-mother/v082/browser_verify.py \
-            --url "$PREVIEW_URL" --html tiles-mother/v082/index.html --out /tmp/tiles082-public-qa
+        run: xvfb-run -a python3 tiles-mother/v082/browser_verify.py --url "$PREVIEW_URL" --html tiles-mother/v082/index.html --out /tmp/tiles082-public-qa
       - name: Upload exact candidate and actual evidence
         if: always()
         uses: actions/upload-artifact@v4
