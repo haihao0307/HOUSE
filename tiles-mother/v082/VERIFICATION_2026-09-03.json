@@ -1,0 +1,52 @@
+{
+  "version": "0.8.2",
+  "runtimeSourceCommit": "64e4f1289cade95f8bc24b70cb7b7c7cb51a9b52",
+  "runtimePath": "tiles-mother/v082/index.html",
+  "htmlSha256": "46803939052e42018b118959b7b36b941b537692562d4bdc73e140b34a90a3e2",
+  "htmlBytes": 1164002,
+  "githubActions": {
+    "run": 33708333374,
+    "job": 100502244393,
+    "artifact": 9876057576,
+    "sourceReconstructionVerified": true,
+    "httpBrowserTestsPassed": 17,
+    "httpBrowserTestCount": 17,
+    "chromiumVersion": "140.0.7339.16",
+    "mobileViewport": [393, 852],
+    "mobileFirstReadyMs": 2355,
+    "optionalFavicon404Recorded": true,
+    "applicationErrors": 0
+  },
+  "localEvidence": {
+    "browser": "Chromium 144.0.7559.96 with Xvfb and SwiftShader",
+    "documentInjectionTestsPassed": 27,
+    "documentInjectionTestCount": 27,
+    "geometryPreservationTestsPassed": 8,
+    "geometryPreservationTestCount": 8,
+    "baseline": "user supplied V0.8.1 HTML",
+    "agesComparedYears": [0, 50, 100, 150],
+    "preservedFields": ["positions", "normals", "tangents", "indices", "uv", "cavities", "flakes", "relief"]
+  },
+  "publication": {
+    "sourceSaved": true,
+    "pagesModified": false,
+    "mainModified": false,
+    "otherMotherAssetsModified": false,
+    "publicPreviewVerified": false,
+    "publicPreviewBrowserRun": false,
+    "publicPreviewFailure": "Independent preview HTTP 403 Forbidden",
+    "pagesBaseProbeRun": 33706967132,
+    "matchingLatestPagesArtifacts": 0
+  },
+  "limitations": {
+    "physicalIPhoneTested": false,
+    "webkitSafariTested": false,
+    "inAppAttachmentViewerTested": false,
+    "exhaustiveTriangleCollisionVerified": false,
+    "agingRatesMeasured": false,
+    "staticSnapshotCountsAs3D": false
+  },
+  "visualApproved": false,
+  "productionApproved": false,
+  "distillationComplete": false
+}
