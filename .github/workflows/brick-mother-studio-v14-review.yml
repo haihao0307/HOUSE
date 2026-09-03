@@ -1,0 +1,98 @@
+name: Brick Mother Studio V1.4 Private Material Review
+
+on:
+  push:
+    branches: [feature/brick-mother-v2.0-composite-material-dna]
+    paths:
+      - .github/workflows/brick-mother-studio-v14-review.yml
+      - tools/brick-mother/publish_studio12.py
+      - tools/brick-mother/refine_studio12.py
+      - tools/brick-mother/refine_studio13.py
+      - tools/brick-mother/finalize_studio13.py
+      - tools/brick-mother/refine_studio14.py
+      - tools/brick-mother/test_studio14.py
+      - docs/brick-mother/BRICK_MOTHER_PBR_MATERIAL_TRUTH_V1.3.md
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: brick-mother-studio-v14-review
+  cancel-in-progress: true
+
+env:
+  BRICK_ROOT: yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother
+  PRESERVED_CORE_BLOB: 7b10389cb9367f7423619262820883cc94b07a61
+  RUNTIME_VERSION: 1.4.0-alpha.1
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 28
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Build exact V1.4 candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 tools/brick-mother/publish_studio12.py "$BRICK_ROOT"
+          python3 tools/brick-mother/refine_studio12.py "$BRICK_ROOT"
+          python3 tools/brick-mother/refine_studio13.py "$BRICK_ROOT"
+          python3 tools/brick-mother/finalize_studio13.py "$BRICK_ROOT"
+          python3 tools/brick-mother/refine_studio14.py "$BRICK_ROOT"
+          python3 - <<'PY'
+          import hashlib,json,os,re,subprocess
+          from pathlib import Path
+          root=Path(os.environ['BRICK_ROOT'])
+          studio=root/'studio.html'; alias=root/'studio-v1.4.html'; text=studio.read_text()
+          assert studio.read_bytes()==alias.read_bytes()
+          assert len(text)>115000
+          for token in ["version:'1.4.0-alpha.1'","brdf:'GGX'","dielectricF0:.04","aoScope:'diffuse-ambient-only'","heightRole:'low-frequency-silhouette'","normalRole:'high-frequency-detail'",'fiberField','pbrSafeAlbedo',"playing:false","background:#c7ced2"]:
+              assert token in text,token
+          for index,code in enumerate(re.findall(r'<script[^>]*>([\s\S]*?)</script>',text)):
+              path=Path(f'/tmp/brick-studio-v14-script-{index}.js'); path.write_text(code); subprocess.run(['node','--check',str(path)],check=True)
+          build=json.loads((root/'STUDIO_BUILD.json').read_text())
+          assert build['runtimeVersion']==os.environ['RUNTIME_VERSION']
+          assert build['preservedCoreBlob']==os.environ['PRESERVED_CORE_BLOB']
+          assert build['files']['studio.html']['sha256']==hashlib.sha256(studio.read_bytes()).hexdigest()
+          assert build['visualApproved'] is False and build['productionApproved'] is False
+          core=(root/'brick-mother-standalone-v2.7.5.html').read_bytes()
+          assert hashlib.sha1(b'blob '+str(len(core)).encode()+b'\0'+core).hexdigest()==os.environ['PRESERVED_CORE_BLOB']
+          PY
+
+      - name: Install real-browser review dependencies
+        run: python3 -m pip install playwright pillow
+
+      - name: Run stable real WebGL review
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m http.server 8765 --bind 127.0.0.1 --directory "$BRICK_ROOT" >/tmp/brick-studio-v14-server.log 2>&1 &
+          PID=$!
+          trap 'kill "$PID" 2>/dev/null || true' EXIT
+          ready=0
+          for i in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:8765/studio-v1.4.html >/dev/null; then ready=1; break; fi
+            sleep 1
+          done
+          test "$ready" = 1
+          python3 tools/brick-mother/test_studio14.py http://127.0.0.1:8765 /tmp/brick-studio-v14-review
+
+      - name: Upload exact V1.4 review evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: brick-studio-v14-private-review-${{ github.sha }}
+          path: |
+            /tmp/brick-studio-v14-review
+            /tmp/brick-studio-v14-server.log
+            ${{ env.BRICK_ROOT }}/studio.html
+            ${{ env.BRICK_ROOT }}/studio-v1.4.html
+            ${{ env.BRICK_ROOT }}/STUDIO_BUILD.json
+          compression-level: 1
+          retention-days: 7
+          if-no-files-found: error
