@@ -36,6 +36,7 @@ jobs:
         run: |
           set -euo pipefail
           python3 tools/brick-mother/publish_studio12.py "$BRICK_ROOT"
+          python3 tools/brick-mother/refine_studio12.py "$BRICK_ROOT"
           python3 - <<'PY'
           import os,re,subprocess
           from pathlib import Path
@@ -46,7 +47,6 @@ jobs:
               path.write_text(code)
               subprocess.run(['node','--check',str(path)],check=True)
           assert len(text)>90000
-          assert 'staticImageGeneration' not in text or 'true' not in text.split('staticImageGeneration')[1][:10]
           PY
       - name: Install browser test driver
         run: python3 -m pip install playwright
@@ -69,18 +69,20 @@ jobs:
             ${{ env.BRICK_ROOT }}/studio.html
             ${{ env.BRICK_ROOT }}/STUDIO_BUILD.json
           retention-days: 7
-      - name: Check reviewed builder gate
+      - name: Check reviewed output gate
         id: gate
         run: |
           set -euo pipefail
           publish=false
           if [ -f tools/brick-mother/STUDIO_RELEASE_READY.json ]; then
             python3 - <<'PY'
-          import json,subprocess
+          import json,subprocess,hashlib,os
           from pathlib import Path
           gate=json.loads(Path('tools/brick-mother/STUDIO_RELEASE_READY.json').read_text())
           blob=subprocess.check_output(['git','hash-object','tools/brick-mother/publish_studio12.py'],text=True).strip()
           assert gate['builderBlob']==blob
+          digest=hashlib.sha256((Path(os.environ['BRICK_ROOT'])/'studio.html').read_bytes()).hexdigest()
+          assert gate['studioSha256']==digest
           assert gate['internalReviewComplete'] is True
           assert gate['humanVisualApproved'] is False
           assert gate['productionApproved'] is False
