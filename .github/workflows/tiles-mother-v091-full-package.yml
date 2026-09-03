@@ -114,8 +114,8 @@ jobs:
             tiles-mother/index.html \
             tiles-mother/README.md \
             tiles-mother/v091 \
-            tiles-mother/releases/Tiles_Mother_V091_Full_Package_2026-09-03.zip \
             tiles-mother/releases/Tiles_Mother_V091_Full_Package_2026-09-03.zip.sha256
+          git add -f tiles-mother/releases/Tiles_Mother_V091_Full_Package_2026-09-03.zip
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git commit -m 'release(tiles-mother): materialize V0.9.1 stage-one full package'
