@@ -1,0 +1,108 @@
+name: Tiles Mother V082 Verified Source and Preview
+on:
+  push:
+    branches: [feature/tiles-mother-v0.1-workbench]
+    paths: [.github/workflows/tiles-mother-v082-verify-source.yml]
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: tiles-mother-v082-source
+  cancel-in-progress: false
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Verify every source and vendor byte
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REF_NAME" = 'feature/tiles-mother-v0.1-workbench'
+          python3 tiles-mother/v082/materialize_verified.py
+          for file in tiles-mother/v082/source/*.js; do node --check "$file"; done
+      - name: Install browser runtime
+        run: |
+          python3 -m pip install 'playwright==1.55.0'
+          python3 -m playwright install --with-deps chromium
+      - name: Real HTTP browser verification
+        run: |
+          set -euo pipefail
+          python3 -m http.server 8765 --bind 127.0.0.1 --directory . >/tmp/tiles082-server.log 2>&1 &
+          xvfb-run -a python3 tiles-mother/v082/browser_verify.py \
+            --url http://127.0.0.1:8765/tiles-mother/v082/index.html \
+            --html tiles-mother/v082/index.html --out tiles-mother/v082/qa-ci
+      - name: Preserve verified source on the existing work branch
+        run: |
+          set -euo pipefail
+          BRANCH='feature/tiles-mother-v0.1-workbench'
+          test "$(git ls-remote origin refs/heads/$BRANCH | cut -f1)" = "$GITHUB_SHA"
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path('tiles-mother/v082/qa-ci/browser-report.json').read_text())
+          assert r['allPassed'] and len(r['tests']) >= 16
+          assert not r['physicalIPhoneTested'] and not r['productionApproved']
+          PY
+          git add tiles-mother/v082/index.html tiles-mother/v082/source tiles-mother/v082/build-manifest.json tiles-mother/v082/qa-ci
+          git diff --cached --name-only | python3 -c 'import sys; paths=sys.stdin.read().splitlines(); assert paths and all(p.startswith("tiles-mother/v082/") for p in paths)'
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'test(tiles-mother): preserve verified V082 mobile recovery and browser evidence'
+          git push origin HEAD:refs/heads/$BRANCH
+          echo "SOURCE_COMMIT=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+      - name: Verify independent commit-pinned preview bytes
+        id: preview_bytes
+        continue-on-error: true
+        run: |
+          python3 - <<'PY'
+          import hashlib,json,os,time,urllib.request
+          from pathlib import Path
+          expected=Path('tiles-mother/v082/index.html').read_bytes()
+          url='https://rawcdn.githack.com/haihao0307/HOUSE/'+os.environ['SOURCE_COMMIT']+'/tiles-mother/v082/index.html'
+          result={'url':url,'sourceCommit':os.environ['SOURCE_COMMIT'],'provider':'raw.githack.com independent preview','pagesModified':False,'verified':False}
+          for attempt in range(4):
+              try:
+                  with urllib.request.urlopen(url,timeout=45) as response:
+                      data=response.read();result['httpStatus']=response.status;result['contentType']=response.headers.get('Content-Type')
+                  result['sha256']=hashlib.sha256(data).hexdigest();result['bytes']=len(data)
+                  assert data==expected,'Public preview byte mismatch'
+                  result['verified']=True
+                  break
+              except Exception as exc:
+                  result['lastError']=str(exc)
+                  if attempt<3:time.sleep(12)
+          Path('/tmp/tiles082-preview.json').write_text(json.dumps(result,indent=2)+'\n')
+          with open(os.environ['GITHUB_ENV'],'a') as env:env.write('PREVIEW_URL='+url+'\n')
+          assert result['verified'],result
+          PY
+      - name: Verify actual public preview browser
+        if: steps.preview_bytes.outcome == 'success'
+        continue-on-error: true
+        run: |
+          xvfb-run -a python3 tiles-mother/v082/browser_verify.py \
+            --url "$PREVIEW_URL" --html tiles-mother/v082/index.html --out /tmp/tiles082-public-qa
+      - name: Upload exact candidate and actual evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tiles-mother-v082-verified-${{ github.run_id }}
+          path: |
+            tiles-mother/v082/index.html
+            tiles-mother/v082/source/
+            tiles-mother/v082/build-manifest.json
+            tiles-mother/v082/qa-ci/
+            /tmp/tiles082-preview.json
+            /tmp/tiles082-public-qa/
+          if-no-files-found: error
+          retention-days: 30
+      - name: Summarize without claiming an unverified publication
+        if: always()
+        run: |
+          echo 'Tiles Mother V082 source verification job result must be read per step.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'No GitHub Pages deployment or Pages settings changes were performed.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'A public preview is accepted only if its byte receipt and public browser report both pass.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'physicalIPhoneTested=false; visualApproved=false; productionApproved=false; distillationComplete=false.' >> "$GITHUB_STEP_SUMMARY"
