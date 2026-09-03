@@ -1,0 +1,60 @@
+{
+  "schema": "tiles-mother-v091-transport-v1",
+  "version": "0.9.1",
+  "format": "lzma-base64-utf8-template",
+  "htmlSha256": "ac137289cedc5f9ab7739c516ac68c806b5f86d6d2e66a70027c31f25475814b",
+  "htmlBytes": 1107470,
+  "templateSha256": "a6f87d6410537883f3ba566861499b687764d3d223d2ffe87eb113edfe9f0ae7",
+  "templateBytes": 93801,
+  "archiveSha256": "f303b5ff2a696a0ef71c8b24bd2e41b74073403fb576e198e2e3f3496808f44b",
+  "archiveBytes": 29836,
+  "vendorSourceSha256": "4c10e68b2a90aeb43f8b81715114e4c0de14ad7e79ac918ccef0a7bb0b9db771",
+  "vendorSourceBytes": 1013695,
+  "embeddedVendorSha256": "24945428781eecbf5a6119eccefe3382b92d45ab9974571ab2dce154b9832211",
+  "embeddedVendorBytes": 1013697,
+  "vendorSourceCommit": "41232fedf53f9e07b40756c7aedfc97c1afcfde7",
+  "vendorSourcePath": "tiles-mother/index.html",
+  "vendorWrapper": "one-leading-and-one-trailing-newline",
+  "marker": "__TILES_V091_PINNED_VENDOR__",
+  "parts": [
+    {
+      "name": "part-00.b64",
+      "bytes": 12000,
+      "sha256": "f93e7cb67455b09a57d783af6fda3a6c4b2f5a5b7bf71d0aff574296e39160b4"
+    },
+    {
+      "name": "part-01.b64",
+      "bytes": 4000,
+      "sha256": "c438a87783ed62bb4514d702fed07b2aba336382598f3ee2e345ec5e485562fa"
+    },
+    {
+      "name": "part-02.b64",
+      "bytes": 4000,
+      "sha256": "09918222fe61ebca4b24764c1bff914578998bd6a533822f7523462e490d9768"
+    },
+    {
+      "name": "part-03.b64",
+      "bytes": 4000,
+      "sha256": "cd24b8e499a498dea3e38a1a72c868805a8b807cb30f869c441005969dbe2a72"
+    },
+    {
+      "name": "part-04.b64",
+      "bytes": 4000,
+      "sha256": "b46c526b861ddca958aa7c55f2db5eaa0885df24aafe5ede32e7d66609ce3849"
+    },
+    {
+      "name": "part-05.b64",
+      "bytes": 11784,
+      "sha256": "490cb3451928d509209666b89090631edf73b54488c5032241ca4661a83fcfd1"
+    }
+  ],
+  "stageOneAccepted": true,
+  "visualApproved": false,
+  "productionApproved": false,
+  "distillationComplete": false,
+  "sourceCommit": "f98a474e1e08ba9a07453fa7bf656033d9f3b904",
+  "workflowRun": "33731270507",
+  "reconstructionVerified": true,
+  "publicPagesModified": false,
+  "exhaustiveTriangleCollisionVerified": false
+}

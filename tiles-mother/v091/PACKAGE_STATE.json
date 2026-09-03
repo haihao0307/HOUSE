@@ -1,0 +1,23 @@
+{
+  "schema": "tiles-mother-v091-package-state-v1",
+  "packageVersion": "0.9.1",
+  "packageKind": "complete_restart_handoff",
+  "generatedDate": "2026-09-03",
+  "repository": "haihao0307/HOUSE",
+  "branch": "feature/tiles-mother-v0.1-workbench",
+  "sourceCommit": "f98a474e1e08ba9a07453fa7bf656033d9f3b904",
+  "workflowRun": "33731270507",
+  "primaryArtifact": "workbench/index.html",
+  "primaryArtifactBytes": 1107470,
+  "primaryArtifactSHA256": "ac137289cedc5f9ab7739c516ac68c806b5f86d6d2e66a70027c31f25475814b",
+  "tileCount": 28,
+  "panCount": 12,
+  "coverCount": 16,
+  "stageOneAccepted": true,
+  "detailRefinementPending": true,
+  "visualApproved": false,
+  "productionApproved": false,
+  "distillationComplete": false,
+  "physicalIPhoneSafariValidated": false,
+  "publicPagesDeploymentIncluded": false
+}
