@@ -1,363 +1,195 @@
-name: Deploy Brick Mother Online Workbench V2.11
+name: Brick Mother Studio V1.2 Review and Direct HTML Publish
 
 on:
   push:
-    branches:
-      - feature/brick-mother-v2.0-composite-material-dna
+    branches: [feature/brick-mother-v2.0-composite-material-dna]
     paths:
-      - ".github/workflows/brick-mother-pages-preview.yml"
-      - "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/**"
+      - .github/workflows/brick-mother-pages-preview.yml
+      - tools/brick-mother/**
+      - yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/**
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
 concurrency:
   group: brick-mother-pages
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 env:
   BRICK_ROOT: yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother
-  PRESERVED_CORE_BLOB: 7b10389cb9367f7423619262820883cc94b07a61
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 38
+    timeout-minutes: 20
+    outputs:
+      publish: ${{ steps.gate.outputs.publish }}
+      source_head: ${{ steps.source.outputs.source_head }}
     steps:
-      - name: Checkout exact branch head
-        uses: actions/checkout@v4
-
-      - name: Validate preserved core and PBR runtime
-        shell: bash
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Build additive self-contained studio
         run: |
           set -euo pipefail
-          root="$BRICK_ROOT"
-          test -s "$root/workbench.html"
-          test -s "$root/brick-mother-standalone-v2.7.5.html"
-          test -s "$root/brick-mother-stone-masonry-v2.8.0-alpha.html"
-          test -s "$root/brick-mother-realtime-weathering-pbr-v1.1.0.html"
-          test -s "$root/brick-mother-realtime-weathering-pbr-v1.1.css"
-          test -s "$root/brick-mother-weathering-geometry-v1.1.js"
-          test -s "$root/brick-mother-realtime-weathering-pbr-v1.1.js"
-          test -s "$root/brick-mother-stone-form-geometry-v3.5.js"
-          test -s "$root/BRICK_MOTHER_REALTIME_WEATHERING_PBR_BUILD_V1.1.json"
-          test "$(git hash-object "$root/brick-mother-standalone-v2.7.5.html")" = "$PRESERVED_CORE_BLOB"
-          grep -q "核心三材质 V2.7.5" "$root/workbench.html"
-          grep -q "PBR 实时风化" "$root/workbench.html"
-          grep -q 'id="weathering"' "$root/workbench.html"
-          grep -q "brick-mother-realtime-weathering-pbr-v1.1.0.html" "$root/workbench.html"
-          grep -q "weatheringRuntime:'1.1.0-alpha.3'" "$root/workbench.html"
-          grep -q "pbrChannels:16" "$root/workbench.html"
-          grep -q "砌筑石形态" "$root/workbench.html"
-          grep -q "Base Color" "$root/brick-mother-realtime-weathering-pbr-v1.1.0.html"
-          grep -q "Roughness" "$root/brick-mother-realtime-weathering-pbr-v1.1.0.html"
-          grep -q "PBR Safe" "$root/brick-mother-realtime-weathering-pbr-v1.1.0.html"
-          grep -q "uDielectricF0" "$root/brick-mother-realtime-weathering-pbr-v1.1.js"
-          grep -q "dataset.baseColorSpace='sRGB'" "$root/brick-mother-realtime-weathering-pbr-v1.1.js"
-          grep -q "dataset.dataChannelSpace='linear'" "$root/brick-mother-realtime-weathering-pbr-v1.1.js"
-          grep -q "dataset.aoScope='diffuse-ambient-only'" "$root/brick-mother-realtime-weathering-pbr-v1.1.js"
-          grep -q "BrickMotherStoneFormGeometryV35" "$root/brick-mother-weathering-geometry-v1.1.js"
-          python3 -m json.tool "$root/BRICK_MOTHER_REALTIME_WEATHERING_PBR_BUILD_V1.1.json" >/dev/null
+          python3 tools/brick-mother/publish_studio12.py "$BRICK_ROOT"
           python3 - <<'PY'
-          import json, os
+          import os,re,subprocess
           from pathlib import Path
-          data=json.loads((Path(os.environ['BRICK_ROOT'])/'BRICK_MOTHER_REALTIME_WEATHERING_PBR_BUILD_V1.1.json').read_text())
-          assert data['runtimeVersion']=='1.1.0-alpha.3'
-          assert data['rendering']['brdf']=='GGX'
-          assert data['rendering']['energyConserving'] is True
-          assert data['rendering']['metalness']==0
-          assert data['rendering']['dielectricF0']==0.04
-          assert data['rendering']['baseColorSpace']=='sRGB'
-          assert data['rendering']['dataChannelSpace']=='linear'
-          assert data['rendering']['aoScope']=='diffuse ambient only'
-          assert len(data['materialFamilies'])==6
-          assert len(data['diagnosticChannels'])==16
-          assert data['preservedCore']['gitBlob']==os.environ['PRESERVED_CORE_BLOB']
-          assert data['visualApproved'] is False
-          assert data['productionApproved'] is False
+          root=Path(os.environ['BRICK_ROOT'])
+          text=(root/'studio.html').read_text()
+          for index,code in enumerate(re.findall(r'<script[^>]*>([\s\S]*?)</script>',text)):
+              path=Path(f'/tmp/brick-studio-script-{index}.js')
+              path.write_text(code)
+              subprocess.run(['node','--check',str(path)],check=True)
+          assert len(text)>90000
+          assert 'staticImageGeneration' not in text or 'true' not in text.split('staticImageGeneration')[1][:10]
           PY
-          grep -q "dataset.metalness='0'" "$root/brick-mother-realtime-weathering-pbr-v1.1.js"
-          grep -q "dataset.dielectricF0='0.04'" "$root/brick-mother-realtime-weathering-pbr-v1.1.js"
-          node --check "$root/brick-mother-stone-form-geometry-v3.5.js"
-          node --check "$root/brick-mother-weathering-geometry-v1.1.js"
-          node --check "$root/brick-mother-realtime-weathering-pbr-v1.1.js"
-
-      - name: Browser QA six material families
-        shell: bash
+      - name: Install browser test driver
+        run: python3 -m pip install playwright
+      - name: Real WebGL material and interaction checks
         run: |
           set -euo pipefail
-          root="$BRICK_ROOT"
-          out=/tmp/brick-weathering-family-qa
-          mkdir -p "$out"
-          python3 -m http.server 8765 --bind 127.0.0.1 --directory "$root" > "$out/server.log" 2>&1 &
-          server_pid=$!
-          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
-          ready=0
-          for attempt in $(seq 1 45); do
-            if curl -fsS http://127.0.0.1:8765/brick-mother-realtime-weathering-pbr-v1.1.0.html >/dev/null; then ready=1; break; fi
-            sleep 1
-          done
-          test "$ready" = 1
-          chrome="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)"
-          test -n "$chrome"
-          for family in 0 1 2 3 4 5; do
-            light=studio
-            if [ "$family" -eq 3 ] || [ "$family" -eq 4 ]; then light=raking; fi
-            url="http://127.0.0.1:8765/brick-mother-realtime-weathering-pbr-v1.1.0.html?family=${family}&channel=0&light=${light}&freeze=1&qa=1&build=$GITHUB_SHA"
-            timeout 210s "$chrome" \
-              --headless=new \
-              --no-sandbox \
-              --disable-dev-shm-usage \
-              --disable-background-networking \
-              --enable-webgl \
-              --ignore-gpu-blocklist \
-              --enable-unsafe-swiftshader \
-              --use-gl=angle \
-              --use-angle=swiftshader \
-              --hide-scrollbars \
-              --window-size=1000,625 \
-              --virtual-time-budget=70000 \
-              --screenshot="$out/family-${family}.png" \
-              --dump-dom \
-              "$url" \
-              > "$out/family-${family}.dom.html" \
-              2> "$out/family-${family}.chrome.log"
-            dom="$out/family-${family}.dom.html"
-            png="$out/family-${family}.png"
-            grep -q 'data-brick-mother-weathering-ready="true"' "$dom"
-            grep -q 'data-workbench-ready="true"' "$dom"
-            grep -q 'data-visual-ready="true"' "$dom"
-            grep -q 'data-runtime-version="1.1.0-alpha.3"' "$dom"
-            grep -q 'data-metalness="0"' "$dom"
-            grep -q 'data-dielectric-f0="0.04"' "$dom"
-            grep -q 'data-base-color-space="sRGB"' "$dom"
-            grep -q 'data-data-channel-space="linear"' "$dom"
-            grep -q 'data-ao-scope="diffuse-ambient-only"' "$dom"
-            grep -q 'data-pbr-channels="16"' "$dom"
-            ! grep -q 'data-runtime-failure="true"' "$dom"
-            test -s "$png"
-            test "$(wc -c < "$png")" -gt 45000
-          done
-
-      - name: Browser QA PBR diagnostic channels
-        shell: bash
-        run: |
-          set -euo pipefail
-          root="$BRICK_ROOT"
-          out=/tmp/brick-weathering-channel-qa
-          mkdir -p "$out"
-          python3 -m http.server 8766 --bind 127.0.0.1 --directory "$root" > "$out/server.log" 2>&1 &
-          server_pid=$!
-          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
-          ready=0
-          for attempt in $(seq 1 45); do
-            if curl -fsS http://127.0.0.1:8766/brick-mother-realtime-weathering-pbr-v1.1.0.html >/dev/null; then ready=1; break; fi
-            sleep 1
-          done
-          test "$ready" = 1
-          chrome="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)"
-          test -n "$chrome"
-          for channel in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
-            url="http://127.0.0.1:8766/brick-mother-realtime-weathering-pbr-v1.1.0.html?family=3&channel=${channel}&light=neutral&freeze=1&qa=1&build=$GITHUB_SHA"
-            timeout 210s "$chrome" \
-              --headless=new \
-              --no-sandbox \
-              --disable-dev-shm-usage \
-              --disable-background-networking \
-              --enable-webgl \
-              --ignore-gpu-blocklist \
-              --enable-unsafe-swiftshader \
-              --use-gl=angle \
-              --use-angle=swiftshader \
-              --hide-scrollbars \
-              --window-size=800,500 \
-              --virtual-time-budget=70000 \
-              --screenshot="$out/channel-${channel}.png" \
-              --dump-dom \
-              "$url" \
-              > "$out/channel-${channel}.dom.html" \
-              2> "$out/channel-${channel}.chrome.log"
-            dom="$out/channel-${channel}.dom.html"
-            png="$out/channel-${channel}.png"
-            grep -q 'data-visual-ready="true"' "$dom"
-            grep -q 'data-metalness="0"' "$dom"
-            grep -q 'data-dielectric-f0="0.04"' "$dom"
-            grep -q 'data-base-color-space="sRGB"' "$dom"
-            grep -q 'data-data-channel-space="linear"' "$dom"
-            grep -q 'data-ao-scope="diffuse-ambient-only"' "$dom"
-            grep -q 'data-pbr-channels="16"' "$dom"
-            ! grep -q 'data-runtime-failure="true"' "$dom"
-            test -s "$png"
-            test "$(wc -c < "$png")" -gt 18000
-          done
-          python3 - <<'PY'
-          from pathlib import Path
-          import hashlib, json, os, struct
-          rows=[]
-          for root in [Path('/tmp/brick-weathering-family-qa'),Path('/tmp/brick-weathering-channel-qa')]:
-              for p in sorted(root.glob('*.png')):
-                  data=p.read_bytes()
-                  assert data[:8] == b'\x89PNG\r\n\x1a\n'
-                  width,height=struct.unpack('>II',data[16:24])
-                  rows.append({'file':p.name,'bytes':len(data),'sha256':hashlib.sha256(data).hexdigest(),'width':width,'height':height})
-          assert len(rows)==21,len(rows)
-          Path('/tmp/brick-weathering-manifest.json').write_text(json.dumps({
-              'head':os.environ['GITHUB_SHA'],
-              'runtime':'1.1.0-alpha.3',
-              'familyViews':6,
-              'diagnosticViews':16,
-              'capturedDiagnosticViews':15,
-              'metalness':0,
-              'dielectricF0':0.04,
-              'baseColorSpace':'sRGB',
-              'dataChannelSpace':'linear',
-              'aoScope':'diffuse-ambient-only',
-              'screenshots':rows,
-              'visualApproved':False,
-              'productionApproved':False
-          },indent=2)+'\n')
-          PY
-
-      - name: Upload PBR browser QA
+          python3 -m http.server 8765 --bind 127.0.0.1 --directory "$BRICK_ROOT" >/tmp/brick-studio-server.log 2>&1 &
+          PID=$!
+          trap 'kill "$PID" 2>/dev/null || true' EXIT
+          for i in $(seq 1 30); do curl -fsS http://127.0.0.1:8765/studio.html >/dev/null && break; sleep 1; done
+          python3 tools/brick-mother/test_studio12.py http://127.0.0.1:8765 /tmp/brick-studio-review
+      - name: Save review evidence and exact candidate
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: brick-mother-weathering-pbr-browser-${{ github.sha }}
+          name: brick-studio-v12-review-${{ github.sha }}
           path: |
-            /tmp/brick-weathering-family-qa
-            /tmp/brick-weathering-channel-qa
-            /tmp/brick-weathering-manifest.json
-          compression-level: 1
-          if-no-files-found: ignore
+            /tmp/brick-studio-review
+            /tmp/brick-studio-server.log
+            ${{ env.BRICK_ROOT }}/studio.html
+            ${{ env.BRICK_ROOT }}/STUDIO_BUILD.json
           retention-days: 7
-
-      - name: Assemble public site
-        shell: bash
+      - name: Check reviewed builder gate
+        id: gate
         run: |
           set -euo pipefail
-          src="yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local"
+          publish=false
+          if [ -f tools/brick-mother/STUDIO_RELEASE_READY.json ]; then
+            python3 - <<'PY'
+          import json,subprocess
+          from pathlib import Path
+          gate=json.loads(Path('tools/brick-mother/STUDIO_RELEASE_READY.json').read_text())
+          blob=subprocess.check_output(['git','hash-object','tools/brick-mother/publish_studio12.py'],text=True).strip()
+          assert gate['builderBlob']==blob
+          assert gate['internalReviewComplete'] is True
+          assert gate['humanVisualApproved'] is False
+          assert gate['productionApproved'] is False
+          PY
+            publish=true
+          fi
+          echo "publish=$publish" >> "$GITHUB_OUTPUT"
+      - name: Append generated source without rewriting history
+        id: source
+        if: steps.gate.outputs.publish == 'true'
+        run: |
+          set -euo pipefail
+          git config user.name 'Brick Mother Automation'
+          git config user.email 'actions@users.noreply.github.com'
+          git add "$BRICK_ROOT/studio.html" "$BRICK_ROOT/studio.webmanifest" "$BRICK_ROOT/studio-icon.svg" "$BRICK_ROOT/studio-sw.js" "$BRICK_ROOT/STUDIO_BUILD.json" "$BRICK_ROOT/workbench.html"
+          if ! git diff --cached --quiet; then
+            git commit -m 'feat(brick): publish verified immersive material studio v1.2'
+            git push origin HEAD:feature/brick-mother-v2.0-composite-material-dna
+          fi
+          echo "source_head=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+      - name: Assemble existing public site with new studio
+        if: steps.gate.outputs.publish == 'true'
+        run: |
+          set -euo pipefail
+          src="$(dirname "$BRICK_ROOT")"
           mkdir -p _site
           cp -R "$src"/. _site/
           rm -rf _site/references-private _site/release _site/.git _site/.github
           rm -f _site/assets/models/YN_TUANJIE_001_EDITABLE_HIGH.glb
           touch _site/.nojekyll
-
-      - name: Configure Pages
-        uses: actions/configure-pages@v5
-        with:
-          enablement: true
-
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
+          python3 - <<'PY'
+          import json,os,subprocess
+          from pathlib import Path
+          Path('_site/brick-mother/STUDIO_DEPLOYMENT.json').write_text(json.dumps({'sourceHead':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),'triggerHead':os.environ['GITHUB_SHA'],'runId':os.environ['GITHUB_RUN_ID'],'runtime':'1.2.0-alpha.9','visualApproved':False,'productionApproved':False},indent=2))
+          PY
+      - uses: actions/upload-pages-artifact@v3
+        if: steps.gate.outputs.publish == 'true'
         with:
           path: _site
 
   deploy:
+    if: needs.build.outputs.publish == 'true'
+    needs: build
+    runs-on: ubuntu-latest
     environment:
       name: brick-mother-online
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
     steps:
-      - name: Deploy to GitHub Pages
+      - uses: actions/deploy-pages@v4
         id: deployment
-        uses: actions/deploy-pages@v4
 
   verify-public:
+    needs: [build, deploy]
     runs-on: ubuntu-latest
-    timeout-minutes: 15
-    needs: deploy
+    timeout-minutes: 10
     steps:
-      - name: Verify public files
-        shell: bash
+      - name: Confirm exact public source identity
         env:
-          BASE_URL: https://haihao0307.github.io/HOUSE/brick-mother
+          SOURCE_HEAD: ${{ needs.build.outputs.source_head }}
         run: |
           set -euo pipefail
-          ok=0
-          for attempt in $(seq 1 36); do
-            if curl -fsSL --retry 2 --retry-delay 2 "$BASE_URL/workbench.html?build=$GITHUB_SHA" -o /tmp/workbench.html \
-              && grep -q "核心三材质 V2.7.5" /tmp/workbench.html \
-              && grep -q "PBR 实时风化" /tmp/workbench.html \
-              && curl -fsSL --retry 2 --retry-delay 2 "$BASE_URL/brick-mother-realtime-weathering-pbr-v1.1.0.html?build=$GITHUB_SHA" -o /tmp/weathering.html \
-              && grep -q "实时风化与 PBR" /tmp/weathering.html \
-              && grep -q "PBR Safe" /tmp/weathering.html \
-              && curl -fsSL --retry 2 --retry-delay 2 "$BASE_URL/brick-mother-realtime-weathering-pbr-v1.1.js?build=$GITHUB_SHA" -o /tmp/weathering.js \
-              && grep -q "1.1.0-alpha.3" /tmp/weathering.js \
-              && grep -q "uDielectricF0" /tmp/weathering.js \
-              && curl -fsSL --retry 2 --retry-delay 2 "$BASE_URL/brick-mother-weathering-geometry-v1.1.js?build=$GITHUB_SHA" -o /tmp/weathering-geometry.js \
-              && grep -q "BrickMotherStoneFormGeometryV35" /tmp/weathering-geometry.js \
-              && curl -fsSL --retry 2 --retry-delay 2 "$BASE_URL/brick-mother-stone-form-geometry-v3.5.js?build=$GITHUB_SHA" -o /tmp/stone-form-geometry.js \
-              && grep -q "BrickMotherStoneFormGeometryV35" /tmp/stone-form-geometry.js \
-              && curl -fsSL --retry 2 --retry-delay 2 "$BASE_URL/brick-mother-realtime-weathering-pbr-v1.1.css?build=$GITHUB_SHA" -o /tmp/weathering.css \
-              && grep -q "diagnostic-bar" /tmp/weathering.css \
-              && curl -fsSL --retry 2 --retry-delay 2 "$BASE_URL/BRICK_MOTHER_REALTIME_WEATHERING_PBR_BUILD_V1.1.json?build=$GITHUB_SHA" -o /tmp/weathering-build.json \
-              && python3 -m json.tool /tmp/weathering-build.json >/dev/null \
-              && grep -q '"runtimeVersion": "1.1.0-alpha.3"' /tmp/weathering-build.json \
-              && curl -fsSL --retry 2 --retry-delay 2 "$BASE_URL/brick-mother-standalone-v2.7.5.html?build=$GITHUB_SHA" -o /tmp/core.html \
-              && grep -q "Brick Mother V2.7" /tmp/core.html; then
-              ok=1
-              break
-            fi
-            sleep 10
+          base=https://haihao0307.github.io/HOUSE/brick-mother
+          for i in $(seq 1 40); do
+            curl -fsS "$base/STUDIO_DEPLOYMENT.json?build=$SOURCE_HEAD" -o /tmp/deployed.json || true
+            if [ -s /tmp/deployed.json ] && grep -q "$SOURCE_HEAD" /tmp/deployed.json; then break; fi
+            sleep 5
           done
-          test "$ok" = 1
-
-      - name: Verify live PBR runtime in Chromium
-        shell: bash
-        env:
-          BASE_URL: https://haihao0307.github.io/HOUSE/brick-mother
+          grep -q "$SOURCE_HEAD" /tmp/deployed.json
+          curl -fsS "$base/studio.html?build=$SOURCE_HEAD" -o /tmp/live-studio.html
+          curl -fsS "$base/STUDIO_BUILD.json?build=$SOURCE_HEAD" -o /tmp/build.json
+          curl -fsS "$base/brick-mother-standalone-v2.7.5.html?build=$SOURCE_HEAD" -o /tmp/core.html
+          python3 - <<'PY'
+          import json,hashlib
+          from pathlib import Path
+          m=json.loads(Path('/tmp/build.json').read_text())
+          assert hashlib.sha256(Path('/tmp/live-studio.html').read_bytes()).hexdigest()==m['files']['studio.html']['sha256']
+          b=Path('/tmp/core.html').read_bytes()
+          assert hashlib.sha1(b'blob '+str(len(b)).encode()+b'\0'+b).hexdigest()==m['preservedCoreBlob']
+          PY
+      - name: Open live public page in Chromium
         run: |
-          set -euo pipefail
-          chrome="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)"
-          test -n "$chrome"
-          timeout 210s "$chrome" \
-            --headless=new \
-            --no-sandbox \
-            --disable-dev-shm-usage \
-            --disable-background-networking \
-            --enable-webgl \
-            --ignore-gpu-blocklist \
-            --enable-unsafe-swiftshader \
-            --use-gl=angle \
-            --use-angle=swiftshader \
-            --hide-scrollbars \
-            --window-size=1000,625 \
-            --virtual-time-budget=70000 \
-            --screenshot=/tmp/live-brick-weathering.png \
-            --dump-dom \
-            "$BASE_URL/brick-mother-realtime-weathering-pbr-v1.1.0.html?family=3&channel=0&light=raking&freeze=1&qa=1&build=$GITHUB_SHA" \
-            > /tmp/live-brick-weathering.dom.html \
-            2> /tmp/live-brick-weathering.chrome.log
-          grep -q 'data-brick-mother-weathering-ready="true"' /tmp/live-brick-weathering.dom.html
-          grep -q 'data-workbench-ready="true"' /tmp/live-brick-weathering.dom.html
-          grep -q 'data-visual-ready="true"' /tmp/live-brick-weathering.dom.html
-          grep -q 'data-runtime-version="1.1.0-alpha.3"' /tmp/live-brick-weathering.dom.html
-          grep -q 'data-metalness="0"' /tmp/live-brick-weathering.dom.html
-          grep -q 'data-dielectric-f0="0.04"' /tmp/live-brick-weathering.dom.html
-          grep -q 'data-base-color-space="sRGB"' /tmp/live-brick-weathering.dom.html
-          grep -q 'data-data-channel-space="linear"' /tmp/live-brick-weathering.dom.html
-          grep -q 'data-ao-scope="diffuse-ambient-only"' /tmp/live-brick-weathering.dom.html
-          grep -q 'data-height-role="low-frequency-silhouette"' /tmp/live-brick-weathering.dom.html
-          grep -q 'data-normal-role="high-frequency-detail"' /tmp/live-brick-weathering.dom.html
-          grep -q 'data-geometry-grammar="BrickMotherStoneFormGeometryV35"' /tmp/live-brick-weathering.dom.html
-          grep -q 'data-pbr-channels="16"' /tmp/live-brick-weathering.dom.html
-          ! grep -q 'data-runtime-failure="true"' /tmp/live-brick-weathering.dom.html
-          test -s /tmp/live-brick-weathering.png
-          test "$(wc -c < /tmp/live-brick-weathering.png)" -gt 45000
-
-      - name: Upload live PBR evidence
+          python3 -m pip install playwright
+          python3 - <<'PY'
+          import json,shutil
+          from pathlib import Path
+          from playwright.sync_api import sync_playwright
+          with sync_playwright() as p:
+              b=p.chromium.launch(executable_path=shutil.which('google-chrome') or shutil.which('chromium'),args=['--no-sandbox','--enable-unsafe-swiftshader','--use-gl=angle','--use-angle=swiftshader'])
+              page=b.new_page(viewport={'width':1280,'height':850})
+              errors=[]
+              page.on('pageerror',lambda e:errors.append(str(e)))
+              page.goto('https://haihao0307.github.io/HOUSE/brick-mother/studio.html',wait_until='domcontentloaded')
+              page.wait_for_function("document.documentElement.dataset.workbenchReady==='true'",timeout=90000)
+              assert page.evaluate('window.__BRICK_MOTHER_WEATHERING_PBR__.version')=='1.2.0-alpha.9'
+              assert page.evaluate("document.documentElement.dataset.runtimeFailure!=='true'")
+              page.wait_for_timeout(1000)
+              page.screenshot(path='/tmp/live-studio.png')
+              Path('/tmp/live-proof.json').write_text(json.dumps({'errors':errors,'data':page.evaluate('({...document.documentElement.dataset})'),'url':page.url,'visualApproved':False,'productionApproved':False},indent=2))
+              assert not errors
+              b.close()
+          PY
+      - name: Upload public evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: live-brick-mother-weathering-pbr-${{ github.sha }}
+          name: brick-studio-v12-public-${{ github.sha }}
           path: |
-            /tmp/live-brick-weathering.png
-            /tmp/live-brick-weathering.dom.html
-            /tmp/live-brick-weathering.chrome.log
-          compression-level: 1
-          if-no-files-found: ignore
+            /tmp/live-studio.png
+            /tmp/live-proof.json
+            /tmp/deployed.json
+            /tmp/build.json
           retention-days: 7
