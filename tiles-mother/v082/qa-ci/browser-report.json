@@ -1,0 +1,682 @@
+{
+  "version": "0.8.2",
+  "url": "http://127.0.0.1:8765/tiles-mother/v082/index.html",
+  "tests": [
+    {
+      "name": "document_identity",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "28_tiles_no_board",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "mobile_pbr_path",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "portrait_fits",
+      "passed": true,
+      "detail": {
+        "minX": -0.8391222269314135,
+        "maxX": 0.8380841065513325,
+        "minY": -0.3003230865749765,
+        "maxY": 0.2413088093112214
+      }
+    },
+    {
+      "name": "triangle_orientation",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "color_control_changes_data",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "color_seed_replay",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "sampled_relations_age_100",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "sampled_relations_age_150",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "sampled_relations_age_0",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "pbr_channel_control",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "context_loss_visible",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "context_restored",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no_application_errors",
+      "passed": true,
+      "detail": {
+        "page": [],
+        "console": [
+          {
+            "text": "Failed to load resource: the server responded with a status of 404 (File not found)",
+            "url": "http://127.0.0.1:8765/favicon.ico"
+          }
+        ],
+        "http": []
+      }
+    },
+    {
+      "name": "document_identity",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "desktop_full_pbr",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "desktop_application_errors",
+      "passed": true,
+      "detail": {
+        "page": [],
+        "console": [],
+        "http": []
+      }
+    }
+  ],
+  "physicalIPhoneTested": false,
+  "webkitSafariTested": false,
+  "visualApproved": false,
+  "productionApproved": false,
+  "distillationComplete": false,
+  "htmlSha256": "46803939052e42018b118959b7b36b941b537692562d4bdc73e140b34a90a3e2",
+  "exhaustiveTriangleCollisionVerified": false,
+  "browser": "140.0.7339.16",
+  "mobileFirstReadyMs": 2355,
+  "mobileHealth": {
+    "version": "0.8.2",
+    "boot": {
+      "ready": true,
+      "failed": false,
+      "started": 33.60000000009313,
+      "phase": "ready",
+      "events": [
+        {
+          "phase": "progress",
+          "detail": "正在准备PBR通道",
+          "t": 16527
+        },
+        {
+          "phase": "progress",
+          "detail": "正在准备PBR通道",
+          "t": 16547
+        },
+        {
+          "phase": "progress",
+          "detail": "正在准备PBR通道",
+          "t": 16568
+        },
+        {
+          "phase": "progress",
+          "detail": "正在准备PBR通道",
+          "t": 16592
+        },
+        {
+          "phase": "progress",
+          "detail": "正在准备PBR通道",
+          "t": 16608
+        },
+        {
+          "phase": "progress",
+          "detail": "正在准备PBR通道",
+          "t": 16629
+        },
+        {
+          "phase": "progress",
+          "detail": "正在准备PBR通道",
+          "t": 16647
+        },
+        {
+          "phase": "progress",
+          "detail": "正在准备PBR通道",
+          "t": 16670
+        },
+        {
+          "phase": "progress",
+          "detail": "正在准备PBR通道",
+          "t": 16686
+        },
+        {
+          "phase": "progress",
+          "detail": "正在准备PBR通道",
+          "t": 16707
+        },
+        {
+          "phase": "progress",
+          "detail": "正在准备PBR通道",
+          "t": 16724
+        },
+        {
+          "phase": "ready",
+          "detail": "三维已运行 · 28块瓦 · 0年",
+          "t": 16760
+        },
+        {
+          "phase": "failed",
+          "detail": "WebGL上下文已丢失，正在等待恢复。参数仍保留。",
+          "t": 16843
+        },
+        {
+          "phase": "recovering",
+          "detail": "",
+          "t": 17204
+        },
+        {
+          "phase": "progress",
+          "detail": "分阶段生成瓦片",
+          "t": 17204
+        },
+        {
+          "phase": "progress",
+          "detail": "按铺瓦次序生成",
+          "t": 17279
+        },
+        {
+          "phase": "progress",
+          "detail": "按铺瓦次序生成",
+          "t": 17297
+        },
+        {
+          "phase": "progress",
+          "detail": "按铺瓦次序生成",
+          "t": 17317
+        },
+        {
+          "phase": "progress",
+          "detail": "按铺瓦次序生成",
+          "t": 17489
+        },
+        {
+          "phase": "progress",
+          "detail": "按铺瓦次序生成",
+          "t": 17530
+        },
+        {
+          "phase": "progress",
+          "detail": "按铺瓦次序生成",
+          "t": 17551
+        },
+        {
+          "phase": "progress",
+          "detail": "按铺瓦次序生成",
+          "t": 17594
+        },
+        {
+          "phase": "progress",
+          "detail": "按铺瓦次序生成",
+          "t": 17619
+        },
+        {
+          "phase": "progress",
+          "detail": "按铺瓦次序生成",
+          "t": 17643
+        },
+        {
+          "phase": "progress",
+          "detail": "按铺瓦次序生成",
+          "t": 17659
+        },
+        {
+          "phase": "progress",
+          "detail": "按铺瓦次序生成",
+          "t": 17677
+        },
+        {
+          "phase": "progress",
+          "detail": "按铺瓦次序生成",
+          "t": 17695
+        },
+        {
+          "phase": "progress",
+          "detail": "按铺瓦次序生成",
+          "t": 17710
+        },
+        {
+          "phase": "progress",
+          "detail": "按铺瓦次序生成",
+          "t": 17728
+        },
+        {
+          "phase": "progress",
+          "detail": "按铺瓦次序生成",
+          "t": 17742
+        },
+        {
+          "phase": "progress",
+          "detail": "按铺瓦次序生成",
+          "t": 17758
+        },
+        {
+          "phase": "progress",
+          "detail": "按铺瓦次序生成",
+          "t": 17777
+        },
+        {
+          "phase": "progress",
+          "detail": "按铺瓦次序生成",
+          "t": 17793
+        },
+        {
+          "phase": "progress",
+          "detail": "按铺瓦次序生成",
+          "t": 17811
+        },
+        {
+          "phase": "progress",
+          "detail": "按铺瓦次序生成",
+          "t": 17826
+        },
+        {
+          "phase": "progress",
+          "detail": "按铺瓦次序生成",
+          "t": 17843
+        },
+        {
+          "phase": "progress",
+          "detail": "按铺瓦次序生成",
+          "t": 17860
+        },
+        {
+          "phase": "progress",
+          "detail": "按铺瓦次序生成",
+          "t": 17879
+        },
+        {
+          "phase": "progress",
+          "detail": "按铺瓦次序生成",
+          "t": 17893
+        },
+        {
+          "phase": "progress",
+          "detail": "按铺瓦次序生成",
+          "t": 17909
+        },
+        {
+          "phase": "progress",
+          "detail": "按铺瓦次序生成",
+          "t": 17929
+        },
+        {
+          "phase": "progress",
+          "detail": "按铺瓦次序生成",
+          "t": 17943
+        },
+        {
+          "phase": "progress",
+          "detail": "按铺瓦次序生成",
+          "t": 17963
+        },
+        {
+          "phase": "progress",
+          "detail": "逐瓦核查外表面",
+          "t": 17994
+        },
+        {
+          "phase": "progress",
+          "detail": "逐瓦核查外表面",
+          "t": 17996
+        },
+        {
+          "phase": "progress",
+          "detail": "逐瓦核查外表面",
+          "t": 18002
+        },
+        {
+          "phase": "progress",
+          "detail": "逐瓦核查外表面",
+          "t": 18019
+        },
+        {
+          "phase": "progress",
+          "detail": "逐瓦核查外表面",
+          "t": 18036
+        },
+        {
+          "phase": "progress",
+          "detail": "逐瓦核查外表面",
+          "t": 18052
+        },
+        {
+          "phase": "progress",
+          "detail": "逐瓦核查外表面",
+          "t": 18069
+        },
+        {
+          "phase": "progress",
+          "detail": "逐瓦核查外表面",
+          "t": 18085
+        },
+        {
+          "phase": "progress",
+          "detail": "逐瓦核查外表面",
+          "t": 18103
+        },
+        {
+          "phase": "progress",
+          "detail": "逐瓦核查外表面",
+          "t": 18119
+        },
+        {
+          "phase": "progress",
+          "detail": "逐瓦核查外表面",
+          "t": 18136
+        },
+        {
+          "phase": "progress",
+          "detail": "逐瓦核查外表面",
+          "t": 18152
+        },
+        {
+          "phase": "progress",
+          "detail": "逐瓦核查外表面",
+          "t": 18170
+        },
+        {
+          "phase": "progress",
+          "detail": "逐瓦核查外表面",
+          "t": 18186
+        },
+        {
+          "phase": "progress",
+          "detail": "逐瓦核查外表面",
+          "t": 18202
+        },
+        {
+          "phase": "progress",
+          "detail": "逐瓦核查外表面",
+          "t": 18220
+        },
+        {
+          "phase": "progress",
+          "detail": "逐瓦核查外表面",
+          "t": 18236
+        },
+        {
+          "phase": "progress",
+          "detail": "逐瓦核查外表面",
+          "t": 18253
+        },
+        {
+          "phase": "progress",
+          "detail": "逐瓦核查外表面",
+          "t": 18269
+        },
+        {
+          "phase": "progress",
+          "detail": "逐瓦核查外表面",
+          "t": 18286
+        },
+        {
+          "phase": "progress",
+          "detail": "逐瓦核查外表面",
+          "t": 18303
+        },
+        {
+          "phase": "progress",
+          "detail": "逐瓦核查外表面",
+          "t": 18319
+        },
+        {
+          "phase": "progress",
+          "detail": "逐瓦核查外表面",
+          "t": 18336
+        },
+        {
+          "phase": "progress",
+          "detail": "逐瓦核查外表面",
+          "t": 18352
+        },
+        {
+          "phase": "progress",
+          "detail": "逐瓦核查外表面",
+          "t": 18369
+        },
+        {
+          "phase": "progress",
+          "detail": "逐瓦核查外表面",
+          "t": 18386
+        },
+        {
+          "phase": "progress",
+          "detail": "逐瓦核查外表面",
+          "t": 18403
+        },
+        {
+          "phase": "progress",
+          "detail": "逐瓦核查外表面",
+          "t": 18419
+        },
+        {
+          "phase": "progress",
+          "detail": "正在准备PBR通道",
+          "t": 18440
+        },
+        {
+          "phase": "progress",
+          "detail": "正在准备PBR通道",
+          "t": 18455
+        },
+        {
+          "phase": "progress",
+          "detail": "正在准备PBR通道",
+          "t": 18472
+        },
+        {
+          "phase": "progress",
+          "detail": "正在准备PBR通道",
+          "t": 18488
+        },
+        {
+          "phase": "progress",
+          "detail": "正在准备PBR通道",
+          "t": 18503
+        },
+        {
+          "phase": "progress",
+          "detail": "正在准备PBR通道",
+          "t": 18521
+        },
+        {
+          "phase": "progress",
+          "detail": "正在准备PBR通道",
+          "t": 18541
+        },
+        {
+          "phase": "progress",
+          "detail": "正在准备PBR通道",
+          "t": 18554
+        },
+        {
+          "phase": "progress",
+          "detail": "正在准备PBR通道",
+          "t": 18571
+        },
+        {
+          "phase": "progress",
+          "detail": "正在准备PBR通道",
+          "t": 18588
+        },
+        {
+          "phase": "progress",
+          "detail": "正在准备PBR通道",
+          "t": 18605
+        },
+        {
+          "phase": "progress",
+          "detail": "正在准备PBR通道",
+          "t": 18625
+        },
+        {
+          "phase": "progress",
+          "detail": "正在准备PBR通道",
+          "t": 18641
+        },
+        {
+          "phase": "progress",
+          "detail": "正在准备PBR通道",
+          "t": 18655
+        },
+        {
+          "phase": "progress",
+          "detail": "正在准备PBR通道",
+          "t": 18672
+        },
+        {
+          "phase": "progress",
+          "detail": "正在准备PBR通道",
+          "t": 18689
+        },
+        {
+          "phase": "progress",
+          "detail": "正在准备PBR通道",
+          "t": 18706
+        },
+        {
+          "phase": "progress",
+          "detail": "正在准备PBR通道",
+          "t": 18724
+        },
+        {
+          "phase": "progress",
+          "detail": "正在准备PBR通道",
+          "t": 18738
+        },
+        {
+          "phase": "progress",
+          "detail": "正在准备PBR通道",
+          "t": 18757
+        },
+        {
+          "phase": "progress",
+          "detail": "正在准备PBR通道",
+          "t": 18771
+        },
+        {
+          "phase": "progress",
+          "detail": "正在准备PBR通道",
+          "t": 18787
+        },
+        {
+          "phase": "progress",
+          "detail": "正在准备PBR通道",
+          "t": 18805
+        },
+        {
+          "phase": "progress",
+          "detail": "正在准备PBR通道",
+          "t": 18821
+        },
+        {
+          "phase": "progress",
+          "detail": "正在准备PBR通道",
+          "t": 18838
+        },
+        {
+          "phase": "progress",
+          "detail": "正在准备PBR通道",
+          "t": 18855
+        },
+        {
+          "phase": "progress",
+          "detail": "正在准备PBR通道",
+          "t": 18871
+        },
+        {
+          "phase": "progress",
+          "detail": "正在准备PBR通道",
+          "t": 18888
+        },
+        {
+          "phase": "ready",
+          "detail": "三维已运行 · 28块瓦 · 0年",
+          "t": 18940
+        }
+      ]
+    },
+    "runtime": {
+      "mobile": true,
+      "rendererPath": "mobile-lightweight-pbr",
+      "roofBudget": {
+        "nu": 18,
+        "nv": 26
+      },
+      "singleBudget": {
+        "nu": 38,
+        "nv": 54
+      },
+      "trioBudget": {
+        "nu": 28,
+        "nv": 40
+      },
+      "pixelRatio": 1,
+      "shadows": false,
+      "startupStarted": 122.70000000006985,
+      "lastBuildMs": 1729.0999999999767,
+      "requestedBuilds": 9,
+      "completedBuilds": 9,
+      "cancelledBuilds": 0,
+      "frameCount": 71,
+      "renderedAgeYears": 0,
+      "contextLossCount": 1,
+      "contextRestoreCount": 1,
+      "shaderErrors": [],
+      "running": true,
+      "building": false,
+      "dirty": false,
+      "fps": 1.1111934217349437,
+      "startupMs": 2225.5
+    },
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.1 Mobile/15E148 Safari/604.1",
+    "protocol": "http:",
+    "contextLost": false,
+    "render": {
+      "frame": 2,
+      "calls": 28,
+      "triangles": 67200,
+      "points": 0,
+      "lines": 0
+    },
+    "memory": {
+      "geometries": 28,
+      "textures": 0
+    },
+    "renderedAgeYears": 0,
+    "targetAgeYears": 0,
+    "physicalIPhoneTested": false,
+    "visualApproved": false,
+    "productionApproved": false
+  },
+  "allPassed": true
+}
