@@ -1,0 +1,141 @@
+name: Tiles Mother V0.9.1 Full Package
+
+on:
+  push:
+    branches: [feature/tiles-mother-v0.1-workbench]
+    paths:
+      - .github/workflows/tiles-mother-v091-full-package.yml
+      - tiles-mother/v091/**
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: tiles-mother-v091-full-package
+  cancel-in-progress: false
+
+jobs:
+  package:
+    if: "${{ github.event_name == 'workflow_dispatch' || !startsWith(github.event.head_commit.message, 'release(tiles-mother): materialize V0.9.1') }}"
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Check out exact branch source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+
+      - name: Verify branch identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REF_NAME" = 'feature/tiles-mother-v0.1-workbench'
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          test "$(git ls-remote origin refs/heads/$GITHUB_REF_NAME | cut -f1)" = "$GITHUB_SHA"
+
+      - name: Reconstruct exact V0.9.1 workbench
+        run: python3 tiles-mother/v091/materialize_verified.py
+
+      - name: Run exact-source and deterministic geometry checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          for file in fatal-guard.js core.js profile.js geometry.js roof.js material.js app.js; do
+            node --check "tiles-mother/v091/source/$file"
+          done
+          node tiles-mother/v091/tools/release_core.cjs
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib, json, re
+          root = Path('tiles-mother/v091')
+          manifest = json.loads((root / 'transport/manifest.json').read_text())
+          html = (root / 'index.html').read_bytes()
+          assert len(html) == manifest['htmlBytes']
+          assert hashlib.sha256(html).hexdigest() == manifest['htmlSha256']
+          assert b'Tiles Mother V0.9.1' in html
+          assert len(re.findall(rb'<script\b[^>]*>(.*?)</script>', html, re.S | re.I)) == 8
+          report = json.loads((root / 'qa/core-release.json').read_text())
+          assert report['allPassed']
+          assert len(report['runs']) == 3
+          assert all(run['topologyPassed'] for run in report['runs'])
+          assert all(run['sampledPenetrations'] == 0 for run in report['runs'])
+          assert all(run['drainageUpslopeSamples'] == 0 for run in report['runs'])
+          PY
+
+      - name: Assemble deterministic complete restart package
+        shell: bash
+        run: |
+          set -euo pipefail
+          PACKAGE=Tiles_Mother_V091_Full_Package_2026-09-03
+          STAGING="$RUNNER_TEMP/$PACKAGE"
+          DIST="$GITHUB_WORKSPACE/tiles-mother/releases"
+          rm -rf "$STAGING"
+          mkdir -p "$STAGING" "$DIST"
+          cp -a tiles-mother/v091/. "$STAGING/"
+          rm -rf "$STAGING/transport"
+          find "$STAGING" -type d -name '__pycache__' -prune -exec rm -rf {} +
+          (
+            cd "$STAGING"
+            find . -type f ! -name FILE_MANIFEST.sha256 -print0 | sort -z | xargs -0 sha256sum
+          ) > "$STAGING/FILE_MANIFEST.sha256"
+          python3 - "$STAGING" "$DIST/$PACKAGE.zip" <<'PY'
+          from pathlib import Path
+          import os, sys, zipfile
+          root = Path(sys.argv[1])
+          output = Path(sys.argv[2])
+          fixed = (2026, 9, 3, 0, 0, 0)
+          if output.exists():
+              output.unlink()
+          with zipfile.ZipFile(output, 'w', compression=zipfile.ZIP_DEFLATED, compresslevel=9) as archive:
+              for path in sorted(item for item in root.rglob('*') if item.is_file()):
+                  relative = Path(root.name) / path.relative_to(root)
+                  info = zipfile.ZipInfo(str(relative).replace(os.sep, '/'), date_time=fixed)
+                  info.compress_type = zipfile.ZIP_DEFLATED
+                  info.external_attr = (0o644 & 0xffff) << 16
+                  archive.writestr(info, path.read_bytes(), compress_type=zipfile.ZIP_DEFLATED, compresslevel=9)
+          PY
+          (
+            cd "$DIST"
+            sha256sum "$PACKAGE.zip" > "$PACKAGE.zip.sha256"
+            sha256sum -c "$PACKAGE.zip.sha256"
+          )
+          unzip -t "$DIST/$PACKAGE.zip" >/dev/null
+
+      - name: Update work branch with exact source and full package
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git ls-remote origin refs/heads/$GITHUB_REF_NAME | cut -f1)" = "$GITHUB_SHA"
+          cp tiles-mother/v091/index.html tiles-mother/index.html
+          cp tiles-mother/v091/README.md tiles-mother/README.md
+          git add \
+            tiles-mother/index.html \
+            tiles-mother/README.md \
+            tiles-mother/v091 \
+            tiles-mother/releases/Tiles_Mother_V091_Full_Package_2026-09-03.zip \
+            tiles-mother/releases/Tiles_Mother_V091_Full_Package_2026-09-03.zip.sha256
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'release(tiles-mother): materialize V0.9.1 stage-one full package'
+          git push origin HEAD:refs/heads/$GITHUB_REF_NAME
+
+      - name: Upload full package artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Tiles_Mother_V091_Full_Package_2026-09-03
+          path: |
+            tiles-mother/releases/Tiles_Mother_V091_Full_Package_2026-09-03.zip
+            tiles-mother/releases/Tiles_Mother_V091_Full_Package_2026-09-03.zip.sha256
+          retention-days: 90
+          if-no-files-found: error
+
+      - name: Summary
+        shell: bash
+        run: |
+          echo '## Tiles Mother V0.9.1 full package' >> "$GITHUB_STEP_SUMMARY"
+          echo "Bootstrap source commit: \`$GITHUB_SHA\`" >> "$GITHUB_STEP_SUMMARY"
+          echo 'Stage one accepted; detail refinement remains open.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Public Pages was not modified.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'visualApproved=false; productionApproved=false; distillationComplete=false.' >> "$GITHUB_STEP_SUMMARY"

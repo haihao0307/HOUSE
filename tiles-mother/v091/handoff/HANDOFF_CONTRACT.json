@@ -1,0 +1,21 @@
+{
+  "schema": "tiles-mother-v091-handoff-contract-v1",
+  "productionLine": "Tiles Mother",
+  "version": "0.9.1",
+  "repository": "haihao0307/HOUSE",
+  "branch": "feature/tiles-mother-v0.1-workbench",
+  "primaryArtifact": "workbench/index.html",
+  "primaryArtifactType": "self-contained interactive 3D HTML",
+  "stageOneAccepted": true,
+  "detailRefinementPending": true,
+  "visualApproved": false,
+  "productionApproved": false,
+  "distillationComplete": false,
+  "forbidSingleImageAsPrimaryDelivery": true,
+  "forbidMainModification": true,
+  "forbidOtherMotherAssetChanges": true,
+  "requirePanBelowCover": true,
+  "requireNoTilePenetration": true,
+  "requireContinuousClayMaterialAcrossFaces": true,
+  "timeScaleYears": [0, 150]
+}
