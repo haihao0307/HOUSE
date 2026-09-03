@@ -1,0 +1,37 @@
+{
+  "schema": "tiles-mother-v091-qa-summary-v1",
+  "htmlSHA256": "ac137289cedc5f9ab7739c516ac68c806b5f86d6d2e66a70027c31f25475814b",
+  "nodeRegressionRuns": [
+    {
+      "name": "desktop-default",
+      "tileCount": 28,
+      "sampledPenetrations": 0,
+      "topologyPassed": true,
+      "minThicknessMM": 7.4087354069868425,
+      "drainageUpslopeSamples": 0
+    },
+    {
+      "name": "mobile-150years",
+      "tileCount": 28,
+      "sampledPenetrations": 0,
+      "topologyPassed": true,
+      "minThicknessMM": 7.3371646277137135,
+      "drainageUpslopeSamples": 0
+    },
+    {
+      "name": "parameter-extremes",
+      "tileCount": 28,
+      "sampledPenetrations": 0,
+      "topologyPassed": true,
+      "minThicknessMM": 5.889971297451259,
+      "drainageUpslopeSamples": 0
+    }
+  ],
+  "desktopBrowserAllCheckedPassed": true,
+  "desktopBrowserErrors": [],
+  "lastCompleteMobileFunctionalChecks": 20,
+  "collisionTestScope": "projected vertical solid intervals, both mesh-vertex sets and dense XZ sampling; not a complete triangle-triangle intersection proof",
+  "physicalIPhoneSafariValidated": false,
+  "visualApproved": false,
+  "productionApproved": false
+}
