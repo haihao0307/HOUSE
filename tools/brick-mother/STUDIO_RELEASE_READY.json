@@ -1,0 +1,14 @@
+{
+  "runtimeVersion": "1.2.0-alpha.9",
+  "builderBlob": "84431e74d258de88e1a6851072c51d4c8f79be2c",
+  "studioSha256": "f3fe76434f5280ae4173547b466ed26fd8a5741295f80f4833294f33da9a76bd",
+  "reviewedArtifactId": 9882013069,
+  "reviewedSourceRun": 33725883614,
+  "interactionVerificationRun": 33725943853,
+  "internalReviewComplete": true,
+  "reviewScope": "Runnable demonstration, six material families, complete frame, clean backdrop, matte pedestal, controls and rendering. Final asset realism remains subject to user visual acceptance.",
+  "verifiedRenderer": "Chromium WebGL2 with SwiftShader",
+  "hardwareGpuBenchmark": false,
+  "humanVisualApproved": false,
+  "productionApproved": false
+}
