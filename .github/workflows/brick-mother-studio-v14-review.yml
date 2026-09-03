@@ -56,10 +56,12 @@ jobs:
           for index,code in enumerate(re.findall(r'<script[^>]*>([\s\S]*?)</script>',text)):
               path=Path(f'/tmp/brick-studio-v14-script-{index}.js'); path.write_text(code); subprocess.run(['node','--check',str(path)],check=True)
           build=json.loads((root/'STUDIO_BUILD.json').read_text())
+          digest=hashlib.sha256(studio.read_bytes()).hexdigest()
           assert build['runtimeVersion']==os.environ['RUNTIME_VERSION']
           assert build['preservedCoreBlob']==os.environ['PRESERVED_CORE_BLOB']
-          assert build['files']['studio.html']['sha256']==hashlib.sha256(studio.read_bytes()).hexdigest()
-          assert build['visualApproved'] is False and build['productionApproved'] is False
+          assert build['studioSha256']==digest
+          assert build['studioBytes']==studio.stat().st_size
+          assert build['humanVisualApproved'] is False and build['productionApproved'] is False
           core=(root/'brick-mother-standalone-v2.7.5.html').read_bytes()
           assert hashlib.sha1(b'blob '+str(len(core)).encode()+b'\0'+core).hexdigest()==os.environ['PRESERVED_CORE_BLOB']
           PY
