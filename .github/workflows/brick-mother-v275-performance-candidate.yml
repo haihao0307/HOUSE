@@ -6,6 +6,7 @@ on:
     paths:
       - .github/workflows/brick-mother-v275-performance-candidate.yml
       - tools/brick-mother/build_v275_performance_candidate.py
+      - tools/brick-mother/refine_v275_performance_candidate.py
       - tools/brick-mother/test_v275_performance_candidate.py
       - yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/brick-mother-standalone-v2.7.5.html
   workflow_dispatch:
@@ -34,16 +35,24 @@ jobs:
           candidate="$BRICK_ROOT/brick-mother-standalone-v2.7.5-perf.html"
           test "$(git hash-object "$source")" = "$PRESERVED_CORE_BLOB"
           python3 tools/brick-mother/build_v275_performance_candidate.py "$source" "$candidate"
+          python3 tools/brick-mother/refine_v275_performance_candidate.py "$candidate"
           test "$(git hash-object "$source")" = "$PRESERVED_CORE_BLOB"
           python3 - <<'PY'
-          import re,subprocess,os
+          import json,re,subprocess,os
           from pathlib import Path
           root=Path(os.environ['BRICK_ROOT'])
-          text=(root/'brick-mother-standalone-v2.7.5-perf.html').read_text()
-          assert "version: '2.7.5-perf.1'" in text
+          candidate=root/'brick-mother-standalone-v2.7.5-perf.html'
+          text=candidate.read_text()
+          manifest=json.loads(candidate.with_suffix('.json').read_text())
+          assert "version: '2.7.5-perf.2'" in text
           assert "dataset.performanceCandidate = 'on-demand-render'" in text
-          assert 'this.invalidate()' in text
+          assert 'setAutoRotate(enabled)' in text
+          assert 'window.__BRICK_MOTHER_PERFORMANCE__' in text
           assert 'if (this.autoRotate || this.drag || this.needsDraw) this.invalidate();' in text
+          assert manifest['candidateRuntime']=='2.7.5-perf.2'
+          assert manifest['rendererStateAPI'] is True
+          assert manifest['visualApproved'] is False
+          assert manifest['productionApproved'] is False
           for index,code in enumerate(re.findall(r'<script[^>]*>([\s\S]*?)</script>',text)):
               path=Path(f'/tmp/brick-mother-v275-perf-script-{index}.js')
               path.write_text(code)
@@ -76,7 +85,7 @@ jobs:
           data=json.loads((out/'verification.json').read_text())
           assert data['passed'] is True
           assert data['baselineRuntime']=='2.7.5-alpha.1'
-          assert data['candidateRuntime']=='2.7.5-perf.1'
+          assert data['candidateRuntime']=='2.7.5-perf.2'
           assert data['visualApproved'] is False
           assert data['productionApproved'] is False
           assert (out/'pixel-difference.png').exists()
