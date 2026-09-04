@@ -1,10 +1,17 @@
 # Brick Mother 版本与资产地图
 
+下文路径分为两种：
+
+1. 仓库相对路径，以 Brick Mother 目录为起点。
+2. 全量包路径，在仓库相对路径前增加 `brick-mother/`。
+
 ## 1. 正式冻结核心
 
 ### 1.1 V2.7.5 三栏观察台
 
-路径：`source/brick-mother/brick-mother-observation-studio.html`
+仓库相对路径：`brick-mother-observation-studio.html`
+
+全量包路径：`brick-mother/brick-mother-observation-studio.html`
 
 Git blob：`7b2a18c6a886d0751ca2fc92530b7986d9e1a727`
 
@@ -14,7 +21,9 @@ Git blob：`7b2a18c6a886d0751ca2fc92530b7986d9e1a727`
 
 ### 1.2 V2.7.5 单文件运行时
 
-路径：`source/brick-mother/brick-mother-standalone-v2.7.5.html`
+仓库相对路径：`brick-mother-standalone-v2.7.5.html`
+
+全量包路径：`brick-mother/brick-mother-standalone-v2.7.5.html`
 
 Git blob：`7b10389cb9367f7423619262820883cc94b07a61`
 
@@ -26,7 +35,9 @@ Git blob：`7b10389cb9367f7423619262820883cc94b07a61`
 
 ### 1.3 V2.6 高变化版
 
-路径：`source/brick-mother/brick-mother-standalone-v2.6.html`
+仓库相对路径：`brick-mother-standalone-v2.6.html`
+
+全量包路径：`brick-mother/brick-mother-standalone-v2.6.html`
 
 Git blob：`f64c65d87dc418bf1a923a4cf332b449efbe0eb9`
 
@@ -38,7 +49,9 @@ Git blob：`f64c65d87dc418bf1a923a4cf332b449efbe0eb9`
 
 ### 2.1 V2.7.6 综合工作台
 
-路径：`source/brick-mother/workbench-v2.7.6.html`
+仓库相对路径：`workbench-v2.7.6.html`
+
+全量包路径：`brick-mother/workbench-v2.7.6.html`
 
 角色：在一个页面中组织 V2.7.5、V2.6、PBR 实验和知识页。
 
@@ -48,7 +61,9 @@ Git blob：`f64c65d87dc418bf1a923a4cf332b449efbe0eb9`
 
 ### 2.2 版本矩阵
 
-路径：`source/brick-mother/VERSION_MATRIX_V2.7.6.json`
+仓库相对路径：`VERSION_MATRIX_V2.7.6.json`
+
+全量包路径：`brick-mother/VERSION_MATRIX_V2.7.6.json`
 
 内容：冻结核心、保留版本、实验路径、性能策略和审批状态。
 
@@ -56,7 +71,9 @@ Git blob：`f64c65d87dc418bf1a923a4cf332b449efbe0eb9`
 
 ### 3.1 实时风化 PBR V1.1
 
-入口：`source/brick-mother/experiments/pbr-weathering-v1.1/index.html`
+仓库相对入口：`experiments/pbr-weathering-v1.1/index.html`
+
+全量包入口：`brick-mother/experiments/pbr-weathering-v1.1/index.html`
 
 配套文件：
 
@@ -71,7 +88,9 @@ Git blob：`f64c65d87dc418bf1a923a4cf332b449efbe0eb9`
 
 ### 3.2 日光 PBR V1.4
 
-入口：`source/brick-mother/experiments/pbr-daylight-v1.4/index.html`
+仓库相对入口：`experiments/pbr-daylight-v1.4/index.html`
+
+全量包入口：`brick-mother/experiments/pbr-daylight-v1.4/index.html`
 
 配套文件：
 
@@ -88,13 +107,17 @@ Git blob：`f64c65d87dc418bf1a923a4cf332b449efbe0eb9`
 
 ### 4.1 可执行规则
 
-路径：`source/brick-mother/knowledge/PBR_GUIDE_PRODUCTION_RULES_V1.json`
+仓库相对路径：`knowledge/PBR_GUIDE_PRODUCTION_RULES_V1.json`
+
+全量包路径：`brick-mother/knowledge/PBR_GUIDE_PRODUCTION_RULES_V1.json`
 
 用途：将用户提供的完整 PBR 手册转成机器可读的生产约束。
 
 ### 4.2 人工检查页
 
-路径：`source/brick-mother/knowledge/pbr-guide-production-rules-v1.html`
+仓库相对路径：`knowledge/pbr-guide-production-rules-v1.html`
+
+全量包路径：`brick-mother/knowledge/pbr-guide-production-rules-v1.html`
 
 用途：快速检查线性空间、介电 F0、Base Color、Roughness、AO、Height、Normal、多通道传播和验证门。
 
@@ -118,9 +141,9 @@ Git blob：`f64c65d87dc418bf1a923a4cf332b449efbe0eb9`
 
 性能改造不得直接修改冻结 HTML。需要改动核心 JS 时，先复制成版本化候选文件，并让候选 HTML 只调用候选 JS。
 
-## 6. 相关工作流
+## 6. 有效工作流
 
-全量包收录下列工作流，便于新窗口继续审计：
+已验证全量包收录下列工作流：
 
 1. `brick-mother-observation-studio-smoke.yml`
 2. `brick-mother-smoke.yml`
@@ -129,7 +152,9 @@ Git blob：`f64c65d87dc418bf1a923a4cf332b449efbe0eb9`
 5. `brick-mother-stone-study.yml`
 6. `brick-mother-v275-full-handoff.yml`
 7. `brick-mother-v276-deploy.yml`
-8. `brick-mother-v276-full-handoff.yml`
+8. `brick-mother-v276-full-package-verified.yml`
+
+被替代的临时打包工作流已经从活动分支删除。
 
 ## 7. 公开页面与本地页面
 
@@ -139,7 +164,19 @@ Git blob：`f64c65d87dc418bf1a923a4cf332b449efbe0eb9`
 
 全量包根目录提供 `START_HERE.html`，通过本地 HTTP 服务一次打开全部版本。
 
-## 8. 权限与审批
+## 8. 已验证全量包身份
+
+源提交：`a601bbdbff979dcf2c23784435ce99351bf0d49d`
+
+Actions run：`33857248735`
+
+Artifact ID：`9930669833`
+
+ZIP SHA256：`71ea081c33213372d0dee2b3e1ba7670b50601ae477194a06e63333cc688d503`
+
+包内逐文件清单：64 个文件，复核差异 0。
+
+## 9. 权限与审批
 
 1. `humanVisualApproved=false`
 2. `productionApproved=false`
