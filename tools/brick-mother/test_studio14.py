@@ -96,7 +96,10 @@ def capture(page, name):
     data = metrics(path)
     report['metrics'][name] = data
     check(f'{name} screenshot exists', data['bytes'] > 45000, data)
-    check(f'{name} daylight background', min(data['cornerLuma']) > 105, data)
+    # Bottom corners may legitimately contain the matte turntable or a secondary sample.
+    # Daylight is measured from the unobstructed upper cyclorama plus the whole-frame mean.
+    daylight = min(data['cornerLuma'][:2]) > 105 and data['meanLuma'] > 115
+    check(f'{name} daylight background', daylight, data)
     check(f'{name} readable tonal range', data['centerRange'] > 25, data)
     return data
 
