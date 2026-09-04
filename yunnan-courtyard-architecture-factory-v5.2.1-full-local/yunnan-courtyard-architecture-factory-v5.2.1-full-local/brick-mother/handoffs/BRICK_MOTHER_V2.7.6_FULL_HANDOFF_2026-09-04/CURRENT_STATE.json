@@ -1,0 +1,132 @@
+{
+  "schemaVersion": "2.7.6-handoff.1",
+  "handoffId": "BRICK_MOTHER_V2.7.6_FULL_HANDOFF_2026-09-04",
+  "repository": "haihao0307/HOUSE",
+  "branch": "feature/brick-mother-v2.0-composite-material-dna",
+  "pullRequest": {
+    "number": 15,
+    "state": "open",
+    "draft": true,
+    "merged": false,
+    "base": "release/brick-mother-v1.0"
+  },
+  "public": {
+    "root": "https://haihao0307.github.io/HOUSE/brick-mother/",
+    "integratedWorkbench": "https://haihao0307.github.io/HOUSE/brick-mother/workbench-v2.7.6.html",
+    "defaultPublicPage": "brick-mother-observation-studio.html"
+  },
+  "frozenCore": {
+    "observationStudio": {
+      "path": "brick-mother-observation-studio.html",
+      "gitBlob": "7b2a18c6a886d0751ca2fc92530b7986d9e1a727",
+      "mutable": false,
+      "role": "authentic V2.7.5 three-column observation studio and public root"
+    },
+    "standaloneRuntime": {
+      "path": "brick-mother-standalone-v2.7.5.html",
+      "gitBlob": "7b10389cb9367f7423619262820883cc94b07a61",
+      "mutable": false,
+      "runtimeVersion": "2.7.5-alpha.1"
+    },
+    "highVariation": {
+      "path": "brick-mother-standalone-v2.6.html",
+      "gitBlob": "f64c65d87dc418bf1a923a4cf332b449efbe0eb9",
+      "mutable": false,
+      "role": "preserved stronger color, damage, cavity and form variation"
+    }
+  },
+  "integratedReview": {
+    "path": "workbench-v2.7.6.html",
+    "role": "additive organizer for frozen versions, experiments and knowledge",
+    "mayReplaceFrozenCore": false,
+    "defaultTab": "v275-fast",
+    "publicDeploymentRun": 33851920355,
+    "httpVerification": "passed",
+    "browserProofRun": 33852321101,
+    "browserProof": {
+      "passed": true,
+      "renderer": "headless Chromium software renderer",
+      "shellReadyMs": 720,
+      "quickSpecimenReadyMs": 13557,
+      "runtime": "2.7.5-alpha.1",
+      "canvasCount": 1,
+      "errors": []
+    }
+  },
+  "preservedPbrExperiments": [
+    {
+      "id": "pbr-weathering-v1.1",
+      "path": "experiments/pbr-weathering-v1.1/index.html",
+      "sourceCommit": "65be6d7671fc5fcb31dd68dda64eecc5bd82f7b4",
+      "status": "archived experiment for continued evolution",
+      "humanVisualApproved": false,
+      "productionApproved": false
+    },
+    {
+      "id": "pbr-daylight-v1.4",
+      "path": "experiments/pbr-daylight-v1.4/index.html",
+      "sourceCommit": "65be6d7671fc5fcb31dd68dda64eecc5bd82f7b4",
+      "status": "archived experiment for continued evolution",
+      "humanVisualApproved": false,
+      "productionApproved": false
+    }
+  ],
+  "knowledge": {
+    "pbrManual": {
+      "title": "The PBR Guide",
+      "author": "Wes McDermott",
+      "edition": "Third edition, February 2018",
+      "providedByUser": true,
+      "originalPdfRedistributed": false
+    },
+    "distilledRulesJson": "knowledge/PBR_GUIDE_PRODUCTION_RULES_V1.json",
+    "inspectionPage": "knowledge/pbr-guide-production-rules-v1.html",
+    "coreRules": [
+      "lighting calculations in linear space",
+      "visible color inputs interpreted as sRGB",
+      "roughness, metallic and height interpreted as linear data",
+      "brick, adobe and ordinary building stone use metallic zero",
+      "common dielectric F0 defaults to 0.04 unless measured evidence supports another value",
+      "base color excludes baked macro lighting and AO",
+      "AO affects ambient diffuse accessibility and does not suppress specular",
+      "height carries low and mid frequency form",
+      "normal carries high frequency surface detail",
+      "one physical material event propagates coherently to every channel it changes"
+    ]
+  },
+  "performanceDiagnosis": {
+    "currentPrimaryCause": "authentic V2.7.5 builds multiple procedural meshes on the main thread before full interaction is ready",
+    "secondaryCauses": [
+      "multiple families are prepared during initial load",
+      "material profile fetches do not favor persistent reuse",
+      "no deterministic generated geometry cache is active",
+      "idle rendering and shadow update policy still require isolation and measurement"
+    ],
+    "nextCandidateStrategy": [
+      "keep frozen files byte stable",
+      "create a separate performance candidate",
+      "render one authentic specimen first",
+      "move geometry generation to a Web Worker",
+      "transfer typed arrays with Transferable ArrayBuffer",
+      "cache generated geometry by runtime version, profile, seeds, controls, quality and algorithm version",
+      "load complete family on demand",
+      "stop redundant idle rendering"
+    ]
+  },
+  "approvals": {
+    "humanVisualApproved": false,
+    "productionApproved": false,
+    "pbrCandidateApproved": false,
+    "performanceCandidateApproved": false
+  },
+  "hardBoundaries": {
+    "modifyMain": false,
+    "modifyFrozenRelease": false,
+    "modifyGhPagesBranch": false,
+    "mergePr": false,
+    "forcePush": false,
+    "overwriteFrozenCore": false,
+    "setExperimentAsDefault": false,
+    "generateStaticImagesAsDelivery": false
+  }
+}
