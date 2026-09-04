@@ -1,0 +1,100 @@
+name: Brick Mother Authentic V2.7.5 Source Restore
+
+on:
+  push:
+    branches:
+      - feature/brick-mother-v2.0-composite-material-dna
+    paths:
+      - .github/workflows/brick-mother-authentic-v275-source-restore.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  TARGET_BRANCH: feature/brick-mother-v2.0-composite-material-dna
+  AUTHENTIC_HANDOFF_HEAD: 8184e95a89279f546d2c02135b13e139a3c7f988
+  BRICK_ROOT: yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother
+  OBSERVATION_BLOB: 7b2a18c6a886d0751ca2fc92530b7986d9e1a727
+  STANDALONE_BLOB: 7b10389cb9367f7423619262820883cc94b07a61
+  SOURCE_INDEX_BLOB: 83ea467bd074a9de1d83f34c60c7f4fec835c866
+
+concurrency:
+  group: brick-mother-authentic-v275-source-restore
+  cancel-in-progress: false
+
+jobs:
+  restore-source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout current branch with full history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ env.TARGET_BRANCH }}
+
+      - name: Replace all non-workflow Brick Mother files with the handoff tree
+        shell: bash
+        run: |
+          set -euo pipefail
+          git cat-file -e "$AUTHENTIC_HANDOFF_HEAD^{commit}"
+          scope='^(yunnan-courtyard-architecture-factory-v5\.2\.1-full-local/yunnan-courtyard-architecture-factory-v5\.2\.1-full-local/brick-mother/|data/brick-mother/|docs/brick-mother/|private-review/brick-mother|tools/brick-mother/)'
+
+          git ls-files | grep -E "$scope" > /tmp/current-scope.txt || true
+          while IFS= read -r path; do
+            [ -n "$path" ] && git rm -f --ignore-unmatch -- "$path"
+          done < /tmp/current-scope.txt
+
+          git ls-tree -r --name-only "$AUTHENTIC_HANDOFF_HEAD" | grep -E "$scope" > /tmp/authentic-scope.txt || true
+          while IFS= read -r path; do
+            [ -n "$path" ] && git checkout "$AUTHENTIC_HANDOFF_HEAD" -- "$path"
+          done < /tmp/authentic-scope.txt
+
+          remaining="$(git diff --name-only "$AUTHENTIC_HANDOFF_HEAD" -- | grep -E "$scope" || true)"
+          if [ -n "$remaining" ]; then
+            printf 'Non-workflow Brick Mother scope still differs:\n%s\n' "$remaining" >&2
+            exit 1
+          fi
+
+          test "$(git hash-object "$BRICK_ROOT/brick-mother-observation-studio.html")" = "$OBSERVATION_BLOB"
+          test "$(git hash-object "$BRICK_ROOT/brick-mother-standalone-v2.7.5.html")" = "$STANDALONE_BLOB"
+          test "$(git hash-object "$BRICK_ROOT/index.html")" = "$SOURCE_INDEX_BLOB"
+          grep -q 'Brick Mother V2.7.5 三维材质观察台' "$BRICK_ROOT/brick-mother-observation-studio.html"
+          grep -q '2.7.5-alpha.1' "$BRICK_ROOT/VERSION.json"
+
+      - name: Commit and push the normal rollback
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'Brick Mother Recovery'
+          git config user.email 'actions@users.noreply.github.com'
+          git commit -m 'revert(brick): restore all source files from authentic V2.7.5 handoff'
+
+          for attempt in 1 2 3 4; do
+            git fetch origin "$TARGET_BRANCH"
+            if git rebase "origin/$TARGET_BRANCH" && git push origin "HEAD:$TARGET_BRANCH"; then
+              break
+            fi
+            git rebase --abort 2>/dev/null || true
+            if [ "$attempt" -eq 4 ]; then exit 1; fi
+            sleep $((attempt * 3))
+          done
+
+          local_head="$(git rev-parse HEAD)"
+          remote_head="$(git ls-remote origin "refs/heads/$TARGET_BRANCH" | awk '{print $1}')"
+          test "$local_head" = "$remote_head"
+
+          scope='^(yunnan-courtyard-architecture-factory-v5\.2\.1-full-local/yunnan-courtyard-architecture-factory-v5\.2\.1-full-local/brick-mother/|data/brick-mother/|docs/brick-mother/|private-review/brick-mother|tools/brick-mother/)'
+          remaining="$(git diff --name-only "$AUTHENTIC_HANDOFF_HEAD" HEAD | grep -E "$scope" || true)"
+          test -z "$remaining"
+          echo "$local_head" > /tmp/authentic-v275-source-head.txt
+
+      - name: Upload source restoration receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: brick-mother-authentic-v275-source-${{ github.sha }}
+          path: /tmp/authentic-v275-source-head.txt
+          if-no-files-found: warn
+          retention-days: 14
