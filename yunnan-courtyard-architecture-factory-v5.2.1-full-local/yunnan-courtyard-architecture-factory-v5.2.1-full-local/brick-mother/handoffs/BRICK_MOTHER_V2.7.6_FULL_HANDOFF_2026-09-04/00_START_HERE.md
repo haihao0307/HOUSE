@@ -11,10 +11,25 @@ Draft PR：`#15`
 ## 新窗口的读取顺序
 
 1. 先读本文件。
-2. 再读 `CURRENT_STATE.json`。
-3. 再读 `VERSION_AND_ASSET_MAP.md`。
-4. 再读 `KNOWN_ISSUES_AND_NEXT_TASKS.md`。
-5. 最后读 `NEXT_WINDOW_PROMPT.md`，并按其中顺序继续执行。
+2. 再读 `BUILD_RECEIPT.md`，确认全量包、GitHub Actions 与校验身份。
+3. 再读 `CURRENT_STATE.json`。
+4. 再读 `VERSION_AND_ASSET_MAP.md`。
+5. 再读 `KNOWN_ISSUES_AND_NEXT_TASKS.md`。
+6. 最后读 `NEXT_WINDOW_PROMPT.md`，并按其中顺序继续执行。
+
+## 已生成的全量包
+
+全量包源提交：`a601bbdbff979dcf2c23784435ce99351bf0d49d`
+
+GitHub Actions run：`33857248735`
+
+Artifact ID：`9930669833`
+
+Artifact 名称：`brick-mother-v276-full-handoff-verified-a601bbdbff979dcf2c23784435ce99351bf0d49d`
+
+ZIP SHA256：`71ea081c33213372d0dee2b3e1ba7670b50601ae477194a06e63333cc688d503`
+
+完整凭据见 `BUILD_RECEIPT.md`。
 
 ## 当前必须保持的版本关系
 
@@ -46,8 +61,9 @@ Draft PR：`#15`
 2. 公开部署的 HTTP 身份检查已经通过。
 3. 真实 Chromium 软件渲染检查已经确认综合工作台可见，V2.7.5 Canvas 存在，运行时身份为 `2.7.5-alpha.1`。
 4. 软件渲染环境记录的综合外壳就绪约为 720 ms，主样本就绪约为 13.6 s。该数值只属于工程诊断，不能视为真实硬件性能结论。
-5. `humanVisualApproved=false`。
-6. `productionApproved=false`。
+5. 全量包 ZIP、逐文件清单、冻结身份与本地路由 smoke 均已通过。
+6. `humanVisualApproved=false`。
+7. `productionApproved=false`。
 
 ## 继续工作的边界
 
