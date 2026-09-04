@@ -1,0 +1,79 @@
+{
+  "schemaVersion": "1.0.0",
+  "purpose": "Prevent repeated work on visual routes already shown to regress Brick Mother.",
+  "canonicalBaseline": {
+    "runtime": "2.7.5-alpha.1",
+    "file": "brick-mother-standalone-v2.7.5.html",
+    "gitBlob": "7b10389cb9367f7423619262820883cc94b07a61"
+  },
+  "rejectedRoutes": [
+    {
+      "id": "uniform-noise-as-material",
+      "status": "blocked",
+      "symptoms": [
+        "pepper noise distributed across every surface",
+        "independent Base Color, Roughness, Height and Normal fields",
+        "surface detail without a formation event",
+        "chocolate, wax, foam or plastic appearance"
+      ],
+      "replacement": "shared material events propagate coherently into all PBR channels"
+    },
+    {
+      "id": "generic-stone-shape-family",
+      "status": "blocked",
+      "symptoms": [
+        "ashlar, rubble, flagstone and cobble differ mainly by outline",
+        "rounded ellipsoid cobbles",
+        "flagstone made by flattening a generic block",
+        "no relation between lithology, processing and construction use"
+      ],
+      "replacement": "separate parent rock, processing morphology and construction placement axes"
+    },
+    {
+      "id": "candidate-as-default-entry",
+      "status": "blocked",
+      "symptoms": [
+        "experimental page opens before the stronger V2.7.5 workbench",
+        "previous strengths become difficult to find",
+        "runtime success is mistaken for visual promotion"
+      ],
+      "replacement": "V2.7.5 remains the unique default until explicit user approval"
+    },
+    {
+      "id": "dark-or-flat-presentation-stage",
+      "status": "blocked",
+      "symptoms": [
+        "black or night-like background",
+        "single-direction light",
+        "poor roughness readability",
+        "reflective pedestal artifacts",
+        "lighting tuned separately to rescue weak materials"
+      ],
+      "replacement": "fixed daylight validation stage plus a separate restrained product stage"
+    },
+    {
+      "id": "quality-reduction-as-performance-fix",
+      "status": "blocked",
+      "symptoms": [
+        "removing visual detail before measuring startup cost",
+        "rebuilding all specimens before the first visible sample",
+        "continuous rendering while idle"
+      ],
+      "replacement": "measure each startup phase, show one retained specimen first, load secondary work progressively and render on demand"
+    }
+  ],
+  "rollbackPolicy": {
+    "consecutiveRegressionLimit": 2,
+    "action": "restore the latest approved visual baseline, isolate one hypothesis and rerun same-seed comparison",
+    "promotionRequires": [
+      "grey-form review",
+      "channel correlation review",
+      "daylight and raking-light review",
+      "same-seed baseline comparison",
+      "real-browser runtime check",
+      "explicit user visual approval"
+    ]
+  },
+  "humanVisualApproved": false,
+  "productionApproved": false
+}
