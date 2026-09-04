@@ -4,71 +4,58 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="dark">
-<meta name="description" content="Brick Mother 综合工作台。完整保留 V2.7.5 三材质核心，并接入实时风化 PBR V1.1、砌筑石形态与岩性研究。">
-<title>Brick Mother 综合工作台</title>
+<meta name="description" content="Brick Mother 正式工作台。默认锁定原 V2.7.5 三材质核心，所有 PBR 与石材新版均作为未批准候选按需加载。">
+<title>Brick Mother V2.7.5 核心工作台</title>
 <link rel="icon" href="data:,">
 <style>
-:root{
-  color-scheme:dark;
-  --bg:#080a0b;
-  --panel:#111516;
-  --panel2:#171b1c;
-  --line:rgba(255,255,255,.105);
-  --line2:rgba(255,255,255,.18);
-  --text:#f3f0e9;
-  --muted:#a5aba8;
-  --soft:#727a77;
-  --accent:#d4ad74;
-  --accentSoft:rgba(212,173,116,.16);
-  --ok:#86b696;
-  font-family:Inter,"Segoe UI","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
-}
-*{box-sizing:border-box}
-html,body{width:100%;height:100%;margin:0;overflow:hidden;background:var(--bg);color:var(--text)}
-body{display:grid;grid-template-rows:58px 49px minmax(0,1fr)}
+:root{color-scheme:dark;--bg:#080a0b;--panel:#111516;--panel2:#171b1c;--line:rgba(255,255,255,.105);--line2:rgba(255,255,255,.18);--text:#f3f0e9;--muted:#a5aba8;--accent:#d4ad74;--accentSoft:rgba(212,173,116,.16);--ok:#86b696;--warn:#e0a56e;font-family:Inter,"Segoe UI","PingFang SC","Microsoft YaHei",system-ui,sans-serif}
+*{box-sizing:border-box}html,body{width:100%;height:100%;margin:0;overflow:hidden;background:var(--bg);color:var(--text)}body{display:grid;grid-template-rows:58px 49px minmax(0,1fr)}
 header{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:0 18px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#171b1c,#111415)}
-.brand{display:flex;align-items:center;gap:12px;min-width:0}.mark{width:34px;height:34px;display:grid;place-items:center;border:1px solid var(--line2);border-radius:10px;color:var(--accent);font:700 10px/1 ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:.13em}.copy{min-width:0}.copy strong{display:block;font-size:13px;letter-spacing:.08em;white-space:nowrap}.copy span{display:block;margin-top:4px;color:var(--muted);font-size:9px;letter-spacing:.06em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.state{display:flex;align-items:center;gap:8px;padding:7px 10px;border:1px solid var(--line);border-radius:999px;color:var(--muted);font-size:9px;white-space:nowrap}.state i{width:6px;height:6px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 4px rgba(134,182,150,.12)}
-nav{display:flex;align-items:center;gap:6px;padding:6px 12px;border-bottom:1px solid var(--line);background:#101314;overflow-x:auto;scrollbar-width:none}nav::-webkit-scrollbar{display:none}
-.tab{flex:0 0 auto;height:35px;padding:0 13px;border:1px solid transparent;border-radius:9px;background:transparent;color:var(--muted);font:550 10px/1 inherit;letter-spacing:.025em;cursor:pointer;transition:.18s}.tab:hover{color:var(--text);background:rgba(255,255,255,.04)}.tab.on{color:var(--text);border-color:rgba(212,173,116,.30);background:var(--accentSoft)}
+.brand{display:flex;align-items:center;gap:12px;min-width:0}.mark{width:34px;height:34px;display:grid;place-items:center;border:1px solid var(--line2);border-radius:10px;color:var(--accent);font:700 10px/1 ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:.13em}.copy{min-width:0}.copy strong{display:block;font-size:13px;letter-spacing:.08em;white-space:nowrap}.copy span{display:block;margin-top:4px;color:var(--muted);font-size:9px;letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.state{display:flex;align-items:center;gap:8px;padding:7px 10px;border:1px solid var(--line);border-radius:999px;color:var(--muted);font-size:9px;white-space:nowrap}.state i{width:6px;height:6px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 4px rgba(134,182,150,.12)}
+nav{display:flex;align-items:center;gap:6px;padding:6px 12px;border-bottom:1px solid var(--line);background:#101314;overflow-x:auto;scrollbar-width:none}nav::-webkit-scrollbar{display:none}.tab{flex:0 0 auto;height:35px;padding:0 13px;border:1px solid transparent;border-radius:9px;background:transparent;color:var(--muted);font:550 10px/1 inherit;letter-spacing:.025em;cursor:pointer;transition:.18s}.tab:hover{color:var(--text);background:rgba(255,255,255,.04)}.tab.on{color:var(--text);border-color:rgba(212,173,116,.30);background:var(--accentSoft)}.tab.experimental::after{content:'未批准';margin-left:6px;padding:2px 5px;border:1px solid rgba(224,165,110,.36);border-radius:999px;color:#efbc89;font-size:7px;vertical-align:1px}
 .open{margin-left:auto;flex:0 0 auto;height:35px;padding:0 12px;display:flex;align-items:center;border:1px solid var(--line);border-radius:9px;color:#ded9cf;text-decoration:none;font-size:9px;background:rgba(255,255,255,.025)}.open:hover{border-color:var(--line2);background:rgba(255,255,255,.05)}
 main{position:relative;min-width:0;min-height:0;background:#000}.panel{position:absolute;inset:0;display:none}.panel.on{display:block}.panel iframe{width:100%;height:100%;border:0;background:#000}.loading{position:absolute;inset:0;display:grid;place-items:center;background:#090b0c;z-index:2;color:var(--muted);font-size:10px;letter-spacing:.08em;transition:.25s}.loading.hidden{opacity:0;visibility:hidden}.spinner{width:28px;height:28px;margin:0 auto 13px;border:1px solid rgba(255,255,255,.13);border-top-color:var(--accent);border-radius:50%;animation:spin 1s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
-@media(max-width:760px){body{grid-template-rows:54px 46px minmax(0,1fr)}header{padding:0 11px}.copy span{display:none}.state{font-size:8px;padding:6px 8px}nav{padding:5px 7px}.tab{height:34px;padding:0 10px}.open{height:34px;padding:0 10px}}
-@media(max-width:470px){.state span{display:none}.state{width:28px;height:28px;padding:0;justify-content:center}.open{font-size:0}.open::after{content:'↗';font-size:14px}.tab{font-size:9px}}
+.candidate-note{position:absolute;left:50%;top:14px;z-index:4;transform:translateX(-50%);max-width:min(720px,calc(100% - 32px));padding:8px 12px;border:1px solid rgba(224,165,110,.34);border-radius:999px;background:rgba(22,18,14,.88);color:#e8c39d;font-size:9px;letter-spacing:.025em;pointer-events:none;backdrop-filter:blur(10px)}
+@media(max-width:760px){body{grid-template-rows:54px 46px minmax(0,1fr)}header{padding:0 11px}.copy span{display:none}.state{font-size:8px;padding:6px 8px}nav{padding:5px 7px}.tab{height:34px;padding:0 10px}.open{height:34px;padding:0 10px}.candidate-note{top:9px;border-radius:10px;text-align:center}}
+@media(max-width:470px){.state span{display:none}.state{width:28px;height:28px;padding:0;justify-content:center}.open{font-size:0}.open::after{content:'↗';font-size:14px}.tab{font-size:9px}.tab.experimental::after{display:none}}
 </style>
 </head>
 <body>
 <header>
-  <div class="brand"><div class="mark">BM</div><div class="copy"><strong>BRICK MOTHER 综合工作台</strong><span>三材质核心完整保留 · 实时风化 PBR V1.1 与砌筑石形态独立接入</span></div></div>
-  <div class="state"><i></i><span>核心 V2.7.5 已保留</span></div>
+  <div class="brand"><div class="mark">BM</div><div class="copy"><strong>BRICK MOTHER V2.7.5 核心工作台</strong><span>唯一默认入口锁定原核心 · 新 PBR 与石材研究仅作为候选按需加载</span></div></div>
+  <div class="state"><i></i><span>原核心已冻结保留</span></div>
 </header>
 <nav aria-label="工作台分区">
-  <button class="tab on" data-view="core">核心三材质 V2.7.5</button>
-  <button class="tab" data-view="weathering">PBR 实时风化 V1.2</button>
-  <button class="tab" data-view="masonry">砌筑石形态</button>
-  <button class="tab" data-view="lithology">石材岩性响应</button>
+  <button class="tab on" data-view="core">原 V2.7.5 三材质核心</button>
+  <button class="tab experimental" data-view="weathering">PBR 实验归档 V1.4</button>
+  <button class="tab experimental" data-view="masonry">石材形态实验归档</button>
+  <button class="tab" data-view="lithology">石材岩性研究</button>
   <button class="tab" data-view="v26">V2.6 高变化保留线</button>
-  <a class="open" id="openCurrent" href="./brick-mother-standalone-v2.7.5.html?v=20260902-restored" target="_blank" rel="noopener">单独打开当前分区</a>
+  <a class="open" id="openCurrent" href="./brick-mother-standalone-v2.7.5.html?v=baseline-registry-v1" target="_blank" rel="noopener">单独打开当前分区</a>
 </nav>
 <main>
-  <section class="panel on" id="core" data-url="./brick-mother-standalone-v2.7.5.html?v=20260902-restored">
-    <div class="loading"><div><div class="spinner"></div>正在载入三材质核心</div></div>
-    <iframe title="Brick Mother 核心三材质 V2.7.5" data-src="./brick-mother-standalone-v2.7.5.html?v=20260902-restored" allow="fullscreen"></iframe>
+  <section class="panel on" id="core" data-url="./brick-mother-standalone-v2.7.5.html?v=baseline-registry-v1">
+    <div class="loading"><div><div class="spinner"></div>正在载入原 V2.7.5 三材质核心</div></div>
+    <iframe title="Brick Mother 原 V2.7.5 三材质核心" data-src="./brick-mother-standalone-v2.7.5.html?v=baseline-registry-v1" allow="fullscreen"></iframe>
   </section>
-  <section class="panel" id="weathering" data-url="./studio.html?v=12a9">
-    <div class="loading"><div><div class="spinner"></div>正在载入实时风化 PBR V1.1 工作台</div></div>
-    <iframe title="Brick Mother 实时风化与 PBR V1.1 三维工作台" data-src="./studio.html?v=12a9" allow="fullscreen"></iframe>
+  <section class="panel" id="weathering" data-url="./studio-v1.4.html?v=rejected-visual-regression">
+    <div class="candidate-note">此页保留用于复盘失败路线，未获得人工视觉批准，不代表 Brick Mother 当前质量。</div>
+    <div class="loading"><div><div class="spinner"></div>正在载入 PBR 实验归档</div></div>
+    <iframe title="Brick Mother PBR 实验归档 V1.4" data-src="./studio-v1.4.html?v=rejected-visual-regression" allow="fullscreen"></iframe>
   </section>
-  <section class="panel" id="masonry" data-url="./studio.html?family=3&v=12a9">
-    <div class="loading"><div><div class="spinner"></div>正在载入砌筑石形态分区</div></div>
-    <iframe title="规则与不规则砌筑石形态" data-src="./studio.html?family=3&v=12a9" allow="fullscreen"></iframe>
+  <section class="panel" id="masonry" data-url="./brick-mother-stone-masonry-v2.8.0-alpha.html?v=research-archive">
+    <div class="candidate-note">此页只保留形体研究记录，后续石材将从灰模和建筑用途重新建立。</div>
+    <div class="loading"><div><div class="spinner"></div>正在载入石材形态实验归档</div></div>
+    <iframe title="Brick Mother 石材形态实验归档" data-src="./brick-mother-stone-masonry-v2.8.0-alpha.html?v=research-archive" allow="fullscreen"></iframe>
   </section>
-  <section class="panel" id="lithology" data-url="./stone-study.html?v=20260902-restored">
-    <div class="loading"><div><div class="spinner"></div>正在载入石材岩性响应</div></div>
-    <iframe title="石材岩性响应研究" data-src="./stone-study.html?v=20260902-restored" allow="fullscreen"></iframe>
+  <section class="panel" id="lithology" data-url="./stone-study.html?v=baseline-registry-v1">
+    <div class="loading"><div><div class="spinner"></div>正在载入石材岩性研究</div></div>
+    <iframe title="石材岩性响应研究" data-src="./stone-study.html?v=baseline-registry-v1" allow="fullscreen"></iframe>
   </section>
-  <section class="panel" id="v26" data-url="./brick-mother-standalone-v2.6.html?v=20260902-restored">
+  <section class="panel" id="v26" data-url="./brick-mother-standalone-v2.6.html?v=baseline-registry-v1">
     <div class="loading"><div><div class="spinner"></div>正在载入 V2.6 高变化保留线</div></div>
-    <iframe title="Brick Mother V2.6 高变化保留线" data-src="./brick-mother-standalone-v2.6.html?v=20260902-restored" allow="fullscreen"></iframe>
+    <iframe title="Brick Mother V2.6 高变化保留线" data-src="./brick-mother-standalone-v2.6.html?v=baseline-registry-v1" allow="fullscreen"></iframe>
   </section>
 </main>
 <script>
@@ -76,16 +63,27 @@ main{position:relative;min-width:0;min-height:0;background:#000}.panel{position:
   const panels=[...document.querySelectorAll('.panel')];
   const tabs=[...document.querySelectorAll('.tab')];
   const open=document.getElementById('openCurrent');
+  const mounted=new Set();
   function mount(panel){
     const frame=panel.querySelector('iframe');
     if(!frame.hasAttribute('src')) frame.src=frame.dataset.src;
+    if(mounted.has(panel.id)) return;
+    mounted.add(panel.id);
     const done=()=>panel.querySelector('.loading')?.classList.add('hidden');
     frame.addEventListener('load',done,{once:true});
-    setTimeout(done,9000);
+    setTimeout(done,12000);
   }
   function select(id,writeHash=true){
     const panel=document.getElementById(id)||document.getElementById('core');
-    panels.forEach(p=>{p.classList.toggle('on',p===panel);if(p!==panel){const f=p.querySelector('iframe');if(f.hasAttribute('src'))f.removeAttribute('src');}});
+    panels.forEach(p=>{
+      p.classList.toggle('on',p===panel);
+      if(p!==panel&&p.id!=='core'){
+        const f=p.querySelector('iframe');
+        if(f.hasAttribute('src')) f.removeAttribute('src');
+        mounted.delete(p.id);
+        p.querySelector('.loading')?.classList.remove('hidden');
+      }
+    });
     tabs.forEach(t=>t.classList.toggle('on',t.dataset.view===panel.id));
     mount(panel);
     open.href=panel.dataset.url;
@@ -93,13 +91,11 @@ main{position:relative;min-width:0;min-height:0;background:#000}.panel{position:
     document.documentElement.dataset.activeWorkbench=panel.id;
   }
   tabs.forEach(tab=>tab.addEventListener('click',()=>select(tab.dataset.view)));
-  const core=document.querySelector('#core iframe');
-  core.addEventListener('load',()=>document.querySelector('#core .loading')?.classList.add('hidden'),{once:true});
-  setTimeout(()=>document.querySelector('#core .loading')?.classList.add('hidden'),9000);
   select(location.hash.slice(1)||'core',false);
   window.addEventListener('hashchange',()=>select(location.hash.slice(1)||'core',false));
   document.documentElement.dataset.brickMotherWorkbenchReady='true';
-  window.__BRICK_MOTHER_WORKBENCH__={version:'3.1.0-alpha.3',corePreserved:'2.7.5',weatheringRuntime:'1.2.0-alpha.9',pbrChannels:16,masonryRuntime:'20260902-runtime-fix',sections:['core','weathering','masonry','lithology','v26'],visualApproved:false,productionApproved:false};
+  document.documentElement.dataset.canonicalEntry='brick-mother-standalone-v2.7.5.html';
+  window.__BRICK_MOTHER_WORKBENCH__={version:'3.2.0-alpha.1',canonicalRuntime:'2.7.5-alpha.1',canonicalBlob:'7b10389cb9367f7423619262820883cc94b07a61',candidateRuntime:'1.4.0-alpha.2',candidateStatus:'rejected_for_visual_regression',sections:['core','weathering','masonry','lithology','v26'],humanVisualApproved:false,productionApproved:false};
 })();
 </script>
 </body>
