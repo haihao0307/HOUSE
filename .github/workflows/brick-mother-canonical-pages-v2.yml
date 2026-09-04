@@ -1,0 +1,202 @@
+name: Deploy Brick Mother Canonical V2.7.5 Workbench V2
+
+on:
+  push:
+    branches: [feature/brick-mother-v2.0-composite-material-dna]
+    paths:
+      - .github/workflows/brick-mother-canonical-pages-v2.yml
+      - tools/brick-mother/test_canonical_entry.py
+      - yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/workbench.html
+      - yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/brick-mother-standalone-v2.7.5.html
+      - yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/BASELINE_REGISTRY_V1.json
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: brick-mother-pages-canonical
+  cancel-in-progress: true
+
+env:
+  BRICK_ROOT: yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother
+  PRESERVED_CORE_BLOB: 7b10389cb9367f7423619262820883cc94b07a61
+  CANONICAL_RUNTIME: 2.7.5-alpha.1
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify frozen core and entry hierarchy
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="$BRICK_ROOT"
+          test -s "$root/workbench.html"
+          test -s "$root/brick-mother-standalone-v2.7.5.html"
+          test -s "$root/BASELINE_REGISTRY_V1.json"
+          test "$(git hash-object "$root/brick-mother-standalone-v2.7.5.html")" = "$PRESERVED_CORE_BLOB"
+          grep -q '原 V2.7.5 三材质核心' "$root/workbench.html"
+          grep -q "canonicalEntry='brick-mother-standalone-v2.7.5.html'" "$root/workbench.html"
+          grep -q "candidateStatus:'rejected_for_visual_regression'" "$root/workbench.html"
+          python3 - <<'PY'
+          import json,os
+          from pathlib import Path
+          root=Path(os.environ['BRICK_ROOT'])
+          registry=json.loads((root/'BASELINE_REGISTRY_V1.json').read_text())
+          assert registry['canonicalEntry']['file']=='brick-mother-standalone-v2.7.5.html'
+          assert registry['canonicalEntry']['gitBlob']==os.environ['PRESERVED_CORE_BLOB']
+          assert registry['canonicalEntry']['immutable'] is True
+          assert all(item['default'] is False for item in registry['experimentalCandidates'])
+          assert registry['approvals']['humanVisualApproved'] is False
+          assert registry['approvals']['productionApproved'] is False
+          PY
+          python3 -m py_compile tools/brick-mother/test_canonical_entry.py
+
+      - name: Install browser test dependency
+        run: python3 -m pip install playwright
+
+      - name: Verify local canonical entry
+        shell: bash
+        run: |
+          set -euo pipefail
+          out=/tmp/brick-mother-canonical-local
+          mkdir -p "$out"
+          python3 -m http.server 8765 --bind 127.0.0.1 --directory "$BRICK_ROOT" >"$out/server.log" 2>&1 &
+          PID=$!
+          trap 'kill "$PID" 2>/dev/null || true' EXIT
+          ready=0
+          for attempt in $(seq 1 40); do
+            if curl -fsS http://127.0.0.1:8765/workbench.html >/dev/null; then ready=1;break;fi
+            sleep 1
+          done
+          test "$ready" = 1
+          python3 tools/brick-mother/test_canonical_entry.py http://127.0.0.1:8765 "$out"
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          data=json.loads(Path('/tmp/brick-mother-canonical-local/verification.json').read_text())
+          assert data['passed'] is True
+          assert data['canonicalEntry']=='brick-mother-standalone-v2.7.5.html'
+          assert data['runtime']=='2.7.5-alpha.1'
+          assert data['humanVisualApproved'] is False
+          assert data['productionApproved'] is False
+          PY
+
+      - name: Upload local proof
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: brick-mother-canonical-local-v2-${{ github.sha }}
+          path: /tmp/brick-mother-canonical-local
+          compression-level: 1
+          retention-days: 14
+          if-no-files-found: warn
+
+      - name: Assemble public site
+        shell: bash
+        run: |
+          set -euo pipefail
+          src="$(dirname "$BRICK_ROOT")"
+          mkdir -p _site
+          cp -R "$src"/. _site/
+          rm -rf _site/references-private _site/release _site/.git _site/.github
+          rm -f _site/assets/models/YN_TUANJIE_001_EDITABLE_HIGH.glb
+          touch _site/.nojekyll
+          python3 - <<'PY'
+          import json,os
+          from pathlib import Path
+          Path('_site/brick-mother/CANONICAL_DEPLOYMENT.json').write_text(json.dumps({
+              'sourceHead':os.environ['GITHUB_SHA'],
+              'runId':os.environ['GITHUB_RUN_ID'],
+              'canonicalEntry':'brick-mother-standalone-v2.7.5.html',
+              'canonicalRuntime':os.environ['CANONICAL_RUNTIME'],
+              'canonicalBlob':os.environ['PRESERVED_CORE_BLOB'],
+              'workbenchDefault':'core',
+              'candidateStatus':'rejected_for_visual_regression',
+              'humanVisualApproved':False,
+              'productionApproved':False
+          },indent=2)+'\n')
+          PY
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: brick-mother-online
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/deploy-pages@v4
+        id: deployment
+
+  verify-public:
+    needs: deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify exact public files and core blob
+        shell: bash
+        run: |
+          set -euo pipefail
+          base=https://haihao0307.github.io/HOUSE/brick-mother
+          ok=0
+          for attempt in $(seq 1 50); do
+            if curl -fsS "$base/CANONICAL_DEPLOYMENT.json?build=$GITHUB_SHA" -o /tmp/canonical.json \
+              && grep -q "$GITHUB_SHA" /tmp/canonical.json \
+              && curl -fsS "$base/workbench.html?build=$GITHUB_SHA" -o /tmp/workbench.html \
+              && grep -q '原 V2.7.5 三材质核心' /tmp/workbench.html \
+              && curl -fsS "$base/brick-mother-standalone-v2.7.5.html?build=$GITHUB_SHA" -o /tmp/core.html \
+              && grep -q 'Brick Mother V2.7' /tmp/core.html; then
+              ok=1
+              break
+            fi
+            sleep 6
+          done
+          test "$ok" = 1
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          deployment=json.loads(Path('/tmp/canonical.json').read_text())
+          core=Path('/tmp/core.html').read_bytes()
+          blob=hashlib.sha1(b'blob '+str(len(core)).encode()+b'\0'+core).hexdigest()
+          assert deployment['canonicalEntry']=='brick-mother-standalone-v2.7.5.html'
+          assert deployment['canonicalRuntime']=='2.7.5-alpha.1'
+          assert deployment['canonicalBlob']==blob=='7b10389cb9367f7423619262820883cc94b07a61'
+          assert deployment['workbenchDefault']=='core'
+          assert deployment['humanVisualApproved'] is False
+          assert deployment['productionApproved'] is False
+          PY
+
+      - name: Verify public default in real Chromium
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m pip install playwright
+          python3 tools/brick-mother/test_canonical_entry.py https://haihao0307.github.io/HOUSE/brick-mother /tmp/brick-mother-canonical-public
+
+      - name: Upload public proof
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: brick-mother-canonical-public-v2-${{ github.sha }}
+          path: |
+            /tmp/brick-mother-canonical-public
+            /tmp/canonical.json
+          compression-level: 1
+          retention-days: 14
+          if-no-files-found: warn
