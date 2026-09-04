@@ -25,7 +25,7 @@ BASE_FILE = "brick-mother-standalone-v2.7.5.html"
 CANDIDATE_FILE = "brick-mother-standalone-v2.7.5-perf.html"
 
 report = {
-    "schemaVersion": "1.0.0",
+    "schemaVersion": "1.0.1",
     "baseUrl": BASE,
     "baselineRuntime": "2.7.5-alpha.1",
     "candidateRuntime": "2.7.5-perf.1",
@@ -139,11 +139,34 @@ with sync_playwright() as playwright:
         idle_end = page.evaluate("Number(document.documentElement.dataset.renderCount||0)")
         check("idle rendering stops", idle_end - idle_start <= 1, {"start": idle_start, "end": idle_end})
 
-        page.mouse.move(420, 360)
+        canvas = page.locator("#brickCanvas")
+        canvas.scroll_into_view_if_needed(timeout=10_000)
+        page.wait_for_timeout(250)
+        box = canvas.bounding_box()
+        check(
+            "canvas visible for real pointer interaction",
+            bool(box) and box["width"] > 300 and box["height"] > 240,
+            box,
+        )
+        x = box["x"] + box["width"] * 0.53
+        y = max(24.0, min(page.viewport_size["height"] - 24.0, box["y"] + box["height"] * 0.46))
+        reaches_canvas = page.evaluate(
+            "([x,y])=>document.elementFromPoint(x,y)===document.querySelector('#brickCanvas')",
+            [x, y],
+        )
+        check(
+            "drag coordinate reaches canvas rather than page chrome",
+            reaches_canvas,
+            {"x": round(x, 2), "y": round(y, 2), "box": box},
+        )
+        page.mouse.move(x, y)
         page.mouse.down()
-        page.mouse.move(560, 395, steps=12)
+        page.mouse.move(x + min(140, box["width"] * 0.18), y + min(35, box["height"] * 0.08), steps=12)
         page.mouse.up()
-        page.wait_for_timeout(450)
+        page.wait_for_function(
+            f"Number(document.documentElement.dataset.renderCount||0)>{idle_end}",
+            timeout=12_000,
+        )
         drag_count = page.evaluate("Number(document.documentElement.dataset.renderCount||0)")
         check("orbit interaction redraws", drag_count > idle_end, {"before": idle_end, "after": drag_count})
 
