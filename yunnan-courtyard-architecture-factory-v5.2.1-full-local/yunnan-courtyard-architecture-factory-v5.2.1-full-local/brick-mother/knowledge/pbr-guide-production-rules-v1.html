@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Brick Mother PBR 手册生产规则</title>
+<style>
+:root{font-family:Inter,"Segoe UI","PingFang SC","Microsoft YaHei",system-ui,sans-serif;color:#26231f;background:#e7e1d7;--paper:#f7f3ec;--ink:#26231f;--muted:#776e63;--line:#cfc4b5;--accent:#8b5e35;--green:#476552}*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 20% 0,#fff8ed 0,transparent 42rem),linear-gradient(#ece6dc,#ddd4c6);min-height:100vh}.wrap{width:min(1180px,calc(100% - 32px));margin:auto;padding:30px 0 50px}header{display:flex;justify-content:space-between;gap:24px;align-items:flex-end;padding:26px 28px;border:1px solid rgba(87,70,52,.18);border-radius:22px;background:rgba(249,246,239,.82);box-shadow:0 24px 80px rgba(78,61,43,.12);backdrop-filter:blur(18px)}h1{margin:5px 0 0;font-size:clamp(24px,4vw,46px);letter-spacing:-.035em}.eyebrow{margin:0;color:var(--accent);font-size:11px;font-weight:800;letter-spacing:.18em}.source{max-width:340px;color:var(--muted);font-size:12px;line-height:1.7}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:18px}.card{padding:22px;border:1px solid rgba(87,70,52,.16);border-radius:18px;background:rgba(249,246,239,.88);box-shadow:0 12px 34px rgba(78,61,43,.08)}.card h2{margin:0 0 8px;font-size:17px}.card p{margin:0;color:#514a42;line-height:1.75;font-size:13px}.pages{display:inline-flex;margin-top:14px;padding:5px 8px;border-radius:999px;background:#e9dfd0;color:var(--accent);font:700 10px/1.2 ui-monospace,monospace}.event{grid-column:1/-1;padding:22px 24px;border-radius:18px;background:#292823;color:#eee9df}.event h2{margin:0 0 12px}.channels{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.channels div{padding:12px;border:1px solid rgba(255,255,255,.10);border-radius:11px;background:rgba(255,255,255,.04)}.channels b{display:block;color:#e7c69e;font-size:11px}.channels span{display:block;margin-top:6px;color:#c9c2b9;font-size:11px;line-height:1.55}.gate{grid-column:1/-1;display:grid;grid-template-columns:repeat(6,1fr);gap:8px}.gate div{padding:14px;border-radius:12px;background:#f4eee5;border:1px solid var(--line);font-size:11px}.gate b{display:block;margin-bottom:5px;color:var(--green)}@media(max-width:760px){header{display:block}.source{margin-top:18px}.grid{grid-template-columns:1fr}.channels,.gate{grid-template-columns:1fr 1fr}.event{grid-column:auto}.gate{grid-column:auto}}
+</style>
+</head>
+<body><main class="wrap"><header><div><p class="eyebrow">THE PBR GUIDE · BRICK MOTHER TRANSLATION</p><h1>PBR 手册生产规则</h1></div><div class="source">依据用户提供的 Wes McDermott《The PBR Guide》第三版整理。上层卡片保持手册原意，下方“材料事件”属于 Brick Mother 的项目化转换。</div></header><section class="grid" id="rules"></section></main>
+<script>
+const rules=[
+  ['线性空间','颜色输入按 sRGB 解释。Roughness、Metallic、Height 等属性数据按线性数据解释。照明计算在线性空间进行。','38–40'],
+  ['介电 F0','砖、土坯与普通建筑石材属于非金属材料。常见介电 F0 通常位于 0.02 至 0.05，金属粗糙度工作流常用 0.04。','31–32、36–37、48–49'],
+  ['Base Color','表达材料反射颜色，整体对比较传统 diffuse 更平缓。去除宏观照明和 AO。暗部通常不低于 30 至 50 sRGB，亮部不高于 240 sRGB。','51–53'],
+  ['Roughness','描述亚像素微表面方向分布，控制高光扩散。重要 Normal 结构应在 Roughness 中有对应，同时用来表达表面经历与状态。','22、25–27、59–60'],
+  ['AO','只描述环境光可达性，只影响环境漫反射贡献，保持独立通道，不压暗镜面反射。','74–75'],
+  ['Height 与 Normal','实时 Height 负责整体形体和轮廓，减少高频。Normal 负责高频表面细节。','75–79'],
+  ['多通道传播','一个真实材质效果要传播到它实际改变的各通道，空间来源保持一致。','56–58'],
+  ['校验工具','PBR Validate 检查 Base Color 与 Metallic 范围，PBR Safe Color 将颜色约束到合理亮度范围。','82–85']
+];
+const host=document.querySelector('#rules');
+for(const [title,body,pages] of rules){const n=document.createElement('article');n.className='card';n.innerHTML=`<h2>${title}</h2><p>${body}</p><span class="pages">手册页 ${pages}</span>`;host.appendChild(n)}
+const event=document.createElement('article');event.className='event';event.innerHTML=`<h2>Brick Mother 材料事件传播示例：孔洞</h2><div class="channels"><div><b>Height</b><span>低频和中频的负向形体</span></div><div><b>Normal</b><span>孔沿碎裂和孔内微结构</span></div><div><b>Roughness</b><span>孔内、孔沿与完整面分别响应</span></div><div><b>AO</b><span>孔内环境漫反射可达性</span></div><div><b>Base Color</b><span>材料颜色变化，不烘焙宏观阴影</span></div></div>`;host.appendChild(event);
+const gate=document.createElement('article');gate.className='gate';gate.innerHTML='<div><b>Metallic</b>固定 0</div><div><b>F0</b>默认 0.04</div><div><b>Base Color</b>无宏观阴影</div><div><b>AO</b>不压镜面</div><div><b>Height</b>低中频</div><div><b>Normal</b>高频细节</div>';host.appendChild(gate);
+</script></body></html>
