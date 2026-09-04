@@ -1,64 +1,11 @@
 {
-  "runtimeVersion": "1.2.0-alpha.9",
-  "entry": "studio.html",
-  "selfContained": true,
+  "runtimeVersion": "1.4.0-alpha.2",
+  "source": "material-truth procedural PBR rebuild",
+  "studioSha256": "7c667b17a9fa5af94caf285c59fdce28949a4fa212830014e471bd60d1e39921",
+  "studioBytes": 137355,
   "preservedCoreBlob": "7b10389cb9367f7423619262820883cc94b07a61",
-  "sourceBaseline": "V1.1 at 2249dbb48a7f825afd044bf8518d88109abf94c4",
-  "sourceBasis": [
-    {
-      "source": "The PBR Guide, third edition 2018",
-      "pages": [
-        38,
-        39,
-        48,
-        51,
-        59,
-        60,
-        74,
-        75,
-        76,
-        78
-      ],
-      "adopted": "linear lighting; sRGB base color; GGX dielectric; roughness variability; independent AO; height versus normal"
-    },
-    {
-      "source": "Project-specific changes",
-      "adopted": "worker, bright studio light, side drawers, non-periodic field operators",
-      "notFromPBRGuide": true
-    }
-  ],
-  "weatheringCalibration": "illustrative_not_calibrated",
-  "runtimeRenderer": "WebGL2 procedural",
-  "webgpuRuntime": false,
-  "files": {
-    "studio.html": {
-      "bytes": 129060,
-      "sha256": "f3fe76434f5280ae4173547b466ed26fd8a5741295f80f4833294f33da9a76bd"
-    },
-    "studio.webmanifest": {
-      "bytes": 375,
-      "sha256": "765a4a9ae26fce60b363c78084e4ed0f25d0d27ea76c913c98d8026a2d2a51e9"
-    },
-    "studio-sw.js": {
-      "bytes": 844,
-      "sha256": "2a9f3b1255d1c15c82eaaefcbe24938f801fd6177bd01dabd5792b6ca7b0278b"
-    },
-    "studio-icon.svg": {
-      "bytes": 273,
-      "sha256": "bf5fe42910c442dad1cad1f43b5f1eb3f0da95cebe958724f532638de92da8de"
-    },
-    "workbench.html": {
-      "bytes": 8402,
-      "sha256": "23e91658cda13a94c535daaafeebfbe07bb066c9c2b56f04a164f72aceb91658"
-    }
-  },
-  "visualApproved": false,
+  "humanVisualApproved": false,
   "productionApproved": false,
-  "presentationChanges": [
-    "matte cap normals",
-    "smooth backdrop without frustum seam",
-    "irregular microrelief",
-    "whole group framing",
-    "explicit resume invalidation"
-  ]
+  "directExample": "studio-v1.4.html",
+  "glslReservedIdentifierPass": true
 }
