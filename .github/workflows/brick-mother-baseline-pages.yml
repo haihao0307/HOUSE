@@ -1,0 +1,179 @@
+name: Brick Mother Frozen V2.7.5 Stable Entry Publish
+
+on:
+  push:
+    branches:
+      - feature/brick-mother-v2.0-composite-material-dna
+    paths:
+      - ".github/workflows/brick-mother-baseline-pages.yml"
+      - "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/index.html"
+      - "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/BASELINE_REGISTRY_V2.json"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: brick-mother-pages
+  cancel-in-progress: false
+
+env:
+  FACTORY_ROOT: yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local
+  BRICK_ROOT: yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother
+  PRESERVED_CORE_BLOB: 7b10389cb9367f7423619262820883cc94b07a61
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - name: Checkout exact branch head
+        uses: actions/checkout@v4
+
+      - name: Verify stable default and frozen core
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s "$BRICK_ROOT/index.html"
+          test -s "$BRICK_ROOT/BASELINE_REGISTRY_V2.json"
+          test -s "$BRICK_ROOT/brick-mother-standalone-v2.7.5.html"
+          test "$(git hash-object "$BRICK_ROOT/brick-mother-standalone-v2.7.5.html")" = "$PRESERVED_CORE_BLOB"
+          grep -q "location.replace" "$BRICK_ROOT/index.html"
+          grep -q "brick-mother-standalone-v2.7.5.html" "$BRICK_ROOT/index.html"
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          root=Path(os.environ['BRICK_ROOT'])
+          data=json.loads((root/'BASELINE_REGISTRY_V2.json').read_text())
+          assert data['defaultEntry']=='index.html'
+          assert data['defaultTarget']=='brick-mother-standalone-v2.7.5.html'
+          assert data['frozenCore']['gitBlob']==os.environ['PRESERVED_CORE_BLOB']
+          assert data['frozenCore']['byteStable'] is True
+          assert data['candidatePolicy']['defaultEntryAllowed'] is False
+          assert data['deliveryPolicy']['staticImageGeneration'] is False
+          PY
+
+      - name: Assemble public site without changing source assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p _site
+          cp -R "$FACTORY_ROOT"/. _site/
+          rm -rf _site/references-private _site/release _site/.git _site/.github
+          rm -f _site/assets/models/YN_TUANJIE_001_EDITABLE_HIGH.glb
+          touch _site/.nojekyll
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          Path('_site/brick-mother/STABLE_ENTRY_DEPLOYMENT.json').write_text(json.dumps({
+            'triggerHead': os.environ['GITHUB_SHA'],
+            'runId': os.environ['GITHUB_RUN_ID'],
+            'defaultEntry': 'index.html',
+            'defaultTarget': 'brick-mother-standalone-v2.7.5.html',
+            'frozenCoreBlob': os.environ['PRESERVED_CORE_BLOB'],
+            'candidateDefault': False,
+            'humanVisualApproved': False,
+            'productionApproved': False
+          }, indent=2) + '\n')
+          PY
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: brick-mother-online
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy stable entry
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+  verify-public:
+    needs: deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Confirm exact public stable-entry identity
+        shell: bash
+        env:
+          BASE: https://haihao0307.github.io/HOUSE/brick-mother
+        run: |
+          set -euo pipefail
+          ready=0
+          for attempt in $(seq 1 48); do
+            if curl -fsS "$BASE/STABLE_ENTRY_DEPLOYMENT.json?build=$GITHUB_SHA" -o /tmp/stable.json \
+              && grep -q "$GITHUB_SHA" /tmp/stable.json \
+              && curl -fsS "$BASE/?build=$GITHUB_SHA" -o /tmp/index.html \
+              && grep -q "brick-mother-standalone-v2.7.5.html" /tmp/index.html \
+              && curl -fsS "$BASE/brick-mother-standalone-v2.7.5.html?build=$GITHUB_SHA" -o /tmp/core.html \
+              && grep -q "Brick Mother V2.7" /tmp/core.html; then
+              ready=1
+              break
+            fi
+            sleep 5
+          done
+          test "$ready" = 1
+          python3 - <<'PY'
+          import hashlib, json, os
+          from pathlib import Path
+          meta=json.loads(Path('/tmp/stable.json').read_text())
+          core=Path('/tmp/core.html').read_bytes()
+          blob=hashlib.sha1(b'blob '+str(len(core)).encode()+b'\0'+core).hexdigest()
+          assert meta['triggerHead']==os.environ['GITHUB_SHA']
+          assert meta['defaultTarget']=='brick-mother-standalone-v2.7.5.html'
+          assert blob==meta['frozenCoreBlob']=='7b10389cb9367f7423619262820883cc94b07a61'
+          PY
+
+      - name: Open stable root in a real browser
+        shell: bash
+        env:
+          BASE: https://haihao0307.github.io/HOUSE/brick-mother
+        run: |
+          python3 -m pip install playwright
+          python3 - <<'PY'
+          import json, os, shutil
+          from pathlib import Path
+          from playwright.sync_api import sync_playwright
+          with sync_playwright() as pw:
+            executable=shutil.which('google-chrome') or shutil.which('google-chrome-stable') or shutil.which('chromium')
+            browser=pw.chromium.launch(executable_path=executable,headless=True,args=['--no-sandbox','--disable-dev-shm-usage','--enable-unsafe-swiftshader','--use-gl=angle','--use-angle=swiftshader'])
+            page=browser.new_page(viewport={'width':1280,'height':850})
+            errors=[]
+            page.on('pageerror',lambda e:errors.append(str(e)))
+            page.goto(os.environ['BASE']+'/?build='+os.environ['GITHUB_SHA'],wait_until='domcontentloaded',timeout=90000)
+            page.wait_for_url('**/brick-mother-standalone-v2.7.5.html**',timeout=30000)
+            page.wait_for_selector('canvas',timeout=90000)
+            page.wait_for_timeout(2500)
+            proof={'url':page.url,'title':page.title(),'canvas':page.locator('canvas').count(),'errors':errors,'humanVisualApproved':False,'productionApproved':False}
+            Path('/tmp/stable-browser-proof.json').write_text(json.dumps(proof,ensure_ascii=False,indent=2)+'\n')
+            page.screenshot(path='/tmp/stable-entry.png')
+            assert 'brick-mother-standalone-v2.7.5.html' in page.url
+            assert proof['canvas']>0
+            assert not errors
+            browser.close()
+          PY
+
+      - name: Upload stable-entry engineering evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: brick-mother-stable-v275-entry-${{ github.sha }}
+          path: |
+            /tmp/stable.json
+            /tmp/stable-browser-proof.json
+            /tmp/stable-entry.png
+          compression-level: 1
+          if-no-files-found: ignore
+          retention-days: 7
