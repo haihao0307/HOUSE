@@ -1,0 +1,159 @@
+name: Brick Mother V2.7.6 Review Deploy
+
+on:
+  push:
+    branches:
+      - feature/brick-mother-v2.0-composite-material-dna
+    paths:
+      - .github/workflows/brick-mother-v276-deploy.yml
+      - yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/workbench-v2.7.6.html
+      - yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/VERSION_MATRIX_V2.7.6.json
+      - yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/experiments/**
+      - yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/knowledge/**
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: brick-mother-v276-review-deploy
+  cancel-in-progress: true
+
+env:
+  FACTORY_ROOT: yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local
+  BRICK_ROOT: yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother
+  OBSERVATION_BLOB: 7b2a18c6a886d0751ca2fc92530b7986d9e1a727
+  STANDALONE_BLOB: 7b10389cb9367f7423619262820883cc94b07a61
+  HIGH_VARIATION_BLOB: f64c65d87dc418bf1a923a4cf332b449efbe0eb9
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - name: Checkout exact head
+        uses: actions/checkout@v4
+
+      - name: Verify frozen originals and all review entries
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object "$BRICK_ROOT/brick-mother-observation-studio.html")" = "$OBSERVATION_BLOB"
+          test "$(git hash-object "$BRICK_ROOT/brick-mother-standalone-v2.7.5.html")" = "$STANDALONE_BLOB"
+          test "$(git hash-object "$BRICK_ROOT/brick-mother-standalone-v2.6.html")" = "$HIGH_VARIATION_BLOB"
+          test -s "$BRICK_ROOT/workbench-v2.7.6.html"
+          test -s "$BRICK_ROOT/experiments/pbr-weathering-v1.1/index.html"
+          test -s "$BRICK_ROOT/experiments/pbr-daylight-v1.4/index.html"
+          test -s "$BRICK_ROOT/knowledge/pbr-guide-production-rules-v1.html"
+          test ! -e "$BRICK_ROOT/studio-sw.js"
+          python3 -m json.tool "$BRICK_ROOT/VERSION_MATRIX_V2.7.6.json" >/dev/null
+          python3 -m json.tool "$BRICK_ROOT/experiments/ARCHIVE_IDENTITY.json" >/dev/null
+          python3 -m json.tool "$BRICK_ROOT/knowledge/PBR_GUIDE_PRODUCTION_RULES_V1.json" >/dev/null
+          grep -q 'data-workbench="brick-mother-v2.7.6"' "$BRICK_ROOT/workbench-v2.7.6.html"
+          grep -q 'data-frame-id="v275-fast"' "$BRICK_ROOT/workbench-v2.7.6.html"
+
+      - name: Assemble public site and retain authentic root
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf _site
+          mkdir -p _site
+          cp -R "$FACTORY_ROOT"/. _site/
+          rm -rf _site/references-private _site/release _site/.git _site/.github
+          rm -f _site/assets/models/YN_TUANJIE_001_EDITABLE_HIGH.glb
+          cp "$BRICK_ROOT/brick-mother-observation-studio.html" _site/brick-mother/index.html
+          touch _site/.nojekyll
+          test "$(git hash-object _site/brick-mother/index.html)" = "$OBSERVATION_BLOB"
+          test "$(git hash-object _site/brick-mother/brick-mother-standalone-v2.7.5.html)" = "$STANDALONE_BLOB"
+          test "$(git hash-object _site/brick-mother/brick-mother-standalone-v2.6.html)" = "$HIGH_VARIATION_BLOB"
+          test -s _site/brick-mother/workbench-v2.7.6.html
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          Path('_site/brick-mother/V276_DEPLOYMENT.json').write_text(json.dumps({
+            'head':os.environ['GITHUB_SHA'],
+            'root':'authentic V2.7.5 observation studio',
+            'reviewWorkbench':'workbench-v2.7.6.html',
+            'v275Frozen':True,
+            'v26Preserved':True,
+            'pbrExperimentsIsolated':True,
+            'serviceWorkerAtBrickRoot':False,
+            'browserSoftwareRendererGate':'reported separately and does not alter visual source',
+            'humanVisualApproved':False,
+            'productionApproved':False
+          },ensure_ascii=False,indent=2)+'\n')
+          PY
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: brick-mother-online
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy review site
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+  verify-http:
+    needs: deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Verify exact public identities and entries
+        shell: bash
+        env:
+          BASE: https://haihao0307.github.io/HOUSE/brick-mother
+        run: |
+          set -euo pipefail
+          ready=0
+          for attempt in $(seq 1 60); do
+            if curl -fsS "$BASE/V276_DEPLOYMENT.json?build=$GITHUB_SHA" -o /tmp/deployment.json \
+              && grep -q "$GITHUB_SHA" /tmp/deployment.json \
+              && curl -fsS "$BASE/workbench-v2.7.6.html?build=$GITHUB_SHA" -o /tmp/workbench.html \
+              && grep -q 'brick-mother-v2.7.6' /tmp/workbench.html \
+              && curl -fsS "$BASE/?build=$GITHUB_SHA" -o /tmp/root.html \
+              && curl -fsS "$BASE/brick-mother-standalone-v2.7.5.html?build=$GITHUB_SHA" -o /tmp/v275.html \
+              && curl -fsS "$BASE/brick-mother-standalone-v2.6.html?build=$GITHUB_SHA" -o /tmp/v26.html \
+              && curl -fsS "$BASE/experiments/pbr-weathering-v1.1/index.html?build=$GITHUB_SHA" -o /tmp/pbr11.html \
+              && curl -fsS "$BASE/experiments/pbr-daylight-v1.4/index.html?build=$GITHUB_SHA" -o /tmp/pbr14.html \
+              && curl -fsS "$BASE/knowledge/pbr-guide-production-rules-v1.html?build=$GITHUB_SHA" -o /tmp/guide.html; then
+              ready=1
+              break
+            fi
+            sleep 5
+          done
+          test "$ready" = 1
+          python3 - <<'PY'
+          import hashlib, json, os
+          from pathlib import Path
+          def blob(path):
+              data=Path(path).read_bytes()
+              return hashlib.sha1(b'blob '+str(len(data)).encode()+b'\0'+data).hexdigest()
+          meta=json.loads(Path('/tmp/deployment.json').read_text())
+          assert meta['head']==os.environ['GITHUB_SHA']
+          assert blob('/tmp/root.html')==os.environ['OBSERVATION_BLOB']
+          assert blob('/tmp/v275.html')==os.environ['STANDALONE_BLOB']
+          assert blob('/tmp/v26.html')==os.environ['HIGH_VARIATION_BLOB']
+          assert meta['humanVisualApproved'] is False
+          assert meta['productionApproved'] is False
+          PY
+
+      - name: Upload HTTP verification
+        uses: actions/upload-artifact@v4
+        with:
+          name: brick-mother-v276-http-${{ github.sha }}
+          path: /tmp/deployment.json
+          retention-days: 14
