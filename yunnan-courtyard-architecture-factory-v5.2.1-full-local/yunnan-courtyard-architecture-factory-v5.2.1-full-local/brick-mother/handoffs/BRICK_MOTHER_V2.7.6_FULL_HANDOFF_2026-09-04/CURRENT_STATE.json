@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "2.7.6-handoff.1",
+  "schemaVersion": "2.7.6-handoff.2",
   "handoffId": "BRICK_MOTHER_V2.7.6_FULL_HANDOFF_2026-09-04",
   "repository": "haihao0307/HOUSE",
   "branch": "feature/brick-mother-v2.0-composite-material-dna",
@@ -9,6 +9,22 @@
     "draft": true,
     "merged": false,
     "base": "release/brick-mother-v1.0"
+  },
+  "verifiedFullPackage": {
+    "sourceCommit": "a601bbdbff979dcf2c23784435ce99351bf0d49d",
+    "workflowRunId": 33857248735,
+    "artifactId": 9930669833,
+    "artifactName": "brick-mother-v276-full-handoff-verified-a601bbdbff979dcf2c23784435ce99351bf0d49d",
+    "zipName": "BRICK_MOTHER_V2.7.6_FULL_HANDOFF_2026-09-04-a601bbdbff979dcf2c23784435ce99351bf0d49d.zip",
+    "zipBytes": 396846,
+    "zipSha256": "71ea081c33213372d0dee2b3e1ba7670b50601ae477194a06e63333cc688d503",
+    "manifestFileCount": 64,
+    "manifestTotalBytes": 1191559,
+    "manifestHashMismatches": 0,
+    "integrity": "passed",
+    "manifestVerification": "passed",
+    "localRouteSmoke": "passed",
+    "buildReceipt": "BUILD_RECEIPT.md"
   },
   "public": {
     "root": "https://haihao0307.github.io/HOUSE/brick-mother/",
