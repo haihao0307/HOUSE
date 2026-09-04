@@ -20,7 +20,11 @@
   <button class="nav" data-id="guide" data-src="./knowledge/pbr-guide-production-rules-v1.html"><b>PBR 手册规则<i>知识</i></b><small>手册原理、页码与 Brick Mother 通道转换。</small></button>
   <div class="rail-note">所有页面按需加载。V2.7.5 与 V2.6 原文件继续保持哈希冻结。PBR 实验只用于继续演化，没有替换核心的权限。</div>
 </aside>
-<section class="stage" id="stage"><div class="stagebar"><div class="stage-id" id="stageId"><b>V2.7.5 快开</b> · 正在启动</div><div class="stage-tools"><button id="reload">重新加载</button><button id="openPage">独立打开</button></div></div><div class="boot" id="boot"><div class="boot-card"><b>正在打开真实 V2.7.5 核心样本</b><span>工作台先出现，再生成一个主样本。完整三材质在左侧按需加载。</span><div class="progress"><i></i></div></div></div></section></main>
+<section class="stage" id="stage">
+  <iframe class="frame on" data-frame-id="v275-fast" title="V2.7.5 快开" allow="fullscreen; autoplay; xr-spatial-tracking" src="./brick-mother-observation-studio.html?profile=old-pbr-fired&amp;mode=siblings&amp;solo=1&amp;focus=1&amp;launch=fast&amp;host=v276" onload="this.dataset.loaded='1';document.getElementById('boot')?.classList.add('hidden');document.documentElement.dataset.defaultFrameLoaded='true'"></iframe>
+  <div class="stagebar"><div class="stage-id" id="stageId"><b>V2.7.5 快开</b> · 正在启动</div><div class="stage-tools"><button id="reload">重新加载</button><button id="openPage">独立打开</button></div></div>
+  <div class="boot" id="boot"><div class="boot-card"><b>正在打开真实 V2.7.5 核心样本</b><span>工作台先出现，再生成一个主样本。完整三材质在左侧按需加载。</span><div class="progress"><i></i></div></div></div>
+</section></main>
 <script>
 (()=>{
   const labels={'v275-fast':'V2.7.5 快开','v275-full':'V2.7.5 完整核心','v26':'V2.6 高变化版','pbr11':'PBR 风化实验 V1.1','pbr14':'PBR 日光实验 V1.4','guide':'PBR 手册生产规则'};
@@ -29,9 +33,11 @@
   const stageId=document.querySelector('#stageId');
   const rail=document.querySelector('#rail');
   const frames=new Map();
-  let active='';
-  let activeSrc='';
-  let started=0;
+  const initialFrame=stage.querySelector('[data-frame-id="v275-fast"]');
+  if(initialFrame)frames.set('v275-fast',initialFrame);
+  let active='v275-fast';
+  let activeSrc='./brick-mother-observation-studio.html?profile=old-pbr-fired&mode=siblings&solo=1&focus=1&launch=fast';
+  let started=performance.now();
   const requested=new URLSearchParams(location.search).get('tab');
   function status(text){stageId.innerHTML=`<b>${labels[active]||active}</b> · ${text}`}
   function inspect(frame){
@@ -53,6 +59,10 @@
     url.searchParams.set('tab',id);
     history.replaceState(null,'',url.pathname+url.search+url.hash);
   }
+  function monitor(frame){
+    const timer=setInterval(()=>{if(inspect(frame))clearInterval(timer)},250);
+    setTimeout(()=>clearInterval(timer),13000);
+  }
   function activate(button){
     try{
       document.querySelectorAll('.nav').forEach(n=>n.classList.toggle('on',n===button));
@@ -66,20 +76,20 @@
       if(!frame){
         frame=document.createElement('iframe');
         frame.className='frame';
+        frame.dataset.frameId=active;
         frame.title=labels[active];
         frame.allow='fullscreen; autoplay; xr-spatial-tracking';
         frame.src=activeSrc+(activeSrc.includes('?')?'&':'?')+'host=v276';
         stage.prepend(frame);
         frames.set(active,frame);
         frame.addEventListener('load',()=>{
-          boot.classList.add('hidden');
-          status(`页面载入 · ${Math.round(performance.now()-started)} ms`);
-          const timer=setInterval(()=>{if(inspect(frame))clearInterval(timer)},250);
-          setTimeout(()=>clearInterval(timer),13000);
+          frame.dataset.loaded='1';
+          if(active===frame.dataset.frameId){boot.classList.add('hidden');status(`页面载入 · ${Math.round(performance.now()-started)} ms`);monitor(frame)}
         },{once:true});
-      }else{
+      }else if(frame.dataset.loaded==='1'){
         boot.classList.add('hidden');
         status('已保留当前状态');
+        monitor(frame);
       }
       frame.classList.add('on');
       setHistory(active);
@@ -91,10 +101,11 @@
       console.error(error);
     }
   }
+  initialFrame?.addEventListener('load',()=>{if(active==='v275-fast'){status(`页面载入 · ${Math.round(performance.now()-started)} ms`);monitor(initialFrame)}},{once:true});
   document.querySelectorAll('.nav').forEach(n=>n.addEventListener('click',()=>activate(n)));
   document.querySelector('#reload').onclick=()=>{
     const f=frames.get(active);
-    if(f){started=performance.now();boot.classList.remove('hidden');f.src=activeSrc+(activeSrc.includes('?')?'&':'?')+'reload='+Date.now()}
+    if(f){started=performance.now();boot.classList.remove('hidden');f.dataset.loaded='0';f.src=activeSrc+(activeSrc.includes('?')?'&':'?')+'reload='+Date.now()}
   };
   document.querySelector('#openPage').onclick=()=>window.open(activeSrc,'_blank','noopener');
   document.querySelector('#fullscreen').onclick=()=>document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen();
