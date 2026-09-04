@@ -1,0 +1,241 @@
+name: Brick Mother V2.7.6 Publish and Verify
+
+on:
+  push:
+    branches:
+      - feature/brick-mother-v2.0-composite-material-dna
+    paths:
+      - .github/workflows/brick-mother-v276-publish.yml
+      - yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/workbench-v2.7.6.html
+      - yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/VERSION_MATRIX_V2.7.6.json
+      - yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/experiments/**
+      - yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/knowledge/**
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: brick-mother-v276-publish
+  cancel-in-progress: true
+
+env:
+  FACTORY_ROOT: yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local
+  BRICK_ROOT: yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother
+  OBSERVATION_BLOB: 7b2a18c6a886d0751ca2fc92530b7986d9e1a727
+  STANDALONE_BLOB: 7b10389cb9367f7423619262820883cc94b07a61
+  HIGH_VARIATION_BLOB: f64c65d87dc418bf1a923a4cf332b449efbe0eb9
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout exact head
+        uses: actions/checkout@v4
+
+      - name: Verify frozen cores and additive candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object "$BRICK_ROOT/brick-mother-observation-studio.html")" = "$OBSERVATION_BLOB"
+          test "$(git hash-object "$BRICK_ROOT/brick-mother-standalone-v2.7.5.html")" = "$STANDALONE_BLOB"
+          test "$(git hash-object "$BRICK_ROOT/brick-mother-standalone-v2.6.html")" = "$HIGH_VARIATION_BLOB"
+          test -s "$BRICK_ROOT/workbench-v2.7.6.html"
+          test -s "$BRICK_ROOT/experiments/pbr-weathering-v1.1/index.html"
+          test -s "$BRICK_ROOT/experiments/pbr-daylight-v1.4/index.html"
+          test -s "$BRICK_ROOT/knowledge/pbr-guide-production-rules-v1.html"
+          test ! -e "$BRICK_ROOT/studio-sw.js"
+          python3 -m json.tool "$BRICK_ROOT/VERSION_MATRIX_V2.7.6.json" >/dev/null
+          python3 -m json.tool "$BRICK_ROOT/knowledge/PBR_GUIDE_PRODUCTION_RULES_V1.json" >/dev/null
+
+      - name: Install browser verifier
+        run: python3 -m pip install playwright
+
+      - name: Verify local shell, quick core and preserved routes
+        shell: bash
+        run: |
+          set -euo pipefail
+          out=/tmp/brick-v276-local
+          mkdir -p "$out"
+          python3 -m http.server 8765 --bind 127.0.0.1 --directory "$BRICK_ROOT" >"$out/server.log" 2>&1 &
+          pid=$!
+          trap 'kill "$pid" 2>/dev/null || true' EXIT
+          ready=0
+          for i in $(seq 1 45); do
+            if curl -fsS http://127.0.0.1:8765/workbench-v2.7.6.html >/dev/null; then ready=1;break;fi
+            sleep 1
+          done
+          test "$ready" = 1
+          python3 - <<'PY'
+          import json, shutil, time
+          from pathlib import Path
+          from playwright.sync_api import sync_playwright
+          out=Path('/tmp/brick-v276-local')
+          report={'headlessSoftwareRenderer':True,'humanVisualApproved':False,'productionApproved':False,'routes':[]}
+          with sync_playwright() as pw:
+              exe=shutil.which('google-chrome') or shutil.which('google-chrome-stable') or shutil.which('chromium')
+              browser=pw.chromium.launch(executable_path=exe,headless=True,args=['--no-sandbox','--disable-dev-shm-usage','--enable-unsafe-swiftshader','--use-gl=angle','--use-angle=swiftshader'])
+              page=browser.new_page(viewport={'width':1440,'height':1000})
+              parent_errors=[]
+              page.on('pageerror',lambda e:parent_errors.append(str(e)))
+              t=time.monotonic()
+              response=page.goto('http://127.0.0.1:8765/workbench-v2.7.6.html?tab=v275-fast',wait_until='domcontentloaded',timeout=90000)
+              page.wait_for_function("document.documentElement.dataset.workbenchReady==='true'",timeout=10000)
+              report['shellReadyMs']=round((time.monotonic()-t)*1000)
+              page.wait_for_selector('iframe.frame.on',timeout=10000)
+              frame=page.locator('iframe.frame.on').element_handle().content_frame()
+              frame.wait_for_selector('canvas',timeout=90000)
+              frame.wait_for_function("window.__BRICK_MOTHER_READY__===true || document.documentElement.dataset.brickMotherReady==='true' || document.body.classList.contains('runtime-failed')",timeout=180000)
+              assert not frame.evaluate("document.body.classList.contains('runtime-failed')")
+              report['quickSpecimenReadyMs']=round((time.monotonic()-t)*1000)
+              report['runtime']=frame.evaluate("window.__BRICK_MOTHER_QA__?.version || null")
+              report['parentErrors']=parent_errors
+              assert response and response.status==200
+              assert not parent_errors,parent_errors
+              for path in [
+                  'brick-mother-observation-studio.html',
+                  'brick-mother-standalone-v2.7.5.html',
+                  'brick-mother-standalone-v2.6.html',
+                  'experiments/pbr-weathering-v1.1/index.html',
+                  'experiments/pbr-daylight-v1.4/index.html',
+                  'knowledge/pbr-guide-production-rules-v1.html'
+              ]:
+                  probe=browser.new_page(viewport={'width':900,'height':700})
+                  r=probe.goto('http://127.0.0.1:8765/'+path,wait_until='domcontentloaded',timeout=90000)
+                  report['routes'].append({'path':path,'status':r.status if r else None,'title':probe.title(),'canvasCount':probe.locator('canvas').count()})
+                  assert r and r.status==200
+                  probe.close()
+              browser.close()
+          report['passed']=True
+          (out/'verification.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n')
+          print(json.dumps(report,ensure_ascii=False,indent=2))
+          PY
+
+      - name: Assemble public site with authentic V2.7.5 root
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf _site
+          mkdir -p _site
+          cp -R "$FACTORY_ROOT"/. _site/
+          rm -rf _site/references-private _site/release _site/.git _site/.github
+          rm -f _site/assets/models/YN_TUANJIE_001_EDITABLE_HIGH.glb
+          cp "$BRICK_ROOT/brick-mother-observation-studio.html" _site/brick-mother/index.html
+          touch _site/.nojekyll
+          test "$(git hash-object _site/brick-mother/index.html)" = "$OBSERVATION_BLOB"
+          test "$(git hash-object _site/brick-mother/brick-mother-standalone-v2.7.5.html)" = "$STANDALONE_BLOB"
+          test "$(git hash-object _site/brick-mother/brick-mother-standalone-v2.6.html)" = "$HIGH_VARIATION_BLOB"
+          test -s _site/brick-mother/workbench-v2.7.6.html
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - name: Upload local verification
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: brick-mother-v276-local-${{ github.sha }}
+          path: /tmp/brick-v276-local
+          compression-level: 1
+          if-no-files-found: warn
+          retention-days: 14
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: brick-mother-online
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+  verify-public:
+    needs: deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - name: Verify public files and frozen identities
+        shell: bash
+        env:
+          BASE: https://haihao0307.github.io/HOUSE/brick-mother
+        run: |
+          set -euo pipefail
+          ready=0
+          for attempt in $(seq 1 60); do
+            if curl -fsS "$BASE/workbench-v2.7.6.html?build=$GITHUB_SHA" -o /tmp/workbench.html \
+              && grep -q 'brick-mother-v2.7.6' /tmp/workbench.html \
+              && curl -fsS "$BASE/?build=$GITHUB_SHA" -o /tmp/root.html \
+              && curl -fsS "$BASE/brick-mother-standalone-v2.7.5.html?build=$GITHUB_SHA" -o /tmp/v275.html \
+              && curl -fsS "$BASE/brick-mother-standalone-v2.6.html?build=$GITHUB_SHA" -o /tmp/v26.html \
+              && curl -fsS "$BASE/experiments/pbr-weathering-v1.1/index.html?build=$GITHUB_SHA" -o /tmp/pbr11.html \
+              && curl -fsS "$BASE/experiments/pbr-daylight-v1.4/index.html?build=$GITHUB_SHA" -o /tmp/pbr14.html; then ready=1;break;fi
+            sleep 5
+          done
+          test "$ready" = 1
+          python3 - <<'PY'
+          import hashlib, os
+          from pathlib import Path
+          def blob(path):
+              data=Path(path).read_bytes()
+              return hashlib.sha1(b'blob '+str(len(data)).encode()+b'\0'+data).hexdigest()
+          assert blob('/tmp/root.html')==os.environ['OBSERVATION_BLOB']
+          assert blob('/tmp/v275.html')==os.environ['STANDALONE_BLOB']
+          assert blob('/tmp/v26.html')==os.environ['HIGH_VARIATION_BLOB']
+          PY
+
+      - name: Verify public integrated shell and quick runtime
+        shell: bash
+        env:
+          BASE: https://haihao0307.github.io/HOUSE/brick-mother
+        run: |
+          set -euo pipefail
+          python3 -m pip install playwright
+          python3 - <<'PY'
+          import json, os, shutil, time
+          from pathlib import Path
+          from playwright.sync_api import sync_playwright
+          report={'head':os.environ['GITHUB_SHA'],'headlessSoftwareRenderer':True,'humanVisualApproved':False,'productionApproved':False}
+          with sync_playwright() as pw:
+              exe=shutil.which('google-chrome') or shutil.which('google-chrome-stable') or shutil.which('chromium')
+              browser=pw.chromium.launch(executable_path=exe,headless=True,args=['--no-sandbox','--disable-dev-shm-usage','--enable-unsafe-swiftshader','--use-gl=angle','--use-angle=swiftshader'])
+              page=browser.new_page(viewport={'width':1440,'height':1000})
+              errors=[]
+              page.on('pageerror',lambda e:errors.append(str(e)))
+              t=time.monotonic()
+              r=page.goto(os.environ['BASE']+'/workbench-v2.7.6.html?tab=v275-fast&build='+os.environ['GITHUB_SHA'],wait_until='domcontentloaded',timeout=90000)
+              page.wait_for_function("document.documentElement.dataset.workbenchReady==='true'",timeout=10000)
+              report['shellReadyMs']=round((time.monotonic()-t)*1000)
+              page.wait_for_selector('iframe.frame.on',timeout=10000)
+              frame=page.locator('iframe.frame.on').element_handle().content_frame()
+              frame.wait_for_selector('canvas',timeout=90000)
+              frame.wait_for_function("window.__BRICK_MOTHER_READY__===true || document.documentElement.dataset.brickMotherReady==='true' || document.body.classList.contains('runtime-failed')",timeout=180000)
+              assert not frame.evaluate("document.body.classList.contains('runtime-failed')")
+              report.update({'status':r.status if r else None,'quickSpecimenReadyMs':round((time.monotonic()-t)*1000),'runtime':frame.evaluate("window.__BRICK_MOTHER_QA__?.version || null"),'errors':errors})
+              assert r and r.status==200
+              assert not errors,errors
+              browser.close()
+          report['passed']=True
+          Path('/tmp/brick-v276-public.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n')
+          print(json.dumps(report,ensure_ascii=False,indent=2))
+          PY
+
+      - name: Upload public verification
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: brick-mother-v276-public-${{ github.sha }}
+          path: /tmp/brick-v276-public.json
+          if-no-files-found: warn
+          retention-days: 14
