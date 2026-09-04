@@ -27,7 +27,7 @@ jobs:
         run: |
           set -euo pipefail
           python3 - <<'PY'
-          import json, os, shutil, time
+          import json, os, shutil, time, traceback
           from pathlib import Path
           from playwright.sync_api import sync_playwright
 
@@ -36,44 +36,71 @@ jobs:
             'headlessSoftwareRenderer':True,
             'humanVisualApproved':False,
             'productionApproved':False,
-            'errors':[]
+            'errors':[],
+            'passed':False
           }
-          with sync_playwright() as pw:
-              executable=shutil.which('google-chrome') or shutil.which('google-chrome-stable') or shutil.which('chromium')
-              browser=pw.chromium.launch(
-                  executable_path=executable,
-                  headless=True,
-                  args=['--no-sandbox','--disable-dev-shm-usage','--enable-unsafe-swiftshader','--use-gl=angle','--use-angle=swiftshader']
-              )
-              page=browser.new_page(viewport={'width':1440,'height':1000},device_scale_factor=1)
-              page.on('pageerror',lambda e:report['errors'].append(str(e)))
-              started=time.monotonic()
-              response=page.goto(os.environ['URL'],wait_until='commit',timeout=90000)
-              page.wait_for_function("document.documentElement.dataset.workbenchReady==='true'",timeout=15000)
-              report['shellReadyMs']=round((time.monotonic()-started)*1000)
-              locator=page.locator('iframe[data-frame-id="v275-fast"]')
-              locator.wait_for(state='attached',timeout=15000)
-              report['iframeCount']=locator.count()
-              report['iframeState']=locator.evaluate("e=>{const s=getComputedStyle(e),r=e.getBoundingClientRect();return {className:e.className,visibility:s.visibility,opacity:s.opacity,display:s.display,width:r.width,height:r.height,src:e.src}}");
-              assert report['iframeCount']==1
-              assert report['iframeState']['width']>500 and report['iframeState']['height']>400
-              frame=locator.element_handle().content_frame()
-              frame.wait_for_selector('canvas',state='attached',timeout=90000)
-              frame.wait_for_function("window.__BRICK_MOTHER_READY__===true || document.documentElement.dataset.brickMotherReady==='true' || document.body.classList.contains('runtime-failed')",timeout=240000)
-              report['runtimeFailed']=frame.evaluate("document.body.classList.contains('runtime-failed')")
-              report['runtime']=frame.evaluate("window.__BRICK_MOTHER_QA__?.version || null")
-              report['quickSpecimenReadyMs']=round((time.monotonic()-started)*1000)
-              report['canvas']=frame.locator('canvas').count()
-              report['httpStatus']=response.status if response else None
-              assert report['httpStatus']==200
-              assert report['runtimeFailed'] is False
-              assert report['runtime']=='2.7.5-alpha.1'
-              assert report['canvas']>0
-              assert not report['errors'],report['errors']
-              browser.close()
-          report['passed']=True
-          Path('/tmp/brick-v276-browser-proof.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n')
-          print(json.dumps(report,ensure_ascii=False,indent=2))
+          try:
+              with sync_playwright() as pw:
+                  executable=shutil.which('google-chrome') or shutil.which('google-chrome-stable') or shutil.which('chromium')
+                  browser=pw.chromium.launch(
+                      executable_path=executable,
+                      headless=True,
+                      args=['--no-sandbox','--disable-dev-shm-usage','--enable-unsafe-swiftshader','--use-gl=angle','--use-angle=swiftshader']
+                  )
+                  page=browser.new_page(viewport={'width':1440,'height':1000},device_scale_factor=1)
+                  page.on('pageerror',lambda e:report['errors'].append(str(e)))
+                  started=time.monotonic()
+                  response=page.goto(os.environ['URL'],wait_until='commit',timeout=90000)
+                  page.wait_for_function("document.documentElement.dataset.workbenchReady==='true'",timeout=15000)
+                  report['shellReadyMs']=round((time.monotonic()-started)*1000)
+
+                  selector='iframe[data-frame-id="v275-fast"]'
+                  deadline=time.monotonic()+20
+                  handle=None
+                  while time.monotonic()<deadline:
+                      handle=page.query_selector(selector)
+                      if handle is not None:
+                          break
+                      page.wait_for_timeout(100)
+                  if handle is None:
+                      raise RuntimeError('default authentic V2.7.5 iframe was not attached')
+
+                  report['iframeCount']=page.locator(selector).count()
+                  report['iframeState']=handle.evaluate("e=>{const s=getComputedStyle(e),r=e.getBoundingClientRect();return {className:e.className,visibility:s.visibility,opacity:s.opacity,display:s.display,width:r.width,height:r.height,src:e.src,loaded:e.dataset.loaded||null}}");
+                  assert report['iframeCount']==1
+                  assert report['iframeState']['width']>500 and report['iframeState']['height']>400
+
+                  frame=None
+                  deadline=time.monotonic()+30
+                  while time.monotonic()<deadline:
+                      frame=handle.content_frame()
+                      if frame is not None:
+                          break
+                      page.wait_for_timeout(100)
+                  if frame is None:
+                      raise RuntimeError('default iframe did not expose a content frame')
+
+                  frame.wait_for_selector('canvas',state='attached',timeout=90000)
+                  frame.wait_for_function("window.__BRICK_MOTHER_READY__===true || document.documentElement.dataset.brickMotherReady==='true' || document.body.classList.contains('runtime-failed')",timeout=240000)
+                  report['runtimeFailed']=frame.evaluate("document.body.classList.contains('runtime-failed')")
+                  report['runtime']=frame.evaluate("window.__BRICK_MOTHER_QA__?.version || null")
+                  report['quickSpecimenReadyMs']=round((time.monotonic()-started)*1000)
+                  report['canvas']=frame.locator('canvas').count()
+                  report['httpStatus']=response.status if response else None
+                  assert report['httpStatus']==200
+                  assert report['runtimeFailed'] is False
+                  assert report['runtime']=='2.7.5-alpha.1'
+                  assert report['canvas']>0
+                  assert not report['errors'],report['errors']
+                  report['passed']=True
+                  browser.close()
+          except Exception:
+              report['exception']=traceback.format_exc()
+          finally:
+              Path('/tmp/brick-v276-browser-proof.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n')
+              print(json.dumps(report,ensure_ascii=False,indent=2))
+          if not report['passed']:
+              raise SystemExit(1)
           PY
 
       - name: Upload proof
