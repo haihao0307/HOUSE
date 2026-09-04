@@ -12,7 +12,7 @@
 </head>
 <body><main class="app"><header class="top"><div class="brand"><div class="mark">BM</div><div><b>BRICK MOTHER 综合工作台</b><span>V2.7.5 冻结核心 · V2.6 高变化 · PBR 实验隔离 · V2.7.6 候选</span></div></div><div class="top-actions"><span class="status">V2.7.5 核心哈希锁定</span><button class="icon-btn mobile-menu" id="menu">版本</button><button class="icon-btn" id="clearCache">清理旧缓存</button><button class="icon-btn" id="fullscreen">全屏</button></div></header>
 <aside class="rail" id="rail"><h2>版本与实验</h2>
-  <button class="nav on" data-id="v275-fast" data-src="./brick-mother-observation-studio.html?profile=old-pbr-fired&mode=siblings&solo=1&focus=1&launch=fast"><b>V2.7.5 快开<i>默认</i></b><small>使用真实 V2.7.5 运行时，只先生成一块核心样本。</small></button>
+  <button class="nav on" data-id="v275-fast" data-src="./brick-mother-observation-studio.html?profile=old-pbr-fired&amp;mode=siblings&amp;solo=1&amp;focus=1&amp;launch=fast"><b>V2.7.5 快开<i>默认</i></b><small>使用真实 V2.7.5 运行时，只先生成一块核心样本。</small></button>
   <button class="nav" data-id="v275-full" data-src="./brick-mother-observation-studio.html?launch=full"><b>V2.7.5 完整核心<i>冻结</i></b><small>原三栏观察台和完整三材质，文件未改动。</small></button>
   <button class="nav" data-id="v26" data-src="./brick-mother-standalone-v2.6.html"><b>V2.6 高变化版<i>保留</i></b><small>更强色彩、孔洞、破损和形体变化。</small></button>
   <button class="nav" data-id="pbr11" data-src="./experiments/pbr-weathering-v1.1/index.html"><b>PBR 风化 V1.1<i>实验</i></b><small>年代、雨水、积尘、盐析与十六个诊断通道。</small></button>
@@ -23,18 +23,23 @@
 <section class="stage" id="stage"><div class="stagebar"><div class="stage-id" id="stageId"><b>V2.7.5 快开</b> · 正在启动</div><div class="stage-tools"><button id="reload">重新加载</button><button id="openPage">独立打开</button></div></div><div class="boot" id="boot"><div class="boot-card"><b>正在打开真实 V2.7.5 核心样本</b><span>工作台先出现，再生成一个主样本。完整三材质在左侧按需加载。</span><div class="progress"><i></i></div></div></div></section></main>
 <script>
 (()=>{
-  const labels={
-    'v275-fast':'V2.7.5 快开','v275-full':'V2.7.5 完整核心','v26':'V2.6 高变化版','pbr11':'PBR 风化实验 V1.1','pbr14':'PBR 日光实验 V1.4','guide':'PBR 手册生产规则'
-  };
-  const stage=document.querySelector('#stage'),boot=document.querySelector('#boot'),stageId=document.querySelector('#stageId'),rail=document.querySelector('#rail');
-  const frames=new Map();let active='';let activeSrc='';let started=0;
-  const params=new URLSearchParams(location.search);
-  const requested=params.get('tab');
+  const labels={'v275-fast':'V2.7.5 快开','v275-full':'V2.7.5 完整核心','v26':'V2.6 高变化版','pbr11':'PBR 风化实验 V1.1','pbr14':'PBR 日光实验 V1.4','guide':'PBR 手册生产规则'};
+  const stage=document.querySelector('#stage');
+  const boot=document.querySelector('#boot');
+  const stageId=document.querySelector('#stageId');
+  const rail=document.querySelector('#rail');
+  const frames=new Map();
+  let active='';
+  let activeSrc='';
+  let started=0;
+  const requested=new URLSearchParams(location.search).get('tab');
   function status(text){stageId.innerHTML=`<b>${labels[active]||active}</b> · ${text}`}
   function inspect(frame){
     const elapsed=Math.round(performance.now()-started);
     try{
-      const w=frame.contentWindow,d=w.documentElement,b=w.document.body;
+      const w=frame.contentWindow;
+      const d=w.document.documentElement;
+      const b=w.document.body;
       const ready=w.__BRICK_MOTHER_READY__===true||d.dataset.brickMotherReady==='true'||d.dataset.ready==='true'||d.dataset.studioReady==='true';
       const failed=b?.classList.contains('runtime-failed')||d.dataset.runtimeFailure==='true';
       if(failed){status(`运行异常 · ${elapsed} ms`);return true}
@@ -43,30 +48,72 @@
     if(elapsed>12000){status(`页面已载入 · 后台仍在生成 · ${elapsed} ms`);return true}
     return false;
   }
+  function setHistory(id){
+    const url=new URL(location.href);
+    url.searchParams.set('tab',id);
+    history.replaceState(null,'',url.pathname+url.search+url.hash);
+  }
   function activate(button){
-    document.querySelectorAll('.nav').forEach(n=>n.classList.toggle('on',n===button));
-    active=button.dataset.id;activeSrc=button.dataset.src;started=performance.now();status('正在载入');boot.classList.remove('hidden');
-    frames.forEach(f=>f.classList.remove('on'));
-    let frame=frames.get(active);
-    if(!frame){
-      frame=document.createElement('iframe');frame.className='frame';frame.title=labels[active];frame.allow='fullscreen; autoplay; xr-spatial-tracking';frame.src=activeSrc+(activeSrc.includes('?')?'&':'?')+'host=v276';stage.prepend(frame);frames.set(active,frame);
-      frame.addEventListener('load',()=>{boot.classList.add('hidden');status(`页面载入 · ${Math.round(performance.now()-started)} ms`);const timer=setInterval(()=>{if(inspect(frame))clearInterval(timer)},250);setTimeout(()=>clearInterval(timer),13000)},{once:true});
-    }else{boot.classList.add('hidden');status('已保留当前状态')}
-    frame.classList.add('on');history.replaceState(null,'',`?tab=${active}`);rail.classList.remove('open');
+    try{
+      document.querySelectorAll('.nav').forEach(n=>n.classList.toggle('on',n===button));
+      active=button.dataset.id;
+      activeSrc=button.dataset.src;
+      started=performance.now();
+      status('正在载入');
+      boot.classList.remove('hidden');
+      frames.forEach(f=>f.classList.remove('on'));
+      let frame=frames.get(active);
+      if(!frame){
+        frame=document.createElement('iframe');
+        frame.className='frame';
+        frame.title=labels[active];
+        frame.allow='fullscreen; autoplay; xr-spatial-tracking';
+        frame.src=activeSrc+(activeSrc.includes('?')?'&':'?')+'host=v276';
+        stage.prepend(frame);
+        frames.set(active,frame);
+        frame.addEventListener('load',()=>{
+          boot.classList.add('hidden');
+          status(`页面载入 · ${Math.round(performance.now()-started)} ms`);
+          const timer=setInterval(()=>{if(inspect(frame))clearInterval(timer)},250);
+          setTimeout(()=>clearInterval(timer),13000);
+        },{once:true});
+      }else{
+        boot.classList.add('hidden');
+        status('已保留当前状态');
+      }
+      frame.classList.add('on');
+      setHistory(active);
+      rail.classList.remove('open');
+    }catch(error){
+      boot.classList.add('hidden');
+      status(`工作台错误 · ${error.message||error}`);
+      document.documentElement.dataset.workbenchFailure='true';
+      console.error(error);
+    }
   }
   document.querySelectorAll('.nav').forEach(n=>n.addEventListener('click',()=>activate(n)));
-  document.querySelector('#reload').onclick=()=>{const f=frames.get(active);if(f){started=performance.now();boot.classList.remove('hidden');f.src=activeSrc+(activeSrc.includes('?')?'&':'?')+'reload='+Date.now()}};
+  document.querySelector('#reload').onclick=()=>{
+    const f=frames.get(active);
+    if(f){started=performance.now();boot.classList.remove('hidden');f.src=activeSrc+(activeSrc.includes('?')?'&':'?')+'reload='+Date.now()}
+  };
   document.querySelector('#openPage').onclick=()=>window.open(activeSrc,'_blank','noopener');
   document.querySelector('#fullscreen').onclick=()=>document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen();
   document.querySelector('#menu').onclick=()=>rail.classList.toggle('open');
   document.querySelector('#clearCache').onclick=async()=>{
     let count=0;
-    if('serviceWorker' in navigator){const rs=await navigator.serviceWorker.getRegistrations();for(const r of rs){if(r.scope.includes('/HOUSE/brick-mother/')){await r.unregister();count++}}}
+    if('serviceWorker' in navigator){
+      const registrations=await navigator.serviceWorker.getRegistrations();
+      for(const registration of registrations){if(registration.scope.includes('/HOUSE/brick-mother/')){await registration.unregister();count++}}
+    }
     if('caches' in window){for(const key of await caches.keys()){if(key.startsWith('brick-studio-')){await caches.delete(key);count++}}}
     status(`旧缓存已清理 ${count} 项`);
   };
-  window.addEventListener('keydown',e=>{if(e.key==='f'||e.key==='F')document.querySelector('#fullscreen').click();if(e.key==='r'||e.key==='R')document.querySelector('#reload').click()});
-  const first=[...document.querySelectorAll('.nav')].find(n=>n.dataset.id===requested)||document.querySelector('.nav');activate(first);
+  window.addEventListener('keydown',event=>{
+    if(event.key==='f'||event.key==='F')document.querySelector('#fullscreen').click();
+    if(event.key==='r'||event.key==='R')document.querySelector('#reload').click();
+  });
   document.documentElement.dataset.workbenchReady='true';
+  const first=[...document.querySelectorAll('.nav')].find(n=>n.dataset.id===requested)||document.querySelector('.nav');
+  requestAnimationFrame(()=>activate(first));
 })();
 </script></body></html>
