@@ -1,315 +1,38 @@
-name: Brick Mother Studio V1.3 Material Truth Review and Direct HTML Publish
+name: Brick Mother V1.3 Archived Audit
 
+# V1.3 is retained for source history only. Canonical Pages deployment is owned
+# by brick-mother-canonical-pages.yml and must open the frozen V2.7.5 core.
 on:
-  push:
-    branches: [feature/brick-mother-v2.0-composite-material-dna]
-    paths:
-      - .github/workflows/brick-mother-pages-preview.yml
-      - tools/brick-mother/publish_studio12.py
-      - tools/brick-mother/refine_studio12.py
-      - tools/brick-mother/refine_studio13.py
-      - tools/brick-mother/test_studio13.py
-      - tools/brick-mother/STUDIO_RELEASE_READY_V13.json
-      - docs/brick-mother/BRICK_MOTHER_PBR_MATERIAL_TRUTH_V1.3.md
-      - yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/brick-mother-realtime-weathering-pbr-v1.1.0.html
-      - yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/brick-mother-realtime-weathering-pbr-v1.1.css
-      - yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/brick-mother-realtime-weathering-pbr-v1.1.js
-      - yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/brick-mother-weathering-geometry-v1.1.js
-      - yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/brick-mother-stone-form-geometry-v3.5.js
   workflow_dispatch:
 
 permissions:
-  contents: write
-  pages: write
-  id-token: write
-
-concurrency:
-  group: brick-mother-pages-v13
-  cancel-in-progress: false
+  contents: read
 
 env:
-  TARGET_BRANCH: feature/brick-mother-v2.0-composite-material-dna
   BRICK_ROOT: yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother
   PRESERVED_CORE_BLOB: 7b10389cb9367f7423619262820883cc94b07a61
-  RUNTIME_VERSION: 1.3.0-alpha.1
 
 jobs:
-  build:
+  archived-audit:
     runs-on: ubuntu-latest
-    timeout-minutes: 28
-    outputs:
-      publish: ${{ steps.gate.outputs.publish }}
-      source_head: ${{ steps.source.outputs.source_head }}
+    timeout-minutes: 8
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
-      - name: Build additive self-contained material-truth studio
+      - name: Verify retained source and approval state
         shell: bash
         run: |
           set -euo pipefail
-          python3 tools/brick-mother/publish_studio12.py "$BRICK_ROOT"
-          python3 tools/brick-mother/refine_studio12.py "$BRICK_ROOT"
-          python3 tools/brick-mother/refine_studio13.py "$BRICK_ROOT"
+          test -s "$BRICK_ROOT/studio-v1.3.html"
+          test -s "$BRICK_ROOT/brick-mother-standalone-v2.7.5.html"
+          test "$(git hash-object "$BRICK_ROOT/brick-mother-standalone-v2.7.5.html")" = "$PRESERVED_CORE_BLOB"
           python3 - <<'PY'
-          import hashlib,json,os,re,subprocess
+          import json,os
           from pathlib import Path
           root=Path(os.environ['BRICK_ROOT'])
-          studio=root/'studio.html'
-          alias=root/'studio-v1.3.html'
-          text=studio.read_text()
-          assert alias.read_bytes()==studio.read_bytes()
-          assert len(text)>110000
-          assert "version:'1.3.0-alpha.1'" in text
-          assert "brdf:'GGX'" in text
-          assert "dielectricF0:.04" in text
-          assert "aoScope:'diffuse-ambient-only'" in text
-          assert "heightRole:'low-frequency-silhouette'" in text
-          assert "normalRole:'high-frequency-detail'" in text
-          assert 'waterCoatBRDF' in text
-          assert 'pbrSafeAlbedo' in text
-          assert "playing:false" in text
-          assert "else setView('hero')" in text
-          assert "background:#c7ced2" in text
-          for index,code in enumerate(re.findall(r'<script[^>]*>([\s\S]*?)</script>',text)):
-              path=Path(f'/tmp/brick-studio-v13-script-{index}.js')
-              path.write_text(code)
-              subprocess.run(['node','--check',str(path)],check=True)
-          build=json.loads((root/'STUDIO_BUILD.json').read_text())
-          assert build['runtimeVersion']=='1.3.0-alpha.1'
-          assert build['preservedCoreBlob']==os.environ['PRESERVED_CORE_BLOB']
-          assert build['files']['studio.html']['sha256']==hashlib.sha256(studio.read_bytes()).hexdigest()
-          assert build['visualApproved'] is False
-          assert build['productionApproved'] is False
-          core=(root/'brick-mother-standalone-v2.7.5.html').read_bytes()
-          blob=hashlib.sha1(b'blob '+str(len(core)).encode()+b'\0'+core).hexdigest()
-          assert blob==os.environ['PRESERVED_CORE_BLOB']
+          registry=json.loads((root/'BASELINE_REGISTRY_V1.json').read_text())
+          assert registry['canonicalEntry']['gitBlob']==os.environ['PRESERVED_CORE_BLOB']
+          assert registry['canonicalEntry']['immutable'] is True
+          assert registry['approvals']['humanVisualApproved'] is False
+          assert registry['approvals']['productionApproved'] is False
           PY
-
-      - name: Install real-browser test drivers
-        run: python3 -m pip install playwright pillow
-
-      - name: Real WebGL PBR, daylight and interaction checks
-        shell: bash
-        run: |
-          set -euo pipefail
-          python3 -m http.server 8765 --bind 127.0.0.1 --directory "$BRICK_ROOT" >/tmp/brick-studio-v13-server.log 2>&1 &
-          PID=$!
-          trap 'kill "$PID" 2>/dev/null || true' EXIT
-          ready=0
-          for i in $(seq 1 30); do
-            if curl -fsS http://127.0.0.1:8765/studio.html >/dev/null; then ready=1; break; fi
-            sleep 1
-          done
-          test "$ready" = 1
-          python3 tools/brick-mother/test_studio13.py http://127.0.0.1:8765 /tmp/brick-studio-v13-review
-
-      - name: Save V1.3 review evidence and exact candidate
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: brick-studio-v13-review-${{ github.sha }}
-          path: |
-            /tmp/brick-studio-v13-review
-            /tmp/brick-studio-v13-server.log
-            ${{ env.BRICK_ROOT }}/studio.html
-            ${{ env.BRICK_ROOT }}/studio-v1.3.html
-            ${{ env.BRICK_ROOT }}/STUDIO_BUILD.json
-          retention-days: 7
-
-      - name: Check reviewed V1.3 output gate
-        id: gate
-        shell: bash
-        run: |
-          set -euo pipefail
-          publish=false
-          if [ -f tools/brick-mother/STUDIO_RELEASE_READY_V13.json ]; then
-            python3 - <<'PY'
-          import hashlib,json,os,subprocess
-          from pathlib import Path
-          gate=json.loads(Path('tools/brick-mother/STUDIO_RELEASE_READY_V13.json').read_text())
-          root=Path(os.environ['BRICK_ROOT'])
-          builder=subprocess.check_output(['git','hash-object','tools/brick-mother/publish_studio12.py'],text=True).strip()
-          refine12=subprocess.check_output(['git','hash-object','tools/brick-mother/refine_studio12.py'],text=True).strip()
-          refine13=subprocess.check_output(['git','hash-object','tools/brick-mother/refine_studio13.py'],text=True).strip()
-          digest=hashlib.sha256((root/'studio.html').read_bytes()).hexdigest()
-          verification=json.loads(Path('/tmp/brick-studio-v13-review/verification.json').read_text())
-          assert gate['runtimeVersion']==os.environ['RUNTIME_VERSION']
-          assert gate['builderBlob']==builder
-          assert gate['refine12Blob']==refine12
-          assert gate['refine13Blob']==refine13
-          assert gate['studioSha256']==digest
-          assert gate['reviewedTest']['passed'] is True
-          assert verification['passed'] is True
-          assert gate['internalReviewComplete'] is True
-          assert gate['humanVisualApproved'] is False
-          assert gate['productionApproved'] is False
-          PY
-            publish=true
-          fi
-          echo "publish=$publish" >> "$GITHUB_OUTPUT"
-
-      - name: Append generated V1.3 source without rewriting history
-        id: source
-        if: steps.gate.outputs.publish == 'true'
-        shell: bash
-        run: |
-          set -euo pipefail
-          git config user.name 'Brick Mother Automation'
-          git config user.email 'actions@users.noreply.github.com'
-          git add \
-            "$BRICK_ROOT/studio.html" \
-            "$BRICK_ROOT/studio-v1.3.html" \
-            "$BRICK_ROOT/studio.webmanifest" \
-            "$BRICK_ROOT/studio-icon.svg" \
-            "$BRICK_ROOT/studio-sw.js" \
-            "$BRICK_ROOT/STUDIO_BUILD.json" \
-            "$BRICK_ROOT/workbench.html"
-          if ! git diff --cached --quiet; then
-            git commit -m 'feat(brick): publish verified material-truth studio v1.3'
-            for attempt in 1 2 3 4; do
-              git fetch origin "$TARGET_BRANCH"
-              git rebase "origin/$TARGET_BRANCH"
-              if git push origin "HEAD:$TARGET_BRANCH"; then break; fi
-              if [ "$attempt" -eq 4 ]; then exit 1; fi
-              sleep $((attempt * 3))
-            done
-          fi
-          echo "source_head=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
-
-      - name: Assemble existing public site with direct V1.3 entries
-        if: steps.gate.outputs.publish == 'true'
-        shell: bash
-        run: |
-          set -euo pipefail
-          src="$(dirname "$BRICK_ROOT")"
-          mkdir -p _site
-          cp -R "$src"/. _site/
-          rm -rf _site/references-private _site/release _site/.git _site/.github
-          rm -f _site/assets/models/YN_TUANJIE_001_EDITABLE_HIGH.glb
-          touch _site/.nojekyll
-          python3 - <<'PY'
-          import json,os,subprocess
-          from pathlib import Path
-          source=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
-          Path('_site/brick-mother/STUDIO_DEPLOYMENT.json').write_text(json.dumps({
-              'sourceHead':source,
-              'triggerHead':os.environ['GITHUB_SHA'],
-              'runId':os.environ['GITHUB_RUN_ID'],
-              'runtime':'1.3.0-alpha.1',
-              'directExample':'studio-v1.3.html',
-              'humanVisualApproved':False,
-              'productionApproved':False
-          },indent=2)+'\n')
-          PY
-
-      - uses: actions/upload-pages-artifact@v3
-        if: steps.gate.outputs.publish == 'true'
-        with:
-          path: _site
-
-  deploy:
-    if: needs.build.outputs.publish == 'true'
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: brick-mother-online
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - uses: actions/deploy-pages@v4
-        id: deployment
-
-  verify-public:
-    needs: [build, deploy]
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    steps:
-      - name: Confirm exact public V1.3 source identity
-        shell: bash
-        env:
-          SOURCE_HEAD: ${{ needs.build.outputs.source_head }}
-        run: |
-          set -euo pipefail
-          base=https://haihao0307.github.io/HOUSE/brick-mother
-          for i in $(seq 1 48); do
-            curl -fsS "$base/STUDIO_DEPLOYMENT.json?build=$SOURCE_HEAD" -o /tmp/deployed.json || true
-            if [ -s /tmp/deployed.json ] && grep -q "$SOURCE_HEAD" /tmp/deployed.json && grep -q '1.3.0-alpha.1' /tmp/deployed.json; then break; fi
-            sleep 5
-          done
-          grep -q "$SOURCE_HEAD" /tmp/deployed.json
-          grep -q '1.3.0-alpha.1' /tmp/deployed.json
-          curl -fsS "$base/studio.html?build=$SOURCE_HEAD" -o /tmp/live-studio.html
-          curl -fsS "$base/studio-v1.3.html?build=$SOURCE_HEAD" -o /tmp/live-studio-v13.html
-          curl -fsS "$base/STUDIO_BUILD.json?build=$SOURCE_HEAD" -o /tmp/build.json
-          curl -fsS "$base/brick-mother-standalone-v2.7.5.html?build=$SOURCE_HEAD" -o /tmp/core.html
-          python3 - <<'PY'
-          import hashlib,json,os
-          from pathlib import Path
-          manifest=json.loads(Path('/tmp/build.json').read_text())
-          main=Path('/tmp/live-studio.html').read_bytes()
-          alias=Path('/tmp/live-studio-v13.html').read_bytes()
-          assert main==alias
-          assert hashlib.sha256(main).hexdigest()==manifest['files']['studio.html']['sha256']
-          assert manifest['runtimeVersion']==os.environ['RUNTIME_VERSION']
-          core=Path('/tmp/core.html').read_bytes()
-          blob=hashlib.sha1(b'blob '+str(len(core)).encode()+b'\0'+core).hexdigest()
-          assert blob==os.environ['PRESERVED_CORE_BLOB']==manifest['preservedCoreBlob']
-          PY
-
-      - name: Open live public V1.3 page in Chromium
-        run: |
-          python3 -m pip install playwright pillow
-          python3 - <<'PY'
-          import json,shutil
-          from pathlib import Path
-          from PIL import Image,ImageStat
-          from playwright.sync_api import sync_playwright
-          url='https://haihao0307.github.io/HOUSE/brick-mother/studio-v1.3.html?view=hero&light=studio'
-          with sync_playwright() as p:
-              browser=p.chromium.launch(executable_path=shutil.which('google-chrome') or shutil.which('chromium'),args=['--no-sandbox','--enable-unsafe-swiftshader','--use-gl=angle','--use-angle=swiftshader'])
-              page=browser.new_page(viewport={'width':1280,'height':850})
-              errors=[]
-              page.on('pageerror',lambda error:errors.append(str(error)))
-              page.goto(url,wait_until='domcontentloaded')
-              page.wait_for_function("document.documentElement.dataset.workbenchReady==='true'",timeout=90000)
-              api='window.__BRICK_MOTHER_WEATHERING_PBR__'
-              assert page.evaluate(api+'.version')=='1.3.0-alpha.1'
-              assert page.evaluate(api+'.brdf')=='GGX'
-              assert page.evaluate(api+'.metalness')==0
-              assert abs(page.evaluate(api+'.dielectricF0')-.04)<1e-6
-              assert page.evaluate(api+'.aoScope')=='diffuse-ambient-only'
-              assert page.evaluate("document.documentElement.dataset.runtimeFailure!=='true'")
-              page.keyboard.press('Tab')
-              page.click('#hidePanels')
-              page.wait_for_timeout(1000)
-              page.screenshot(path='/tmp/live-studio-v13.png')
-              image=Image.open('/tmp/live-studio-v13.png').convert('RGB')
-              stat=ImageStat.Stat(image)
-              mean=sum(v*w for v,w in zip(stat.mean,(.2126,.7152,.0722)))
-              assert mean>72,mean
-              proof={
-                  'errors':errors,
-                  'data':page.evaluate('({...document.documentElement.dataset})'),
-                  'url':page.url,
-                  'runtime':page.evaluate(api+'.version'),
-                  'meanLuma':mean,
-                  'humanVisualApproved':False,
-                  'productionApproved':False
-              }
-              Path('/tmp/live-proof-v13.json').write_text(json.dumps(proof,indent=2))
-              assert not errors
-              browser.close()
-          PY
-
-      - name: Upload public V1.3 evidence
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: brick-studio-v13-public-${{ github.sha }}
-          path: |
-            /tmp/live-studio-v13.png
-            /tmp/live-proof-v13.json
-            /tmp/deployed.json
-            /tmp/build.json
-          retention-days: 7
