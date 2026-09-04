@@ -1,0 +1,96 @@
+name: Brick Mother V2.7.5 Performance Candidate Review
+
+on:
+  push:
+    branches: [feature/brick-mother-v2.0-composite-material-dna]
+    paths:
+      - .github/workflows/brick-mother-v275-performance-candidate.yml
+      - tools/brick-mother/build_v275_performance_candidate.py
+      - tools/brick-mother/test_v275_performance_candidate.py
+      - yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/brick-mother-standalone-v2.7.5.html
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  BRICK_ROOT: yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother
+  PRESERVED_CORE_BLOB: 7b10389cb9367f7423619262820883cc94b07a61
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 32
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Build additive candidate and protect frozen source
+        shell: bash
+        run: |
+          set -euo pipefail
+          source="$BRICK_ROOT/brick-mother-standalone-v2.7.5.html"
+          candidate="$BRICK_ROOT/brick-mother-standalone-v2.7.5-perf.html"
+          test "$(git hash-object "$source")" = "$PRESERVED_CORE_BLOB"
+          python3 tools/brick-mother/build_v275_performance_candidate.py "$source" "$candidate"
+          test "$(git hash-object "$source")" = "$PRESERVED_CORE_BLOB"
+          python3 - <<'PY'
+          import re,subprocess,os
+          from pathlib import Path
+          root=Path(os.environ['BRICK_ROOT'])
+          text=(root/'brick-mother-standalone-v2.7.5-perf.html').read_text()
+          assert "version: '2.7.5-perf.1'" in text
+          assert "dataset.performanceCandidate = 'on-demand-render'" in text
+          assert 'this.invalidate()' in text
+          assert 'if (this.autoRotate || this.drag || this.needsDraw) this.invalidate();' in text
+          for index,code in enumerate(re.findall(r'<script[^>]*>([\s\S]*?)</script>',text)):
+              path=Path(f'/tmp/brick-mother-v275-perf-script-{index}.js')
+              path.write_text(code)
+              subprocess.run(['node','--check',str(path)],check=True)
+          PY
+
+      - name: Install browser review dependencies
+        run: python3 -m pip install playwright pillow
+
+      - name: Verify pixel equivalence and idle rendering
+        shell: bash
+        run: |
+          set -euo pipefail
+          out=/tmp/brick-mother-v275-performance-candidate
+          mkdir -p "$out"
+          python3 -m http.server 8765 --bind 127.0.0.1 --directory "$BRICK_ROOT" >"$out/server.log" 2>&1 &
+          PID=$!
+          trap 'kill "$PID" 2>/dev/null || true' EXIT
+          ready=0
+          for attempt in $(seq 1 40); do
+            if curl -fsS http://127.0.0.1:8765/brick-mother-standalone-v2.7.5-perf.html >/dev/null; then ready=1;break;fi
+            sleep 1
+          done
+          test "$ready" = 1
+          python3 tools/brick-mother/test_v275_performance_candidate.py http://127.0.0.1:8765 "$out"
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          out=Path('/tmp/brick-mother-v275-performance-candidate')
+          data=json.loads((out/'verification.json').read_text())
+          assert data['passed'] is True
+          assert data['baselineRuntime']=='2.7.5-alpha.1'
+          assert data['candidateRuntime']=='2.7.5-perf.1'
+          assert data['visualApproved'] is False
+          assert data['productionApproved'] is False
+          assert (out/'pixel-difference.png').exists()
+          PY
+
+      - name: Upload exact candidate and evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: brick-mother-v275-performance-candidate-${{ github.sha }}
+          path: |
+            /tmp/brick-mother-v275-performance-candidate
+            ${{ env.BRICK_ROOT }}/brick-mother-standalone-v2.7.5-perf.html
+            ${{ env.BRICK_ROOT }}/brick-mother-standalone-v2.7.5-perf.json
+          compression-level: 1
+          retention-days: 14
+          if-no-files-found: warn
