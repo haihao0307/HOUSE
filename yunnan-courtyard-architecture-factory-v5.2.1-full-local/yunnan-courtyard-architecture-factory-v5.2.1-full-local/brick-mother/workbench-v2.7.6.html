@@ -114,6 +114,6 @@
   });
   document.documentElement.dataset.workbenchReady='true';
   const first=[...document.querySelectorAll('.nav')].find(n=>n.dataset.id===requested)||document.querySelector('.nav');
-  requestAnimationFrame(()=>activate(first));
+  activate(first);
 })();
 </script></body></html>
