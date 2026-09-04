@@ -1,268 +1,43 @@
-name: Brick Mother Studio V1.4 Review and Direct HTML Publish
+name: Brick Mother Studio V1.4 Archived Audit
 
+# V1.4 remains available for regression analysis only. It is rejected as a
+# visual candidate and must not publish or replace the V2.7.5 canonical entry.
 on:
-  push:
-    branches: [feature/brick-mother-v2.0-composite-material-dna]
-    paths:
-      - .github/workflows/brick-mother-studio-v14-final-review.yml
-      - tools/brick-mother/publish_studio12.py
-      - tools/brick-mother/refine_studio12.py
-      - tools/brick-mother/refine_studio13.py
-      - tools/brick-mother/finalize_studio13.py
-      - tools/brick-mother/refine_studio14.py
-      - tools/brick-mother/finalize_studio14.py
-      - tools/brick-mother/test_studio14.py
-      - tools/brick-mother/test_studio14_final.py
-      - docs/brick-mother/BRICK_MOTHER_PBR_MATERIAL_TRUTH_V1.3.md
   workflow_dispatch:
 
 permissions:
-  contents: write
-  pages: write
-  id-token: write
-
-concurrency:
-  group: brick-mother-pages-v14
-  cancel-in-progress: false
+  contents: read
 
 env:
-  TARGET_BRANCH: feature/brick-mother-v2.0-composite-material-dna
   BRICK_ROOT: yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother
   PRESERVED_CORE_BLOB: 7b10389cb9367f7423619262820883cc94b07a61
-  RUNTIME_VERSION: 1.4.0-alpha.2
 
 jobs:
-  build:
+  archived-audit:
     runs-on: ubuntu-latest
-    timeout-minutes: 38
-    outputs:
-      source_head: ${{ steps.source.outputs.source_head }}
+    timeout-minutes: 8
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
-      - name: Build finalized V1.4 candidate
+      - name: Verify archive identity and canonical core protection
         shell: bash
         run: |
           set -euo pipefail
-          python3 tools/brick-mother/publish_studio12.py "$BRICK_ROOT"
-          python3 tools/brick-mother/refine_studio12.py "$BRICK_ROOT"
-          python3 tools/brick-mother/refine_studio13.py "$BRICK_ROOT"
-          python3 tools/brick-mother/finalize_studio13.py "$BRICK_ROOT"
-          python3 tools/brick-mother/refine_studio14.py "$BRICK_ROOT"
-          python3 tools/brick-mother/finalize_studio14.py "$BRICK_ROOT"
+          test -s "$BRICK_ROOT/studio-v1.4.html"
+          test -s "$BRICK_ROOT/STUDIO_BUILD.json"
+          test -s "$BRICK_ROOT/BASELINE_REGISTRY_V1.json"
+          test "$(git hash-object "$BRICK_ROOT/brick-mother-standalone-v2.7.5.html")" = "$PRESERVED_CORE_BLOB"
           python3 - <<'PY'
-          import hashlib,json,os,re,subprocess
+          import json,os
           from pathlib import Path
           root=Path(os.environ['BRICK_ROOT'])
-          studio=root/'studio.html'; alias=root/'studio-v1.4.html'; text=studio.read_text()
-          assert studio.read_bytes()==alias.read_bytes()
-          assert len(text)>115000
-          for token in ["version:'1.4.0-alpha.2'","brdf:'GGX'","dielectricF0:.04","aoScope:'diffuse-ambient-only'","heightRole:'low-frequency-silhouette'","normalRole:'high-frequency-detail'",'fiberField','fiberActive','pbrSafeAlbedo',"playing:false","background:#c7ced2"]:
-              assert token in text,token
-          start=text.index('const fragmentSource=`');end=text.index('`;',start)
-          assert not re.search(r'\bactive\b',text[start:end])
-          for index,code in enumerate(re.findall(r'<script[^>]*>([\s\S]*?)</script>',text)):
-              path=Path(f'/tmp/brick-studio-v14-script-{index}.js')
-              path.write_text(code)
-              subprocess.run(['node','--check',str(path)],check=True)
-          build=json.loads((root/'STUDIO_BUILD.json').read_text());digest=hashlib.sha256(studio.read_bytes()).hexdigest()
-          assert build['runtimeVersion']==os.environ['RUNTIME_VERSION']
-          assert build['preservedCoreBlob']==os.environ['PRESERVED_CORE_BLOB']
-          assert build['studioSha256']==digest and build['studioBytes']==studio.stat().st_size
-          assert build['glslReservedIdentifierPass'] is True
-          assert build['humanVisualApproved'] is False and build['productionApproved'] is False
-          core=(root/'brick-mother-standalone-v2.7.5.html').read_bytes()
-          assert hashlib.sha1(b'blob '+str(len(core)).encode()+b'\0'+core).hexdigest()==os.environ['PRESERVED_CORE_BLOB']
-          PY
-
-      - name: Install real browser review dependencies
-        run: python3 -m pip install playwright pillow
-
-      - name: Run real WebGL material and daylight review
-        shell: bash
-        run: |
-          set -euo pipefail
-          python3 -m http.server 8765 --bind 127.0.0.1 --directory "$BRICK_ROOT" >/tmp/brick-studio-v14-server.log 2>&1 &
-          PID=$!
-          trap 'kill "$PID" 2>/dev/null || true' EXIT
-          ready=0
-          for i in $(seq 1 30); do
-            if curl -fsS http://127.0.0.1:8765/studio-v1.4.html >/dev/null; then ready=1;break;fi
-            sleep 1
-          done
-          test "$ready" = 1
-          python3 tools/brick-mother/test_studio14_final.py http://127.0.0.1:8765 /tmp/brick-studio-v14-review
-
-      - name: Upload exact V1.4 review evidence
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: brick-studio-v14-review-${{ github.sha }}
-          path: |
-            /tmp/brick-studio-v14-review
-            /tmp/brick-studio-v14-server.log
-            ${{ env.BRICK_ROOT }}/studio.html
-            ${{ env.BRICK_ROOT }}/studio-v1.4.html
-            ${{ env.BRICK_ROOT }}/STUDIO_BUILD.json
-          compression-level: 1
-          retention-days: 7
-          if-no-files-found: error
-
-      - name: Append reviewed direct HTML source
-        id: source
-        shell: bash
-        run: |
-          set -euo pipefail
-          python3 - <<'PY'
-          import json
-          from pathlib import Path
-          verification=json.loads(Path('/tmp/brick-studio-v14-review/verification.json').read_text())
-          assert verification['passed'] is True
-          assert verification['humanVisualApproved'] is False
-          assert verification['productionApproved'] is False
-          PY
-          git config user.name 'Brick Mother Automation'
-          git config user.email 'actions@users.noreply.github.com'
-          git add \
-            "$BRICK_ROOT/studio.html" \
-            "$BRICK_ROOT/studio-v1.4.html" \
-            "$BRICK_ROOT/studio.webmanifest" \
-            "$BRICK_ROOT/studio-icon.svg" \
-            "$BRICK_ROOT/studio-sw.js" \
-            "$BRICK_ROOT/STUDIO_BUILD.json" \
-            "$BRICK_ROOT/workbench.html"
-          if ! git diff --cached --quiet; then
-            git commit -m 'feat(brick): publish reviewed daylight material studio v1.4'
-            for attempt in 1 2 3 4; do
-              git fetch origin "$TARGET_BRANCH"
-              git rebase "origin/$TARGET_BRANCH"
-              if git push origin "HEAD:$TARGET_BRANCH"; then break; fi
-              if [ "$attempt" -eq 4 ]; then exit 1; fi
-              sleep $((attempt * 3))
-            done
-          fi
-          echo "source_head=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
-
-      - name: Assemble public site with direct V1.4 entry
-        shell: bash
-        run: |
-          set -euo pipefail
-          src="$(dirname "$BRICK_ROOT")"
-          mkdir -p _site
-          cp -R "$src"/. _site/
-          rm -rf _site/references-private _site/release _site/.git _site/.github
-          rm -f _site/assets/models/YN_TUANJIE_001_EDITABLE_HIGH.glb
-          touch _site/.nojekyll
-          python3 - <<'PY'
-          import json,os,subprocess
-          from pathlib import Path
-          source=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
-          Path('_site/brick-mother/STUDIO_DEPLOYMENT_V14.json').write_text(json.dumps({
-              'sourceHead':source,
-              'triggerHead':os.environ['GITHUB_SHA'],
-              'runId':os.environ['GITHUB_RUN_ID'],
-              'runtime':'1.4.0-alpha.2',
-              'directExample':'studio-v1.4.html',
-              'preservedCoreBlob':os.environ['PRESERVED_CORE_BLOB'],
-              'humanVisualApproved':False,
-              'productionApproved':False
-          },indent=2)+'\n')
-          PY
-
-      - uses: actions/configure-pages@v5
-
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: _site
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: brick-mother-online
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - uses: actions/deploy-pages@v4
-        id: deployment
-
-  verify-public:
-    needs: [build, deploy]
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    steps:
-      - name: Confirm exact public V1.4 identity
-        env:
-          SOURCE_HEAD: ${{ needs.build.outputs.source_head }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          base=https://haihao0307.github.io/HOUSE/brick-mother
-          ok=0
-          for i in $(seq 1 50); do
-            if curl -fsS "$base/STUDIO_DEPLOYMENT_V14.json?build=$SOURCE_HEAD" -o /tmp/deployment.json \
-              && grep -q "$SOURCE_HEAD" /tmp/deployment.json \
-              && curl -fsS "$base/studio-v1.4.html?build=$SOURCE_HEAD" -o /tmp/studio-v14.html \
-              && grep -q "1.4.0-alpha.2" /tmp/studio-v14.html; then
-              ok=1;break
-            fi
-            sleep 6
-          done
-          test "$ok" = 1
-          curl -fsS "$base/STUDIO_BUILD.json?build=$SOURCE_HEAD" -o /tmp/build.json
-          curl -fsS "$base/brick-mother-standalone-v2.7.5.html?build=$SOURCE_HEAD" -o /tmp/core.html
-          python3 - <<'PY'
-          import hashlib,json,os
-          from pathlib import Path
-          build=json.loads(Path('/tmp/build.json').read_text())
-          studio=Path('/tmp/studio-v14.html').read_bytes()
-          core=Path('/tmp/core.html').read_bytes()
+          build=json.loads((root/'STUDIO_BUILD.json').read_text())
+          registry=json.loads((root/'BASELINE_REGISTRY_V1.json').read_text())
           assert build['runtimeVersion']=='1.4.0-alpha.2'
-          assert build['studioSha256']==hashlib.sha256(studio).hexdigest()
-          assert hashlib.sha1(b'blob '+str(len(core)).encode()+b'\0'+core).hexdigest()==build['preservedCoreBlob']
           assert build['humanVisualApproved'] is False
           assert build['productionApproved'] is False
+          item=next(x for x in registry['experimentalCandidates'] if x['file']=='studio-v1.4.html')
+          assert item['status']=='rejected_for_visual_regression'
+          assert item['default'] is False
+          assert registry['canonicalEntry']['gitBlob']==os.environ['PRESERVED_CORE_BLOB']
           PY
-
-      - name: Open live V1.4 in Chromium
-        shell: bash
-        run: |
-          set -euo pipefail
-          python3 -m pip install playwright
-          python3 - <<'PY'
-          import json,shutil
-          from pathlib import Path
-          from playwright.sync_api import sync_playwright
-          url='https://haihao0307.github.io/HOUSE/brick-mother/studio-v1.4.html?view=hero&light=studio'
-          with sync_playwright() as p:
-              browser=p.chromium.launch(executable_path=shutil.which('google-chrome') or shutil.which('chromium') or shutil.which('google-chrome-stable'),args=['--no-sandbox','--enable-unsafe-swiftshader','--use-gl=angle','--use-angle=swiftshader'])
-              page=browser.new_page(viewport={'width':1280,'height':850})
-              errors=[]
-              page.on('pageerror',lambda error:errors.append(str(error)))
-              response=page.goto(url,wait_until='domcontentloaded',timeout=60000)
-              assert response.status==200
-              page.wait_for_function("document.documentElement.dataset.workbenchReady==='true'||document.documentElement.dataset.runtimeFailure==='true'",timeout=120000)
-              assert page.evaluate("document.documentElement.dataset.runtimeFailure!=='true'")
-              assert page.evaluate('window.__BRICK_MOTHER_WEATHERING_PBR__.version')=='1.4.0-alpha.2'
-              assert page.evaluate('window.__BRICK_MOTHER_WEATHERING_PBR__.state.piece')=='hero'
-              assert not errors,errors
-              page.wait_for_timeout(800)
-              page.screenshot(path='/tmp/live-studio-v14.png')
-              Path('/tmp/live-studio-v14.json').write_text(json.dumps({'url':page.url,'errors':errors,'dataset':page.evaluate('({...document.documentElement.dataset})'),'humanVisualApproved':False,'productionApproved':False},ensure_ascii=False,indent=2))
-              browser.close()
-          PY
-
-      - name: Upload public V1.4 proof
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: brick-studio-v14-public-${{ github.sha }}
-          path: |
-            /tmp/deployment.json
-            /tmp/build.json
-            /tmp/live-studio-v14.png
-            /tmp/live-studio-v14.json
-          compression-level: 1
-          retention-days: 7
-          if-no-files-found: warn
