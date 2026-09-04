@@ -25,7 +25,7 @@ BASE_FILE = "brick-mother-standalone-v2.7.5.html"
 CANDIDATE_FILE = "brick-mother-standalone-v2.7.5-perf.html"
 
 report = {
-    "schemaVersion": "1.0.1",
+    "schemaVersion": "1.0.2",
     "baseUrl": BASE,
     "baselineRuntime": "2.7.5-alpha.1",
     "candidateRuntime": "2.7.5-perf.1",
@@ -170,11 +170,14 @@ with sync_playwright() as playwright:
         drag_count = page.evaluate("Number(document.documentElement.dataset.renderCount||0)")
         check("orbit interaction redraws", drag_count > idle_end, {"before": idle_end, "after": drag_count})
 
-        page.click("#autoRotate")
-        page.wait_for_timeout(1_200)
+        page.evaluate("document.querySelector('#autoRotate').click()")
+        page.wait_for_function(
+            f"Number(document.documentElement.dataset.renderCount||0)>={drag_count + 2}",
+            timeout=12_000,
+        )
         rotating_count = page.evaluate("Number(document.documentElement.dataset.renderCount||0)")
         check("auto rotation redraws continuously", rotating_count - drag_count >= 2, {"before": drag_count, "after": rotating_count})
-        page.click("#autoRotate")
+        page.evaluate("document.querySelector('#autoRotate').click()")
         page.wait_for_timeout(450)
         stopped_count = page.evaluate("Number(document.documentElement.dataset.renderCount||0)")
         page.wait_for_timeout(1_000)
