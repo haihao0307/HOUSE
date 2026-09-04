@@ -1,0 +1,86 @@
+name: Brick Mother V2.7.6 Browser Proof
+
+on:
+  push:
+    branches:
+      - feature/brick-mother-v2.0-composite-material-dna
+    paths:
+      - .github/workflows/brick-mother-v276-browser-proof.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  URL: https://haihao0307.github.io/HOUSE/brick-mother/workbench-v2.7.6.html?tab=v275-fast&build=a009956af6dc82dbd0003ae00dd008a46d9b1880
+
+jobs:
+  prove:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Install Playwright client
+        run: python3 -m pip install playwright
+
+      - name: Open deployed review workbench and authentic runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, os, shutil, time
+          from pathlib import Path
+          from playwright.sync_api import sync_playwright
+
+          report={
+            'url':os.environ['URL'],
+            'headlessSoftwareRenderer':True,
+            'humanVisualApproved':False,
+            'productionApproved':False,
+            'errors':[]
+          }
+          with sync_playwright() as pw:
+              executable=shutil.which('google-chrome') or shutil.which('google-chrome-stable') or shutil.which('chromium')
+              browser=pw.chromium.launch(
+                  executable_path=executable,
+                  headless=True,
+                  args=['--no-sandbox','--disable-dev-shm-usage','--enable-unsafe-swiftshader','--use-gl=angle','--use-angle=swiftshader']
+              )
+              page=browser.new_page(viewport={'width':1440,'height':1000},device_scale_factor=1)
+              page.on('pageerror',lambda e:report['errors'].append(str(e)))
+              started=time.monotonic()
+              response=page.goto(os.environ['URL'],wait_until='commit',timeout=90000)
+              page.wait_for_function("document.documentElement.dataset.workbenchReady==='true'",timeout=15000)
+              report['shellReadyMs']=round((time.monotonic()-started)*1000)
+              locator=page.locator('iframe[data-frame-id="v275-fast"]')
+              locator.wait_for(state='attached',timeout=15000)
+              report['iframeCount']=locator.count()
+              report['iframeState']=locator.evaluate("e=>{const s=getComputedStyle(e),r=e.getBoundingClientRect();return {className:e.className,visibility:s.visibility,opacity:s.opacity,display:s.display,width:r.width,height:r.height,src:e.src}}");
+              assert report['iframeCount']==1
+              assert report['iframeState']['width']>500 and report['iframeState']['height']>400
+              frame=locator.element_handle().content_frame()
+              frame.wait_for_selector('canvas',state='attached',timeout=90000)
+              frame.wait_for_function("window.__BRICK_MOTHER_READY__===true || document.documentElement.dataset.brickMotherReady==='true' || document.body.classList.contains('runtime-failed')",timeout=240000)
+              report['runtimeFailed']=frame.evaluate("document.body.classList.contains('runtime-failed')")
+              report['runtime']=frame.evaluate("window.__BRICK_MOTHER_QA__?.version || null")
+              report['quickSpecimenReadyMs']=round((time.monotonic()-started)*1000)
+              report['canvas']=frame.locator('canvas').count()
+              report['httpStatus']=response.status if response else None
+              assert report['httpStatus']==200
+              assert report['runtimeFailed'] is False
+              assert report['runtime']=='2.7.5-alpha.1'
+              assert report['canvas']>0
+              assert not report['errors'],report['errors']
+              browser.close()
+          report['passed']=True
+          Path('/tmp/brick-v276-browser-proof.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n')
+          print(json.dumps(report,ensure_ascii=False,indent=2))
+          PY
+
+      - name: Upload proof
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: brick-mother-v276-browser-proof-${{ github.sha }}
+          path: /tmp/brick-v276-browser-proof.json
+          if-no-files-found: warn
+          retention-days: 14
