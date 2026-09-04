@@ -1,0 +1,576 @@
+name: Brick Mother V2.7.6 Integrated Review Workbench
+
+on:
+  push:
+    branches:
+      - feature/brick-mother-v2.0-composite-material-dna
+    paths:
+      - .github/workflows/brick-mother-v276-integrated-workbench.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: brick-mother-v276-integrated-workbench
+  cancel-in-progress: false
+
+env:
+  TARGET_BRANCH: feature/brick-mother-v2.0-composite-material-dna
+  FACTORY_ROOT: yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local
+  BRICK_ROOT: yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother
+  AUTHENTIC_HANDOFF_HEAD: 8184e95a89279f546d2c02135b13e139a3c7f988
+  PBR_ARCHIVE_HEAD: 65be6d7671fc5fcb31dd68dda64eecc5bd82f7b4
+  OBSERVATION_BLOB: 7b2a18c6a886d0751ca2fc92530b7986d9e1a727
+  STANDALONE_BLOB: 7b10389cb9367f7423619262820883cc94b07a61
+  HIGH_VARIATION_BLOB: f64c65d87dc418bf1a923a4cf332b449efbe0eb9
+
+jobs:
+  build-commit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    outputs:
+      candidate_head: ${{ steps.push.outputs.candidate_head }}
+    steps:
+      - name: Checkout full feature history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ env.TARGET_BRANCH }}
+
+      - name: Verify frozen V2.7.5 and V2.6 identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          git cat-file -e "$AUTHENTIC_HANDOFF_HEAD^{commit}"
+          git cat-file -e "$PBR_ARCHIVE_HEAD^{commit}"
+          test "$(git hash-object "$BRICK_ROOT/brick-mother-observation-studio.html")" = "$OBSERVATION_BLOB"
+          test "$(git hash-object "$BRICK_ROOT/brick-mother-standalone-v2.7.5.html")" = "$STANDALONE_BLOB"
+          test "$(git hash-object "$BRICK_ROOT/brick-mother-standalone-v2.6.html")" = "$HIGH_VARIATION_BLOB"
+          grep -q 'Brick Mother V2.7.5 三维材质观察台' "$BRICK_ROOT/brick-mother-observation-studio.html"
+          grep -q '2.7.5-alpha.1' "$BRICK_ROOT/VERSION.json"
+
+      - name: Restore later PBR experiments into isolated archive folders
+        shell: bash
+        run: |
+          set -euo pipefail
+          pbr11="$BRICK_ROOT/experiments/pbr-weathering-v1.1"
+          pbr14="$BRICK_ROOT/experiments/pbr-daylight-v1.4"
+          rm -rf "$BRICK_ROOT/experiments"
+          mkdir -p "$pbr11" "$pbr14"
+
+          copy_old() {
+            src="$1"; dst="$2"
+            git show "$PBR_ARCHIVE_HEAD:$BRICK_ROOT/$src" > "$dst"
+            test -s "$dst"
+          }
+
+          copy_old brick-mother-realtime-weathering-pbr-v1.1.0.html "$pbr11/index.html"
+          copy_old brick-mother-realtime-weathering-pbr-v1.1.css "$pbr11/brick-mother-realtime-weathering-pbr-v1.1.css"
+          copy_old brick-mother-realtime-weathering-pbr-v1.1.js "$pbr11/brick-mother-realtime-weathering-pbr-v1.1.js"
+          copy_old brick-mother-stone-form-geometry-v3.5.js "$pbr11/brick-mother-stone-form-geometry-v3.5.js"
+          copy_old brick-mother-weathering-geometry-v1.1.js "$pbr11/brick-mother-weathering-geometry-v1.1.js"
+
+          copy_old studio-v1.4.html "$pbr14/index.html"
+          copy_old studio.webmanifest "$pbr14/studio.webmanifest"
+          copy_old studio-icon.svg "$pbr14/studio-icon.svg"
+
+          python3 - <<'PY'
+          import json, os, re
+          from pathlib import Path
+
+          root=Path(os.environ['BRICK_ROOT'])
+          p14=root/'experiments/pbr-daylight-v1.4'
+          html=(p14/'index.html').read_text()
+          html=html.replace('navigator.serviceWorker.register', 'window.__BM_DISABLED_SW_REGISTER__')
+          guard="""<script>
+          window.__BM_DISABLED_SW_REGISTER__=()=>Promise.resolve({scope:location.href});
+          if('serviceWorker' in navigator){navigator.serviceWorker.getRegistrations().then(rs=>rs.filter(r=>r.scope.includes('/HOUSE/brick-mother/')).forEach(r=>r.unregister())).catch(()=>{});}
+          </script>"""
+          html=html.replace('</head>',guard+'\n</head>',1)
+          (p14/'index.html').write_text(html)
+
+          manifest=json.loads((p14/'studio.webmanifest').read_text())
+          manifest['id']='./index.html'
+          manifest['start_url']='./index.html'
+          manifest['scope']='./'
+          (p14/'studio.webmanifest').write_text(json.dumps(manifest,ensure_ascii=False,indent=2)+'\n')
+
+          archive={
+            'schemaVersion':'1.0.0',
+            'status':'archived_experiment_for_further_evolution',
+            'sourceCommit':os.environ['PBR_ARCHIVE_HEAD'],
+            'mayReplaceV275':False,
+            'defaultEntryAllowed':False,
+            'serviceWorkerAllowedOutsideExperimentScope':False,
+            'humanVisualApproved':False,
+            'productionApproved':False,
+            'entries':[
+              {'id':'pbr-weathering-v1.1','path':'pbr-weathering-v1.1/index.html','role':'preserved realtime weathering experiment'},
+              {'id':'pbr-daylight-v1.4','path':'pbr-daylight-v1.4/index.html','role':'preserved daylight PBR experiment'}
+            ]
+          }
+          (root/'experiments/ARCHIVE_IDENTITY.json').write_text(json.dumps(archive,ensure_ascii=False,indent=2)+'\n')
+          PY
+
+      - name: Write PBR guide production rules and version matrix
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$BRICK_ROOT/knowledge"
+          cat > "$BRICK_ROOT/knowledge/PBR_GUIDE_PRODUCTION_RULES_V1.json" <<'JSON'
+          {
+            "schemaVersion": "1.0.0",
+            "source": {
+              "title": "The PBR Guide",
+              "author": "Wes McDermott",
+              "edition": "Third edition, February 2018",
+              "basis": "user supplied complete manual"
+            },
+            "manualRules": [
+              {
+                "id": "linear-space",
+                "pages": [38, 39, 40],
+                "rule": "Lighting and color computations occur in linear space. Visible color maps are interpreted as sRGB, while roughness, metallic and height are linear data."
+              },
+              {
+                "id": "dielectric-f0",
+                "pages": [31, 32, 36, 37, 48, 49, 69, 70],
+                "rule": "Common dielectrics usually use F0 from 0.02 to 0.05 linear. The metal roughness workflow commonly uses 0.04."
+              },
+              {
+                "id": "base-color-range",
+                "pages": [51, 52, 53],
+                "rule": "Dielectric base color stays comparatively flat, excludes baked lighting and AO apart from limited micro occlusion, usually remains above 30 to 50 sRGB in dark regions and below 240 sRGB in bright regions."
+              },
+              {
+                "id": "roughness-story",
+                "pages": [22, 25, 26, 27, 59, 60],
+                "rule": "Roughness represents sub texel micro surface orientation. Rougher surfaces spread highlights. Key surface structures in the normal map should inform roughness, while roughness also tells the history and condition of the surface."
+              },
+              {
+                "id": "ao-role",
+                "pages": [74, 75],
+                "rule": "AO describes access to ambient environment lighting, affects diffuse contribution only and must remain separate from specular contribution and base color."
+              },
+              {
+                "id": "height-normal-frequency-split",
+                "pages": [75, 76, 77, 78, 79],
+                "rule": "Realtime height should emphasize overall forms and silhouette with reduced high frequency detail. Normal carries high frequency surface detail."
+              },
+              {
+                "id": "multi-channel-propagation",
+                "pages": [56, 57, 58],
+                "rule": "A material effect is propagated coherently across the channels it physically changes."
+              },
+              {
+                "id": "validation",
+                "pages": [82, 83, 84, 85],
+                "rule": "PBR Validate checks base color and metallic ranges with a heat map. PBR Safe Color constrains base color or diffuse values to valid dielectric brightness ranges."
+              }
+            ],
+            "brickMotherTranslations": [
+              {
+                "event": "cavity",
+                "status": "project interpretation built from manual channel rules",
+                "channels": {
+                  "height": "negative low and mid frequency form",
+                  "normal": "rim and interior micro structure",
+                  "roughness": "interior, rim and exposed face respond differently",
+                  "ao": "ambient diffuse accessibility inside cavity",
+                  "baseColor": "material color change without baked macro shadow"
+                }
+              },
+              {
+                "event": "fired-shell-and-spall",
+                "status": "project interpretation built from manual channel rules",
+                "channels": {
+                  "baseColor": "kiln and oxidation color domains",
+                  "roughness": "dense fired skin differs from powdery spall",
+                  "height": "spall thickness and missing flakes",
+                  "normal": "clay grain and broken face detail",
+                  "ao": "only local ambient accessibility"
+                }
+              }
+            ],
+            "nonNegotiableForBrickStoneAdobe": {
+              "metallic": 0,
+              "defaultDielectricF0": 0.04,
+              "aoMayDarkenSpecular": false,
+              "baseColorMayContainBakedMacroLighting": false,
+              "heightOwnsHighFrequencyNoise": false,
+              "normalOwnsHighFrequencySurfaceDetail": true
+            }
+          }
+          JSON
+
+          cat > "$BRICK_ROOT/VERSION_MATRIX_V2.7.6.json" <<JSON
+          {
+            "schemaVersion": "2.7.6",
+            "workbench": "workbench-v2.7.6.html",
+            "defaultView": "v275-fast",
+            "frozenCore": {
+              "observationStudio": {"path": "brick-mother-observation-studio.html", "blob": "$OBSERVATION_BLOB", "mutable": false},
+              "standalone": {"path": "brick-mother-standalone-v2.7.5.html", "blob": "$STANDALONE_BLOB", "mutable": false}
+            },
+            "preservedVersions": [
+              {"id": "v275-fast", "role": "quick launch using the authentic runtime in one specimen mode"},
+              {"id": "v275-full", "role": "exact authentic complete V2.7.5 observation studio"},
+              {"id": "v26-high-variation", "path": "brick-mother-standalone-v2.6.html", "blob": "$HIGH_VARIATION_BLOB"},
+              {"id": "pbr-weathering-v1.1", "path": "experiments/pbr-weathering-v1.1/index.html", "approved": false},
+              {"id": "pbr-daylight-v1.4", "path": "experiments/pbr-daylight-v1.4/index.html", "approved": false}
+            ],
+            "performanceStrategy": {
+              "shellFirst": true,
+              "lazyIframePerVersion": true,
+              "quickLaunchBuildsOneAuthenticSpecimen": true,
+              "fullFamilyLoadsOnDemand": true,
+              "coreSourceChanged": false
+            },
+            "humanVisualApproved": false,
+            "productionApproved": false
+          }
+          JSON
+
+      - name: Create PBR guide inspection page
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > "$BRICK_ROOT/knowledge/pbr-guide-production-rules-v1.html" <<'HTML'
+          <!doctype html>
+          <html lang="zh-CN">
+          <head>
+          <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width,initial-scale=1">
+          <title>Brick Mother PBR 手册生产规则</title>
+          <style>
+          :root{font-family:Inter,"Segoe UI","PingFang SC","Microsoft YaHei",system-ui,sans-serif;color:#26231f;background:#e7e1d7;--paper:#f7f3ec;--ink:#26231f;--muted:#776e63;--line:#cfc4b5;--accent:#8b5e35;--green:#476552}*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 20% 0,#fff8ed 0,transparent 42rem),linear-gradient(#ece6dc,#ddd4c6);min-height:100vh}.wrap{width:min(1180px,calc(100% - 32px));margin:auto;padding:30px 0 50px}header{display:flex;justify-content:space-between;gap:24px;align-items:flex-end;padding:26px 28px;border:1px solid rgba(87,70,52,.18);border-radius:22px;background:rgba(249,246,239,.82);box-shadow:0 24px 80px rgba(78,61,43,.12);backdrop-filter:blur(18px)}h1{margin:5px 0 0;font-size:clamp(24px,4vw,46px);letter-spacing:-.035em}.eyebrow{margin:0;color:var(--accent);font-size:11px;font-weight:800;letter-spacing:.18em}.source{max-width:340px;color:var(--muted);font-size:12px;line-height:1.7}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:18px}.card{padding:22px;border:1px solid rgba(87,70,52,.16);border-radius:18px;background:rgba(249,246,239,.88);box-shadow:0 12px 34px rgba(78,61,43,.08)}.card h2{margin:0 0 8px;font-size:17px}.card p{margin:0;color:#514a42;line-height:1.75;font-size:13px}.pages{display:inline-flex;margin-top:14px;padding:5px 8px;border-radius:999px;background:#e9dfd0;color:var(--accent);font:700 10px/1.2 ui-monospace,monospace}.event{grid-column:1/-1;padding:22px 24px;border-radius:18px;background:#292823;color:#eee9df}.event h2{margin:0 0 12px}.channels{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.channels div{padding:12px;border:1px solid rgba(255,255,255,.10);border-radius:11px;background:rgba(255,255,255,.04)}.channels b{display:block;color:#e7c69e;font-size:11px}.channels span{display:block;margin-top:6px;color:#c9c2b9;font-size:11px;line-height:1.55}.gate{grid-column:1/-1;display:grid;grid-template-columns:repeat(6,1fr);gap:8px}.gate div{padding:14px;border-radius:12px;background:#f4eee5;border:1px solid var(--line);font-size:11px}.gate b{display:block;margin-bottom:5px;color:var(--green)}@media(max-width:760px){header{display:block}.source{margin-top:18px}.grid{grid-template-columns:1fr}.channels,.gate{grid-template-columns:1fr 1fr}.event{grid-column:auto}.gate{grid-column:auto}}
+          </style>
+          </head>
+          <body><main class="wrap"><header><div><p class="eyebrow">THE PBR GUIDE · BRICK MOTHER TRANSLATION</p><h1>PBR 手册生产规则</h1></div><div class="source">依据用户提供的 Wes McDermott《The PBR Guide》第三版整理。上层卡片保持手册原意，下方“材料事件”属于 Brick Mother 的项目化转换。</div></header><section class="grid" id="rules"></section></main>
+          <script>
+          const rules=[
+            ['线性空间','颜色输入按 sRGB 解释。Roughness、Metallic、Height 等属性数据按线性数据解释。照明计算在线性空间进行。','38–40'],
+            ['介电 F0','砖、土坯与普通建筑石材属于非金属材料。常见介电 F0 通常位于 0.02 至 0.05，金属粗糙度工作流常用 0.04。','31–32、36–37、48–49'],
+            ['Base Color','表达材料反射颜色，整体对比较传统 diffuse 更平缓。去除宏观照明和 AO。暗部通常不低于 30 至 50 sRGB，亮部不高于 240 sRGB。','51–53'],
+            ['Roughness','描述亚像素微表面方向分布，控制高光扩散。重要 Normal 结构应在 Roughness 中有对应，同时用来表达表面经历与状态。','22、25–27、59–60'],
+            ['AO','只描述环境光可达性，只影响环境漫反射贡献，保持独立通道，不压暗镜面反射。','74–75'],
+            ['Height 与 Normal','实时 Height 负责整体形体和轮廓，减少高频。Normal 负责高频表面细节。','75–79'],
+            ['多通道传播','一个真实材质效果要传播到它实际改变的各通道，空间来源保持一致。','56–58'],
+            ['校验工具','PBR Validate 检查 Base Color 与 Metallic 范围，PBR Safe Color 将颜色约束到合理亮度范围。','82–85']
+          ];
+          const host=document.querySelector('#rules');
+          for(const [title,body,pages] of rules){const n=document.createElement('article');n.className='card';n.innerHTML=`<h2>${title}</h2><p>${body}</p><span class="pages">手册页 ${pages}</span>`;host.appendChild(n)}
+          const event=document.createElement('article');event.className='event';event.innerHTML=`<h2>Brick Mother 材料事件传播示例：孔洞</h2><div class="channels"><div><b>Height</b><span>低频和中频的负向形体</span></div><div><b>Normal</b><span>孔沿碎裂和孔内微结构</span></div><div><b>Roughness</b><span>孔内、孔沿与完整面分别响应</span></div><div><b>AO</b><span>孔内环境漫反射可达性</span></div><div><b>Base Color</b><span>材料颜色变化，不烘焙宏观阴影</span></div></div>`;host.appendChild(event);
+          const gate=document.createElement('article');gate.className='gate';gate.innerHTML='<div><b>Metallic</b>固定 0</div><div><b>F0</b>默认 0.04</div><div><b>Base Color</b>无宏观阴影</div><div><b>AO</b>不压镜面</div><div><b>Height</b>低中频</div><div><b>Normal</b>高频细节</div>';host.appendChild(gate);
+          </script></body></html>
+          HTML
+
+      - name: Create integrated V2.7.6 review workbench
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > "$BRICK_ROOT/workbench-v2.7.6.html" <<'HTML'
+          <!doctype html>
+          <html lang="zh-CN" data-workbench="brick-mother-v2.7.6">
+          <head>
+          <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+          <meta name="color-scheme" content="light">
+          <meta name="theme-color" content="#e8e0d4">
+          <title>Brick Mother 综合工作台 V2.7.6</title>
+          <style>
+          :root{font-family:Inter,"Segoe UI","PingFang SC","Microsoft YaHei",system-ui,sans-serif;--bg:#ded6ca;--panel:#f3eee6;--ink:#26241f;--muted:#786f64;--line:rgba(63,52,41,.16);--accent:#8b5e35;--accent2:#b98a5f;--ok:#526f5c;--shadow:0 18px 58px rgba(57,45,31,.16)}*{box-sizing:border-box}html,body{width:100%;height:100%;margin:0;overflow:hidden;background:var(--bg);color:var(--ink)}body:before{content:"";position:fixed;inset:0;background:radial-gradient(circle at 18% -10%,rgba(255,251,241,.95),transparent 42rem),linear-gradient(125deg,rgba(255,255,255,.12),transparent 40%);pointer-events:none}.app{position:relative;height:100%;padding:10px;display:grid;grid-template-columns:226px minmax(0,1fr);grid-template-rows:58px minmax(0,1fr);gap:10px}.top{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;padding:0 14px;border:1px solid var(--line);border-radius:16px;background:rgba(248,244,237,.86);box-shadow:var(--shadow);backdrop-filter:blur(20px)}.brand{display:flex;align-items:center;gap:11px}.mark{width:38px;height:38px;display:grid;place-items:center;border-radius:11px;background:#2c2b26;color:#dfb584;font:800 10px/1 ui-monospace,monospace;letter-spacing:.12em}.brand b{display:block;font-size:14px;letter-spacing:.03em}.brand span{display:block;margin-top:3px;color:var(--muted);font-size:9px}.top-actions{display:flex;align-items:center;gap:7px}.status{padding:7px 10px;border:1px solid rgba(82,111,92,.25);border-radius:999px;background:rgba(82,111,92,.09);color:var(--ok);font-size:9px;font-weight:750}.icon-btn{height:32px;padding:0 10px;border:1px solid var(--line);border-radius:9px;background:rgba(255,255,255,.52);color:var(--muted);font-size:9px;cursor:pointer}.icon-btn:hover{color:var(--ink);border-color:rgba(63,52,41,.28)}.rail{min-height:0;overflow:auto;padding:10px;border:1px solid var(--line);border-radius:16px;background:rgba(246,241,233,.88);box-shadow:var(--shadow);backdrop-filter:blur(18px)}.rail h2{margin:5px 7px 10px;font-size:10px;letter-spacing:.14em;color:var(--muted)}.nav{width:100%;display:block;margin:0 0 7px;padding:11px;border:1px solid transparent;border-radius:12px;background:transparent;text-align:left;color:var(--muted);cursor:pointer}.nav:hover{background:rgba(255,255,255,.58);color:var(--ink)}.nav.on{border-color:rgba(139,94,53,.25);background:linear-gradient(135deg,rgba(139,94,53,.13),rgba(255,255,255,.50));color:var(--ink)}.nav b{display:flex;align-items:center;justify-content:space-between;font-size:11px}.nav b i{font:750 7px/1 ui-monospace,monospace;font-style:normal;padding:4px 5px;border-radius:999px;background:rgba(0,0,0,.06);color:var(--muted)}.nav small{display:block;margin-top:5px;font-size:8px;line-height:1.45;color:#8b8277}.rail-note{margin-top:12px;padding:11px;border-top:1px solid var(--line);color:var(--muted);font-size:8px;line-height:1.6}.stage{position:relative;min-width:0;min-height:0;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#222;box-shadow:var(--shadow)}.frame{position:absolute;inset:0;width:100%;height:100%;border:0;background:#171816;visibility:hidden;opacity:0;transition:opacity .18s}.frame.on{visibility:visible;opacity:1}.stagebar{position:absolute;left:12px;right:12px;top:10px;height:34px;display:flex;align-items:center;justify-content:space-between;pointer-events:none;z-index:8}.stage-id{max-width:min(560px,70%);padding:8px 11px;border:1px solid rgba(255,255,255,.12);border-radius:10px;background:rgba(21,22,20,.74);backdrop-filter:blur(14px);color:#ddd6cc;font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.stage-id b{color:#e7bf8f}.stage-tools{display:flex;gap:6px;pointer-events:auto}.stage-tools button{height:30px;padding:0 9px;border:1px solid rgba(255,255,255,.12);border-radius:8px;background:rgba(21,22,20,.74);backdrop-filter:blur(14px);color:#d6d0c8;font-size:8px;cursor:pointer}.boot{position:absolute;inset:0;display:grid;place-items:center;background:linear-gradient(135deg,#ddd4c7,#f1ece4);z-index:5;transition:.25s}.boot.hidden{opacity:0;visibility:hidden}.boot-card{width:min(420px,calc(100% - 34px));padding:24px;border:1px solid var(--line);border-radius:18px;background:rgba(255,255,255,.65);box-shadow:0 24px 80px rgba(53,42,29,.16);text-align:center}.boot-card b{display:block;font-size:14px}.boot-card span{display:block;margin-top:8px;color:var(--muted);font-size:10px;line-height:1.65}.progress{height:3px;margin-top:18px;border-radius:99px;overflow:hidden;background:rgba(65,51,38,.10)}.progress i{display:block;width:20%;height:100%;background:linear-gradient(90deg,var(--accent),#d8ae7d);animation:move 1.25s ease-in-out infinite}@keyframes move{0%{transform:translateX(-110%)}100%{transform:translateX(520%)}}.mobile-menu{display:none}@media(max-width:760px){.app{padding:7px;grid-template-columns:1fr;grid-template-rows:52px minmax(0,1fr)}.top{grid-column:auto}.brand span,.status{display:none}.rail{position:fixed;left:7px;right:7px;top:66px;z-index:20;max-height:calc(100vh - 74px);transform:translateY(-115%);transition:.22s}.rail.open{transform:none}.stage{grid-column:1}.mobile-menu{display:inline-block}.top-actions .icon-btn:nth-of-type(2){display:none}.stagebar{top:auto;bottom:10px}.stage-id{max-width:58%}}
+          </style>
+          </head>
+          <body><main class="app"><header class="top"><div class="brand"><div class="mark">BM</div><div><b>BRICK MOTHER 综合工作台</b><span>V2.7.5 冻结核心 · V2.6 高变化 · PBR 实验隔离 · V2.7.6 候选</span></div></div><div class="top-actions"><span class="status">V2.7.5 核心哈希锁定</span><button class="icon-btn mobile-menu" id="menu">版本</button><button class="icon-btn" id="clearCache">清理旧缓存</button><button class="icon-btn" id="fullscreen">全屏</button></div></header>
+          <aside class="rail" id="rail"><h2>版本与实验</h2>
+            <button class="nav on" data-id="v275-fast" data-src="./brick-mother-observation-studio.html?profile=old-pbr-fired&mode=siblings&solo=1&focus=1&launch=fast"><b>V2.7.5 快开<i>默认</i></b><small>使用真实 V2.7.5 运行时，只先生成一块核心样本。</small></button>
+            <button class="nav" data-id="v275-full" data-src="./brick-mother-observation-studio.html?launch=full"><b>V2.7.5 完整核心<i>冻结</i></b><small>原三栏观察台和完整三材质，文件未改动。</small></button>
+            <button class="nav" data-id="v26" data-src="./brick-mother-standalone-v2.6.html"><b>V2.6 高变化版<i>保留</i></b><small>更强色彩、孔洞、破损和形体变化。</small></button>
+            <button class="nav" data-id="pbr11" data-src="./experiments/pbr-weathering-v1.1/index.html"><b>PBR 风化 V1.1<i>实验</i></b><small>年代、雨水、积尘、盐析与十六个诊断通道。</small></button>
+            <button class="nav" data-id="pbr14" data-src="./experiments/pbr-daylight-v1.4/index.html"><b>PBR 日光 V1.4<i>实验</i></b><small>保存后期日光与材质研究，隔离旧缓存。</small></button>
+            <button class="nav" data-id="guide" data-src="./knowledge/pbr-guide-production-rules-v1.html"><b>PBR 手册规则<i>知识</i></b><small>手册原理、页码与 Brick Mother 通道转换。</small></button>
+            <div class="rail-note">所有页面按需加载。V2.7.5 与 V2.6 原文件继续保持哈希冻结。PBR 实验只用于继续演化，没有替换核心的权限。</div>
+          </aside>
+          <section class="stage" id="stage"><div class="stagebar"><div class="stage-id" id="stageId"><b>V2.7.5 快开</b> · 正在启动</div><div class="stage-tools"><button id="reload">重新加载</button><button id="openPage">独立打开</button></div></div><div class="boot" id="boot"><div class="boot-card"><b>正在打开真实 V2.7.5 核心样本</b><span>工作台先出现，再生成一个主样本。完整三材质在左侧按需加载。</span><div class="progress"><i></i></div></div></div></section></main>
+          <script>
+          (()=>{
+            const labels={
+              'v275-fast':'V2.7.5 快开','v275-full':'V2.7.5 完整核心','v26':'V2.6 高变化版','pbr11':'PBR 风化实验 V1.1','pbr14':'PBR 日光实验 V1.4','guide':'PBR 手册生产规则'
+            };
+            const stage=document.querySelector('#stage'),boot=document.querySelector('#boot'),stageId=document.querySelector('#stageId'),rail=document.querySelector('#rail');
+            const frames=new Map();let active='';let activeSrc='';let started=0;
+            const params=new URLSearchParams(location.search);
+            const requested=params.get('tab');
+            function status(text){stageId.innerHTML=`<b>${labels[active]||active}</b> · ${text}`}
+            function inspect(frame){
+              const elapsed=Math.round(performance.now()-started);
+              try{
+                const w=frame.contentWindow,d=w.documentElement,b=w.document.body;
+                const ready=w.__BRICK_MOTHER_READY__===true||d.dataset.brickMotherReady==='true'||d.dataset.ready==='true'||d.dataset.studioReady==='true';
+                const failed=b?.classList.contains('runtime-failed')||d.dataset.runtimeFailure==='true';
+                if(failed){status(`运行异常 · ${elapsed} ms`);return true}
+                if(ready){status(`可交互 · ${elapsed} ms`);return true}
+              }catch(_){ }
+              if(elapsed>12000){status(`页面已载入 · 后台仍在生成 · ${elapsed} ms`);return true}
+              return false;
+            }
+            function activate(button){
+              document.querySelectorAll('.nav').forEach(n=>n.classList.toggle('on',n===button));
+              active=button.dataset.id;activeSrc=button.dataset.src;started=performance.now();status('正在载入');boot.classList.remove('hidden');
+              frames.forEach(f=>f.classList.remove('on'));
+              let frame=frames.get(active);
+              if(!frame){
+                frame=document.createElement('iframe');frame.className='frame';frame.title=labels[active];frame.allow='fullscreen; autoplay; xr-spatial-tracking';frame.src=activeSrc+(activeSrc.includes('?')?'&':'?')+'host=v276';stage.prepend(frame);frames.set(active,frame);
+                frame.addEventListener('load',()=>{boot.classList.add('hidden');status(`页面载入 · ${Math.round(performance.now()-started)} ms`);const timer=setInterval(()=>{if(inspect(frame))clearInterval(timer)},250);setTimeout(()=>clearInterval(timer),13000)},{once:true});
+              }else{boot.classList.add('hidden');status('已保留当前状态')}
+              frame.classList.add('on');history.replaceState(null,'',`?tab=${active}`);rail.classList.remove('open');
+            }
+            document.querySelectorAll('.nav').forEach(n=>n.addEventListener('click',()=>activate(n)));
+            document.querySelector('#reload').onclick=()=>{const f=frames.get(active);if(f){started=performance.now();boot.classList.remove('hidden');f.src=activeSrc+(activeSrc.includes('?')?'&':'?')+'reload='+Date.now()}};
+            document.querySelector('#openPage').onclick=()=>window.open(activeSrc,'_blank','noopener');
+            document.querySelector('#fullscreen').onclick=()=>document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen();
+            document.querySelector('#menu').onclick=()=>rail.classList.toggle('open');
+            document.querySelector('#clearCache').onclick=async()=>{
+              let count=0;
+              if('serviceWorker' in navigator){const rs=await navigator.serviceWorker.getRegistrations();for(const r of rs){if(r.scope.includes('/HOUSE/brick-mother/')){await r.unregister();count++}}}
+              if('caches' in window){for(const key of await caches.keys()){if(key.startsWith('brick-studio-')){await caches.delete(key);count++}}}
+              status(`旧缓存已清理 ${count} 项`);
+            };
+            window.addEventListener('keydown',e=>{if(e.key==='f'||e.key==='F')document.querySelector('#fullscreen').click();if(e.key==='r'||e.key==='R')document.querySelector('#reload').click()});
+            const first=[...document.querySelectorAll('.nav')].find(n=>n.dataset.id===requested)||document.querySelector('.nav');activate(first);
+            document.documentElement.dataset.workbenchReady='true';
+          })();
+          </script></body></html>
+          HTML
+
+      - name: Validate source isolation and browser syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object "$BRICK_ROOT/brick-mother-observation-studio.html")" = "$OBSERVATION_BLOB"
+          test "$(git hash-object "$BRICK_ROOT/brick-mother-standalone-v2.7.5.html")" = "$STANDALONE_BLOB"
+          test "$(git hash-object "$BRICK_ROOT/brick-mother-standalone-v2.6.html")" = "$HIGH_VARIATION_BLOB"
+          test -s "$BRICK_ROOT/workbench-v2.7.6.html"
+          test -s "$BRICK_ROOT/experiments/pbr-weathering-v1.1/index.html"
+          test -s "$BRICK_ROOT/experiments/pbr-daylight-v1.4/index.html"
+          test -s "$BRICK_ROOT/knowledge/pbr-guide-production-rules-v1.html"
+          test ! -e "$BRICK_ROOT/studio-sw.js"
+          python3 -m json.tool "$BRICK_ROOT/VERSION_MATRIX_V2.7.6.json" >/dev/null
+          python3 -m json.tool "$BRICK_ROOT/knowledge/PBR_GUIDE_PRODUCTION_RULES_V1.json" >/dev/null
+          python3 -m json.tool "$BRICK_ROOT/experiments/ARCHIVE_IDENTITY.json" >/dev/null
+          python3 - <<'PY'
+          import re, subprocess, os
+          from pathlib import Path
+          root=Path(os.environ['BRICK_ROOT'])
+          for html in [root/'workbench-v2.7.6.html',root/'knowledge/pbr-guide-production-rules-v1.html']:
+              text=html.read_text()
+              for i,code in enumerate(re.findall(r'<script[^>]*>([\s\S]*?)</script>',text)):
+                  path=Path('/tmp')/(html.stem+f'-{i}.js')
+                  path.write_text(code)
+                  subprocess.run(['node','--check',str(path)],check=True)
+          PY
+
+      - name: Commit additive candidate without touching frozen files
+        id: push
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add "$BRICK_ROOT/workbench-v2.7.6.html" "$BRICK_ROOT/VERSION_MATRIX_V2.7.6.json" "$BRICK_ROOT/knowledge" "$BRICK_ROOT/experiments"
+          git config user.name 'Brick Mother Production'
+          git config user.email 'actions@users.noreply.github.com'
+          git commit -m 'feat(brick): add V2.7.6 integrated workbench and isolated PBR archive'
+
+          for attempt in 1 2 3 4; do
+            git fetch origin "$TARGET_BRANCH"
+            if git rebase "origin/$TARGET_BRANCH" && git push origin "HEAD:$TARGET_BRANCH"; then break; fi
+            git rebase --abort 2>/dev/null || true
+            if [ "$attempt" -eq 4 ]; then exit 1; fi
+            sleep $((attempt*3))
+          done
+          head="$(git rev-parse HEAD)"
+          remote="$(git ls-remote origin "refs/heads/$TARGET_BRANCH"|awk '{print $1}')"
+          test "$head" = "$remote"
+          echo "candidate_head=$head" >> "$GITHUB_OUTPUT"
+
+      - name: Install browser verifier
+        run: python3 -m pip install playwright
+
+      - name: Verify quick launch and preserved routes locally
+        shell: bash
+        run: |
+          set -euo pipefail
+          out=/tmp/brick-v276-review
+          mkdir -p "$out"
+          python3 -m http.server 8765 --bind 127.0.0.1 --directory "$BRICK_ROOT" >"$out/server.log" 2>&1 &
+          pid=$!
+          trap 'kill "$pid" 2>/dev/null || true' EXIT
+          for i in $(seq 1 30); do curl -fsS http://127.0.0.1:8765/workbench-v2.7.6.html >/dev/null && break; sleep 1; done
+          python3 - <<'PY'
+          import json, shutil, time
+          from pathlib import Path
+          from playwright.sync_api import sync_playwright
+          out=Path('/tmp/brick-v276-review')
+          result={'humanVisualApproved':False,'productionApproved':False,'routes':[]}
+          with sync_playwright() as pw:
+              exe=shutil.which('google-chrome') or shutil.which('google-chrome-stable') or shutil.which('chromium')
+              browser=pw.chromium.launch(executable_path=exe,headless=True,args=['--no-sandbox','--disable-dev-shm-usage','--enable-unsafe-swiftshader','--use-gl=angle','--use-angle=swiftshader'])
+              page=browser.new_page(viewport={'width':1440,'height':1000})
+              errors=[];page.on('pageerror',lambda e:errors.append(str(e)))
+              started=time.monotonic();r=page.goto('http://127.0.0.1:8765/workbench-v2.7.6.html?tab=v275-fast',wait_until='domcontentloaded',timeout=90000)
+              page.wait_for_function("document.documentElement.dataset.workbenchReady==='true'",timeout=10000)
+              shell_ms=round((time.monotonic()-started)*1000)
+              page.wait_for_selector('iframe.frame.on',timeout=10000)
+              frame=page.locator('iframe.frame.on').element_handle().content_frame()
+              frame.wait_for_selector('canvas',timeout=90000)
+              frame.wait_for_function("window.__BRICK_MOTHER_READY__===true || document.documentElement.dataset.brickMotherReady==='true' || document.body.classList.contains('runtime-failed')",timeout=180000)
+              assert not frame.evaluate("document.body.classList.contains('runtime-failed')")
+              quick_ms=round((time.monotonic()-started)*1000)
+              assert not errors,errors
+              result['shellDOMContentLoadedMs']=shell_ms
+              result['quickSpecimenReadyMs']=quick_ms
+              result['quickRuntime']=frame.evaluate("window.__BRICK_MOTHER_QA__?.version || null")
+              result['routes'].append({'id':'v275-fast','status':r.status,'canvas':frame.locator('canvas').count()})
+              for path in ['brick-mother-observation-studio.html','brick-mother-standalone-v2.6.html','experiments/pbr-weathering-v1.1/index.html','experiments/pbr-daylight-v1.4/index.html','knowledge/pbr-guide-production-rules-v1.html']:
+                  p=browser.new_page(viewport={'width':900,'height':700})
+                  resp=p.goto('http://127.0.0.1:8765/'+path,wait_until='domcontentloaded',timeout=90000)
+                  p.wait_for_timeout(750)
+                  result['routes'].append({'id':path,'status':resp.status if resp else None,'canvas':p.locator('canvas').count(),'title':p.title()})
+                  assert resp and resp.status==200
+                  p.close()
+              browser.close()
+          result['passed']=True
+          (out/'verification.json').write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n')
+          print(json.dumps(result,ensure_ascii=False,indent=2))
+          PY
+
+      - name: Upload local engineering verification
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: brick-mother-v276-local-${{ steps.push.outputs.candidate_head }}
+          path: /tmp/brick-v276-review
+          compression-level: 1
+          if-no-files-found: warn
+          retention-days: 14
+
+  deploy:
+    needs: build-commit
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment:
+      name: brick-mother-online
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout exact candidate head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.build-commit.outputs.candidate_head }}
+
+      - name: Assemble HOUSE public site while keeping authentic V2.7.5 root
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p _site
+          cp -R "$FACTORY_ROOT"/. _site/
+          rm -rf _site/references-private _site/release _site/.git _site/.github
+          rm -f _site/assets/models/YN_TUANJIE_001_EDITABLE_HIGH.glb
+          cp "$BRICK_ROOT/brick-mother-observation-studio.html" _site/brick-mother/index.html
+          touch _site/.nojekyll
+          test "$(git hash-object _site/brick-mother/index.html)" = "$OBSERVATION_BLOB"
+          test "$(git hash-object _site/brick-mother/brick-mother-standalone-v2.7.5.html)" = "$STANDALONE_BLOB"
+          test "$(git hash-object _site/brick-mother/brick-mother-standalone-v2.6.html)" = "$HIGH_VARIATION_BLOB"
+          test -s _site/brick-mother/workbench-v2.7.6.html
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - name: Deploy integrated candidate
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+  verify-public:
+    needs: [build-commit, deploy]
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - name: Verify exact public identities and integrated routes
+        shell: bash
+        env:
+          BASE: https://haihao0307.github.io/HOUSE/brick-mother
+          CANDIDATE_HEAD: ${{ needs.build-commit.outputs.candidate_head }}
+        run: |
+          set -euo pipefail
+          ready=0
+          for attempt in $(seq 1 60); do
+            if curl -fsS "$BASE/workbench-v2.7.6.html?build=$CANDIDATE_HEAD" -o /tmp/workbench.html \
+              && grep -q 'brick-mother-v2.7.6' /tmp/workbench.html \
+              && curl -fsS "$BASE/?build=$CANDIDATE_HEAD" -o /tmp/root.html \
+              && curl -fsS "$BASE/brick-mother-standalone-v2.7.5.html?build=$CANDIDATE_HEAD" -o /tmp/v275.html \
+              && curl -fsS "$BASE/brick-mother-standalone-v2.6.html?build=$CANDIDATE_HEAD" -o /tmp/v26.html \
+              && curl -fsS "$BASE/experiments/pbr-weathering-v1.1/index.html?build=$CANDIDATE_HEAD" -o /tmp/pbr11.html \
+              && curl -fsS "$BASE/experiments/pbr-daylight-v1.4/index.html?build=$CANDIDATE_HEAD" -o /tmp/pbr14.html; then ready=1;break;fi
+            sleep 5
+          done
+          test "$ready" = 1
+          python3 - <<'PY'
+          import hashlib, os
+          from pathlib import Path
+          def blob(path):
+              data=Path(path).read_bytes();return hashlib.sha1(b'blob '+str(len(data)).encode()+b'\0'+data).hexdigest()
+          assert blob('/tmp/root.html')==os.environ['OBSERVATION_BLOB']
+          assert blob('/tmp/v275.html')==os.environ['STANDALONE_BLOB']
+          assert blob('/tmp/v26.html')==os.environ['HIGH_VARIATION_BLOB']
+          PY
+
+      - name: Open public integrated workbench in Chromium
+        shell: bash
+        env:
+          BASE: https://haihao0307.github.io/HOUSE/brick-mother
+          CANDIDATE_HEAD: ${{ needs.build-commit.outputs.candidate_head }}
+        run: |
+          set -euo pipefail
+          python3 -m pip install playwright
+          python3 - <<'PY'
+          import json, os, shutil, time
+          from pathlib import Path
+          from playwright.sync_api import sync_playwright
+          result={'candidateHead':os.environ['CANDIDATE_HEAD'],'humanVisualApproved':False,'productionApproved':False}
+          with sync_playwright() as pw:
+              exe=shutil.which('google-chrome') or shutil.which('google-chrome-stable') or shutil.which('chromium')
+              browser=pw.chromium.launch(executable_path=exe,headless=True,args=['--no-sandbox','--disable-dev-shm-usage','--enable-unsafe-swiftshader','--use-gl=angle','--use-angle=swiftshader'])
+              page=browser.new_page(viewport={'width':1440,'height':1000})
+              errors=[];page.on('pageerror',lambda e:errors.append(str(e)))
+              started=time.monotonic();resp=page.goto(os.environ['BASE']+'/workbench-v2.7.6.html?tab=v275-fast&build='+os.environ['CANDIDATE_HEAD'],wait_until='domcontentloaded',timeout=90000)
+              page.wait_for_function("document.documentElement.dataset.workbenchReady==='true'",timeout=10000)
+              shell_ms=round((time.monotonic()-started)*1000)
+              handle=page.locator('iframe.frame.on').element_handle();frame=handle.content_frame()
+              frame.wait_for_selector('canvas',timeout=90000)
+              frame.wait_for_function("window.__BRICK_MOTHER_READY__===true || document.documentElement.dataset.brickMotherReady==='true' || document.body.classList.contains('runtime-failed')",timeout=180000)
+              assert not frame.evaluate("document.body.classList.contains('runtime-failed')")
+              result.update({'status':resp.status if resp else None,'shellDOMContentLoadedMs':shell_ms,'quickSpecimenReadyMs':round((time.monotonic()-started)*1000),'runtime':frame.evaluate("window.__BRICK_MOTHER_QA__?.version || null"),'errors':errors})
+              assert resp and resp.status==200
+              assert not errors,errors
+              browser.close()
+          Path('/tmp/brick-mother-v276-public.json').write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n')
+          print(json.dumps(result,ensure_ascii=False,indent=2))
+          PY
+
+      - name: Upload public verification
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: brick-mother-v276-public-${{ needs.build-commit.outputs.candidate_head }}
+          path: /tmp/brick-mother-v276-public.json
+          if-no-files-found: warn
+          retention-days: 14
