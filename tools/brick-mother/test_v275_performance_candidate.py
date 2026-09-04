@@ -23,12 +23,13 @@ OUT = Path(sys.argv[2])
 OUT.mkdir(parents=True, exist_ok=True)
 BASE_FILE = "brick-mother-standalone-v2.7.5.html"
 CANDIDATE_FILE = "brick-mother-standalone-v2.7.5-perf.html"
+PERF_API = "window.__BRICK_MOTHER_PERFORMANCE__"
 
 report = {
-    "schemaVersion": "1.0.2",
+    "schemaVersion": "1.1.0",
     "baseUrl": BASE,
     "baselineRuntime": "2.7.5-alpha.1",
-    "candidateRuntime": "2.7.5-perf.1",
+    "candidateRuntime": "2.7.5-perf.2",
     "checks": [],
     "errors": [],
     "visualApproved": False,
@@ -82,7 +83,7 @@ with sync_playwright() as playwright:
         images = {}
         runtime_expectations = {
             BASE_FILE: "2.7.5-alpha.1",
-            CANDIDATE_FILE: "2.7.5-perf.1",
+            CANDIDATE_FILE: "2.7.5-perf.2",
         }
         for file_name, output_name in ((BASE_FILE, "baseline.png"), (CANDIDATE_FILE, "candidate.png")):
             context = browser.new_context(viewport={"width": 800, "height": 500}, device_scale_factor=1)
@@ -130,8 +131,9 @@ with sync_playwright() as playwright:
         check("interactive candidate HTTP 200", bool(response) and response.status == 200, response.status if response else None)
         wait_ready(page)
         report["candidateReadyWallMs"] = round((time.monotonic() - started) * 1000.0, 3)
-        check("interactive candidate runtime", page.evaluate("window.__BRICK_MOTHER_QA__.version") == "2.7.5-perf.1")
+        check("interactive candidate runtime", page.evaluate("window.__BRICK_MOTHER_QA__.version") == "2.7.5-perf.2")
         check("performance candidate stamped", page.evaluate("document.documentElement.dataset.performanceCandidate") == "on-demand-render")
+        check("performance state API available", page.evaluate(f"!!{PERF_API} && {PERF_API}.version==='2.7.5-perf.2'"))
 
         page.wait_for_timeout(700)
         idle_start = page.evaluate("Number(document.documentElement.dataset.renderCount||0)")
@@ -170,19 +172,33 @@ with sync_playwright() as playwright:
         drag_count = page.evaluate("Number(document.documentElement.dataset.renderCount||0)")
         check("orbit interaction redraws", drag_count > idle_end, {"before": idle_end, "after": drag_count})
 
-        page.evaluate("document.querySelector('#autoRotate').click()")
+        started_state = page.evaluate(f"{PERF_API}.setAutoRotate(true); {PERF_API}.diagnostics()")
+        check("explicit auto rotation state starts", started_state["autoRotate"] is True, started_state)
+        check("test page remains visible", started_state["documentHidden"] is False, started_state)
         page.wait_for_function(
             f"Number(document.documentElement.dataset.renderCount||0)>={drag_count + 2}",
-            timeout=12_000,
+            timeout=20_000,
         )
         rotating_count = page.evaluate("Number(document.documentElement.dataset.renderCount||0)")
         check("auto rotation redraws continuously", rotating_count - drag_count >= 2, {"before": drag_count, "after": rotating_count})
-        page.evaluate("document.querySelector('#autoRotate').click()")
+
+        stopped_state = page.evaluate(f"{PERF_API}.setAutoRotate(false); {PERF_API}.diagnostics()")
+        check("explicit auto rotation state stops", stopped_state["autoRotate"] is False, stopped_state)
         page.wait_for_timeout(450)
         stopped_count = page.evaluate("Number(document.documentElement.dataset.renderCount||0)")
         page.wait_for_timeout(1_000)
         stopped_idle_count = page.evaluate("Number(document.documentElement.dataset.renderCount||0)")
         check("rendering stops after auto rotation", stopped_idle_count - stopped_count <= 1, {"start": stopped_count, "end": stopped_idle_count})
+
+        toggled_on = page.evaluate(f"{PERF_API}.toggleViaButton()")
+        check("toolbar auto rotation button starts renderer", toggled_on["autoRotate"] is True, toggled_on)
+        toggled_off = page.evaluate(f"{PERF_API}.toggleViaButton()")
+        check("toolbar auto rotation button stops renderer", toggled_off["autoRotate"] is False, toggled_off)
+        page.wait_for_timeout(600)
+        final_count = page.evaluate("Number(document.documentElement.dataset.renderCount||0)")
+        page.wait_for_timeout(800)
+        final_idle_count = page.evaluate("Number(document.documentElement.dataset.renderCount||0)")
+        check("toolbar stop returns to idle rendering", final_idle_count - final_count <= 1, {"start": final_count, "end": final_idle_count})
         check("interactive page errors empty", not errors, errors)
         report["renderCounts"] = {
             "idleStart": idle_start,
@@ -191,7 +207,10 @@ with sync_playwright() as playwright:
             "duringAutoRotate": rotating_count,
             "afterStop": stopped_count,
             "afterStopIdle": stopped_idle_count,
+            "final": final_count,
+            "finalIdle": final_idle_count,
         }
+        report["rendererDiagnostics"] = page.evaluate(f"{PERF_API}.diagnostics()")
         context.close()
     except Exception as error:
         report["failure"] = str(error)
@@ -205,4 +224,5 @@ print(json.dumps({
     "passed": report["passed"],
     "candidateReadyWallMs": report.get("candidateReadyWallMs"),
     "renderCounts": report.get("renderCounts"),
+    "rendererDiagnostics": report.get("rendererDiagnostics"),
 }, ensure_ascii=False, indent=2))
