@@ -1,0 +1,14 @@
+{
+  "version": "0.15.0",
+  "archive": "Yunnan_Master_and_Village_V0.15.0_Full_Restart_2026-09-05.zip",
+  "archive_bytes": 9927426,
+  "archive_sha256": "cd3a438708152182fd9ff457f6a0a53c35fbff620ce1cbd72ed18be74571989a",
+  "files": 51,
+  "manifest_verified_entries": 49,
+  "runtime_byte_identical": true,
+  "zip_in_git": true,
+  "source_archive_run": 33952333895,
+  "source_archive_commit": "34cb5f1b1843a457b98b3d8d93dca52232edf1c0",
+  "persist_trigger_commit": "b537f5d7b6e4d2d3a5d03e501e800cb14a57592c",
+  "public_site_deployed": false
+}
