@@ -1,0 +1,55 @@
+name: Tiles Mother V0.9.9 Bounded Render Cost
+on:
+  push:
+    branches: [feature/tiles-mother-v0.1-workbench]
+    paths: ['.github/workflows/tiles-mother-v099-cost.yml']
+permissions:
+  contents: write
+jobs:
+  refine:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Apply scoped cost refinements and rebuild
+        run: |
+          python tiles-mother/v099/tools/refine_performance.py
+          python tiles-mother/v099/tools/build.py
+          node --check tiles-mother/v099/source/app.js
+          node tiles-mother/v099/qa/geometry.cjs tiles-mother/v098
+      - run: |
+          pip install playwright==1.57.0
+          playwright install --with-deps chromium
+      - name: Recheck actual closeups, assembly, UV and report performance separately
+        run: |
+          python tiles-mother/v099/qa/browser.py --quick
+          python tiles-mother/v099/qa/browser.py --full
+      - name: Materialize functional candidate, without granting production approval
+        run: |
+          test "${GITHUB_REF_NAME}" = "feature/tiles-mother-v0.1-workbench"
+          git fetch origin "${GITHUB_REF_NAME}"
+          test "$(git rev-parse FETCH_HEAD)" = "${GITHUB_SHA}"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -f tiles-mother/v099/source tiles-mother/v099/tools/build.py tiles-mother/v099/qa tiles-mother/v099/BUILD.json tiles-mother/v099/START_HERE.html
+          git commit -m 'perf(tiles-mother): bound roof detail and cache unchanged shadows'
+          git push origin "HEAD:${GITHUB_REF_NAME}"
+          echo "PREVIEW_SOURCE_SHA=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+      - name: Read back the final immutable public preview
+        continue-on-error: true
+        run: python tiles-mother/v099/qa/public_preview.py
+      - name: Preserve source, geometry, browser and public results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Tiles_Mother_V099_Final_Candidate
+          path: tiles-mother/v099
+          retention-days: 30
