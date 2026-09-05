@@ -1,0 +1,43 @@
+name: Brick Mother Stone Surface Study
+on:
+  push:
+    branches: [feature/brick-mother-v2.0-composite-material-dna]
+    paths:
+      - '**/brick-mother/stone-study.html'
+      - '**/brick-mother/stone-response-study.js'
+      - '**/brick-mother/tools/capture_stone_study.py'
+      - '.github/workflows/brick-mother-stone-study.yml'
+permissions:
+  contents: read
+concurrency:
+  group: brick-mother-stone-study
+  cancel-in-progress: false
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+      - name: Install browser test helpers and CJK fonts
+        run: |
+          python3 -m pip install --quiet playwright pillow
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq fonts-noto-cjk
+      - name: Validate study source and frozen core
+        run: |
+          set -euo pipefail
+          brick='yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother'
+          node --check "$brick/stone-response-study.js"
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          test -z "$(git diff --name-only 54f9ae9f43c078522ac6e082c4a857e57b06fae2 HEAD -- "$brick/brick-mother-geometry-v2.js" "$brick/brick-mother-renderer-v2.js" "$brick/brick-mother-app-v2.js" "$brick/data/brick-material-profiles-v2.json" "$brick/releases/v1.0")"
+      - name: Native browser, standalone and public validation
+        run: python3 -u yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/tools/capture_stone_study.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: stone-study-s1-${{ github.sha }}
+          path: /tmp/stone-study-evidence/
+          if-no-files-found: error

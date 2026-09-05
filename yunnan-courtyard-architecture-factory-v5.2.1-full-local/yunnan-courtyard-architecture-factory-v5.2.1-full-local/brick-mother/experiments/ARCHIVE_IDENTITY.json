@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "1.0.0",
+  "status": "archived_experiment_for_further_evolution",
+  "sourceCommit": "65be6d7671fc5fcb31dd68dda64eecc5bd82f7b4",
+  "mayReplaceV275": false,
+  "defaultEntryAllowed": false,
+  "serviceWorkerAllowedOutsideExperimentScope": false,
+  "humanVisualApproved": false,
+  "productionApproved": false,
+  "entries": [
+    {
+      "id": "pbr-weathering-v1.1",
+      "path": "pbr-weathering-v1.1/index.html",
+      "role": "preserved realtime weathering experiment"
+    },
+    {
+      "id": "pbr-daylight-v1.4",
+      "path": "pbr-daylight-v1.4/index.html",
+      "role": "preserved daylight PBR experiment"
+    }
+  ]
+}
