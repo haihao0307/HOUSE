@@ -1,0 +1,25 @@
+{
+  "version": "0.9.9",
+  "baselineVersion": "0.9.8",
+  "startHead": "ab18ac365be1444587f42f483af5d2a08cf8a815",
+  "workbenchSHA256": "e1f74d0069381ae0ad4752859b4bf4f013046cdbf8bf9a77775d1775436ddef4",
+  "appSHA256": "12abac5aa0bcb0d29be1daede834de7600efd7598d760d21142d1e43b4ccaeed",
+  "bytes": 1459915,
+  "inheritedLock": {
+    "detail": {
+      "unchanged": true,
+      "sha256": "43a899aa7602fab829d5b78f977213a325dec1dd626d6402b82d42b869486bc0"
+    },
+    "shader": {
+      "unchanged": true,
+      "sha256": "57c2ce32bfdfd9df97213ae1a19e6d1f17d92bea9dd3de9c9d200bd5bdd2eb0a"
+    },
+    "lighting": {
+      "unchanged": true,
+      "sha256": "4c7fba6d35aa552718966d1a3a221c172e5d51614a5e216a05c4749c90dc9dea"
+    }
+  },
+  "visualApproved": false,
+  "productionApproved": false,
+  "publicSiteDeployed": false
+}

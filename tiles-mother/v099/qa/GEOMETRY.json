@@ -1,0 +1,15 @@
+{
+  "version": "0.9.9",
+  "runtime": "v22.23.2",
+  "tileCases": 270,
+  "failures": [],
+  "positiveAssertions": 6,
+  "negativeAssertions": 6,
+  "range": {
+    "maxTriangles": 8592,
+    "minTriangles": 1728
+  },
+  "allPassed": true,
+  "visualApproved": false,
+  "productionApproved": false
+}

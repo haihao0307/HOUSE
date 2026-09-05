@@ -1,0 +1,2891 @@
+{
+  "version": "0.9.9",
+  "stage": "quick",
+  "hostPlatform": "linux",
+  "windowsDeviceTested": false,
+  "sourceSHA256": "e1f74d0069381ae0ad4752859b4bf4f013046cdbf8bf9a77775d1775436ddef4",
+  "pageErrors": [],
+  "consoleErrors": [],
+  "externalRequests": [],
+  "cases": [
+    {
+      "name": "01_new_trio",
+      "values": {
+        "scene": "trio",
+        "trioFamily": "pan",
+        "focusSingle": false,
+        "geometryRevision": 1,
+        "surfaceRevision": 1,
+        "mode": "material"
+      },
+      "seconds": 2.27,
+      "stats": {
+        "triangles": 25782,
+        "calls": 6,
+        "counts": null,
+        "contact": null,
+        "uv": {
+          "pan": {
+            "allPassed": true,
+            "faces": [
+              {
+                "face": "top",
+                "label": "外表面",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.908704314225202,
+                "bitangentScore": 0.999216364727051,
+                "passed": true,
+                "minOutwardDot": 0.6983960921286,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              },
+              {
+                "face": "bottom",
+                "label": "内表面",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.9089092794270914,
+                "bitangentScore": 0.9992664860557313,
+                "passed": true,
+                "minOutwardDot": 0.6998238758293727,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              },
+              {
+                "face": "left",
+                "label": "左侧边",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.9985013030851153,
+                "bitangentScore": 0.5985078345479014,
+                "passed": true,
+                "minOutwardDot": 0.9526913537585073,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              },
+              {
+                "face": "right",
+                "label": "右侧边",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.9988379725791587,
+                "bitangentScore": 0.6058756618635612,
+                "passed": true,
+                "minOutwardDot": 0.9514568724915556,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              },
+              {
+                "face": "eave",
+                "label": "出檐端",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.9089473725950079,
+                "bitangentScore": 0.7298729494075806,
+                "passed": true,
+                "minOutwardDot": 0.9563241260847908,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              },
+              {
+                "face": "ridge",
+                "label": "迎水端",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.9050487429983647,
+                "bitangentScore": 0.7485795230068535,
+                "passed": true,
+                "minOutwardDot": 0.959026615510034,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              }
+            ]
+          },
+          "cover": {
+            "allPassed": true,
+            "faces": [
+              {
+                "face": "top",
+                "label": "外表面",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.8183167081115962,
+                "bitangentScore": 0.9990334708010506,
+                "passed": true,
+                "minOutwardDot": 0.32725601331230586,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              },
+              {
+                "face": "bottom",
+                "label": "内表面",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.8169227474894638,
+                "bitangentScore": 0.9990130193439798,
+                "passed": true,
+                "minOutwardDot": 0.3281333028888843,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              },
+              {
+                "face": "left",
+                "label": "左侧边",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.9980498145596615,
+                "bitangentScore": 0.31503905943499577,
+                "passed": true,
+                "minOutwardDot": 0.9575683007889391,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              },
+              {
+                "face": "right",
+                "label": "右侧边",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.9979712241022094,
+                "bitangentScore": 0.31623564872819815,
+                "passed": true,
+                "minOutwardDot": 0.9539963906513054,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              },
+              {
+                "face": "eave",
+                "label": "出檐端",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.8303884367934664,
+                "bitangentScore": 0.6874498945840253,
+                "passed": true,
+                "minOutwardDot": 0.9516504355347211,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              },
+              {
+                "face": "ridge",
+                "label": "迎水端",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.8004354213013426,
+                "bitangentScore": 0.6661925928107479,
+                "passed": true,
+                "minOutwardDot": 0.9566312857877257,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              }
+            ]
+          },
+          "rafter": {
+            "allPassed": true,
+            "faces": [
+              {
+                "face": "side",
+                "minOutwardDot": 0.9981341411553327,
+                "outwardCriterion": "positive radial dot against local centreline",
+                "finite": true,
+                "uvRange": true,
+                "nonzeroArea": true,
+                "nonMirrored": true,
+                "longitudinalV": true,
+                "outward": true,
+                "triangles": 864,
+                "passed": true
+              },
+              {
+                "face": "start",
+                "minOutwardDot": 0.9999999999999999,
+                "outwardCriterion": "end-facing normal",
+                "finite": true,
+                "uvRange": true,
+                "nonzeroArea": true,
+                "nonMirrored": true,
+                "longitudinalV": true,
+                "outward": true,
+                "triangles": 24,
+                "passed": true
+              },
+              {
+                "face": "end",
+                "minOutwardDot": 0.9999999999999999,
+                "outwardCriterion": "end-facing normal",
+                "finite": true,
+                "uvRange": true,
+                "nonzeroArea": true,
+                "nonMirrored": true,
+                "longitudinalV": true,
+                "outward": true,
+                "triangles": 24,
+                "passed": true
+              }
+            ]
+          },
+          "crossbeam": {
+            "allPassed": true,
+            "faces": [
+              {
+                "face": "side",
+                "minOutwardDot": 0.9985508664435413,
+                "outwardCriterion": "positive radial dot against local centreline",
+                "finite": true,
+                "uvRange": true,
+                "nonzeroArea": true,
+                "nonMirrored": true,
+                "longitudinalV": true,
+                "outward": true,
+                "triangles": 864,
+                "passed": true
+              },
+              {
+                "face": "start",
+                "minOutwardDot": 0.9999999999999999,
+                "outwardCriterion": "end-facing normal",
+                "finite": true,
+                "uvRange": true,
+                "nonzeroArea": true,
+                "nonMirrored": true,
+                "longitudinalV": true,
+                "outward": true,
+                "triangles": 24,
+                "passed": true
+              },
+              {
+                "face": "end",
+                "minOutwardDot": 0.9999999999999999,
+                "outwardCriterion": "end-facing normal",
+                "finite": true,
+                "uvRange": true,
+                "nonzeroArea": true,
+                "nonMirrored": true,
+                "longitudinalV": true,
+                "outward": true,
+                "triangles": 24,
+                "passed": true
+              }
+            ]
+          },
+          "allPassed": true
+        },
+        "camera": {
+          "yaw": -0.7,
+          "pitch": 0.54,
+          "distance": 2.2,
+          "target": [
+            0,
+            -0.01,
+            0
+          ],
+          "side": "iso"
+        }
+      },
+      "screenshot": "01_new_trio.jpg"
+    },
+    {
+      "name": "02_pan_new_edge",
+      "values": {
+        "scene": "trio",
+        "trioFamily": "pan",
+        "focusSingle": true,
+        "geometryRevision": 1,
+        "surfaceRevision": 1,
+        "mode": "material"
+      },
+      "seconds": 1.622,
+      "stats": {
+        "triangles": 8592,
+        "calls": 1,
+        "counts": null,
+        "contact": null,
+        "uv": {
+          "pan": {
+            "allPassed": true,
+            "faces": [
+              {
+                "face": "top",
+                "label": "外表面",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.908704314225202,
+                "bitangentScore": 0.999216364727051,
+                "passed": true,
+                "minOutwardDot": 0.6983960921286,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              },
+              {
+                "face": "bottom",
+                "label": "内表面",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.9089092794270914,
+                "bitangentScore": 0.9992664860557313,
+                "passed": true,
+                "minOutwardDot": 0.6998238758293727,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              },
+              {
+                "face": "left",
+                "label": "左侧边",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.9985013030851153,
+                "bitangentScore": 0.5985078345479014,
+                "passed": true,
+                "minOutwardDot": 0.9526913537585073,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              },
+              {
+                "face": "right",
+                "label": "右侧边",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.9988379725791587,
+                "bitangentScore": 0.6058756618635612,
+                "passed": true,
+                "minOutwardDot": 0.9514568724915556,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              },
+              {
+                "face": "eave",
+                "label": "出檐端",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.9089473725950079,
+                "bitangentScore": 0.7298729494075806,
+                "passed": true,
+                "minOutwardDot": 0.9563241260847908,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              },
+              {
+                "face": "ridge",
+                "label": "迎水端",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.9050487429983647,
+                "bitangentScore": 0.7485795230068535,
+                "passed": true,
+                "minOutwardDot": 0.959026615510034,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              }
+            ]
+          },
+          "cover": {
+            "allPassed": true,
+            "faces": [
+              {
+                "face": "top",
+                "label": "外表面",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.8183167081115962,
+                "bitangentScore": 0.9990334708010506,
+                "passed": true,
+                "minOutwardDot": 0.32725601331230586,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              },
+              {
+                "face": "bottom",
+                "label": "内表面",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.8169227474894638,
+                "bitangentScore": 0.9990130193439798,
+                "passed": true,
+                "minOutwardDot": 0.3281333028888843,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              },
+              {
+                "face": "left",
+                "label": "左侧边",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.9980498145596615,
+                "bitangentScore": 0.31503905943499577,
+                "passed": true,
+                "minOutwardDot": 0.9575683007889391,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              },
+              {
+                "face": "right",
+                "label": "右侧边",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.9979712241022094,
+                "bitangentScore": 0.31623564872819815,
+                "passed": true,
+                "minOutwardDot": 0.9539963906513054,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              },
+              {
+                "face": "eave",
+                "label": "出檐端",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.8303884367934664,
+                "bitangentScore": 0.6874498945840253,
+                "passed": true,
+                "minOutwardDot": 0.9516504355347211,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              },
+              {
+                "face": "ridge",
+                "label": "迎水端",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.8004354213013426,
+                "bitangentScore": 0.6661925928107479,
+                "passed": true,
+                "minOutwardDot": 0.9566312857877257,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              }
+            ]
+          },
+          "rafter": {
+            "allPassed": true,
+            "faces": [
+              {
+                "face": "side",
+                "minOutwardDot": 0.9981341411553327,
+                "outwardCriterion": "positive radial dot against local centreline",
+                "finite": true,
+                "uvRange": true,
+                "nonzeroArea": true,
+                "nonMirrored": true,
+                "longitudinalV": true,
+                "outward": true,
+                "triangles": 864,
+                "passed": true
+              },
+              {
+                "face": "start",
+                "minOutwardDot": 0.9999999999999999,
+                "outwardCriterion": "end-facing normal",
+                "finite": true,
+                "uvRange": true,
+                "nonzeroArea": true,
+                "nonMirrored": true,
+                "longitudinalV": true,
+                "outward": true,
+                "triangles": 24,
+                "passed": true
+              },
+              {
+                "face": "end",
+                "minOutwardDot": 0.9999999999999999,
+                "outwardCriterion": "end-facing normal",
+                "finite": true,
+                "uvRange": true,
+                "nonzeroArea": true,
+                "nonMirrored": true,
+                "longitudinalV": true,
+                "outward": true,
+                "triangles": 24,
+                "passed": true
+              }
+            ]
+          },
+          "crossbeam": {
+            "allPassed": true,
+            "faces": [
+              {
+                "face": "side",
+                "minOutwardDot": 0.9985508664435413,
+                "outwardCriterion": "positive radial dot against local centreline",
+                "finite": true,
+                "uvRange": true,
+                "nonzeroArea": true,
+                "nonMirrored": true,
+                "longitudinalV": true,
+                "outward": true,
+                "triangles": 864,
+                "passed": true
+              },
+              {
+                "face": "start",
+                "minOutwardDot": 0.9999999999999999,
+                "outwardCriterion": "end-facing normal",
+                "finite": true,
+                "uvRange": true,
+                "nonzeroArea": true,
+                "nonMirrored": true,
+                "longitudinalV": true,
+                "outward": true,
+                "triangles": 24,
+                "passed": true
+              },
+              {
+                "face": "end",
+                "minOutwardDot": 0.9999999999999999,
+                "outwardCriterion": "end-facing normal",
+                "finite": true,
+                "uvRange": true,
+                "nonzeroArea": true,
+                "nonMirrored": true,
+                "longitudinalV": true,
+                "outward": true,
+                "triangles": 24,
+                "passed": true
+              }
+            ]
+          },
+          "allPassed": true
+        },
+        "camera": {
+          "yaw": -0.67,
+          "pitch": 0.19,
+          "distance": 1.38,
+          "target": [
+            0,
+            -0.007,
+            0
+          ],
+          "side": "iso"
+        }
+      },
+      "screenshot": "02_pan_new_edge.jpg"
+    },
+    {
+      "name": "03_pan_shape_only",
+      "values": {
+        "scene": "trio",
+        "trioFamily": "pan",
+        "focusSingle": true,
+        "geometryRevision": 1,
+        "surfaceRevision": 0,
+        "mode": "material"
+      },
+      "seconds": 1.705,
+      "stats": {
+        "triangles": 8592,
+        "calls": 1,
+        "counts": null,
+        "contact": null,
+        "uv": {
+          "pan": {
+            "allPassed": true,
+            "faces": [
+              {
+                "face": "top",
+                "label": "外表面",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.908704314225202,
+                "bitangentScore": 0.999216364727051,
+                "passed": true,
+                "minOutwardDot": 0.6983960921286,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              },
+              {
+                "face": "bottom",
+                "label": "内表面",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.9089092794270914,
+                "bitangentScore": 0.9992664860557313,
+                "passed": true,
+                "minOutwardDot": 0.6998238758293727,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              },
+              {
+                "face": "left",
+                "label": "左侧边",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.9985013030851153,
+                "bitangentScore": 0.5985078345479014,
+                "passed": true,
+                "minOutwardDot": 0.9526913537585073,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              },
+              {
+                "face": "right",
+                "label": "右侧边",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.9988379725791587,
+                "bitangentScore": 0.6058756618635612,
+                "passed": true,
+                "minOutwardDot": 0.9514568724915556,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              },
+              {
+                "face": "eave",
+                "label": "出檐端",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.9089473725950079,
+                "bitangentScore": 0.7298729494075806,
+                "passed": true,
+                "minOutwardDot": 0.9563241260847908,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              },
+              {
+                "face": "ridge",
+                "label": "迎水端",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.9050487429983647,
+                "bitangentScore": 0.7485795230068535,
+                "passed": true,
+                "minOutwardDot": 0.959026615510034,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              }
+            ]
+          },
+          "cover": {
+            "allPassed": true,
+            "faces": [
+              {
+                "face": "top",
+                "label": "外表面",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.8183167081115962,
+                "bitangentScore": 0.9990334708010506,
+                "passed": true,
+                "minOutwardDot": 0.32725601331230586,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              },
+              {
+                "face": "bottom",
+                "label": "内表面",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.8169227474894638,
+                "bitangentScore": 0.9990130193439798,
+                "passed": true,
+                "minOutwardDot": 0.3281333028888843,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              },
+              {
+                "face": "left",
+                "label": "左侧边",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.9980498145596615,
+                "bitangentScore": 0.31503905943499577,
+                "passed": true,
+                "minOutwardDot": 0.9575683007889391,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              },
+              {
+                "face": "right",
+                "label": "右侧边",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.9979712241022094,
+                "bitangentScore": 0.31623564872819815,
+                "passed": true,
+                "minOutwardDot": 0.9539963906513054,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              },
+              {
+                "face": "eave",
+                "label": "出檐端",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.8303884367934664,
+                "bitangentScore": 0.6874498945840253,
+                "passed": true,
+                "minOutwardDot": 0.9516504355347211,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              },
+              {
+                "face": "ridge",
+                "label": "迎水端",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.8004354213013426,
+                "bitangentScore": 0.6661925928107479,
+                "passed": true,
+                "minOutwardDot": 0.9566312857877257,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              }
+            ]
+          },
+          "rafter": {
+            "allPassed": true,
+            "faces": [
+              {
+                "face": "side",
+                "minOutwardDot": 0.9981341411553327,
+                "outwardCriterion": "positive radial dot against local centreline",
+                "finite": true,
+                "uvRange": true,
+                "nonzeroArea": true,
+                "nonMirrored": true,
+                "longitudinalV": true,
+                "outward": true,
+                "triangles": 864,
+                "passed": true
+              },
+              {
+                "face": "start",
+                "minOutwardDot": 0.9999999999999999,
+                "outwardCriterion": "end-facing normal",
+                "finite": true,
+                "uvRange": true,
+                "nonzeroArea": true,
+                "nonMirrored": true,
+                "longitudinalV": true,
+                "outward": true,
+                "triangles": 24,
+                "passed": true
+              },
+              {
+                "face": "end",
+                "minOutwardDot": 0.9999999999999999,
+                "outwardCriterion": "end-facing normal",
+                "finite": true,
+                "uvRange": true,
+                "nonzeroArea": true,
+                "nonMirrored": true,
+                "longitudinalV": true,
+                "outward": true,
+                "triangles": 24,
+                "passed": true
+              }
+            ]
+          },
+          "crossbeam": {
+            "allPassed": true,
+            "faces": [
+              {
+                "face": "side",
+                "minOutwardDot": 0.9985508664435413,
+                "outwardCriterion": "positive radial dot against local centreline",
+                "finite": true,
+                "uvRange": true,
+                "nonzeroArea": true,
+                "nonMirrored": true,
+                "longitudinalV": true,
+                "outward": true,
+                "triangles": 864,
+                "passed": true
+              },
+              {
+                "face": "start",
+                "minOutwardDot": 0.9999999999999999,
+                "outwardCriterion": "end-facing normal",
+                "finite": true,
+                "uvRange": true,
+                "nonzeroArea": true,
+                "nonMirrored": true,
+                "longitudinalV": true,
+                "outward": true,
+                "triangles": 24,
+                "passed": true
+              },
+              {
+                "face": "end",
+                "minOutwardDot": 0.9999999999999999,
+                "outwardCriterion": "end-facing normal",
+                "finite": true,
+                "uvRange": true,
+                "nonzeroArea": true,
+                "nonMirrored": true,
+                "longitudinalV": true,
+                "outward": true,
+                "triangles": 24,
+                "passed": true
+              }
+            ]
+          },
+          "allPassed": true
+        },
+        "camera": {
+          "yaw": -0.67,
+          "pitch": 0.19,
+          "distance": 1.38,
+          "target": [
+            0,
+            -0.007,
+            0
+          ],
+          "side": "iso"
+        }
+      },
+      "screenshot": "03_pan_shape_only.jpg"
+    },
+    {
+      "name": "04_pan_original",
+      "values": {
+        "scene": "trio",
+        "trioFamily": "pan",
+        "focusSingle": true,
+        "geometryRevision": 0,
+        "surfaceRevision": 0,
+        "mode": "material"
+      },
+      "seconds": 1.442,
+      "stats": {
+        "triangles": 4056,
+        "calls": 1,
+        "counts": null,
+        "contact": null,
+        "uv": {
+          "pan": {
+            "allPassed": true,
+            "faces": [
+              {
+                "face": "top",
+                "label": "外表面",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.9066160026039235,
+                "bitangentScore": 0.9991285119648605,
+                "passed": true
+              },
+              {
+                "face": "bottom",
+                "label": "内表面",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.9066551065758339,
+                "bitangentScore": 0.9991380838676122,
+                "passed": true
+              },
+              {
+                "face": "left",
+                "label": "左侧边",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.9959523226219725,
+                "bitangentScore": 0.7008425792310882,
+                "passed": true
+              },
+              {
+                "face": "right",
+                "label": "右侧边",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.996094888006755,
+                "bitangentScore": 0.7008425811206318,
+                "passed": true
+              },
+              {
+                "face": "eave",
+                "label": "出檐端",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.9077973280209338,
+                "bitangentScore": 0.908798361754079,
+                "passed": true
+              },
+              {
+                "face": "ridge",
+                "label": "迎水端",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.9038620144657019,
+                "bitangentScore": 0.9046009583365165,
+                "passed": true
+              }
+            ]
+          },
+          "cover": {
+            "allPassed": true,
+            "faces": [
+              {
+                "face": "top",
+                "label": "外表面",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.8144808282777185,
+                "bitangentScore": 0.9990932851884915,
+                "passed": true
+              },
+              {
+                "face": "bottom",
+                "label": "内表面",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.8131088855598616,
+                "bitangentScore": 0.999037510449588,
+                "passed": true
+              },
+              {
+                "face": "left",
+                "label": "左侧边",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.9976055421155771,
+                "bitangentScore": 0.3357576123624791,
+                "passed": true
+              },
+              {
+                "face": "right",
+                "label": "右侧边",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.9975970702206318,
+                "bitangentScore": 0.33575761321319064,
+                "passed": true
+              },
+              {
+                "face": "eave",
+                "label": "出檐端",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.8292143987391001,
+                "bitangentScore": 0.8343964082644986,
+                "passed": true
+              },
+              {
+                "face": "ridge",
+                "label": "迎水端",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.7993978347538324,
+                "bitangentScore": 0.8033824747824027,
+                "passed": true
+              }
+            ]
+          },
+          "rafter": {
+            "allPassed": true,
+            "faces": [
+              {
+                "face": "side",
+                "minOutwardDot": 0.9981341411553327,
+                "outwardCriterion": "positive radial dot against local centreline",
+                "finite": true,
+                "uvRange": true,
+                "nonzeroArea": true,
+                "nonMirrored": true,
+                "longitudinalV": true,
+                "outward": true,
+                "triangles": 864,
+                "passed": true
+              },
+              {
+                "face": "start",
+                "minOutwardDot": 0.9999999999999999,
+                "outwardCriterion": "end-facing normal",
+                "finite": true,
+                "uvRange": true,
+                "nonzeroArea": true,
+                "nonMirrored": true,
+                "longitudinalV": true,
+                "outward": true,
+                "triangles": 24,
+                "passed": true
+              },
+              {
+                "face": "end",
+                "minOutwardDot": 0.9999999999999999,
+                "outwardCriterion": "end-facing normal",
+                "finite": true,
+                "uvRange": true,
+                "nonzeroArea": true,
+                "nonMirrored": true,
+                "longitudinalV": true,
+                "outward": true,
+                "triangles": 24,
+                "passed": true
+              }
+            ]
+          },
+          "crossbeam": {
+            "allPassed": true,
+            "faces": [
+              {
+                "face": "side",
+                "minOutwardDot": 0.9985508664435413,
+                "outwardCriterion": "positive radial dot against local centreline",
+                "finite": true,
+                "uvRange": true,
+                "nonzeroArea": true,
+                "nonMirrored": true,
+                "longitudinalV": true,
+                "outward": true,
+                "triangles": 864,
+                "passed": true
+              },
+              {
+                "face": "start",
+                "minOutwardDot": 0.9999999999999999,
+                "outwardCriterion": "end-facing normal",
+                "finite": true,
+                "uvRange": true,
+                "nonzeroArea": true,
+                "nonMirrored": true,
+                "longitudinalV": true,
+                "outward": true,
+                "triangles": 24,
+                "passed": true
+              },
+              {
+                "face": "end",
+                "minOutwardDot": 0.9999999999999999,
+                "outwardCriterion": "end-facing normal",
+                "finite": true,
+                "uvRange": true,
+                "nonzeroArea": true,
+                "nonMirrored": true,
+                "longitudinalV": true,
+                "outward": true,
+                "triangles": 24,
+                "passed": true
+              }
+            ]
+          },
+          "allPassed": true
+        },
+        "camera": {
+          "yaw": -0.67,
+          "pitch": 0.19,
+          "distance": 1.38,
+          "target": [
+            0,
+            -0.007,
+            0
+          ],
+          "side": "iso"
+        }
+      },
+      "screenshot": "04_pan_original.jpg"
+    },
+    {
+      "name": "05_pan_under",
+      "values": {
+        "scene": "trio",
+        "trioFamily": "pan",
+        "focusSingle": true,
+        "geometryRevision": 1,
+        "surfaceRevision": 1,
+        "mode": "material"
+      },
+      "seconds": 1.572,
+      "stats": {
+        "triangles": 8592,
+        "calls": 1,
+        "counts": null,
+        "contact": null,
+        "uv": {
+          "pan": {
+            "allPassed": true,
+            "faces": [
+              {
+                "face": "top",
+                "label": "外表面",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.908704314225202,
+                "bitangentScore": 0.999216364727051,
+                "passed": true,
+                "minOutwardDot": 0.6983960921286,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              },
+              {
+                "face": "bottom",
+                "label": "内表面",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.9089092794270914,
+                "bitangentScore": 0.9992664860557313,
+                "passed": true,
+                "minOutwardDot": 0.6998238758293727,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              },
+              {
+                "face": "left",
+                "label": "左侧边",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.9985013030851153,
+                "bitangentScore": 0.5985078345479014,
+                "passed": true,
+                "minOutwardDot": 0.9526913537585073,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              },
+              {
+                "face": "right",
+                "label": "右侧边",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.9988379725791587,
+                "bitangentScore": 0.6058756618635612,
+                "passed": true,
+                "minOutwardDot": 0.9514568724915556,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              },
+              {
+                "face": "eave",
+                "label": "出檐端",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.9089473725950079,
+                "bitangentScore": 0.7298729494075806,
+                "passed": true,
+                "minOutwardDot": 0.9563241260847908,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              },
+              {
+                "face": "ridge",
+                "label": "迎水端",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.9050487429983647,
+                "bitangentScore": 0.7485795230068535,
+                "passed": true,
+                "minOutwardDot": 0.959026615510034,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              }
+            ]
+          },
+          "cover": {
+            "allPassed": true,
+            "faces": [
+              {
+                "face": "top",
+                "label": "外表面",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.8183167081115962,
+                "bitangentScore": 0.9990334708010506,
+                "passed": true,
+                "minOutwardDot": 0.32725601331230586,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              },
+              {
+                "face": "bottom",
+                "label": "内表面",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.8169227474894638,
+                "bitangentScore": 0.9990130193439798,
+                "passed": true,
+                "minOutwardDot": 0.3281333028888843,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              },
+              {
+                "face": "left",
+                "label": "左侧边",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.9980498145596615,
+                "bitangentScore": 0.31503905943499577,
+                "passed": true,
+                "minOutwardDot": 0.9575683007889391,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              },
+              {
+                "face": "right",
+                "label": "右侧边",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.9979712241022094,
+                "bitangentScore": 0.31623564872819815,
+                "passed": true,
+                "minOutwardDot": 0.9539963906513054,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              },
+              {
+                "face": "eave",
+                "label": "出檐端",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.8303884367934664,
+                "bitangentScore": 0.6874498945840253,
+                "passed": true,
+                "minOutwardDot": 0.9516504355347211,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              },
+              {
+                "face": "ridge",
+                "label": "迎水端",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.8004354213013426,
+                "bitangentScore": 0.6661925928107479,
+                "passed": true,
+                "minOutwardDot": 0.9566312857877257,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              }
+            ]
+          },
+          "rafter": {
+            "allPassed": true,
+            "faces": [
+              {
+                "face": "side",
+                "minOutwardDot": 0.9981341411553327,
+                "outwardCriterion": "positive radial dot against local centreline",
+                "finite": true,
+                "uvRange": true,
+                "nonzeroArea": true,
+                "nonMirrored": true,
+                "longitudinalV": true,
+                "outward": true,
+                "triangles": 864,
+                "passed": true
+              },
+              {
+                "face": "start",
+                "minOutwardDot": 0.9999999999999999,
+                "outwardCriterion": "end-facing normal",
+                "finite": true,
+                "uvRange": true,
+                "nonzeroArea": true,
+                "nonMirrored": true,
+                "longitudinalV": true,
+                "outward": true,
+                "triangles": 24,
+                "passed": true
+              },
+              {
+                "face": "end",
+                "minOutwardDot": 0.9999999999999999,
+                "outwardCriterion": "end-facing normal",
+                "finite": true,
+                "uvRange": true,
+                "nonzeroArea": true,
+                "nonMirrored": true,
+                "longitudinalV": true,
+                "outward": true,
+                "triangles": 24,
+                "passed": true
+              }
+            ]
+          },
+          "crossbeam": {
+            "allPassed": true,
+            "faces": [
+              {
+                "face": "side",
+                "minOutwardDot": 0.9985508664435413,
+                "outwardCriterion": "positive radial dot against local centreline",
+                "finite": true,
+                "uvRange": true,
+                "nonzeroArea": true,
+                "nonMirrored": true,
+                "longitudinalV": true,
+                "outward": true,
+                "triangles": 864,
+                "passed": true
+              },
+              {
+                "face": "start",
+                "minOutwardDot": 0.9999999999999999,
+                "outwardCriterion": "end-facing normal",
+                "finite": true,
+                "uvRange": true,
+                "nonzeroArea": true,
+                "nonMirrored": true,
+                "longitudinalV": true,
+                "outward": true,
+                "triangles": 24,
+                "passed": true
+              },
+              {
+                "face": "end",
+                "minOutwardDot": 0.9999999999999999,
+                "outwardCriterion": "end-facing normal",
+                "finite": true,
+                "uvRange": true,
+                "nonzeroArea": true,
+                "nonMirrored": true,
+                "longitudinalV": true,
+                "outward": true,
+                "triangles": 24,
+                "passed": true
+              }
+            ]
+          },
+          "allPassed": true
+        },
+        "camera": {
+          "yaw": -0.55,
+          "pitch": -0.5,
+          "distance": 1.38,
+          "target": [
+            0,
+            -0.007,
+            0
+          ],
+          "side": "under"
+        }
+      },
+      "screenshot": "05_pan_under.jpg"
+    },
+    {
+      "name": "06_cover_new",
+      "values": {
+        "scene": "trio",
+        "trioFamily": "cover",
+        "focusSingle": true,
+        "geometryRevision": 1,
+        "surfaceRevision": 1,
+        "mode": "material"
+      },
+      "seconds": 1.594,
+      "stats": {
+        "triangles": 8592,
+        "calls": 1,
+        "counts": null,
+        "contact": null,
+        "uv": {
+          "pan": {
+            "allPassed": true,
+            "faces": [
+              {
+                "face": "top",
+                "label": "外表面",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.908704314225202,
+                "bitangentScore": 0.999216364727051,
+                "passed": true,
+                "minOutwardDot": 0.6983960921286,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              },
+              {
+                "face": "bottom",
+                "label": "内表面",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.9089092794270914,
+                "bitangentScore": 0.9992664860557313,
+                "passed": true,
+                "minOutwardDot": 0.6998238758293727,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              },
+              {
+                "face": "left",
+                "label": "左侧边",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.9985013030851153,
+                "bitangentScore": 0.5985078345479014,
+                "passed": true,
+                "minOutwardDot": 0.9526913537585073,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              },
+              {
+                "face": "right",
+                "label": "右侧边",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.9988379725791587,
+                "bitangentScore": 0.6058756618635612,
+                "passed": true,
+                "minOutwardDot": 0.9514568724915556,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              },
+              {
+                "face": "eave",
+                "label": "出檐端",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.9089473725950079,
+                "bitangentScore": 0.7298729494075806,
+                "passed": true,
+                "minOutwardDot": 0.9563241260847908,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              },
+              {
+                "face": "ridge",
+                "label": "迎水端",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.9050487429983647,
+                "bitangentScore": 0.7485795230068535,
+                "passed": true,
+                "minOutwardDot": 0.959026615510034,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              }
+            ]
+          },
+          "cover": {
+            "allPassed": true,
+            "faces": [
+              {
+                "face": "top",
+                "label": "外表面",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.8183167081115962,
+                "bitangentScore": 0.9990334708010506,
+                "passed": true,
+                "minOutwardDot": 0.32725601331230586,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              },
+              {
+                "face": "bottom",
+                "label": "内表面",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.8169227474894638,
+                "bitangentScore": 0.9990130193439798,
+                "passed": true,
+                "minOutwardDot": 0.3281333028888843,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              },
+              {
+                "face": "left",
+                "label": "左侧边",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.9980498145596615,
+                "bitangentScore": 0.31503905943499577,
+                "passed": true,
+                "minOutwardDot": 0.9575683007889391,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              },
+              {
+                "face": "right",
+                "label": "右侧边",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.9979712241022094,
+                "bitangentScore": 0.31623564872819815,
+                "passed": true,
+                "minOutwardDot": 0.9539963906513054,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              },
+              {
+                "face": "eave",
+                "label": "出檐端",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.8303884367934664,
+                "bitangentScore": 0.6874498945840253,
+                "passed": true,
+                "minOutwardDot": 0.9516504355347211,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              },
+              {
+                "face": "ridge",
+                "label": "迎水端",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.8004354213013426,
+                "bitangentScore": 0.6661925928107479,
+                "passed": true,
+                "minOutwardDot": 0.9566312857877257,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              }
+            ]
+          },
+          "rafter": {
+            "allPassed": true,
+            "faces": [
+              {
+                "face": "side",
+                "minOutwardDot": 0.9981341411553327,
+                "outwardCriterion": "positive radial dot against local centreline",
+                "finite": true,
+                "uvRange": true,
+                "nonzeroArea": true,
+                "nonMirrored": true,
+                "longitudinalV": true,
+                "outward": true,
+                "triangles": 864,
+                "passed": true
+              },
+              {
+                "face": "start",
+                "minOutwardDot": 0.9999999999999999,
+                "outwardCriterion": "end-facing normal",
+                "finite": true,
+                "uvRange": true,
+                "nonzeroArea": true,
+                "nonMirrored": true,
+                "longitudinalV": true,
+                "outward": true,
+                "triangles": 24,
+                "passed": true
+              },
+              {
+                "face": "end",
+                "minOutwardDot": 0.9999999999999999,
+                "outwardCriterion": "end-facing normal",
+                "finite": true,
+                "uvRange": true,
+                "nonzeroArea": true,
+                "nonMirrored": true,
+                "longitudinalV": true,
+                "outward": true,
+                "triangles": 24,
+                "passed": true
+              }
+            ]
+          },
+          "crossbeam": {
+            "allPassed": true,
+            "faces": [
+              {
+                "face": "side",
+                "minOutwardDot": 0.9985508664435413,
+                "outwardCriterion": "positive radial dot against local centreline",
+                "finite": true,
+                "uvRange": true,
+                "nonzeroArea": true,
+                "nonMirrored": true,
+                "longitudinalV": true,
+                "outward": true,
+                "triangles": 864,
+                "passed": true
+              },
+              {
+                "face": "start",
+                "minOutwardDot": 0.9999999999999999,
+                "outwardCriterion": "end-facing normal",
+                "finite": true,
+                "uvRange": true,
+                "nonzeroArea": true,
+                "nonMirrored": true,
+                "longitudinalV": true,
+                "outward": true,
+                "triangles": 24,
+                "passed": true
+              },
+              {
+                "face": "end",
+                "minOutwardDot": 0.9999999999999999,
+                "outwardCriterion": "end-facing normal",
+                "finite": true,
+                "uvRange": true,
+                "nonzeroArea": true,
+                "nonMirrored": true,
+                "longitudinalV": true,
+                "outward": true,
+                "triangles": 24,
+                "passed": true
+              }
+            ]
+          },
+          "allPassed": true
+        },
+        "camera": {
+          "yaw": -0.67,
+          "pitch": 0.19,
+          "distance": 1.1,
+          "target": [
+            0,
+            -0.007,
+            0
+          ],
+          "side": "iso"
+        }
+      },
+      "screenshot": "06_cover_new.jpg"
+    },
+    {
+      "name": "07_cover_original",
+      "values": {
+        "scene": "trio",
+        "trioFamily": "cover",
+        "focusSingle": true,
+        "geometryRevision": 0,
+        "surfaceRevision": 0,
+        "mode": "material"
+      },
+      "seconds": 1.545,
+      "stats": {
+        "triangles": 4056,
+        "calls": 1,
+        "counts": null,
+        "contact": null,
+        "uv": {
+          "pan": {
+            "allPassed": true,
+            "faces": [
+              {
+                "face": "top",
+                "label": "外表面",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.9066160026039235,
+                "bitangentScore": 0.9991285119648605,
+                "passed": true
+              },
+              {
+                "face": "bottom",
+                "label": "内表面",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.9066551065758339,
+                "bitangentScore": 0.9991380838676122,
+                "passed": true
+              },
+              {
+                "face": "left",
+                "label": "左侧边",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.9959523226219725,
+                "bitangentScore": 0.7008425792310882,
+                "passed": true
+              },
+              {
+                "face": "right",
+                "label": "右侧边",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.996094888006755,
+                "bitangentScore": 0.7008425811206318,
+                "passed": true
+              },
+              {
+                "face": "eave",
+                "label": "出檐端",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.9077973280209338,
+                "bitangentScore": 0.908798361754079,
+                "passed": true
+              },
+              {
+                "face": "ridge",
+                "label": "迎水端",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.9038620144657019,
+                "bitangentScore": 0.9046009583365165,
+                "passed": true
+              }
+            ]
+          },
+          "cover": {
+            "allPassed": true,
+            "faces": [
+              {
+                "face": "top",
+                "label": "外表面",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.8144808282777185,
+                "bitangentScore": 0.9990932851884915,
+                "passed": true
+              },
+              {
+                "face": "bottom",
+                "label": "内表面",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.8131088855598616,
+                "bitangentScore": 0.999037510449588,
+                "passed": true
+              },
+              {
+                "face": "left",
+                "label": "左侧边",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.9976055421155771,
+                "bitangentScore": 0.3357576123624791,
+                "passed": true
+              },
+              {
+                "face": "right",
+                "label": "右侧边",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.9975970702206318,
+                "bitangentScore": 0.33575761321319064,
+                "passed": true
+              },
+              {
+                "face": "eave",
+                "label": "出檐端",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.8292143987391001,
+                "bitangentScore": 0.8343964082644986,
+                "passed": true
+              },
+              {
+                "face": "ridge",
+                "label": "迎水端",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.7993978347538324,
+                "bitangentScore": 0.8033824747824027,
+                "passed": true
+              }
+            ]
+          },
+          "rafter": {
+            "allPassed": true,
+            "faces": [
+              {
+                "face": "side",
+                "minOutwardDot": 0.9981341411553327,
+                "outwardCriterion": "positive radial dot against local centreline",
+                "finite": true,
+                "uvRange": true,
+                "nonzeroArea": true,
+                "nonMirrored": true,
+                "longitudinalV": true,
+                "outward": true,
+                "triangles": 864,
+                "passed": true
+              },
+              {
+                "face": "start",
+                "minOutwardDot": 0.9999999999999999,
+                "outwardCriterion": "end-facing normal",
+                "finite": true,
+                "uvRange": true,
+                "nonzeroArea": true,
+                "nonMirrored": true,
+                "longitudinalV": true,
+                "outward": true,
+                "triangles": 24,
+                "passed": true
+              },
+              {
+                "face": "end",
+                "minOutwardDot": 0.9999999999999999,
+                "outwardCriterion": "end-facing normal",
+                "finite": true,
+                "uvRange": true,
+                "nonzeroArea": true,
+                "nonMirrored": true,
+                "longitudinalV": true,
+                "outward": true,
+                "triangles": 24,
+                "passed": true
+              }
+            ]
+          },
+          "crossbeam": {
+            "allPassed": true,
+            "faces": [
+              {
+                "face": "side",
+                "minOutwardDot": 0.9985508664435413,
+                "outwardCriterion": "positive radial dot against local centreline",
+                "finite": true,
+                "uvRange": true,
+                "nonzeroArea": true,
+                "nonMirrored": true,
+                "longitudinalV": true,
+                "outward": true,
+                "triangles": 864,
+                "passed": true
+              },
+              {
+                "face": "start",
+                "minOutwardDot": 0.9999999999999999,
+                "outwardCriterion": "end-facing normal",
+                "finite": true,
+                "uvRange": true,
+                "nonzeroArea": true,
+                "nonMirrored": true,
+                "longitudinalV": true,
+                "outward": true,
+                "triangles": 24,
+                "passed": true
+              },
+              {
+                "face": "end",
+                "minOutwardDot": 0.9999999999999999,
+                "outwardCriterion": "end-facing normal",
+                "finite": true,
+                "uvRange": true,
+                "nonzeroArea": true,
+                "nonMirrored": true,
+                "longitudinalV": true,
+                "outward": true,
+                "triangles": 24,
+                "passed": true
+              }
+            ]
+          },
+          "allPassed": true
+        },
+        "camera": {
+          "yaw": -0.67,
+          "pitch": 0.19,
+          "distance": 1.1,
+          "target": [
+            0,
+            -0.007,
+            0
+          ],
+          "side": "iso"
+        }
+      },
+      "screenshot": "07_cover_original.jpg"
+    },
+    {
+      "name": "08_pan_clay",
+      "values": {
+        "scene": "trio",
+        "trioFamily": "pan",
+        "focusSingle": true,
+        "geometryRevision": 1,
+        "surfaceRevision": 1,
+        "mode": "clay"
+      },
+      "seconds": 0.991,
+      "stats": {
+        "triangles": 8592,
+        "calls": 1,
+        "counts": null,
+        "contact": null,
+        "uv": {
+          "pan": {
+            "allPassed": true,
+            "faces": [
+              {
+                "face": "top",
+                "label": "外表面",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.908704314225202,
+                "bitangentScore": 0.999216364727051,
+                "passed": true,
+                "minOutwardDot": 0.6983960921286,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              },
+              {
+                "face": "bottom",
+                "label": "内表面",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.9089092794270914,
+                "bitangentScore": 0.9992664860557313,
+                "passed": true,
+                "minOutwardDot": 0.6998238758293727,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              },
+              {
+                "face": "left",
+                "label": "左侧边",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.9985013030851153,
+                "bitangentScore": 0.5985078345479014,
+                "passed": true,
+                "minOutwardDot": 0.9526913537585073,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              },
+              {
+                "face": "right",
+                "label": "右侧边",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.9988379725791587,
+                "bitangentScore": 0.6058756618635612,
+                "passed": true,
+                "minOutwardDot": 0.9514568724915556,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              },
+              {
+                "face": "eave",
+                "label": "出檐端",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.9089473725950079,
+                "bitangentScore": 0.7298729494075806,
+                "passed": true,
+                "minOutwardDot": 0.9563241260847908,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              },
+              {
+                "face": "ridge",
+                "label": "迎水端",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.9050487429983647,
+                "bitangentScore": 0.7485795230068535,
+                "passed": true,
+                "minOutwardDot": 0.959026615510034,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              }
+            ]
+          },
+          "cover": {
+            "allPassed": true,
+            "faces": [
+              {
+                "face": "top",
+                "label": "外表面",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.8183167081115962,
+                "bitangentScore": 0.9990334708010506,
+                "passed": true,
+                "minOutwardDot": 0.32725601331230586,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              },
+              {
+                "face": "bottom",
+                "label": "内表面",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.8169227474894638,
+                "bitangentScore": 0.9990130193439798,
+                "passed": true,
+                "minOutwardDot": 0.3281333028888843,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              },
+              {
+                "face": "left",
+                "label": "左侧边",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.9980498145596615,
+                "bitangentScore": 0.31503905943499577,
+                "passed": true,
+                "minOutwardDot": 0.9575683007889391,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              },
+              {
+                "face": "right",
+                "label": "右侧边",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.9979712241022094,
+                "bitangentScore": 0.31623564872819815,
+                "passed": true,
+                "minOutwardDot": 0.9539963906513054,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              },
+              {
+                "face": "eave",
+                "label": "出檐端",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.8303884367934664,
+                "bitangentScore": 0.6874498945840253,
+                "passed": true,
+                "minOutwardDot": 0.9516504355347211,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              },
+              {
+                "face": "ridge",
+                "label": "迎水端",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.8004354213013426,
+                "bitangentScore": 0.6661925928107479,
+                "passed": true,
+                "minOutwardDot": 0.9566312857877257,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              }
+            ]
+          },
+          "rafter": {
+            "allPassed": true,
+            "faces": [
+              {
+                "face": "side",
+                "minOutwardDot": 0.9981341411553327,
+                "outwardCriterion": "positive radial dot against local centreline",
+                "finite": true,
+                "uvRange": true,
+                "nonzeroArea": true,
+                "nonMirrored": true,
+                "longitudinalV": true,
+                "outward": true,
+                "triangles": 864,
+                "passed": true
+              },
+              {
+                "face": "start",
+                "minOutwardDot": 0.9999999999999999,
+                "outwardCriterion": "end-facing normal",
+                "finite": true,
+                "uvRange": true,
+                "nonzeroArea": true,
+                "nonMirrored": true,
+                "longitudinalV": true,
+                "outward": true,
+                "triangles": 24,
+                "passed": true
+              },
+              {
+                "face": "end",
+                "minOutwardDot": 0.9999999999999999,
+                "outwardCriterion": "end-facing normal",
+                "finite": true,
+                "uvRange": true,
+                "nonzeroArea": true,
+                "nonMirrored": true,
+                "longitudinalV": true,
+                "outward": true,
+                "triangles": 24,
+                "passed": true
+              }
+            ]
+          },
+          "crossbeam": {
+            "allPassed": true,
+            "faces": [
+              {
+                "face": "side",
+                "minOutwardDot": 0.9985508664435413,
+                "outwardCriterion": "positive radial dot against local centreline",
+                "finite": true,
+                "uvRange": true,
+                "nonzeroArea": true,
+                "nonMirrored": true,
+                "longitudinalV": true,
+                "outward": true,
+                "triangles": 864,
+                "passed": true
+              },
+              {
+                "face": "start",
+                "minOutwardDot": 0.9999999999999999,
+                "outwardCriterion": "end-facing normal",
+                "finite": true,
+                "uvRange": true,
+                "nonzeroArea": true,
+                "nonMirrored": true,
+                "longitudinalV": true,
+                "outward": true,
+                "triangles": 24,
+                "passed": true
+              },
+              {
+                "face": "end",
+                "minOutwardDot": 0.9999999999999999,
+                "outwardCriterion": "end-facing normal",
+                "finite": true,
+                "uvRange": true,
+                "nonzeroArea": true,
+                "nonMirrored": true,
+                "longitudinalV": true,
+                "outward": true,
+                "triangles": 24,
+                "passed": true
+              }
+            ]
+          },
+          "allPassed": true
+        },
+        "camera": {
+          "yaw": -0.67,
+          "pitch": 0.19,
+          "distance": 1.38,
+          "target": [
+            0,
+            -0.007,
+            0
+          ],
+          "side": "iso"
+        }
+      },
+      "screenshot": "08_pan_clay.jpg"
+    },
+    {
+      "name": "09_mobile_trio",
+      "values": {
+        "scene": "trio",
+        "trioFamily": "pan",
+        "focusSingle": false,
+        "geometryRevision": 1,
+        "surfaceRevision": 1,
+        "mode": "material"
+      },
+      "seconds": 1.435,
+      "stats": {
+        "triangles": 25782,
+        "calls": 6,
+        "counts": null,
+        "contact": null,
+        "uv": {
+          "pan": {
+            "allPassed": true,
+            "faces": [
+              {
+                "face": "top",
+                "label": "外表面",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.908704314225202,
+                "bitangentScore": 0.999216364727051,
+                "passed": true,
+                "minOutwardDot": 0.6983960921286,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              },
+              {
+                "face": "bottom",
+                "label": "内表面",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.9089092794270914,
+                "bitangentScore": 0.9992664860557313,
+                "passed": true,
+                "minOutwardDot": 0.6998238758293727,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              },
+              {
+                "face": "left",
+                "label": "左侧边",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.9985013030851153,
+                "bitangentScore": 0.5985078345479014,
+                "passed": true,
+                "minOutwardDot": 0.9526913537585073,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              },
+              {
+                "face": "right",
+                "label": "右侧边",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.9988379725791587,
+                "bitangentScore": 0.6058756618635612,
+                "passed": true,
+                "minOutwardDot": 0.9514568724915556,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              },
+              {
+                "face": "eave",
+                "label": "出檐端",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.9089473725950079,
+                "bitangentScore": 0.7298729494075806,
+                "passed": true,
+                "minOutwardDot": 0.9563241260847908,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              },
+              {
+                "face": "ridge",
+                "label": "迎水端",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.9050487429983647,
+                "bitangentScore": 0.7485795230068535,
+                "passed": true,
+                "minOutwardDot": 0.959026615510034,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              }
+            ]
+          },
+          "cover": {
+            "allPassed": true,
+            "faces": [
+              {
+                "face": "top",
+                "label": "外表面",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.8183167081115962,
+                "bitangentScore": 0.9990334708010506,
+                "passed": true,
+                "minOutwardDot": 0.32725601331230586,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              },
+              {
+                "face": "bottom",
+                "label": "内表面",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.8169227474894638,
+                "bitangentScore": 0.9990130193439798,
+                "passed": true,
+                "minOutwardDot": 0.3281333028888843,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              },
+              {
+                "face": "left",
+                "label": "左侧边",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.9980498145596615,
+                "bitangentScore": 0.31503905943499577,
+                "passed": true,
+                "minOutwardDot": 0.9575683007889391,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              },
+              {
+                "face": "right",
+                "label": "右侧边",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.9979712241022094,
+                "bitangentScore": 0.31623564872819815,
+                "passed": true,
+                "minOutwardDot": 0.9539963906513054,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              },
+              {
+                "face": "eave",
+                "label": "出檐端",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.8303884367934664,
+                "bitangentScore": 0.6874498945840253,
+                "passed": true,
+                "minOutwardDot": 0.9516504355347211,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              },
+              {
+                "face": "ridge",
+                "label": "迎水端",
+                "noGeometricFold": true,
+                "finite": true,
+                "inRange": true,
+                "zeroAreaTriangles": 0,
+                "orientationConsistent": true,
+                "tangentAligned": true,
+                "bitangentAligned": true,
+                "tangentScore": 0.8004354213013426,
+                "bitangentScore": 0.6661925928107479,
+                "passed": true,
+                "minOutwardDot": 0.9566312857877257,
+                "outwardCriterion": "shell normal and rounded edge-profile outward direction"
+              }
+            ]
+          },
+          "rafter": {
+            "allPassed": true,
+            "faces": [
+              {
+                "face": "side",
+                "minOutwardDot": 0.9981341411553327,
+                "outwardCriterion": "positive radial dot against local centreline",
+                "finite": true,
+                "uvRange": true,
+                "nonzeroArea": true,
+                "nonMirrored": true,
+                "longitudinalV": true,
+                "outward": true,
+                "triangles": 864,
+                "passed": true
+              },
+              {
+                "face": "start",
+                "minOutwardDot": 0.9999999999999999,
+                "outwardCriterion": "end-facing normal",
+                "finite": true,
+                "uvRange": true,
+                "nonzeroArea": true,
+                "nonMirrored": true,
+                "longitudinalV": true,
+                "outward": true,
+                "triangles": 24,
+                "passed": true
+              },
+              {
+                "face": "end",
+                "minOutwardDot": 0.9999999999999999,
+                "outwardCriterion": "end-facing normal",
+                "finite": true,
+                "uvRange": true,
+                "nonzeroArea": true,
+                "nonMirrored": true,
+                "longitudinalV": true,
+                "outward": true,
+                "triangles": 24,
+                "passed": true
+              }
+            ]
+          },
+          "crossbeam": {
+            "allPassed": true,
+            "faces": [
+              {
+                "face": "side",
+                "minOutwardDot": 0.9985508664435413,
+                "outwardCriterion": "positive radial dot against local centreline",
+                "finite": true,
+                "uvRange": true,
+                "nonzeroArea": true,
+                "nonMirrored": true,
+                "longitudinalV": true,
+                "outward": true,
+                "triangles": 864,
+                "passed": true
+              },
+              {
+                "face": "start",
+                "minOutwardDot": 0.9999999999999999,
+                "outwardCriterion": "end-facing normal",
+                "finite": true,
+                "uvRange": true,
+                "nonzeroArea": true,
+                "nonMirrored": true,
+                "longitudinalV": true,
+                "outward": true,
+                "triangles": 24,
+                "passed": true
+              },
+              {
+                "face": "end",
+                "minOutwardDot": 0.9999999999999999,
+                "outwardCriterion": "end-facing normal",
+                "finite": true,
+                "uvRange": true,
+                "nonzeroArea": true,
+                "nonMirrored": true,
+                "longitudinalV": true,
+                "outward": true,
+                "triangles": 24,
+                "passed": true
+              }
+            ]
+          },
+          "allPassed": true
+        },
+        "camera": {
+          "yaw": -0.7,
+          "pitch": 0.54,
+          "distance": 3.396693548387097,
+          "target": [
+            0,
+            -0.01,
+            0
+          ],
+          "side": "iso"
+        }
+      },
+      "screenshot": "09_mobile_trio.jpg"
+    }
+  ],
+  "checks": [
+    {
+      "name": "shape_material_switch_keeps_camera",
+      "passed": true
+    },
+    {
+      "name": "mobile_390x844_no_horizontal_overflow",
+      "passed": true,
+      "inner": 390,
+      "scroll": 390,
+      "canvas": 372
+    }
+  ],
+  "visualApproved": false,
+  "productionApproved": false,
+  "publicSiteDeployed": false,
+  "browserVersion": "143.0.7499.4",
+  "protocol": "file",
+  "seconds": 17.787,
+  "allPassed": true
+}
