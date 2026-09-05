@@ -65,7 +65,7 @@ function makeTileGeometryV099(kind='pan',options={}){
   for(let j=0;j<=nv;j++){top[j]=[];bottom[j]=[];for(let i=0;i<=nu;i++){const o=studyBoundary(kind,i/nu*2-1,j/nv,opt);top[j][i]=add(studyRoundPosition(o,0),i/nu,j/nv,o.cavity,1,o.relief,[i/nu*2-1,j/nv,0]);bottom[j][i]=add(studyRoundPosition(o,1),i/nu,j/nv,0,0,0,[i/nu*2-1,j/nv,1]);}}
   begin('top');for(let j=0;j<nv;j++)for(let i=0;i<nu;i++){const a=top[j][i],b=top[j][i+1],c=top[j+1][i],d=top[j+1][i+1];idx.push(a,c,b,b,c,d);}end();
   begin('bottom');for(let j=0;j<nv;j++)for(let i=0;i<nu;i++){const a=bottom[j][i],b=bottom[j][i+1],c=bottom[j+1][i],d=bottom[j+1][i+1];idx.push(a,b,c,b,d,c);}end();
-  const qs=[0,.05272,.18,.5,.82,.94728,1];
+  const qs=nv<=22?[0,.18,.5,.82,1]:[0,.05272,.18,.5,.82,.94728,1];
   function edge(name,n,fn,order){begin(name);const grid=[],lengths=[0];let prev=null,total=0;
     for(let k=0;k<=n;k++){const [s,t]=fn(k/n),o=studyBoundary(kind,s,t,opt);if(prev)total+=o.p.distanceTo(prev);lengths[k]=total;prev=o.p;grid[k]={o,s,t,ids:[]};}
     for(let k=0;k<=n;k++){const o=grid[k].o;for(const q of qs)grid[k].ids.push(add(studyRoundPosition(o,q),lengths[k]/total,1-q,0,0,0,[grid[k].s,grid[k].t,q]));}
@@ -73,7 +73,7 @@ function makeTileGeometryV099(kind='pan',options={}){
   }
   edge('left',nv,t=>[-1,t],'A');edge('right',nv,t=>[1,t],'B');edge('eave',nu,u=>[u*2-1,0],'B');edge('ridge',nu,u=>[u*2-1,1],'A');
   const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));g.setAttribute('studyParam',new THREE.Float32BufferAttribute(param,3));g.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));g.setAttribute('tileCavity',new THREE.Float32BufferAttribute(cavity,1));g.setAttribute('tileFace',new THREE.Float32BufferAttribute(face,1));g.setAttribute('tileRelief',new THREE.Float32BufferAttribute(relief,1));g.setIndex(idx);smoothCoincidentNormals(g);surfaces.forEach((s,i)=>g.addGroup(s.start,s.count,i));g.computeBoundingSphere();
-  g.userData={kind,profile:p,surfaces,geometryRevision:'0.9.9-edge-study',seed:opt.seed,edgeStrength:opt.edgeStrength,bevelBands:6,uvConvention:{top:['+x','+z'],bottom:['+x','+z'],left:['+z','innerToOuter'],right:['+z','innerToOuter'],eave:['+x','innerToOuter'],ridge:['+x','innerToOuter']}};return g;
+  g.userData={kind,profile:p,surfaces,geometryRevision:'0.9.9-edge-study',seed:opt.seed,edgeStrength:opt.edgeStrength,bevelBands:qs.length-1,uvConvention:{top:['+x','+z'],bottom:['+x','+z'],left:['+z','innerToOuter'],right:['+z','innerToOuter'],eave:['+x','innerToOuter'],ridge:['+x','innerToOuter']}};return g;
 }
 function makeTileGeometry(kind='pan',options={}){
   return state.geometryRevision===0?makeTileGeometryV098(kind,options):makeTileGeometryV099(kind,{edgeStrength:state.edgeStrength??1,...options});

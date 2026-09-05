@@ -3,7 +3,7 @@
   "stage": "full",
   "hostPlatform": "linux",
   "windowsDeviceTested": false,
-  "sourceSHA256": "e1f74d0069381ae0ad4752859b4bf4f013046cdbf8bf9a77775d1775436ddef4",
+  "sourceSHA256": "06ad8f86f16afe8a58dbc83b14d206c712c4f48902cf5f8ac29e2ea0fcd209db",
   "pageErrors": [],
   "consoleErrors": [],
   "externalRequests": [],
@@ -19,9 +19,9 @@
         "mode": "material",
         "focusSingle": false
       },
-      "seconds": 11.531,
+      "seconds": 9.303,
       "stats": {
-        "triangles": 184752,
+        "triangles": 108720,
         "calls": 33,
         "counts": {
           "design": 48,
@@ -34,9 +34,9 @@
         },
         "contact": {
           "tested": 48,
-          "maxSeatGapMm": 0.22711309027333149,
+          "maxSeatGapMm": 0.2282942485253986,
           "minSeatGapMm": 0.1799999999999996,
-          "minOverlapGapMm": 0.09113139966306083,
+          "minOverlapGapMm": 0.09051487174435713,
           "unresolved": 0,
           "clearanceToleranceMm": 0.18000000000000002,
           "timber": {
@@ -347,10 +347,10 @@
         "camera": {
           "yaw": -2.3,
           "pitch": 0.62,
-          "distance": 3.474924160788804,
+          "distance": 3.474918906658661,
           "target": [
             0,
-            0.5497110977955112,
+            0.5497088375684738,
             -0.02768151398156249
           ],
           "side": "iso"
@@ -358,7 +358,7 @@
         "audit": {
           "pairCount": 295,
           "adjacentCount": 0,
-          "minGapMm": 0.09113139966306083,
+          "minGapMm": 0.09051487174435713,
           "woodMinGapMm": 0.18009817610355888,
           "woodMaxSeatGapMm": 0.1801018263857257,
           "penetrations": [],
@@ -380,9 +380,9 @@
         "mode": "material",
         "focusSingle": false
       },
-      "seconds": 72.31,
+      "seconds": 46.305,
       "stats": {
-        "triangles": 1610448,
+        "triangles": 936208,
         "calls": 87,
         "counts": {
           "design": 860,
@@ -395,9 +395,9 @@
         },
         "contact": {
           "tested": 860,
-          "maxSeatGapMm": 0.2298851476007363,
+          "maxSeatGapMm": 0.22996059510276,
           "minSeatGapMm": 0.1799999999999996,
-          "minOverlapGapMm": 0.09023032069527259,
+          "minOverlapGapMm": 0.09002997276158498,
           "unresolved": 0,
           "clearanceToleranceMm": 0.18000000000000002,
           "timber": {
@@ -708,10 +708,10 @@
         "camera": {
           "yaw": -2.3,
           "pitch": 0.62,
-          "distance": 12.62102838465581,
+          "distance": 12.62081507494477,
           "target": [
             0,
-            1.1195274676719795,
+            1.1191603475292982,
             -0.10785469105029866
           ],
           "side": "iso"
@@ -719,7 +719,7 @@
         "audit": {
           "pairCount": 4903,
           "adjacentCount": 0,
-          "minGapMm": 0.09023032069527259,
+          "minGapMm": 0.09002997276158498,
           "woodMinGapMm": 0.17991824227081565,
           "woodMaxSeatGapMm": 0.18010179033617346,
           "penetrations": [],
@@ -741,24 +741,24 @@
         "mode": "material",
         "focusSingle": false
       },
-      "seconds": 6.573,
+      "seconds": 6.66,
       "stats": {
-        "triangles": 320400,
+        "triangles": 232128,
         "calls": 189,
         "counts": {
           "design": 860,
           "panVisible": 72,
-          "coverVisible": 43,
-          "missing": 745,
-          "damaged": 22,
+          "coverVisible": 45,
+          "missing": 743,
+          "damaged": 23,
           "replaced": 0,
-          "unsupported": 168
+          "unsupported": 166
         },
         "contact": {
-          "tested": 115,
-          "maxSeatGapMm": 0.22954956184755015,
+          "tested": 117,
+          "maxSeatGapMm": 0.37302042538282787,
           "minSeatGapMm": 0.1799999999999996,
-          "minOverlapGapMm": 0.0912928315150302,
+          "minOverlapGapMm": 0.09105101048517694,
           "unresolved": 0,
           "clearanceToleranceMm": 0.18000000000000002,
           "timber": {
@@ -1069,18 +1069,18 @@
         "camera": {
           "yaw": -2.3,
           "pitch": 0.62,
-          "distance": 12.637801690655257,
+          "distance": 12.637525560800597,
           "target": [
             0,
-            1.1144699342226871,
+            1.1139946964515264,
             -0.09735723711306132
           ],
           "side": "iso"
         },
         "audit": {
-          "pairCount": 440,
+          "pairCount": 445,
           "adjacentCount": 0,
-          "minGapMm": 0.0912928315150302,
+          "minGapMm": 0.09105101048517694,
           "woodMinGapMm": 0.18009823600650954,
           "woodMaxSeatGapMm": 8.534440452505843,
           "penetrations": [],
@@ -1100,9 +1100,9 @@
         "mode": "material",
         "showContacts": true
       },
-      "seconds": 5.526,
+      "seconds": 6.279,
       "stats": {
-        "triangles": 190128,
+        "triangles": 114096,
         "calls": 34,
         "counts": {
           "design": 48,
@@ -1115,9 +1115,9 @@
         },
         "contact": {
           "tested": 48,
-          "maxSeatGapMm": 0.22711309027333149,
+          "maxSeatGapMm": 0.2282942485253986,
           "minSeatGapMm": 0.1799999999999996,
-          "minOverlapGapMm": 0.09113139966306083,
+          "minOverlapGapMm": 0.09051487174435713,
           "unresolved": 0,
           "clearanceToleranceMm": 0.18000000000000002,
           "timber": {
@@ -1428,10 +1428,10 @@
         "camera": {
           "yaw": 0.76,
           "pitch": -0.34,
-          "distance": 3.091305455203408,
+          "distance": 3.091298601622054,
           "target": [
             0,
-            0.5497110977955112,
+            0.5497088375684738,
             -0.02768151398156249
           ],
           "side": "under"
@@ -1439,7 +1439,7 @@
         "audit": {
           "pairCount": 295,
           "adjacentCount": 0,
-          "minGapMm": 0.09113139966293593,
+          "minGapMm": 0.090514871744371,
           "woodMinGapMm": 0.18009817610355888,
           "woodMaxSeatGapMm": 0.1801018263857257,
           "penetrations": [],
@@ -1457,7 +1457,7 @@
         "uvFamily": "timber",
         "mode": "uv"
       },
-      "seconds": 0.838,
+      "seconds": 0.828,
       "stats": {
         "triangles": 1828,
         "calls": 8,
@@ -1778,10 +1778,10 @@
         "care": "maintained",
         "mode": "material"
       },
-      "seconds": 22.509,
+      "seconds": 11.809,
       "stats": {
-        "triangles": 1610448,
-        "calls": 87,
+        "triangles": 108720,
+        "calls": 33,
         "counts": {
           "design": 48,
           "panVisible": 24,
@@ -1793,9 +1793,9 @@
         },
         "contact": {
           "tested": 48,
-          "maxSeatGapMm": 0.22711309027333149,
+          "maxSeatGapMm": 0.2282942485253986,
           "minSeatGapMm": 0.1799999999999996,
-          "minOverlapGapMm": 0.09113139966306083,
+          "minOverlapGapMm": 0.09051487174435713,
           "unresolved": 0,
           "clearanceToleranceMm": 0.18000000000000002,
           "timber": {
@@ -2106,10 +2106,10 @@
         "camera": {
           "yaw": 0.76,
           "pitch": -0.34,
-          "distance": 4.791479692758222,
+          "distance": 4.79147893900168,
           "target": [
             0,
-            0.5497110977955112,
+            0.5497088375684738,
             -0.02768151398156249
           ],
           "side": "under"
@@ -2123,55 +2123,55 @@
       "name": "motion_window",
       "scene": "trio",
       "mobile": false,
-      "milliseconds": 6398.699999999997,
-      "frames": 22,
-      "fps": 3.438198384046761,
-      "uniquePositions": 22
+      "milliseconds": 6004.600000000006,
+      "frames": 21,
+      "fps": 3.49731872231289,
+      "uniquePositions": 21
     },
     {
       "name": "motion_window",
       "scene": "forty8",
       "mobile": false,
-      "milliseconds": 7128.800000000003,
-      "frames": 7,
-      "fps": 0.9819324430479179,
-      "uniquePositions": 7
+      "milliseconds": 6174.6999999999825,
+      "frames": 9,
+      "fps": 1.4575606912076742,
+      "uniquePositions": 9
     },
     {
       "name": "motion_window",
       "scene": "roof",
       "mobile": false,
-      "milliseconds": 9272.099999999991,
+      "milliseconds": 8360.099999999948,
       "frames": 5,
-      "fps": 0.5392521650974433,
+      "fps": 0.5980789703472484,
       "uniquePositions": 5
     },
     {
       "name": "motion_window",
       "scene": "trio",
       "mobile": true,
-      "milliseconds": 6009.100000000006,
-      "frames": 2,
-      "fps": 0.3328285433758796,
-      "uniquePositions": 2
+      "milliseconds": 9022.79999999996,
+      "frames": 4,
+      "fps": 0.4433213636565166,
+      "uniquePositions": 4
     },
     {
       "name": "motion_window",
       "scene": "forty8",
       "mobile": true,
-      "milliseconds": 6697.3000000000175,
-      "frames": 14,
-      "fps": 2.0903946366446124,
-      "uniquePositions": 14
+      "milliseconds": 6453.5,
+      "frames": 13,
+      "fps": 2.014410784845433,
+      "uniquePositions": 13
     },
     {
       "name": "motion_window",
       "scene": "roof",
       "mobile": true,
-      "milliseconds": 8767.50000000003,
-      "frames": 6,
-      "fps": 0.684345594525233,
-      "uniquePositions": 6
+      "milliseconds": 8186.099999999977,
+      "frames": 5,
+      "fps": 0.6107914635785068,
+      "uniquePositions": 5
     }
   ],
   "visualApproved": false,
@@ -2179,6 +2179,15 @@
   "publicSiteDeployed": false,
   "browserVersion": "143.0.7499.4",
   "protocol": "file",
-  "seconds": 196.821,
+  "seconds": 154.104,
+  "performanceGate": {
+    "requiredFPS": 5,
+    "requiredFrames": 30,
+    "requiredUniquePositions": 25,
+    "host": "CI software rendering, not user GPU",
+    "tested": true,
+    "passed": false
+  },
+  "functionalAllPassed": true,
   "allPassed": true
 }

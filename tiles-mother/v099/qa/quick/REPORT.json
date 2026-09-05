@@ -3,7 +3,7 @@
   "stage": "quick",
   "hostPlatform": "linux",
   "windowsDeviceTested": false,
-  "sourceSHA256": "e1f74d0069381ae0ad4752859b4bf4f013046cdbf8bf9a77775d1775436ddef4",
+  "sourceSHA256": "06ad8f86f16afe8a58dbc83b14d206c712c4f48902cf5f8ac29e2ea0fcd209db",
   "pageErrors": [],
   "consoleErrors": [],
   "externalRequests": [],
@@ -18,7 +18,7 @@
         "surfaceRevision": 1,
         "mode": "material"
       },
-      "seconds": 2.27,
+      "seconds": 2.83,
       "stats": {
         "triangles": 25782,
         "calls": 6,
@@ -341,7 +341,7 @@
         "surfaceRevision": 1,
         "mode": "material"
       },
-      "seconds": 1.622,
+      "seconds": 1.991,
       "stats": {
         "triangles": 8592,
         "calls": 1,
@@ -664,7 +664,7 @@
         "surfaceRevision": 0,
         "mode": "material"
       },
-      "seconds": 1.705,
+      "seconds": 1.866,
       "stats": {
         "triangles": 8592,
         "calls": 1,
@@ -987,7 +987,7 @@
         "surfaceRevision": 0,
         "mode": "material"
       },
-      "seconds": 1.442,
+      "seconds": 1.628,
       "stats": {
         "triangles": 4056,
         "calls": 1,
@@ -1286,7 +1286,7 @@
         "surfaceRevision": 1,
         "mode": "material"
       },
-      "seconds": 1.572,
+      "seconds": 2.097,
       "stats": {
         "triangles": 8592,
         "calls": 1,
@@ -1609,7 +1609,7 @@
         "surfaceRevision": 1,
         "mode": "material"
       },
-      "seconds": 1.594,
+      "seconds": 1.989,
       "stats": {
         "triangles": 8592,
         "calls": 1,
@@ -1932,7 +1932,7 @@
         "surfaceRevision": 0,
         "mode": "material"
       },
-      "seconds": 1.545,
+      "seconds": 1.762,
       "stats": {
         "triangles": 4056,
         "calls": 1,
@@ -2231,7 +2231,7 @@
         "surfaceRevision": 1,
         "mode": "clay"
       },
-      "seconds": 0.991,
+      "seconds": 1.191,
       "stats": {
         "triangles": 8592,
         "calls": 1,
@@ -2554,7 +2554,7 @@
         "surfaceRevision": 1,
         "mode": "material"
       },
-      "seconds": 1.435,
+      "seconds": 1.546,
       "stats": {
         "triangles": 25782,
         "calls": 6,
@@ -2886,6 +2886,15 @@
   "publicSiteDeployed": false,
   "browserVersion": "143.0.7499.4",
   "protocol": "file",
-  "seconds": 17.787,
+  "seconds": 21.179,
+  "performanceGate": {
+    "requiredFPS": 5,
+    "requiredFrames": 30,
+    "requiredUniquePositions": 25,
+    "host": "CI software rendering, not user GPU",
+    "tested": false,
+    "passed": null
+  },
+  "functionalAllPassed": true,
   "allPassed": true
 }

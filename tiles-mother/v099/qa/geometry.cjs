@@ -13,7 +13,7 @@ function audit(g){const P=g.attributes.position.array,I=g.index.array,N=g.attrib
  for(const f of g.userData.surfaces)if(f.name==='top'||f.name==='bottom')for(let k=f.start;k<f.start+f.count;k+=3){const [a,b,c]=[I[k]*3,I[k+1]*3,I[k+2]*3],ny=(P[b+2]-P[a+2])*(P[c]-P[a])-(P[b]-P[a])*(P[c+2]-P[a+2]);minSigned=Math.min(minSigned,ny*(f.name==='top'?1:-1));}
  return {finite:Array.from(P).every(Number.isFinite)&&Array.from(N).every(Number.isFinite),zero,unpaired:Array.from(edges.values()).filter(v=>v!==2).length,minSigned,maxNormalGap,uv:A.uvGate(g).allPassed,vertices:P.length/3,triangles:I.length/3};
 }
-for(const kind of ['pan','cover'])for(const seed of [101,202,314159,61771,987654])for(const damageClass of [0,1,2])for(const [nu,nv] of [[12,20],[20,30],[36,46]])for(const edgeStrength of [0,1,1.5]){
+for(const kind of ['pan','cover'])for(const seed of [101,202,314159,61771,987654])for(const damageClass of [0,1,2])for(const [nu,nv] of [[10,14],[16,22],[36,46]])for(const edgeStrength of [0,1,1.5]){
  const opts={seed,damageClass,nu,nv,edgeStrength},g=A.makeTileGeometryV099(kind,opts),r=audit(g);if(!r.finite||r.zero||r.unpaired||r.minSigned<=0||!r.uv||r.maxNormalGap>1e-6)failures.push({kind,...opts,...r,details:!r.uv?A.uvGate(g):undefined});
  cases.push({kind,...opts,...r});g.dispose();
 }

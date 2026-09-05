@@ -19,7 +19,7 @@ s=s.replace("if(mode!=='uv')m.material.color", "if(mode!=='uv'&&mode!=='clay')m.
 s=s.replace("if(state.mode!=='uv')b.m.setColorAt", "if(state.mode!=='uv'&&state.mode!=='clay')b.m.setColorAt")
 s=s.replace("const layoutKey=[kind,state.year,state.seed,state.care]", "const layoutKey=[state.geometryRevision,state.edgeStrength,kind,state.year,state.seed,state.care]")
 # Candidate uses more longitudinal samples at the roof. Fixed geometry within a mode.
-s=s.replace("lod=is48?{nu:16,nv:22}:{nu:10,nv:14}","lod=state.geometryRevision===0?(is48?{nu:16,nv:22}:{nu:10,nv:14}):(is48?{nu:20,nv:30}:{nu:12,nv:20})")
+s=s.replace("lod=is48?{nu:16,nv:22}:{nu:10,nv:14}","lod=state.geometryRevision===0?(is48?{nu:16,nv:22}:{nu:10,nv:14}):(is48?{nu:16,nv:22}:{nu:10,nv:14})")
 # Add a close-up without removing any of the inherited scenes.
 a=s.index('function buildTrio(){'); b=s.index('\nfunction lifecycle',a)
 trio='''function buildTrio(){
@@ -35,6 +35,9 @@ s=s.replace("state.scene=b.dataset.scene;state.cameraSide='iso';", "state.scene=
 s=s.replace("syncUI();runGlobalQA();}","syncUI();runGlobalQA();studyUI();}")
 # Give geometry changes a specific cache identity, avoiding old placement reuse.
 s += '\n'+ui
+s=s.replace("function rebuild(){lastRoof=null;","function rebuild(){renderer.shadowMap.needsUpdate=true;lastRoof=null;")
+s += '\nrenderer.shadowMap.autoUpdate=false;renderer.shadowMap.needsUpdate=true;needsRender=true;\n'
+s=s.replace('首次打开860片屋面需要几秒至十余秒。','首次打开860片需要计算实际接触，等待时间取决于设备。')
 html=html.replace('V0.9.8 · 接触解算与四梁承托','Tiles Mother V0.9.9 · 边口与材质学习工作台')
 html=html.replace('V0.9.8 · 继承陶瓦材质 · 接触解算 · 四梁承托','V0.9.9 · 边口造型 · 参考分层材质 · 原版可对照')
 html=html.replace('</head>','<style>\n'+(here/'source/study.css').read_text()+'\n</style></head>')

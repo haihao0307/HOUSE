@@ -19,7 +19,7 @@ with sync_playwright() as p:
   def view(name,values,angle=None,audit=False):
    t=time.monotonic();page.evaluate('(x)=>TilesMotherV099.setView(x)',values)
    if angle:page.evaluate('(x)=>TilesMotherV099.setAngle(x)',angle)
-   page.wait_for_timeout(300)
+   page.evaluate("__tilesDebug.renderer.render(__tilesDebug.scene,__tilesDebug.camera)");page.wait_for_timeout(100)
    stats=page.evaluate('({triangles:__tilesDebug.renderer.info.render.triangles,calls:__tilesDebug.renderer.info.render.calls,counts:TilesMotherV099.getCounts(),contact:TilesMotherV099.getContactQA(),uv:TilesMotherV099.runUVQA(),camera:TilesMotherV099.getCamera()})')
    assert stats['triangles']>0,name;assert stats['uv']['allPassed'],(name,'uv failed')
    if audit:
@@ -47,9 +47,11 @@ with sync_playwright() as p:
     page.set_viewport_size({'width':390,'height':844} if mobile else {'width':1500,'height':950})
     for scene in ['trio','forty8','roof']:
      page.evaluate('(s)=>TilesMotherV099.setView({scene:s,year:0,care:"maintained",mode:"material",showContacts:false,focusSingle:false})',scene)
+     page.evaluate("__tilesDebug.renderer.render(__tilesDebug.scene,__tilesDebug.camera)")
      sample=page.evaluate('''()=>new Promise(resolve=>{let start=performance.now(),last=start,times=[],positions=[];TilesMotherV099.state.autoRotate=true;function frame(now){times.push(now-last);last=now;positions.push(__tilesDebug.camera.position.toArray());if(now-start<6000)requestAnimationFrame(frame);else{TilesMotherV099.state.autoRotate=false;resolve({milliseconds:now-start,frames:times.length,fps:times.length*1000/(now-start),positions});}}requestAnimationFrame(frame);})''')
      sample['uniquePositions']=len({tuple(round(x,6) for x in a) for a in sample.pop('positions')});checks.append({'name':'motion_window','scene':scene,'mobile':mobile,**sample});save()
    page.set_viewport_size({'width':390,'height':844});view('15_mobile_forty8',{'scene':'forty8','year':0,'care':'maintained','mode':'material'})
+  windows=[x for x in checks if x['name']=='motion_window'];report['performanceGate']={'requiredFPS':5,'requiredFrames':30,'requiredUniquePositions':25,'host':'CI software rendering, not user GPU','tested':bool(windows),'passed':all(x['fps']>=5 and x['frames']>=30 and x['uniquePositions']>=25 for x in windows) if windows else None};report['functionalAllPassed']=not errors and not console and not requests
   report['allPassed']=not errors and not console and not requests;save();assert report['allPassed'],(errors,console);print('PASS',stage,flush=True)
  except Exception as e:
   report['failure']=str(e);report['allPassed']=False

@@ -7,7 +7,7 @@
   "negativeAssertions": 6,
   "range": {
     "maxTriangles": 8592,
-    "minTriangles": 1728
+    "minTriangles": 944
   },
   "allPassed": true,
   "visualApproved": false,
