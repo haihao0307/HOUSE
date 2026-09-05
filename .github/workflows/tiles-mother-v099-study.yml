@@ -1,0 +1,66 @@
+name: Tiles Mother V0.9.9 Study Workbench
+on:
+  push:
+    branches: [feature/tiles-mother-v0.1-workbench]
+    paths:
+      - 'tiles-mother/v099/transport/**'
+      - '.github/workflows/tiles-mother-v099-study.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: tiles-mother-v099-study
+  cancel-in-progress: false
+jobs:
+  study:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Recover checksum-verified source on the existing Tiles branch
+        run: python tiles-mother/v099/transport/reassemble.py
+      - name: Rebuild from untouched V0.9.8 and test geometry
+        run: |
+          python tiles-mother/v099/tools/build.py
+          node --check tiles-mother/v099/source/app.js
+          node tiles-mother/v099/qa/geometry.cjs tiles-mother/v098
+      - name: Install the pinned browser test runtime
+        run: |
+          pip install playwright==1.57.0
+          playwright install --with-deps chromium
+      - name: Genuine WebGL closeups and A/B/C interaction
+        run: python tiles-mother/v099/qa/browser.py --quick
+      - name: Preserve quick-view evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Tiles_Mother_V099_Quick
+          path: tiles-mother/v099
+          retention-days: 30
+      - name: Genuine installed roof, underside, timber and mobile regressions
+        run: python tiles-mother/v099/qa/browser.py --full
+      - name: Record validated build only on the original feature branch
+        run: |
+          test "${GITHUB_REF_NAME}" = "feature/tiles-mother-v0.1-workbench"
+          git fetch origin "${GITHUB_REF_NAME}"
+          test "$(git rev-parse FETCH_HEAD)" = "${GITHUB_SHA}"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -f tiles-mother/v099/source tiles-mother/v099/tools tiles-mother/v099/qa tiles-mother/v099/README.md tiles-mother/v099/BUILD.json tiles-mother/v099/START_HERE.html
+          git commit -m 'feat(tiles-mother): materialize tested V0.9.9 edge and material study workbench'
+          git push origin "HEAD:${GITHUB_REF_NAME}"
+      - name: Preserve all results including failed checks
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Tiles_Mother_V099_All_Results
+          path: tiles-mother/v099
+          retention-days: 30
