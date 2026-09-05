@@ -1,0 +1,114 @@
+{
+  "schema": "tiles-edge-source-probe-v1",
+  "sourceCommit": "c715ad31948d71b662c60eefa02126973d794fb6",
+  "sourcePath": "tiles-mother/v098/source/app.js",
+  "runtime": "v22.16.0",
+  "method": "algebraic reduction of intact x/z expressions; not full-app execution",
+  "cases": [
+    {
+      "kind": "pan",
+      "seed": 1,
+      "damageClass": 0,
+      "samplesPerEdge": 101,
+      "maxPlanMirrorErrorMm": 0,
+      "eaveZRangeMm": 0,
+      "ridgeZRangeMm": 0
+    },
+    {
+      "kind": "pan",
+      "seed": 7,
+      "damageClass": 0,
+      "samplesPerEdge": 101,
+      "maxPlanMirrorErrorMm": 0,
+      "eaveZRangeMm": 0,
+      "ridgeZRangeMm": 0
+    },
+    {
+      "kind": "pan",
+      "seed": 314159,
+      "damageClass": 0,
+      "samplesPerEdge": 101,
+      "maxPlanMirrorErrorMm": 0,
+      "eaveZRangeMm": 0,
+      "ridgeZRangeMm": 0
+    },
+    {
+      "kind": "pan",
+      "seed": 271828,
+      "damageClass": 0,
+      "samplesPerEdge": 101,
+      "maxPlanMirrorErrorMm": 0,
+      "eaveZRangeMm": 0,
+      "ridgeZRangeMm": 0
+    },
+    {
+      "kind": "pan",
+      "seed": 4294967295,
+      "damageClass": 0,
+      "samplesPerEdge": 101,
+      "maxPlanMirrorErrorMm": 0,
+      "eaveZRangeMm": 0,
+      "ridgeZRangeMm": 0
+    },
+    {
+      "kind": "cover",
+      "seed": 1,
+      "damageClass": 0,
+      "samplesPerEdge": 101,
+      "maxPlanMirrorErrorMm": 0,
+      "eaveZRangeMm": 0,
+      "ridgeZRangeMm": 0
+    },
+    {
+      "kind": "cover",
+      "seed": 7,
+      "damageClass": 0,
+      "samplesPerEdge": 101,
+      "maxPlanMirrorErrorMm": 0,
+      "eaveZRangeMm": 0,
+      "ridgeZRangeMm": 0
+    },
+    {
+      "kind": "cover",
+      "seed": 314159,
+      "damageClass": 0,
+      "samplesPerEdge": 101,
+      "maxPlanMirrorErrorMm": 0,
+      "eaveZRangeMm": 0,
+      "ridgeZRangeMm": 0
+    },
+    {
+      "kind": "cover",
+      "seed": 271828,
+      "damageClass": 0,
+      "samplesPerEdge": 101,
+      "maxPlanMirrorErrorMm": 0,
+      "eaveZRangeMm": 0,
+      "ridgeZRangeMm": 0
+    },
+    {
+      "kind": "cover",
+      "seed": 4294967295,
+      "damageClass": 0,
+      "samplesPerEdge": 101,
+      "maxPlanMirrorErrorMm": 0,
+      "eaveZRangeMm": 0,
+      "ridgeZRangeMm": 0
+    }
+  ],
+  "conclusions": {
+    "intactLeftRightPlanInsetExactlyShared": true,
+    "frontBackPlanEdgesFixedZ": true
+  },
+  "excluded": [
+    "y curvature and three-dimensional edge symmetry",
+    "damageClass 1/2 corner chips",
+    "mesh UV normals and contacts",
+    "browser visual review",
+    "Blender execution",
+    "reference image reconstruction"
+  ],
+  "productionChanged": false,
+  "visualApproved": false,
+  "productionApproved": false
+}
