@@ -1,0 +1,69 @@
+{
+  "recordId": "YUNNAN-WALL-DISTILLATION-CONTRACT-V1",
+  "schemaVersion": "1.0.0",
+  "moduleId": "walls",
+  "studioVersion": "2.7.0",
+  "purpose": "Turn continuously supplied wall evidence into traceable observations, weighted findings, program-wall parameters and versioned knowledge snapshots.",
+  "storage": {
+    "sourceEvidence": "YunnanComponentStudio IndexedDB attachments store",
+    "rawPreviewCache": "YunnanWallStudioV2 IndexedDB previews store",
+    "annotations": "localStorage yunnan-wall-v27:annotations",
+    "batchSelection": "localStorage yunnan-wall-v27:batch-selection",
+    "snapshots": "localStorage yunnan-wall-v27:snapshots",
+    "originalFilesRemainLocal": true,
+    "temporaryGitHubEvidenceMayBeDeletedAfterDistillation": true
+  },
+  "evidenceGrades": {
+    "direct-photo": { "label": "照片直接可见", "weight": 1.0 },
+    "multi-photo": { "label": "多图交叉支持", "weight": 0.95 },
+    "drawing": { "label": "图纸或测绘支持", "weight": 0.9 },
+    "field-note": { "label": "现场记录支持", "weight": 0.85 },
+    "regional-analogy": { "label": "地区类比", "weight": 0.55 },
+    "visual-calibration": { "label": "视觉校准", "weight": 0.5 },
+    "unresolved": { "label": "仍未解决", "weight": 0.25 }
+  },
+  "evidenceTags": [
+    "stone-plinth",
+    "adobe-block",
+    "brick-edge-wear",
+    "missing-corner",
+    "pitting",
+    "small-holes",
+    "straw-fiber",
+    "plaster-remnant",
+    "plaster-loss",
+    "repair-patch",
+    "rain-wash",
+    "base-damp",
+    "large-wave",
+    "erosion-cluster",
+    "wood-lintel",
+    "stone-soil-joint",
+    "wall-opening",
+    "unknown"
+  ],
+  "parameterGroups": {
+    "wholeWall": ["waveStrength", "waveScale", "domainWarp", "flow", "erosionCluster"],
+    "adobe": ["brickLength", "brickHeight", "edgeWear", "edgeBreak", "pitting", "brickIrregularity", "mortar", "missingBrickRate"],
+    "surface": ["plaster", "plasterLoss", "plasterPatchCount", "roughness", "damp", "rain", "holeDensity", "holeScale", "strawDensity", "strawLength"],
+    "structure": ["stoneHeight", "stoneProjection", "stoneIrregularity", "stoneWidth", "stoneCourseHeight", "lintelEmbed", "lintelHeight"]
+  },
+  "distillationLifecycle": [
+    "ingest",
+    "select-batch",
+    "annotate",
+    "grade-evidence",
+    "generate-weighted-findings",
+    "map-to-program-parameters",
+    "visual-review",
+    "save-snapshot",
+    "promote-approved-knowledge",
+    "delete-temporary-evidence-when-authorized"
+  ],
+  "promotionGate": [
+    "A parameter suggestion must retain selected evidence IDs and evidence grades.",
+    "Visual evidence may calibrate visible material, erosion and repair state but may not prove hidden construction.",
+    "Measured dimensions remain provisional until supported by drawings, survey or scale evidence.",
+    "Temporary source previews may be deleted only after the distilled JSON and accepted parameter snapshot are preserved."
+  ]
+}

@@ -1,0 +1,189 @@
+{
+  "schemaVersion": "1.0.0",
+  "updatedAt": "2026-08-30",
+  "source": {
+    "id": "YN-LIT-2024-BAI-TIMBER-HBIM",
+    "title": "A Parametric HBIM Approach for Preservation of Bai Ethnic Traditional Timber Dwellings in Yunnan, China",
+    "authors": [
+      "Yalong Mao",
+      "Huifang Lu",
+      "Yingying Xiao",
+      "Zhe Lai",
+      "Lukui Huang"
+    ],
+    "journal": "Buildings",
+    "year": 2024,
+    "volume": 14,
+    "article": 1960,
+    "pages": 26,
+    "doi": "10.3390/buildings14071960",
+    "license": "CC BY 4.0",
+    "uploadedFile": {
+      "name": "02_Bai_Traditional_Timber_Dwelling_Parametric_HBIM_2024(1).pdf",
+      "bytes": 71796828,
+      "sha256": "236fdae02bb0a69485051c45925de1ce71e2657571b0bce4e3a3af3751aeb198"
+    }
+  },
+  "humanReview": {
+    "reviewer": "project owner",
+    "assessment": "The work is comparatively rough, but it may remain as a supporting point until more complete architectural surveys are supplied.",
+    "classification": "B1_SUPPORTING_METHOD_REFERENCE",
+    "productionRuleStatus": "candidate-only",
+    "humanVisualApproved": false,
+    "productionApproved": false
+  },
+  "scope": {
+    "region": "Dali Bai cultural region, with Xizhou and representative Bai courtyard cases used by the paper",
+    "buildingType": "traditional Bai timber dwellings and hybrid timber courtyard houses",
+    "useAs": [
+      "component ontology support",
+      "parametric dependency support",
+      "assembly-sequence support",
+      "typology search lead",
+      "HBIM data-organization reference"
+    ],
+    "doNotUseAs": [
+      "authoritative measured survey",
+      "province-wide Bai dimension standard",
+      "exact joint geometry",
+      "historic material specification",
+      "automatic production defaults",
+      "proof of structural performance or historical accuracy"
+    ]
+  },
+  "evidenceAssessment": {
+    "strengths": [
+      "The paper separates timber architecture into components, attributes, relationships and assembly methods.",
+      "It identifies plan, frame and roof as linked controlling systems rather than independent geometry layers.",
+      "It documents a bottom-up and inside-out assembly sequence in which frame units are completed before purlins and rafters are inserted.",
+      "It treats width, depth, floor height and component dimensions as editable variables that propagate through the model.",
+      "It presents representative Bai courtyard plans, aerial views, component diagrams and parametric timber-frame examples."
+    ],
+    "limitations": [
+      "The exact provenance of the measured values used by each generated model is not fully traceable in the paper.",
+      "Raw survey notes, point clouds, complete CAD drawings and Grasshopper source definitions are not supplied.",
+      "The paper does not publish a complete dimension table for the representative buildings.",
+      "Mortise-and-tenon relationships are described mainly as spatial nodes and schematic component relations, without a complete joint-detail catalogue.",
+      "Original fabric, repaired fabric and later alteration are not consistently separated for every case.",
+      "Several architectural statements and translated component names require checking against primary Bai surveys and Chinese timber-construction terminology.",
+      "Claims about accuracy, structural integrity and scalability are not accompanied by an independent geometric error benchmark or structural validation dataset."
+    ]
+  },
+  "distilledSupport": {
+    "metaModelLayers": {
+      "metaObjects": "building units and timber components",
+      "metaAttributes": [
+        "component code",
+        "size",
+        "area",
+        "volume",
+        "material",
+        "construction type",
+        "component count"
+      ],
+      "metaRelationships": [
+        "spatial topology",
+        "numeric dependency",
+        "component intersection",
+        "plan-to-frame dependency",
+        "frame-to-roof dependency"
+      ],
+      "metaMethods": [
+        "plan topology generation",
+        "frame generation",
+        "component insertion",
+        "roof generation",
+        "ordered assembly"
+      ]
+    },
+    "controlSystems": [
+      "plan system",
+      "framework system",
+      "roof system"
+    ],
+    "architecturalSubsystems": [
+      "base system",
+      "framing system",
+      "veranda system",
+      "roof system"
+    ],
+    "componentFamilies": [
+      "pillars",
+      "beams",
+      "penetrating beams and tie beams",
+      "purlins",
+      "rafters",
+      "ridge components",
+      "eave components",
+      "veranda pillars and beams"
+    ],
+    "assemblySequenceCandidate": [
+      "establish plan topology and structural axes",
+      "place pillars and complete one frame unit",
+      "repeat frame units across the plan",
+      "locate and insert purlins from frame intersections",
+      "derive rafter positions and lengths from beams and purlins",
+      "complete the roof-related framework",
+      "attach component codes and semantic attributes"
+    ],
+    "parameterGroups": [
+      "building width",
+      "building depth",
+      "floor height",
+      "bay arrangement",
+      "column height and section",
+      "beam length and section",
+      "purlin length and section",
+      "projection length",
+      "recess size",
+      "veranda-column placement"
+    ],
+    "typologyCluesRequiringVerification": [
+      "fang as the basic compositional unit",
+      "single fang",
+      "double fang",
+      "three fang with screen wall",
+      "four houses and five courtyards",
+      "multiple-courtyard compounds",
+      "six elevation families and twelve plan-topology patterns",
+      "usually two-storey timber dwellings",
+      "a claimed five-bay depth tendency",
+      "a claimed central-pillar response to seismic conditions"
+    ]
+  },
+  "productionLineMapping": {
+    "knowledgeBlueprint": [
+      "retain fang and courtyard composition as provisional Bai typology nodes",
+      "keep topology and metric evidence as separate fields"
+    ],
+    "timberStructure": [
+      "adopt the component, relationship and assembly-method ontology as a supporting schema",
+      "preserve dependencies among plan axes, frames, purlins and rafters",
+      "require every generated component to carry an identifier and source status"
+    ],
+    "roofForm": [
+      "derive roof members from the frame and purlin system rather than from an unrelated roof mesh"
+    ],
+    "totalAssembly": [
+      "assemble systems in dependency order and allow parameter changes to propagate through dependent components"
+    ],
+    "blockedUntilBetterEvidence": [
+      "exact bay widths",
+      "exact depth intervals",
+      "column and beam sections",
+      "joint dimensions",
+      "roof pitch",
+      "eave projection",
+      "historical material defaults",
+      "canonical Bai production preset"
+    ]
+  },
+  "nextEvidenceRequired": [
+    "primary measured plans, elevations and sections for named Bai dwellings",
+    "component schedules with dimensions and material records",
+    "joint-detail sheets and carpenter terminology",
+    "raw or traceable point-cloud and CAD evidence",
+    "clear separation of original, repaired and reconstructed elements",
+    "independent surveys that confirm each typology and dimensional claim"
+  ]
+}

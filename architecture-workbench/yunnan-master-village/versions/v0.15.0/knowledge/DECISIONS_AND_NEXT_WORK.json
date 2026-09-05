@@ -1,0 +1,79 @@
+{
+  "version": "0.15.0",
+  "owner": "小李",
+  "archive_only": true,
+  "do_not_modify": [
+    "main",
+    "release/brick-mother-v1.0",
+    "gh-pages",
+    "existing frozen assets",
+    "other Mother directories"
+  ],
+  "no_force_push": true,
+  "work_branch": "feature/yunnan-component-studio-v1",
+  "pr": {
+    "number": 13,
+    "keep_draft": true,
+    "keep_open": true,
+    "merge": false
+  },
+  "runtime_rules": [
+    "pure procedural geometry and materials",
+    "no image generation as substitute for 3D workbench",
+    "no original SKP mesh in runtime",
+    "no modern steel reinforcement adopted from renovation reference",
+    "reference measurements separate from construction claims",
+    "retain previous accepted behavior and snapshot before edits",
+    "world-model reading, evidence intake, reflection, bounded plan, execution, regression"
+  ],
+  "frozen_features": [
+    "whole-bent ground assembly",
+    "end-to-end raising direction",
+    "pulling crew retreats",
+    "same push pole becomes retained brace",
+    "upper beam celebration before floor and walls",
+    "bottom-up central firecrackers",
+    "one-metre side eave candidate",
+    "stair-walk and operable door tests",
+    "front courtyard table carry and feast",
+    "five dogs wait and then feed",
+    "four cooked chicken legs and no slaughter display",
+    "bright red-soil setting",
+    "procedural soundscape",
+    "mobile viewer"
+  ],
+  "next_work": [
+    {
+      "id": "SU-UNITS",
+      "state": "blocked_on_measurement_evidence",
+      "task": "核验SKP单位、实例变换、隐藏几何、轴线及标高，不猜尺寸"
+    },
+    {
+      "id": "STAIR-EAR",
+      "state": "candidate",
+      "task": "根据具名平面核定两跑木梯与耳房连接轴位，保留实际通行回归"
+    },
+    {
+      "id": "JOINERY",
+      "state": "incomplete",
+      "task": "独立榫卯试件扩展到具名节点，避免假支承"
+    },
+    {
+      "id": "REGIONAL-RITUAL",
+      "state": "unverified",
+      "task": "核查柱上题字及滇中起房号子；分离各地域案例"
+    },
+    {
+      "id": "ROOF-COURTYARD",
+      "state": "not_complete",
+      "task": "在前置支承与尺度门通过后接入耳房、瓦作和完整院落"
+    }
+  ],
+  "approval_flags": {
+    "measurementTruthApproved": false,
+    "constructionTruthApproved": false,
+    "historicReconstructionApproved": false,
+    "visualApproved": false,
+    "productionApproved": false
+  }
+}

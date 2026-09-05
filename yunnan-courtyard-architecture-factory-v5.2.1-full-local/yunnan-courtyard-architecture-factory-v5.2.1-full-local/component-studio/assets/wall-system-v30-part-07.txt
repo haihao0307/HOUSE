@@ -1,0 +1,186 @@
+  buildSide(-1, parameters.innerPatchCount, parameters.innerPlasterCoverage, parameters.innerPlasterLoss, parameters.innerPlasterThickness, materials.plasterInner, 6200);
+  return {
+    patchCount,
+    outerPatchCount,
+    innerPatchCount,
+    outerPlasterArea,
+    innerPlasterArea,
+    exposedFaceArea: faceArea,
+    outerPlasterCoverageActual: clamp(outerPlasterArea / faceArea, 0, 1),
+    innerPlasterCoverageActual: clamp(innerPlasterArea / faceArea, 0, 1)
+  };
+}
+
+function buildFrame(contract, materials, noise) {
+  const postDepth = parameters.frameDepth;
+  const postWidth = parameters.frameWidth;
+  const centerX = contract.effectiveDoorOffset;
+  const outerHalf = parameters.doorWidth / 2 + postWidth / 2;
+  for (const side of [-1, 1]) {
+    const geometry = erodedBlockGeometry(postWidth, parameters.doorHeight, postDepth, parameters.seed + 8000 + side, noise, 'brick');
+    addMesh(geometry, materials.timber, frameGroup, centerX + side * outerHalf, parameters.doorHeight / 2, frontAt(parameters.doorHeight / 2, contract) + 0.055);
+  }
+  const lintelWidth = parameters.doorWidth + postWidth * 2 + parameters.lintelEmbed * 2;
+  addMesh(erodedBlockGeometry(lintelWidth, parameters.lintelHeight, postDepth * 1.10, parameters.seed + 8100, noise, 'brick'), materials.timber, frameGroup,
+    centerX, parameters.doorHeight + parameters.lintelHeight / 2, frontAt(parameters.doorHeight, contract) + 0.065);
+  addMesh(erodedBlockGeometry(parameters.doorWidth + postWidth * 0.8, 0.13, postDepth, parameters.seed + 8200, noise, 'brick'), materials.timber, frameGroup,
+    centerX, 0.065, frontAt(0.05, contract) + 0.060);
+}
+
+function buildDetails(contract, materials, noise) {
+  const random = mulberry32(parameters.seed + 9301);
+  const holeCountTarget = Math.round(parameters.holeDensity * 38);
+  const holeMaterial = new THREE.MeshStandardMaterial({ color: 0x2b160e, roughness: 1 });
+  let holeCount = 0;
+  for (let index = 0; index < holeCountTarget; index += 1) {
+    const y = parameters.stoneHeight + 0.12 + random() * Math.max(0.2, contract.wallHeight - parameters.stoneHeight - 0.28);
+    const half = halfWidthAt(y, contract);
+    const x = (random() * 2 - 1) * (half - 0.18);
+    if (openingIntersects(x - 0.08, x + 0.08, y - 0.08, y + 0.08, contract, 0.04)) continue;
+    const radius = parameters.holeScale * (0.55 + random() * 0.95);
+    const geometry = new THREE.CylinderGeometry(radius, radius * (0.72 + random() * 0.18), 0.030, 14, 1, false);
+    const z = frontAt(y, contract) + parameters.brickProjection + surfaceField(x, y, noise) + 0.010;
+    addMesh(geometry, holeMaterial, detailGroup, x, y, z, { x: Math.PI / 2, y: 0, z: random() * Math.PI });
+    holeCount += 1;
+  }
+
+  const fiberCountTarget = Math.round(parameters.strawDensity * 220);
+  const fiberGeometry = new THREE.CylinderGeometry(1, 1, 1, 5, 1, false);
+  const fiberMaterial = new THREE.MeshStandardMaterial({ color: 0xb99655, roughness: 1 });
+  const fiberMesh = new THREE.InstancedMesh(fiberGeometry, fiberMaterial, Math.max(1, fiberCountTarget));
+  const dummy = new THREE.Object3D();
+  const yAxis = new THREE.Vector3(0, 1, 0);
+  let fiberCount = 0;
+  for (let index = 0; index < fiberCountTarget; index += 1) {
+    const y = parameters.stoneHeight + 0.08 + random() * Math.max(0.2, contract.wallHeight - parameters.stoneHeight - 0.20);
+    const half = halfWidthAt(y, contract);
+    const x = (random() * 2 - 1) * (half - 0.10);
+    if (openingIntersects(x - 0.10, x + 0.10, y - 0.10, y + 0.10, contract, 0.03)) continue;
+    const angle = (random() - 0.5) * Math.PI * 0.82;
+    const length = parameters.strawLength * (0.45 + random() * 1.15);
+    const direction = new THREE.Vector3(Math.cos(angle), Math.sin(angle), (random() - 0.5) * 0.08).normalize();
+    dummy.position.set(x, y, frontAt(y, contract) + parameters.brickProjection + surfaceField(x, y, noise) + 0.022 + random() * 0.008);
+    dummy.quaternion.setFromUnitVectors(yAxis, direction);
+    const thickness = 0.0045 + random() * 0.0035;
+    dummy.scale.set(thickness, length, thickness);
+    dummy.updateMatrix();
+    fiberMesh.setMatrixAt(fiberCount, dummy.matrix);
+    fiberCount += 1;
+  }
+  fiberMesh.count = Math.max(0, fiberCount);
+  fiberMesh.castShadow = true;
+  detailGroup.add(fiberMesh);
+
+  const crackCountTarget = Math.round(parameters.crackDensity * 16);
+  const crackMaterial = new THREE.LineBasicMaterial({ color: 0x392019, transparent: true, opacity: 0.86 });
+  let crackCount = 0;
+  for (let index = 0; index < crackCountTarget; index += 1) {
+    const startY = parameters.stoneHeight + 0.15 + random() * Math.max(0.3, contract.wallHeight - parameters.stoneHeight - 0.55);
+    const half = halfWidthAt(startY, contract);
+    const startX = (random() * 2 - 1) * (half - 0.20);
+    if (openingIntersects(startX - 0.16, startX + 0.16, startY - 0.15, startY + 0.4, contract, 0.05)) continue;
+    const points = [];
+    let x = startX;
+    let y = startY;
+    for (let segment = 0; segment < 5; segment += 1) {
+      points.push(new THREE.Vector3(x, y, frontAt(y, contract) + parameters.brickProjection + surfaceField(x, y, noise) + 0.026));
+      x += (random() - 0.5) * 0.10;
+      y += 0.08 + random() * 0.13;
+    }
+    const geometry = new THREE.BufferGeometry().setFromPoints(points);
+    detailGroup.add(new THREE.Line(geometry, crackMaterial.clone()));
+    crackCount += 1;
+  }
+  return { holeCount, fiberCount, crackCount };
+}
+
+function makeMaterials(noise) {
+  const core = makeMaterial('core', noise, 5, 0xffffff);
+  const adobe = [
+    makeMaterial('adobe', noise, 17, 0xf0c49a),
+    makeMaterial('adobe', noise, 31, 0xdba578),
+    makeMaterial('adobe', noise, 47, 0xc88d62),
+    makeMaterial('adobe', noise, 63, 0xe2ad80)
+  ];
+  const adobeInterior = [
+    makeMaterial('adobe', noise, 73, 0xb77b56),
+    makeMaterial('adobe', noise, 89, 0xc38a62),
+    makeMaterial('adobe', noise, 103, 0xa96d4d)
+  ];
+  const stone = [
+    makeMaterial('stone', noise, 121, 0xd3c9ae),
+    makeMaterial('stone', noise, 139, 0xbdb296),
+    makeMaterial('stone', noise, 157, 0xe0d4b8)
+  ];
+  const plasterOuter = makeMaterial('plaster', noise, 173, 0xd3c9b6);
+  const plasterInner = makeMaterial('plaster', noise, 191, 0xe0d9cc);
+  const timber = makeMaterial('timber', noise, 211, 0x6c4028);
+  return { core, adobe, adobeInterior, stone, plasterOuter, plasterInner, timber };
+}
+
+function boundaryEdgeCount(geometry) {
+  const index = geometry.index;
+  if (!index) return null;
+  const counts = new Map();
+  const add = (a, b) => {
+    const key = a < b ? `${a}:${b}` : `${b}:${a}`;
+    counts.set(key, (counts.get(key) || 0) + 1);
+  };
+  for (let offset = 0; offset < index.count; offset += 3) {
+    const a = index.getX(offset);
+    const b = index.getX(offset + 1);
+    const c = index.getX(offset + 2);
+    add(a, b); add(b, c); add(c, a);
+  }
+  return [...counts.values()].filter((count) => count !== 2).length;
+}
+
+function childMeshBounds(group, predicate = () => true) {
+  const records = [];
+  group.traverse((object) => {
+    if (!object.isMesh || !predicate(object)) return;
+    records.push({ object, box: new THREE.Box3().setFromObject(object) });
+  });
+  return records;
+}
+
+function measureStoneAdobeJoint(contract, stoneRows, brickRows) {
+  root.updateMatrixWorld(true);
+  const stones = childMeshBounds(stoneGroup, (mesh) => mesh.userData.side === 'exterior' && mesh.userData.row === stoneRows - 1);
+  const bricks = childMeshBounds(exteriorBrickGroup, (mesh) => mesh.userData.row === 0);
+  const topBricks = childMeshBounds(exteriorBrickGroup, (mesh) => mesh.userData.row === brickRows - 1);
+  const gaps = [];
+  const overlaps = [];
+  const half = halfWidthAt(parameters.stoneHeight, contract);
+  for (let x = -half + 0.03; x <= half - 0.03; x += 0.035) {
+    if (openingIntersects(x - 0.012, x + 0.012, parameters.stoneHeight - 0.08, parameters.stoneHeight + 0.08, contract, 0)) continue;
+    const stoneAtX = stones.filter(({ box }) => x >= box.min.x + 0.003 && x <= box.max.x - 0.003);
+    const brickAtX = bricks.filter(({ box }) => x >= box.min.x + 0.003 && x <= box.max.x - 0.003);
+    if (!stoneAtX.length || !brickAtX.length) continue;
+    const stoneTop = Math.max(...stoneAtX.map(({ box }) => box.max.y));
+    const brickBottom = Math.min(...brickAtX.map(({ box }) => box.min.y));
+    gaps.push(Math.max(0, brickBottom - stoneTop));
+    overlaps.push(Math.max(0, stoneTop - brickBottom));
+  }
+  const topGaps = topBricks.map(({ box }) => Math.max(0, contract.wallHeight - box.max.y));
+  return {
+    jointSampleCount: gaps.length,
+    jointGapActual: gaps.length ? Math.max(...gaps) : Number.POSITIVE_INFINITY,
+    jointOverlapActual: overlaps.length ? overlaps.reduce((sum, value) => sum + value, 0) / overlaps.length : 0,
+    stoneTopActual: stones.length ? Math.max(...stones.map(({ box }) => box.max.y)) : 0,
+    adobeBottomActual: bricks.length ? Math.min(...bricks.map(({ box }) => box.min.y)) : 0,
+    adobeTopActual: topBricks.length ? Math.max(...topBricks.map(({ box }) => box.max.y)) : 0,
+    topGapActual: topGaps.length ? Math.max(...topGaps) : Number.POSITIVE_INFINITY
+  };
+}
+
+function measureCoreTopology() {
+  const meshes = childMeshBounds(coreGroup);
+  return {
+    corePieceCount: meshes.length,
+    openSurfaceCount: meshes.reduce((sum, { object }) => sum + (boundaryEdgeCount(object.geometry) ?? 1), 0)
+  };
+}
+
+function updateAudit(contract, geometry) {
+  const set = (id, text, passed = null) => {

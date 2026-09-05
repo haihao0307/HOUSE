@@ -1,0 +1,154 @@
+      } else if (kind === 'stone') {
+        base = [...stoneBase];
+        base[0] += (macro - 0.5) * 38 - damp * 18;
+        base[1] += (macro - 0.5) * 34 - damp * 16;
+        base[2] += (macro - 0.5) * 29 - damp * 12;
+        height = 0.50 + (macro - 0.5) * 0.32 + (cell - 0.5) * 0.18 + (fine - 0.5) * 0.05;
+      } else if (kind === 'plaster') {
+        base = [plasterBaseValue, plasterBaseValue - 5, plasterBaseValue - 14];
+        base[0] += (macro - 0.5) * 22 - damp * 24 - rain * 16;
+        base[1] += (macro - 0.5) * 20 - damp * 22 - rain * 14;
+        base[2] += (macro - 0.5) * 17 - damp * 17 - rain * 10;
+        height = 0.54 + (macro - 0.5) * 0.16 + (mid - 0.5) * 0.08 + (fine - 0.5) * 0.025;
+      } else {
+        base = [83, 52, 34];
+        base[0] += (macro - 0.5) * 22;
+        base[1] += (macro - 0.5) * 15;
+        base[2] += (macro - 0.5) * 10;
+        height = 0.5 + (mid - 0.5) * 0.12;
+      }
+      const index = (y * size + x) * 4;
+      colorData.data[index] = clamp(base[0], 8, 240);
+      colorData.data[index + 1] = clamp(base[1], 8, 235);
+      colorData.data[index + 2] = clamp(base[2], 6, 225);
+      colorData.data[index + 3] = 255;
+      const gray = clamp(height * 255, 0, 255);
+      bumpData.data[index] = bumpData.data[index + 1] = bumpData.data[index + 2] = gray;
+      bumpData.data[index + 3] = 255;
+    }
+  }
+  colorContext.putImageData(colorData, 0, 0);
+  bumpContext.putImageData(bumpData, 0, 0);
+  const map = new THREE.CanvasTexture(colorCanvas);
+  const bumpMap = new THREE.CanvasTexture(bumpCanvas);
+  map.colorSpace = THREE.SRGBColorSpace;
+  map.wrapS = map.wrapT = bumpMap.wrapS = bumpMap.wrapT = THREE.RepeatWrapping;
+  map.anisotropy = bumpMap.anisotropy = Math.min(16, renderer.capabilities.getMaxAnisotropy());
+  return { map, bumpMap };
+}
+
+function makeMaterial(kind, noise, seedOffset = 0, tint = 0xffffff) {
+  const texture = makeTexture(kind, noise, seedOffset);
+  return new THREE.MeshStandardMaterial({
+    map: texture.map,
+    bumpMap: texture.bumpMap,
+    bumpScale: kind === 'adobe' ? 0.052 : kind === 'stone' ? 0.044 : kind === 'plaster' ? 0.025 : 0.035,
+    roughness: kind === 'timber' ? 0.82 : 0.97,
+    color: tint
+  });
+}
+
+function disposeRoot() {
+  root.traverse((object) => {
+    if (object.geometry) object.geometry.dispose();
+    if (object.material) {
+      const materials = Array.isArray(object.material) ? object.material : [object.material];
+      for (const material of materials) {
+        const textures = new Set([material.map, material.bumpMap, material.roughnessMap, material.normalMap].filter(Boolean));
+        textures.forEach((texture) => texture.dispose());
+        material.dispose();
+      }
+    }
+  });
+  coreGroup.clear();
+  exteriorBrickGroup.clear();
+  interiorBrickGroup.clear();
+  stoneGroup.clear();
+  plasterGroup.clear();
+  detailGroup.clear();
+  frameGroup.clear();
+  guideGroup.clear();
+}
+
+function addMesh(geometry, material, parent, x, y, z, rotation = null, metadata = null) {
+  const mesh = new THREE.Mesh(geometry, material);
+  mesh.position.set(x, y, z);
+  if (rotation) mesh.rotation.set(rotation.x || 0, rotation.y || 0, rotation.z || 0);
+  mesh.castShadow = true;
+  mesh.receiveShadow = true;
+  if (metadata) Object.assign(mesh.userData, metadata);
+  parent.add(mesh);
+  return mesh;
+}
+
+function addCorePiece(geometry, material) {
+  const mesh = addMesh(geometry, material, coreGroup, 0, 0, 0, null, { semantic: 'closed-core-piece' });
+  const edges = new THREE.LineSegments(new THREE.EdgesGeometry(geometry, 18), new THREE.LineBasicMaterial({ color: 0xf4c775, transparent: true, opacity: 0.8 }));
+  guideGroup.add(edges);
+  return mesh;
+}
+
+function buildCore(contract, materials) {
+  const openingTop = contract.openingTop;
+  const sideBottom = contract.bottomHalf;
+  const sideOpening = halfWidthAt(openingTop, contract);
+  const frontOpening = frontAt(openingTop, contract);
+  const backOpening = backAt(openingTop, contract);
+  addCorePiece(taperedPrismGeometry({
+    x0Bottom: -sideBottom, x1Bottom: contract.doorLeft,
+    x0Top: -sideOpening, x1Top: contract.doorLeft,
+    y0: 0, y1: openingTop,
+   zFrontBottom: contract.frontBottom, zBackBottom: contract.backBottom,
+    zFrontTop: frontOpening, zBackTop: backOpening
+  }), materials.core);
+  addCorePiece(taperedPrismGeometry({
+    x0Bottom: contract.doorRight, x1Bottom: sideBottom,
+    x0Top: contract.doorRight, x1Top: sideOpening,
+    y0: 0, y1: openingTop,
+    zFrontBottom: contract.frontBottom, zBackBottom: contract.backBottom,
+    zFrontTop: frontOpening, zBackTop: backOpening
+  }), materials.core);
+  addCorePiece(taperedPrismGeometry({
+    x0Bottom: -sideOpening, x1Bottom: sideOpening,
+    x0Top: -contract.topHalf, x1Top: contract.topHalf,
+    y0: openingTop, y1: contract.wallHeight,
+    zFrontBottom: frontOpening, zBackBottom: backOpening,
+    zFrontTop: contract.frontTop, zBackTop: contract.backTop
+  }), materials.core);
+}
+
+function openingIntersects(x0, x1, y0, y1, contract, extra = 0) {
+  if (y0 >= contract.openingTop) return false;
+  return x1 > contract.doorLeft - extra && x0 < contract.doorRight + extra && y1 > 0;
+}
+
+function buildStones(contract, materials, noise) {
+  const rowCount = Math.max(1, Math.round(parameters.stoneHeight / parameters.stoneCourseHeight) + Math.round(parameters.stoneCourseAdjust));
+  const coursePitch = parameters.stoneHeight / rowCount;
+  const random = mulberry32(parameters.seed + 2201);
+  let stoneCount = 0;
+  const stoneWidths = [];
+  for (let row = 0; row < rowCount; row += 1) {
+    const courseStart = row * coursePitch;
+    const courseEnd = courseStart + coursePitch;
+    const y0 = courseStart + (row > 0 ? 0.009 : 0);
+    const y1 = courseEnd - (row < rowCount - 1 ? 0.009 : 0);
+    const height = Math.max(0.12, y1 - y0);
+    const cy = (y0 + y1) / 2;
+    const half = halfWidthAt(cy, contract);
+    let x = -half + 0.015;
+    while (x < half - 0.015) {
+      const widthTarget = parameters.stoneWidth * (1 + (random() - 0.5) * parameters.stoneIrregularity * 0.90);
+      const x1 = Math.min(half - 0.015, x + widthTarget);
+      const width = x1 - x;
+      if (width < 0.14) break;
+      const cx = (x + x1) / 2;
+      if (!openingIntersects(x, x1, y0, y0 + height, contract, 0.02)) {
+        const depth = 0.15 + random() * 0.055;
+        const field = surfaceField(cx, cy, noise);
+        const blockSeed = parameters.seed + stoneCount * 31;
+        const exteriorGeometry = erodedBlockGeometry(width - 0.018, height, depth, blockSeed, noise, 'stone');
+        const interiorGeometry = exteriorGeometry.clone();
+        applyContinuousSurfaceField(exteriorGeometry, cx, cy, noise, 1, 0.45);
+        applyContinuousSurfaceField(interiorGeometry, cx, cy, noise, -1, 0.24);
+        const frontZ = frontAt(cy, contract) + parameters.stoneProjection + field * 0.35;

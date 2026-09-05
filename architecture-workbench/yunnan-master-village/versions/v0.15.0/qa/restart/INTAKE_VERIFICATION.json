@@ -1,0 +1,8 @@
+{
+  "payload_sha256": "f9d5b78790ca157a18c7e6a71cc75cd07f97d0358e146076289ac1a249e93856",
+  "html_sha256": "bdd566b7c1817a21c9fc136e23b53adaa1c018adaa6e4aa25a43ef292aaedae9",
+  "baseline_sha256": "9fd104d6d95604351e041faa8dc39516d4337d85569601e1b6e3ca162dd5b587",
+  "payload_files": 28,
+  "source_commit": "3453d752cf1ea2a8fc21d87c4955417fe3e71ca1",
+  "original_media_in_public_package": false
+}
