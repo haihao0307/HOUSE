@@ -31,3 +31,9 @@
 
 下一轮可直接说：
 “Tiles Mother，读取 HOUSE 工作分支的 tiles-mother/RESTART_START_HERE.md 和 V0.9.8 全量接续包，保留现有材质与三片、48片、860片三个界面，接着往下做。”
+
+## 小妈学习接续，2026-09-05
+
+继续制作前读取[材质、UV与装配一致性学习卡](knowledge/xiaoma-learning-r1/SKILL.md)。该卡记录小妈R1教材定位、本线独立答卷、英文官方来源、具体规则和有限试验设计。教材提交为guilin-dem-pipeline的b1f01bae975c4151539bc38d84644b8542c70c29，回执交HOUSE Issue #16。
+
+此次仅更新知识和导航，V0.9.8源码、HTML、材质锁与全量包均不变。新技能仍为候选；小妈复核、House独立互审、Blender实操和新浏览器证据均需真实记录，不能由本次资料入库自动判为通过。
