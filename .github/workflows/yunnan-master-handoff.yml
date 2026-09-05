@@ -56,7 +56,7 @@ jobs:
       - name: Cold-start archived workbench
         if: steps.package.outputs.ready == 'true'
         run: |
-          python3 architecture-workbench/yunnan-master-village/intake/restart_check.py
+          xvfb-run -a python3 architecture-workbench/yunnan-master-village/intake/restart_check.py
           python3 architecture-workbench/yunnan-master-village/intake/materialize.py --finalize
       - name: Commit complete archive on the same branch
         if: steps.package.outputs.ready == 'true'
