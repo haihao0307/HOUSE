@@ -1,0 +1,82 @@
+name: Yunnan Master Full Handoff
+on:
+  push:
+    branches: [feature/yunnan-component-studio-v1]
+    paths:
+      - .github/workflows/yunnan-master-handoff.yml
+      - architecture-workbench/yunnan-master-village/intake/**
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: yunnan-master-handoff
+  cancel-in-progress: false
+jobs:
+  archive:
+    if: github.ref == 'refs/heads/feature/yunnan-component-studio-v1'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+      - name: Probe pinned vendor source
+        run: |
+          python3 - <<'PY'
+          import urllib.request,hashlib,re
+          u='https://raw.githubusercontent.com/mrdoob/three.js/r162/build/three.module.js'
+          data=urllib.request.urlopen(u,timeout=60).read()
+          s=data.decode('utf-8'); match=re.search(r'\bexport\s*\{',s)
+          assert match, 'Missing upstream export block'
+          body=s[:match.start()].strip().encode()
+          print('upstream bytes',len(data),'body bytes',len(body))
+          print('body sha256',hashlib.sha256(body).hexdigest())
+          assert hashlib.sha256(body).hexdigest()=='906bf005eab591e88fa0b2d9343e099f0204bb9e07a6922166bbbc522888d823'
+          open('/tmp/yunnan-three-r162.js','wb').write(data)
+          PY
+      - name: Materialize verified source and archive
+        id: package
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT=architecture-workbench/yunnan-master-village
+          if [ ! -f "$ROOT/intake/materialize.py" ]; then
+            echo 'Intake pending; no package or restart is claimed.'
+            echo 'ready=false' >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          python3 "$ROOT/intake/materialize.py" --vendor /tmp/yunnan-three-r162.js
+          echo 'ready=true' >> "$GITHUB_OUTPUT"
+      - name: Install restart-check browser
+        if: steps.package.outputs.ready == 'true'
+        run: |
+          python3 -m pip install playwright==1.55.0
+          python3 -m playwright install --with-deps chromium
+      - name: Cold-start archived workbench
+        if: steps.package.outputs.ready == 'true'
+        run: |
+          python3 architecture-workbench/yunnan-master-village/intake/restart_check.py
+          python3 architecture-workbench/yunnan-master-village/intake/materialize.py --finalize
+      - name: Commit complete archive on the same branch
+        if: steps.package.outputs.ready == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          BRANCH=feature/yunnan-component-studio-v1
+          REMOTE=$(git ls-remote origin "refs/heads/$BRANCH" | cut -f1)
+          test "$REMOTE" = "$GITHUB_SHA"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- architecture-workbench/yunnan-master-village
+          git diff --cached --name-only | python3 -c 'import sys; p=sys.stdin.read().splitlines(); assert p and all(x.startswith("architecture-workbench/yunnan-master-village/") for x in p),p'
+          git commit -m 'archive(yunnan): freeze V0.15.0 full handoff and cold-start evidence [skip ci]'
+          git push origin "HEAD:refs/heads/$BRANCH"
+      - uses: actions/upload-artifact@v4
+        if: steps.package.outputs.ready == 'true' && always()
+        with:
+          name: yunnan-master-v015-full-handoff
+          path: |
+            architecture-workbench/yunnan-master-village/packages/
+            architecture-workbench/yunnan-master-village/versions/v0.15.0/qa/restart/
+          retention-days: 90
