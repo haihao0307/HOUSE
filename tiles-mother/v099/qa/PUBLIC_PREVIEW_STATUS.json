@@ -1,0 +1,19 @@
+{
+  "recordKind": "summary_of_actual_artifact_report",
+  "sourceReportInArtifact": "qa/public/REPORT.json",
+  "artifactId": 9967696713,
+  "runId": 33960088835,
+  "commit": "f2062b494ecf598d109434e61f0ed6c3ca741e4e",
+  "expectedHTMLSHA256": "06ad8f86f16afe8a58dbc83b14d206c712c4f48902cf5f8ac29e2ea0fcd209db",
+  "httpClientStatus": 200,
+  "httpClientBytesMatch": true,
+  "browserResponseSHA256": "e9041552a12354950ce6324529b0e548a7d068494f56cde748e537f0c69e155d",
+  "browserResponseMatchesWorkbench": false,
+  "failure": "Browser response does not match workbench bytes",
+  "consoleErrors": ["Failed to load resource: net::ERR_BLOCKED_BY_RESPONSE.NotSameOrigin"],
+  "allPassed": false,
+  "publicPreviewVerified": false,
+  "ownPagesDeployed": false,
+  "visualApproved": false,
+  "productionApproved": false
+}
