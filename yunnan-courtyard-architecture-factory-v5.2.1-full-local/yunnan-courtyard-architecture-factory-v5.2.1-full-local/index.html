@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>云南院落历史建筑生产线 V5.4.2</title>
+<title>云南院落历史建筑生产线 V5.5.0</title>
 <link rel="icon" href="data:,">
 <style>
 :root{
@@ -51,7 +51,35 @@ svg .outerWall{fill:none;stroke:#313833;stroke-width:12;stroke-linejoin:round}.w
 @media(max-width:860px){.modelControls{right:10px;left:10px;bottom:10px}.modelLegend{display:none}.modelHud{max-width:250px}}
 
 @media(max-width:1250px){.shell{grid-template-columns:270px 1fr}.inspector{display:none}.logicGrid,.explainGrid,.evidenceGrid{grid-template-columns:1fr}}
-@media(max-width:860px){.app{height:auto;min-height:100%}.shell{grid-template-columns:1fr}.sidebar{display:none}.workspace{min-height:860px}.paper,.scrollPaper{inset:8px}.status{grid-template-columns:1fr}.badges{display:none}.familyMap{grid-template-columns:1fr}.branchArrow{transform:rotate(90deg)}}
+@media(max-width:860px){
+  .app{height:auto;min-height:100%;width:100%;min-width:0}
+  .topbar{min-width:0;padding:0 10px;gap:8px}
+  .brand{width:100%;min-width:0;gap:8px}
+  .brand>div:last-child{min-width:0}
+  .brand h1{font-size:clamp(13px,4vw,15px);line-height:1.2;white-space:normal;overflow-wrap:anywhere}
+  .brand p{max-width:100%}
+  .seal{width:36px;height:36px;font-size:20px}
+  .shell{grid-template-columns:minmax(0,1fr);width:100%;min-width:0}
+  .sidebar{display:none}
+  .workspace{width:100%;min-width:0;min-height:calc(100vh - 68px);min-height:calc(100svh - 68px)}
+  .toolbar,.tabs,.tools,.viewport,.status{min-width:0;max-width:100%}
+  .toolbar{align-items:flex-start}
+  .tabs,.tools{width:100%}
+  .tab,.tool{max-width:100%}
+  .paper,.scrollPaper{inset:8px;min-width:0;max-width:calc(100% - 16px)}
+  .status{grid-template-columns:minmax(0,1fr)}
+  .stageCtl{grid-template-columns:minmax(0,105px) minmax(0,1fr) 30px;min-width:0}
+  .badges{display:none}
+  .familyMap{grid-template-columns:minmax(0,1fr)}
+  .familyNode,.logicCard,.explainCard,.evidence,.referenceCard{min-width:0;overflow-wrap:anywhere}
+  .branchArrow{transform:rotate(90deg)}
+  .modelHud{left:8px;right:8px;max-width:none}
+  .modelControls{left:8px;right:8px;max-width:none}
+  .referenceModelGrid{grid-template-columns:minmax(0,1fr)}
+  .referenceMeta{grid-template-columns:minmax(0,90px) minmax(0,1fr)}
+  .referenceMeta dd{min-width:0;overflow-wrap:anywhere}
+}
+@media(max-width:480px){.brand p{display:none}}
 /* V5.2.1 WebGL and tour interface */
 .modelTourPanel{position:absolute;right:14px;top:78px;width:270px;max-height:58%;overflow:auto;padding:10px 11px;border:1px solid #46584f;border-radius:9px;background:#101a17e8;color:#dce5de;box-shadow:0 12px 32px #0004;font-size:9px;line-height:1.45}
 .modelTourPanel>b{display:block;color:#f0d29b;font-size:11px;margin-bottom:5px}.modelTourPanel strong{display:block;color:#fff0c8;font-size:10px}.modelTourPanel p{margin:4px 0 8px;color:#bfcac3}.modelTourPanel ol{list-style:none;margin:7px 0 0;padding:0;display:grid;gap:3px}.modelTourPanel li{display:grid;grid-template-columns:18px 1fr;gap:5px;align-items:center;padding:4px 5px;border-radius:5px;color:#85928b}.modelTourPanel li b{width:17px;height:17px;border-radius:50%;display:grid;place-items:center;background:#28342f;color:#b9c5be;font:8px ui-monospace,monospace}.modelTourPanel li.active{background:#332a1b;color:#f1d9a8}.modelTourPanel li.active b{background:#b48645;color:#15130f}.tourMeter{height:4px;border-radius:10px;background:#2c3933;overflow:hidden}.tourMeter i{display:block;width:0;height:100%;background:#e0ab4f;transition:width .12s linear}.modelControls{max-width:calc(100% - 250px)}.modelControls .tourPrimary{border-color:#9d7947;background:#47361e;color:#ffe0a4}.modelNorth{right:298px}.modelLegend span:nth-of-type(5){margin-left:0}.model3dWrap canvas{image-rendering:auto}
@@ -64,12 +92,13 @@ svg .outerWall{fill:none;stroke:#313833;stroke-width:12;stroke-linejoin:round}.w
 .modelControls button.demoActive{box-shadow:0 0 0 2px #d6a64b55 inset}
 .referenceHub{padding:18px;display:grid;gap:14px;color:var(--ink)}.referenceIntro{display:grid;grid-template-columns:1.3fr .7fr;gap:12px}.referenceCard{border:1px solid #d6cab2;background:#faf6ed;border-radius:9px;padding:14px}.referenceCard h2,.referenceCard h3{margin:0 0 7px;color:#805c32}.referenceCard h2{font-size:18px}.referenceCard h3{font-size:12px}.referenceCard p,.referenceCard li{font-size:10px;line-height:1.7;color:#555c56}.referenceCard ul{margin:6px 0 0;padding-left:18px}.referenceMeta{display:grid;grid-template-columns:110px 1fr;gap:6px;font-size:10px}.referenceMeta dt{color:#82745e}.referenceMeta dd{margin:0;color:#343b37}.referenceActions{display:flex;gap:7px;flex-wrap:wrap;margin-top:11px}.referenceActions button,.referenceActions a,.referenceActions label{border:1px solid #8d6d42;border-radius:6px;background:#32281a;color:#f5deb2;padding:8px 11px;text-decoration:none;font-size:10px;cursor:pointer}.referenceActions a,.referenceActions label{background:#f0e5cf;color:#6e4d27}.referenceActions input{display:none}.referenceLocalHint{margin:9px 0 0!important;padding:7px 9px;border-left:3px solid #9a7646;background:#f5ecd9;color:#654c2f!important}.referenceViewer{position:relative;height:560px;border-radius:9px;overflow:hidden;background:#101714;border:1px solid #35463e}.referenceViewer[hidden]{display:none}.referenceViewer.dragging{outline:3px solid #d4a85f;outline-offset:-3px}.referenceViewer canvas{width:100%;height:100%;display:block;touch-action:none;cursor:grab}.referenceViewer canvas:active{cursor:grabbing}.referenceViewerHud{position:absolute;left:12px;top:12px;max-width:410px;padding:9px 11px;border:1px solid #46564e;border-radius:7px;background:#101a17e8;color:#e9eee9;font-size:9px;line-height:1.55;pointer-events:none}.referenceViewerHud b{display:block;color:#edcb91;font-size:11px}.referenceViewerDrop{position:absolute;inset:92px 12% 86px;display:grid;place-items:center;text-align:center;border:1px dashed #8d9b92;border-radius:10px;background:#13201bd9;color:#d7ded8;font-size:12px;line-height:1.8;pointer-events:none}.referenceViewer[data-state="ready"] .referenceViewerDrop,.referenceViewer[data-state="loading"] .referenceViewerDrop{display:none}.referenceViewerDrop b{display:block;color:#edcb91;font-size:15px}.referenceViewerControls{position:absolute;left:12px;right:12px;bottom:12px;display:flex;gap:5px;flex-wrap:wrap;padding:7px;border:1px solid #405048;border-radius:8px;background:#101a17df}.referenceViewerControls button{border:1px solid #47564f;border-radius:5px;background:#19231f;color:#dce5de;padding:6px 8px;font-size:9px;cursor:pointer}.referenceViewerControls button.active{border-color:#b08246;background:#342a1c;color:#f3d69f}.referenceEvidence{display:grid;grid-template-columns:1fr 1fr;gap:12px}.referenceFlag{display:inline-block;border:1px solid #9a7646;border-radius:99px;padding:3px 7px;color:#7a542d;background:#f2e5ca;font-size:9px}@media(max-width:900px){.referenceIntro,.referenceEvidence{grid-template-columns:1fr}.referenceViewer{height:480px}.referenceViewerDrop{inset:100px 7% 105px}}
 .referenceModelGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.referenceModelGrid p{margin:4px 0}
+@media(max-width:860px){.referenceModelGrid{grid-template-columns:minmax(0,1fr)}.referenceMeta{grid-template-columns:minmax(0,90px) minmax(0,1fr)}.referenceMeta dd{min-width:0;overflow-wrap:anywhere}.referenceViewerHud{right:12px;max-width:none}}
 </style>
 </head>
 <body>
 <div class="app">
 <header class="topbar">
-  <div class="brand"><div class="seal">院</div><div><h1>云南院落历史建筑生产线 V5.4.2</h1><p>母体体系 → 地方支系/测绘个案 → 平面布局 → 立面等级 → 构架屋面 → 瓦作门窗 → 年代状态</p></div></div>
+  <div class="brand"><div class="seal">院</div><div><h1>云南院落历史建筑生产线 V5.5.0</h1><p>母体体系 → 地方支系/测绘个案 → 平面布局 → 立面等级 → 构架屋面 → 瓦作门窗 → 年代状态</p></div></div>
   <div class="badges"><span class="badge ok">WebGL遮挡已修正</span><span class="badge ok">三开间前廊个案已接入</span><span class="badge ok">11.53×7.92米尺寸链闭合</span><span class="badge ok">混合梁架已分榀</span><span class="badge warn">地点与族属待核</span><span class="badge ok">单片筒板瓦已按实测收分</span></div>
 </header>
 <div class="shell">
@@ -108,6 +137,7 @@ svg .outerWall{fill:none;stroke:#313833;stroke-width:12;stroke-linejoin:round}.w
       <button class="tab" data-view="evidence">证据对照</button>
       <button class="tab" data-view="reference">团结乡样本</button>
       <button class="tab" data-view="data">完整数据</button>
+      <a class="tab" href="surface-production-lab.html">V5.5.0 表面 A/B</a>
     </div>
     <div class="tools">
       <button class="tool active" id="floor1">一层</button>
@@ -186,7 +216,7 @@ function branch(){return DATA.branches[state.branch]}
 function types(){return branch().typeFamily}
 function selectedType(){return types().find(x=>x.id===state.typeId)||types()[0]}
 function selectedForm(){return DATA.branches.naxi.buildingForms.find(x=>x.id===state.formId)}
-function setView(v){state.view=v;history.replaceState(null,'',`#${v}`);$$('.tab').forEach(b=>b.classList.toggle('active',b.dataset.view===v));render()}
+function setView(v){state.view=v;history.replaceState(null,'',`#${v}`);$$('.tab[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===v));render()}
 function shell(content,scroll=false){return `<div class="${scroll?'scrollPaper':'paper'}">${content}</div>`}
 function defs(){return `<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#4d8e9a"/></marker><pattern id="stone" width="18" height="12" patternUnits="userSpaceOnUse"><rect width="18" height="12" fill="#aaa18c"/><path d="M0 6h18M7 0v6M13 6v6" stroke="#777164" stroke-width="1"/></pattern><pattern id="tileRows" width="14" height="12" patternUnits="userSpaceOnUse"><rect width="14" height="12" fill="#c5c8c3"/><path d="M2 12 Q7 2 12 12" fill="none" stroke="#676d69" stroke-width="2"/></pattern></defs>`}
 function svgWrap(inner,title,subtitle=''){return `<svg viewBox="0 0 1000 900" role="img">${defs()}<rect width="1000" height="900" fill="#f5f0e6"/><text x="50" y="42" font-size="18" fill="#715433">${esc(title)}</text><text x="50" y="62" font-size="10" fill="#777b75">${esc(subtitle)}</text>${inner}</svg>`}
@@ -695,7 +725,7 @@ function cleanupBuilding3D(){cancelAnimationFrame(M3D.raf);if(M3D.observer)M3D.o
 const TUANJIE={viewer:null,loading:false};
 function cleanupTuanjieReference(){if(TUANJIE.viewer)TUANJIE.viewer.destroy();TUANJIE.viewer=null;TUANJIE.loading=false}
 function referenceView(){return `<div class="scrollPaper"><div class="referenceHub">
- <div class="referenceIntro"><section class="referenceCard"><span class="referenceFlag">用户确认 · 团结乡</span><h2>YN_TUANJIE_001 · 团结乡样本 01</h2><p>这是完整院落扫描参考，不再按单个“美人靠”构件解释。现提供同一套扫描几何的高精度主档与网页标准档；墙体长期风化、典型云南板瓦—筒瓦可见关系和旧木综合色已登记为用户确认的实物参考。FBX 只保留在私有来源链中，不是生产线运行依赖。</p><div class="referenceActions"><button id="openTuanjieReference">打开高精度 GLB</button><button id="openTuanjieStandard">打开网页标准档</button><label for="tuanjieFileInput">选择本地 GLB<input id="tuanjieFileInput" type="file" accept=".glb,model/gltf-binary"></label><a href="assets/models/YN_TUANJIE_001_EDITABLE_HIGH.glb" download="YN_TUANJIE_001_EDITABLE_HIGH.glb">下载高精度主档</a><a href="assets/models/YN_TUANJIE_001_EDITABLE.glb" download="YN_TUANJIE_001_EDITABLE.glb">下载网页标准档</a><a href="threejs/yunnan-courtyard-production-demo.html" target="_blank" rel="noopener">打开 Three.js 生产原型</a></div><p class="referenceLocalHint" id="tuanjieLocalHint">高精度主档为 113.8 MB，保留 7000×7000 底色与 2500×2500 法线；网页标准档为 45.5 MB，贴图较轻，几何面数相同。</p></section>
+ <div class="referenceIntro"><section class="referenceCard"><span class="referenceFlag">用户确认 · 团结乡</span><h2>YN_TUANJIE_001 · 团结乡样本 01</h2><p>这是完整院落扫描参考，不再按单个“美人靠”构件解释。现提供本地高精度主档选择与网页标准档；墙体长期风化、典型云南板瓦—筒瓦可见关系和旧木综合色已登记为用户确认的实物参考。FBX 只保留在私有来源链中，不是生产线运行依赖。</p><div class="referenceActions"><button id="openTuanjieReference">选择本地高精度 GLB</button><button id="openTuanjieStandard">打开网页标准档</button><label for="tuanjieFileInput">选择本地 GLB<input id="tuanjieFileInput" type="file" accept=".glb,model/gltf-binary"></label><a href="assets/models/YN_TUANJIE_001_EDITABLE.glb" download="YN_TUANJIE_001_EDITABLE.glb">下载网页标准档</a><a href="threejs/yunnan-courtyard-production-demo.html" target="_blank" rel="noopener">打开 Three.js 生产原型</a></div><p class="referenceLocalHint" id="tuanjieLocalHint">高精度主档仅通过本地文件选择载入，不从公开站点请求；网页标准档为 45.5 MB，贴图较轻，几何面数相同。</p></section>
  <section class="referenceCard"><h3>双档技术合同</h3><dl class="referenceMeta"><dt>可编辑对象</dt><dd>两档均为 48 个独立网格，可在 Blender 中逐网格选择与修改</dd><dt>几何量</dt><dd>两档均为 608,634 顶点 · 464,288 三角面，网页档未删减几何</dd><dt>高精度主档</dt><dd>7000×7000 底色 · 2500×2500 法线 · 113.8 MB</dd><dt>网页标准档</dt><dd>3072×3072 底色 · 1024×1024 法线 · 45.5 MB</dd><dt>负担检查</dt><dd>0 动画 · 0 骨骼 · 0 morph · 0 相机</dd><dt>尺度状态</dt><dd>扫描显示单位，尚未用测绘控制尺寸标定</dd></dl></section></div>
  <div class="referenceViewer" id="tuanjieViewer" data-state="empty"><canvas id="tuanjieCanvas" aria-label="团结乡可编辑 GLB 查看器"></canvas><div class="referenceViewerHud"><b>高精度 / 网页档 GLB 查看器</b><span id="tuanjieLoadState" aria-live="polite">尚未载入模型</span><br>查看器已启用法线贴图、各向异性过滤与高 DPI 渲染；扫描源已有的破边、漏空不会被伪装成修复。</div><div class="referenceViewerDrop"><div><b>把 GLB 拖到这里即可打开</b>也可使用上方“选择本地 GLB”按钮<br>支持高精度主档与网页标准档</div></div><div class="referenceViewerControls"><button data-tj-group="site" class="active">场地/台阶</button><button data-tj-group="details" class="active">未定细部</button><button data-tj-group="level1" class="active">一层扫描</button><button data-tj-group="level2" class="active">二层扫描</button><button data-tj-group="roof" class="active">屋顶扫描</button><button id="tuanjieAuto">自动旋转</button><button id="tuanjieFit">复位视角</button></div></div>
  <div class="referenceEvidence"><section class="referenceCard"><h3>用户确认 · 可进入生产线</h3><ul><li>暖红褐土墙的长期分层风化：粗颗粒暴露、侵蚀、浅色斑块、深色流挂与墙脚过渡。</li><li>典型云南旧瓦面的板瓦居下、筒瓦压缝、顺坡逐片搭接和檐口圆弧端头。</li><li>外露木作以低饱和灰褐至深褐为准，按日晒、遮蔽和构件位置保留色差。</li><li>完整院落体量、中央空腔、多屋面高差、入口—台阶—坡地的相对关系。</li></ul></section><section class="referenceCard"><h3>必须保持未锁定</h3><ul><li>绝对尺寸、朝向、房间功能与精确柱网。</li><li>土墙厚度、收分、材料配比、浅色斑块成因与修缮阶段。</li><li>板瓦/筒瓦单片尺寸、纵横搭接、基层、固定和屋脊节点。</li><li>木种、原始涂层，以及门窗、楼梯、檐口和脊饰的做法尺寸。</li></ul></section></div>
@@ -704,7 +734,7 @@ async function initTuanjieReference(){
  const open=document.getElementById('openTuanjieReference'),standard=document.getElementById('openTuanjieStandard'),input=document.getElementById('tuanjieFileInput'),host=document.getElementById('tuanjieViewer'),stateEl=document.getElementById('tuanjieLoadState'),hint=document.getElementById('tuanjieLocalHint');if(!open||!standard||!input||!host)return;
  const isFile=location.protocol==='file:';
  const profiles={
-  high:{label:'团结乡高精度',url:'assets/models/YN_TUANJIE_001_EDITABLE_HIGH.glb',button:open},
+  high:{label:'团结乡高精度（本地）',button:open},
   standard:{label:'团结乡网页标准',url:'assets/models/YN_TUANJIE_001_EDITABLE.glb',button:standard},
   dali:{label:'云南大理参考',url:'assets/models/YN_DALI_001_REFERENCE_WEB.glb',button:null},
   wulong:{label:'浩思一·乌龙 WL',url:'assets/models/YN_HAOSI1_WULONG_WL_001_REFERENCE_WEB.glb',button:null}
@@ -714,18 +744,17 @@ async function initTuanjieReference(){
  profiles.dali.button=document.getElementById('openDaliReference');profiles.wulong.button=document.getElementById('openWulongReference');
  const daliInput=document.getElementById('daliFileInput'),wulongInput=document.getElementById('wulongFileInput'),modelHint=document.getElementById('referenceModelHint');
  const actionButtons=[open,standard,profiles.dali.button,profiles.wulong.button];
- if(isFile){open.textContent='选择高精度 GLB';standard.textContent='选择网页标准 GLB';if(hint)hint.textContent='当前是本地直接打开模式：浏览器不会自动读取 G:\\HOUSE 旁边的文件。请使用对应的“选择本地 GLB”按钮加载原始档。'}
+ if(isFile){standard.textContent='选择网页标准 GLB';if(hint)hint.textContent='当前是本地直接打开模式：浏览器不会自动读取 G:\\HOUSE 旁边的文件。请使用对应的“选择本地 GLB”按钮加载原始档。'}
  const detectProfile=name=>{const n=String(name||'').toLowerCase();if(/dali|大理/.test(n))return 'dali';if(/wulong|wl|浩思|乌龙/.test(n))return 'wulong';if(/high/.test(n))return 'high';if(/editable\.glb$/.test(n))return 'standard';return 'local'};
  const bindControls=()=>{document.querySelectorAll('[data-tj-group]').forEach(b=>b.onclick=()=>{if(!TUANJIE.viewer?.loaded)return;b.classList.toggle('active');TUANJIE.viewer.setGroup(b.dataset.tjGroup,b.classList.contains('active'))});document.getElementById('tuanjieAuto').onclick=e=>{if(!TUANJIE.viewer?.loaded)return;e.currentTarget.classList.toggle('active');TUANJIE.viewer.setAuto(e.currentTarget.classList.contains('active'))};document.getElementById('tuanjieFit').onclick=()=>TUANJIE.viewer?.fit()};
  const load=async(source,profile='local')=>{if(TUANJIE.loading)return;TUANJIE.loading=true;host.dataset.state='loading';actionButtons.forEach(b=>{if(b)b.disabled=true});const p=profiles[profile]||{label:source?.name||'本地 GLB'};const label=p.label||source?.name||'本地';if(stateEl)stateEl.textContent=`正在载入${label}…`;if(modelHint)modelHint.textContent=`正在载入：${label}；保持当前生产线查看器和可编辑分组。`;if(TUANJIE.viewer)TUANJIE.viewer.destroy();TUANJIE.viewer=null;
-  try{TUANJIE.viewer=TuanjieGLBViewer.create(document.getElementById('tuanjieCanvas'),{onState:s=>{if(stateEl)stateEl.textContent=s.text}});if(source instanceof File)await TUANJIE.viewer.loadFile(source);else await TUANJIE.viewer.load(source);host.dataset.state='ready';actionButtons.forEach(b=>{if(b)b.textContent=b===p.button?`${label}已打开`:b.id==='openDaliReference'?'打开云南大理 GLB':b.id==='openWulongReference'?'打开浩思一·乌龙 WL':b===open?(isFile?'选择高精度 GLB':'打开高精度 GLB'):isFile?'选择网页标准 GLB':'打开网页标准档'});if(modelHint)modelHint.textContent=`当前模型：${label}。可继续使用屋顶/一层/二层分组、自动旋转和复位视角。`;bindControls()}
+  try{TUANJIE.viewer=TuanjieGLBViewer.create(document.getElementById('tuanjieCanvas'),{onState:s=>{if(stateEl)stateEl.textContent=s.text}});if(source instanceof File)await TUANJIE.viewer.loadFile(source);else await TUANJIE.viewer.load(source);host.dataset.state='ready';actionButtons.forEach(b=>{if(b)b.textContent=b===p.button?`${label}已打开`:b.id==='openDaliReference'?'打开云南大理 GLB':b.id==='openWulongReference'?'打开浩思一·乌龙 WL':b===open?'选择本地高精度 GLB':isFile?'选择网页标准 GLB':'打开网页标准档'});if(modelHint)modelHint.textContent=`当前模型：${label}。可继续使用屋顶/一层/二层分组、自动旋转和复位视角。`;bindControls()}
   catch(error){
-   if(!isFile&&profile==='high'&&/HTTP 404|HTTP 403|读取失败/.test(String(error?.message||error))){if(stateEl)stateEl.textContent='公开网页未发布高精度主档，已自动切换网页标准档…';TUANJIE.loading=false;return load('assets/models/YN_TUANJIE_001_EDITABLE.glb','standard')}
    host.dataset.state='error';if(stateEl)stateEl.textContent=`载入失败：${error.message}`;if(modelHint)modelHint.textContent=`载入失败：${error.message}`;if(TUANJIE.viewer)TUANJIE.viewer.destroy();TUANJIE.viewer=null
   }
   finally{TUANJIE.loading=false;actionButtons.forEach(b=>{if(b)b.disabled=false})}
  };
- open.onclick=()=>isFile?input.click():load(profiles.high.url,'high');standard.onclick=()=>isFile?input.click():load(profiles.standard.url,'standard');profiles.dali.button.onclick=()=>isFile?daliInput.click():load(profiles.dali.url,'dali');profiles.wulong.button.onclick=()=>isFile?wulongInput.click():load(profiles.wulong.url,'wulong');
+ open.onclick=()=>input.click();standard.onclick=()=>isFile?input.click():load(profiles.standard.url,'standard');profiles.dali.button.onclick=()=>isFile?daliInput.click():load(profiles.dali.url,'dali');profiles.wulong.button.onclick=()=>isFile?wulongInput.click():load(profiles.wulong.url,'wulong');
  input.onchange=()=>{const file=input.files?.[0];if(file)load(file,detectProfile(file.name));input.value=''};daliInput.onchange=()=>{const file=daliInput.files?.[0];if(file)load(file,'dali');daliInput.value=''};wulongInput.onchange=()=>{const file=wulongInput.files?.[0];if(file)load(file,'wulong');wulongInput.value=''};
  host.ondragenter=host.ondragover=e=>{e.preventDefault();host.classList.add('dragging')};host.ondragleave=e=>{if(!host.contains(e.relatedTarget))host.classList.remove('dragging')};host.ondrop=e=>{e.preventDefault();host.classList.remove('dragging');const file=[...(e.dataTransfer?.files||[])].find(f=>/\.glb$/i.test(f.name));if(file)load(file,detectProfile(file.name));else if(stateEl)stateEl.textContent='拖入的文件不是 .glb，请重新选择'};
  bindControls();
@@ -831,18 +860,18 @@ function updateStatus(){
  $('#stageValue').textContent=state.stage+1;
  $('#renderStatus').textContent=state.view==='building'?'完整建筑已自动入镜 · Canvas 3D 自包含':state.view==='reference'?'本地 GLB · 无 FBX 运行依赖':'离线自包含 · 无外部依赖';
 }
-$$('.tab').forEach(b=>b.onclick=()=>setView(b.dataset.view));
+$$('.tab[data-view]').forEach(b=>b.onclick=()=>setView(b.dataset.view));
 $('#floor1').onclick=()=>{state.floor=1;$('#floor1').classList.add('active');$('#floor2').classList.remove('active');renderCurrentInfo();if(state.view==='plan')render()};
 $('#floor2').onclick=()=>{state.floor=2;$('#floor2').classList.add('active');$('#floor1').classList.remove('active');renderCurrentInfo();if(state.view==='plan')render()};
 $('#toggleDoors').onclick=()=>{state.doorsOpen=!state.doorsOpen;state.doorStates={};$('#toggleDoors').classList.toggle('active',state.doorsOpen);if(['plan','building'].includes(state.view))render()};
 $('#toggleWindows').onclick=()=>{state.windowsOpen=!state.windowsOpen;$('#toggleWindows').classList.toggle('active',state.windowsOpen);if(['plan','building'].includes(state.view))render()};
-$('#reset').onclick=()=>{Object.assign(state,{branch:'yikeyin',typeId:'YKY-T07',formId:'NF-07',view:'building',floor:1,stage:13,doorsOpen:false,windowsOpen:false,doorStates:{}});history.replaceState(null,'','#building');$$('.tab').forEach(b=>b.classList.toggle('active',b.dataset.view==='building'));$('#floor1').classList.add('active');$('#floor2').classList.remove('active');$('#toggleDoors').classList.remove('active');$('#toggleWindows').classList.remove('active');$('#stage').value=13;renderAll()};
+$('#reset').onclick=()=>{Object.assign(state,{branch:'yikeyin',typeId:'YKY-T07',formId:'NF-07',view:'building',floor:1,stage:13,doorsOpen:false,windowsOpen:false,doorStates:{}});history.replaceState(null,'','#building');$$('.tab[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view==='building'));$('#floor1').classList.add('active');$('#floor2').classList.remove('active');$('#toggleDoors').classList.remove('active');$('#toggleWindows').classList.remove('active');$('#stage').value=13;renderAll()};
 $('#focusModel').onclick=()=>{document.querySelector('.app').classList.toggle('modelFocus');setTimeout(()=>{if(state.view==='building')m3Resize();if(state.view==='reference'&&TUANJIE.viewer)TUANJIE.viewer.resize()},30)};
 $$('[data-layer]').forEach(i=>i.onchange=()=>{state.layers[i.dataset.layer]=i.checked;if(['plan','roof','building'].includes(state.view))render()});
 $('#stage').oninput=e=>{state.stage=+e.target.value;renderLogicList();updateStatus();if(state.view==='construction')render();if(state.view==='building')m3Draw()};
 /* ===== V5.2.1 visibility, openings and visitor-route upgrade ===== */
-DATA.schemaVersion='5.4.2';
-DATA.title='云南院落历史建筑生产线 V5.4.2';
+DATA.schemaVersion='5.5.0';
+DATA.title='云南院落历史建筑生产线 V5.5.0';
 DATA.visitSequence=[
  {id:'V01',name:'门外识别入口',detail:'人物从院落主轴南端接近中央大门。'},
  {id:'V02',name:'门扇自动开启',detail:'到达门前触发双扇大门，门扇绕各自门轴转动。'},
@@ -1147,7 +1176,7 @@ const V521_oldStatus=updateStatus;
 updateStatus=function(){V521_oldStatus();if(state.view==='building'){const rs=document.getElementById('renderStatus');if(rs)rs.textContent=M3D.fallback?'Canvas 回退渲染':'WebGL 深度缓冲 · 遮挡修正已启用'}if(state.view==='reference'){const rs=document.getElementById('renderStatus');if(rs)rs.textContent='可编辑 GLB 主档 · 48 网格 · 无 FBX 运行依赖'}};
 
 window.__V521_TEST__={
- version:'5.4.2',
+ version:'5.5.0',
  startTour:v521StartTour,
  resetTour:v521ResetTour,
  startOpenings:v521StartOpeningsDemo,
@@ -1164,7 +1193,7 @@ window.__TUANJIE_TEST__={open:()=>document.getElementById('openTuanjieReference'
 window.__PRODUCTION_CONTEXT__=()=>({view:state.view,branch:state.branch,typeId:state.typeId,formId:state.formId,floor:state.floor,stage:state.stage,doorsOpen:state.doorsOpen,windowsOpen:state.windowsOpen});
 
 
-$$('.tab').forEach(b=>b.classList.toggle('active',b.dataset.view===state.view));
+$$('.tab[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===state.view));
 renderAll();
 window.__APP_READY__=true;
 window.__QA_RESULTS__=qaResults();

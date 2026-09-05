@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="description" content="V5.4.4 与 V5.5.0 完整一颗印同镜头表面生产 A/B 与浏览器 QA">
+  <title>V5.5.0 云南一颗印表面生产 A/B</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="assets/css/surface-production-lab.css">
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "./vendor/three/three.module.js",
+        "three/addons/": "./vendor/three/"
+      }
+    }
+  </script>
+</head>
+<body>
+  <header class="hero">
+    <div>
+      <small>HOUSE · V5.5.0 · SURFACE PRODUCTION</small>
+      <h1>完整一颗印，墙面与瓦顶生产验证</h1>
+      <p>左右使用同一建筑种子、相机与光照。左侧保留 V5.4.4 表面基线，右侧运行 V5.5.0 分层瓦作、成片风化与交互回归。</p>
+    </div>
+    <nav><a href="folk-building-production-line.html">返回民间建筑生产线</a><a href="index.html">完整生产线</a></nav>
+  </header>
+
+  <section class="toolbar" aria-label="表面生产控制">
+    <label>生产预设
+      <select id="preset">
+        <option value="museum1940sBalanced">一颗印，1940 年代均衡</option>
+        <option value="wulongWeathered">乌龙村，长期风化</option>
+        <option value="daliMaintained">大理院落，较完整维护</option>
+      </select>
+    </label>
+    <div class="button-group" aria-label="镜头">
+      <button data-camera="overview">完整建筑</button>
+      <button data-camera="ab">A/B 同镜头</button>
+      <button data-camera="eave">板瓦筒瓦近景</button>
+      <button data-camera="roof">屋面俯视</button>
+      <button data-camera="wall">墙面近景</button>
+      <button data-camera="stair">门窗人物楼梯</button>
+    </div>
+    <div class="button-group" aria-label="构造与历史状态">
+      <button id="explode" aria-pressed="false">屋面爆炸分层</button>
+      <button id="roofOnly" aria-pressed="false">仅屋面</button>
+      <button id="wallOnly" aria-pressed="false">仅墙面</button>
+      <button id="historyOnly" aria-pressed="false">仅历史状态</button>
+      <button id="openings" aria-pressed="false">门窗开合</button>
+      <button id="visitor" aria-pressed="false">人物入户上楼</button>
+      <button id="tour" aria-pressed="false">自动演示</button>
+      <button id="reset">复位</button>
+    </div>
+  </section>
+
+  <main>
+    <article>
+      <div class="panel-heading">
+        <div><span class="version baseline">V5.4.4</span><h2>完整建筑基线</h2></div>
+        <p>固定执行提交 <code>323a893</code> 的完整生成器与材质快照，保留旧瓦型参数和旧板筒排布。</p>
+      </div>
+      <div class="viewport" id="baseline" aria-label="V5.4.4 完整一颗印三维视图"></div>
+      <dl class="metrics" id="baselineMetrics"></dl>
+    </article>
+    <article>
+      <div class="panel-heading">
+        <div><span class="version production">V5.5.0</span><h2>完整建筑生产成果</h2></div>
+        <p>七个真实屋面、七层构造、独立板筒瓦、风化片区、活动门窗与 8+8 双跑楼梯。</p>
+      </div>
+      <div class="viewport" id="production" aria-label="V5.5.0 完整一颗印三维视图"></div>
+      <dl class="metrics" id="productionMetrics"></dl>
+    </article>
+  </main>
+
+  <aside class="evidence">
+    <div><strong id="status">正在读取生产数据与建立 WebGL 场景…</strong><span id="quality"></span></div>
+    <details>
+      <summary>当前证据边界</summary>
+      <p>当前瓦长向搭接、瓦距、基层固定和脊部封口均有可运行生产几何；它们尚未获得具体历史建筑的实测节点数据。本页分别记录运行验收与历史证据边界。</p>
+    </details>
+  </aside>
+
+  <script type="module" src="assets/js/surface-production-lab.js"></script>
+</body>
+</html>

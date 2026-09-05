@@ -1,0 +1,60 @@
+{
+  "schemaVersion": "1.0.0",
+  "title": "云南民间建筑生产线参考资料总库",
+  "createdAt": "2026-08-25",
+  "fileCount": 92,
+  "totalBytes": 98498887,
+  "categoryCounts": {
+    "source_legacy": 57,
+    "field": 18,
+    "review_screenshots": 5,
+    "knowledge_extracts": 12
+  },
+  "categoryBytes": {
+    "source_legacy": 30765619,
+    "field": 62417368,
+    "review_screenshots": 4150077,
+    "knowledge_extracts": 1165823
+  },
+  "coverage": [
+    "一颗印科普图与文章截图",
+    "刘致平1940年代昆明东北乡测绘图录",
+    "一颗印平面、立面、剖面与门窗瓦作图",
+    "纳西民居类型图",
+    "大理、乌龙村、团结乡模型视觉证据",
+    "2024年航拍整体照片",
+    "瓦、墙、土坯、抹灰、苔藓与风化局部照片",
+    "网页问题反馈截图",
+    "建筑语法、构件模板和瓦作知识提取文件"
+  ],
+  "evidencePolicy": {
+    "measuredGeometryWins": true,
+    "scanAndPhotoAppearanceCannotOverrideMeasuredGeometry": true,
+    "duplicateFilesRetainedButDoNotIncreaseEvidenceWeight": true,
+    "copyrightOwnershipNotClaimed": true
+  },
+  "existingGitHubBinaryAssets": [
+    "assets/models/YN_DALI_001_REFERENCE_WEB.glb",
+    "assets/models/YN_HAOSI1_WULONG_WL_001_REFERENCE_WEB.glb",
+    "assets/models/YN_TUANJIE_001_EDITABLE.glb"
+  ],
+  "archivePartChecksums": {
+    "01-legacy-article-screenshots-part1.zip": "a08ae398e3f1223ae28de626e66a29844e1a8bcbd32ecaac271d0d7bf3cf155b",
+    "02-legacy-article-screenshots-part2.zip": "4ec82109cfb08320229d88b5b0bdb06e7c2b2af4a7b43e3c18282cf686679104",
+    "03-liu-zhiping-canonical.zip": "76fd98c0769eedddc7be556469138377c649189b62256b179d62586e9fab9280",
+    "04-measured-drawings.zip": "c1a1ab27072eae3d433c35f26458fcb028889e92fae961c5cb201e1ab6122b58",
+    "05-typologies-feedback.zip": "d43b59bd6e742b4e1827d3d8ba365a54e7688291c4ce90804088a1c96bfd770b",
+    "06-aerial-DJI_20241007112052_0813_D.zip": "9f3d6d36a68b75ff281cd7565a66df800ee9698e736d48e96271598ce9070abd",
+    "07-aerial-DJI_20241007113706_0877_D.zip": "92a35505711ef85cadd8e04dfd8edd7a8d709f6add96312bfcb3c77730f70cf5",
+    "08-aerial-DJI_20241007113858_0899_D.zip": "0195e75eee3045fe34f3bb762d75d4790a3d27c04239d10d19eaaf0cbb8b59b6",
+    "09-aerial-DJI_20241007114451_0984_D.zip": "5e4183f6e63dba0154982a9f2f71542d89e0bd6bb3b0af0001abbbbaf603b7b8",
+    "10-aerial-DJI_20241007114536_0998_D.zip": "52b8327770b6c2971ec6e0ff823fa6bb8e31d2cfa4f861e3a2504afaac16eebe",
+    "11-aerial-DJI_20241007114613_0010_D.zip": "718d0db3928cbaf1faf9cfc08e0eae20b4bf65129ed2ea279fbd2d6a9b650d18",
+    "12-aerial-DJI_20241007114615_0011_D.zip": "1e4cbdf841600c5671652c2d35c5e465591b1d7995b84f6fc5c2b1eec7b5b008",
+    "13-aerial-DJI_20241007114625_0014_D.zip": "c587eb9e8071f5f09e83a8a2fd3a17a5ccb277790916057414b3ac4b98f02c3f",
+    "14-roof-wall-details-part1.zip": "50667a1c91bc85e8a1c14be8dc7ee496d2b2d4ca12e5c222a2c9378c3ffe59d8",
+    "15-roof-wall-details-part2.zip": "eab522c2d0e9ab4c137192c3869468ad11bec06b5c1f1c23c15e3a465064e928",
+    "16-review-screenshots.zip": "b28d4d69eb9c722d78461d960e8d5c3cb4ed9e99d143525bb630d07fc02517b4",
+    "17-knowledge-extracts.zip": "c5d1eb212d1bc6717c9483eb535d41dcd394fc3e36bf95d159ccff02a174abe1"
+  }
+}
