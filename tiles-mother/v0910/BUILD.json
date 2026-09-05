@@ -1,0 +1,18 @@
+{
+  "version": "0.9.10",
+  "baseCommit": "3679d88d86493a1c3c756b0d20f2a6e048dd26ad",
+  "baseHTMLSHA256": "06ad8f86f16afe8a58dbc83b14d206c712c4f48902cf5f8ac29e2ea0fcd209db",
+  "htmlSHA256": "1d52c47f56c0b502b889650949b1e05ca98c34ea8b7ef960cac3d9cac33442e7",
+  "appSHA256": "d942354f4e6207081a8e81a9760c7ab136c994ad7ca9cf0b9484b165549a801d",
+  "bytes": 1468993,
+  "unchangedBlocks": {
+    "detail": "43a899aa7602fab829d5b78f977213a325dec1dd626d6402b82d42b869486bc0",
+    "shader": "57c2ce32bfdfd9df97213ae1a19e6d1f17d92bea9dd3de9c9d200bd5bdd2eb0a",
+    "lighting": "4c7fba6d35aa552718966d1a3a221c172e5d51614a5e216a05c4749c90dc9dea",
+    "tileShape": "f5d5e253119940186ad859530556c226c2b599cd316f5698ccfbe9cfb526b61f",
+    "timber": "ac7130d9174f0d5f4ff0615a6c3f42eb1674f25bb81e376a02e4a09be504bd81"
+  },
+  "visualApproved": false,
+  "productionApproved": false,
+  "publicSiteDeployed": false
+}

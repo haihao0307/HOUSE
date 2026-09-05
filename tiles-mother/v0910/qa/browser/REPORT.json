@@ -1,0 +1,582 @@
+{
+  "version": "0.9.10",
+  "host": "same GitHub Actions Linux runner, software WebGL",
+  "versions": {
+    "before": {
+      "browser": "143.0.7499.4",
+      "htmlSHA256": "06ad8f86f16afe8a58dbc83b14d206c712c4f48902cf5f8ac29e2ea0fcd209db",
+      "errors": [],
+      "consoleErrors": [],
+      "externalRequests": [],
+      "cases": [
+        {
+          "name": "trio",
+          "buildMs": 128.19999999998254,
+          "firstRenderIncludingFinishMs": 0.7999999999883585,
+          "wallSeconds": 1.4038663880000115,
+          "geometrySHA256": "63bc217aa62d53dd592061bd493efa44a87b35495cb868592cf88fae613332de",
+          "counts": null,
+          "contacts": null,
+          "timber": null,
+          "instanceBytes": 0,
+          "usedInstances": 0,
+          "render": {
+            "calls": 6,
+            "triangles": 25782
+          },
+          "camera": {
+            "yaw": -0.7,
+            "pitch": 0.54,
+            "distance": 2.2,
+            "target": [
+              0,
+              -0.01,
+              0
+            ],
+            "side": "iso"
+          }
+        },
+        {
+          "name": "forty8",
+          "buildMs": 4088.7999999999884,
+          "firstRenderIncludingFinishMs": 2610.7999999999884,
+          "wallSeconds": 7.328164879000013,
+          "geometrySHA256": "a689f24cbe0d607d011310e8a36416708295f8b2d32ec4b020fd8373c76b2b7e",
+          "counts": {
+            "design": 48,
+            "panVisible": 24,
+            "coverVisible": 24,
+            "missing": 0,
+            "damaged": 0,
+            "replaced": 0,
+            "unsupported": 0
+          },
+          "contacts": {
+            "tested": 48,
+            "maxSeatGapMm": 0.2282942485253986,
+            "minSeatGapMm": 0.1799999999999996,
+            "minOverlapGapMm": 0.09051487174435713,
+            "unresolved": 0,
+            "clearanceToleranceMm": 0.18000000000000002,
+            "timber": {
+              "tested": 20,
+              "minGapMm": 0.18009817610355888,
+              "penetrations": [],
+              "absentStations": 0
+            },
+            "actualGeometry": {
+              "tested": 15,
+              "failures": [],
+              "allPassed": true
+            }
+          },
+          "timber": {
+            "brokenRafters": 0,
+            "brokenBeams": 0,
+            "maxRadialLoss": 0,
+            "maxBeamLoss": 0
+          },
+          "instanceBytes": 29184,
+          "usedInstances": 144,
+          "render": {
+            "calls": 33,
+            "triangles": 108720
+          },
+          "camera": {
+            "yaw": -2.3,
+            "pitch": 0.62,
+            "distance": 3.474918906658661,
+            "target": [
+              0,
+              0.5497088375684738,
+              -0.02768151398156249
+            ],
+            "side": "iso"
+          }
+        },
+        {
+          "name": "roof",
+          "buildMs": 35198.899999999994,
+          "firstRenderIncludingFinishMs": 2.5,
+          "wallSeconds": 35.766421361,
+          "geometrySHA256": "8b36aa51002b0b79b4b28fde2e4ec2531a5f1252a78b6490e9166bc191e2e25e",
+          "counts": {
+            "design": 860,
+            "panVisible": 440,
+            "coverVisible": 420,
+            "missing": 0,
+            "damaged": 0,
+            "replaced": 0,
+            "unsupported": 0
+          },
+          "contacts": {
+            "tested": 860,
+            "maxSeatGapMm": 0.22996059510276,
+            "minSeatGapMm": 0.1799999999999996,
+            "minOverlapGapMm": 0.09002997276158498,
+            "unresolved": 0,
+            "clearanceToleranceMm": 0.18000000000000002,
+            "timber": {
+              "tested": 92,
+              "minGapMm": 0.17991824227081565,
+              "penetrations": [],
+              "absentStations": 0
+            },
+            "actualGeometry": {
+              "tested": 33,
+              "failures": [],
+              "allPassed": true
+            }
+          },
+          "timber": {
+            "brokenRafters": 0,
+            "brokenBeams": 0,
+            "maxRadialLoss": 0,
+            "maxBeamLoss": 0
+          },
+          "instanceBytes": 522880,
+          "usedInstances": 2580,
+          "render": {
+            "calls": 87,
+            "triangles": 936208
+          },
+          "camera": {
+            "yaw": -2.3,
+            "pitch": 0.62,
+            "distance": 12.62081507494477,
+            "target": [
+              0,
+              1.1191603475292982,
+              -0.10785469105029866
+            ],
+            "side": "iso"
+          }
+        },
+        {
+          "name": "abandoned",
+          "buildMs": 2567.100000000006,
+          "firstRenderIncludingFinishMs": 2.7999999999883585,
+          "wallSeconds": 3.715786718000004,
+          "geometrySHA256": "d0f5aa37c48d2a03df87628ae2b86c92102c78d565b2933f160b2dc7eafdaf4b",
+          "counts": {
+            "design": 860,
+            "panVisible": 72,
+            "coverVisible": 45,
+            "missing": 743,
+            "damaged": 23,
+            "replaced": 0,
+            "unsupported": 166
+          },
+          "contacts": {
+            "tested": 117,
+            "maxSeatGapMm": 0.37302042538282787,
+            "minSeatGapMm": 0.1799999999999996,
+            "minOverlapGapMm": 0.09105101048517694,
+            "unresolved": 0,
+            "clearanceToleranceMm": 0.18000000000000002,
+            "timber": {
+              "tested": 89,
+              "minGapMm": 0.18009823600650954,
+              "penetrations": [],
+              "absentStations": 5
+            },
+            "actualGeometry": {
+              "tested": 33,
+              "failures": [],
+              "allPassed": true
+            }
+          },
+          "timber": {
+            "brokenRafters": 22,
+            "brokenBeams": 3,
+            "maxRadialLoss": 0.82,
+            "maxBeamLoss": 0.26376497828756484
+          },
+          "instanceBytes": 998184,
+          "usedInstances": 351,
+          "render": {
+            "calls": 189,
+            "triangles": 232128
+          },
+          "camera": {
+            "yaw": -2.3,
+            "pitch": 0.62,
+            "distance": 12.637525560800597,
+            "target": [
+              0,
+              1.1139946964515264,
+              -0.09735723711306132
+            ],
+            "side": "iso"
+          }
+        }
+      ],
+      "sameRoofRepeatMs": 532.2000000000116,
+      "heapAfterCollection": {
+        "usedSize": 72706944,
+        "totalSize": 73408512,
+        "embedderHeapUsedSize": 2154152,
+        "backingStorageSize": 11106655
+      }
+    },
+    "after": {
+      "browser": "143.0.7499.4",
+      "htmlSHA256": "1d52c47f56c0b502b889650949b1e05ca98c34ea8b7ef960cac3d9cac33442e7",
+      "errors": [],
+      "consoleErrors": [],
+      "externalRequests": [],
+      "cases": [
+        {
+          "name": "trio",
+          "buildMs": 95.20000000001164,
+          "firstRenderIncludingFinishMs": 1,
+          "wallSeconds": 1.5092025529999944,
+          "geometrySHA256": "63bc217aa62d53dd592061bd493efa44a87b35495cb868592cf88fae613332de",
+          "counts": null,
+          "contacts": null,
+          "timber": null,
+          "instanceBytes": 0,
+          "usedInstances": 0,
+          "render": {
+            "calls": 6,
+            "triangles": 25782
+          },
+          "camera": {
+            "yaw": -0.7,
+            "pitch": 0.54,
+            "distance": 2.2,
+            "target": [
+              0,
+              -0.01,
+              0
+            ],
+            "side": "iso"
+          }
+        },
+        {
+          "name": "forty8",
+          "buildMs": 2058.100000000006,
+          "firstRenderIncludingFinishMs": 696,
+          "wallSeconds": 3.4247219560000133,
+          "geometrySHA256": "a689f24cbe0d607d011310e8a36416708295f8b2d32ec4b020fd8373c76b2b7e",
+          "counts": {
+            "design": 48,
+            "panVisible": 24,
+            "coverVisible": 24,
+            "missing": 0,
+            "damaged": 0,
+            "replaced": 0,
+            "unsupported": 0
+          },
+          "contacts": {
+            "tested": 48,
+            "maxSeatGapMm": 0.2282942485253986,
+            "minSeatGapMm": 0.1799999999999996,
+            "minOverlapGapMm": 0.09051487174435713,
+            "unresolved": 0,
+            "clearanceToleranceMm": 0.18000000000000002,
+            "timber": {
+              "tested": 20,
+              "minGapMm": 0.18009817610355888,
+              "penetrations": [],
+              "absentStations": 0
+            },
+            "actualGeometry": {
+              "tested": 15,
+              "failures": [],
+              "allPassed": true
+            }
+          },
+          "timber": {
+            "brokenRafters": 0,
+            "brokenBeams": 0,
+            "maxRadialLoss": 0,
+            "maxBeamLoss": 0
+          },
+          "instanceBytes": 10944,
+          "usedInstances": 144,
+          "render": {
+            "calls": 33,
+            "triangles": 108720
+          },
+          "camera": {
+            "yaw": -2.3,
+            "pitch": 0.62,
+            "distance": 3.474918906658661,
+            "target": [
+              0,
+              0.5497088375684738,
+              -0.02768151398156249
+            ],
+            "side": "iso"
+          }
+        },
+        {
+          "name": "roof",
+          "buildMs": 14639.600000000006,
+          "firstRenderIncludingFinishMs": 2.6000000000058208,
+          "wallSeconds": 14.66308664799999,
+          "geometrySHA256": "8b36aa51002b0b79b4b28fde2e4ec2531a5f1252a78b6490e9166bc191e2e25e",
+          "counts": {
+            "design": 860,
+            "panVisible": 440,
+            "coverVisible": 420,
+            "missing": 0,
+            "damaged": 0,
+            "replaced": 0,
+            "unsupported": 0
+          },
+          "contacts": {
+            "tested": 860,
+            "maxSeatGapMm": 0.22996059510276,
+            "minSeatGapMm": 0.1799999999999996,
+            "minOverlapGapMm": 0.09002997276158498,
+            "unresolved": 0,
+            "clearanceToleranceMm": 0.18000000000000002,
+            "timber": {
+              "tested": 92,
+              "minGapMm": 0.17991824227081565,
+              "penetrations": [],
+              "absentStations": 0
+            },
+            "actualGeometry": {
+              "tested": 33,
+              "failures": [],
+              "allPassed": true
+            }
+          },
+          "timber": {
+            "brokenRafters": 0,
+            "brokenBeams": 0,
+            "maxRadialLoss": 0,
+            "maxBeamLoss": 0
+          },
+          "instanceBytes": 196080,
+          "usedInstances": 2580,
+          "render": {
+            "calls": 87,
+            "triangles": 936208
+          },
+          "camera": {
+            "yaw": -2.3,
+            "pitch": 0.62,
+            "distance": 12.62081507494477,
+            "target": [
+              0,
+              1.1191603475292982,
+              -0.10785469105029866
+            ],
+            "side": "iso"
+          }
+        },
+        {
+          "name": "abandoned",
+          "buildMs": 1258.3999999999942,
+          "firstRenderIncludingFinishMs": 3,
+          "wallSeconds": 1.2848139500000002,
+          "geometrySHA256": "d0f5aa37c48d2a03df87628ae2b86c92102c78d565b2933f160b2dc7eafdaf4b",
+          "counts": {
+            "design": 860,
+            "panVisible": 72,
+            "coverVisible": 45,
+            "missing": 743,
+            "damaged": 23,
+            "replaced": 0,
+            "unsupported": 166
+          },
+          "contacts": {
+            "tested": 117,
+            "maxSeatGapMm": 0.37302042538282787,
+            "minSeatGapMm": 0.1799999999999996,
+            "minOverlapGapMm": 0.09105101048517694,
+            "unresolved": 0,
+            "clearanceToleranceMm": 0.18000000000000002,
+            "timber": {
+              "tested": 89,
+              "minGapMm": 0.18009823600650954,
+              "penetrations": [],
+              "absentStations": 5
+            },
+            "actualGeometry": {
+              "tested": 33,
+              "failures": [],
+              "allPassed": true
+            }
+          },
+          "timber": {
+            "brokenRafters": 22,
+            "brokenBeams": 3,
+            "maxRadialLoss": 0.82,
+            "maxBeamLoss": 0.26376497828756484
+          },
+          "instanceBytes": 26676,
+          "usedInstances": 351,
+          "render": {
+            "calls": 189,
+            "triangles": 232128
+          },
+          "camera": {
+            "yaw": -2.3,
+            "pitch": 0.62,
+            "distance": 12.637525560800597,
+            "target": [
+              0,
+              1.1139946964515264,
+              -0.09735723711306132
+            ],
+            "side": "iso"
+          }
+        }
+      ],
+      "sameRoofRepeatMs": 1,
+      "heapAfterCollection": {
+        "usedSize": 76495296,
+        "totalSize": 77602816,
+        "embedderHeapUsedSize": 2413776,
+        "backingStorageSize": 14482727
+      },
+      "performance": {
+        "version": "0.9.10",
+        "sceneHits": 1,
+        "sceneMisses": 3,
+        "lastBuildMs": 0.6000000000058208,
+        "lastBuildMode": "完整场景复用",
+        "frames": 7,
+        "frameCallbacks": 7,
+        "sceneCacheLimit": 2,
+        "compactFits": 117,
+        "pendingFrame": false,
+        "cacheKeys": [
+          "v0910/roof/1/1/0/314159/maintained/material",
+          "v0910/roof/1/1/100/314159/abandoned/material"
+        ],
+        "instanceBytes": 26676,
+        "instanceSlots": 351,
+        "geometryCount": 65,
+        "materialCount": 29,
+        "renderer": {
+          "calls": 189,
+          "triangles": 232128,
+          "memory": {
+            "geometries": 63,
+            "textures": 6
+          }
+        },
+        "hidden": false
+      },
+      "lazyAudit": {
+        "pairCount": 445,
+        "adjacentCount": 0,
+        "minGapMm": 0.09105101048517694,
+        "woodMinGapMm": 0.18009823600650954,
+        "woodMaxSeatGapMm": 8.534440452505843,
+        "penetrations": [],
+        "actualGeometryGroups": 33,
+        "geometryFailures": [],
+        "bodyReadiness": "true"
+      },
+      "idle6s": {
+        "frames": 0,
+        "callbacks": 0,
+        "pending": false
+      },
+      "motionWindows": [
+        {
+          "mobile": false,
+          "scene": "trio",
+          "ms": 6272.599999999991,
+          "frames": 22,
+          "fps": 3.5073175397761744,
+          "uniquePositions": 22
+        },
+        {
+          "mobile": false,
+          "scene": "forty8",
+          "ms": 6318.999999999971,
+          "frames": 8,
+          "fps": 1.2660231049216706,
+          "uniquePositions": 8
+        },
+        {
+          "mobile": false,
+          "scene": "roof",
+          "ms": 6045.899999999994,
+          "frames": 4,
+          "fps": 0.6616053854678383,
+          "uniquePositions": 4
+        },
+        {
+          "mobile": true,
+          "scene": "trio",
+          "ms": 15050.800000000003,
+          "frames": 2,
+          "fps": 0.13288330188428518,
+          "uniquePositions": 2
+        },
+        {
+          "mobile": true,
+          "scene": "forty8",
+          "ms": 6005.599999999962,
+          "frames": 13,
+          "fps": 2.164646330091928,
+          "uniquePositions": 13
+        },
+        {
+          "mobile": true,
+          "scene": "roof",
+          "ms": 7972.399999999994,
+          "frames": 7,
+          "fps": 0.8780292007425625,
+          "uniquePositions": 7
+        }
+      ],
+      "performanceGatePassed": false
+    }
+  },
+  "pixelComparisons": [
+    {
+      "name": "trio",
+      "size": [
+        918,
+        850
+      ],
+      "maxChannelDifference": 0,
+      "meanAbsoluteDifference": 0.0,
+      "exact": true
+    },
+    {
+      "name": "forty8",
+      "size": [
+        918,
+        850
+      ],
+      "maxChannelDifference": 0,
+      "meanAbsoluteDifference": 0.0,
+      "exact": true
+    },
+    {
+      "name": "roof",
+      "size": [
+        918,
+        850
+      ],
+      "maxChannelDifference": 0,
+      "meanAbsoluteDifference": 0.0,
+      "exact": true
+    },
+    {
+      "name": "abandoned",
+      "size": [
+        918,
+        850
+      ],
+      "maxChannelDifference": 0,
+      "meanAbsoluteDifference": 0.0,
+      "exact": true
+    }
+  ],
+  "visualApproved": false,
+  "productionApproved": false,
+  "publicSiteDeployed": false,
+  "allFunctionalPassed": true
+}

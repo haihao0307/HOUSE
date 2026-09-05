@@ -1,0 +1,108 @@
+{
+  "runtime": "v22.23.2",
+  "method": "Node numerical assembly; material construction stubbed; not browser/GPU benchmark",
+  "baselineSHA256": "ed965aebdfb44754f81e478ad45508fa8392ca2331a735f4d1d101c61b551d3d",
+  "runs": [
+    {
+      "name": "before",
+      "scene": "forty8",
+      "year": 0,
+      "ms": 4674.688084,
+      "hash": "732b7383df35a216d361919fed83d50c20ffb172cbfc34e117f34d59b7b0564c",
+      "counts": {
+        "design": 48,
+        "panVisible": 24,
+        "coverVisible": 24,
+        "missing": 0,
+        "damaged": 0,
+        "replaced": 0,
+        "unsupported": 0
+      }
+    },
+    {
+      "name": "after",
+      "scene": "forty8",
+      "year": 0,
+      "ms": 1860.0872909999998,
+      "hash": "732b7383df35a216d361919fed83d50c20ffb172cbfc34e117f34d59b7b0564c",
+      "counts": {
+        "design": 48,
+        "panVisible": 24,
+        "coverVisible": 24,
+        "missing": 0,
+        "damaged": 0,
+        "replaced": 0,
+        "unsupported": 0
+      }
+    },
+    {
+      "name": "before",
+      "scene": "roof",
+      "year": 0,
+      "ms": 44547.877081,
+      "hash": "fb8a7936c086104abd15641040b4cd4cf9203259603ee55c97e978724f0d4248",
+      "counts": {
+        "design": 860,
+        "panVisible": 440,
+        "coverVisible": 420,
+        "missing": 0,
+        "damaged": 0,
+        "replaced": 0,
+        "unsupported": 0
+      }
+    },
+    {
+      "name": "after",
+      "scene": "roof",
+      "year": 0,
+      "ms": 16161.672649,
+      "hash": "fb8a7936c086104abd15641040b4cd4cf9203259603ee55c97e978724f0d4248",
+      "counts": {
+        "design": 860,
+        "panVisible": 440,
+        "coverVisible": 420,
+        "missing": 0,
+        "damaged": 0,
+        "replaced": 0,
+        "unsupported": 0
+      }
+    },
+    {
+      "name": "before",
+      "scene": "roof",
+      "year": 100,
+      "care": "abandoned",
+      "ms": 2507.3079769999895,
+      "hash": "cb0eb2310f1e97ffdc405b80f748a1eaf68d0836f647307ecb8ca1a6a14d0068",
+      "counts": {
+        "design": 860,
+        "panVisible": 72,
+        "coverVisible": 45,
+        "missing": 743,
+        "damaged": 23,
+        "replaced": 0,
+        "unsupported": 166
+      }
+    },
+    {
+      "name": "after",
+      "scene": "roof",
+      "year": 100,
+      "care": "abandoned",
+      "ms": 1431.819537000003,
+      "hash": "cb0eb2310f1e97ffdc405b80f748a1eaf68d0836f647307ecb8ca1a6a14d0068",
+      "counts": {
+        "design": 860,
+        "panVisible": 72,
+        "coverVisible": 45,
+        "missing": 743,
+        "damaged": 23,
+        "replaced": 0,
+        "unsupported": 166
+      }
+    }
+  ],
+  "exactSceneComparisons": 3,
+  "exactPairComparisons": 160,
+  "allPassed": true
+}
