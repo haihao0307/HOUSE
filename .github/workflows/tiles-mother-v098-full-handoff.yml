@@ -1,0 +1,104 @@
+name: Tiles Mother V0.9.8 Full Restart Package
+on:
+  push:
+    branches: [feature/tiles-mother-v0.1-workbench]
+    paths:
+      - .github/workflows/tiles-mother-v098-full-handoff.yml
+      - tiles-mother/v098/transport/**
+      - tiles-mother/v098/materialize.py
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: tiles-mother-v098-full-handoff
+  cancel-in-progress: false
+jobs:
+  package:
+    if: "${{ !startsWith(github.event.head_commit.message, 'release(tiles-mother): materialize V0.9.8') }}"
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+      - name: Guard work branch and exact HEAD
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REF_NAME" = 'feature/tiles-mother-v0.1-workbench'
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          test "$(git ls-remote origin refs/heads/$GITHUB_REF_NAME | cut -f1)" = "$GITHUB_SHA"
+      - name: Reconstruct unchanged runtime and continuation source
+        run: python3 tiles-mother/v098/materialize.py
+      - name: Verify source and run geometry regression
+        run: |
+          set -euo pipefail
+          node --check tiles-mother/v098/source/app.js
+          python3 tiles-mother/v098/tools/rebuild_html.py --check
+          mkdir -p tiles-mother/v098/qa/release-refresh
+          node tiles-mother/v098/qa/check_geometry.cjs > tiles-mother/v098/qa/release-refresh/GEOMETRY_REPORT.json
+      - name: Install browser test dependencies
+        run: |
+          python3 -m pip install playwright==1.57.0
+          python3 -m playwright install --with-deps chromium
+      - name: Render and verify unchanged offline workbench
+        run: python3 tiles-mother/v098/qa/release_smoke.py
+      - name: Build verified full restart archive
+        run: |
+          python3 tiles-mother/v098/tools/build_release.py --dist tiles-mother/releases
+          python3 tiles-mother/v098/tools/verify_package.py
+      - name: Set continuation pointers without changing published Pages
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import json, os
+          root=Path('tiles-mother')
+          r=json.loads((root/'releases/V098_PACKAGE_RECEIPT.json').read_text())
+          r.update({'repository':'haihao0307/HOUSE','branch':os.environ['GITHUB_REF_NAME'],'versionDirectory':'tiles-mother/v098','restart':'tiles-mother/RESTART_START_HERE.md','workbench':'tiles-mother/v098/START_HERE.html','archivePath':'tiles-mother/releases/'+r['archive'],'publicSiteDeployed':False})
+          (root/'CURRENT_BASELINE.json').write_text(json.dumps(r,ensure_ascii=False,indent=2)+'\n')
+          (root/'RESTART_START_HERE.md').write_bytes((root/'v098/RESTART_START_HERE.md').read_bytes())
+          (root/'README.md').write_text('# Tiles Mother V0.9.8\n\nCurrent work branch: `feature/tiles-mother-v0.1-workbench`.\n\nStart with [RESTART_START_HERE.md](RESTART_START_HERE.md) and [CURRENT_BASELINE.json](CURRENT_BASELINE.json).\n\n[Full source and offline workbench](v098/README.md).\n\n[Full restart package](releases/'+r['archive']+').\n\nThe V0.9.8 workbench is unchanged. Main and public Pages are untouched. Historical directories are not current work entries.\n\nvisualApproved=false; productionApproved=false.\n')
+          PY
+      - name: Commit package on existing branch with a normal fast-forward
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git ls-remote origin refs/heads/$GITHUB_REF_NAME | cut -f1)" = "$GITHUB_SHA"
+          git add tiles-mother/v098 tiles-mother/README.md tiles-mother/RESTART_START_HERE.md tiles-mother/CURRENT_BASELINE.json tiles-mother/releases/V098_PACKAGE_RECEIPT.json tiles-mother/releases/Tiles_Mother_V098_Full_Restart_Package_2026-09-05.zip.sha256
+          git add -f tiles-mother/releases/Tiles_Mother_V098_Full_Restart_Package_2026-09-05.zip
+          python3 - <<'PY'
+          import subprocess
+          allowed={'tiles-mother/README.md','tiles-mother/RESTART_START_HERE.md','tiles-mother/CURRENT_BASELINE.json','tiles-mother/releases/V098_PACKAGE_RECEIPT.json','tiles-mother/releases/Tiles_Mother_V098_Full_Restart_Package_2026-09-05.zip','tiles-mother/releases/Tiles_Mother_V098_Full_Restart_Package_2026-09-05.zip.sha256'}
+          paths=subprocess.check_output(['git','diff','--cached','--name-only'],text=True).splitlines()
+          assert paths and all(p.startswith('tiles-mother/v098/') or p in allowed for p in paths),paths
+          PY
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'release(tiles-mother): materialize V0.9.8 full restart package'
+          git push origin HEAD:refs/heads/$GITHUB_REF_NAME
+          python3 - <<'PY'
+          from pathlib import Path
+          import subprocess,json,os
+          r=json.loads(Path('tiles-mother/CURRENT_BASELINE.json').read_text())
+          r.update({'publishedCommit':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),'actionsRunId':os.environ['GITHUB_RUN_ID'],'publishVerified':True})
+          Path(os.environ['RUNNER_TEMP'],'V098_PUBLISH_RECEIPT.json').write_text(json.dumps(r,indent=2)+'\n')
+          PY
+      - name: Upload complete package and receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: Tiles_Mother_V098_Full_Restart_2026-09-05
+          path: |
+            tiles-mother/releases/Tiles_Mother_V098_Full_Restart_Package_2026-09-05.zip
+            tiles-mother/releases/Tiles_Mother_V098_Full_Restart_Package_2026-09-05.zip.sha256
+            ${{ runner.temp }}/V098_PUBLISH_RECEIPT.json
+          retention-days: 90
+          if-no-files-found: error
+      - name: Preserve failure diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Tiles_Mother_V098_Failed_Checks
+          path: tiles-mother/v098/qa/release-refresh
+          retention-days: 14
+          if-no-files-found: ignore
