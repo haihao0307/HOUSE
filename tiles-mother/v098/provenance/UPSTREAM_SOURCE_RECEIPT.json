@@ -1,0 +1,31 @@
+{
+  "version": "0.9.8",
+  "date": "2026-09-05",
+  "baseline": {
+    "version": "0.9.7",
+    "htmlSHA256": "0763d42ece148496baa0684e9e4fac09b98ff2b741bedc7f4431217ce076319c",
+    "preservedUnmodified": true
+  },
+  "sourceReadVerified": true,
+  "references": [
+    {
+      "source": "user-supplied image; not a newly retrieved web source",
+      "originalFilename": "古建筑测绘_7_Disorder_来自小红书网页版.jpg",
+      "path": "references/user_measured_tiles.jpg",
+      "sha256": "e68ed1f4157eeab450a42b20f7e815dc4e4b4fd201a8d227049d3831d355a0f1",
+      "bytes": 102663
+    },
+    {
+      "source": "user-supplied image; not a newly retrieved web source",
+      "originalFilename": "文献馆 _ 刘致平 昆明东北乡古建筑图录_9_WDC_来自小红书网页版 - 副本.jpeg",
+      "path": "references/user_historical_roof_diagram.jpeg",
+      "sha256": "0fe5ccc052d664ef4eebd2acdd891f414c88b4050c39894755db29da13960db7",
+      "bytes": 369315
+    }
+  ],
+  "rawJiangwutangScanNewlyReadThisIteration": false,
+  "colorBasis": "preserved accepted V097 shader plus user-directed whole-tile probability configuration",
+  "regionalSoilAndKilnResearchComplete": false,
+  "visualApproved": false,
+  "productionApproved": false
+}

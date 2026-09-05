@@ -1,0 +1,41 @@
+{
+  "files": [
+    {
+      "path": "START_HERE.html",
+      "bytes": 1434842,
+      "sha256": "c8b8211f8d14512b2f29c067894be563e2710053b648b39427a87986bcf34c9b"
+    },
+    {
+      "path": "source/app.js",
+      "bytes": 70841,
+      "sha256": "08097e09c4e2273daa81b156211aefc63c1bec5925740e68d98285d12851b379"
+    },
+    {
+      "path": "source/contact.js",
+      "bytes": 5887,
+      "sha256": "babdd8359aba89d1f6df8e6af7e69001272d2d4c8991e79a70c1f52bb7cbc17e"
+    },
+    {
+      "path": "source/cracks.js",
+      "bytes": 1113,
+      "sha256": "5a4b880a79860e4dd4d3044b92e5084a5c01f757f857bb51ea6f24c7bc4ebcdc"
+    },
+    {
+      "path": "source/roof.js",
+      "bytes": 14608,
+      "sha256": "6d20abab24eca25dbc3d0217e0318c5a922f049169c7ea96152207d005e61fc1"
+    },
+    {
+      "path": "source/vendor/three_runtime.cjs",
+      "bytes": 1028824,
+      "sha256": "7d800ff6c3f4b76f6c85d6aa2abedc27976190b28860668b83e72269da83c805"
+    },
+    {
+      "path": "source/wood.js",
+      "bytes": 7495,
+      "sha256": "61789555fda65c7d382bdf2bfad8d8dbd332003e69b81d9138eaaf894c0c0c41"
+    }
+  ],
+  "runtimeSourcePath": "tiles-mother/v091/source/runtime/tiles-reference-runtime-three-r180.js",
+  "runtimeSHA256": "4c10e68b2a90aeb43f8b81715114e4c0de14ad7e79ac918ccef0a7bb0b9db771"
+}

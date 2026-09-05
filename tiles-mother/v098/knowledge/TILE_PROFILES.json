@@ -1,0 +1,47 @@
+{
+  "schema": "tiles-mother.measured-profiles.v1",
+  "units": "m",
+  "measurementStatus": "manual transcription from user-supplied drawing; approximate; ambiguous handwritten values remain unpromoted",
+  "panTile": {
+    "nameZh": "板瓦",
+    "length": 0.238,
+    "widthEave": 0.242,
+    "widthRidge": 0.221,
+    "riseEave": 0.05,
+    "riseRidge": 0.047,
+    "thickness": 0.012,
+    "effectiveExposureStep": 0.198,
+    "shapeRules": [
+      "前后口收分",
+      "连续船形凹面",
+      "内外表面与六个封闭面",
+      "沿坡向搭接"
+    ],
+    "effectiveExposureStepStatus": "inherited layout setting, not independently measured from drawing"
+  },
+  "coverTile": {
+    "nameZh": "筒瓦",
+    "length": 0.222,
+    "widthEave": 0.115,
+    "widthRidge": 0.09,
+    "riseEave": 0.037,
+    "riseRidge": 0.035,
+    "thickness": 0.01,
+    "effectiveExposureStep": 0.198,
+    "shapeRules": [
+      "前后口收分",
+      "拱壳",
+      "覆盖两列板瓦接缝",
+      "内外表面与六个封闭面"
+    ],
+    "effectiveExposureStepStatus": "860-roof layout setting; 48-tile layout uses its own exposure to keep 24 pan + 24 cover tiles on interior seams"
+  },
+  "decorativeEaveParts": {
+    "enabled": false,
+    "reason": "当前普通民居范围暂不接入勾头、滴水与纹样件"
+  },
+  "sourceFiles": [
+    "references/user_measured_tiles.jpg",
+    "references/user_historical_roof_diagram.jpeg"
+  ]
+}

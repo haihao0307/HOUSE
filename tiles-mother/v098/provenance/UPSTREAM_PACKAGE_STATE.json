@@ -1,0 +1,18 @@
+{
+  "version": "0.9.8",
+  "status": "tested visual-review candidate",
+  "baseVersion": "0.9.7",
+  "sourceSHA256": "c8b8211f8d14512b2f29c067894be563e2710053b648b39427a87986bcf34c9b",
+  "materialFunctionsUnchanged": true,
+  "browserReport": "qa/BROWSER_REPORT.json",
+  "visualApproved": false,
+  "productionApproved": false,
+  "remoteGitHubWritePerformed": false,
+  "publicSiteDeployed": false,
+  "limits": [
+    "demonstration decay calibration",
+    "no independent falling-fragment dynamics",
+    "no wall-collapse model",
+    "Windows direct file launch untested"
+  ]
+}

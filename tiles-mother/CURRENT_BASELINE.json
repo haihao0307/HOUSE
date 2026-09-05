@@ -1,0 +1,18 @@
+{
+  "version": "0.9.8",
+  "archive": "Tiles_Mother_V098_Full_Restart_Package_2026-09-05.zip",
+  "bytes": 1660986,
+  "sha256": "9c9389243c25b4106c46733456e0f5807affa2d0b16e5bd5efbe85d822334e2c",
+  "fileCount": 48,
+  "workbenchSHA256": "c8b8211f8d14512b2f29c067894be563e2710053b648b39427a87986bcf34c9b",
+  "githubBuildSourceCommit": "970f36416ac5f3fac4dfcb5094901a03ee53dfcd",
+  "visualApproved": false,
+  "productionApproved": false,
+  "repository": "haihao0307/HOUSE",
+  "branch": "feature/tiles-mother-v0.1-workbench",
+  "versionDirectory": "tiles-mother/v098",
+  "restart": "tiles-mother/RESTART_START_HERE.md",
+  "workbench": "tiles-mother/v098/START_HERE.html",
+  "archivePath": "tiles-mother/releases/Tiles_Mother_V098_Full_Restart_Package_2026-09-05.zip",
+  "publicSiteDeployed": false
+}

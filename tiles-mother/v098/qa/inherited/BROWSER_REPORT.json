@@ -1,0 +1,667 @@
+{
+  "globalUV": {
+    "pan": {
+      "allPassed": true,
+      "faces": [
+        {
+          "face": "top",
+          "label": "外表面",
+          "noGeometricFold": true,
+          "finite": true,
+          "inRange": true,
+          "zeroAreaTriangles": 0,
+          "orientationConsistent": true,
+          "tangentAligned": true,
+          "bitangentAligned": true,
+          "tangentScore": 0.9066160026039235,
+          "bitangentScore": 0.9991285119648605,
+          "passed": true
+        },
+        {
+          "face": "bottom",
+          "label": "内表面",
+          "noGeometricFold": true,
+          "finite": true,
+          "inRange": true,
+          "zeroAreaTriangles": 0,
+          "orientationConsistent": true,
+          "tangentAligned": true,
+          "bitangentAligned": true,
+          "tangentScore": 0.9066551065758339,
+          "bitangentScore": 0.9991380838676122,
+          "passed": true
+        },
+        {
+          "face": "left",
+          "label": "左侧边",
+          "noGeometricFold": true,
+          "finite": true,
+          "inRange": true,
+          "zeroAreaTriangles": 0,
+          "orientationConsistent": true,
+          "tangentAligned": true,
+          "bitangentAligned": true,
+          "tangentScore": 0.9959523226219725,
+          "bitangentScore": 0.7008425792310882,
+          "passed": true
+        },
+        {
+          "face": "right",
+          "label": "右侧边",
+          "noGeometricFold": true,
+          "finite": true,
+          "inRange": true,
+          "zeroAreaTriangles": 0,
+          "orientationConsistent": true,
+          "tangentAligned": true,
+          "bitangentAligned": true,
+          "tangentScore": 0.996094888006755,
+          "bitangentScore": 0.7008425811206318,
+          "passed": true
+        },
+        {
+          "face": "eave",
+          "label": "出檐端",
+          "noGeometricFold": true,
+          "finite": true,
+          "inRange": true,
+          "zeroAreaTriangles": 0,
+          "orientationConsistent": true,
+          "tangentAligned": true,
+          "bitangentAligned": true,
+          "tangentScore": 0.9077973280209338,
+          "bitangentScore": 0.908798361754079,
+          "passed": true
+        },
+        {
+          "face": "ridge",
+          "label": "迎水端",
+          "noGeometricFold": true,
+          "finite": true,
+          "inRange": true,
+          "zeroAreaTriangles": 0,
+          "orientationConsistent": true,
+          "tangentAligned": true,
+          "bitangentAligned": true,
+          "tangentScore": 0.9038620144657019,
+          "bitangentScore": 0.9046009583365165,
+          "passed": true
+        }
+      ]
+    },
+    "cover": {
+      "allPassed": true,
+      "faces": [
+        {
+          "face": "top",
+          "label": "外表面",
+          "noGeometricFold": true,
+          "finite": true,
+          "inRange": true,
+          "zeroAreaTriangles": 0,
+          "orientationConsistent": true,
+          "tangentAligned": true,
+          "bitangentAligned": true,
+          "tangentScore": 0.8144808282777185,
+          "bitangentScore": 0.9990932851884915,
+          "passed": true
+        },
+        {
+          "face": "bottom",
+          "label": "内表面",
+          "noGeometricFold": true,
+          "finite": true,
+          "inRange": true,
+          "zeroAreaTriangles": 0,
+          "orientationConsistent": true,
+          "tangentAligned": true,
+          "bitangentAligned": true,
+          "tangentScore": 0.8131088855598616,
+          "bitangentScore": 0.999037510449588,
+          "passed": true
+        },
+        {
+          "face": "left",
+          "label": "左侧边",
+          "noGeometricFold": true,
+          "finite": true,
+          "inRange": true,
+          "zeroAreaTriangles": 0,
+          "orientationConsistent": true,
+          "tangentAligned": true,
+          "bitangentAligned": true,
+          "tangentScore": 0.9976055421155771,
+          "bitangentScore": 0.3357576123624791,
+          "passed": true
+        },
+        {
+          "face": "right",
+          "label": "右侧边",
+          "noGeometricFold": true,
+          "finite": true,
+          "inRange": true,
+          "zeroAreaTriangles": 0,
+          "orientationConsistent": true,
+          "tangentAligned": true,
+          "bitangentAligned": true,
+          "tangentScore": 0.9975970702206318,
+          "bitangentScore": 0.33575761321319064,
+          "passed": true
+        },
+        {
+          "face": "eave",
+          "label": "出檐端",
+          "noGeometricFold": true,
+          "finite": true,
+          "inRange": true,
+          "zeroAreaTriangles": 0,
+          "orientationConsistent": true,
+          "tangentAligned": true,
+          "bitangentAligned": true,
+          "tangentScore": 0.8292143987391001,
+          "bitangentScore": 0.8343964082644986,
+          "passed": true
+        },
+        {
+          "face": "ridge",
+          "label": "迎水端",
+          "noGeometricFold": true,
+          "finite": true,
+          "inRange": true,
+          "zeroAreaTriangles": 0,
+          "orientationConsistent": true,
+          "tangentAligned": true,
+          "bitangentAligned": true,
+          "tangentScore": 0.7993978347538324,
+          "bitangentScore": 0.8033824747824027,
+          "passed": true
+        }
+      ]
+    },
+    "rafter": {
+      "allPassed": true,
+      "faces": [
+        {
+          "face": "side",
+          "minOutwardDot": 0.9981341411553327,
+          "outwardCriterion": "positive radial dot against local centreline",
+          "finite": true,
+          "uvRange": true,
+          "nonzeroArea": true,
+          "nonMirrored": true,
+          "longitudinalV": true,
+          "outward": true,
+          "triangles": 864,
+          "passed": true
+        },
+        {
+          "face": "start",
+          "minOutwardDot": 0.9999999999999999,
+          "outwardCriterion": "end-facing normal",
+          "finite": true,
+          "uvRange": true,
+          "nonzeroArea": true,
+          "nonMirrored": true,
+          "longitudinalV": true,
+          "outward": true,
+          "triangles": 24,
+          "passed": true
+        },
+        {
+          "face": "end",
+          "minOutwardDot": 0.9999999999999999,
+          "outwardCriterion": "end-facing normal",
+          "finite": true,
+          "uvRange": true,
+          "nonzeroArea": true,
+          "nonMirrored": true,
+          "longitudinalV": true,
+          "outward": true,
+          "triangles": 24,
+          "passed": true
+        }
+      ]
+    },
+    "crossbeam": {
+      "allPassed": true,
+      "faces": [
+        {
+          "face": "side",
+          "minOutwardDot": 0.9985508664435413,
+          "outwardCriterion": "positive radial dot against local centreline",
+          "finite": true,
+          "uvRange": true,
+          "nonzeroArea": true,
+          "nonMirrored": true,
+          "longitudinalV": true,
+          "outward": true,
+          "triangles": 864,
+          "passed": true
+        },
+        {
+          "face": "start",
+          "minOutwardDot": 0.9999999999999999,
+          "outwardCriterion": "end-facing normal",
+          "finite": true,
+          "uvRange": true,
+          "nonzeroArea": true,
+          "nonMirrored": true,
+          "longitudinalV": true,
+          "outward": true,
+          "triangles": 24,
+          "passed": true
+        },
+        {
+          "face": "end",
+          "minOutwardDot": 0.9999999999999999,
+          "outwardCriterion": "end-facing normal",
+          "finite": true,
+          "uvRange": true,
+          "nonzeroArea": true,
+          "nonMirrored": true,
+          "longitudinalV": true,
+          "outward": true,
+          "triangles": 24,
+          "passed": true
+        }
+      ]
+    },
+    "allPassed": true
+  },
+  "records": [
+    {
+      "ms": 2388.399999999907,
+      "stats": {
+        "design": 48,
+        "panVisible": 24,
+        "coverVisible": 24,
+        "missing": 0,
+        "damaged": 0,
+        "replaced": 0,
+        "unsupported": 0
+      },
+      "qa": {
+        "tested": 48,
+        "maxSeatGapMm": 0.22336726837125787,
+        "minSeatGapMm": 0.1799999999999996,
+        "minOverlapGapMm": 0.09075850542061836,
+        "unresolved": 0,
+        "clearanceToleranceMm": 0.18000000000000002,
+        "timber": {
+          "tested": 20,
+          "minGapMm": 0.18009817610355888,
+          "penetrations": [],
+          "absentStations": 0
+        },
+        "actualGeometry": {
+          "tested": 15,
+          "failures": [],
+          "allPassed": true
+        }
+      },
+      "timber": {
+        "brokenRafters": 0,
+        "brokenBeams": 0,
+        "maxRadialLoss": 0,
+        "maxBeamLoss": 0
+      },
+      "population": {
+        "讲武堂参考组": 10,
+        "整片深蓝灰": 15,
+        "整片青灰": 8,
+        "整片浅灰": 6,
+        "整片白化": 4,
+        "整片黄褐": 3,
+        "整片铁红": 2
+      },
+      "independentAudit": {
+        "pairCount": 295,
+        "adjacentCount": 0,
+        "minGapMm": 0.09075850542061836,
+        "woodMinGapMm": 0.18009817610355888,
+        "woodMaxSeatGapMm": 0.1801018263857257,
+        "penetrations": [],
+        "actualGeometryGroups": 11,
+        "geometryFailures": [],
+        "bodyReadiness": "true"
+      },
+      "auditSeconds": 1.2257144451141357,
+      "case": "forty8_0_maintained"
+    },
+    {
+      "ms": 1354.8000000000466,
+      "stats": {
+        "design": 48,
+        "panVisible": 18,
+        "coverVisible": 14,
+        "missing": 16,
+        "damaged": 9,
+        "replaced": 0,
+        "unsupported": 7
+      },
+      "qa": {
+        "tested": 32,
+        "maxSeatGapMm": 0.2978840607079855,
+        "minSeatGapMm": 0.1799999999999996,
+        "minOverlapGapMm": 0.09426589905692229,
+        "unresolved": 0,
+        "clearanceToleranceMm": 0.18000000000000002,
+        "timber": {
+          "tested": 20,
+          "minGapMm": 0.1800985825613985,
+          "penetrations": [],
+          "absentStations": 0
+        },
+        "actualGeometry": {
+          "tested": 15,
+          "failures": [],
+          "allPassed": true
+        }
+      },
+      "timber": {
+        "brokenRafters": 1,
+        "brokenBeams": 0,
+        "maxRadialLoss": 0.6331908884014393,
+        "maxBeamLoss": 0.033747667926861555
+      },
+      "population": {
+        "讲武堂参考组": 10,
+        "整片深蓝灰": 15,
+        "整片青灰": 8,
+        "整片浅灰": 6,
+        "整片白化": 4,
+        "整片黄褐": 3,
+        "整片铁红": 2
+      },
+      "independentAudit": {
+        "pairCount": 175,
+        "adjacentCount": 0,
+        "minGapMm": 0.09426589905692229,
+        "woodMinGapMm": 0.1800985825613985,
+        "woodMaxSeatGapMm": 0.29484208815633295,
+        "penetrations": [],
+        "actualGeometryGroups": 15,
+        "geometryFailures": [],
+        "bodyReadiness": "true"
+      },
+      "auditSeconds": 0.9463136196136475,
+      "case": "forty8_75_abandoned"
+    },
+    {
+      "ms": 190.60000000009313,
+      "stats": {
+        "design": 48,
+        "panVisible": 6,
+        "coverVisible": 4,
+        "missing": 38,
+        "damaged": 0,
+        "replaced": 0,
+        "unsupported": 12
+      },
+      "qa": {
+        "tested": 10,
+        "maxSeatGapMm": 0.22624438072412628,
+        "minSeatGapMm": 0.1799999999999996,
+        "minOverlapGapMm": 0.09043059515184693,
+        "unresolved": 0,
+        "clearanceToleranceMm": 0.18000000000000002,
+        "timber": {
+          "tested": 20,
+          "minGapMm": 0.1800987414109223,
+          "penetrations": [],
+          "absentStations": 0
+        },
+        "actualGeometry": {
+          "tested": 15,
+          "failures": [],
+          "allPassed": true
+        }
+      },
+      "timber": {
+        "brokenRafters": 4,
+        "brokenBeams": 1,
+        "maxRadialLoss": 0.82,
+        "maxBeamLoss": 0.23157287108514696
+      },
+      "population": {
+        "讲武堂参考组": 10,
+        "整片深蓝灰": 15,
+        "整片青灰": 8,
+        "整片浅灰": 6,
+        "整片白化": 4,
+        "整片黄褐": 3,
+        "整片铁红": 2
+      },
+      "independentAudit": {
+        "pairCount": 57,
+        "adjacentCount": 0,
+        "minGapMm": 0.09043059515184693,
+        "woodMinGapMm": 0.1800987414109223,
+        "woodMaxSeatGapMm": 0.4182245871215129,
+        "penetrations": [],
+        "actualGeometryGroups": 11,
+        "geometryFailures": [],
+        "bodyReadiness": "true"
+      },
+      "auditSeconds": 0.4246201515197754,
+      "case": "forty8_100_abandoned"
+    },
+    {
+      "ms": 16868.399999999907,
+      "stats": {
+        "design": 860,
+        "panVisible": 440,
+        "coverVisible": 420,
+        "missing": 0,
+        "damaged": 0,
+        "replaced": 0,
+        "unsupported": 0
+      },
+      "qa": {
+        "tested": 860,
+        "maxSeatGapMm": 0.2298737550131963,
+        "minSeatGapMm": 0.1799999999999996,
+        "minOverlapGapMm": 0.09016744714152036,
+        "unresolved": 0,
+        "clearanceToleranceMm": 0.18000000000000002,
+        "timber": {
+          "tested": 92,
+          "minGapMm": 0.17991824227081565,
+          "penetrations": [],
+          "absentStations": 0
+        },
+        "actualGeometry": {
+          "tested": 33,
+          "failures": [],
+          "allPassed": true
+        }
+      },
+      "timber": {
+        "brokenRafters": 0,
+        "brokenBeams": 0,
+        "maxRadialLoss": 0,
+        "maxBeamLoss": 0
+      },
+      "population": {
+        "讲武堂参考组": 205,
+        "整片深蓝灰": 229,
+        "整片青灰": 220,
+        "整片浅灰": 91,
+        "整片白化": 56,
+        "整片黄褐": 39,
+        "整片铁红": 20
+      },
+      "independentAudit": {
+        "pairCount": 4903,
+        "adjacentCount": 0,
+        "minGapMm": 0.09016744714152036,
+        "woodMinGapMm": 0.17991824227081565,
+        "woodMaxSeatGapMm": 0.18010179033617346,
+        "penetrations": [],
+        "actualGeometryGroups": 29,
+        "geometryFailures": [],
+        "bodyReadiness": "true"
+      },
+      "auditSeconds": 1.9919559955596924,
+      "case": "roof_0_maintained"
+    },
+    {
+      "ms": 20924.300000000047,
+      "stats": {
+        "design": 860,
+        "panVisible": 440,
+        "coverVisible": 420,
+        "missing": 0,
+        "damaged": 69,
+        "replaced": 554,
+        "unsupported": 0
+      },
+      "qa": {
+        "tested": 860,
+        "maxSeatGapMm": 0.2296748312383204,
+        "minSeatGapMm": 0.1799999999999996,
+        "minOverlapGapMm": 0.09004930942424494,
+        "unresolved": 0,
+        "clearanceToleranceMm": 0.18000000000000002,
+        "timber": {
+          "tested": 92,
+          "minGapMm": 0.17991709732811945,
+          "penetrations": [],
+          "absentStations": 0
+        },
+        "actualGeometry": {
+          "tested": 33,
+          "failures": [],
+          "allPassed": true
+        }
+      },
+      "timber": {
+        "brokenRafters": 0,
+        "brokenBeams": 0,
+        "maxRadialLoss": 0.09177608329815146,
+        "maxBeamLoss": 0.0050433626550756795
+      },
+      "population": {
+        "讲武堂参考组": 196,
+        "整片深蓝灰": 220,
+        "整片青灰": 228,
+        "整片浅灰": 90,
+        "整片白化": 64,
+        "整片黄褐": 45,
+        "整片铁红": 17
+      },
+      "independentAudit": {
+        "pairCount": 4903,
+        "adjacentCount": 0,
+        "minGapMm": 0.09004930942424494,
+        "woodMinGapMm": 0.17991709732811945,
+        "woodMaxSeatGapMm": 0.210813951555755,
+        "penetrations": [],
+        "actualGeometryGroups": 33,
+        "geometryFailures": [],
+        "bodyReadiness": "true"
+      },
+      "auditSeconds": 2.4692299365997314,
+      "case": "roof_100_maintained"
+    },
+    {
+      "ms": 1307.3000000000466,
+      "stats": {
+        "design": 860,
+        "panVisible": 72,
+        "coverVisible": 43,
+        "missing": 745,
+        "damaged": 22,
+        "replaced": 0,
+        "unsupported": 168
+      },
+      "qa": {
+        "tested": 115,
+        "maxSeatGapMm": 0.22978767407459688,
+        "minSeatGapMm": 0.1799999999999996,
+        "minOverlapGapMm": 0.09191548995257648,
+        "unresolved": 0,
+        "clearanceToleranceMm": 0.18000000000000002,
+        "timber": {
+          "tested": 89,
+          "minGapMm": 0.18009823600650954,
+          "penetrations": [],
+          "absentStations": 5
+        },
+        "actualGeometry": {
+          "tested": 33,
+          "failures": [],
+          "allPassed": true
+        }
+      },
+      "timber": {
+        "brokenRafters": 22,
+        "brokenBeams": 3,
+        "maxRadialLoss": 0.82,
+        "maxBeamLoss": 0.26376497828756484
+      },
+      "population": {
+        "讲武堂参考组": 205,
+        "整片深蓝灰": 229,
+        "整片青灰": 220,
+        "整片浅灰": 91,
+        "整片白化": 56,
+        "整片黄褐": 39,
+        "整片铁红": 20
+      },
+      "independentAudit": {
+        "pairCount": 439,
+        "adjacentCount": 0,
+        "minGapMm": 0.09191548995257648,
+        "woodMinGapMm": 0.18009823600650954,
+        "woodMaxSeatGapMm": 8.534440452505843,
+        "penetrations": [],
+        "actualGeometryGroups": 33,
+        "geometryFailures": [],
+        "bodyReadiness": "true"
+      },
+      "auditSeconds": 1.011465072631836,
+      "case": "roof_100_abandoned"
+    }
+  ],
+  "errors": [],
+  "consoleErrors": [],
+  "sourceSHA256": "c8b8211f8d14512b2f29c067894be563e2710053b648b39427a87986bcf34c9b",
+  "externalRequests": [],
+  "cache": {
+    "ms": 551.4000000001397,
+    "counts": {
+      "design": 860,
+      "panVisible": 440,
+      "coverVisible": 420,
+      "missing": 0,
+      "damaged": 0,
+      "replaced": 0,
+      "unsupported": 0
+    },
+    "qa": {
+      "tested": 860,
+      "maxSeatGapMm": 0.2298737550131963,
+      "minSeatGapMm": 0.1799999999999996,
+      "minOverlapGapMm": 0.09016744714152036,
+      "unresolved": 0,
+      "clearanceToleranceMm": 0.18000000000000002,
+      "timber": {
+        "tested": 92,
+        "minGapMm": 0.17991824227081565,
+        "penetrations": [],
+        "absentStations": 0
+      },
+      "actualGeometry": {
+        "tested": 33,
+        "failures": [],
+        "allPassed": true
+      }
+    }
+  },
+  "protocol": {
+    "tested": "injected complete offline HTML into real Chromium document",
+    "fileProtocol": "blocked by administrative policy in runner",
+    "windowsFileDoubleClick": "not directly tested"
+  }
+}

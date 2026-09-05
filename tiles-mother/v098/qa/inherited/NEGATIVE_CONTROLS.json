@@ -1,0 +1,14 @@
+{
+  "goodMeshPasses": true,
+  "mirroredStartCapDetected": true,
+  "inwardSideFacesDetected": true,
+  "collapsedUVsDetected": true,
+  "intactClosure": {
+    "edges": 1800,
+    "nonmanifoldEdges": 0
+  },
+  "brokenClosure": {
+    "edges": 2304,
+    "nonmanifoldEdges": 0
+  }
+}

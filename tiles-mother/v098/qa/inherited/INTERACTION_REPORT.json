@@ -1,0 +1,97 @@
+{
+  "sourceSHA256": "c8b8211f8d14512b2f29c067894be563e2710053b648b39427a87986bcf34c9b",
+  "records": [
+    {
+      "mobileViewport": false,
+      "navStates": [
+        {
+          "scene": "trio",
+          "cls": "",
+          "bg": "rgb(251, 250, 246)",
+          "color": "rgb(37, 48, 51)"
+        },
+        {
+          "scene": "forty8",
+          "cls": "active",
+          "bg": "rgb(65, 93, 98)",
+          "color": "rgb(255, 255, 255)"
+        },
+        {
+          "scene": "roof",
+          "cls": "",
+          "bg": "rgb(251, 250, 246)",
+          "color": "rgb(37, 48, 51)"
+        },
+        {
+          "scene": "uv",
+          "cls": "",
+          "bg": "rgb(251, 250, 246)",
+          "color": "rgb(37, 48, 51)"
+        }
+      ],
+      "timberOnlyHidesAllTileMeshes": true,
+      "spinRenderCalls": 50,
+      "spinWindowSeconds": 6.2,
+      "spinFPS": 8.064516129032258,
+      "uniqueCameraPositions": 50,
+      "alternateSeedAudit": {
+        "pairCount": 274,
+        "adjacentCount": 0,
+        "minGapMm": 0.0927402364786778,
+        "woodMinGapMm": 0.18009884573574886,
+        "woodMaxSeatGapMm": 0.28723105698938434,
+        "penetrations": [],
+        "actualGeometryGroups": 14,
+        "geometryFailures": [],
+        "bodyReadiness": "true"
+      },
+      "errors": []
+    },
+    {
+      "mobileViewport": true,
+      "navStates": [
+        {
+          "scene": "trio",
+          "cls": "",
+          "bg": "rgb(251, 250, 246)",
+          "color": "rgb(37, 48, 51)"
+        },
+        {
+          "scene": "forty8",
+          "cls": "active",
+          "bg": "rgb(65, 93, 98)",
+          "color": "rgb(255, 255, 255)"
+        },
+        {
+          "scene": "roof",
+          "cls": "",
+          "bg": "rgb(251, 250, 246)",
+          "color": "rgb(37, 48, 51)"
+        },
+        {
+          "scene": "uv",
+          "cls": "",
+          "bg": "rgb(251, 250, 246)",
+          "color": "rgb(37, 48, 51)"
+        }
+      ],
+      "timberOnlyHidesAllTileMeshes": true,
+      "spinRenderCalls": 75,
+      "spinWindowSeconds": 6.2,
+      "spinFPS": 12.096774193548386,
+      "uniqueCameraPositions": 75,
+      "alternateSeedAudit": {
+        "pairCount": 274,
+        "adjacentCount": 0,
+        "minGapMm": 0.0927402364786778,
+        "woodMinGapMm": 0.18009884573574886,
+        "woodMaxSeatGapMm": 0.28723105698938434,
+        "penetrations": [],
+        "actualGeometryGroups": 14,
+        "geometryFailures": [],
+        "bodyReadiness": "true"
+      },
+      "errors": []
+    }
+  ]
+}

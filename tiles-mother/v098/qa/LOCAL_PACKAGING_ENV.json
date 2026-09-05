@@ -1,0 +1,12 @@
+{
+  "sourceManifestEntriesVerified": 48,
+  "standaloneMatchesArchive": true,
+  "geometryCasesRerun": 90,
+  "geometryFailures": [],
+  "localBrowserRefresh": "blocked by local Chromium WebGL context creation",
+  "localBrowserError": "THREE.WebGLRenderer: Error creating WebGL context.",
+  "notClaimedAsBrowserPass": true,
+  "remoteBrowserReleaseGate": "must pass in GitHub Actions before package promotion",
+  "visualApproved": false,
+  "productionApproved": false
+}

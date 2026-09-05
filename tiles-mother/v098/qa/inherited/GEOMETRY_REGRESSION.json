@@ -1,0 +1,1721 @@
+{
+  "generated": "2026-09-05",
+  "oldRafter": {
+    "hasUV": false,
+    "inwardSideTriangles": 864,
+    "totalSideTriangles": 864
+  },
+  "newRafter": {
+    "allPassed": true,
+    "faces": [
+      {
+        "face": "side",
+        "minOutwardDot": 0.9981340929745564,
+        "outwardCriterion": "positive radial dot against local centreline",
+        "finite": true,
+        "uvRange": true,
+        "nonzeroArea": true,
+        "nonMirrored": true,
+        "longitudinalV": true,
+        "outward": true,
+        "triangles": 1152,
+        "passed": true
+      },
+      {
+        "face": "start",
+        "minOutwardDot": 0.9999999999999999,
+        "outwardCriterion": "end-facing normal",
+        "finite": true,
+        "uvRange": true,
+        "nonzeroArea": true,
+        "nonMirrored": true,
+        "longitudinalV": true,
+        "outward": true,
+        "triangles": 24,
+        "passed": true
+      },
+      {
+        "face": "end",
+        "minOutwardDot": 0.9999999999999999,
+        "outwardCriterion": "end-facing normal",
+        "finite": true,
+        "uvRange": true,
+        "nonzeroArea": true,
+        "nonMirrored": true,
+        "longitudinalV": true,
+        "outward": true,
+        "triangles": 24,
+        "passed": true
+      }
+    ]
+  },
+  "newBeam": {
+    "allPassed": true,
+    "faces": [
+      {
+        "face": "side",
+        "minOutwardDot": 0.9985508336597748,
+        "outwardCriterion": "positive radial dot against local centreline",
+        "finite": true,
+        "uvRange": true,
+        "nonzeroArea": true,
+        "nonMirrored": true,
+        "longitudinalV": true,
+        "outward": true,
+        "triangles": 1152,
+        "passed": true
+      },
+      {
+        "face": "start",
+        "minOutwardDot": 0.9999999999999999,
+        "outwardCriterion": "end-facing normal",
+        "finite": true,
+        "uvRange": true,
+        "nonzeroArea": true,
+        "nonMirrored": true,
+        "longitudinalV": true,
+        "outward": true,
+        "triangles": 24,
+        "passed": true
+      },
+      {
+        "face": "end",
+        "minOutwardDot": 0.9999999999999999,
+        "outwardCriterion": "end-facing normal",
+        "finite": true,
+        "uvRange": true,
+        "nonzeroArea": true,
+        "nonMirrored": true,
+        "longitudinalV": true,
+        "outward": true,
+        "triangles": 24,
+        "passed": true
+      }
+    ]
+  },
+  "tileFoldCases": 90,
+  "candidateFailures": 0,
+  "baselineFailureCases": 53,
+  "cases": [
+    {
+      "seed": 101,
+      "kind": "pan",
+      "damage": 0,
+      "lod": [
+        10,
+        14
+      ],
+      "baseline": {
+        "top": 0,
+        "bottom": 0
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 101,
+      "kind": "pan",
+      "damage": 0,
+      "lod": [
+        16,
+        22
+      ],
+      "baseline": {
+        "top": 0,
+        "bottom": 0
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 101,
+      "kind": "pan",
+      "damage": 0,
+      "lod": [
+        28,
+        34
+      ],
+      "baseline": {
+        "top": 0,
+        "bottom": 0
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 101,
+      "kind": "pan",
+      "damage": 1,
+      "lod": [
+        10,
+        14
+      ],
+      "baseline": {
+        "top": 0,
+        "bottom": 0
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 101,
+      "kind": "pan",
+      "damage": 1,
+      "lod": [
+        16,
+        22
+      ],
+      "baseline": {
+        "top": 0,
+        "bottom": 0
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 101,
+      "kind": "pan",
+      "damage": 1,
+      "lod": [
+        28,
+        34
+      ],
+      "baseline": {
+        "top": 4,
+        "bottom": 9
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 101,
+      "kind": "pan",
+      "damage": 2,
+      "lod": [
+        10,
+        14
+      ],
+      "baseline": {
+        "top": 2,
+        "bottom": 2
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 101,
+      "kind": "pan",
+      "damage": 2,
+      "lod": [
+        16,
+        22
+      ],
+      "baseline": {
+        "top": 0,
+        "bottom": 7
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 101,
+      "kind": "pan",
+      "damage": 2,
+      "lod": [
+        28,
+        34
+      ],
+      "baseline": {
+        "top": 14,
+        "bottom": 22
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 101,
+      "kind": "cover",
+      "damage": 0,
+      "lod": [
+        10,
+        14
+      ],
+      "baseline": {
+        "top": 0,
+        "bottom": 0
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 101,
+      "kind": "cover",
+      "damage": 0,
+      "lod": [
+        16,
+        22
+      ],
+      "baseline": {
+        "top": 0,
+        "bottom": 0
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 101,
+      "kind": "cover",
+      "damage": 0,
+      "lod": [
+        28,
+        34
+      ],
+      "baseline": {
+        "top": 0,
+        "bottom": 0
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 101,
+      "kind": "cover",
+      "damage": 1,
+      "lod": [
+        10,
+        14
+      ],
+      "baseline": {
+        "top": 0,
+        "bottom": 0
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 101,
+      "kind": "cover",
+      "damage": 1,
+      "lod": [
+        16,
+        22
+      ],
+      "baseline": {
+        "top": 0,
+        "bottom": 6
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 101,
+      "kind": "cover",
+      "damage": 1,
+      "lod": [
+        28,
+        34
+      ],
+      "baseline": {
+        "top": 10,
+        "bottom": 28
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 101,
+      "kind": "cover",
+      "damage": 2,
+      "lod": [
+        10,
+        14
+      ],
+      "baseline": {
+        "top": 2,
+        "bottom": 5
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 101,
+      "kind": "cover",
+      "damage": 2,
+      "lod": [
+        16,
+        22
+      ],
+      "baseline": {
+        "top": 4,
+        "bottom": 14
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 101,
+      "kind": "cover",
+      "damage": 2,
+      "lod": [
+        28,
+        34
+      ],
+      "baseline": {
+        "top": 26,
+        "bottom": 48
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 202,
+      "kind": "pan",
+      "damage": 0,
+      "lod": [
+        10,
+        14
+      ],
+      "baseline": {
+        "top": 0,
+        "bottom": 0
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 202,
+      "kind": "pan",
+      "damage": 0,
+      "lod": [
+        16,
+        22
+      ],
+      "baseline": {
+        "top": 0,
+        "bottom": 0
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 202,
+      "kind": "pan",
+      "damage": 0,
+      "lod": [
+        28,
+        34
+      ],
+      "baseline": {
+        "top": 0,
+        "bottom": 0
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 202,
+      "kind": "pan",
+      "damage": 1,
+      "lod": [
+        10,
+        14
+      ],
+      "baseline": {
+        "top": 0,
+        "bottom": 0
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 202,
+      "kind": "pan",
+      "damage": 1,
+      "lod": [
+        16,
+        22
+      ],
+      "baseline": {
+        "top": 0,
+        "bottom": 2
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 202,
+      "kind": "pan",
+      "damage": 1,
+      "lod": [
+        28,
+        34
+      ],
+      "baseline": {
+        "top": 3,
+        "bottom": 10
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 202,
+      "kind": "pan",
+      "damage": 2,
+      "lod": [
+        10,
+        14
+      ],
+      "baseline": {
+        "top": 1,
+        "bottom": 0
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 202,
+      "kind": "pan",
+      "damage": 2,
+      "lod": [
+        16,
+        22
+      ],
+      "baseline": {
+        "top": 7,
+        "bottom": 7
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 202,
+      "kind": "pan",
+      "damage": 2,
+      "lod": [
+        28,
+        34
+      ],
+      "baseline": {
+        "top": 15,
+        "bottom": 20
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 202,
+      "kind": "cover",
+      "damage": 0,
+      "lod": [
+        10,
+        14
+      ],
+      "baseline": {
+        "top": 0,
+        "bottom": 0
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 202,
+      "kind": "cover",
+      "damage": 0,
+      "lod": [
+        16,
+        22
+      ],
+      "baseline": {
+        "top": 0,
+        "bottom": 2
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 202,
+      "kind": "cover",
+      "damage": 0,
+      "lod": [
+        28,
+        34
+      ],
+      "baseline": {
+        "top": 0,
+        "bottom": 14
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 202,
+      "kind": "cover",
+      "damage": 1,
+      "lod": [
+        10,
+        14
+      ],
+      "baseline": {
+        "top": 0,
+        "bottom": 0
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 202,
+      "kind": "cover",
+      "damage": 1,
+      "lod": [
+        16,
+        22
+      ],
+      "baseline": {
+        "top": 3,
+        "bottom": 12
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 202,
+      "kind": "cover",
+      "damage": 1,
+      "lod": [
+        28,
+        34
+      ],
+      "baseline": {
+        "top": 11,
+        "bottom": 43
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 202,
+      "kind": "cover",
+      "damage": 2,
+      "lod": [
+        10,
+        14
+      ],
+      "baseline": {
+        "top": 1,
+        "bottom": 3
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 202,
+      "kind": "cover",
+      "damage": 2,
+      "lod": [
+        16,
+        22
+      ],
+      "baseline": {
+        "top": 9,
+        "bottom": 13
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 202,
+      "kind": "cover",
+      "damage": 2,
+      "lod": [
+        28,
+        34
+      ],
+      "baseline": {
+        "top": 25,
+        "bottom": 50
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 314159,
+      "kind": "pan",
+      "damage": 0,
+      "lod": [
+        10,
+        14
+      ],
+      "baseline": {
+        "top": 0,
+        "bottom": 0
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 314159,
+      "kind": "pan",
+      "damage": 0,
+      "lod": [
+        16,
+        22
+      ],
+      "baseline": {
+        "top": 0,
+        "bottom": 0
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 314159,
+      "kind": "pan",
+      "damage": 0,
+      "lod": [
+        28,
+        34
+      ],
+      "baseline": {
+        "top": 0,
+        "bottom": 0
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 314159,
+      "kind": "pan",
+      "damage": 1,
+      "lod": [
+        10,
+        14
+      ],
+      "baseline": {
+        "top": 0,
+        "bottom": 0
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 314159,
+      "kind": "pan",
+      "damage": 1,
+      "lod": [
+        16,
+        22
+      ],
+      "baseline": {
+        "top": 0,
+        "bottom": 5
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 314159,
+      "kind": "pan",
+      "damage": 1,
+      "lod": [
+        28,
+        34
+      ],
+      "baseline": {
+        "top": 0,
+        "bottom": 10
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 314159,
+      "kind": "pan",
+      "damage": 2,
+      "lod": [
+        10,
+        14
+      ],
+      "baseline": {
+        "top": 0,
+        "bottom": 0
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 314159,
+      "kind": "pan",
+      "damage": 2,
+      "lod": [
+        16,
+        22
+      ],
+      "baseline": {
+        "top": 2,
+        "bottom": 4
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 314159,
+      "kind": "pan",
+      "damage": 2,
+      "lod": [
+        28,
+        34
+      ],
+      "baseline": {
+        "top": 13,
+        "bottom": 20
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 314159,
+      "kind": "cover",
+      "damage": 0,
+      "lod": [
+        10,
+        14
+      ],
+      "baseline": {
+        "top": 0,
+        "bottom": 0
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 314159,
+      "kind": "cover",
+      "damage": 0,
+      "lod": [
+        16,
+        22
+      ],
+      "baseline": {
+        "top": 0,
+        "bottom": 0
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 314159,
+      "kind": "cover",
+      "damage": 0,
+      "lod": [
+        28,
+        34
+      ],
+      "baseline": {
+        "top": 0,
+        "bottom": 2
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 314159,
+      "kind": "cover",
+      "damage": 1,
+      "lod": [
+        10,
+        14
+      ],
+      "baseline": {
+        "top": 0,
+        "bottom": 2
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 314159,
+      "kind": "cover",
+      "damage": 1,
+      "lod": [
+        16,
+        22
+      ],
+      "baseline": {
+        "top": 0,
+        "bottom": 9
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 314159,
+      "kind": "cover",
+      "damage": 1,
+      "lod": [
+        28,
+        34
+      ],
+      "baseline": {
+        "top": 2,
+        "bottom": 39
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 314159,
+      "kind": "cover",
+      "damage": 2,
+      "lod": [
+        10,
+        14
+      ],
+      "baseline": {
+        "top": 2,
+        "bottom": 4
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 314159,
+      "kind": "cover",
+      "damage": 2,
+      "lod": [
+        16,
+        22
+      ],
+      "baseline": {
+        "top": 7,
+        "bottom": 11
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 314159,
+      "kind": "cover",
+      "damage": 2,
+      "lod": [
+        28,
+        34
+      ],
+      "baseline": {
+        "top": 20,
+        "bottom": 53
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 61771,
+      "kind": "pan",
+      "damage": 0,
+      "lod": [
+        10,
+        14
+      ],
+      "baseline": {
+        "top": 0,
+        "bottom": 0
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 61771,
+      "kind": "pan",
+      "damage": 0,
+      "lod": [
+        16,
+        22
+      ],
+      "baseline": {
+        "top": 0,
+        "bottom": 0
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 61771,
+      "kind": "pan",
+      "damage": 0,
+      "lod": [
+        28,
+        34
+      ],
+      "baseline": {
+        "top": 0,
+        "bottom": 0
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 61771,
+      "kind": "pan",
+      "damage": 1,
+      "lod": [
+        10,
+        14
+      ],
+      "baseline": {
+        "top": 0,
+        "bottom": 0
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 61771,
+      "kind": "pan",
+      "damage": 1,
+      "lod": [
+        16,
+        22
+      ],
+      "baseline": {
+        "top": 0,
+        "bottom": 2
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 61771,
+      "kind": "pan",
+      "damage": 1,
+      "lod": [
+        28,
+        34
+      ],
+      "baseline": {
+        "top": 3,
+        "bottom": 12
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 61771,
+      "kind": "pan",
+      "damage": 2,
+      "lod": [
+        10,
+        14
+      ],
+      "baseline": {
+        "top": 0,
+        "bottom": 0
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 61771,
+      "kind": "pan",
+      "damage": 2,
+      "lod": [
+        16,
+        22
+      ],
+      "baseline": {
+        "top": 3,
+        "bottom": 10
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 61771,
+      "kind": "pan",
+      "damage": 2,
+      "lod": [
+        28,
+        34
+      ],
+      "baseline": {
+        "top": 13,
+        "bottom": 21
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 61771,
+      "kind": "cover",
+      "damage": 0,
+      "lod": [
+        10,
+        14
+      ],
+      "baseline": {
+        "top": 0,
+        "bottom": 0
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 61771,
+      "kind": "cover",
+      "damage": 0,
+      "lod": [
+        16,
+        22
+      ],
+      "baseline": {
+        "top": 0,
+        "bottom": 2
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 61771,
+      "kind": "cover",
+      "damage": 0,
+      "lod": [
+        28,
+        34
+      ],
+      "baseline": {
+        "top": 0,
+        "bottom": 14
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 61771,
+      "kind": "cover",
+      "damage": 1,
+      "lod": [
+        10,
+        14
+      ],
+      "baseline": {
+        "top": 0,
+        "bottom": 3
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 61771,
+      "kind": "cover",
+      "damage": 1,
+      "lod": [
+        16,
+        22
+      ],
+      "baseline": {
+        "top": 1,
+        "bottom": 9
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 61771,
+      "kind": "cover",
+      "damage": 1,
+      "lod": [
+        28,
+        34
+      ],
+      "baseline": {
+        "top": 9,
+        "bottom": 47
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 61771,
+      "kind": "cover",
+      "damage": 2,
+      "lod": [
+        10,
+        14
+      ],
+      "baseline": {
+        "top": 3,
+        "bottom": 3
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 61771,
+      "kind": "cover",
+      "damage": 2,
+      "lod": [
+        16,
+        22
+      ],
+      "baseline": {
+        "top": 11,
+        "bottom": 15
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 61771,
+      "kind": "cover",
+      "damage": 2,
+      "lod": [
+        28,
+        34
+      ],
+      "baseline": {
+        "top": 26,
+        "bottom": 59
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 987654,
+      "kind": "pan",
+      "damage": 0,
+      "lod": [
+        10,
+        14
+      ],
+      "baseline": {
+        "top": 0,
+        "bottom": 0
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 987654,
+      "kind": "pan",
+      "damage": 0,
+      "lod": [
+        16,
+        22
+      ],
+      "baseline": {
+        "top": 0,
+        "bottom": 0
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 987654,
+      "kind": "pan",
+      "damage": 0,
+      "lod": [
+        28,
+        34
+      ],
+      "baseline": {
+        "top": 0,
+        "bottom": 0
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 987654,
+      "kind": "pan",
+      "damage": 1,
+      "lod": [
+        10,
+        14
+      ],
+      "baseline": {
+        "top": 0,
+        "bottom": 0
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 987654,
+      "kind": "pan",
+      "damage": 1,
+      "lod": [
+        16,
+        22
+      ],
+      "baseline": {
+        "top": 0,
+        "bottom": 0
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 987654,
+      "kind": "pan",
+      "damage": 1,
+      "lod": [
+        28,
+        34
+      ],
+      "baseline": {
+        "top": 1,
+        "bottom": 3
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 987654,
+      "kind": "pan",
+      "damage": 2,
+      "lod": [
+        10,
+        14
+      ],
+      "baseline": {
+        "top": 0,
+        "bottom": 0
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 987654,
+      "kind": "pan",
+      "damage": 2,
+      "lod": [
+        16,
+        22
+      ],
+      "baseline": {
+        "top": 0,
+        "bottom": 5
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 987654,
+      "kind": "pan",
+      "damage": 2,
+      "lod": [
+        28,
+        34
+      ],
+      "baseline": {
+        "top": 9,
+        "bottom": 15
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 987654,
+      "kind": "cover",
+      "damage": 0,
+      "lod": [
+        10,
+        14
+      ],
+      "baseline": {
+        "top": 0,
+        "bottom": 0
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 987654,
+      "kind": "cover",
+      "damage": 0,
+      "lod": [
+        16,
+        22
+      ],
+      "baseline": {
+        "top": 0,
+        "bottom": 0
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 987654,
+      "kind": "cover",
+      "damage": 0,
+      "lod": [
+        28,
+        34
+      ],
+      "baseline": {
+        "top": 0,
+        "bottom": 14
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 987654,
+      "kind": "cover",
+      "damage": 1,
+      "lod": [
+        10,
+        14
+      ],
+      "baseline": {
+        "top": 0,
+        "bottom": 0
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 987654,
+      "kind": "cover",
+      "damage": 1,
+      "lod": [
+        16,
+        22
+      ],
+      "baseline": {
+        "top": 0,
+        "bottom": 7
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 987654,
+      "kind": "cover",
+      "damage": 1,
+      "lod": [
+        28,
+        34
+      ],
+      "baseline": {
+        "top": 5,
+        "bottom": 34
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 987654,
+      "kind": "cover",
+      "damage": 2,
+      "lod": [
+        10,
+        14
+      ],
+      "baseline": {
+        "top": 0,
+        "bottom": 3
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 987654,
+      "kind": "cover",
+      "damage": 2,
+      "lod": [
+        16,
+        22
+      ],
+      "baseline": {
+        "top": 8,
+        "bottom": 14
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    },
+    {
+      "seed": 987654,
+      "kind": "cover",
+      "damage": 2,
+      "lod": [
+        28,
+        34
+      ],
+      "baseline": {
+        "top": 26,
+        "bottom": 56
+      },
+      "candidate": {
+        "top": 0,
+        "bottom": 0
+      },
+      "pass": true
+    }
+  ]
+}

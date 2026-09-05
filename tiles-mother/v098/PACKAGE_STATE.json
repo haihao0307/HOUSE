@@ -1,0 +1,29 @@
+{
+  "version": "0.9.8",
+  "status": "handoff candidate; visual review pending",
+  "baseVersion": "0.9.7",
+  "sourceSHA256": "c8b8211f8d14512b2f29c067894be563e2710053b648b39427a87986bcf34c9b",
+  "materialFunctionsUnchanged": true,
+  "browserReport": "qa/release-refresh/REPORT.json",
+  "visualApproved": false,
+  "productionApproved": false,
+  "publicSiteDeployed": false,
+  "limits": [
+    "demonstration decay calibration",
+    "no independent falling-fragment dynamics",
+    "no wall-collapse model",
+    "Windows direct file launch untested"
+  ],
+  "packageRevision": "handoff.1",
+  "packagingOnly": true,
+  "baselineRepository": "haihao0307/HOUSE",
+  "workBranch": "feature/tiles-mother-v0.1-workbench",
+  "remoteSourceAtStart": "fca17a3a4c8203ae2647ce44687691487cae6dd6",
+  "upstreamArchiveSHA256": "df9e533be328f84633e2e0e03d9aabdb2e2c1049ce54df35be661b3b3119522b",
+  "inheritedBrowserReport": "qa/inherited/BROWSER_REPORT.json",
+  "rawReferencesBundled": false,
+  "runtimeUnchanged": true,
+  "githubBuildSourceCommit": "970f36416ac5f3fac4dfcb5094901a03ee53dfcd",
+  "githubActionsRunId": "33952349772",
+  "releaseBrowserChecksPassed": true
+}

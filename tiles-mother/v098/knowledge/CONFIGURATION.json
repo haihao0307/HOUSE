@@ -1,0 +1,57 @@
+{
+  "schema": "tiles-mother-contact-v098",
+  "units": "metres",
+  "noRoofBoards": true,
+  "noHiddenSupportPlanes": true,
+  "sceneCounts": {
+    "trio": 3,
+    "forty8": {
+      "pan": 24,
+      "cover": 24,
+      "panRows": 6,
+      "panChannels": 4,
+      "coverRows": 8,
+      "coverSeams": 3,
+      "rafters": 5,
+      "beams": 4
+    },
+    "roof": {
+      "pan": 440,
+      "cover": 420,
+      "panRows": 20,
+      "panChannels": 22,
+      "coverRows": 20,
+      "coverSeams": 21,
+      "rafters": 23,
+      "beams": 4
+    }
+  },
+  "crossChannelPitch": 0.264,
+  "panCourseStep": 0.198,
+  "rafterRadius": 0.04,
+  "beamRadius": 0.069,
+  "timberSizeStatus": "editable illustrative dimensions, not surveyed or load-rated",
+  "nominalNumericalSeatGap": 0.00018,
+  "rejectionMaxBilateralGap": 0.0005,
+  "pairPenetrationTestTolerance": 5e-05,
+  "generationPolicy": "hold seed, year, care mode fixed; only color tint changes between populations",
+  "wholeTilePopulationPct": {
+    "Jiangwutang_reference": 24,
+    "deep_blue_grey": 27,
+    "cyan_grey": 25,
+    "light_grey": 10,
+    "whitish": 7,
+    "yellow_brown": 5,
+    "iron_red": 2
+  },
+  "probabilityStatus": "user-directed working defaults, not measured historical proportions",
+  "partialImplementation": {
+    "tileRigidBodyFragmentMotion": false,
+    "fullyCoupledStructuralFailureSolver": false,
+    "wallCollapse": false,
+    "calibratedYunnanWoodDecay": false,
+    "surfaceCracksAndMissingTiles": true,
+    "rafterMoistureStainThinningSagBreak": true,
+    "lateBeamBreak": true
+  }
+}

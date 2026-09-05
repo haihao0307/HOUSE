@@ -1,0 +1,245 @@
+{
+  "version": "0.9.8",
+  "files": [
+    {
+      "path": "LICENSE_NOTICE.md",
+      "bytes": 256,
+      "sha256": "17f2efdd54ac2dad87d933b9c31d51e03d05b3c96896d2671d615ad35171702b"
+    },
+    {
+      "path": "PACKAGE_STATE.json",
+      "bytes": 571,
+      "sha256": "ba0ae9c6af18ffb91c111f0f8819b41131e41c3f4bc7543b2a853091ee42abd7"
+    },
+    {
+      "path": "README.md",
+      "bytes": 2801,
+      "sha256": "c3915140b7c9e0742e9169a47920f5dc1c5707e390f5cd5c2957ff9a678c2c89"
+    },
+    {
+      "path": "RELEASE_NOTES.md",
+      "bytes": 2289,
+      "sha256": "38c5f4cdeca440c7f00b629ccdce981e28577887acb08b84c5940668fbe299ac"
+    },
+    {
+      "path": "RESTART_START_HERE.md",
+      "bytes": 1032,
+      "sha256": "be5410905ab7e7032605240e18683c173422ce1a135bf4e216279dfaa5020ecf"
+    },
+    {
+      "path": "START_HERE.html",
+      "bytes": 1434842,
+      "sha256": "c8b8211f8d14512b2f29c067894be563e2710053b648b39427a87986bcf34c9b"
+    },
+    {
+      "path": "knowledge/CONFIGURATION.json",
+      "bytes": 1543,
+      "sha256": "c3cfeb465c3f4b2df4128abfdb0a73d6367ca07b79309374e2ebe89087fb01d9"
+    },
+    {
+      "path": "knowledge/MATERIAL_LOCK.json",
+      "bytes": 373,
+      "sha256": "1b4de63f056e1ce6851316fe95629d7d1e3922e1c493294ae2796e675dc1e516"
+    },
+    {
+      "path": "knowledge/SOURCE_RECEIPT.json",
+      "bytes": 1238,
+      "sha256": "ecaa4f95e50271869f755313ee3fb5f83b8474ffa1cfe7314006e456d7262406"
+    },
+    {
+      "path": "knowledge/TECHNICAL_SOURCES.json",
+      "bytes": 635,
+      "sha256": "a33f6d24378eb834739e8ed0fd3cb687fbf2a017d89d576da5f1b1b1c47b1f57"
+    },
+    {
+      "path": "knowledge/TILE_PROFILES.json",
+      "bytes": 1431,
+      "sha256": "9833f4aba8e7778d12172e0bf02dcf9cc5103e94ca810b5d721ed2054a615e13"
+    },
+    {
+      "path": "qa/BROWSER_REPORT.json",
+      "bytes": 18461,
+      "sha256": "6489fbf525844f10b983f30d4256499a43a1b47ca38e699d1a140470c1cbf9b7"
+    },
+    {
+      "path": "qa/GEOMETRY_REGRESSION.json",
+      "bytes": 27337,
+      "sha256": "fcd2619f4af0045a1052a8d3b59325aeb04eb3e3a64b4a422479027864b994ba"
+    },
+    {
+      "path": "qa/INTERACTION_REPORT.json",
+      "bytes": 2517,
+      "sha256": "b31fc53f5e6a98a7ef7f7b8befc7202edf2c7803df6447968bc18b6a94c97256"
+    },
+    {
+      "path": "qa/NEGATIVE_CONTROLS.json",
+      "bytes": 273,
+      "sha256": "4d1fdfe98aacaad5c2a691b1a9d6128a6eed52cc717bca8f7bba7e238ffa12f2"
+    },
+    {
+      "path": "qa/audit_runtime.js",
+      "bytes": 2331,
+      "sha256": "10484862b567c1be19f07f40c4b33358c6742f066c04727a1e993a0a43b3f97b"
+    },
+    {
+      "path": "qa/browser_check.py",
+      "bytes": 1667,
+      "sha256": "c929eb57998d0e38adeb72f31c71689ffb8e86efdb708e57a3b0a04832813ffd"
+    },
+    {
+      "path": "qa/check_geometry.cjs",
+      "bytes": 1515,
+      "sha256": "2acf972acfbf7b7b43382bb9979079577dd4cc25ce6545989d6efaa0ccb69a63"
+    },
+    {
+      "path": "qa/evidence/desktop_contacts.jpg",
+      "bytes": 174981,
+      "sha256": "d436f80ea77a044555f9054f3c7971ecacfd6d6d8d7a11ee9b66a9cb719eda84"
+    },
+    {
+      "path": "qa/evidence/desktop_sunny.jpg",
+      "bytes": 178153,
+      "sha256": "9f664927922f86e1dde8d931c5ec27e81596f846c267d0805ecf4af26f7c3562"
+    },
+    {
+      "path": "qa/evidence/desktop_wood.jpg",
+      "bytes": 171894,
+      "sha256": "d7270df210477e76c542a98f8adbcdd0b0e075a0ce95a1e3d1a2376c0e365027"
+    },
+    {
+      "path": "qa/evidence/desktop_wood_uv.jpg",
+      "bytes": 159009,
+      "sha256": "31ee27f6a6e24b9ceec06056636f79a79b43da7c082f2ebeb8c06a7b1d39031a"
+    },
+    {
+      "path": "qa/evidence/forty8_0_maintained.jpg",
+      "bytes": 173630,
+      "sha256": "aeea4c65cb2bd3e175460ce1a7a620bd5d366ee01462d1cc77d2fcf1b44cb5a9"
+    },
+    {
+      "path": "qa/evidence/forty8_0_maintained_under.jpg",
+      "bytes": 169660,
+      "sha256": "513c19149cd269a83b4a8540b1a1258dda804cc69472d15d45b9912dd269ca15"
+    },
+    {
+      "path": "qa/evidence/forty8_100_abandoned.jpg",
+      "bytes": 175005,
+      "sha256": "3b64d0ea41e6e0da7614b9595da5185c859e6a44d09096150596320a01b65c06"
+    },
+    {
+      "path": "qa/evidence/forty8_100_abandoned_under.jpg",
+      "bytes": 170801,
+      "sha256": "a8775b3f2d16ca6e8e9cf757bb53fdf79544c9bf501961cb7cf5cbc1feeb6d3d"
+    },
+    {
+      "path": "qa/evidence/forty8_75_abandoned.jpg",
+      "bytes": 175837,
+      "sha256": "63791bcc0d9b17cead6887466e2bf53ba99cc84e4ee2c0b293d03920b50331aa"
+    },
+    {
+      "path": "qa/evidence/mobile48.jpg",
+      "bytes": 50031,
+      "sha256": "e1fddd2ba62b159e4f703fdee04ea28053bf9b0db13263df2399e316edcb4d3b"
+    },
+    {
+      "path": "qa/evidence/mobile_contacts.jpg",
+      "bytes": 49990,
+      "sha256": "eb153491db7fdf390c7387d7dfa73bdb4b877e58908bddafa060e59789d2ab67"
+    },
+    {
+      "path": "qa/evidence/mobile_sunny.jpg",
+      "bytes": 43339,
+      "sha256": "40da2697d625be005499693c2339ff6577d40a430e22a55ad65f7b289f231688"
+    },
+    {
+      "path": "qa/evidence/mobile_trio.jpg",
+      "bytes": 43799,
+      "sha256": "0404e847104ceff3d39c2783a3667c67a6ed1f5a8e1180ba649473f764a89cc2"
+    },
+    {
+      "path": "qa/evidence/mobile_wood.jpg",
+      "bytes": 49719,
+      "sha256": "2abbace9685b30da12a282af923f7475b5477f0c426f8d26b920318cd79812ae"
+    },
+    {
+      "path": "qa/evidence/mobile_wood_uv.jpg",
+      "bytes": 48742,
+      "sha256": "1a268835d081dc89b75871660df965db08a5ac9d213767245561d1d356d929e1"
+    },
+    {
+      "path": "qa/evidence/roof_0_maintained.jpg",
+      "bytes": 197890,
+      "sha256": "24f48bff5712937d8e7b943ed9bee37bed1ee95f36f29147deba063ec3e4fddd"
+    },
+    {
+      "path": "qa/evidence/roof_100_abandoned.jpg",
+      "bytes": 209038,
+      "sha256": "73d63dd95ef643041176355ec2f1b7c2afcc48dc8fe6aa9691ab21de80d639e0"
+    },
+    {
+      "path": "qa/evidence/roof_100_maintained.jpg",
+      "bytes": 198986,
+      "sha256": "2a0be22e8d80b3667cd90d58b53c5774bbd22bb369a9e5fbf167db4b4d332a10"
+    },
+    {
+      "path": "qa/evidence/trio.jpg",
+      "bytes": 144490,
+      "sha256": "845554a3dec32e3da47a1bfba5021e9ac67b294db7ed899b1c51e5f3f1661cc1"
+    },
+    {
+      "path": "qa/evidence/uv_tiles.jpg",
+      "bytes": 156926,
+      "sha256": "9282065ccbc43875f69d0f1d2259f4c295856da8b88ec6f36c9a4a8d66629784"
+    },
+    {
+      "path": "qa/evidence/uv_timber.jpg",
+      "bytes": 157710,
+      "sha256": "6811d17f0a291130a4e05a94c0507d2f7a904b5fdd584e64993cd12112e8a535"
+    },
+    {
+      "path": "references/user_historical_roof_diagram.jpeg",
+      "bytes": 369315,
+      "sha256": "0fe5ccc052d664ef4eebd2acdd891f414c88b4050c39894755db29da13960db7"
+    },
+    {
+      "path": "references/user_measured_tiles.jpg",
+      "bytes": 102663,
+      "sha256": "e68ed1f4157eeab450a42b20f7e815dc4e4b4fd201a8d227049d3831d355a0f1"
+    },
+    {
+      "path": "source/app.js",
+      "bytes": 70841,
+      "sha256": "08097e09c4e2273daa81b156211aefc63c1bec5925740e68d98285d12851b379"
+    },
+    {
+      "path": "source/contact.js",
+      "bytes": 5887,
+      "sha256": "babdd8359aba89d1f6df8e6af7e69001272d2d4c8991e79a70c1f52bb7cbc17e"
+    },
+    {
+      "path": "source/cracks.js",
+      "bytes": 1113,
+      "sha256": "5a4b880a79860e4dd4d3044b92e5084a5c01f757f857bb51ea6f24c7bc4ebcdc"
+    },
+    {
+      "path": "source/roof.js",
+      "bytes": 14608,
+      "sha256": "6d20abab24eca25dbc3d0217e0318c5a922f049169c7ea96152207d005e61fc1"
+    },
+    {
+      "path": "source/vendor/three_runtime.cjs",
+      "bytes": 1028824,
+      "sha256": "7d800ff6c3f4b76f6c85d6aa2abedc27976190b28860668b83e72269da83c805"
+    },
+    {
+      "path": "source/wood.js",
+      "bytes": 7495,
+      "sha256": "61789555fda65c7d382bdf2bfad8d8dbd332003e69b81d9138eaaf894c0c0c41"
+    },
+    {
+      "path": "tools/rebuild_html.py",
+      "bytes": 727,
+      "sha256": "d90ae4a8955f7fba10f970820c53da3da38f8c3ae5582dfcdd3011c972f146d8"
+    }
+  ]
+}

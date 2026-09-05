@@ -1,0 +1,14 @@
+{
+  "detail": {
+    "sha256": "43a899aa7602fab829d5b78f977213a325dec1dd626d6402b82d42b869486bc0",
+    "unchanged": true
+  },
+  "shader": {
+    "sha256": "57c2ce32bfdfd9df97213ae1a19e6d1f17d92bea9dd3de9c9d200bd5bdd2eb0a",
+    "unchanged": true
+  },
+  "lighting": {
+    "sha256": "4c7fba6d35aa552718966d1a3a221c172e5d51614a5e216a05c4749c90dc9dea",
+    "unchanged": true
+  }
+}

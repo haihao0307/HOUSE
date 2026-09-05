@@ -1,0 +1,16 @@
+{
+  "accessed": "2026-09-05",
+  "sources": [
+    {
+      "title": "Three.js BufferGeometry documentation",
+      "url": "https://threejs.org/docs/pages/BufferGeometry.html",
+      "use": "independent indexed position/uv/normal attributes, groups"
+    },
+    {
+      "title": "USDA Forest Products Laboratory, Wood Handbook (2021)",
+      "url": "https://research.fs.usda.gov/treesearch/62200",
+      "use": "wood mechanics and moisture background; NOT calibration of the demonstration damage rates"
+    }
+  ],
+  "evidenceLimits": "No locality-specific timber service life or full kiln-temperature study was performed in this update."
+}
