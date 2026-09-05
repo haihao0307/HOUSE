@@ -1,0 +1,433 @@
+{
+  "schemaVersion": 1,
+  "createdAt": "2026-09-05T08:16:14.060131+00:00",
+  "sourceRepository": "haihao0307/HOUSE",
+  "sourceCommit": "b1cb5e57899cbf80dee7aa22bac84a82d6182540",
+  "sourceArchive": "Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05.zip",
+  "sourceBlobSha": "f3fd21d92ebf66cdb92144d5d476e8334e873f2a",
+  "archiveBytes": 1642048,
+  "archiveSha256": "8694ff672b8a9759b3b0166a886beaaae593eaecaef85aa305f454876a229fc1",
+  "targetBranch": "xiaoma/intake-v1.1.1-20260905",
+  "targetDirectory": "mother-system/handoffs/v1.1.1/source",
+  "sourcePreserved": true,
+  "mainBranchModified": false,
+  "extractionVerified": true,
+  "contentReviewComplete": false,
+  "otherMotherJobsStarted": false,
+  "files": [
+    {
+      "path": "mother-system/handoffs/v1.1.1/source/Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/00_START_HERE.md",
+      "archivePath": "Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/00_START_HERE.md",
+      "bytes": 2317,
+      "sha256": "e14e9322bb6a86c1eca9489cc9a6f3ecfb338e62a1904570be8c9901fcda6ca0"
+    },
+    {
+      "path": "mother-system/handoffs/v1.1.1/source/Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/01_MOTHER_STARTUP.md",
+      "archivePath": "Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/01_MOTHER_STARTUP.md",
+      "bytes": 2501,
+      "sha256": "4d1feb65763d02d060cae4497b4205dc5883b8c7249ce423b61086b2688ef7aa"
+    },
+    {
+      "path": "mother-system/handoffs/v1.1.1/source/Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/02_REVIEW_DISPOSITION.md",
+      "archivePath": "Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/02_REVIEW_DISPOSITION.md",
+      "bytes": 2530,
+      "sha256": "196e2573c570985ad50abb83caf0b81cd2dae3e0e3b114721e9f0915eb254e81"
+    },
+    {
+      "path": "mother-system/handoffs/v1.1.1/source/Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/03_RECIPIENTS.md",
+      "archivePath": "Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/03_RECIPIENTS.md",
+      "bytes": 1925,
+      "sha256": "783cdff350475dd1c5eb10dbb9c4ecba813a6613cd314fe0edd8b84a491783a9"
+    },
+    {
+      "path": "mother-system/handoffs/v1.1.1/source/Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/04_TASK_CARD_TEMPLATE.md",
+      "archivePath": "Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/04_TASK_CARD_TEMPLATE.md",
+      "bytes": 1041,
+      "sha256": "b4219befbca629e4ee16cb0266cc3f76f711e78463416fab2db283f7a0cdb06d"
+    },
+    {
+      "path": "mother-system/handoffs/v1.1.1/source/Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/05_ACK_TEMPLATE.json",
+      "archivePath": "Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/05_ACK_TEMPLATE.json",
+      "bytes": 675,
+      "sha256": "86126853ff1a17b56c256c8dabfd87b9373e5ddfe6bd3a715f061ad39a4efd4e"
+    },
+    {
+      "path": "mother-system/handoffs/v1.1.1/source/Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/06_SCOPE_AND_SOURCE_NOTES.md",
+      "archivePath": "Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/06_SCOPE_AND_SOURCE_NOTES.md",
+      "bytes": 1440,
+      "sha256": "06c084e0528ccc57b897322157f500024e446cde7d3006d40ab65e80f7ba59fa"
+    },
+    {
+      "path": "mother-system/handoffs/v1.1.1/source/Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/CHANGELOG.md",
+      "archivePath": "Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/CHANGELOG.md",
+      "bytes": 504,
+      "sha256": "862f191df30a4bbb58239a0d72d1a6ac0a7863c83608f6afa2f8b476f1f82027"
+    },
+    {
+      "path": "mother-system/handoffs/v1.1.1/source/Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/DISPATCH_LEDGER.json",
+      "archivePath": "Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/DISPATCH_LEDGER.json",
+      "bytes": 2740,
+      "sha256": "2ab858028ce3c56362c6704e007f799db91065fe5820e35c74151b1c07442e3c"
+    },
+    {
+      "path": "mother-system/handoffs/v1.1.1/source/Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/MANIFEST.json",
+      "archivePath": "Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/MANIFEST.json",
+      "bytes": 13625,
+      "sha256": "3c67f8aca689cf1f08df464d5e7200ec3b02f5c359255fb9b29af0a60c5dfb4f"
+    },
+    {
+      "path": "mother-system/handoffs/v1.1.1/source/Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/PUBLICATION_STATUS.json",
+      "archivePath": "Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/PUBLICATION_STATUS.json",
+      "bytes": 2165,
+      "sha256": "7f8e4f5f87fc4a4a1c520b0cf520977b045ae3834182b756d16198cb06e3a076"
+    },
+    {
+      "path": "mother-system/handoffs/v1.1.1/source/Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/SHA256SUMS",
+      "archivePath": "Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/SHA256SUMS",
+      "bytes": 7733,
+      "sha256": "64c920cc8b14df0a90652ec21275d24528f7090e270cc571fcbed199ed3edfde"
+    },
+    {
+      "path": "mother-system/handoffs/v1.1.1/source/Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/archives/Mother_System_Astra_Research_Pack_V1.0_2026-09-05.zip",
+      "archivePath": "Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/archives/Mother_System_Astra_Research_Pack_V1.0_2026-09-05.zip",
+      "bytes": 21768,
+      "sha256": "da096ec58003b4081912758f8615db9f9b645d6d8192d18c2abc35127473971b"
+    },
+    {
+      "path": "mother-system/handoffs/v1.1.1/source/Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/archives/Mother_System_V1.1_Xiaoma_Readback_2026-09-05.zip",
+      "archivePath": "Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/archives/Mother_System_V1.1_Xiaoma_Readback_2026-09-05.zip",
+      "bytes": 401674,
+      "sha256": "f3c8ad8272eead28da92bf90be773c141733dc0c33f2ff288d300bf750440528"
+    },
+    {
+      "path": "mother-system/handoffs/v1.1.1/source/Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/archives/Mother_System_小妈交接包_V1.1_2026-09-05.zip",
+      "archivePath": "Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/archives/Mother_System_小妈交接包_V1.1_2026-09-05.zip",
+      "bytes": 393079,
+      "sha256": "cd6095f7384f6114e1c8fc804cd119c512b568020772673a9f328d410b43d849"
+    },
+    {
+      "path": "mother-system/handoffs/v1.1.1/source/Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/archives/Xiaoma_Mother_Dispatch_V1.1.1_2026-09-05.zip",
+      "archivePath": "Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/archives/Xiaoma_Mother_Dispatch_V1.1.1_2026-09-05.zip",
+      "bytes": 9109,
+      "sha256": "c1596ff626e5e55aca0c47f818b8033252ae2b893fa09ba6cb33972cc4f5aac6"
+    },
+    {
+      "path": "mother-system/handoffs/v1.1.1/source/Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/publication/GITHUB_DISPATCH_INDEX.md",
+      "archivePath": "Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/publication/GITHUB_DISPATCH_INDEX.md",
+      "bytes": 912,
+      "sha256": "af341b905c80d62e8c51df568b6671a01faf825d8679ff9abe38af268c4624e8"
+    },
+    {
+      "path": "mother-system/handoffs/v1.1.1/source/Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/publication/README.md",
+      "archivePath": "Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/publication/README.md",
+      "bytes": 1024,
+      "sha256": "6b7b5065e102ee87afc2d334be57bf8ef1fc21e6e6b39109dfdd6dc68ee0b5f5"
+    },
+    {
+      "path": "mother-system/handoffs/v1.1.1/source/Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/publication/local_validation.json",
+      "archivePath": "Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/publication/local_validation.json",
+      "bytes": 1335,
+      "sha256": "5f0350542255971f1b25a1c2f2b2e82a31e08a198834f80ecb4bf5e24a63b311"
+    },
+    {
+      "path": "mother-system/handoffs/v1.1.1/source/Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/00_小妈先读.md",
+      "archivePath": "Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/00_小妈先读.md",
+      "bytes": 3227,
+      "sha256": "f8a0cbfa90f1cb921600052e53ade6c770aac443c363cdb6ad177152178a5a6a"
+    },
+    {
+      "path": "mother-system/handoffs/v1.1.1/source/Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/01_完整研究与复核.md",
+      "archivePath": "Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/01_完整研究与复核.md",
+      "bytes": 102277,
+      "sha256": "90ddb446dc5208afa4b1aea9f1134e9c6d3c782e7890c28f62032934e93bd554"
+    },
+    {
+      "path": "mother-system/handoffs/v1.1.1/source/Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/MANIFEST.json",
+      "archivePath": "Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/MANIFEST.json",
+      "bytes": 7369,
+      "sha256": "470c9701340b3211663dad63385c824748db905bcc0387e3679edc536e3e88cd"
+    },
+    {
+      "path": "mother-system/handoffs/v1.1.1/source/Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/details/00_SECOND_REVIEW.md",
+      "archivePath": "Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/details/00_SECOND_REVIEW.md",
+      "bytes": 7314,
+      "sha256": "368fe0a31cd33a0a2f3fd0820daf13d4060e1ab83d0d7b9b593d528741c09a43"
+    },
+    {
+      "path": "mother-system/handoffs/v1.1.1/source/Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/details/01_REVIEW.md",
+      "archivePath": "Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/details/01_REVIEW.md",
+      "bytes": 32003,
+      "sha256": "a00676c2e46743458fd8454683e0addc5f441539a6c2e234a599a173b213c679"
+    },
+    {
+      "path": "mother-system/handoffs/v1.1.1/source/Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/details/02_HANDOFF_AND_ROADMAP.md",
+      "archivePath": "Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/details/02_HANDOFF_AND_ROADMAP.md",
+      "bytes": 15705,
+      "sha256": "324f1e71d61b4900847ce806c81ebb30fa71b7402a4d39e93e8acec05c001435"
+    },
+    {
+      "path": "mother-system/handoffs/v1.1.1/source/Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/details/03_RESOURCE_MAP.md",
+      "archivePath": "Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/details/03_RESOURCE_MAP.md",
+      "bytes": 15575,
+      "sha256": "e0d90501eedd76fb323ff95d669d0db92c08bd17f63f96e6673c2a1760abb76b"
+    },
+    {
+      "path": "mother-system/handoffs/v1.1.1/source/Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/details/04_RISKS_AND_QUESTIONS.md",
+      "archivePath": "Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/details/04_RISKS_AND_QUESTIONS.md",
+      "bytes": 13071,
+      "sha256": "99f408a503447a791d04d918331ce1c78cb8bdc9eb6eb981427e5d5f69077484"
+    },
+    {
+      "path": "mother-system/handoffs/v1.1.1/source/Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/details/05_CONTRACTS.md",
+      "archivePath": "Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/details/05_CONTRACTS.md",
+      "bytes": 9374,
+      "sha256": "4075044841c1d83ae1c294171d693fdf5b706daba084dd420ad41f133f3cb427"
+    },
+    {
+      "path": "mother-system/handoffs/v1.1.1/source/Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/details/06_DEM_AND_STORAGE.md",
+      "archivePath": "Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/details/06_DEM_AND_STORAGE.md",
+      "bytes": 6469,
+      "sha256": "3f4419e04c5674e75466ca87f55007e469bf7a9e1fb5e18109360a529ea0d07b"
+    },
+    {
+      "path": "mother-system/handoffs/v1.1.1/source/Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/details/CHANGELOG.md",
+      "archivePath": "Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/details/CHANGELOG.md",
+      "bytes": 2076,
+      "sha256": "936984b41671d9fe2d2efd9084b778a2d98e1825b1e134385003dd16e2372288"
+    },
+    {
+      "path": "mother-system/handoffs/v1.1.1/source/Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/details/DELIVERY_MANIFEST.json",
+      "archivePath": "Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/details/DELIVERY_MANIFEST.json",
+      "bytes": 5897,
+      "sha256": "2289a17f5428a363a9926e6f29d10bd9ee62e6723e6369ece312466dc69d9ad9"
+    },
+    {
+      "path": "mother-system/handoffs/v1.1.1/source/Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/details/README.md",
+      "archivePath": "Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/details/README.md",
+      "bytes": 3818,
+      "sha256": "1659d31bb9e8e5edb377b2bfcebeb8c3aaa90d65dd177369d360038291b14304"
+    },
+    {
+      "path": "mother-system/handoffs/v1.1.1/source/Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/details/contracts/examples.json",
+      "archivePath": "Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/details/contracts/examples.json",
+      "bytes": 6755,
+      "sha256": "66162fd497f2734942813f13e96b60c8ae73562292c9aab43da0d4c17eed188d"
+    },
+    {
+      "path": "mother-system/handoffs/v1.1.1/source/Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/details/evidence/compression_demo.json",
+      "archivePath": "Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/details/evidence/compression_demo.json",
+      "bytes": 1665,
+      "sha256": "2bf21808e5ce59027613d53275418dfb2971d7ad297e036242b30071c2b8e8c2"
+    },
+    {
+      "path": "mother-system/handoffs/v1.1.1/source/Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/details/evidence/delivery_validation.json",
+      "archivePath": "Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/details/evidence/delivery_validation.json",
+      "bytes": 651,
+      "sha256": "7224edbd52e38c75ba0b91148bb29936880c6ead93439a7ddba6bcf9d5dfc6a1"
+    },
+    {
+      "path": "mother-system/handoffs/v1.1.1/source/Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/details/evidence/input_audit.json",
+      "archivePath": "Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/details/evidence/input_audit.json",
+      "bytes": 4364,
+      "sha256": "ea58a23acf8dc8258f6f57b400bd4789c2a5d9f4942121e7c9b743e78207182a"
+    },
+    {
+      "path": "mother-system/handoffs/v1.1.1/source/Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/details/evidence/local_evidence_provenance.json",
+      "archivePath": "Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/details/evidence/local_evidence_provenance.json",
+      "bytes": 1097,
+      "sha256": "ecfbf556a93727202fdcaef3aad39334e7b23a61b663f118b73b958b8c68f69d"
+    },
+    {
+      "path": "mother-system/handoffs/v1.1.1/source/Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/details/evidence/local_tiles_analysis_20260901.json",
+      "archivePath": "Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/details/evidence/local_tiles_analysis_20260901.json",
+      "bytes": 24087,
+      "sha256": "0d9f2dd2dee84ea57e2e8b0dbabe36ab060b5647171ee082bfab2ab0c58dfca7"
+    },
+    {
+      "path": "mother-system/handoffs/v1.1.1/source/Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/details/evidence/local_tiles_contact_sheet_20260901.png",
+      "archivePath": "Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/details/evidence/local_tiles_contact_sheet_20260901.png",
+      "bytes": 213777,
+      "sha256": "7cb5ddbe1ad17eedb364b2e5b07c70667d5f47501bada5483630ab2a97c6ea71"
+    },
+    {
+      "path": "mother-system/handoffs/v1.1.1/source/Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/details/evidence/local_tiles_review_20260901.md",
+      "archivePath": "Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/details/evidence/local_tiles_review_20260901.md",
+      "bytes": 3964,
+      "sha256": "3325e4eb2faff5e91d44012e41cc4221ee4d4ff7db0f29d9e9614b6cde369c22"
+    },
+    {
+      "path": "mother-system/handoffs/v1.1.1/source/Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/details/input/ASTRA_OUTPUT_CONTRACT.md",
+      "archivePath": "Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/details/input/ASTRA_OUTPUT_CONTRACT.md",
+      "bytes": 1583,
+      "sha256": "922d489abef9149e9b9e3feab66f4c80064b43438215336a6f2d77325b53494d"
+    },
+    {
+      "path": "mother-system/handoffs/v1.1.1/source/Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/details/input/CONTRIBUTION_SCHEMA.md",
+      "archivePath": "Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/details/input/CONTRIBUTION_SCHEMA.md",
+      "bytes": 886,
+      "sha256": "1cde230632a62aa9eb3f81c3c9ed6a2c6e73e37d3ad30f6c6794ead2146982a2"
+    },
+    {
+      "path": "mother-system/handoffs/v1.1.1/source/Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/details/input/CURRENT_FAILURE_MODES.md",
+      "archivePath": "Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/details/input/CURRENT_FAILURE_MODES.md",
+      "bytes": 2545,
+      "sha256": "c7c8088964b450750220f0a0a791525041075f5b73cca5e2a6e0de9c67cbdad8"
+    },
+    {
+      "path": "mother-system/handoffs/v1.1.1/source/Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/details/input/MANIFEST.json",
+      "archivePath": "Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/details/input/MANIFEST.json",
+      "bytes": 635,
+      "sha256": "90614e48f2f8040afcf799577d25479f9000b43752f6d9244d9bbe790ba454b3"
+    },
+    {
+      "path": "mother-system/handoffs/v1.1.1/source/Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/details/input/MEMORY_AND_HANDOFF_PROTOCOL.md",
+      "archivePath": "Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/details/input/MEMORY_AND_HANDOFF_PROTOCOL.md",
+      "bytes": 2009,
+      "sha256": "15e059605b0f8fff8882076193626c2b45315fee0aebb6eb6d25f1510a999d15"
+    },
+    {
+      "path": "mother-system/handoffs/v1.1.1/source/Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/details/input/MOTHER_REGISTRY.md",
+      "archivePath": "Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/details/input/MOTHER_REGISTRY.md",
+      "bytes": 2880,
+      "sha256": "6bb98692769185185cc15b34ebcdf7b9d3ffde31176208e489f4f5f9fe64b096"
+    },
+    {
+      "path": "mother-system/handoffs/v1.1.1/source/Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/details/input/OPEN_WORLD_KNOWLEDGE_COMMONS.md",
+      "archivePath": "Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/details/input/OPEN_WORLD_KNOWLEDGE_COMMONS.md",
+      "bytes": 2530,
+      "sha256": "12276eb0e636c4417119cf03b9db1027ff689829f89e1287e36c79bd1cd3d4c9"
+    },
+    {
+      "path": "mother-system/handoffs/v1.1.1/source/Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/details/input/PROJECT_STATE_SNAPSHOT.md",
+      "archivePath": "Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/details/input/PROJECT_STATE_SNAPSHOT.md",
+      "bytes": 1819,
+      "sha256": "66fc8ea7dd5e3fb3a4613bf7b148356da1e7da16cee2d49550a7f4b63d056ffe"
+    },
+    {
+      "path": "mother-system/handoffs/v1.1.1/source/Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/details/input/PUBLIC_TECH_KNOWLEDGE_MAP.md",
+      "archivePath": "Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/details/input/PUBLIC_TECH_KNOWLEDGE_MAP.md",
+      "bytes": 4675,
+      "sha256": "39869aeaa8bd5bf88c223bc5ddbc6b30d97d26407af0d4a572ad36d56f8a0ff1"
+    },
+    {
+      "path": "mother-system/handoffs/v1.1.1/source/Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/details/input/README_START_HERE.md",
+      "archivePath": "Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/details/input/README_START_HERE.md",
+      "bytes": 2773,
+      "sha256": "5bd9d0417b4e8bdc085ed768f35e360d761d25e422336fe8bb24c4086a4dbb2e"
+    },
+    {
+      "path": "mother-system/handoffs/v1.1.1/source/Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/details/input/RESEARCH_QUESTIONS_FOR_ASTRA.md",
+      "archivePath": "Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/details/input/RESEARCH_QUESTIONS_FOR_ASTRA.md",
+      "bytes": 5699,
+      "sha256": "09a7beecacbe79c2b7a44d32b861d99733682ce1fc795d89cdf097814b838411"
+    },
+    {
+      "path": "mother-system/handoffs/v1.1.1/source/Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/details/input/SOURCE_MAP.md",
+      "archivePath": "Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/details/input/SOURCE_MAP.md",
+      "bytes": 3478,
+      "sha256": "f5bc84e977da04cd897cb255b93c78d22ed046a3256c0d645978baf607659360"
+    },
+    {
+      "path": "mother-system/handoffs/v1.1.1/source/Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/details/input/SYSTEM_CANON.md",
+      "archivePath": "Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/details/input/SYSTEM_CANON.md",
+      "bytes": 4202,
+      "sha256": "e5ab1d347bfe4cb1eee47eac48219cf26f89e18c814ceba9cc248612aaa49999"
+    },
+    {
+      "path": "mother-system/handoffs/v1.1.1/source/Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/details/input/WORLD_LEARNING_MODEL.md",
+      "archivePath": "Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/details/input/WORLD_LEARNING_MODEL.md",
+      "bytes": 3871,
+      "sha256": "fbe756a04a3d57ee8f1ef9d322319c43db65627baedf7b74ce893ed570e4bf87"
+    },
+    {
+      "path": "mother-system/handoffs/v1.1.1/source/Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/details/input/original_research_pack.zip",
+      "archivePath": "Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/details/input/original_research_pack.zip",
+      "bytes": 21768,
+      "sha256": "da096ec58003b4081912758f8615db9f9b645d6d8192d18c2abc35127473971b"
+    },
+    {
+      "path": "mother-system/handoffs/v1.1.1/source/Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/details/tools/build_evidence.py",
+      "archivePath": "Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/details/tools/build_evidence.py",
+      "bytes": 6289,
+      "sha256": "6888bb9aebd9b5ec7674096b4969f73f7e20fc7be28b5a675ada8d60514e7d29"
+    },
+    {
+      "path": "mother-system/handoffs/v1.1.1/source/Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/details/tools/package_review.py",
+      "archivePath": "Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/details/tools/package_review.py",
+      "bytes": 6540,
+      "sha256": "3a10dddd5996affc32c3bb470e7d62db0c3520edd835af73841f30ef8008dee6"
+    },
+    {
+      "path": "mother-system/handoffs/v1.1.1/source/Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/tools/README.md",
+      "archivePath": "Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/tools/README.md",
+      "bytes": 938,
+      "sha256": "14a5a69dd5c8f4828dc30c991ab746320671595ef81331ee61c5b89f57c8157d"
+    },
+    {
+      "path": "mother-system/handoffs/v1.1.1/source/Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/tools/assemble_handoff.py",
+      "archivePath": "Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/tools/assemble_handoff.py",
+      "bytes": 7063,
+      "sha256": "78907bf5d5ecef70c8dac3595ca8a271c49020e6b84d8fd652a1c477c84a6f7f"
+    },
+    {
+      "path": "mother-system/handoffs/v1.1.1/source/Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/tools/refine_review.py",
+      "archivePath": "Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/tools/refine_review.py",
+      "bytes": 12725,
+      "sha256": "2f78757c868eb132342c23046ea13f76e96f3cf1a2f6aedc67d181384d068f1f"
+    },
+    {
+      "path": "mother-system/handoffs/v1.1.1/source/Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/tools/verify_handoff.py",
+      "archivePath": "Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/mentor_v1_1/tools/verify_handoff.py",
+      "bytes": 1903,
+      "sha256": "946288e9ba5c09f50b6f467ca5247e254826da9bd762097ef1c9e17f15415d9c"
+    },
+    {
+      "path": "mother-system/handoffs/v1.1.1/source/Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/xiaoma_readback_v1_1/MANIFEST.json",
+      "archivePath": "Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/xiaoma_readback_v1_1/MANIFEST.json",
+      "bytes": 1273,
+      "sha256": "10a8b262ae605594c1da2adfe0c97e50929fcee5c0494f740ce2c876fb5e9c19"
+    },
+    {
+      "path": "mother-system/handoffs/v1.1.1/source/Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/xiaoma_readback_v1_1/receipt_validation.json",
+      "archivePath": "Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/xiaoma_readback_v1_1/receipt_validation.json",
+      "bytes": 10183,
+      "sha256": "bf8b8ab14d18b404dabb12595bc235e93474d9e1fae8f9296b989d6561cff6cb"
+    },
+    {
+      "path": "mother-system/handoffs/v1.1.1/source/Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/xiaoma_readback_v1_1/reference/compression_demo.json",
+      "archivePath": "Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/xiaoma_readback_v1_1/reference/compression_demo.json",
+      "bytes": 1665,
+      "sha256": "2bf21808e5ce59027613d53275418dfb2971d7ad297e036242b30071c2b8e8c2"
+    },
+    {
+      "path": "mother-system/handoffs/v1.1.1/source/Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/xiaoma_readback_v1_1/reproduce_synthetic.py",
+      "archivePath": "Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/xiaoma_readback_v1_1/reproduce_synthetic.py",
+      "bytes": 3411,
+      "sha256": "dabf2f723f13c58280dc716866f22c5b747e92be7429f992f3b872e123fb75f8"
+    },
+    {
+      "path": "mother-system/handoffs/v1.1.1/source/Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/xiaoma_readback_v1_1/source/Mother_System_小妈交接包_V1.1_2026-09-05.zip",
+      "archivePath": "Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/xiaoma_readback_v1_1/source/Mother_System_小妈交接包_V1.1_2026-09-05.zip",
+      "bytes": 393079,
+      "sha256": "cd6095f7384f6114e1c8fc804cd119c512b568020772673a9f328d410b43d849"
+    },
+    {
+      "path": "mother-system/handoffs/v1.1.1/source/Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/xiaoma_readback_v1_1/synthetic_reproduction.json",
+      "archivePath": "Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/xiaoma_readback_v1_1/synthetic_reproduction.json",
+      "bytes": 1528,
+      "sha256": "951ab5475366ccf770798bec4ae8c842c162e992f13bae782b2fcbcbf504bfae"
+    },
+    {
+      "path": "mother-system/handoffs/v1.1.1/source/Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/xiaoma_readback_v1_1/小妈接收审阅记录_V1.1_2026-09-05.md",
+      "archivePath": "Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/sources/xiaoma_readback_v1_1/小妈接收审阅记录_V1.1_2026-09-05.md",
+      "bytes": 10546,
+      "sha256": "d7d912ba07eb9aa8a7f107ef3958723b0b5ef2fc0d9ae468308419b52651a1d2"
+    },
+    {
+      "path": "mother-system/handoffs/v1.1.1/source/Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/tools/verify_package.py",
+      "archivePath": "Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05/tools/verify_package.py",
+      "bytes": 2488,
+      "sha256": "5568d675e4c6d6c666e85a2ce212f3ec317e45f9b7cc491dc994fa0614fb3411"
+    }
+  ]
+}

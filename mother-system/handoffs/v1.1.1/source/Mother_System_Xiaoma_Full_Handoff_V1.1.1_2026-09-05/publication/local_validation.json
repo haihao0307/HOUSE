@@ -1,0 +1,38 @@
+{
+  "date": "2026-09-05",
+  "mentor_read_only_verifier": {
+    "status": "passed",
+    "recipient": "小妈",
+    "version": "1.1",
+    "files_hash_checked": 40,
+    "original_input_files_match": true,
+    "external_files_or_network_required": false,
+    "scope": "Package integrity only; does not validate proposed production or learning capabilities."
+  },
+  "source_copies": [
+    {
+      "path": "archives/Mother_System_Astra_Research_Pack_V1.0_2026-09-05.zip",
+      "bytes": 21768,
+      "sha256": "da096ec58003b4081912758f8615db9f9b645d6d8192d18c2abc35127473971b",
+      "byte_identical": true
+    },
+    {
+      "path": "archives/Mother_System_小妈交接包_V1.1_2026-09-05.zip",
+      "bytes": 393079,
+      "sha256": "cd6095f7384f6114e1c8fc804cd119c512b568020772673a9f328d410b43d849",
+      "byte_identical": true
+    },
+    {
+      "path": "archives/Mother_System_V1.1_Xiaoma_Readback_2026-09-05.zip",
+      "bytes": 401674,
+      "sha256": "f3c8ad8272eead28da92bf90be773c141733dc0c33f2ff288d300bf750440528",
+      "byte_identical": true
+    }
+  ],
+  "notes": [
+    "This turn repackages previously reviewed material.",
+    "The synthetic experiment results are preserved historical receipts; no new production test is claimed."
+  ],
+  "mentor_all_42_entries_preserved": true,
+  "readback_all_7_entries_preserved": true
+}

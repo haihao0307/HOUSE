@@ -1,0 +1,47 @@
+{
+  "kind": "SYNTHETIC_DEMONSTRATION_NOT_REAL_DEM_BENCHMARK",
+  "python": "3.12.10",
+  "zlib": "1.3.1",
+  "seed": 20260905,
+  "shape": [
+    512,
+    512
+  ],
+  "stored_type": "int16 little endian",
+  "codec": "zlib level 9, with and without simple per-row delta predictor",
+  "scope": "Payload byte counts exclude container metadata, decoder code, dependency storage, and indexes. Random generator seed only reproduces this invented dataset; it does not encode unknown real-world measurements.",
+  "rows": [
+    {
+      "case": "smooth_integer_field",
+      "cells": 262144,
+      "raw_bytes": 524288,
+      "zlib_bytes": 93393,
+      "zlib_fraction": 0.1781330108642578,
+      "row_delta_zlib_bytes": 17745,
+      "row_delta_zlib_fraction": 0.03384590148925781,
+      "sample_value_roundtrip_exact": true
+    },
+    {
+      "case": "unstructured_integer_field",
+      "cells": 262144,
+      "raw_bytes": 524288,
+      "zlib_bytes": 390458,
+      "zlib_fraction": 0.7447395324707031,
+      "row_delta_zlib_bytes": 405682,
+      "row_delta_zlib_fraction": 0.7737770080566406,
+      "sample_value_roundtrip_exact": true
+    }
+  ],
+  "illustrative_area_arithmetic": {
+    "area_km2": 60,
+    "cell_spacing_m": 1,
+    "assumption": "exact 60,000,000 grid cells; no rectangular padding",
+    "float32_raw_bytes": 240000000,
+    "float32_raw_MiB": 228.8818359375,
+    "int16_raw_bytes": 120000000,
+    "full_2d_overview_limit_multiplier": 1.3333333333333333,
+    "float32_with_overviews_limit_bytes": 320000000,
+    "rgba8_7000_square_base_bytes": 196000000,
+    "rgba8_7000_square_with_mips_approx_bytes": 261333333
+  }
+}

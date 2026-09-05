@@ -1,0 +1,44 @@
+{
+  "package_id": "XIAOMA-MENTOR-V1.1-DIST-20260905",
+  "scope": "Full received source archives and Xiaoma dispatch documents; not all production assets or repositories.",
+  "mentor_version": "1.1",
+  "distribution_version": "1.1.1",
+  "local_full_archive": "payload_complete",
+  "github": {
+    "repository": "haihao0307/guilin-dem-pipeline",
+    "branch": "handoff/xiaoma-mentor-v1.1-20260905",
+    "base_commit": "301c9c75f765cd6581695025897528c7f1ebe5bd",
+    "documentation_commit": "0c2439b6a48870f3267cd8ee74d1b1f07ad05ad8",
+    "documentation_tree": "18dec80bae62049c7f51bf37e080ae9d1fb420c3",
+    "documentation_entry": "https://github.com/haihao0307/guilin-dem-pipeline/blob/6d8a102600245745cd9909c53c74f5e8647c6e5f/docs/mother_coordination/mentor-v1.1/README.md",
+    "documentation_files_added": 8,
+    "documentation_status": "published_readback_and_compare_checked",
+    "full_archive_status": "not_published",
+    "raw_source_archives_status": "not_published",
+    "production_files_changed": false,
+    "main_branch_changed": false,
+    "note": "Only dispatch work documents are committed. Do not report full remote backup as complete.",
+    "notification_index_commit": "6d8a102600245745cd9909c53c74f5e8647c6e5f",
+    "dispatch_index": "https://github.com/haihao0307/guilin-dem-pipeline/blob/6d8a102600245745cd9909c53c74f5e8647c6e5f/docs/mother_coordination/mentor-v1.1/DISPATCH_STATUS.md"
+  },
+  "notifications": {
+    "repositories_posted": 5,
+    "acknowledged_mothers": 0,
+    "status": "posted_to_repository_waiting_for_individual_ack"
+  },
+  "unmapped_recipient_groups": [
+    "Animal",
+    "Plant",
+    "Brain/Jarvis"
+  ],
+  "production_experiments_started": false,
+  "scheduling_started": false,
+  "rejected_binary_upload": {
+    "candidate": "Xiaoma_Mother_Dispatch_V1.1.1_2026-09-05.zip",
+    "expected_git_blob_sha": "ffc1f6682a81216c370f91efd4475e8cbcee7194",
+    "returned_git_blob_sha": "8b79eb6c5016498e8fb7c7f325c6dd0585f29631",
+    "result": "hash_mismatch_rejected",
+    "referenced_by_branch": false,
+    "note": "No download link to this rejected Git blob is distributed. The full local original archives are unaffected."
+  }
+}

@@ -1,0 +1,89 @@
+{
+  "package_id": "XIAOMA-MENTOR-V1.1-DIST-20260905",
+  "distribution_version": "1.1.1",
+  "dispatch_channel": "GitHub repository issues",
+  "docs_commit": "0c2439b6a48870f3267cd8ee74d1b1f07ad05ad8",
+  "posted": [
+    {
+      "repository": "haihao0307/guilin-dem-pipeline",
+      "issue_number": 61,
+      "issue_url": "https://github.com/haihao0307/guilin-dem-pipeline/issues/61",
+      "recipients": [
+        "DEM",
+        "Landscape",
+        "Weather",
+        "Ocean",
+        "Coast"
+      ],
+      "publication_status": "posted_to_repository",
+      "receipt_status": "not_acknowledged",
+      "execution_status": "not_started_by_coordinator"
+    },
+    {
+      "repository": "haihao0307/HOUSE",
+      "issue_number": 16,
+      "issue_url": "https://github.com/haihao0307/HOUSE/issues/16",
+      "recipients": [
+        "House",
+        "Brick",
+        "Tiles"
+      ],
+      "publication_status": "posted_to_repository",
+      "receipt_status": "not_acknowledged",
+      "execution_status": "not_started_by_coordinator"
+    },
+    {
+      "repository": "haihao0307/AIRCRAFT",
+      "issue_number": 15,
+      "issue_url": "https://github.com/haihao0307/AIRCRAFT/issues/15",
+      "recipients": [
+        "Aircraft",
+        "Aircraft Weapons"
+      ],
+      "publication_status": "posted_to_repository",
+      "receipt_status": "not_acknowledged",
+      "execution_status": "not_started_by_coordinator"
+    },
+    {
+      "repository": "haihao0307/Humanoid-Rig-Lab-Next",
+      "issue_number": 1,
+      "issue_url": "https://github.com/haihao0307/Humanoid-Rig-Lab-Next/issues/1",
+      "recipients": [
+        "Human"
+      ],
+      "publication_status": "posted_to_repository",
+      "receipt_status": "not_acknowledged",
+      "execution_status": "not_started_by_coordinator"
+    },
+    {
+      "repository": "haihao0307/Three.js",
+      "issue_number": 2,
+      "issue_url": "https://github.com/haihao0307/Three.js/issues/2",
+      "recipients": [
+        "Historical World"
+      ],
+      "publication_status": "posted_to_repository",
+      "receipt_status": "not_acknowledged",
+      "execution_status": "not_started_by_coordinator"
+    }
+  ],
+  "unmapped": [
+    {
+      "mother": "Animal",
+      "status": "destination_unconfirmed",
+      "receipt_status": "not_acknowledged"
+    },
+    {
+      "mother": "Plant",
+      "status": "destination_unconfirmed",
+      "receipt_status": "not_acknowledged"
+    },
+    {
+      "mother": "Brain/Jarvis",
+      "status": "destination_unconfirmed",
+      "receipt_status": "not_acknowledged"
+    }
+  ],
+  "note": "Repository publication does not establish that any individual Mother has read the instructions.",
+  "dispatch_index_commit": "6d8a102600245745cd9909c53c74f5e8647c6e5f"
+}

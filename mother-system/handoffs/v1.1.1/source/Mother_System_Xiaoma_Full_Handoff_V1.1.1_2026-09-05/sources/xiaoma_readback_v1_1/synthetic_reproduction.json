@@ -1,0 +1,45 @@
+{
+  "reviewer": "小妈",
+  "date": "2026-09-05",
+  "method": "Independently implemented from the supplied generator and codec recipe; complete compressed-data decode tested.",
+  "scope": "Synthetic examples only. No real DEM, geospatial data or production asset tested.",
+  "input_report_sha256": "2bf21808e5ce59027613d53275418dfb2971d7ad297e036242b30071c2b8e8c2",
+  "environment": {
+    "python": "3.13.5",
+    "zlib_runtime": "1.3.1",
+    "zlib_compile": "1.3.1",
+    "byteorder": "little"
+  },
+  "reported_environment": {
+    "python": "3.12.10",
+    "zlib": "1.3.1"
+  },
+  "results": [
+    {
+      "case": "smooth_integer_field",
+      "cells": 262144,
+      "raw_bytes": 524288,
+      "raw_sha256": "9f827797572663fc6b6ccff77ea1b3d271884af782b790f210b7b5a49dfbbc00",
+      "direct_zlib_bytes": 93393,
+      "row_delta_zlib_bytes": 17745,
+      "direct_roundtrip_exact": true,
+      "delta_full_decode_roundtrip_exact": true,
+      "reported_direct_bytes": 93393,
+      "reported_delta_bytes": 17745,
+      "byte_counts_match_report": true
+    },
+    {
+      "case": "unstructured_integer_field",
+      "cells": 262144,
+      "raw_bytes": 524288,
+      "raw_sha256": "bcb53257bff19370a42626a843b1361719c2dfbe6000777cfb9ca44fc8182b56",
+      "direct_zlib_bytes": 390458,
+      "row_delta_zlib_bytes": 405682,
+      "direct_roundtrip_exact": true,
+      "delta_full_decode_roundtrip_exact": true,
+      "reported_direct_bytes": 390458,
+      "reported_delta_bytes": 405682,
+      "byte_counts_match_report": true
+    }
+  ]
+}

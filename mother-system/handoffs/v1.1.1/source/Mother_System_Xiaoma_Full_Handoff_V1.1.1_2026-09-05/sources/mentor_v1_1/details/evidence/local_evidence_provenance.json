@@ -1,0 +1,25 @@
+{
+  "read_on": "2026-09-05",
+  "report_date": "2026-09-01",
+  "scope": "Existing analysis records read; contact sheet visually inspected. Original FBX and original tile ZIP were not re-analysed in this review.",
+  "records": [
+    {
+      "original_path": "G:\\HOUSE\\tiles-mother-analysis-2026-09-01\\tiles-mother-review.md",
+      "snapshot": "evidence/local_tiles_review_20260901.md",
+      "sha256": "3325e4eb2faff5e91d44012e41cc4221ee4d4ff7db0f29d9e9614b6cde369c22",
+      "bytes": 3964
+    },
+    {
+      "original_path": "G:\\HOUSE\\tiles-mother-analysis-2026-09-01\\fbx-model-contact-sheet.png",
+      "snapshot": "evidence/local_tiles_contact_sheet_20260901.png",
+      "sha256": "7cb5ddbe1ad17eedb364b2e5b07c70667d5f47501bada5483630ab2a97c6ea71",
+      "bytes": 213777
+    },
+    {
+      "original_path": "G:\\HOUSE\\tiles-mother-analysis-2026-09-01\\tiles-mother-analysis.json",
+      "snapshot": "evidence/local_tiles_analysis_20260901.json",
+      "sha256": "0d9f2dd2dee84ea57e2e8b0dbabe36ab060b5647171ee082bfab2ab0c58dfca7",
+      "bytes": 24087
+    }
+  ]
+}

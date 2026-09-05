@@ -1,0 +1,39 @@
+{
+  "package": "Mother System V1.1 小妈接收审阅记录",
+  "date": "2026-09-05",
+  "type": "readback_and_local_checks_not_production_upgrade",
+  "entrypoint": "小妈接收审阅记录_V1.1_2026-09-05.md",
+  "source_preserved": true,
+  "files": [
+    {
+      "path": "receipt_validation.json",
+      "bytes": 10183,
+      "sha256": "bf8b8ab14d18b404dabb12595bc235e93474d9e1fae8f9296b989d6561cff6cb"
+    },
+    {
+      "path": "reference/compression_demo.json",
+      "bytes": 1665,
+      "sha256": "2bf21808e5ce59027613d53275418dfb2971d7ad297e036242b30071c2b8e8c2"
+    },
+    {
+      "path": "reproduce_synthetic.py",
+      "bytes": 3411,
+      "sha256": "dabf2f723f13c58280dc716866f22c5b747e92be7429f992f3b872e123fb75f8"
+    },
+    {
+      "path": "source/Mother_System_小妈交接包_V1.1_2026-09-05.zip",
+      "bytes": 393079,
+      "sha256": "cd6095f7384f6114e1c8fc804cd119c512b568020772673a9f328d410b43d849"
+    },
+    {
+      "path": "synthetic_reproduction.json",
+      "bytes": 1528,
+      "sha256": "951ab5475366ccf770798bec4ae8c842c162e992f13bae782b2fcbcbf504bfae"
+    },
+    {
+      "path": "小妈接收审阅记录_V1.1_2026-09-05.md",
+      "bytes": 10546,
+      "sha256": "d7d912ba07eb9aa8a7f107ef3958723b0b5ef2fc0d9ae468308419b52651a1d2"
+    }
+  ]
+}

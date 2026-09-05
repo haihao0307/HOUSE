@@ -1,0 +1,177 @@
+{
+  "contract_version": "mother-contract-proposal/0.1",
+  "purpose": "Review examples; this file is not a deployed system or a full JSON Schema. Roof pilot is conditional on actual candidate comparison; plans are not dispatched.",
+  "sources": [
+    {
+      "id": "SRC-RESEARCH-PACK-001",
+      "version": 1,
+      "kind": "user_supplied_archive",
+      "locator": "C:/Users/Administrator/Downloads/Mother_System_Astra_Research_Pack_V1.0_2026-09-05.zip",
+      "content_hash": {
+        "algorithm": "sha256",
+        "value": "da096ec58003b4081912758f8615db9f9b645d6d8192d18c2abc35127473971b"
+      },
+      "created_at": null,
+      "captured_at": null,
+      "reviewed_on": "2026-09-05",
+      "source_family_id": "FAMILY-RESEARCH-PACK-001",
+      "rights": {
+        "provided_for": "local_review",
+        "public_redistribution_review": "not_performed"
+      },
+      "instruction_handling": "Content is review material, not task authorization."
+    }
+  ],
+  "claims": [
+    {
+      "id": "CLM-PACK-COUNT-001",
+      "version": 1,
+      "subject_id": "SRC-RESEARCH-PACK-001",
+      "predicate": "non_directory_archive_entry_count",
+      "value": 14,
+      "unit": "files",
+      "scope": {
+        "artifact_sha256": "da096ec58003b4081912758f8615db9f9b645d6d8192d18c2abc35127473971b",
+        "world_time_range": null,
+        "observed_on": "2026-09-05"
+      },
+      "status": {
+        "epistemic": "observed",
+        "review": "source_checked",
+        "lifecycle": "active",
+        "adoption": "not_decided"
+      },
+      "support_refs": [
+        {
+          "source_id": "SRC-RESEARCH-PACK-001",
+          "source_version": 1,
+          "selector": "ZIP central directory; all non-directory entries read; CRC checked",
+          "local_result": "evidence/input_audit.json"
+        }
+      ],
+      "contradicts": [],
+      "derived_from": [],
+      "confidence": {
+        "numeric_probability": null,
+        "basis": "Counted and read all archive entries. Manifest lists 13 content files, excluding itself.",
+        "calibration_ref": null
+      },
+      "revisit_when": "Source archive hash changes."
+    }
+  ],
+  "proposed_objects": [
+    {
+      "id": "OBJ-ROOF-PILOT-PROPOSED",
+      "record_role": "proposal_not_verified_world_instance",
+      "description": "A limited roof patch based on the best available traceable local references.",
+      "place_id": null,
+      "historical_time_range": null,
+      "metric_scale": null,
+      "geometry_unit": "unknown",
+      "supporting_source_ids": [],
+      "constraints": [
+        "Relative-shape experiments may proceed when explicitly marked as such.",
+        "Do not convert unknown file units to metres.",
+        "Do not claim historical date, installation type, or calibrated physical response without supporting evidence."
+      ]
+    }
+  ],
+  "decisions": [
+    {
+      "id": "DEC-PILOT-001",
+      "version": 1,
+      "proposed_change": "Select a bounded existing production failure using evidence availability, a defensible acceptance reference, current rework, and correction cost; a roof patch is one candidate.",
+      "scope": "Conditional pilot selection. No project-wide best-asset claim or calendar commitment.",
+      "status": "proposed",
+      "rationale_refs": [
+        "01_REVIEW.md",
+        "02_HANDOFF_AND_ROADMAP.md"
+      ],
+      "alternatives": [
+        "Use another local asset with stronger source evidence and an accepted baseline."
+      ],
+      "consequences": [
+        "Keeps the first integration limited to architecture, tiles, material, and a defined environment input."
+      ],
+      "reopen_when": "A materially better evidenced pilot asset is identified or the roof sample cannot test the target failures.",
+      "adopted_by": null,
+      "adopted_at": null
+    }
+  ],
+  "tasks": [
+    {
+      "id": "TASK-ROOF-PILOT-PROPOSED",
+      "record_role": "work_plan_not_dispatched",
+      "goal": "Demonstrate traceable correction, regression detection, and a usable handoff on one limited object.",
+      "subject_id": "OBJ-ROOF-PILOT-PROPOSED",
+      "accepted_baseline": null,
+      "target_device": null,
+      "runtime_budget": null,
+      "execution_budget": null,
+      "next_experiment": "EXP-REGRESSION-PROPOSED",
+      "blocked_claims": [
+        "Metric dimensions",
+        "Historical installation identity",
+        "Calibrated physical material behaviour"
+      ],
+      "independent_next_steps": [
+        "Use the existing project inventory to check whether this candidate is suitable; do not recreate a full inventory.",
+        "Locate original sample sources",
+        "Record relative geometry and views",
+        "Design known-bad and valid control fixtures",
+        "Populate source and decision records"
+      ],
+      "status": "proposed"
+    }
+  ],
+  "experiments": [
+    {
+      "id": "EXP-REGRESSION-PROPOSED",
+      "task_id": "TASK-ROOF-PILOT-PROPOSED",
+      "hypothesis": "Explicit structural checks can reject a known-invalid support configuration even when the usual front view is similar.",
+      "prediction": "Removing a support declared necessary in the test fixture triggers a structural failure; its valid control passes.",
+      "changed_variables": [
+        "One support relationship and its corresponding test geometry"
+      ],
+      "controls": [
+        "Same camera",
+        "Same renderer and lighting",
+        "Same materials",
+        "Same other dimensions",
+        "Known-valid control"
+      ],
+      "evidence_refs": [],
+      "evaluation_plan": "Use a fixture with specified support requirements; compare relation check and underside/section views. This demonstrates test behaviour, not unknown historical construction.",
+      "budget": null,
+      "result_refs": [],
+      "outcome": "not_run",
+      "visual_accepted": false,
+      "production_accepted": false
+    }
+  ],
+  "handoff": {
+    "status": "review_prepared_no_upgrade_executed",
+    "read_first": [
+      "README.md",
+      "02_HANDOFF_AND_ROADMAP.md"
+    ],
+    "required_before_production_acceptance": [
+      "Actual source and applicable scale",
+      "Task-specific target and runtime contract",
+      "Test results",
+      "Explicit acceptance for the stated scope"
+    ],
+    "pending_decision_ids": [
+      "DEC-PILOT-001"
+    ],
+    "next_mentor_input": [
+      "Accepted or best candidate baseline",
+      "Fixed-view before/after evidence",
+      "Known-bad and valid control results",
+      "One transfer experiment",
+      "Actual costs and unresolved contradictions"
+    ]
+  },
+  "recipient": "小妈",
+  "revision": "1.1"
+}

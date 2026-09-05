@@ -1,0 +1,112 @@
+{
+  "date": "2026-09-05",
+  "source": "C:\\Users\\Administrator\\Downloads\\Mother_System_Astra_Research_Pack_V1.0_2026-09-05.zip",
+  "source_bytes": 21768,
+  "source_sha256": "da096ec58003b4081912758f8615db9f9b645d6d8192d18c2abc35127473971b",
+  "zip_crc_check": "passed",
+  "files_read": 14,
+  "content_files_excluding_manifest": 13,
+  "manifest_matches": true,
+  "uncompressed_bytes": 39585,
+  "entries": [
+    {
+      "name": "ASTRA_OUTPUT_CONTRACT.md",
+      "archive_path": "Mother_System_Astra_Research_Pack_V1.0/ASTRA_OUTPUT_CONTRACT.md",
+      "bytes": 1583,
+      "lines": 73,
+      "sha256": "922d489abef9149e9b9e3feab66f4c80064b43438215336a6f2d77325b53494d"
+    },
+    {
+      "name": "CONTRIBUTION_SCHEMA.md",
+      "archive_path": "Mother_System_Astra_Research_Pack_V1.0/CONTRIBUTION_SCHEMA.md",
+      "bytes": 886,
+      "lines": 61,
+      "sha256": "1cde230632a62aa9eb3f81c3c9ed6a2c6e73e37d3ad30f6c6794ead2146982a2"
+    },
+    {
+      "name": "CURRENT_FAILURE_MODES.md",
+      "archive_path": "Mother_System_Astra_Research_Pack_V1.0/CURRENT_FAILURE_MODES.md",
+      "bytes": 2545,
+      "lines": 104,
+      "sha256": "c7c8088964b450750220f0a0a791525041075f5b73cca5e2a6e0de9c67cbdad8"
+    },
+    {
+      "name": "MANIFEST.json",
+      "archive_path": "Mother_System_Astra_Research_Pack_V1.0/MANIFEST.json",
+      "bytes": 635,
+      "lines": 22,
+      "sha256": "90614e48f2f8040afcf799577d25479f9000b43752f6d9244d9bbe790ba454b3"
+    },
+    {
+      "name": "MEMORY_AND_HANDOFF_PROTOCOL.md",
+      "archive_path": "Mother_System_Astra_Research_Pack_V1.0/MEMORY_AND_HANDOFF_PROTOCOL.md",
+      "bytes": 2009,
+      "lines": 96,
+      "sha256": "15e059605b0f8fff8882076193626c2b45315fee0aebb6eb6d25f1510a999d15"
+    },
+    {
+      "name": "MOTHER_REGISTRY.md",
+      "archive_path": "Mother_System_Astra_Research_Pack_V1.0/MOTHER_REGISTRY.md",
+      "bytes": 2880,
+      "lines": 197,
+      "sha256": "6bb98692769185185cc15b34ebcdf7b9d3ffde31176208e489f4f5f9fe64b096"
+    },
+    {
+      "name": "OPEN_WORLD_KNOWLEDGE_COMMONS.md",
+      "archive_path": "Mother_System_Astra_Research_Pack_V1.0/OPEN_WORLD_KNOWLEDGE_COMMONS.md",
+      "bytes": 2530,
+      "lines": 111,
+      "sha256": "12276eb0e636c4417119cf03b9db1027ff689829f89e1287e36c79bd1cd3d4c9"
+    },
+    {
+      "name": "PROJECT_STATE_SNAPSHOT.md",
+      "archive_path": "Mother_System_Astra_Research_Pack_V1.0/PROJECT_STATE_SNAPSHOT.md",
+      "bytes": 1819,
+      "lines": 74,
+      "sha256": "66fc8ea7dd5e3fb3a4613bf7b148356da1e7da16cee2d49550a7f4b63d056ffe"
+    },
+    {
+      "name": "PUBLIC_TECH_KNOWLEDGE_MAP.md",
+      "archive_path": "Mother_System_Astra_Research_Pack_V1.0/PUBLIC_TECH_KNOWLEDGE_MAP.md",
+      "bytes": 4675,
+      "lines": 216,
+      "sha256": "39869aeaa8bd5bf88c223bc5ddbc6b30d97d26407af0d4a572ad36d56f8a0ff1"
+    },
+    {
+      "name": "README_START_HERE.md",
+      "archive_path": "Mother_System_Astra_Research_Pack_V1.0/README_START_HERE.md",
+      "bytes": 2773,
+      "lines": 58,
+      "sha256": "5bd9d0417b4e8bdc085ed768f35e360d761d25e422336fe8bb24c4086a4dbb2e"
+    },
+    {
+      "name": "RESEARCH_QUESTIONS_FOR_ASTRA.md",
+      "archive_path": "Mother_System_Astra_Research_Pack_V1.0/RESEARCH_QUESTIONS_FOR_ASTRA.md",
+      "bytes": 5699,
+      "lines": 188,
+      "sha256": "09a7beecacbe79c2b7a44d32b861d99733682ce1fc795d89cdf097814b838411"
+    },
+    {
+      "name": "SOURCE_MAP.md",
+      "archive_path": "Mother_System_Astra_Research_Pack_V1.0/SOURCE_MAP.md",
+      "bytes": 3478,
+      "lines": 123,
+      "sha256": "f5bc84e977da04cd897cb255b93c78d22ed046a3256c0d645978baf607659360"
+    },
+    {
+      "name": "SYSTEM_CANON.md",
+      "archive_path": "Mother_System_Astra_Research_Pack_V1.0/SYSTEM_CANON.md",
+      "bytes": 4202,
+      "lines": 155,
+      "sha256": "e5ab1d347bfe4cb1eee47eac48219cf26f89e18c814ceba9cc248612aaa49999"
+    },
+    {
+      "name": "WORLD_LEARNING_MODEL.md",
+      "archive_path": "Mother_System_Astra_Research_Pack_V1.0/WORLD_LEARNING_MODEL.md",
+      "bytes": 3871,
+      "lines": 176,
+      "sha256": "fbe756a04a3d57ee8f1ef9d322319c43db65627baedf7b74ce893ed570e4bf87"
+    }
+  ],
+  "scope": "All 14 archive files read. No code, raw DEM, production assets, or benchmark runs are included in this input archive."
+}

@@ -1,0 +1,323 @@
+{
+  "review_date": "2026-09-05",
+  "reviewer": "小妈",
+  "scope": "local handoff contents and integrity; no live production code, external websites or real DEM revalidation",
+  "input_zip": {
+    "name": "Mother_System_小妈交接包_V1.1_2026-09-05.zip",
+    "sha256": "cd6095f7384f6114e1c8fc804cd119c512b568020772673a9f328d410b43d849",
+    "files": 42
+  },
+  "manifest_checks": [
+    {
+      "manifest": "MANIFEST.json",
+      "hashed_entries_checked": 40,
+      "mismatches": []
+    },
+    {
+      "manifest": "details/DELIVERY_MANIFEST.json",
+      "hashed_entries_checked": 34,
+      "mismatches": []
+    }
+  ],
+  "json_files_parsed": 9,
+  "original_input_matches_current_v1_0_archive": true,
+  "original_input_sha256": "da096ec58003b4081912758f8615db9f9b645d6d8192d18c2abc35127473971b",
+  "original_input_crc_passed": true,
+  "original_files": [
+    {
+      "file": "ASTRA_OUTPUT_CONTRACT.md",
+      "bytes": 1583,
+      "matches_packaged_copy": true
+    },
+    {
+      "file": "CONTRIBUTION_SCHEMA.md",
+      "bytes": 886,
+      "matches_packaged_copy": true
+    },
+    {
+      "file": "CURRENT_FAILURE_MODES.md",
+      "bytes": 2545,
+      "matches_packaged_copy": true
+    },
+    {
+      "file": "MANIFEST.json",
+      "bytes": 635,
+      "matches_packaged_copy": true
+    },
+    {
+      "file": "MEMORY_AND_HANDOFF_PROTOCOL.md",
+      "bytes": 2009,
+      "matches_packaged_copy": true
+    },
+    {
+      "file": "MOTHER_REGISTRY.md",
+      "bytes": 2880,
+      "matches_packaged_copy": true
+    },
+    {
+      "file": "OPEN_WORLD_KNOWLEDGE_COMMONS.md",
+      "bytes": 2530,
+      "matches_packaged_copy": true
+    },
+    {
+      "file": "PROJECT_STATE_SNAPSHOT.md",
+      "bytes": 1819,
+      "matches_packaged_copy": true
+    },
+    {
+      "file": "PUBLIC_TECH_KNOWLEDGE_MAP.md",
+      "bytes": 4675,
+      "matches_packaged_copy": true
+    },
+    {
+      "file": "README_START_HERE.md",
+      "bytes": 2773,
+      "matches_packaged_copy": true
+    },
+    {
+      "file": "RESEARCH_QUESTIONS_FOR_ASTRA.md",
+      "bytes": 5699,
+      "matches_packaged_copy": true
+    },
+    {
+      "file": "SOURCE_MAP.md",
+      "bytes": 3478,
+      "matches_packaged_copy": true
+    },
+    {
+      "file": "SYSTEM_CANON.md",
+      "bytes": 4202,
+      "matches_packaged_copy": true
+    },
+    {
+      "file": "WORLD_LEARNING_MODEL.md",
+      "bytes": 3871,
+      "matches_packaged_copy": true
+    }
+  ],
+  "consolidated_report_matches_eight_modules": true,
+  "local_markdown_links_checked": 35,
+  "local_link_errors": [],
+  "question_index_all_1_to_47": true,
+  "resource_map_count": 36,
+  "resource_ids_contiguous": true,
+  "proposed_decisions_remain_unadopted": true,
+  "proposed_experiments_remain_not_run": true,
+  "bundled_readonly_verifier": {
+    "returncode": 0,
+    "stdout": "{\n  \"status\": \"passed\",\n  \"recipient\": \"小妈\",\n  \"version\": \"1.1\",\n  \"files_hash_checked\": 40,\n  \"original_input_files_match\": true,\n  \"external_files_or_network_required\": false,\n  \"scope\": \"Package integrity only; does not validate proposed production or learning capabilities.\"\n}\n",
+    "stderr": ""
+  },
+  "files": [
+    {
+      "path": "00_小妈先读.md",
+      "bytes": 3227,
+      "sha256": "f8a0cbfa90f1cb921600052e53ade6c770aac443c363cdb6ad177152178a5a6a"
+    },
+    {
+      "path": "01_完整研究与复核.md",
+      "bytes": 102277,
+      "sha256": "90ddb446dc5208afa4b1aea9f1134e9c6d3c782e7890c28f62032934e93bd554"
+    },
+    {
+      "path": "MANIFEST.json",
+      "bytes": 7369,
+      "sha256": "470c9701340b3211663dad63385c824748db905bcc0387e3679edc536e3e88cd"
+    },
+    {
+      "path": "details/00_SECOND_REVIEW.md",
+      "bytes": 7314,
+      "sha256": "368fe0a31cd33a0a2f3fd0820daf13d4060e1ab83d0d7b9b593d528741c09a43"
+    },
+    {
+      "path": "details/01_REVIEW.md",
+      "bytes": 32003,
+      "sha256": "a00676c2e46743458fd8454683e0addc5f441539a6c2e234a599a173b213c679"
+    },
+    {
+      "path": "details/02_HANDOFF_AND_ROADMAP.md",
+      "bytes": 15705,
+      "sha256": "324f1e71d61b4900847ce806c81ebb30fa71b7402a4d39e93e8acec05c001435"
+    },
+    {
+      "path": "details/03_RESOURCE_MAP.md",
+      "bytes": 15575,
+      "sha256": "e0d90501eedd76fb323ff95d669d0db92c08bd17f63f96e6673c2a1760abb76b"
+    },
+    {
+      "path": "details/04_RISKS_AND_QUESTIONS.md",
+      "bytes": 13071,
+      "sha256": "99f408a503447a791d04d918331ce1c78cb8bdc9eb6eb981427e5d5f69077484"
+    },
+    {
+      "path": "details/05_CONTRACTS.md",
+      "bytes": 9374,
+      "sha256": "4075044841c1d83ae1c294171d693fdf5b706daba084dd420ad41f133f3cb427"
+    },
+    {
+      "path": "details/06_DEM_AND_STORAGE.md",
+      "bytes": 6469,
+      "sha256": "3f4419e04c5674e75466ca87f55007e469bf7a9e1fb5e18109360a529ea0d07b"
+    },
+    {
+      "path": "details/CHANGELOG.md",
+      "bytes": 2076,
+      "sha256": "936984b41671d9fe2d2efd9084b778a2d98e1825b1e134385003dd16e2372288"
+    },
+    {
+      "path": "details/DELIVERY_MANIFEST.json",
+      "bytes": 5897,
+      "sha256": "2289a17f5428a363a9926e6f29d10bd9ee62e6723e6369ece312466dc69d9ad9"
+    },
+    {
+      "path": "details/README.md",
+      "bytes": 3818,
+      "sha256": "1659d31bb9e8e5edb377b2bfcebeb8c3aaa90d65dd177369d360038291b14304"
+    },
+    {
+      "path": "details/contracts/examples.json",
+      "bytes": 6755,
+      "sha256": "66162fd497f2734942813f13e96b60c8ae73562292c9aab43da0d4c17eed188d"
+    },
+    {
+      "path": "details/evidence/compression_demo.json",
+      "bytes": 1665,
+      "sha256": "2bf21808e5ce59027613d53275418dfb2971d7ad297e036242b30071c2b8e8c2"
+    },
+    {
+      "path": "details/evidence/delivery_validation.json",
+      "bytes": 651,
+      "sha256": "7224edbd52e38c75ba0b91148bb29936880c6ead93439a7ddba6bcf9d5dfc6a1"
+    },
+    {
+      "path": "details/evidence/input_audit.json",
+      "bytes": 4364,
+      "sha256": "ea58a23acf8dc8258f6f57b400bd4789c2a5d9f4942121e7c9b743e78207182a"
+    },
+    {
+      "path": "details/evidence/local_evidence_provenance.json",
+      "bytes": 1097,
+      "sha256": "ecfbf556a93727202fdcaef3aad39334e7b23a61b663f118b73b958b8c68f69d"
+    },
+    {
+      "path": "details/evidence/local_tiles_analysis_20260901.json",
+      "bytes": 24087,
+      "sha256": "0d9f2dd2dee84ea57e2e8b0dbabe36ab060b5647171ee082bfab2ab0c58dfca7"
+    },
+    {
+      "path": "details/evidence/local_tiles_contact_sheet_20260901.png",
+      "bytes": 213777,
+      "sha256": "7cb5ddbe1ad17eedb364b2e5b07c70667d5f47501bada5483630ab2a97c6ea71"
+    },
+    {
+      "path": "details/evidence/local_tiles_review_20260901.md",
+      "bytes": 3964,
+      "sha256": "3325e4eb2faff5e91d44012e41cc4221ee4d4ff7db0f29d9e9614b6cde369c22"
+    },
+    {
+      "path": "details/input/ASTRA_OUTPUT_CONTRACT.md",
+      "bytes": 1583,
+      "sha256": "922d489abef9149e9b9e3feab66f4c80064b43438215336a6f2d77325b53494d"
+    },
+    {
+      "path": "details/input/CONTRIBUTION_SCHEMA.md",
+      "bytes": 886,
+      "sha256": "1cde230632a62aa9eb3f81c3c9ed6a2c6e73e37d3ad30f6c6794ead2146982a2"
+    },
+    {
+      "path": "details/input/CURRENT_FAILURE_MODES.md",
+      "bytes": 2545,
+      "sha256": "c7c8088964b450750220f0a0a791525041075f5b73cca5e2a6e0de9c67cbdad8"
+    },
+    {
+      "path": "details/input/MANIFEST.json",
+      "bytes": 635,
+      "sha256": "90614e48f2f8040afcf799577d25479f9000b43752f6d9244d9bbe790ba454b3"
+    },
+    {
+      "path": "details/input/MEMORY_AND_HANDOFF_PROTOCOL.md",
+      "bytes": 2009,
+      "sha256": "15e059605b0f8fff8882076193626c2b45315fee0aebb6eb6d25f1510a999d15"
+    },
+    {
+      "path": "details/input/MOTHER_REGISTRY.md",
+      "bytes": 2880,
+      "sha256": "6bb98692769185185cc15b34ebcdf7b9d3ffde31176208e489f4f5f9fe64b096"
+    },
+    {
+      "path": "details/input/OPEN_WORLD_KNOWLEDGE_COMMONS.md",
+      "bytes": 2530,
+      "sha256": "12276eb0e636c4417119cf03b9db1027ff689829f89e1287e36c79bd1cd3d4c9"
+    },
+    {
+      "path": "details/input/PROJECT_STATE_SNAPSHOT.md",
+      "bytes": 1819,
+      "sha256": "66fc8ea7dd5e3fb3a4613bf7b148356da1e7da16cee2d49550a7f4b63d056ffe"
+    },
+    {
+      "path": "details/input/PUBLIC_TECH_KNOWLEDGE_MAP.md",
+      "bytes": 4675,
+      "sha256": "39869aeaa8bd5bf88c223bc5ddbc6b30d97d26407af0d4a572ad36d56f8a0ff1"
+    },
+    {
+      "path": "details/input/README_START_HERE.md",
+      "bytes": 2773,
+      "sha256": "5bd9d0417b4e8bdc085ed768f35e360d761d25e422336fe8bb24c4086a4dbb2e"
+    },
+    {
+      "path": "details/input/RESEARCH_QUESTIONS_FOR_ASTRA.md",
+      "bytes": 5699,
+      "sha256": "09a7beecacbe79c2b7a44d32b861d99733682ce1fc795d89cdf097814b838411"
+    },
+    {
+      "path": "details/input/SOURCE_MAP.md",
+      "bytes": 3478,
+      "sha256": "f5bc84e977da04cd897cb255b93c78d22ed046a3256c0d645978baf607659360"
+    },
+    {
+      "path": "details/input/SYSTEM_CANON.md",
+      "bytes": 4202,
+      "sha256": "e5ab1d347bfe4cb1eee47eac48219cf26f89e18c814ceba9cc248612aaa49999"
+    },
+    {
+      "path": "details/input/WORLD_LEARNING_MODEL.md",
+      "bytes": 3871,
+      "sha256": "fbe756a04a3d57ee8f1ef9d322319c43db65627baedf7b74ce893ed570e4bf87"
+    },
+    {
+      "path": "details/input/original_research_pack.zip",
+      "bytes": 21768,
+      "sha256": "da096ec58003b4081912758f8615db9f9b645d6d8192d18c2abc35127473971b"
+    },
+    {
+      "path": "details/tools/build_evidence.py",
+      "bytes": 6289,
+      "sha256": "6888bb9aebd9b5ec7674096b4969f73f7e20fc7be28b5a675ada8d60514e7d29"
+    },
+    {
+      "path": "details/tools/package_review.py",
+      "bytes": 6540,
+      "sha256": "3a10dddd5996affc32c3bb470e7d62db0c3520edd835af73841f30ef8008dee6"
+    },
+    {
+      "path": "tools/README.md",
+      "bytes": 938,
+      "sha256": "14a5a69dd5c8f4828dc30c991ab746320671595ef81331ee61c5b89f57c8157d"
+    },
+    {
+      "path": "tools/assemble_handoff.py",
+      "bytes": 7063,
+      "sha256": "78907bf5d5ecef70c8dac3595ca8a271c49020e6b84d8fd652a1c477c84a6f7f"
+    },
+    {
+      "path": "tools/refine_review.py",
+      "bytes": 12725,
+      "sha256": "2f78757c868eb132342c23046ea13f76e96f3cf1a2f6aedc67d181384d068f1f"
+    },
+    {
+      "path": "tools/verify_handoff.py",
+      "bytes": 1903,
+      "sha256": "946288e9ba5c09f50b6f467ca5247e254826da9bd762097ef1c9e17f15415d9c"
+    }
+  ]
+}

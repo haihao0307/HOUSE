@@ -1,0 +1,22 @@
+{
+  "package": "Mother System × Astra Research Pack",
+  "version": "1.0",
+  "created": "2026-09-05",
+  "file_count": 13,
+  "files": [
+    "ASTRA_OUTPUT_CONTRACT.md",
+    "CONTRIBUTION_SCHEMA.md",
+    "CURRENT_FAILURE_MODES.md",
+    "MEMORY_AND_HANDOFF_PROTOCOL.md",
+    "MOTHER_REGISTRY.md",
+    "OPEN_WORLD_KNOWLEDGE_COMMONS.md",
+    "PROJECT_STATE_SNAPSHOT.md",
+    "PUBLIC_TECH_KNOWLEDGE_MAP.md",
+    "README_START_HERE.md",
+    "RESEARCH_QUESTIONS_FOR_ASTRA.md",
+    "SOURCE_MAP.md",
+    "SYSTEM_CANON.md",
+    "WORLD_LEARNING_MODEL.md"
+  ],
+  "purpose": "First consolidated mentor-level research handoff for the Mother System."
+}

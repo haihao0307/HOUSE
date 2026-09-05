@@ -1,0 +1,21 @@
+{
+  "package_id": "XIAOMA-MENTOR-V1.1-DIST-20260905",
+  "mentor_version": "1.1",
+  "distribution_version": "1.1.1",
+  "mother_id": null,
+  "source_commit_read": null,
+  "paths_read": [],
+  "working_repository": null,
+  "working_branch": null,
+  "working_head": null,
+  "baseline_acceptance_evidence": null,
+  "selected_issue": null,
+  "reference_evidence": [],
+  "protected_constraints": [],
+  "open_questions": [],
+  "receipt_status": "not_acknowledged",
+  "experiment_status": "not_run",
+  "visual_acceptance": null,
+  "production_ready": null,
+  "note": "由实际收件执行者填写；协调端不得代签。null 表示未知，模板不改变现有批准状态。"
+}
