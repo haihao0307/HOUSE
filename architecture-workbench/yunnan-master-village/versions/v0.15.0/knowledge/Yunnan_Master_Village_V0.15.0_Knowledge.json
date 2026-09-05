@@ -1,0 +1,122 @@
+{
+  "version": "0.15.0",
+  "role": "Yunnan master-builder workbench; incremental circulation candidate",
+  "baseline": {
+    "file": "Yunnan_Master_and_Village_V0.14.0.html",
+    "sha256": "9fd104d6d95604351e041faa8dc39516d4337d85569601e1b6e3ca162dd5b587",
+    "modified": false
+  },
+  "scope": [
+    "staircase physical interfaces",
+    "three floor workers descend",
+    "openable east upstairs double door",
+    "front-courtyard table moving and shared meal"
+  ],
+  "evidence_boundaries": {
+    "SU_measurements_imported": false,
+    "regional_stair_dimensions_confirmed": false,
+    "floor_height_source": "inherited V0.14.0 program candidate",
+    "user_requested_constraints": [
+      "retain assembly/raising/brace sequence",
+      "side-entry stair with turning platform",
+      "no handrail for this visual candidate",
+      "upstairs door opens",
+      "dinner in front earth courtyard",
+      "four cooked chicken legs",
+      "five dogs waiting then fed"
+    ],
+    "reference_pdf": "云南民居dokumen.pub_1-9787512399761.pdf",
+    "pdf_note": "PDF p101 discusses Qingyang hostel timber stairs in Enshi. It does not establish dimensions or exact stair location for the present Kunming/Yikeyin candidate."
+  },
+  "stair": {
+    "world_up": "Y",
+    "front_direction": "negative Z",
+    "bottom_stone_top_m": 0.21,
+    "floor_top_m": 3.076,
+    "turning_platform_top_m": 1.643,
+    "nominal_width_m": 1.0,
+    "runs": 2,
+    "timber_treads_per_run": 7,
+    "rises_per_run_including_landing": 8,
+    "rise_m": 0.179125,
+    "tread_depth_m": 0.26,
+    "top_landing_bounds_xz": [
+      3.56,
+      4.64,
+      -3.6,
+      -3.3
+    ],
+    "turn_landing_bounds_xz": [
+      3.53,
+      4.67,
+      -6.56,
+      -5.42
+    ],
+    "constructionSafetyApproved": false
+  },
+  "door": {
+    "leaves": 2,
+    "clear_opening_nominal_m": 1.5,
+    "opening_angle_deg": 100.8,
+    "hinges": "opposite outside edges",
+    "swing": "into east upstairs room",
+    "replay": "opens before arrival, closes after passage"
+  },
+  "circulation": {
+    "workers": [
+      "PERSON-6",
+      "PERSON-7",
+      "PERSON-8"
+    ],
+    "departure_gap_seconds": 7,
+    "route": [
+      "installed floor",
+      "east upper doorway",
+      "gallery",
+      "upper run",
+      "turning platform",
+      "lower run",
+      "base stone",
+      "exit stone",
+      "front court"
+    ],
+    "foot_solver": "explicit physical surface rectangles and step targets, two-link knee IK, no invisible stair ramp",
+    "overhead_response": "sample actual member underside and duck while retaining frame geometry",
+    "inspection": "independent 62-second finished-building replay; construction chronology remains unchanged except added descent and table moving phases"
+  },
+  "meal": {
+    "table_centre_m": [
+      0,
+      0,
+      -8.15
+    ],
+    "table_footprint_xz": [
+      -2.775,
+      2.775,
+      -8.74,
+      -7.56
+    ],
+    "construction_workers": 13,
+    "all_diners": 17,
+    "cook_chicken_legs": 4,
+    "live_chickens_at_meal": 0,
+    "waiting_dogs": 5,
+    "food_after_wait": true,
+    "violence_shown": false
+  },
+  "remaining": [
+    "SU file units and nested transforms",
+    "exact relation to missing ear rooms",
+    "full-house joint fabrication",
+    "authentic regional ritual text/song",
+    "universal obstacle avoidance and full body physics",
+    "real mobile-device performance"
+  ],
+  "approvals": {
+    "measurementTruthApproved": false,
+    "historicReconstructionApproved": false,
+    "constructionTruthApproved": false,
+    "visualApproved": false,
+    "productionApproved": false
+  }
+}

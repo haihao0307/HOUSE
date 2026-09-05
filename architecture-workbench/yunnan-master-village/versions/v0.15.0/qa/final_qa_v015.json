@@ -1,0 +1,1997 @@
+{
+  "harness": "Chromium headed + Xvfb + SwiftShader; set_content of complete HTML bytes",
+  "timestamp_utc": "2026-09-05T06:12:27Z",
+  "html_sha256": "bdd566b7c1817a21c9fc136e23b53adaa1c018adaa6e4aa25a43ef292aaedae9",
+  "baseline_sha256": "9fd104d6d95604351e041faa8dc39516d4337d85569601e1b6e3ca162dd5b587",
+  "source_locks": [
+    {
+      "name": "whole_bent_generator",
+      "identical": true,
+      "bytes": 2834,
+      "sha256": "82cf80b5fcfe868167ff4b2c95a0ead45f13bab04d1e5394867df13a1cfb7e6b"
+    },
+    {
+      "name": "raising_crew_and_brace",
+      "identical": true,
+      "bytes": 5299,
+      "sha256": "cef4f90a640ece26e250a2f7e0ded94eebf279724184c0a80280c8f166c3882c"
+    },
+    {
+      "name": "sound_engine",
+      "identical": true,
+      "bytes": 10789,
+      "sha256": "fd71a2202da0632a67e23a29926180c6fb620d392e2e7c8b2b42f2fafe3a17b2"
+    }
+  ],
+  "initial": {
+    "t": 290,
+    "stage": 20,
+    "stageKey": "descend",
+    "stageProgress": 0.2903225806451613,
+    "view": "walk",
+    "light": "sunny",
+    "director": false,
+    "occlusion": {
+      "blocked": false,
+      "hit": null
+    },
+    "bounds": {
+      "width": 1192,
+      "height": 880
+    }
+  },
+  "staircase": {
+    "passed": 6,
+    "total": 6,
+    "pass": true,
+    "tests": [
+      {
+        "id": "TOP_LANDING_FLUSH",
+        "pass": true,
+        "detail": {
+          "landing": 3.07599999922514,
+          "floor": 3.076
+        }
+      },
+      {
+        "id": "TOP_DOES_NOT_COVER_TREADS",
+        "pass": true,
+        "detail": "上跑踏步终止于平台前缘"
+      },
+      {
+        "id": "BOTTOM_PAD_BEARING",
+        "pass": true,
+        "detail": {
+          "bottom": -0.17999999284744264,
+          "top": 0.2099999928474426
+        }
+      },
+      {
+        "id": "RISERS_UNIFORM",
+        "pass": true,
+        "detail": {
+          "count": 16,
+          "rise": 0.179125,
+          "min": 0.17912499880790708,
+          "max": 0.17912500119209307
+        }
+      },
+      {
+        "id": "NO_TREAD_LANDING_OVERLAP",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "id": "TREADS_TOUCH_BOTH_STRINGERS",
+        "pass": true,
+        "detail": [
+          {
+            "id": "STAIR-LOWER-TREAD-0",
+            "side": -1,
+            "gap": -1.8095192011458039e-09
+          },
+          {
+            "id": "STAIR-LOWER-TREAD-0",
+            "side": 1,
+            "gap": -1.8095192011458039e-09
+          },
+          {
+            "id": "STAIR-UPPER-TREAD-0",
+            "side": -1,
+            "gap": -1.8095192011458039e-09
+          },
+          {
+            "id": "STAIR-UPPER-TREAD-0",
+            "side": 1,
+            "gap": -1.8095192011458039e-09
+          },
+          {
+            "id": "STAIR-LOWER-TREAD-1",
+            "side": -1,
+            "gap": -1.809518979101199e-09
+          },
+          {
+            "id": "STAIR-LOWER-TREAD-1",
+            "side": 1,
+            "gap": -1.809518979101199e-09
+          },
+          {
+            "id": "STAIR-UPPER-TREAD-1",
+            "side": -1,
+            "gap": -1.809518979101199e-09
+          },
+          {
+            "id": "STAIR-UPPER-TREAD-1",
+            "side": 1,
+            "gap": -1.809518979101199e-09
+          },
+          {
+            "id": "STAIR-LOWER-TREAD-2",
+            "side": -1,
+            "gap": -1.8095192011458039e-09
+          },
+          {
+            "id": "STAIR-LOWER-TREAD-2",
+            "side": 1,
+            "gap": -1.8095192011458039e-09
+          },
+          {
+            "id": "STAIR-UPPER-TREAD-2",
+            "side": -1,
+            "gap": -1.809518757056594e-09
+          },
+          {
+            "id": "STAIR-UPPER-TREAD-2",
+            "side": 1,
+            "gap": -1.809518757056594e-09
+          },
+          {
+            "id": "STAIR-LOWER-TREAD-3",
+            "side": -1,
+            "gap": -1.8095197562573162e-09
+          },
+          {
+            "id": "STAIR-LOWER-TREAD-3",
+            "side": 1,
+            "gap": -1.8095197562573162e-09
+          },
+          {
+            "id": "STAIR-UPPER-TREAD-3",
+            "side": -1,
+            "gap": -1.8095192011458039e-09
+          },
+          {
+            "id": "STAIR-UPPER-TREAD-3",
+            "side": 1,
+            "gap": -1.8095192011458039e-09
+          },
+          {
+            "id": "STAIR-LOWER-TREAD-4",
+            "side": -1,
+            "gap": -1.8095194231904088e-09
+          },
+          {
+            "id": "STAIR-LOWER-TREAD-4",
+            "side": 1,
+            "gap": -1.8095194231904088e-09
+          },
+          {
+            "id": "STAIR-UPPER-TREAD-4",
+            "side": -1,
+            "gap": -1.8095192011458039e-09
+          },
+          {
+            "id": "STAIR-UPPER-TREAD-4",
+            "side": 1,
+            "gap": -1.8095192011458039e-09
+          },
+          {
+            "id": "STAIR-LOWER-TREAD-5",
+            "side": -1,
+            "gap": -1.8095194231904088e-09
+          },
+          {
+            "id": "STAIR-LOWER-TREAD-5",
+            "side": 1,
+            "gap": -1.8095194231904088e-09
+          },
+          {
+            "id": "STAIR-UPPER-TREAD-5",
+            "side": -1,
+            "gap": -1.8095192011458039e-09
+          },
+          {
+            "id": "STAIR-UPPER-TREAD-5",
+            "side": 1,
+            "gap": -1.8095192011458039e-09
+          },
+          {
+            "id": "STAIR-LOWER-TREAD-6",
+            "side": -1,
+            "gap": -1.8095194231904088e-09
+          },
+          {
+            "id": "STAIR-LOWER-TREAD-6",
+            "side": 1,
+            "gap": -1.8095194231904088e-09
+          },
+          {
+            "id": "STAIR-UPPER-TREAD-6",
+            "side": -1,
+            "gap": -1.8095196452350137e-09
+          },
+          {
+            "id": "STAIR-UPPER-TREAD-6",
+            "side": 1,
+            "gap": -1.8095196452350137e-09
+          }
+        ]
+      }
+    ]
+  },
+  "stages": [
+    {
+      "stage": "clear",
+      "index": 0,
+      "progress": 0.12,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 79,
+        "passed": 79,
+        "failures": []
+      }
+    },
+    {
+      "stage": "clear",
+      "index": 0,
+      "progress": 0.5,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 79,
+        "passed": 79,
+        "failures": []
+      }
+    },
+    {
+      "stage": "clear",
+      "index": 0,
+      "progress": 0.92,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 79,
+        "passed": 79,
+        "failures": []
+      }
+    },
+    {
+      "stage": "level",
+      "index": 1,
+      "progress": 0.12,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 79,
+        "passed": 79,
+        "failures": []
+      }
+    },
+    {
+      "stage": "level",
+      "index": 1,
+      "progress": 0.5,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 79,
+        "passed": 79,
+        "failures": []
+      }
+    },
+    {
+      "stage": "level",
+      "index": 1,
+      "progress": 0.92,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 79,
+        "passed": 79,
+        "failures": []
+      }
+    },
+    {
+      "stage": "stake",
+      "index": 2,
+      "progress": 0.12,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 79,
+        "passed": 79,
+        "failures": []
+      }
+    },
+    {
+      "stage": "stake",
+      "index": 2,
+      "progress": 0.5,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 79,
+        "passed": 79,
+        "failures": []
+      }
+    },
+    {
+      "stage": "stake",
+      "index": 2,
+      "progress": 0.92,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 79,
+        "passed": 79,
+        "failures": []
+      }
+    },
+    {
+      "stage": "chalk",
+      "index": 3,
+      "progress": 0.12,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 79,
+        "passed": 79,
+        "failures": []
+      }
+    },
+    {
+      "stage": "chalk",
+      "index": 3,
+      "progress": 0.5,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 79,
+        "passed": 79,
+        "failures": []
+      }
+    },
+    {
+      "stage": "chalk",
+      "index": 3,
+      "progress": 0.92,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 79,
+        "passed": 79,
+        "failures": []
+      }
+    },
+    {
+      "stage": "dig",
+      "index": 4,
+      "progress": 0.12,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 79,
+        "passed": 79,
+        "failures": []
+      }
+    },
+    {
+      "stage": "dig",
+      "index": 4,
+      "progress": 0.5,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 79,
+        "passed": 79,
+        "failures": []
+      }
+    },
+    {
+      "stage": "dig",
+      "index": 4,
+      "progress": 0.92,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 79,
+        "passed": 79,
+        "failures": []
+      }
+    },
+    {
+      "stage": "masonry",
+      "index": 5,
+      "progress": 0.12,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 79,
+        "passed": 79,
+        "failures": []
+      }
+    },
+    {
+      "stage": "masonry",
+      "index": 5,
+      "progress": 0.5,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 79,
+        "passed": 79,
+        "failures": []
+      }
+    },
+    {
+      "stage": "masonry",
+      "index": 5,
+      "progress": 0.92,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 79,
+        "passed": 79,
+        "failures": []
+      }
+    },
+    {
+      "stage": "base",
+      "index": 6,
+      "progress": 0.12,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 79,
+        "passed": 79,
+        "failures": []
+      }
+    },
+    {
+      "stage": "base",
+      "index": 6,
+      "progress": 0.5,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 79,
+        "passed": 79,
+        "failures": []
+      }
+    },
+    {
+      "stage": "base",
+      "index": 6,
+      "progress": 0.92,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 79,
+        "passed": 79,
+        "failures": []
+      }
+    },
+    {
+      "stage": "assemble1",
+      "index": 7,
+      "progress": 0.12,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 79,
+        "passed": 79,
+        "failures": []
+      }
+    },
+    {
+      "stage": "assemble1",
+      "index": 7,
+      "progress": 0.5,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 79,
+        "passed": 79,
+        "failures": []
+      }
+    },
+    {
+      "stage": "assemble1",
+      "index": 7,
+      "progress": 0.92,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 79,
+        "passed": 79,
+        "failures": []
+      }
+    },
+    {
+      "stage": "raise1",
+      "index": 8,
+      "progress": 0.12,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 97,
+        "passed": 97,
+        "failures": []
+      }
+    },
+    {
+      "stage": "raise1",
+      "index": 8,
+      "progress": 0.5,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 97,
+        "passed": 97,
+        "failures": []
+      }
+    },
+    {
+      "stage": "raise1",
+      "index": 8,
+      "progress": 0.92,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 97,
+        "passed": 97,
+        "failures": []
+      }
+    },
+    {
+      "stage": "brace1",
+      "index": 9,
+      "progress": 0.12,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 100,
+        "passed": 100,
+        "failures": []
+      }
+    },
+    {
+      "stage": "brace1",
+      "index": 9,
+      "progress": 0.5,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 100,
+        "passed": 100,
+        "failures": []
+      }
+    },
+    {
+      "stage": "brace1",
+      "index": 9,
+      "progress": 0.92,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 100,
+        "passed": 100,
+        "failures": []
+      }
+    },
+    {
+      "stage": "assemble2",
+      "index": 10,
+      "progress": 0.12,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 98,
+        "passed": 98,
+        "failures": []
+      }
+    },
+    {
+      "stage": "assemble2",
+      "index": 10,
+      "progress": 0.5,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 98,
+        "passed": 98,
+        "failures": []
+      }
+    },
+    {
+      "stage": "assemble2",
+      "index": 10,
+      "progress": 0.92,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 98,
+        "passed": 98,
+        "failures": []
+      }
+    },
+    {
+      "stage": "raise2",
+      "index": 11,
+      "progress": 0.12,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 116,
+        "passed": 116,
+        "failures": []
+      }
+    },
+    {
+      "stage": "raise2",
+      "index": 11,
+      "progress": 0.5,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 116,
+        "passed": 116,
+        "failures": []
+      }
+    },
+    {
+      "stage": "raise2",
+      "index": 11,
+      "progress": 0.92,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 119,
+        "passed": 119,
+        "failures": []
+      }
+    },
+    {
+      "stage": "link2",
+      "index": 12,
+      "progress": 0.12,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 117,
+        "passed": 117,
+        "failures": []
+      }
+    },
+    {
+      "stage": "link2",
+      "index": 12,
+      "progress": 0.5,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 117,
+        "passed": 117,
+        "failures": []
+      }
+    },
+    {
+      "stage": "link2",
+      "index": 12,
+      "progress": 0.92,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 117,
+        "passed": 117,
+        "failures": []
+      }
+    },
+    {
+      "stage": "raise3",
+      "index": 13,
+      "progress": 0.12,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 117,
+        "passed": 117,
+        "failures": []
+      }
+    },
+    {
+      "stage": "raise3",
+      "index": 13,
+      "progress": 0.5,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 135,
+        "passed": 135,
+        "failures": []
+      }
+    },
+    {
+      "stage": "raise3",
+      "index": 13,
+      "progress": 0.92,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 136,
+        "passed": 136,
+        "failures": []
+      }
+    },
+    {
+      "stage": "link3",
+      "index": 14,
+      "progress": 0.12,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 136,
+        "passed": 136,
+        "failures": []
+      }
+    },
+    {
+      "stage": "link3",
+      "index": 14,
+      "progress": 0.5,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 136,
+        "passed": 136,
+        "failures": []
+      }
+    },
+    {
+      "stage": "link3",
+      "index": 14,
+      "progress": 0.92,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 136,
+        "passed": 136,
+        "failures": []
+      }
+    },
+    {
+      "stage": "raise4",
+      "index": 15,
+      "progress": 0.12,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 136,
+        "passed": 136,
+        "failures": []
+      }
+    },
+    {
+      "stage": "raise4",
+      "index": 15,
+      "progress": 0.5,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 154,
+        "passed": 154,
+        "failures": []
+      }
+    },
+    {
+      "stage": "raise4",
+      "index": 15,
+      "progress": 0.92,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 155,
+        "passed": 155,
+        "failures": []
+      }
+    },
+    {
+      "stage": "link4",
+      "index": 16,
+      "progress": 0.12,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 155,
+        "passed": 155,
+        "failures": []
+      }
+    },
+    {
+      "stage": "link4",
+      "index": 16,
+      "progress": 0.5,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 155,
+        "passed": 155,
+        "failures": []
+      }
+    },
+    {
+      "stage": "link4",
+      "index": 16,
+      "progress": 0.92,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 155,
+        "passed": 155,
+        "failures": []
+      }
+    },
+    {
+      "stage": "celebrate",
+      "index": 17,
+      "progress": 0.12,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 155,
+        "passed": 155,
+        "failures": []
+      }
+    },
+    {
+      "stage": "celebrate",
+      "index": 17,
+      "progress": 0.5,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 155,
+        "passed": 155,
+        "failures": []
+      }
+    },
+    {
+      "stage": "celebrate",
+      "index": 17,
+      "progress": 0.92,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 155,
+        "passed": 155,
+        "failures": []
+      }
+    },
+    {
+      "stage": "joists",
+      "index": 18,
+      "progress": 0.12,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 155,
+        "passed": 155,
+        "failures": []
+      }
+    },
+    {
+      "stage": "joists",
+      "index": 18,
+      "progress": 0.5,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 155,
+        "passed": 155,
+        "failures": []
+      }
+    },
+    {
+      "stage": "joists",
+      "index": 18,
+      "progress": 0.92,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 155,
+        "passed": 155,
+        "failures": []
+      }
+    },
+    {
+      "stage": "boards",
+      "index": 19,
+      "progress": 0.12,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 155,
+        "passed": 155,
+        "failures": []
+      }
+    },
+    {
+      "stage": "boards",
+      "index": 19,
+      "progress": 0.5,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 155,
+        "passed": 155,
+        "failures": []
+      }
+    },
+    {
+      "stage": "boards",
+      "index": 19,
+      "progress": 0.92,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 155,
+        "passed": 155,
+        "failures": []
+      }
+    },
+    {
+      "stage": "descend",
+      "index": 20,
+      "progress": 0.12,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 156,
+        "passed": 156,
+        "failures": []
+      }
+    },
+    {
+      "stage": "descend",
+      "index": 20,
+      "progress": 0.5,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 156,
+        "passed": 156,
+        "failures": []
+      }
+    },
+    {
+      "stage": "descend",
+      "index": 20,
+      "progress": 0.92,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 156,
+        "passed": 156,
+        "failures": []
+      }
+    },
+    {
+      "stage": "rafters",
+      "index": 21,
+      "progress": 0.12,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 155,
+        "passed": 155,
+        "failures": []
+      }
+    },
+    {
+      "stage": "rafters",
+      "index": 21,
+      "progress": 0.5,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 155,
+        "passed": 155,
+        "failures": []
+      }
+    },
+    {
+      "stage": "rafters",
+      "index": 21,
+      "progress": 0.92,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 155,
+        "passed": 155,
+        "failures": []
+      }
+    },
+    {
+      "stage": "enclosure",
+      "index": 22,
+      "progress": 0.12,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 155,
+        "passed": 155,
+        "failures": []
+      }
+    },
+    {
+      "stage": "enclosure",
+      "index": 22,
+      "progress": 0.5,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 155,
+        "passed": 155,
+        "failures": []
+      }
+    },
+    {
+      "stage": "enclosure",
+      "index": 22,
+      "progress": 0.92,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 155,
+        "passed": 155,
+        "failures": []
+      }
+    },
+    {
+      "stage": "groundfloor",
+      "index": 23,
+      "progress": 0.12,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 155,
+        "passed": 155,
+        "failures": []
+      }
+    },
+    {
+      "stage": "groundfloor",
+      "index": 23,
+      "progress": 0.5,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 155,
+        "passed": 155,
+        "failures": []
+      }
+    },
+    {
+      "stage": "groundfloor",
+      "index": 23,
+      "progress": 0.92,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 155,
+        "passed": 155,
+        "failures": []
+      }
+    },
+    {
+      "stage": "feastsetup",
+      "index": 24,
+      "progress": 0.12,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 155,
+        "passed": 155,
+        "failures": []
+      }
+    },
+    {
+      "stage": "feastsetup",
+      "index": 24,
+      "progress": 0.5,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 155,
+        "passed": 155,
+        "failures": []
+      }
+    },
+    {
+      "stage": "feastsetup",
+      "index": 24,
+      "progress": 0.92,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 155,
+        "passed": 155,
+        "failures": []
+      }
+    },
+    {
+      "stage": "feast",
+      "index": 25,
+      "progress": 0.12,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 155,
+        "passed": 155,
+        "failures": []
+      }
+    },
+    {
+      "stage": "feast",
+      "index": 25,
+      "progress": 0.5,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 156,
+        "passed": 156,
+        "failures": []
+      }
+    },
+    {
+      "stage": "feast",
+      "index": 25,
+      "progress": 0.92,
+      "logical": {
+        "pass": true,
+        "total": 41,
+        "passed": 41,
+        "failures": []
+      },
+      "geometry": {
+        "pass": true,
+        "total": 156,
+        "passed": 156,
+        "failures": []
+      }
+    }
+  ],
+  "graph_regression": {
+    "checked": 632,
+    "missing": [],
+    "changed": [],
+    "total_current": 946
+  },
+  "atmosphere_graph_isolation": true,
+  "walk": {
+    "sample_count": 125,
+    "step_seconds": 0.5,
+    "workers": 3,
+    "foot_centres": 750,
+    "sole_footprint_points": 3750,
+    "min_centre_clearance_m": 0.002999998599289899,
+    "body_hits": 0,
+    "sole_hits": 0,
+    "final": {
+      "enabled": true,
+      "mode": "completed_building_replay",
+      "time": 62,
+      "doorOpenDegrees": 0,
+      "workers": [
+        {
+          "id": "PERSON-6",
+          "progress": 1,
+          "elapsed": 62,
+          "tag": "前院候席",
+          "position": [
+            2.45,
+            0.006,
+            -6.95
+          ],
+          "duck": 0,
+          "feet": [
+            {
+              "side": "left",
+              "x": 2.45,
+              "z": -7.045,
+              "soleY": 0.00299999859929085,
+              "supportY": 0,
+              "supportId": "TERRAIN",
+              "clearance": 0.00299999859929085,
+              "swing": false
+            },
+            {
+              "side": "right",
+              "x": 2.45,
+              "z": -6.855,
+              "soleY": 0.00299999859929085,
+              "supportY": 0,
+              "supportId": "TERRAIN",
+              "clearance": 0.00299999859929085,
+              "swing": false
+            }
+          ],
+          "finished": true
+        },
+        {
+          "id": "PERSON-7",
+          "progress": 1,
+          "elapsed": 55,
+          "tag": "前院候席",
+          "position": [
+            3.2300000000000004,
+            0.006,
+            -6.95
+          ],
+          "duck": 0,
+          "feet": [
+            {
+              "side": "left",
+              "x": 3.2300000000000004,
+              "z": -7.045,
+              "soleY": 0.00299999859929085,
+              "supportY": 0,
+              "supportId": "TERRAIN",
+              "clearance": 0.00299999859929085,
+              "swing": false
+            },
+            {
+              "side": "right",
+              "x": 3.2300000000000004,
+              "z": -6.855,
+              "soleY": 0.00299999859929085,
+              "supportY": 0,
+              "supportId": "TERRAIN",
+              "clearance": 0.00299999859929085,
+              "swing": false
+            }
+          ],
+          "finished": true
+        },
+        {
+          "id": "PERSON-8",
+          "progress": 1,
+          "elapsed": 48,
+          "tag": "前院候席",
+          "position": [
+            4.01,
+            0.006,
+            -6.95
+          ],
+          "duck": 0,
+          "feet": [
+            {
+              "side": "left",
+              "x": 4.01,
+              "z": -7.045,
+              "soleY": 0.00299999859929085,
+              "supportY": 0,
+              "supportId": "TERRAIN",
+              "clearance": 0.00299999859929085,
+              "swing": false
+            },
+            {
+              "side": "right",
+              "x": 4.01,
+              "z": -6.855,
+              "soleY": 0.00299999859929085,
+              "supportY": 0,
+              "supportId": "TERRAIN",
+              "clearance": 0.00299999859929085,
+              "swing": false
+            }
+          ],
+          "finished": true
+        }
+      ],
+      "routes": [
+        {
+          "worker": "PERSON-6",
+          "steps": 63,
+          "duration": 33
+        },
+        {
+          "worker": "PERSON-7",
+          "steps": 59,
+          "duration": 33
+        },
+        {
+          "worker": "PERSON-8",
+          "steps": 58,
+          "duration": 33
+        }
+      ],
+      "sourceScaleStatus": "provisional_not_extracted_SKP_truth"
+    }
+  },
+  "meals": [
+    {
+      "progress": 0.0,
+      "probe": {
+        "stage": "搬桌与摆凳",
+        "tableTravel": 0,
+        "tableLift": 0,
+        "constructionPresent": 13,
+        "dinersSeated": 0,
+        "totalDiners": 17,
+        "waitingDogs": 0,
+        "fedDogs": 0,
+        "clinks": [],
+        "drumstickCount": 0,
+        "liveChickens": 2,
+        "table": [
+          -0.5,
+          0,
+          -5.12
+        ],
+        "tableFootprint": {
+          "x0": -3.275,
+          "x1": 2.275,
+          "z0": -5.71,
+          "z1": -4.53
+        },
+        "stoneBandFront": -5.9399999999999995
+      }
+    },
+    {
+      "progress": 0.5,
+      "probe": {
+        "stage": "搬桌与摆凳",
+        "tableTravel": 0.5641282798833821,
+        "tableLift": 0.22369346174697835,
+        "constructionPresent": 13,
+        "dinersSeated": 0,
+        "totalDiners": 17,
+        "waitingDogs": 0,
+        "fedDogs": 0,
+        "clinks": [],
+        "drumstickCount": 0,
+        "liveChickens": 2,
+        "table": [
+          -0.21793586005830895,
+          0.22369346174697835,
+          -6.829308688046648
+        ],
+        "tableFootprint": {
+          "x0": -2.9929358600583087,
+          "x1": 2.557064139941691,
+          "z0": -7.419308688046648,
+          "z1": -6.239308688046648
+        },
+        "stoneBandFront": -5.9399999999999995
+      }
+    },
+    {
+      "progress": 0.999,
+      "probe": {
+        "stage": "搬桌与摆凳",
+        "tableTravel": 1,
+        "tableLift": 2.816687638038912e-17,
+        "constructionPresent": 13,
+        "dinersSeated": 0,
+        "totalDiners": 17,
+        "waitingDogs": 0,
+        "fedDogs": 0,
+        "clinks": [],
+        "drumstickCount": 0,
+        "liveChickens": 2,
+        "table": [
+          0,
+          2.816687638038912e-17,
+          -8.15
+        ],
+        "tableFootprint": {
+          "x0": -2.775,
+          "x1": 2.775,
+          "z0": -8.74,
+          "z1": -7.5600000000000005
+        },
+        "stoneBandFront": -5.9399999999999995
+      }
+    },
+    {
+      "progress": 0.1,
+      "probe": {
+        "stage": "前院入席",
+        "tableTravel": 1,
+        "tableLift": 0,
+        "constructionPresent": 13,
+        "dinersSeated": 0,
+        "totalDiners": 17,
+        "waitingDogs": 5,
+        "fedDogs": 0,
+        "clinks": [],
+        "drumstickCount": 4,
+        "liveChickens": 0,
+        "table": [
+          0,
+          0,
+          -8.15
+        ],
+        "tableFootprint": {
+          "x0": -2.775,
+          "x1": 2.775,
+          "z0": -8.74,
+          "z1": -7.5600000000000005
+        },
+        "stoneBandFront": -5.9399999999999995
+      }
+    },
+    {
+      "progress": 0.6,
+      "probe": {
+        "stage": "前院入席",
+        "tableTravel": 1,
+        "tableLift": 0,
+        "constructionPresent": 13,
+        "dinersSeated": 17,
+        "totalDiners": 17,
+        "waitingDogs": 5,
+        "fedDogs": 0,
+        "clinks": [
+          {
+            "a": "PERSON-6",
+            "b": "PERSON-7",
+            "phase": 0.8319655791846836,
+            "targetSeparation": 0.15
+          },
+          {
+            "a": "PERSON-8",
+            "b": "PERSON-9",
+            "phase": 0.9596038340621698,
+            "targetSeparation": 0.15
+          },
+          {
+            "a": "PERSON-10",
+            "b": "PERSON-11",
+            "phase": 0.9996890873953374,
+            "targetSeparation": 0.15
+          },
+          {
+            "a": "PERSON-0",
+            "b": "PERSON-1",
+            "phase": 0.9445852317654237,
+            "targetSeparation": 0.15
+          },
+          {
+            "a": "PERSON-2",
+            "b": "PERSON-3",
+            "phase": 0.804789368370287,
+            "targetSeparation": 0.15
+          },
+          {
+            "a": "PERSON-4",
+            "b": "PERSON-5",
+            "phase": 0.6069321441640947,
+            "targetSeparation": 0.15
+          }
+        ],
+        "drumstickCount": 4,
+        "liveChickens": 0,
+        "table": [
+          0,
+          0,
+          -8.15
+        ],
+        "tableFootprint": {
+          "x0": -2.775,
+          "x1": 2.775,
+          "z0": -8.74,
+          "z1": -7.5600000000000005
+        },
+        "stoneBandFront": -5.9399999999999995
+      }
+    },
+    {
+      "progress": 0.9,
+      "probe": {
+        "stage": "前院入席",
+        "tableTravel": 1,
+        "tableLift": 0,
+        "constructionPresent": 13,
+        "dinersSeated": 17,
+        "totalDiners": 17,
+        "waitingDogs": 0,
+        "fedDogs": 5,
+        "clinks": [
+          {
+            "a": "PERSON-6",
+            "b": "PERSON-7",
+            "phase": 0.9934467258643025,
+            "targetSeparation": 0.15
+          },
+          {
+            "a": "PERSON-8",
+            "b": "PERSON-9",
+            "phase": 0.9120791352252688,
+            "targetSeparation": 0.15
+          },
+          {
+            "a": "PERSON-10",
+            "b": "PERSON-11",
+            "phase": 0.7522118400823398,
+            "targetSeparation": 0.15
+          },
+          {
+            "a": "PERSON-0",
+            "b": "PERSON-1",
+            "phase": 0.5442990283712159,
+            "targetSeparation": 0.15
+          },
+          {
+            "a": "PERSON-2",
+            "b": "PERSON-3",
+            "phase": 0.3279473991134835,
+            "targetSeparation": 0.15
+          },
+          {
+            "a": "PERSON-4",
+            "b": "PERSON-5",
+            "phase": 0.1443712180019427,
+            "targetSeparation": 0.15
+          }
+        ],
+        "drumstickCount": 4,
+        "liveChickens": 0,
+        "table": [
+          0,
+          0,
+          -8.15
+        ],
+        "tableFootprint": {
+          "x0": -2.775,
+          "x1": 2.775,
+          "z0": -8.74,
+          "z1": -7.5600000000000005
+        },
+        "stoneBandFront": -5.9399999999999995
+      }
+    }
+  ],
+  "door_manual_open": 100.8,
+  "door_manual_close": 0,
+  "walk_button": "completed_building_replay",
+  "replay_cleared_by_feast": true,
+  "audio": {
+    "context": "running",
+    "master": true,
+    "demoRuns": 1,
+    "events": {
+      "dog": 3,
+      "pig": 1,
+      "buffalo": 1,
+      "chicken": 1,
+      "cat": 1,
+      "chant": 1,
+      "cracker": 9,
+      "work": 1,
+      "bird": 1,
+      "rope": 1,
+      "crowd": 1,
+      "clink": 1
+    },
+    "next": {
+      "chant": 100746.90000000014,
+      "dog": 100606.90000000014,
+      "pig": 102036.90000000014,
+      "buffalo": 101486.90000000014,
+      "chicken": 101306.90000000014,
+      "cat": 104786.90000000014,
+      "work": 100746.90000000014,
+      "clink": 102186.90000000014,
+      "crowd": 102586.90000000014,
+      "bird": 102486.90000000014,
+      "rope": 100906.90000000014
+    }
+  },
+  "desktop_errors": [],
+  "desktop_console": [],
+  "requests": [],
+  "failed_requests": [],
+  "static_dependencies": {
+    "external_scripts": [],
+    "image_tags": 0,
+    "media_tags": 0
+  }
+}

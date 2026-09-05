@@ -1,0 +1,158 @@
+{
+  "source_bundle": "Yunnan_Master_and_Village_V0.15.0_Full_Package.zip",
+  "bytes": 9207333,
+  "sha256": "1141a8634a0420e6a7882e22bc9e4a2428a8043a98e36597e6c5153eb6aea681",
+  "note": "原交付文件指纹。公开重启包中的 evidence 截图由同一 HTML 在冷启动复核时重新截取，文件内容可能不同，分别以新 MANIFEST 为准。源码、基线及原始 QA 数据保持原字节。",
+  "files": [
+    {
+      "path": "MANIFEST.json",
+      "bytes": 5021,
+      "sha256": "613fd7f3885c16fadd3189da4b35a4c7819c787d5f8653a964d86e62e38cf93e"
+    },
+    {
+      "path": "README.md",
+      "bytes": 2233,
+      "sha256": "4342e7bf3dc5946b9f63a5befca1a7122acc8ad369003ce4ac9d50628d23bfb9"
+    },
+    {
+      "path": "Yunnan_Master_Village_V0.15.0_QA.md",
+      "bytes": 4159,
+      "sha256": "91e285484c0d03071a4d7d47bf8d90010104cc51b31aa228b8c75c6ff2b5f289"
+    },
+    {
+      "path": "Yunnan_Master_and_Village_V0.15.0.html",
+      "bytes": 1488930,
+      "sha256": "bdd566b7c1817a21c9fc136e23b53adaa1c018adaa6e4aa25a43ef292aaedae9"
+    },
+    {
+      "path": "baseline/Yunnan_Master_and_Village_V0.14.0.html",
+      "bytes": 1457565,
+      "sha256": "9fd104d6d95604351e041faa8dc39516d4337d85569601e1b6e3ca162dd5b587"
+    },
+    {
+      "path": "evidence/01_workers_descending.png",
+      "bytes": 1115775,
+      "sha256": "d8eca90749094f114ffd3fd847a738a05aefec478a8869ad019b8e9e405c9086"
+    },
+    {
+      "path": "evidence/02_completed_stair_passage.png",
+      "bytes": 1263620,
+      "sha256": "653f02de88e9982624f800c7b207016132ae82a115754ff0607eb7b001f4d8f2"
+    },
+    {
+      "path": "evidence/03_open_upstairs_door.png",
+      "bytes": 656071,
+      "sha256": "3e7d3f232b0281d9219a6008d06c7dbe65c60b1702cdfd5b93b40a410f51b57f"
+    },
+    {
+      "path": "evidence/04_carrying_table_to_front_court.png",
+      "bytes": 1108941,
+      "sha256": "ef016fae13b66896919c760e17bbc02629e61b5a9502f3b014c3e9a6ae81d3ec"
+    },
+    {
+      "path": "evidence/05_front_courtyard_feast.png",
+      "bytes": 1172428,
+      "sha256": "a1c946f83e9211fd4982fdb657987d2849c488f99a6f5bcaa6cdd848967fd043"
+    },
+    {
+      "path": "evidence/06_mobile_walk_390.png",
+      "bytes": 331227,
+      "sha256": "34df566160aa7836d5c51ec91916e3c35eaee4b169f8d9d0f947b1aee505af98"
+    },
+    {
+      "path": "evidence/06_mobile_walk_430.png",
+      "bytes": 391660,
+      "sha256": "8fcdcc1219be9a97fc3c6e42eb7fbb9aefa3e0773f214cb63442f6bf7cae4621"
+    },
+    {
+      "path": "evidence/07_mobile_feast_390.png",
+      "bytes": 250393,
+      "sha256": "30d67283e95bb90d5cd99951151aac57e986389514e30bf561c7d527c9c92cb5"
+    },
+    {
+      "path": "evidence/07_mobile_feast_430.png",
+      "bytes": 296734,
+      "sha256": "6d1a5ced4a2fd862d2bdd25ebb3efabb2746b1081b2169e5a2cc8b6578c5bbce"
+    },
+    {
+      "path": "evidence/08_four_cooked_chicken_legs.png",
+      "bytes": 1112602,
+      "sha256": "9d8b3370ae1f6c160fc902dca4ddbbc25cca69ae08dcfe6555dbd81cc3cf7c56"
+    },
+    {
+      "path": "evidence/09_same_pole_brace_preserved.png",
+      "bytes": 792133,
+      "sha256": "6c85a8170e605418311e4caa3af6eb17abf451ba88bf094b0d24db78ea711a14"
+    },
+    {
+      "path": "knowledge/Yunnan_Master_Village_V0.15.0_Knowledge.json",
+      "bytes": 3587,
+      "sha256": "5f2032e347ea5851e53468059cfd66c9c18173acc140040ae2aef2f9853dab7d"
+    },
+    {
+      "path": "qa/capture15.py",
+      "bytes": 1781,
+      "sha256": "80cd7fedeb3150c323174ed938864e74a3c4cbe550c38d6f1b6d3d2a232253b6"
+    },
+    {
+      "path": "qa/captures_v015.json",
+      "bytes": 2806,
+      "sha256": "d81e8c303a631d6908860382220cb0f87020d0943f3977c47529f549a86900b0"
+    },
+    {
+      "path": "qa/component_graph_v015.json",
+      "bytes": 248218,
+      "sha256": "78475b658c8dae3199a66ad1f9265930c129619bbf0de365628e301b3ce72720"
+    },
+    {
+      "path": "qa/control_replay15.py",
+      "bytes": 2223,
+      "sha256": "c20d4ced34793d03b4b3981e439d52003539abbeed00edcf7558496b8c79e4f5"
+    },
+    {
+      "path": "qa/controls_v015.json",
+      "bytes": 6067,
+      "sha256": "ae8f8bb6d5b10259ec8080af16e7b058ee195425a7219e19a2d4513738bf811c"
+    },
+    {
+      "path": "qa/faults_mobile_v015.json",
+      "bytes": 2594,
+      "sha256": "07b1fa60ee83268f219de1423527f0026e960d48f1be31518ed406887ee3d2b9"
+    },
+    {
+      "path": "qa/final_qa15.py",
+      "bytes": 6663,
+      "sha256": "40ce1e3797fe0ab471b0ba899f4ac34e4755ff14da620cdb75125a8f1282db81"
+    },
+    {
+      "path": "qa/final_qa_v015.json",
+      "bytes": 41015,
+      "sha256": "d5fbd206d1bf73cde8d1f7cfd3edec3f040cad1c27d3ec9f3c8988de975f17ba"
+    },
+    {
+      "path": "qa/qa_faults_mobile15.py",
+      "bytes": 3902,
+      "sha256": "dafb0e625919a8ffdcfaa6609971a3f72094f1616857fe9e67315f5f190888cb"
+    },
+    {
+      "path": "qa/walk_trace_v015.json",
+      "bytes": 255174,
+      "sha256": "d933a2d6ee5f772442aa6baa8e73e0b9f100646afc85681e81f0db8a1eab3371"
+    },
+    {
+      "path": "src/build_v015.py",
+      "bytes": 9731,
+      "sha256": "feed623202dc5e6cb995fddf10113b9e00aa5f269ddc1f7ea04e4f6d81b19c12"
+    },
+    {
+      "path": "src/runtime_v015.js",
+      "bytes": 25533,
+      "sha256": "d0d21266d53d36c2ae45b681b86d273658a72306e495525b47422e4e29c24cc7"
+    },
+    {
+      "path": "src/stair_v015.js",
+      "bytes": 5285,
+      "sha256": "ac02aafd0e4fe9e7de8f494118b50250ca4f507c78ed58a0ec0d87357c7dc3ca"
+    }
+  ]
+}
