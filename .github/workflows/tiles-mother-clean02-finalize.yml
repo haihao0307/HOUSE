@@ -1,0 +1,175 @@
+name: Tiles Mother Clean 02 Final Public Verification
+on:
+  push:
+    branches: [feature/tiles-mother-v0.1-workbench]
+    paths:
+      - .github/workflows/tiles-mother-clean02-finalize.yml
+      - tiles-mother/clean-02/tools/public_fix.py
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+  pages: write
+  id-token: write
+concurrency:
+  group: tiles-mother-clean02-publication
+  cancel-in-progress: false
+jobs:
+  finalize:
+    if: github.ref == 'refs/heads/feature/tiles-mother-v0.1-workbench'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment:
+      name: tiles-mother-online
+      url: ${{ steps.deployment.outputs.page_url }}
+    env:
+      ROOT: tiles-mother/clean-02
+      PRIOR_RUN: '34025010125'
+      PUBLIC_URL: https://haihao0307.github.io/HOUSE/tiles-mother/clean-02/
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Recover original build and its failed public check evidence
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          run-id: 34025010125
+          name: Tiles_Mother_Clean_02_Public_Result
+          path: _first_result
+      - name: Recover current complete published website
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          run-id: 34025010125
+          name: github-pages
+          path: _previous_pages
+      - name: Correct only page icon and strengthen error capture
+        run: |
+          cp -a _first_result/. "$ROOT/"
+          echo "08c3c7323174c66c56a2c0080551e00ec014af4747006419ce22a1c4a926eedd  $ROOT/START_HERE.html" | sha256sum -c -
+          python "$ROOT/tools/public_fix.py" "$ROOT"
+          python "$ROOT/build.py"
+          echo "1477c0b62fc62ba97df823ba6a5bc6a362c82646397076ce122b8b0980835922  $ROOT/START_HERE.html" | sha256sum -c -
+          python - <<'PY'
+          import os
+          from pathlib import Path
+          r=Path(os.environ['ROOT']);old=Path('_first_result')
+          for p in (r/'source').glob('*.js'):assert p.read_bytes()==(old/'source'/p.name).read_bytes()
+          assert (r/'START_HERE.html').read_bytes().replace(b'<link rel="icon" href="data:,">',b'')==(old/'START_HERE.html').read_bytes()
+          PY
+          node "$ROOT/qa/geometry.cjs"
+          node "$ROOT/qa/contact.cjs"
+          node "$ROOT/qa/changes.cjs"
+      - name: Install actual browser
+        run: |
+          pip install playwright==1.57.0
+          playwright install --with-deps chromium
+      - name: Identify original public resource error without filtering
+        run: |
+          python - <<'PY'
+          import os,json
+          from pathlib import Path
+          from playwright.sync_api import sync_playwright
+          records=[]
+          with sync_playwright() as p:
+              kw={'headless':True,'args':['--no-sandbox','--use-angle=swiftshader','--enable-unsafe-swiftshader','--disable-dev-shm-usage']}
+              if Path('/usr/bin/chromium').exists():kw['executable_path']='/usr/bin/chromium'
+              b=p.chromium.launch(**kw);page=b.new_page()
+              page.on('response',lambda r:records.append({'kind':'http','url':r.url,'status':r.status}) if r.status>=400 else None)
+              page.on('console',lambda m:records.append({'kind':'console','message':m.text,'location':m.location}) if m.type=='error' else None)
+              page.goto(os.environ['PUBLIC_URL'],wait_until='load',timeout=120000);page.wait_for_timeout(5000);b.close()
+          (Path(os.environ['ROOT'])/'qa/FIRST_PUBLIC_ERROR_DIAGNOSIS.json').write_text(json.dumps(records,indent=2)+'\n');print(json.dumps(records))
+          PY
+      - name: Validate final local bytes in actual WebGL
+        run: env -u PUBLIC_URL python "$ROOT/qa/verify_browser.py"
+      - name: Preserve all other public files; update only this page
+        run: |
+          python - <<'PY'
+          import tarfile,json,hashlib,os,shutil
+          from pathlib import Path
+          site=Path('_site');site.mkdir()
+          with tarfile.open('_previous_pages/artifact.tar') as ar:
+              for m in ar:
+                  p=Path(m.name);assert not p.is_absolute() and '..' not in p.parts
+                  dest=site/p
+                  if m.isdir():dest.mkdir(parents=True,exist_ok=True)
+                  elif m.isfile():
+                      dest.parent.mkdir(parents=True,exist_ok=True)
+                      with ar.extractfile(m) as f,dest.open('wb') as o:shutil.copyfileobj(f,o)
+                  else:raise ValueError(m.name)
+          def hashes():return {p.relative_to(site).as_posix():hashlib.sha256(p.read_bytes()).hexdigest() for p in site.rglob('*') if p.is_file()}
+          before=hashes();own={'tiles-mother/clean-02/index.html','tiles-mother/clean-02/build.json'}
+          assert before['tiles-mother/clean-02/index.html']=='08c3c7323174c66c56a2c0080551e00ec014af4747006419ce22a1c4a926eedd'
+          r=Path(os.environ['ROOT']);shutil.copyfile(r/'START_HERE.html',site/'tiles-mother/clean-02/index.html');shutil.copyfile(r/'BUILD.json',site/'tiles-mother/clean-02/build.json')
+          after=hashes();assert set(after)==set(before)
+          assert all(after[k]==v for k,v in before.items() if k not in own)
+          report={'priorRun':int(os.environ['PRIOR_RUN']),'preservedOtherFileCount':len(before)-2,'allOtherFilesIdentical':True,'onlyUpdatedPaths':sorted(own),'htmlSHA256':after['tiles-mother/clean-02/index.html'],'sourceCommit':os.environ['GITHUB_SHA']}
+          (r/'qa/SITE_PRESERVATION.json').write_text(json.dumps(report,indent=2)+'\n');Path('_previous_hashes.json').write_text(json.dumps(before))
+          PY
+      - name: Refuse overwriting any newer complete Pages build
+        run: |
+          python - <<'PY'
+          import urllib.request,json,os
+          api='https://api.github.com/repos/'+os.environ['GITHUB_REPOSITORY']
+          def get(path):
+              r=urllib.request.Request(api+path,headers={'Authorization':'Bearer '+os.environ['GH_TOKEN'],'Accept':'application/vnd.github+json'})
+              with urllib.request.urlopen(r) as f:return json.load(f)
+          prior=get('/actions/runs/'+os.environ['PRIOR_RUN'])
+          for r in get('/actions/runs?per_page=100')['workflow_runs']:
+              if r['id']==int(os.environ['GITHUB_RUN_ID']) or r['created_at']<=prior['created_at']:continue
+              arts=get('/actions/runs/'+str(r['id'])+'/artifacts')['artifacts']
+              if any(a['name']=='github-pages' for a in arts):raise RuntimeError('Newer site artifact requires review: '+str(r['id']))
+              if r['status']!='completed' and ('deploy' in r['name'].lower() or 'public release' in r['name'].lower()):raise RuntimeError('Concurrent site publication: '+str(r['id']))
+          PY
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - name: Deploy complete preserved site
+        id: deployment
+        uses: actions/deploy-pages@v4
+      - name: Verify exact HTTPS page and retained public entries
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import os,time,json,hashlib,urllib.request
+          r=Path(os.environ['ROOT']);expected=hashlib.sha256((r/'START_HERE.html').read_bytes()).hexdigest()
+          for attempt in range(40):
+              try:
+                  with urllib.request.urlopen(os.environ['PUBLIC_URL'],timeout=20) as f:data=f.read();status=f.status
+                  if hashlib.sha256(data).hexdigest()==expected:break
+              except Exception as e:print(str(e))
+              time.sleep(5)
+          else:raise RuntimeError('Public HTML mismatch')
+          before=json.loads(Path('_previous_hashes.json').read_text());retained=[]
+          for name in ['index.html','brick-mother/index.html','brick-mother/experiments/atelier-r5/web/index.html','brick-mother/experiments/atelier-r6/web/index.html']:
+              with urllib.request.urlopen('https://haihao0307.github.io/HOUSE/'+name,timeout=30) as f:actual=hashlib.sha256(f.read()).hexdigest()
+              assert actual==before[name],name;retained.append(name)
+          (r/'qa/PUBLIC_HTTP.json').write_text(json.dumps({'url':os.environ['PUBLIC_URL'],'status':status,'sha256':expected,'bytes':len(data),'exactBytes':True,'retainedPublicEntries':retained},indent=2)+'\n')
+          PY
+      - name: Actual public desktop and phone interaction with zero unfiltered errors
+        run: python "$ROOT/qa/verify_browser.py"
+      - name: Save complete source and final evidence on original Tiles branch
+        run: |
+          git fetch origin feature/tiles-mother-v0.1-workbench
+          test "$(git rev-parse origin/feature/tiles-mother-v0.1-workbench)" = "$GITHUB_SHA"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -f "$ROOT/source" "$ROOT/build.py" "$ROOT/README.md" "$ROOT/START_HERE.html" "$ROOT/BUILD.json"
+          git add -f "$ROOT/qa/geometry.cjs" "$ROOT/qa/contact.cjs" "$ROOT/qa/changes.cjs" "$ROOT/qa/verify_browser.py"
+          git add -f "$ROOT/qa/GEOMETRY.json" "$ROOT/qa/CONTACT.json" "$ROOT/qa/CHANGES.json" "$ROOT/qa/SITE_PRESERVATION.json" "$ROOT/qa/PUBLIC_HTTP.json" "$ROOT/qa/FIRST_PUBLIC_ERROR_DIAGNOSIS.json"
+          git add -f "$ROOT/qa/browser02/REPORT.json" "$ROOT/qa/public/REPORT.json" "$ROOT/qa/public/NETWORK.json"
+          git commit -m 'release(tiles): preserve exact Clean 02 public source and unfiltered browser checks [skip ci]'
+          git push origin HEAD:feature/tiles-mother-v0.1-workbench
+      - name: Keep complete final results even on failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Tiles_Mother_Clean_02_Final_Public_Result
+          path: tiles-mother/clean-02
+          retention-days: 30
