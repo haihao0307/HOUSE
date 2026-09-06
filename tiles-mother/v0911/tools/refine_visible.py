@@ -4,7 +4,7 @@ root=Path(__file__).resolve().parents[1]
 p=root/'source/field_geometry.js';s=p.read_text()
 if 'fieldRaggedRim' not in s:
  s=s.replace('const radius=g.userData.radius,radial=g.userData.radial,ringCount=8;', '''const radius=g.userData.radius,radial=g.userData.radial,ringCount=8;
- const fieldRaggedRim=(theta,seed)=>.28*Math.sin(theta*3+seed*.13)+.72*Math.pow(.5+.5*Math.sin(theta*7+seed*.17),5)-.15;
+ const fieldRaggedRim=(theta,seed)=>.08+.20*(.5+.5*Math.sin(theta*3+seed*.13))+.65*Math.pow(.5+.5*Math.sin(theta*7+seed*.17),5);
  const ends=broken.map(part=>{const ix=oldI[part.start]*3;return {part,cx:P[ix],cy:P[ix+1],cz:P[ix+2],sign:part.name==='end'?1:-1};});
  const fieldAmp=Math.min(radius*.62,.027,...ends.flatMap(a=>ends.filter(b=>Math.abs(a.cz-b.cz)>1e-7).map(b=>Math.abs(a.cz-b.cz)*.30)));
  // Move duplicated shell/end boundary vertices together. Original intact ends stay flat.
@@ -17,6 +17,15 @@ if 'fieldRaggedRim' not in s:
  s=s.replace('const z=cz+sign*amp*(1-rho*rho)*splinter;', 'const z=lerp(cz,P[a*3+2],rho*rho)+sign*amp*(1-rho*rho)*splinter;')
  s=s.replace('// Zero at the shell rim: watertight boundary, signed depth along fibre axis.', '// Match the moved shell rim exactly, with signed depth along the fibre axis.')
  s=s.replace('(both?2.75:1.95)', '(both?2.15:1.40)')
+ p.write_text(s)
+# Explicitly migrate the rejected inward-jitter candidate when present.
+p=root/'source/field_geometry.js';s=p.read_text();s=s.replace('.28*Math.sin(theta*3+seed*.13)+.72*Math.pow(.5+.5*Math.sin(theta*7+seed*.17),5)-.15','.08+.20*(.5+.5*Math.sin(theta*3+seed*.13))+.65*Math.pow(.5+.5*Math.sin(theta*7+seed*.17),5)');p.write_text(s)
+p=root/'source/field_geometry.js';s=p.read_text()
+if 'Follow the actual fibre coordinate' not in s:
+ s=s.replace(' for(const part of g.userData.surfaces){', ''' // Follow the actual fibre coordinate on the moved side ring; cap UVs stay separate.
+ const sidePart=g.userData.surfaces.find(part=>part.name==='side');
+ for(let k=sidePart.start;k<sidePart.start+sidePart.count;k++){const i=oldI[k];U[i*2+1]=P[i*3+2]/g.userData.length+.5;}
+ for(const part of g.userData.surfaces){''',1)
  p.write_text(s)
 p=root/'source/wave_material.js';s=p.read_text()
 if 'waveFootprint' not in s:
