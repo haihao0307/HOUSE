@@ -1,41 +1,31 @@
 # Tiles Mother 接续入口
 
-最新可审阅候选：V0.9.10 同画面性能工作台。受保护的上一候选：V0.9.9 边口与材质学习版。恢复基线：V0.9.8 Contact Rafter Beams。仓库haihao0307/HOUSE，工作分支feature/tiles-mother-v0.1-workbench。
+最新可审阅候选：V0.9.11 共用噪波场、断口与厚苔。保留V0.9.10同画面性能版、V0.9.9边口材质版和V0.9.8恢复基线。仓库haihao0307/HOUSE，工作分支feature/tiles-mother-v0.1-workbench。
 
-## 当前工作入口
+## 当前入口
 
-先读[候选身份](CURRENT_CANDIDATE.json)、[V0.9.10实测结果与未过门槛](v0910/DELIVERY_STATUS.md)，打开[V0.9.10独立HTML](v0910/START_HERE.html)。从[v0910/README.md](v0910/README.md)了解重建和方法来源。
+先读[候选身份](CURRENT_CANDIDATE.json)、[实际交付与未完成边界](v0911/DELIVERY_STATUS.md)，打开[V0.9.11独立HTML](v0911/START_HERE.html)。[重建和模块说明](v0911/README.md)包含完整复现方法。
 
-本轮同机浏览器860片首次CPU工作35.199s到14.640s；四组新旧有效几何、接触和画布逐像素一致；最近两个完整屋面复用；静止6秒无新绘制或帧轮询。单帧着色仍重，运动性能门槛未过；用户设备风扇、GPU与Windows双击没有直接测量。无Pages或其他公网部署。完整证据在v0910/qa/browser/REPORT.json和qa/NODE_BENCH.json。
+默认是断口样台，D为共用噪波材质；3/48/860和A/B/C均保留。真实浏览器19个案例、22组新断面几何、5个装配状态接触审计通过。三片材质软件WebGL同会话绘制区间323.674ms到179.664ms；最终860片计时未取得有效值，不外推用户GPU或风扇表现。完整运动性能门槛未通过，没有公网部署，人工视觉和生产批准false。
 
-用户对V0.9.9的瓦形和搭接给出接近完工的方向认可，要求优先性能，再细化厚苔层、木断口和下层木构腐朽。按范围记录，不产生全系统批准。visualApproved=false，productionApproved=false。
+受力仅在样台采用简化梁/条带候选；屋面为受水与支承依赖的经验情景。十年为用户指导的严重失养目标，未标定普遍寿命。断口展开不代表刚体坠落；持续修缮按钮选择从初始一直维护的对照历史，中途维修事件账本尚未实现。不得把原型输出写成完整建筑倒塌或精确断裂力学。
 
-## 保留与恢复
+## 保护和恢复
 
-[V0.9.9工作台](v099/START_HERE.html)与[原交付边界](v099/DELIVERY_STATUS.md)保留，HTML SHA256为06ad8f86f16afe8a58dbc83b14d206c712c4f48902cf5f8ac29e2ea0fcd209db。
+[V0.9.10](v0910/START_HERE.html)、[其真实结果](v0910/DELIVERY_STATUS.md)保持，HTML SHA256为1d52c47f56c0b502b889650949b1e05ca98c34ea8b7ef960cac3d9cac33442e7。[V0.9.9](v099/START_HERE.html)保持，SHA256为06ad8f86f16afe8a58dbc83b14d206c712c4f48902cf5f8ac29e2ea0fcd209db。
 
-[V0.9.8身份](CURRENT_BASELINE.json)、[包内接续](v098/RESTART_START_HERE.md)、[重建说明](v098/README.md)、[用户规则](v098/handoff/USER_DECISIONS.md)、[缺口](v098/handoff/KNOWN_GAPS.md)、[材质锁](v098/knowledge/MATERIAL_LOCK.json)、[历史QA](v098/qa/release-refresh/REPORT.json)继续有效。
+[V0.9.8身份](CURRENT_BASELINE.json)、[包内接续](v098/RESTART_START_HERE.md)、[用户决定](v098/handoff/USER_DECISIONS.md)、[缺口](v098/handoff/KNOWN_GAPS.md)、[材质锁](v098/knowledge/MATERIAL_LOCK.json)保持。[V0.9.8工作台](v098/START_HERE.html) SHA256为c8b8211f8d14512b2f29c067894be563e2710053b648b39427a87986bcf34c9b。[原全量包](releases/Tiles_Mother_V098_Full_Restart_Package_2026-09-05.zip) SHA256为9c9389243c25b4106c46733456e0f5807affa2d0b16e5bd5efbe85d822334e2c。CURRENT_BASELINE未改。
 
-[V0.9.8工作台](v098/START_HERE.html) SHA256为c8b8211f8d14512b2f29c067894be563e2710053b648b39427a87986bcf34c9b。[原全量包](releases/Tiles_Mother_V098_Full_Restart_Package_2026-09-05.zip) SHA256为9c9389243c25b4106c46733456e0f5807affa2d0b16e5bd5efbe85d822334e2c。CURRENT_BASELINE和这些资产未变。
+三片是主入口之一，48片和860片必须继续保留。无木板、望板或隐藏支承平面；共享圆椽在四根横梁上；板瓦双侧承托，筒瓦双侧落座；瓦片不得穿透。新断口与厚苔独立对照，微孔旧核心和观察光保留。不能用减少瓦数、偷偷改尺寸、换灯光掩盖形体或接触错误。
 
-## 不得丢失
+几何、年份、种子和维护情景变化需重新核算依赖；只改显示参数避免重算全场景。缓存有上限并释放无用资源；画面停止后停止绘制。新噪波层的频率、梯度、颜色空间和坐标附着分别验证，不能以函数名称或公式短推断GPU速度。
 
-保留三片独立瓦、48片构造台、860片屋面及A/B/C。本轮未降低瓦片数、网格细分、渲染分辨率或关闭原有阴影。材质核心、微孔细节、观察光、边口几何和木构演化块逐字节保持。新表面层独立对照；整片偏色概率与单片色斑面积分开。
+开始时重新读取远端HEAD，从最新正常历史继续。不强推、不改写历史，不修改main、gh-pages、Brick Mother或冻结资产。不得用transport的初始归档覆盖后来源文件。
 
-无木板、望板或隐藏承托平面；圆椽在四根横梁之上；相邻板瓦共享圆椽；筒瓦双侧落座；不得穿透。改变几何、年份、seed或维护状态需重新核算，静止/灯光切换不得误重建全屋面。缓存必须有上限并释放无用资源，不能将少量缓冲减少概括为总内存降低。
+## 学习和参照
 
-新改动先小样逐面检查瓦、木构和断口的UV、法线、落座、穿透，再扩展到48与860片。青苔目前为颜色层，厚度几何未完成；木断面与下层横梁病害还需细化。完整结构求解、碎片刚体堆积和地方寿命标定仍未完成。
+继续读[小妈R1学习卡](knowledge/xiaoma-learning-r1/SKILL.md)、[边口专项](knowledge/xiaoma-learning-r1/EDGE_FORM_REVIEW.md)、[讲武堂重读和尺寸纠错](knowledge/jiangwutang-001/SOURCE_REACCESS_20260905.md)、[失养逻辑与噪波研究](experiments/abandonment-noise-r1/README.md)。小妈最新已读资料提交7a6197fa9fd770c6e19c191eb9b140f877837ecc；HOUSE #16咨询5556071710的独立回复仍需实际回读，不能自签协作完成。
 
-开始时重读远端HEAD，从最新正常历史继续。不强推、不改写历史、不修改main、gh-pages、Brick Mother或冻结资产。V0.9.2不恢复为当前入口。
+讲武堂精细包沿用jiangwutang-001，仅作参考和未完成细节对照；原始大包/FBX/完整贴图不重复入Git或运行时。两张线描分别登记，筒瓦3cm壁厚等旧推断已经撤回，不把不同来源尺寸混成同一测绘对象。屋面照片定位在[v0910参考回执](v0910/REFERENCE_RECEIPT.json)，不由远景测苔厚或推断物种。
 
-## 学习与参考
-
-读取[小妈R1学习卡](knowledge/xiaoma-learning-r1/SKILL.md)、[边口诊断](knowledge/xiaoma-learning-r1/EDGE_FORM_REVIEW.md)和[讲武堂原件重读及读图纠错](knowledge/jiangwutang-001/SOURCE_REACCESS_20260905.md)。小妈教材固定提交b1f01bae975c4151539bc38d84644b8542c70c29，HOUSE #16留实际回执，小妈/House独立复核不能代签。
-
-讲武堂精细ZIP沿用jiangwutang-001，仍保留作未完成的细节对照；原始大文件不重复入Git或网页。两张线描分别登记，筒瓦3cm壁厚等旧推断已撤回。新屋面照片身份在[v0910/REFERENCE_RECEIPT.json](v0910/REFERENCE_RECEIPT.json)，用于整体灰度和风化节奏，不由远景照片推定苔藓物种或实测厚度。
-
-## 2026-09-06：失养逻辑、面板与噪波专项
-
-先读[十年情景与联动失效实施方案](experiments/abandonment-noise-r1/README.md)。本轮按小妈最新7a6197f资料，复算14个旧状态并完成16组独立CPU检查。十年为用户指导的潮湿旧宅失养情景，建筑年龄与停止维护时间分开，横梁有独立受水损伤，失支沿依赖传递。新版面板、木断口、厚苔与GPU噪波方案尚待接入及真实浏览器对照。
-
-V0.9.10源码和HTML、本页原恢复入口、CURRENT_BASELINE及CURRENT_CANDIDATE均保持。本实验不是V0.9.11成品；小妈独立复核等待HOUSE #16实际回复，不能自签讨论完成或视觉批准。
+下一轮先看用户对新D质感、木断口和厚苔的反馈，再做有限修正。保留全部恢复版本和真实失败记录；继续补860片图形计时及运动验证，剩余物理和材质真实性不得由本轮数值通过自动批准。
