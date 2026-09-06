@@ -1,0 +1,370 @@
+{
+  "htmlSHA256": "1477c0b62fc62ba97df823ba6a5bc6a362c82646397076ce122b8b0980835922",
+  "htmlBytes": 53033,
+  "url": null,
+  "responses": [],
+  "browser": "152.0.7977.0",
+  "renderer": "WebKit WebGL",
+  "cases": [
+    {
+      "name": "01_open_color_panel",
+      "stats": {
+        "drawCalls": 4,
+        "triangles": 111778,
+        "geometryBytes": 152520,
+        "width": 1280,
+        "height": 900,
+        "eye": [
+          -1.2246971492041154,
+          1.9554155003282714,
+          -1.746343727335547
+        ],
+        "cpuSubmitMs": 11.199999999953434,
+        "originalTiles": 49,
+        "panLive": 28,
+        "coverLive": 21,
+        "missing": 0,
+        "failedBeamSegments": 0,
+        "failedRafterSegments": 0,
+        "mossPatches": 0,
+        "buildMs": 2.699999999953434,
+        "seatingMs": 0,
+        "frames": 2,
+        "pendingFrames": 0,
+        "generation": 2
+      }
+    },
+    {
+      "name": "02_pan",
+      "stats": {
+        "drawCalls": 2,
+        "triangles": 2242,
+        "geometryBytes": 69112,
+        "width": 1280,
+        "height": 900,
+        "eye": [
+          -0.2788466749910348,
+          0.4514799120887185,
+          0.4350395573177722
+        ],
+        "cpuSubmitMs": 0.10000000009313226,
+        "originalTiles": 1,
+        "panLive": 0,
+        "coverLive": 0,
+        "missing": 0,
+        "failedBeamSegments": 0,
+        "failedRafterSegments": 0,
+        "mossPatches": 0,
+        "buildMs": 15.199999999953434,
+        "seatingMs": 0,
+        "frames": 3,
+        "pendingFrames": 0,
+        "generation": 3
+      }
+    },
+    {
+      "name": "03_clay_and_moss",
+      "stats": {
+        "drawCalls": 6,
+        "triangles": 10710,
+        "geometryBytes": 369640,
+        "width": 1280,
+        "height": 900,
+        "eye": [
+          -0.2788466749910348,
+          0.4514799120887185,
+          0.4350395573177722
+        ],
+        "cpuSubmitMs": 0.20000000018626451,
+        "originalTiles": 1,
+        "panLive": 0,
+        "coverLive": 0,
+        "missing": 0,
+        "failedBeamSegments": 0,
+        "failedRafterSegments": 0,
+        "mossPatches": 3,
+        "buildMs": 55.299999999813735,
+        "seatingMs": 0,
+        "frames": 28,
+        "pendingFrames": 0,
+        "generation": 4
+      }
+    },
+    {
+      "name": "04_wood_zero",
+      "stats": {
+        "drawCalls": 2,
+        "triangles": 226,
+        "geometryBytes": 10360,
+        "width": 1280,
+        "height": 900,
+        "eye": [
+          -0.43144993517790237,
+          0.5725077375771785,
+          0.4190304764944795
+        ],
+        "cpuSubmitMs": 0.09999999986030161,
+        "originalTiles": 0,
+        "panLive": 0,
+        "coverLive": 0,
+        "missing": 0,
+        "failedBeamSegments": 0,
+        "failedRafterSegments": 0,
+        "mossPatches": 0,
+        "buildMs": 1.3999999999068677,
+        "seatingMs": 0,
+        "frames": 29,
+        "pendingFrames": 0,
+        "generation": 5
+      }
+    },
+    {
+      "name": "05_wood_eroded",
+      "stats": {
+        "drawCalls": 2,
+        "triangles": 2802,
+        "geometryBytes": 83224,
+        "width": 1280,
+        "height": 900,
+        "eye": [
+          -0.43144993517790237,
+          0.5725077375771785,
+          0.4190304764944795
+        ],
+        "cpuSubmitMs": 0.10000000009313226,
+        "originalTiles": 0,
+        "panLive": 0,
+        "coverLive": 0,
+        "missing": 0,
+        "failedBeamSegments": 0,
+        "failedRafterSegments": 0,
+        "mossPatches": 0,
+        "buildMs": 9.5,
+        "seatingMs": 0,
+        "frames": 30,
+        "pendingFrames": 0,
+        "generation": 6
+      }
+    },
+    {
+      "name": "06_construct_zero",
+      "stats": {
+        "drawCalls": 4,
+        "triangles": 111778,
+        "geometryBytes": 152520,
+        "width": 1280,
+        "height": 900,
+        "eye": [
+          -1.2246971492041154,
+          1.9554155003282714,
+          -1.746343727335547
+        ],
+        "cpuSubmitMs": 1.8000000000465661,
+        "originalTiles": 49,
+        "panLive": 28,
+        "coverLive": 21,
+        "missing": 0,
+        "failedBeamSegments": 0,
+        "failedRafterSegments": 0,
+        "mossPatches": 0,
+        "buildMs": 0.8000000000465661,
+        "seatingMs": 0,
+        "frames": 33,
+        "pendingFrames": 0,
+        "generation": 7
+      }
+    },
+    {
+      "name": "07_construct_seven",
+      "stats": {
+        "drawCalls": 18,
+        "triangles": 144030,
+        "geometryBytes": 1351896,
+        "width": 1280,
+        "height": 900,
+        "eye": [
+          -1.2246971492041154,
+          1.9554155003282714,
+          -1.746343727335547
+        ],
+        "cpuSubmitMs": 0.19999999995343387,
+        "originalTiles": 49,
+        "panLive": 24,
+        "coverLive": 17,
+        "missing": 8,
+        "failedBeamSegments": 0,
+        "failedRafterSegments": 0,
+        "mossPatches": 13,
+        "buildMs": 49.5,
+        "seatingMs": 0,
+        "frames": 34,
+        "pendingFrames": 0,
+        "generation": 8
+      }
+    },
+    {
+      "name": "08_timber_under",
+      "stats": {
+        "drawCalls": 17,
+        "triangles": 144030,
+        "geometryBytes": 1351896,
+        "width": 1280,
+        "height": 900,
+        "eye": [
+          0.9815749806457965,
+          -0.9227929705234843,
+          2.1980190874076952
+        ],
+        "cpuSubmitMs": 0,
+        "originalTiles": 49,
+        "panLive": 24,
+        "coverLive": 17,
+        "missing": 8,
+        "failedBeamSegments": 0,
+        "failedRafterSegments": 0,
+        "mossPatches": 13,
+        "buildMs": 49.5,
+        "seatingMs": 0,
+        "frames": 35,
+        "pendingFrames": 0,
+        "generation": 8
+      }
+    },
+    {
+      "name": "09_roof_zero",
+      "stats": {
+        "drawCalls": 4,
+        "triangles": 1932450,
+        "geometryBytes": 218840,
+        "width": 1280,
+        "height": 900,
+        "eye": [
+          -4.762711135793783,
+          7.267726945721055,
+          -6.791336717416017
+        ],
+        "cpuSubmitMs": 0.30000000004656613,
+        "originalTiles": 860,
+        "panLive": 440,
+        "coverLive": 420,
+        "missing": 0,
+        "failedBeamSegments": 0,
+        "failedRafterSegments": 0,
+        "mossPatches": 0,
+        "buildMs": 6.399999999906868,
+        "seatingMs": 0,
+        "frames": 36,
+        "pendingFrames": 0,
+        "generation": 9
+      }
+    },
+    {
+      "name": "10_roof_seven",
+      "stats": {
+        "drawCalls": 36,
+        "triangles": 1972758,
+        "geometryBytes": 2910072,
+        "width": 1280,
+        "height": 900,
+        "eye": [
+          -4.762711135793783,
+          7.267726945721055,
+          -6.791336717416017
+        ],
+        "cpuSubmitMs": 0.19999999995343387,
+        "originalTiles": 860,
+        "panLive": 383,
+        "coverLive": 324,
+        "missing": 153,
+        "failedBeamSegments": 0,
+        "failedRafterSegments": 0,
+        "mossPatches": 151,
+        "buildMs": 68.69999999995343,
+        "seatingMs": 0,
+        "frames": 37,
+        "pendingFrames": 0,
+        "generation": 10
+      }
+    },
+    {
+      "name": "11_construct_ten",
+      "stats": {
+        "drawCalls": 5,
+        "triangles": 18594,
+        "geometryBytes": 541288,
+        "width": 1280,
+        "height": 900,
+        "eye": [
+          -1.2246971492041154,
+          1.9554155003282714,
+          -1.746343727335547
+        ],
+        "cpuSubmitMs": 0.10000000009313226,
+        "originalTiles": 49,
+        "panLive": 0,
+        "coverLive": 0,
+        "missing": 49,
+        "failedBeamSegments": 6,
+        "failedRafterSegments": 35,
+        "mossPatches": 0,
+        "buildMs": 36,
+        "seatingMs": 0,
+        "frames": 38,
+        "pendingFrames": 0,
+        "generation": 11
+      }
+    }
+  ],
+  "controls": [
+    {
+      "control": "brightness",
+      "changesCanvas": true,
+      "restores": true,
+      "noGeometryBuild": true
+    },
+    {
+      "control": "temperature",
+      "changesCanvas": true,
+      "restores": true,
+      "noGeometryBuild": true
+    },
+    {
+      "control": "variation",
+      "changesCanvas": true,
+      "restores": true,
+      "noGeometryBuild": true
+    },
+    {
+      "control": "patina",
+      "changesCanvas": true,
+      "restores": true,
+      "noGeometryBuild": true
+    },
+    {
+      "control": "warmth",
+      "changesCanvas": true,
+      "restores": true,
+      "noGeometryBuild": true
+    },
+    {
+      "control": "relief",
+      "changesCanvas": true,
+      "restores": true,
+      "noGeometryBuild": true
+    },
+    {
+      "control": "twist",
+      "changesCanvas": true
+    }
+  ],
+  "idleFramesSixSeconds": 0,
+  "mobileOverflow": false,
+  "errors": [],
+  "httpFailures": [],
+  "failedRequests": [],
+  "glError": 0,
+  "passed": true,
+  "fullMotionPerformanceGate": "not_tested_this_script",
+  "humanVisualApproved": false,
+  "note": "Browser pixel/control checks; appearance is a candidate. No calibrated physical collapse or universal device performance claim."
+}

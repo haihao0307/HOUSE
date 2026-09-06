@@ -1,0 +1,18 @@
+{
+  "version": "clean-02",
+  "bytes": 53033,
+  "sha256": "1477c0b62fc62ba97df823ba6a5bc6a362c82646397076ce122b8b0980835922",
+  "ownImplementation": true,
+  "bundledThirdPartyRuntimeBytes": 0,
+  "externalMaterialImages": 0,
+  "sourceSHA256": {
+    "math.js": "0f3455ff77ecdf410960ac57f1c8f46bbd2f3aef04f43cf0d5c4b8da3564eb21",
+    "geometry.js": "9cd32944aa2fcc3e0fa0fee4bf0c68fbd2dd16c4a7531684d1ecc0a484b9f7de",
+    "shaders.js": "a66f87726dd2478982d698c00dd1b6310da845528ba95c8b0272cc9b1bd8ba9e",
+    "renderer.js": "4134acaf6a373921612d89c14e73a8be8b39b9342c51a041218dada07dffd8cd",
+    "scene.js": "5cec3ac45831f378dff10bf66068cd50fffab27c45a2c32f5f70adefe20c8345",
+    "app.js": "7e4b4d532df8544c1ffcab78ba99785b3044884ea9d3508eec47eb851c1e9592"
+  },
+  "visualApproved": false,
+  "productionApproved": false
+}

@@ -1,0 +1,23 @@
+{
+  "tests": [
+    "inspection restores every top seam cover and reports 49",
+    "full roof keeps 440 plus 420 at zero",
+    "no cover survives missing adjacent support tile",
+    "decay 0 stays inside original circular stock and preserves bearing crown",
+    "decay 0.1 stays inside original circular stock and preserves bearing crown",
+    "decay 0.3 stays inside original circular stock and preserves bearing crown",
+    "decay 0.5 stays inside original circular stock and preserves bearing crown",
+    "decay 0.8 stays inside original circular stock and preserves bearing crown",
+    "stock volume falls monotonically under increasing decay",
+    "bearing collars remain complete"
+  ],
+  "passed": 10,
+  "volumes": [
+    3.135005315764464,
+    2.965449439315705,
+    2.643508971468875,
+    2.3444635689390645,
+    1.9388237162430935
+  ],
+  "scope": "CPU template/state and monotone stock erosion checks only; protected bearing collars until modelled failure, not calibrated structural capacity."
+}

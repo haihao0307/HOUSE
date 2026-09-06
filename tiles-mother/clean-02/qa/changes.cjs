@@ -1,0 +1,12 @@
+'use strict';
+const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict'),path=require('node:path');
+const root=path.resolve(__dirname,'..'),ctx={console,performance};vm.createContext(ctx);vm.runInContext(['math.js','geometry.js','scene.js'].map(n=>fs.readFileSync(root+'/source/'+n,'utf8')).join('\n')+'\nthis.A={ceramic,timber,roofState};',ctx);const A=ctx.A;
+let tests=[];function check(name,fn){fn();tests.push(name)}
+const vol=m=>{let sum=0,p=m.p;for(let j=0;j<m.idx.length;j+=3){let a=m.idx[j]*3,b=m.idx[j+1]*3,c=m.idx[j+2]*3;sum+=(p[a]*(p[b+1]*p[c+2]-p[b+2]*p[c+1])+p[a+1]*(p[b+2]*p[c]-p[b]*p[c+2])+p[a+2]*(p[b]*p[c+1]-p[b+1]*p[c]))/6}return sum;};
+check('inspection restores every top seam cover and reports 49',()=>{let s=A.roofState(7,4,0,false,314159);assert.equal(s.total,49);assert.equal(s.panLive,28);assert.equal(s.visibleCover.length,21);assert(s.visibleCover.some(([r,c])=>r===6&&c===2));assert([...s.cracked].every(v=>v===0))});
+check('full roof keeps 440 plus 420 at zero',()=>{let s=A.roofState(20,22,0,false,314159);assert.equal(s.panLive,440);assert.equal(s.visibleCover.length,420)});
+check('no cover survives missing adjacent support tile',()=>{for(let year of [3,5,7,10,15]){let s=A.roofState(20,22,year,false,314159);for(let[r,c]of s.visibleCover)assert(!s.lost[r*22+c]&&!s.lost[r*22+c+1])}});
+let volumes=[];for(let d of [0,.1,.3,.5,.8]){let m=A.timber(false,81,[d*.7,d,d*.7]);volumes.push(vol(m));check('decay '+d+' stays inside original circular stock and preserves bearing crown',()=>{let maxY=-Infinity;for(let i=0;i<m.p.length;i+=3){assert(Math.hypot(m.p[i],m.p[i+1])<=1.0000002);maxY=Math.max(maxY,m.p[i+1]);}assert(Math.abs(maxY-1)<1e-6);assert([...m.p,...m.n].every(Number.isFinite))})}
+check('stock volume falls monotonically under increasing decay',()=>{for(let i=1;i<volumes.length;i++)assert(volumes[i]<volumes[i-1])});
+check('bearing collars remain complete',()=>{let m=A.timber(false,81,[.8,.8],[[.5,.04]]),p=m.p;let mid=[];for(let i=0;i<p.length;i+=3)if(Math.abs(p[i+2])<1e-7)mid.push(Math.hypot(p[i],p[i+1]));assert(mid.length>30);assert(mid.every(r=>Math.abs(r-1)<1e-6))});
+let result={tests,passed:tests.length,volumes,scope:'CPU template/state and monotone stock erosion checks only; protected bearing collars until modelled failure, not calibrated structural capacity.'};fs.writeFileSync(root+'/qa/CHANGES.json',JSON.stringify(result,null,2));console.log(JSON.stringify(result,null,2));

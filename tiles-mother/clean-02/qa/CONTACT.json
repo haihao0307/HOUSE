@@ -1,0 +1,165 @@
+{
+  "scope": "Projected triangle intersections evaluated with affine height on every intersection vertex. Shared rigid templates only. No load capacity, moss-on-surface, arbitrary fracture motion or debris collision.",
+  "toleranceMm": 0.05,
+  "bilateralMaxMm": 0.5,
+  "seats": {
+    "step": 0.198,
+    "spacing": 0.242,
+    "rafterRadius": 0.023,
+    "panY": 0.005078458743291489,
+    "panAngle": 0.11500000000000007,
+    "panRoll": 0.0014608644540637082,
+    "coverY": 0.03861105347105794,
+    "coverAngle": 0.05000000000000002,
+    "coverRoll": 0.06122098204075048,
+    "coverPhase": -0.044
+  },
+  "tests": [
+    {
+      "name": "pan longitudinal",
+      "trianglePairs": 5868,
+      "minGapMm": 0.23203679033138164,
+      "where": [
+        0.11166228151527222,
+        0.0835304688325428
+      ],
+      "pass": true
+    },
+    {
+      "name": "cover longitudinal",
+      "trianglePairs": 4612,
+      "minGapMm": 0.5577832183437798,
+      "where": [
+        -0.01461378849054809,
+        0.096884519489612
+      ],
+      "pass": true
+    },
+    {
+      "name": "cover on pan -1/-1",
+      "trianglePairs": 3533,
+      "minGapMm": 19.987092904606573,
+      "where": [
+        -0.047686067316296724,
+        -0.1548344711827463
+      ],
+      "pass": true
+    },
+    {
+      "name": "cover on pan -1/0",
+      "trianglePairs": 7490,
+      "minGapMm": 0.18000281104630506,
+      "where": [
+        -0.04578988591144657,
+        -0.11597847774295239
+      ],
+      "pass": true
+    },
+    {
+      "name": "cover on pan -1/1",
+      "trianglePairs": 0,
+      "minGapMm": null,
+      "where": null,
+      "pass": true
+    },
+    {
+      "name": "cover on pan 1/-1",
+      "trianglePairs": 3502,
+      "minGapMm": 22.339983574693285,
+      "where": [
+        0.006810754455252414,
+        -0.15300614933740306
+      ],
+      "pass": true
+    },
+    {
+      "name": "cover on pan 1/0",
+      "trianglePairs": 7271,
+      "minGapMm": 0.18000268243403839,
+      "where": [
+        0.0008266578701457694,
+        -0.1117640962041504
+      ],
+      "pass": true
+    },
+    {
+      "name": "cover on pan 1/1",
+      "trianglePairs": 0,
+      "minGapMm": null,
+      "where": null,
+      "pass": true
+    },
+    {
+      "name": "rafter-pan -1/-1.8",
+      "trianglePairs": 5201,
+      "minGapMm": 0.17972247067468347,
+      "where": [
+        -0.10665973398282425,
+        -1.6786260323138213
+      ],
+      "pass": true
+    },
+    {
+      "name": "rafter-pan -1/0",
+      "trianglePairs": 5205,
+      "minGapMm": 0.17972247067468347,
+      "where": [
+        -0.10665973398282425,
+        0.12137392000246283
+      ],
+      "pass": true
+    },
+    {
+      "name": "rafter-pan -1/1.8",
+      "trianglePairs": 5199,
+      "minGapMm": 0.17972247067468347,
+      "where": [
+        -0.10665973398282425,
+        1.921373872318747
+      ],
+      "pass": true
+    },
+    {
+      "name": "rafter-pan 1/-1.8",
+      "trianglePairs": 5202,
+      "minGapMm": 0.1802890848827468,
+      "where": [
+        0.10665973398282425,
+        -1.6790236521821802
+      ],
+      "pass": true
+    },
+    {
+      "name": "rafter-pan 1/0",
+      "trianglePairs": 5212,
+      "minGapMm": 0.1802890848827468,
+      "where": [
+        0.10665973398282425,
+        0.12097630013410399
+      ],
+      "pass": true
+    },
+    {
+      "name": "rafter-pan 1/1.8",
+      "trianglePairs": 5207,
+      "minGapMm": 0.1802890848827468,
+      "where": [
+        0.10665973398282425,
+        1.9209762524503882
+      ],
+      "pass": true
+    },
+    {
+      "name": "crossbeam-rafter",
+      "trianglePairs": 12544,
+      "minGapMm": -0.000001862645149230957,
+      "where": [
+        0,
+        -2.2655967064804168e-18
+      ],
+      "pass": true
+    }
+  ],
+  "bilateralPassed": true,
+  "pass": true
+}

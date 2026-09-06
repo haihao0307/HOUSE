@@ -1,0 +1,246 @@
+{
+  "scope": "Actual new mesh topology and user-directed scenario; not a load or dynamic solver.",
+  "cases": [
+    {
+      "name": "pan0",
+      "vertices": 1310,
+      "triangles": 2240,
+      "minArea": 0.000007146394842856198,
+      "degenerate": 0,
+      "boundaryEdges": 0,
+      "nonmanifoldEdges": 0,
+      "orientationConflicts": 0,
+      "signedVolume": 0.000764733172203638,
+      "finite": true,
+      "pass": true
+    },
+    {
+      "name": "pan1",
+      "vertices": 1310,
+      "triangles": 2240,
+      "minArea": 0.000005570737543405314,
+      "degenerate": 0,
+      "boundaryEdges": 0,
+      "nonmanifoldEdges": 0,
+      "orientationConflicts": 0,
+      "signedVolume": 0.00033392987944873303,
+      "finite": true,
+      "pass": true
+    },
+    {
+      "name": "pan2",
+      "vertices": 1310,
+      "triangles": 2240,
+      "minArea": 0.000007146394842856198,
+      "degenerate": 0,
+      "boundaryEdges": 0,
+      "nonmanifoldEdges": 0,
+      "orientationConflicts": 0,
+      "signedVolume": 0.0004302307360912171,
+      "finite": true,
+      "pass": true
+    },
+    {
+      "name": "cover0",
+      "vertices": 1310,
+      "triangles": 2240,
+      "minArea": 0.000001469999160562477,
+      "degenerate": 0,
+      "boundaryEdges": 0,
+      "nonmanifoldEdges": 0,
+      "orientationConflicts": 0,
+      "signedVolume": 0.00026832931902527667,
+      "finite": true,
+      "pass": true
+    },
+    {
+      "name": "cover1",
+      "vertices": 1310,
+      "triangles": 2240,
+      "minArea": 0.000001910252495423119,
+      "degenerate": 0,
+      "boundaryEdges": 0,
+      "nonmanifoldEdges": 0,
+      "orientationConflicts": 0,
+      "signedVolume": 0.00012129377160488924,
+      "finite": true,
+      "pass": true
+    },
+    {
+      "name": "cover2",
+      "vertices": 1310,
+      "triangles": 2240,
+      "minArea": 0.000001469999160562477,
+      "degenerate": 0,
+      "boundaryEdges": 0,
+      "nonmanifoldEdges": 0,
+      "orientationConflicts": 0,
+      "signedVolume": 0.00014681366158236442,
+      "finite": true,
+      "pass": true
+    },
+    {
+      "name": "woodfalse",
+      "vertices": 230,
+      "triangles": 224,
+      "minArea": 0.05598222910050721,
+      "degenerate": 0,
+      "boundaryEdges": 0,
+      "nonmanifoldEdges": 0,
+      "orientationConflicts": 0,
+      "signedVolume": 3.135005315764464,
+      "finite": true,
+      "pass": true
+    },
+    {
+      "name": "woodtrue",
+      "vertices": 2453,
+      "triangles": 4592,
+      "minArea": 0.0003887654694049447,
+      "degenerate": 0,
+      "boundaryEdges": 0,
+      "nonmanifoldEdges": 0,
+      "orientationConflicts": 0,
+      "signedVolume": 3.0671521431919277,
+      "finite": true,
+      "pass": true
+    },
+    {
+      "name": "panMoss",
+      "vertices": 1632,
+      "triangles": 2076,
+      "minArea": 2.452619211903683e-8,
+      "degenerate": 0,
+      "boundaryEdges": 0,
+      "nonmanifoldEdges": 0,
+      "orientationConflicts": 0,
+      "signedVolume": 1.560392380207922e-7,
+      "finite": true,
+      "pass": true
+    },
+    {
+      "name": "coverMoss",
+      "vertices": 1632,
+      "triangles": 2076,
+      "minArea": 2.4526098870484314e-8,
+      "degenerate": 0,
+      "boundaryEdges": 0,
+      "nonmanifoldEdges": 0,
+      "orientationConflicts": 0,
+      "signedVolume": 1.5785696188153297e-7,
+      "finite": true,
+      "pass": true
+    }
+  ],
+  "years": [
+    {
+      "year": 0,
+      "care": false,
+      "pan": 440,
+      "cover": 420,
+      "lost": 0,
+      "beamSegments": 0,
+      "rafterSegments": 0
+    },
+    {
+      "year": 0,
+      "care": true,
+      "pan": 440,
+      "cover": 420,
+      "lost": 0,
+      "beamSegments": 0,
+      "rafterSegments": 0
+    },
+    {
+      "year": 3,
+      "care": false,
+      "pan": 439,
+      "cover": 418,
+      "lost": 3,
+      "beamSegments": 0,
+      "rafterSegments": 0
+    },
+    {
+      "year": 3,
+      "care": true,
+      "pan": 440,
+      "cover": 420,
+      "lost": 0,
+      "beamSegments": 0,
+      "rafterSegments": 0
+    },
+    {
+      "year": 5,
+      "care": false,
+      "pan": 433,
+      "cover": 407,
+      "lost": 20,
+      "beamSegments": 0,
+      "rafterSegments": 0
+    },
+    {
+      "year": 5,
+      "care": true,
+      "pan": 440,
+      "cover": 420,
+      "lost": 0,
+      "beamSegments": 0,
+      "rafterSegments": 0
+    },
+    {
+      "year": 7,
+      "care": false,
+      "pan": 383,
+      "cover": 324,
+      "lost": 153,
+      "beamSegments": 0,
+      "rafterSegments": 0
+    },
+    {
+      "year": 7,
+      "care": true,
+      "pan": 440,
+      "cover": 420,
+      "lost": 0,
+      "beamSegments": 0,
+      "rafterSegments": 0
+    },
+    {
+      "year": 10,
+      "care": false,
+      "pan": 8,
+      "cover": 1,
+      "lost": 851,
+      "beamSegments": 51,
+      "rafterSegments": 432
+    },
+    {
+      "year": 10,
+      "care": true,
+      "pan": 440,
+      "cover": 420,
+      "lost": 0,
+      "beamSegments": 0,
+      "rafterSegments": 0
+    },
+    {
+      "year": 15,
+      "care": false,
+      "pan": 0,
+      "cover": 0,
+      "lost": 860,
+      "beamSegments": 86,
+      "rafterSegments": 460
+    },
+    {
+      "year": 15,
+      "care": true,
+      "pan": 440,
+      "cover": 420,
+      "lost": 0,
+      "beamSegments": 0,
+      "rafterSegments": 0
+    }
+  ],
+  "pass": true
+}

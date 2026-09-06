@@ -1,0 +1,13 @@
+{
+  "url": "https://haihao0307.github.io/HOUSE/tiles-mother/clean-02/",
+  "status": 200,
+  "sha256": "1477c0b62fc62ba97df823ba6a5bc6a362c82646397076ce122b8b0980835922",
+  "bytes": 53033,
+  "exactBytes": true,
+  "retainedPublicEntries": [
+    "index.html",
+    "brick-mother/index.html",
+    "brick-mother/experiments/atelier-r5/web/index.html",
+    "brick-mother/experiments/atelier-r6/web/index.html"
+  ]
+}

@@ -1,0 +1,11 @@
+[
+  {
+    "kind": "console",
+    "message": "Failed to load resource: the server responded with a status of 404 ()",
+    "location": {
+      "url": "https://haihao0307.github.io/favicon.ico",
+      "lineNumber": 0,
+      "columnNumber": 0
+    }
+  }
+]
