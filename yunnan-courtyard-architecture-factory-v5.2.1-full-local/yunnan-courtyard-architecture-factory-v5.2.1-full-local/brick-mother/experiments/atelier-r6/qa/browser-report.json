@@ -1,0 +1,1136 @@
+{
+  "version": "R6.0.0",
+  "url": "http://127.0.0.1:8765/",
+  "checks": [
+    {
+      "test": "finished family fired",
+      "passed": true,
+      "controls": 11
+    },
+    {
+      "test": "finished family kiln",
+      "passed": true,
+      "controls": 12
+    },
+    {
+      "test": "finished family adobe",
+      "passed": true,
+      "controls": 12
+    },
+    {
+      "test": "finished family dressed",
+      "passed": true,
+      "controls": 11
+    },
+    {
+      "test": "finished family rubble",
+      "passed": true,
+      "controls": 11
+    },
+    {
+      "test": "finished family stone",
+      "passed": true,
+      "controls": 12
+    },
+    {
+      "test": "finished family pebble",
+      "passed": true,
+      "controls": 10
+    },
+    {
+      "test": "seven lithologies produce distinct pebble pixels",
+      "passed": true
+    },
+    {
+      "test": "desktop lithology buttons are connected",
+      "passed": true
+    },
+    {
+      "test": "hard-stone fracture envelope",
+      "passed": true
+    },
+    {
+      "test": "irrelevant layering control hidden on hard stone",
+      "passed": true
+    },
+    {
+      "test": "slate rubble layering changes real geometry",
+      "passed": true
+    },
+    {
+      "test": "six adobe views and shell geometry",
+      "passed": true,
+      "husks": 68
+    },
+    {
+      "test": "real pointer without rebuild",
+      "passed": true
+    },
+    {
+      "test": "wheel zoom",
+      "passed": true
+    },
+    {
+      "test": "master seed changes specimen",
+      "passed": true
+    },
+    {
+      "test": "parameter and camera roundtrip",
+      "passed": true
+    },
+    {
+      "test": "pause stops worker and drawing",
+      "passed": true
+    },
+    {
+      "test": "mobile controls (390, 844)",
+      "passed": true
+    },
+    {
+      "test": "mobile controls (844, 390)",
+      "passed": true
+    },
+    {
+      "test": "rotation reuses programs, coordinates and geometry; idle stops",
+      "passed": true
+    }
+  ],
+  "controls": [
+    {
+      "family": "fired",
+      "key": "damage",
+      "dependency": "geo",
+      "low": 0.1,
+      "high": 0.85,
+      "meanByteDifference": 1.2282234432234431,
+      "changedPixels": 91485,
+      "fraction": 0.11968210361067504,
+      "meshChanged": true,
+      "passed": true
+    },
+    {
+      "family": "fired",
+      "key": "edgeWear",
+      "dependency": "geo",
+      "low": 0.1,
+      "high": 0.85,
+      "meanByteDifference": 1.6003894121751265,
+      "changedPixels": 106826,
+      "fraction": 0.1397514390371533,
+      "meshChanged": true,
+      "passed": true
+    },
+    {
+      "family": "fired",
+      "key": "red",
+      "dependency": "surface",
+      "low": 0,
+      "high": 1,
+      "meanByteDifference": 4.414935025292168,
+      "changedPixels": 282900,
+      "fraction": 0.37009419152276296,
+      "meshChanged": false,
+      "passed": true
+    },
+    {
+      "family": "fired",
+      "key": "char",
+      "dependency": "surface",
+      "low": 0,
+      "high": 1,
+      "meanByteDifference": 6.120198412698413,
+      "changedPixels": 190599,
+      "fraction": 0.24934458398744114,
+      "meshChanged": false,
+      "passed": true
+    },
+    {
+      "family": "fired",
+      "key": "tone",
+      "dependency": "surface",
+      "low": -0.8,
+      "high": 0.8,
+      "meanByteDifference": 2.745723879295308,
+      "changedPixels": 282900,
+      "fraction": 0.37009419152276296,
+      "meshChanged": false,
+      "passed": true
+    },
+    {
+      "family": "fired",
+      "key": "color",
+      "dependency": "surface",
+      "low": 0.05,
+      "high": 1.35,
+      "meanByteDifference": 0.4121040467469039,
+      "changedPixels": 51345,
+      "fraction": 0.06717032967032967,
+      "meshChanged": false,
+      "passed": true
+    },
+    {
+      "family": "fired",
+      "key": "grain",
+      "dependency": "surface",
+      "low": 0,
+      "high": 1,
+      "meanByteDifference": 2.3297854526425956,
+      "changedPixels": 230037,
+      "fraction": 0.30093799058084775,
+      "meshChanged": false,
+      "passed": true
+    },
+    {
+      "family": "fired",
+      "key": "frequency",
+      "dependency": "surface",
+      "low": 8,
+      "high": 24,
+      "meanByteDifference": 1.5508041165184023,
+      "changedPixels": 212308,
+      "fraction": 0.2777446363160649,
+      "meshChanged": false,
+      "passed": true
+    },
+    {
+      "family": "fired",
+      "key": "rough",
+      "dependency": "surface",
+      "low": 0.35,
+      "high": 0.96,
+      "meanByteDifference": 1.301414181057038,
+      "changedPixels": 264211,
+      "fraction": 0.34564495028780745,
+      "meshChanged": false,
+      "passed": true
+    },
+    {
+      "family": "fired",
+      "key": "wet",
+      "dependency": "surface",
+      "low": 0,
+      "high": 1,
+      "meanByteDifference": 4.188905459619745,
+      "changedPixels": 282900,
+      "fraction": 0.37009419152276296,
+      "meshChanged": false,
+      "passed": true
+    },
+    {
+      "family": "fired",
+      "key": "strength",
+      "dependency": "surface",
+      "low": 0.05,
+      "high": 1.35,
+      "meanByteDifference": 1.81974925867783,
+      "changedPixels": 225441,
+      "fraction": 0.294925431711146,
+      "meshChanged": false,
+      "passed": true
+    },
+    {
+      "family": "kiln",
+      "key": "damage",
+      "dependency": "geo",
+      "low": 0.1,
+      "high": 0.85,
+      "meanByteDifference": 1.0906855049712192,
+      "changedPixels": 97775,
+      "fraction": 0.12791077969649398,
+      "meshChanged": true,
+      "passed": true
+    },
+    {
+      "family": "kiln",
+      "key": "edgeWear",
+      "dependency": "geo",
+      "low": 0.1,
+      "high": 0.85,
+      "meanByteDifference": 1.5847688819117391,
+      "changedPixels": 106399,
+      "fraction": 0.13919283097854526,
+      "meshChanged": true,
+      "passed": true
+    },
+    {
+      "family": "kiln",
+      "key": "red",
+      "dependency": "surface",
+      "low": 0,
+      "high": 1,
+      "meanByteDifference": 3.689747078318507,
+      "changedPixels": 282145,
+      "fraction": 0.3691064887493459,
+      "meshChanged": false,
+      "passed": true
+    },
+    {
+      "family": "kiln",
+      "key": "char",
+      "dependency": "surface",
+      "low": 0,
+      "high": 1,
+      "meanByteDifference": 3.625259026687598,
+      "changedPixels": 150118,
+      "fraction": 0.19638670852956566,
+      "meshChanged": false,
+      "passed": true
+    },
+    {
+      "family": "kiln",
+      "key": "kiln",
+      "dependency": "surface",
+      "low": 0,
+      "high": 1,
+      "meanByteDifference": 1.983114861329147,
+      "changedPixels": 220502,
+      "fraction": 0.2884641548927263,
+      "meshChanged": false,
+      "passed": true
+    },
+    {
+      "family": "kiln",
+      "key": "tone",
+      "dependency": "surface",
+      "low": -0.8,
+      "high": 0.8,
+      "meanByteDifference": 2.8079125239839526,
+      "changedPixels": 282146,
+      "fraction": 0.36910779696493984,
+      "meshChanged": false,
+      "passed": true
+    },
+    {
+      "family": "kiln",
+      "key": "color",
+      "dependency": "surface",
+      "low": 0.05,
+      "high": 1.35,
+      "meanByteDifference": 0.19635487528344672,
+      "changedPixels": 36714,
+      "fraction": 0.048029827315541604,
+      "meshChanged": false,
+      "passed": true
+    },
+    {
+      "family": "kiln",
+      "key": "grain",
+      "dependency": "surface",
+      "low": 0,
+      "high": 1,
+      "meanByteDifference": 2.376974533403105,
+      "changedPixels": 232373,
+      "fraction": 0.3039939822082679,
+      "meshChanged": false,
+      "passed": true
+    },
+    {
+      "family": "kiln",
+      "key": "frequency",
+      "dependency": "surface",
+      "low": 8,
+      "high": 24,
+      "meanByteDifference": 1.3625235478806907,
+      "changedPixels": 204910,
+      "fraction": 0.26806645735217166,
+      "meshChanged": false,
+      "passed": true
+    },
+    {
+      "family": "kiln",
+      "key": "rough",
+      "dependency": "surface",
+      "low": 0.35,
+      "high": 0.96,
+      "meanByteDifference": 1.3608730158730158,
+      "changedPixels": 272130,
+      "fraction": 0.35600470957613817,
+      "meshChanged": false,
+      "passed": true
+    },
+    {
+      "family": "kiln",
+      "key": "wet",
+      "dependency": "surface",
+      "low": 0,
+      "high": 1,
+      "meanByteDifference": 4.599396912611199,
+      "changedPixels": 282146,
+      "fraction": 0.36910779696493984,
+      "meshChanged": false,
+      "passed": true
+    },
+    {
+      "family": "kiln",
+      "key": "strength",
+      "dependency": "surface",
+      "low": 0.05,
+      "high": 1.35,
+      "meanByteDifference": 2.1320447409733125,
+      "changedPixels": 266124,
+      "fraction": 0.34814756671899527,
+      "meshChanged": false,
+      "passed": true
+    },
+    {
+      "family": "adobe",
+      "key": "damage",
+      "dependency": "geo",
+      "low": 0.1,
+      "high": 0.85,
+      "meanByteDifference": 1.075435199720914,
+      "changedPixels": 81802,
+      "fraction": 0.10701465201465202,
+      "meshChanged": true,
+      "passed": true
+    },
+    {
+      "family": "adobe",
+      "key": "relief",
+      "dependency": "geo",
+      "low": 0.1,
+      "high": 0.85,
+      "meanByteDifference": 1.6229801151229724,
+      "changedPixels": 236843,
+      "fraction": 0.3098417059131345,
+      "meshChanged": true,
+      "passed": true
+    },
+    {
+      "family": "adobe",
+      "key": "edgeWear",
+      "dependency": "geo",
+      "low": 0.1,
+      "high": 0.85,
+      "meanByteDifference": 1.0265663701377987,
+      "changedPixels": 77404,
+      "fraction": 0.1012611198325484,
+      "meshChanged": true,
+      "passed": true
+    },
+    {
+      "family": "adobe",
+      "key": "strawDensity",
+      "dependency": "geo",
+      "low": 0,
+      "high": 1,
+      "meanByteDifference": 0.15716596895168325,
+      "changedPixels": 10569,
+      "fraction": 0.013826530612244897,
+      "meshChanged": true,
+      "passed": true
+    },
+    {
+      "family": "adobe",
+      "key": "huskDensity",
+      "dependency": "geo",
+      "low": 0,
+      "high": 1,
+      "meanByteDifference": 0.0981698063840921,
+      "changedPixels": 4535,
+      "fraction": 0.005932757718472004,
+      "meshChanged": true,
+      "passed": true
+    },
+    {
+      "family": "adobe",
+      "key": "tone",
+      "dependency": "surface",
+      "low": -0.8,
+      "high": 0.8,
+      "meanByteDifference": 3.1953235653235654,
+      "changedPixels": 316650,
+      "fraction": 0.41424646781789637,
+      "meshChanged": false,
+      "passed": true
+    },
+    {
+      "family": "adobe",
+      "key": "color",
+      "dependency": "surface",
+      "low": 0.05,
+      "high": 1.35,
+      "meanByteDifference": 3.1052760334903193,
+      "changedPixels": 288389,
+      "fraction": 0.37727498691784406,
+      "meshChanged": false,
+      "passed": true
+    },
+    {
+      "family": "adobe",
+      "key": "grain",
+      "dependency": "surface",
+      "low": 0,
+      "high": 1,
+      "meanByteDifference": 1.4017146345717775,
+      "changedPixels": 225448,
+      "fraction": 0.2949345892203035,
+      "meshChanged": false,
+      "passed": true
+    },
+    {
+      "family": "adobe",
+      "key": "frequency",
+      "dependency": "surface",
+      "low": 8,
+      "high": 24,
+      "meanByteDifference": 0.8956990231990232,
+      "changedPixels": 192390,
+      "fraction": 0.25168759811616953,
+      "meshChanged": false,
+      "passed": true
+    },
+    {
+      "family": "adobe",
+      "key": "rough",
+      "dependency": "surface",
+      "low": 0.35,
+      "high": 0.96,
+      "meanByteDifference": 0.32513736263736265,
+      "changedPixels": 95370,
+      "fraction": 0.12476452119309263,
+      "meshChanged": false,
+      "passed": true
+    },
+    {
+      "family": "adobe",
+      "key": "wet",
+      "dependency": "surface",
+      "low": 0,
+      "high": 1,
+      "meanByteDifference": 4.02108756323042,
+      "changedPixels": 320385,
+      "fraction": 0.4191326530612245,
+      "meshChanged": false,
+      "passed": true
+    },
+    {
+      "family": "adobe",
+      "key": "strength",
+      "dependency": "surface",
+      "low": 0.05,
+      "high": 1.35,
+      "meanByteDifference": 1.146447322518751,
+      "changedPixels": 216623,
+      "fraction": 0.2833895866038723,
+      "meshChanged": false,
+      "passed": true
+    },
+    {
+      "family": "dressed",
+      "key": "damage",
+      "dependency": "geo",
+      "low": 0.1,
+      "high": 0.85,
+      "meanByteDifference": 2.3052337345194487,
+      "changedPixels": 152859,
+      "fraction": 0.19997252747252747,
+      "meshChanged": true,
+      "passed": true
+    },
+    {
+      "family": "dressed",
+      "key": "relief",
+      "dependency": "geo",
+      "low": 0.1,
+      "high": 0.85,
+      "meanByteDifference": 4.033956480027909,
+      "changedPixels": 266570,
+      "fraction": 0.348731030873888,
+      "meshChanged": true,
+      "passed": true
+    },
+    {
+      "family": "dressed",
+      "key": "chisel",
+      "dependency": "geo",
+      "low": 0.1,
+      "high": 0.85,
+      "meanByteDifference": 0.27237353915925344,
+      "changedPixels": 23204,
+      "fraction": 0.030355834641548927,
+      "meshChanged": true,
+      "passed": true
+    },
+    {
+      "family": "dressed",
+      "key": "mineral",
+      "dependency": "surface",
+      "low": 0,
+      "high": 1,
+      "meanByteDifference": 0.634204168847026,
+      "changedPixels": 165115,
+      "fraction": 0.2160060177917321,
+      "meshChanged": false,
+      "passed": true
+    },
+    {
+      "family": "dressed",
+      "key": "tone",
+      "dependency": "surface",
+      "low": -0.8,
+      "high": 0.8,
+      "meanByteDifference": 4.535713849642421,
+      "changedPixels": 287992,
+      "fraction": 0.3767556253270539,
+      "meshChanged": false,
+      "passed": true
+    },
+    {
+      "family": "dressed",
+      "key": "color",
+      "dependency": "surface",
+      "low": 0.05,
+      "high": 1.35,
+      "meanByteDifference": 5.840754404325833,
+      "changedPixels": 274984,
+      "fraction": 0.359738356881214,
+      "meshChanged": false,
+      "passed": true
+    },
+    {
+      "family": "dressed",
+      "key": "grain",
+      "dependency": "surface",
+      "low": 0,
+      "high": 1,
+      "meanByteDifference": 0.7480442176870749,
+      "changedPixels": 158682,
+      "fraction": 0.20759026687598117,
+      "meshChanged": false,
+      "passed": true
+    },
+    {
+      "family": "dressed",
+      "key": "frequency",
+      "dependency": "surface",
+      "low": 8,
+      "high": 24,
+      "meanByteDifference": 1.254546485260771,
+      "changedPixels": 228346,
+      "fraction": 0.2987257980115123,
+      "meshChanged": false,
+      "passed": true
+    },
+    {
+      "family": "dressed",
+      "key": "rough",
+      "dependency": "surface",
+      "low": 0.35,
+      "high": 0.96,
+      "meanByteDifference": 0.6012092272806558,
+      "changedPixels": 154191,
+      "fraction": 0.20171507064364208,
+      "meshChanged": false,
+      "passed": true
+    },
+    {
+      "family": "dressed",
+      "key": "wet",
+      "dependency": "surface",
+      "low": 0,
+      "high": 1,
+      "meanByteDifference": 3.942041252398395,
+      "changedPixels": 287982,
+      "fraction": 0.3767425431711146,
+      "meshChanged": false,
+      "passed": true
+    },
+    {
+      "family": "dressed",
+      "key": "strength",
+      "dependency": "surface",
+      "low": 0.05,
+      "high": 1.35,
+      "meanByteDifference": 1.1932657421943136,
+      "changedPixels": 225932,
+      "fraction": 0.2955677655677656,
+      "meshChanged": false,
+      "passed": true
+    },
+    {
+      "family": "rubble",
+      "key": "damage",
+      "dependency": "geo",
+      "low": 0.1,
+      "high": 0.85,
+      "meanByteDifference": 1.6368995290423862,
+      "changedPixels": 84922,
+      "fraction": 0.11109628466771324,
+      "meshChanged": true,
+      "passed": true
+    },
+    {
+      "family": "rubble",
+      "key": "relief",
+      "dependency": "geo",
+      "low": 0.1,
+      "high": 0.85,
+      "meanByteDifference": 4.119307081807082,
+      "changedPixels": 254331,
+      "fraction": 0.3327197802197802,
+      "meshChanged": true,
+      "passed": true
+    },
+    {
+      "family": "rubble",
+      "key": "chisel",
+      "dependency": "geo",
+      "low": 0.1,
+      "high": 0.85,
+      "meanByteDifference": 0.24868873190301763,
+      "changedPixels": 14108,
+      "fraction": 0.018456305599162743,
+      "meshChanged": true,
+      "passed": true
+    },
+    {
+      "family": "rubble",
+      "key": "mineral",
+      "dependency": "surface",
+      "low": 0,
+      "high": 1,
+      "meanByteDifference": 0.5754125239839526,
+      "changedPixels": 148831,
+      "fraction": 0.19470303506017791,
+      "meshChanged": false,
+      "passed": true
+    },
+    {
+      "family": "rubble",
+      "key": "tone",
+      "dependency": "surface",
+      "low": -0.8,
+      "high": 0.8,
+      "meanByteDifference": 4.301518838304553,
+      "changedPixels": 269859,
+      "fraction": 0.3530337519623234,
+      "meshChanged": false,
+      "passed": true
+    },
+    {
+      "family": "rubble",
+      "key": "color",
+      "dependency": "surface",
+      "low": 0.05,
+      "high": 1.35,
+      "meanByteDifference": 4.9593341182626896,
+      "changedPixels": 261019,
+      "fraction": 0.34146912611198327,
+      "meshChanged": false,
+      "passed": true
+    },
+    {
+      "family": "rubble",
+      "key": "grain",
+      "dependency": "surface",
+      "low": 0,
+      "high": 1,
+      "meanByteDifference": 0.6928907203907204,
+      "changedPixels": 144760,
+      "fraction": 0.18937728937728937,
+      "meshChanged": false,
+      "passed": true
+    },
+    {
+      "family": "rubble",
+      "key": "frequency",
+      "dependency": "surface",
+      "low": 8,
+      "high": 24,
+      "meanByteDifference": 0.9897265829408687,
+      "changedPixels": 205382,
+      "fraction": 0.26868393511250654,
+      "meshChanged": false,
+      "passed": true
+    },
+    {
+      "family": "rubble",
+      "key": "rough",
+      "dependency": "surface",
+      "low": 0.35,
+      "high": 0.96,
+      "meanByteDifference": 0.5717342578056864,
+      "changedPixels": 153119,
+      "fraction": 0.20031266352694924,
+      "meshChanged": false,
+      "passed": true
+    },
+    {
+      "family": "rubble",
+      "key": "wet",
+      "dependency": "surface",
+      "low": 0,
+      "high": 1,
+      "meanByteDifference": 3.6651334379905807,
+      "changedPixels": 269854,
+      "fraction": 0.35302721088435374,
+      "meshChanged": false,
+      "passed": true
+    },
+    {
+      "family": "rubble",
+      "key": "strength",
+      "dependency": "surface",
+      "low": 0.05,
+      "high": 1.35,
+      "meanByteDifference": 1.143377812663527,
+      "changedPixels": 213253,
+      "fraction": 0.2789809000523286,
+      "meshChanged": false,
+      "passed": true
+    },
+    {
+      "family": "stone",
+      "key": "damage",
+      "dependency": "geo",
+      "low": 0.1,
+      "high": 0.85,
+      "meanByteDifference": 2.726127245770103,
+      "changedPixels": 133531,
+      "fraction": 0.17468733647305076,
+      "meshChanged": true,
+      "passed": true
+    },
+    {
+      "family": "stone",
+      "key": "relief",
+      "dependency": "geo",
+      "low": 0.1,
+      "high": 0.85,
+      "meanByteDifference": 6.352563230420373,
+      "changedPixels": 293370,
+      "fraction": 0.3837912087912088,
+      "meshChanged": true,
+      "passed": true
+    },
+    {
+      "family": "stone",
+      "key": "chisel",
+      "dependency": "geo",
+      "low": 0.1,
+      "high": 0.85,
+      "meanByteDifference": 1.2350222396650967,
+      "changedPixels": 67243,
+      "fraction": 0.08796834118262689,
+      "meshChanged": true,
+      "passed": true
+    },
+    {
+      "family": "stone",
+      "key": "strata",
+      "dependency": "geo",
+      "low": 0.1,
+      "high": 0.85,
+      "meanByteDifference": 6.081818855747427,
+      "changedPixels": 290030,
+      "fraction": 0.379421768707483,
+      "meshChanged": true,
+      "passed": true
+    },
+    {
+      "family": "stone",
+      "key": "mineral",
+      "dependency": "surface",
+      "low": 0,
+      "high": 1,
+      "meanByteDifference": 0.4681584685156114,
+      "changedPixels": 50552,
+      "fraction": 0.06613291470434328,
+      "meshChanged": false,
+      "passed": true
+    },
+    {
+      "family": "stone",
+      "key": "tone",
+      "dependency": "surface",
+      "low": -0.8,
+      "high": 0.8,
+      "meanByteDifference": 4.270579539508111,
+      "changedPixels": 300059,
+      "fraction": 0.3925418628990058,
+      "meshChanged": false,
+      "passed": true
+    },
+    {
+      "family": "stone",
+      "key": "color",
+      "dependency": "surface",
+      "low": 0.05,
+      "high": 1.35,
+      "meanByteDifference": 3.7643681318681317,
+      "changedPixels": 284127,
+      "fraction": 0.37169937205651493,
+      "meshChanged": false,
+      "passed": true
+    },
+    {
+      "family": "stone",
+      "key": "grain",
+      "dependency": "surface",
+      "low": 0,
+      "high": 1,
+      "meanByteDifference": 0.4007993197278912,
+      "changedPixels": 85703,
+      "fraction": 0.11211800104657248,
+      "meshChanged": false,
+      "passed": true
+    },
+    {
+      "family": "stone",
+      "key": "frequency",
+      "dependency": "surface",
+      "low": 8,
+      "high": 24,
+      "meanByteDifference": 4.32507326007326,
+      "changedPixels": 287455,
+      "fraction": 0.37605311355311355,
+      "meshChanged": false,
+      "passed": true
+    },
+    {
+      "family": "stone",
+      "key": "rough",
+      "dependency": "surface",
+      "low": 0.35,
+      "high": 0.96,
+      "meanByteDifference": 1.1115493633350777,
+      "changedPixels": 242691,
+      "fraction": 0.31749215070643644,
+      "meshChanged": false,
+      "passed": true
+    },
+    {
+      "family": "stone",
+      "key": "wet",
+      "dependency": "surface",
+      "low": 0,
+      "high": 1,
+      "meanByteDifference": 4.218805599162742,
+      "changedPixels": 299398,
+      "fraction": 0.3916771323914181,
+      "meshChanged": false,
+      "passed": true
+    },
+    {
+      "family": "stone",
+      "key": "strength",
+      "dependency": "surface",
+      "low": 0.05,
+      "high": 1.35,
+      "meanByteDifference": 4.386156898656899,
+      "changedPixels": 286281,
+      "fraction": 0.3745172684458399,
+      "meshChanged": false,
+      "passed": true
+    },
+    {
+      "family": "pebble",
+      "key": "roundness",
+      "dependency": "geo",
+      "low": 0.1,
+      "high": 0.85,
+      "meanByteDifference": 1.1445299145299146,
+      "changedPixels": 119115,
+      "fraction": 0.1558281004709576,
+      "meshChanged": true,
+      "passed": true
+    },
+    {
+      "family": "pebble",
+      "key": "mineral",
+      "dependency": "surface",
+      "low": 0,
+      "high": 1,
+      "meanByteDifference": 0.17856009070294784,
+      "changedPixels": 12994,
+      "fraction": 0.016998953427524856,
+      "meshChanged": false,
+      "passed": true
+    },
+    {
+      "family": "pebble",
+      "key": "polish",
+      "dependency": "surface",
+      "low": 0,
+      "high": 1,
+      "meanByteDifference": 0.5331889935461364,
+      "changedPixels": 107750,
+      "fraction": 0.14096023024594453,
+      "meshChanged": false,
+      "passed": true
+    },
+    {
+      "family": "pebble",
+      "key": "tone",
+      "dependency": "surface",
+      "low": -0.8,
+      "high": 0.8,
+      "meanByteDifference": 2.134952468166754,
+      "changedPixels": 155787,
+      "fraction": 0.20380298273155417,
+      "meshChanged": false,
+      "passed": true
+    },
+    {
+      "family": "pebble",
+      "key": "color",
+      "dependency": "surface",
+      "low": 0.05,
+      "high": 1.35,
+      "meanByteDifference": 2.2787445491016918,
+      "changedPixels": 147062,
+      "fraction": 0.19238880167451597,
+      "meshChanged": false,
+      "passed": true
+    },
+    {
+      "family": "pebble",
+      "key": "grain",
+      "dependency": "surface",
+      "low": 0,
+      "high": 1,
+      "meanByteDifference": 0.12806296877725448,
+      "changedPixels": 17522,
+      "fraction": 0.02292255363683935,
+      "meshChanged": false,
+      "passed": true
+    },
+    {
+      "family": "pebble",
+      "key": "frequency",
+      "dependency": "surface",
+      "low": 8,
+      "high": 24,
+      "meanByteDifference": 0.5550976800976801,
+      "changedPixels": 61756,
+      "fraction": 0.08079016221873364,
+      "meshChanged": false,
+      "passed": true
+    },
+    {
+      "family": "pebble",
+      "key": "rough",
+      "dependency": "surface",
+      "low": 0.35,
+      "high": 0.96,
+      "meanByteDifference": 0.851182190825048,
+      "changedPixels": 152700,
+      "fraction": 0.19976452119309263,
+      "meshChanged": false,
+      "passed": true
+    },
+    {
+      "family": "pebble",
+      "key": "wet",
+      "dependency": "surface",
+      "low": 0,
+      "high": 1,
+      "meanByteDifference": 2.2568685679399967,
+      "changedPixels": 155666,
+      "fraction": 0.20364468864468865,
+      "meshChanged": false,
+      "passed": true
+    },
+    {
+      "family": "pebble",
+      "key": "strength",
+      "dependency": "surface",
+      "low": 0.05,
+      "high": 1.35,
+      "meanByteDifference": 0.6541675388103959,
+      "changedPixels": 77172,
+      "fraction": 0.10095761381475667,
+      "meshChanged": false,
+      "passed": true
+    }
+  ],
+  "performance": [
+    {
+      "viewport": [
+        1200,
+        820
+      ],
+      "family": "fired",
+      "seconds": 6.001807909999968,
+      "frames": 36,
+      "uniquePositions": 36,
+      "fps": 5.998192634592364,
+      "pixels": 763200
+    },
+    {
+      "viewport": [
+        1200,
+        820
+      ],
+      "family": "dressed",
+      "seconds": 6.001438386000018,
+      "frames": 38,
+      "uniquePositions": 38,
+      "fps": 6.331815400895442,
+      "pixels": 763200
+    },
+    {
+      "viewport": [
+        1200,
+        820
+      ],
+      "family": "pebble",
+      "seconds": 6.001849043999982,
+      "frames": 42,
+      "uniquePositions": 42,
+      "fps": 6.99784344659371,
+      "pixels": 763200
+    },
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "family": "fired",
+      "seconds": 6.002722012000049,
+      "frames": 100,
+      "uniquePositions": 100,
+      "fps": 16.65910895092091,
+      "pixels": 248040
+    },
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "family": "dressed",
+      "seconds": 6.0010042029999795,
+      "frames": 106,
+      "uniquePositions": 106,
+      "fps": 17.663710341514047,
+      "pixels": 248040
+    },
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "family": "pebble",
+      "seconds": 6.001866530999962,
+      "frames": 84,
+      "uniquePositions": 84,
+      "fps": 13.995646115443504,
+      "pixels": 248040
+    }
+  ],
+  "errors": [],
+  "failures": [],
+  "humanVisualApproved": false,
+  "productionApproved": false,
+  "http": {
+    "status": 200,
+    "contentType": "text/html",
+    "bytes": 78835,
+    "sha256": "32c09833cedb01c1cbae6fb04faea6e9322112e92f07252baedd3b27bf7cc76d"
+  },
+  "loadMethod": "HTTP navigation",
+  "sourceHead": "b4b5f4f3dad128ccdceaf63f8fc6ffbfac45ea78",
+  "passed": true,
+  "performanceScope": "software Chromium ANGLE SwiftShader; three 6s material windows per viewport, user device untested"
+}
