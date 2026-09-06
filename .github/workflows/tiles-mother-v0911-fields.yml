@@ -29,6 +29,7 @@ jobs:
         run: |
           python tiles-mother/v0911/transport/reassemble.py
           python tiles-mother/v0911/tools/refine_visible.py
+          python tiles-mother/v0911/tools/final_checks_patch.py
           python tiles-mother/v0911/tools/build.py
           node --check tiles-mother/v0911/source/app.js
           node tiles-mother/v0911/qa/geometry.cjs
@@ -38,6 +39,13 @@ jobs:
           playwright install --with-deps chromium
       - name: Real WebGL fractures moss states contacts comparison and mobile
         run: python tiles-mother/v0911/qa/browser.py
+      - name: Preserve functional and visual evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Tiles_Mother_V0911_Functional
+          path: tiles-mother/v0911
+          retention-days: 30
       - name: Same-session material timer query comparison
         run: python tiles-mother/v0911/qa/performance.py
       - name: Preserve validated candidate on original feature branch
