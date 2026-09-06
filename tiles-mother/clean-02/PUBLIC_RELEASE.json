@@ -1,0 +1,83 @@
+{
+  "version": "clean-02",
+  "date": "2026-09-06",
+  "publicURL": "https://haihao0307.github.io/HOUSE/tiles-mother/clean-02/",
+  "publicSiteDeployed": true,
+  "publicBrowserVerified": true,
+  "htmlBytes": 53033,
+  "htmlSHA256": "1477c0b62fc62ba97df823ba6a5bc6a362c82646397076ce122b8b0980835922",
+  "sourcePath": "tiles-mother/clean-02/",
+  "sourceMaterializedCommit": "4eee1292ebce3c9a0b1971a202a54e5f09fed7c1",
+  "verificationInputCommit": "ee51116b90c81175ec567be51354183fc8e3fad4",
+  "verificationRun": 34025424061,
+  "resultArtifactId": 9986938625,
+  "resultArchiveSHA256": "cd4a138f95f039d2e93526206da6d0f32485485bbde33b783e490bfe40c68728",
+  "completeSiteArtifactId": 9986920954,
+  "sourceZIP": {
+    "filename": "Tiles_Mother_Clean_02_Source.zip",
+    "bytes": 66800,
+    "sha256": "7a5fd7c93d4a0b1fe05e8dd9deeb21011f5b1327de4ad17bf061c0f3e8f486c7",
+    "payloadsVerified": 25,
+    "independentRebuildExact": true,
+    "location": "current conversation attachment; runtime source is also materialized in this repository"
+  },
+  "changes": {
+    "colorControls": "Restored brightness, cool/warm gray, per-tile variation, relief, local ochre, gray coverage, wet appearance and exposed clay body. Parameters affect the displayed material without regenerating geometry.",
+    "colorCalibration": "Reference-guided neutral gray candidate, not calibrated spectral data or human visual acceptance.",
+    "topCover": "Removed explicit row 6 column 2 skip. Inspection roof is now 28 pan plus 21 cover = 49, labelled honestly; no new ridge system claimed.",
+    "roofCountAtZero": {"pan": 440, "cover": 420},
+    "wood": "Stable local grain rotation; longitudinal damage interpolation; irregular inward erosion; contiguous surviving runs. Lower beams now use their own cumulative damage instead of a constant.",
+    "woodApproximation": "Bearing crown and contact collars are protected until modelled failure to retain static seating. This is a display approximation, not a calibrated decay or strength solver.",
+    "moss": "Coverage and thickness separated; correlated regional wet bias, broad surface coverage plus bounded host-attached local patches. Maximum 160 roof patches and 36 inspection patches. Species and thickness uncalibrated."
+  },
+  "tests": {
+    "geometryCasesPassed": 10,
+    "fixedTemplateContactCasesPassed": 15,
+    "targetedChangeChecksPassed": 10,
+    "publicDesktopCaptures": 11,
+    "publicMobileCaptures": 2,
+    "colorControlPairsVisibleRestorableWithoutGeometryBuild": 6,
+    "woodGrainRotationChangesCanvas": true,
+    "publicDesktopAndMobileExactHTTPBytes": true,
+    "browser": "152.0.7977.0",
+    "execution": "GitHub Actions Linux browser with software WebGL launch flags, not user GPU",
+    "publicPageErrors": 0,
+    "publicConsoleErrors": 0,
+    "publicHTTPFailures": 0,
+    "publicRequestFailures": 0,
+    "webGLError": 0,
+    "mobileViewport": [390, 844],
+    "mobileHorizontalOverflow": false,
+    "idleDrawsInSixSeconds": 0,
+    "fullMotionPerformanceGate": "not_retested_this_release",
+    "gpuTiming": "unknown"
+  },
+  "initialPublicFailure": {
+    "run": 34025010125,
+    "causeConfirmed": "Automatic request for https://haihao0307.github.io/favicon.ico returned 404.",
+    "correction": "31-byte inline empty favicon declaration. Runtime JavaScript, geometry and shaders unchanged. Final test captures all console errors without favicon filtering."
+  },
+  "sitePreservation": {
+    "originalCompleteSiteRun": 34023843003,
+    "previousCompleteSiteRun": 34025010125,
+    "otherFilesPreservedByteExactly": 283,
+    "onlyPublishedPaths": ["tiles-mother/clean-02/index.html", "tiles-mother/clean-02/build.json"],
+    "publicRootBrickRootR5R6Rechecked": true,
+    "futureDeploymentMustPreserveLatestCompleteSite": true,
+    "mainAndGhPagesSourceBranchesModified": false
+  },
+  "mentor": {
+    "readCommit": "1fc23df1dd253d4785e05b19154cf443b4636ced",
+    "sources": ["FUNCTION_APPLICATION_MAP material coordinates and output semantics", "surface-and-volume-optics/SKILL.md lines 1-82"],
+    "readingReply": 5558358851,
+    "independentReview": "pending"
+  },
+  "limits": [
+    "Geometry/contact tests cover declared rigid templates and erosion constraints, not structural safety or arbitrary fragment motion.",
+    "No real crack propagation, falling debris/collision/piles, mid-history repair ledger or local physical calibration.",
+    "53 KB payload and idle-stop do not establish final 860-tile motion speed or user fan/power reduction.",
+    "No rejected Macroscopic R1 implementation restored; earlier working versions and references preserved."
+  ],
+  "visualApproved": false,
+  "productionApproved": false
+}
