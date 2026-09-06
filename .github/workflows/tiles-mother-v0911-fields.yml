@@ -28,6 +28,7 @@ jobs:
       - name: Recover verified source and rebuild from untouched V0.9.10
         run: |
           python tiles-mother/v0911/transport/reassemble.py
+          python tiles-mother/v0911/tools/refine_visible.py
           python tiles-mother/v0911/tools/build.py
           node --check tiles-mother/v0911/source/app.js
           node tiles-mother/v0911/qa/geometry.cjs
@@ -37,6 +38,8 @@ jobs:
           playwright install --with-deps chromium
       - name: Real WebGL fractures moss states contacts comparison and mobile
         run: python tiles-mother/v0911/qa/browser.py
+      - name: Same-session material timer query comparison
+        run: python tiles-mother/v0911/qa/performance.py
       - name: Preserve validated candidate on original feature branch
         run: |
           git fetch origin feature/tiles-mother-v0.1-workbench
