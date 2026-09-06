@@ -1,0 +1,171 @@
+name: Tiles Mother Clean 02 Public Release
+on:
+  push:
+    branches: [feature/tiles-mother-v0.1-workbench]
+    paths:
+      - .github/workflows/tiles-mother-clean02-publish.yml
+      - tiles-mother/clean-02/transport/**
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+  pages: write
+  id-token: write
+concurrency:
+  group: tiles-mother-clean02-publication
+  cancel-in-progress: false
+jobs:
+  publish:
+    if: github.ref == 'refs/heads/feature/tiles-mother-v0.1-workbench'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    environment:
+      name: tiles-mother-online
+      url: ${{ steps.deployment.outputs.page_url }}
+    env:
+      ROOT: tiles-mother/clean-02
+      PRIOR_RUN: '34023843003'
+      GH_TOKEN: ${{ github.token }}
+      PUBLIC_URL: https://haihao0307.github.io/HOUSE/tiles-mother/clean-02/
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Recover exact source, without importing old app code
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import os,base64,hashlib,tarfile,io
+          r=Path(os.environ['ROOT'])
+          data=base64.b64decode(''.join(p.read_text() for p in sorted((r/'transport').glob('part*.b64'))),validate=True)
+          assert hashlib.sha256(data).hexdigest()=='738c55005184e1bd32bbc97492828da4649209c9ec0a7681466584a5d31ab002'
+          with tarfile.open(fileobj=io.BytesIO(data),mode='r:xz') as archive:
+              for m in archive:
+                  p=Path(m.name)
+                  assert not p.is_absolute() and '..' not in p.parts
+                  assert m.isfile() and m.size<200000
+                  target=r/p; target.parent.mkdir(parents=True,exist_ok=True)
+                  target.write_bytes(archive.extractfile(m).read())
+          PY
+          python "$ROOT/build.py"
+          echo "08c3c7323174c66c56a2c0080551e00ec014af4747006419ce22a1c4a926eedd  $ROOT/START_HERE.html" | sha256sum -c -
+      - name: Geometry, contacts, restored cover and continuous timber tests
+        run: |
+          node "$ROOT/qa/geometry.cjs"
+          node "$ROOT/qa/contact.cjs"
+          node "$ROOT/qa/changes.cjs"
+      - name: Install actual browser
+        run: |
+          pip install playwright==1.57.0
+          playwright install --with-deps chromium
+      - name: Local actual WebGL and visible color controls
+        run: env -u PUBLIC_URL python "$ROOT/qa/verify_browser.py"
+      - name: Recover complete currently published site
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          run-id: 34023843003
+          name: github-pages
+          path: _previous_pages
+      - name: Preserve every old public file and add only Tiles Clean 02
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import tarfile,hashlib,json,os,shutil
+          source=Path('_previous_pages/artifact.tar')
+          assert source.is_file(),list(Path('_previous_pages').rglob('*'))
+          site=Path('_site');site.mkdir()
+          with tarfile.open(source) as archive:
+              for m in archive:
+                  p=Path(m.name)
+                  assert not p.is_absolute() and '..' not in p.parts
+                  target=site/p
+                  if m.isdir():target.mkdir(parents=True,exist_ok=True)
+                  elif m.isfile():
+                      target.parent.mkdir(parents=True,exist_ok=True)
+                      with archive.extractfile(m) as f, target.open('wb') as out:shutil.copyfileobj(f,out)
+                  else:raise ValueError('Unsupported archive entry '+m.name)
+          def hashes():return {p.relative_to(site).as_posix():hashlib.sha256(p.read_bytes()).hexdigest() for p in site.rglob('*') if p.is_file()}
+          before=hashes()
+          dest=site/'tiles-mother/clean-02';assert not dest.exists(),'Release path already exists'
+          dest.mkdir(parents=True)
+          root=Path(os.environ['ROOT'])
+          shutil.copyfile(root/'START_HERE.html',dest/'index.html')
+          shutil.copyfile(root/'BUILD.json',dest/'build.json')
+          after=hashes();assert all(after.get(k)==v for k,v in before.items())
+          assert set(after)-set(before)=={'tiles-mother/clean-02/index.html','tiles-mother/clean-02/build.json'}
+          report={'priorRun':int(os.environ['PRIOR_RUN']),'preservedFileCount':len(before),'allPreviousFilesIdentical':True,'addedPaths':sorted(set(after)-set(before)),'addedHTMLSHA256':after['tiles-mother/clean-02/index.html'],'oldManifestSHA256':hashlib.sha256(json.dumps(before,sort_keys=True).encode()).hexdigest(),'sourceCommit':os.environ['GITHUB_SHA']}
+          (root/'qa/SITE_PRESERVATION.json').write_text(json.dumps(report,indent=2)+'\n')
+          Path('_previous_hashes.json').write_text(json.dumps(before))
+          PY
+      - name: Abort if another site deployment superseded the preserved artifact
+        run: |
+          python - <<'PY'
+          import urllib.request,json,os
+          api='https://api.github.com/repos/'+os.environ['GITHUB_REPOSITORY']
+          def get(p):
+              r=urllib.request.Request(api+p,headers={'Authorization':'Bearer '+os.environ['GH_TOKEN'],'Accept':'application/vnd.github+json'})
+              with urllib.request.urlopen(r) as f:return json.load(f)
+          prior=get('/actions/runs/'+os.environ['PRIOR_RUN'])
+          runs=get('/actions/runs?per_page=100')['workflow_runs']
+          for r in runs:
+              if r['id']==int(os.environ['GITHUB_RUN_ID']) or r['created_at']<=prior['created_at']:continue
+              if 'deploy' not in r['name'].lower() and 'public release' not in r['name'].lower():continue
+              if r['status']!='completed':raise RuntimeError('Another publication is running: '+str(r['id']))
+              if r['conclusion']=='success':
+                  aa=get('/actions/runs/'+str(r['id'])+'/artifacts')['artifacts']
+                  if any(a['name']=='github-pages' for a in aa):raise RuntimeError('Newer site archive needs preservation: '+str(r['id']))
+          print('Pinned prior site remains the newest completed deployment.')
+          PY
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - name: Deploy existing site plus isolated tile path
+        id: deployment
+        uses: actions/deploy-pages@v4
+      - name: Wait for exact public bytes and check retained entry points
+        run: |
+          python - <<'PY'
+          import os,urllib.request,hashlib,time,json
+          from pathlib import Path
+          target=Path(os.environ['ROOT'])/'START_HERE.html';expected=hashlib.sha256(target.read_bytes()).hexdigest()
+          for attempt in range(40):
+              try:
+                  with urllib.request.urlopen(os.environ['PUBLIC_URL'],timeout=20) as f:
+                      data=f.read();status=f.status
+                  if hashlib.sha256(data).hexdigest()==expected:break
+              except Exception as e:print(type(e).__name__,str(e)[:160])
+              time.sleep(5)
+          else:raise RuntimeError('Public bytes did not match')
+          old=json.loads(Path('_previous_hashes.json').read_text());retained=[]
+          for p in ['index.html','brick-mother/index.html','brick-mother/experiments/atelier-r5/web/index.html','brick-mother/experiments/atelier-r6/web/index.html']:
+              assert p in old,p
+              with urllib.request.urlopen('https://haihao0307.github.io/HOUSE/'+p,timeout=30) as f:got=hashlib.sha256(f.read()).hexdigest()
+              assert got==old[p],p
+              retained.append(p)
+          (Path(os.environ['ROOT'])/'qa/PUBLIC_HTTP.json').write_text(json.dumps({'url':os.environ['PUBLIC_URL'],'status':status,'sha256':expected,'retainedPublicEntries':retained,'exactBytes':True},indent=2)+'\n')
+          PY
+      - name: Actual public browser, WebGL, color sliders and phone layout
+        run: python "$ROOT/qa/verify_browser.py"
+      - name: Commit complete source and evidence on Tiles branch only
+        run: |
+          git fetch origin feature/tiles-mother-v0.1-workbench
+          test "$(git rev-parse origin/feature/tiles-mother-v0.1-workbench)" = "$GITHUB_SHA"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -f "$ROOT/source" "$ROOT/build.py" "$ROOT/README.md" "$ROOT/START_HERE.html" "$ROOT/BUILD.json"
+          git add -f "$ROOT/qa/geometry.cjs" "$ROOT/qa/contact.cjs" "$ROOT/qa/changes.cjs" "$ROOT/qa/verify_browser.py"
+          git add -f "$ROOT/qa/GEOMETRY.json" "$ROOT/qa/CONTACT.json" "$ROOT/qa/CHANGES.json" "$ROOT/qa/SITE_PRESERVATION.json" "$ROOT/qa/PUBLIC_HTTP.json" "$ROOT/qa/browser02/REPORT.json" "$ROOT/qa/public/REPORT.json"
+          git commit -m 'release(tiles): preserve Clean 02 source and verified public evidence [skip ci]'
+          git push origin HEAD:feature/tiles-mother-v0.1-workbench
+      - name: Preserve full result including any failed checks
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Tiles_Mother_Clean_02_Public_Result
+          path: tiles-mother/clean-02
+          retention-days: 30
