@@ -8,7 +8,7 @@ ROOT=Path(__file__).resolve().parents[1]
 OUT=Path(os.environ.get('BRICK_QA_OUT',str(ROOT/'qa')));OUT.mkdir(parents=True,exist_ok=True)
 URL=sys.argv[1] if len(sys.argv)>1 else None
 REPORT={'version':'R5.0.0','url':URL,'loadMethod':'HTTP navigation' if URL else 'set_content full HTML','checks':[],'errors':[],'performance':[],'humanVisualApproved':False,'productionApproved':False}
-def passed(name,**kw):REPORT['checks'].append({'test':name,'passed':True,**kw})
+def passed(label,**kw):REPORT['checks'].append({'test':label,'passed':True,**kw})
 with sync_playwright() as p:
  browser=p.chromium.launch(executable_path=os.environ.get('CHROMIUM_PATH','') or None,headless=False,args=['--use-angle=swiftshader','--enable-unsafe-swiftshader','--no-sandbox'])
  page=browser.new_page(viewport={'width':1280,'height':860},device_scale_factor=1)
