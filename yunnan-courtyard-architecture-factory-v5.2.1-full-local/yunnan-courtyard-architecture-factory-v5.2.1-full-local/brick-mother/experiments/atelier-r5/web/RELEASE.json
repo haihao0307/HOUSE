@@ -1,0 +1,35 @@
+{
+  "version": "R5.0.0",
+  "sourceHead": "7390c27e83995e4f68f703d6476f40a35ef1e38a",
+  "htmlSHA256": "83b36384cc6eed0416a3c57d1340926bf84651b0656c777f2f68b6983ef63428",
+  "bytes": 80401,
+  "sourceSHA256": {
+    "index.template.html": "790fbf8aa643d431a0177c99de3dcb08cb228b681bc7e7034c5a8214c57a8bd7",
+    "style.css": "18ea2c273cedfd9e2217ab89819b6e08aa79c9015ee0077f84e5d5e15518475e",
+    "app.js": "63ce8e7958e8fd498256fb3b30f2ce47264bd9f4ff896bf9ff2af882e22d5982",
+    "renderer.js": "9ca030b93cd8d313e2aa2a1d54c7511e2914a589bd892c2feee965a467ff7076",
+    "kernel.js": "2b30e9b7d00557a8632037e718a39c12296c5e77988a6463b2199491e0c537bf"
+  },
+  "defaultMaterial": "fired",
+  "materials": [
+    "fired",
+    "kiln",
+    "adobe",
+    "dressed",
+    "rubble",
+    "stone",
+    "pebble"
+  ],
+  "lithologies": [
+    "R4-layer-preserved",
+    "granite-candidate",
+    "sandstone-candidate",
+    "basalt-candidate",
+    "quartzite-candidate"
+  ],
+  "R4_preserved": true,
+  "referenceGLBLoaded": false,
+  "humanVisualApproved": false,
+  "productionApproved": false,
+  "publicURLVerified": false
+}
