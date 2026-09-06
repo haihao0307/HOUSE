@@ -33,3 +33,9 @@
 读取[小妈R1学习卡](knowledge/xiaoma-learning-r1/SKILL.md)、[边口诊断](knowledge/xiaoma-learning-r1/EDGE_FORM_REVIEW.md)和[讲武堂原件重读及读图纠错](knowledge/jiangwutang-001/SOURCE_REACCESS_20260905.md)。小妈教材固定提交b1f01bae975c4151539bc38d84644b8542c70c29，HOUSE #16留实际回执，小妈/House独立复核不能代签。
 
 讲武堂精细ZIP沿用jiangwutang-001，仍保留作未完成的细节对照；原始大文件不重复入Git或网页。两张线描分别登记，筒瓦3cm壁厚等旧推断已撤回。新屋面照片身份在[v0910/REFERENCE_RECEIPT.json](v0910/REFERENCE_RECEIPT.json)，用于整体灰度和风化节奏，不由远景照片推定苔藓物种或实测厚度。
+
+## 2026-09-06：失养逻辑、面板与噪波专项
+
+先读[十年情景与联动失效实施方案](experiments/abandonment-noise-r1/README.md)。本轮按小妈最新7a6197f资料，复算14个旧状态并完成16组独立CPU检查。十年为用户指导的潮湿旧宅失养情景，建筑年龄与停止维护时间分开，横梁有独立受水损伤，失支沿依赖传递。新版面板、木断口、厚苔与GPU噪波方案尚待接入及真实浏览器对照。
+
+V0.9.10源码和HTML、本页原恢复入口、CURRENT_BASELINE及CURRENT_CANDIDATE均保持。本实验不是V0.9.11成品；小妈独立复核等待HOUSE #16实际回复，不能自签讨论完成或视觉批准。
