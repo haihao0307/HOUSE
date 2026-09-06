@@ -1,0 +1,120 @@
+name: Brick Mother R4 Public Candidate Build
+on:
+  push:
+    branches: [feature/brick-mother-v2.0-composite-material-dna]
+    paths: [.github/workflows/brick-mother-r4-publish-build.yml]
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: brick-mother-r4-public-candidate
+  cancel-in-progress: false
+jobs:
+  verify-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    env:
+      BRICK: yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother
+      EXPECTED_BRANCH: feature/brick-mother-v2.0-composite-material-dna
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check branch and frozen originals
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REF_NAME" = "$EXPECTED_BRANCH"
+          test "$(git hash-object "$BRICK/brick-mother-observation-studio.html")" = 7b2a18c6a886d0751ca2fc92530b7986d9e1a727
+          test "$(git hash-object "$BRICK/brick-mother-standalone-v2.7.5.html")" = 7b10389cb9367f7423619262820883cc94b07a61
+          test "$(git hash-object "$BRICK/brick-mother-standalone-v2.6.html")" = f64c65d87dc418bf1a923a4cf332b449efbe0eb9
+      - name: Build isolated public candidate
+        run: |
+          python "$BRICK/experiments/atelier-r4/build_web.py" "$RUNNER_TEMP/r4-site"
+          mkdir -p "$RUNNER_TEMP/r4-evidence"
+          python - <<'PY'
+          import pathlib,os,re,subprocess,json
+          root=pathlib.Path(os.environ['RUNNER_TEMP'])
+          html=(root/'r4-site/index.html').read_text()
+          assert 'window.BrickR4=' in html
+          assert len(html.encode())<300000
+          for i,script in enumerate(re.findall(r'<script[^>]*>(.*?)</script>',html,re.S)):
+              p=root/f'r4-script-{i}.js'; p.write_text(script)
+              subprocess.run(['node','--check',str(p)],check=True)
+          print('JavaScript syntax valid; HTML bytes',len(html.encode()))
+          PY
+      - name: Install test browser
+        run: |
+          python -m pip install playwright==1.55.0
+          python -m playwright install --with-deps chromium
+      - name: Real HTTP browser verification
+        run: |
+          python - <<'PY'
+          import pathlib,os,json,threading,http.server,functools,time
+          from playwright.sync_api import sync_playwright
+          root=pathlib.Path(os.environ['RUNNER_TEMP']); site=root/'r4-site'; out=root/'r4-evidence'
+          server=http.server.ThreadingHTTPServer(('127.0.0.1',8765),functools.partial(http.server.SimpleHTTPRequestHandler,directory=str(site)))
+          threading.Thread(target=server.serve_forever,daemon=True).start()
+          report={'sourceCommit':os.environ['GITHUB_SHA'],'publicURLTest':False,'tests':[],'errors':[],'humanVisualApproved':False,'productionApproved':False}
+          try:
+              with sync_playwright() as p:
+                  browser=p.chromium.launch(headless=True,args=['--use-angle=swiftshader','--enable-unsafe-swiftshader','--no-sandbox'])
+                  page=browser.new_page(viewport={'width':1280,'height':800},device_scale_factor=1)
+                  page.on('pageerror',lambda e:report['errors'].append(str(e)))
+                  page.goto('http://127.0.0.1:8765/',wait_until='load')
+                  page.wait_for_function('window.BrickR4 && BrickR4.audit.ready && !BrickR4.stats().busy',timeout=90000)
+                  for family in ['fired','kiln','adobe','dressed','rubble','stone','pebble']:
+                      page.locator('[data-family="'+family+'"]').click()
+                      page.wait_for_function('(f)=>window.BrickR4 && !BrickR4.stats().busy && BrickR4.stats().geometry?.family===f',arg=family,timeout=90000)
+                      page.wait_for_timeout(700)
+                      state=page.evaluate('BrickR4.stats()')
+                      assert state['geometry']['family']==family
+                      assert page.locator('[data-family="'+family+'"]').is_visible()
+                      assert page.locator('#error').is_hidden()
+                      assert state['geometry']['vertices']>0
+                      page.screenshot(path=str(out/(family+'-desktop.png')))
+                      report['tests'].append({'test':'desktop material '+family,'passed':True,'geometry':{'vertices':state['geometry']['vertices'],'triangles':state['geometry']['triangles'],'buildMs':state['geometry']['buildMs']}})
+                  page.evaluate("BrickR4.selectFamily('adobe')")
+                  page.wait_for_function("!BrickR4.stats().busy && BrickR4.stats().geometry.family==='adobe'",timeout=90000)
+                  builds=page.evaluate('BrickR4.audit.builds')
+                  for face in ['front','back','left','right','top','bottom']:
+                      page.evaluate('(f)=>BrickR4.face(f)',face);page.wait_for_timeout(500)
+                      assert page.evaluate('BrickR4.audit.builds')==builds
+                      assert page.locator('#error').is_hidden()
+                      report['tests'].append({'test':'adobe '+face+' view does not rebuild','passed':True})
+                  page.set_viewport_size({'width':390,'height':844});page.wait_for_timeout(750)
+                  for f in ['fired','kiln','adobe','dressed','rubble','stone','pebble']:
+                      b=page.locator('[data-family="'+f+'"]');assert b.is_visible();box=b.bounding_box()
+                      assert box and box['x']>=0 and box['y']>=0 and box['x']+box['width']<=391 and box['y']+box['height']<=844
+                  page.screenshot(path=str(out/'mobile-390x844.png'))
+                  report['tests'].append({'test':'seven material buttons visible in mobile viewport','passed':True})
+                  assert not report['errors'],report['errors']
+                  browser.close()
+          finally:
+              (out/'browser-report.json').write_text(json.dumps(report,ensure_ascii=False,indent=2))
+              server.shutdown()
+          print(json.dumps(report,ensure_ascii=False,indent=2))
+          PY
+      - name: Save candidate only after browser checks
+        run: |
+          set -euo pipefail
+          current=$(git ls-remote origin "refs/heads/$EXPECTED_BRANCH" | cut -f1)
+          test "$current" = "$GITHUB_SHA"
+          DEST="$BRICK/experiments/atelier-r4/web"
+          mkdir -p "$DEST"
+          cp "$RUNNER_TEMP/r4-site/index.html" "$DEST/index.html"
+          cp "$RUNNER_TEMP/r4-site/RELEASE.json" "$DEST/RELEASE.json"
+          cp "$RUNNER_TEMP/r4-evidence/browser-report.json" "$DEST/BUILD_QA.json"
+          git config user.name 'Brick Mother publish verification'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- "$DEST/index.html" "$DEST/RELEASE.json" "$DEST/BUILD_QA.json"
+          git diff --cached --name-only | while IFS= read -r f; do case "$f" in "$DEST"/*) ;; *) exit 1;; esac; done
+          git commit -m 'build(brick): materialize browser-verified R4 web candidate [skip ci]'
+          git push origin "HEAD:refs/heads/$EXPECTED_BRANCH"
+          git rev-parse HEAD > "$RUNNER_TEMP/r4-evidence/materialized-commit.txt"
+      - name: Retain source and evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: brick-mother-r4-public-candidate-${{ github.run_id }}
+          path: |
+            ${{ runner.temp }}/r4-site
+            ${{ runner.temp }}/r4-evidence
+          retention-days: 30
