@@ -900,24 +900,28 @@ uniform vec4 waveControl;uniform vec4 waveCause;uniform vec4 identity;uniform ve
 vec3 waveColorResult;vec3 waveGradientResult;float waveRoughResult;float waveAOResult;
 void waveEvaluate(){
  vec3 p=wP;vec3 id=identity.xyz;
- vec4 low=wn(p*11.+id),middle=wn(p*55.+id+vec3(11.,7.,3.)),fine=wn(p*245.+id+27.),grain=wn(p*2100.+id+41.);
+ float waveFootprint=max(length(dFdx(p)),length(dFdy(p)));
+ float wf=1.-smoothstep(.25,.90,waveFootprint*245.),wgf=1.-smoothstep(.20,.75,waveFootprint*2100.);
+ vec4 low=wn(p*11.+id),middle=wn(p*55.+id+vec3(11.,7.,3.)),fine=vec4(.5,0,0,0),grain=vec4(.5,0,0,0);
+ if(wf>.001){fine=wn(p*245.+id+27.);fine=vec4(mix(.5,fine.x,wf),fine.yzw*wf);}
+ if(wgf>.001){grain=wn(p*2100.+id+41.);grain=vec4(mix(.5,grain.x,wgf),grain.yzw*wgf);}
  float warm=smoothstep(.48,.73,low.x+(middle.x-.5)*.20+identity.w*.7);
  float ash=smoothstep(.48,.76,middle.x+(fine.x-.5)*.27);
  float deep=smoothstep(.67,.84,low.x*.32+middle.x*.68);
  vec3 c=vec3(.365,.405,.421)+identity.w*.055;
- c=mix(c,vec3(.50,.40,.305),warm*.52*waveControl.x);
- c=mix(c,vec3(.62,.602,.557),ash*.48*waveControl.x);
+ c=mix(c,vec3(.50,.40,.305),warm*.32*waveControl.x);
+ c=mix(c,vec3(.62,.602,.557),ash*.32*waveControl.x);
  c=mix(c,vec3(.235,.27,.287),deep*.36*waveControl.x);
- c+=(fine.x-.5)*.060+(grain.x-.5)*.039;
+ c+=(fine.x-.5)*.035+(grain.x-.5)*.022;
  // Sparse 3D pore cells. Feature sphere remains within its cell (no cell cutoffs).
  vec3 cp=p*680.+id,cell=floor(cp),cf=fract(cp);
  float h=wh(cell+3.);vec3 centre=vec3(.35+.28*h,.35+.28*wh(cell+7.),.35+.28*wh(cell+13.));
  vec3 delta=cf-centre;float r=.14+.13*h,rr=length(delta),pore=(1.-smoothstep(r*.50,r,rr))*step(.80,h);
  float lip=exp(-pow((rr-r)/.048,2.))*step(.80,h);
- vec3 poreGrad=delta/max(rr,.001)*pore*.42;
+ float wp=1.-smoothstep(.20,.70,waveFootprint*680.);pore*=wp;lip*=wp;vec3 poreGrad=delta/max(rr,.001)*pore*.42;
  // Forming striations share the medium field. No secondary octave stack.
  float phase=p.x*4700.+p.z*135.+middle.x*4.;float band=sin(phase);
- float stripe=smoothstep(.91,.998,band)*smoothstep(.43,.72,fine.x)*waveControl.y;
+ float stripe=smoothstep(.91,.998,band)*smoothstep(.43,.72,fine.x)*waveControl.y*(1.-smoothstep(.20,.70,waveFootprint*760.));
  float moisture=clamp(waveCause.x+ceramic.z*.65,0.,1.);
  float patina=waveCause.y*smoothstep(.24,.8,wUV.y)*smoothstep(.38,.65,middle.x);
  c-=pore*.070+stripe*.016;c+=lip*.013;
@@ -943,7 +947,7 @@ function waveMaterial(kind,variant,age,wet=0){
  if(materialCache.has(key))return materialCache.get(key);
  const seed=hash32(state.seed+variant*8191+(kind==='cover'?1337:0));
  const u={identity:{value:new THREE.Vector4(hash01(seed,1)*97,hash01(seed,2)*97,hash01(seed,3)*97,(hash01(seed,4)-.5)*.22)},ceramic:{value:new THREE.Vector4(1,1,wet,0)},waveControl:{value:new THREE.Vector4(state.colorLayer??1,state.striations??.7,0,0)},waveCause:{value:new THREE.Vector4()}};
- const m=new THREE.MeshStandardMaterial({color:0xffffff,roughness:.80,metalness:0,envMapIntensity:.68,side:THREE.FrontSide});m.userData.uniforms=u;m.userData.wave=true;
+ const m=new THREE.MeshStandardMaterial({color:0xffffff,roughness:.80,metalness:0,envMapIntensity:.68,side:THREE.FrontSide});m.userData.uniforms=u;m.userData.wave=true;m.userData.waveKind=kind;
  m.onBeforeCompile=s=>{
   Object.assign(s.uniforms,u);
   s.vertexShader=s.vertexShader.replace('#include <common>',`#include <common>
@@ -969,27 +973,28 @@ wX=normalMatrix*localRotation*vec3(1,0,0);wY=normalMatrix*localRotation*vec3(0,1
 function waveUpdateMaterial(m){
  const u=m.userData.uniforms;if(!m.userData.wave||!u)return;
  const wet=state.care==='abandoned'?1-Math.exp(-state.year*.12*state.rainInput):.12;
- const demand=fieldTileDemand('pan',state.year,state.seed,state.rainInput,state.loadFactor);
+ const demand=fieldTileDemand(m.userData.waveKind||'pan',state.care==='maintained'?0:state.year,state.seed,state.rainInput,state.loadFactor);
  u.waveControl.value.set(state.colorLayer??1,state.striations??.7,0,0);
  u.waveCause.value.set(wet*.58,Math.min(1,state.year/12),state.scene==='fracture'?demand.damage:(state.care==='abandoned'?Math.min(1,state.year/11):.05),demand.s*.110);
  u.ceramic.value.z=state.light==='rain'?1:0;
 }
-function waveUpdateAll(){for(const m of materialCache.values())waveUpdateMaterial(m);perfRequest();}
+function waveUpdateAll(){for(const m of materialCache.values())waveUpdateMaterial(m);if(waveWoodMaterials)for(const m of waveWoodMaterials)m.userData.woodExposure.value=state.care==='abandoned'?1-Math.exp(-state.year*.17*state.rainInput):.08;perfRequest();}
 let waveWoodMaterials=null,waveMossMat=null;
 function waveWood(check=false){
  if(check)return getWoodMaterialsV0910(true);
  if(waveWoodMaterials)return waveWoodMaterials;
  waveWoodMaterials=[false,true].map(end=>{
- const m=new THREE.MeshStandardMaterial({vertexColors:true,roughness:.91,metalness:0,envMapIntensity:.40});
- m.onBeforeCompile=s=>{
+ const m=new THREE.MeshStandardMaterial({vertexColors:true,roughness:.91,metalness:0,envMapIntensity:.40});m.userData.woodExposure={value:state.care==='abandoned'?1-Math.exp(-state.year*.17*state.rainInput):.08};
+ m.onBeforeCompile=s=>{s.uniforms.woodExposure=m.userData.woodExposure;
  s.vertexShader=s.vertexShader.replace('#include <common>','#include <common>\nvarying vec3 woodP;').replace('#include <begin_vertex>','#include <begin_vertex>\nwoodP=position;');
- s.fragmentShader=s.fragmentShader.replace('#include <common>','#include <common>\nvarying vec3 woodP;\n'+waveNoiseGLSL)
+ s.fragmentShader=s.fragmentShader.replace('#include <common>','#include <common>\nvarying vec3 woodP;uniform float woodExposure;\n'+waveNoiseGLSL)
  .replace('#include <color_fragment>',`#include <color_fragment>
 vec4 fib=wn(vec3(woodP.xy*155.,woodP.z*4.));
 float rings=sin(length(woodP.xy+vec2(.013,-.009))*1050.+fib.x*3.);
 float fibres=pow(.5+.5*sin(woodP.x*1850.+woodP.y*1570.+fib.x*5.),12.);
 float streak=mix(.88,1.12,fib.x)-fibres*.13;
-diffuseColor.rgb*=streak${end?'+.08*rings':''};`);
+diffuseColor.rgb*=streak${end?'+.08*rings':''};
+${end?'':`vec4 weather=wn(vec3(woodP.xy*38.,woodP.z*7.)+13.);float groove=pow(.5+.5*sin(woodP.x*390.+woodP.y*470.+fib.x*3.),28.)*smoothstep(.32,.65,weather.x);diffuseColor.rgb=mix(diffuseColor.rgb,vec3(.115,.111,.098),woodExposure*(.32+.25*weather.x));diffuseColor.rgb*=1.-groove*woodExposure*.42;`} `);
  };m.customProgramCacheKey=()=>`tm0911-fibre-${end}`;PERSISTENT_MATERIALS.add(m);return m;
  });return waveWoodMaterials;
 }
@@ -1012,12 +1017,23 @@ function fieldRoughWood(g,seed){
  if(!broken.length)return g;
  const P=Array.from(g.attributes.position.array),U=Array.from(g.attributes.uv.array),C=Array.from(g.attributes.color.array),oldI=g.index.array,newI=[],faces=[];
  const radius=g.userData.radius,radial=g.userData.radial,ringCount=8;
+ const fieldRaggedRim=(theta,seed)=>.08+.20*(.5+.5*Math.sin(theta*3+seed*.13))+.65*Math.pow(.5+.5*Math.sin(theta*7+seed*.17),5);
+ const ends=broken.map(part=>{const ix=oldI[part.start]*3;return {part,cx:P[ix],cy:P[ix+1],cz:P[ix+2],sign:part.name==='end'?1:-1};});
+ const fieldAmp=Math.min(radius*.62,.027,...ends.flatMap(a=>ends.filter(b=>Math.abs(a.cz-b.cz)>1e-7).map(b=>Math.abs(a.cz-b.cz)*.30)));
+ // Move duplicated shell/end boundary vertices together. Original intact ends stay flat.
+ for(const e of ends)for(let j=0;j<P.length;j+=3)if(Math.abs(P[j+2]-e.cz)<1e-7){
+  const theta=Math.atan2(P[j+1]-e.cy,P[j]-e.cx),rho=Math.min(1,Math.hypot(P[j]-e.cx,P[j+1]-e.cy)/radius);
+  P[j+2]+=e.sign*fieldAmp*rho*fieldRaggedRim(theta,seed);
+ }
+ // Follow the actual fibre coordinate on the moved side ring; cap UVs stay separate.
+ const sidePart=g.userData.surfaces.find(part=>part.name==='side');
+ for(let k=sidePart.start;k<sidePart.start+sidePart.count;k++){const i=oldI[k];U[i*2+1]=P[i*3+2]/g.userData.length+.5;}
  for(const part of g.userData.surfaces){
   const start=newI.length;
   if(!part.broken){for(let k=part.start;k<part.start+part.count;k++)newI.push(oldI[k]);faces.push({...part,start,count:newI.length-start});continue;}
-  const centre=oldI[part.start],cx=P[centre*3],cy=P[centre*3+1],cz=P[centre*3+2],end=part.name==='end',sign=end?1:-1;
+  const centre=oldI[part.start],cx=P[centre*3],cy=P[centre*3+1],cz=ends.find(e=>e.part===part).cz,end=part.name==='end',sign=end?1:-1;
   const originalRim=[];for(let k=part.start;k<part.start+part.count;k+=3){const ix=oldI[k+(end?1:2)];originalRim.push(ix);}
-  const ring=[[]],amp=Math.min(radius*.22,.014);
+  const ring=[[]],amp=fieldAmp;
   const add=(x,y,z,rho,theta)=>{
    const i=P.length/3,noise=noise2((x-cx)/radius*5.2,(y-cy)/radius*5.2,seed+933);
    P.push(x,y,z);U.push(.5+(end?1:-1)*(x-cx)/(radius*2),.5+(y-cy)/(radius*2));
@@ -1030,8 +1046,8 @@ function fieldRoughWood(g,seed){
     const a=originalRim[i],x=lerp(cx,P[a*3],rho),y=lerp(cy,P[a*3+1],rho);
     const n=noise2((x-cx)/radius*6,(y-cy)/radius*6,seed+977),n2=noise2((x-cx)/radius*13,(y-cy)/radius*13,seed+991);
     const splinter=(n-.4)*1.05+Math.pow(n2,4)*.55;
-    // Zero at the shell rim: watertight boundary, signed depth along fibre axis.
-    const z=cz+sign*amp*(1-rho*rho)*splinter;
+    // Match the moved shell rim exactly, with signed depth along the fibre axis.
+    const z=lerp(cz,P[a*3+2],rho*rho)+sign*amp*(1-rho*rho)*splinter;
     ids.push(add(x,y,z,rho,i/radial*Math.PI*2));
    }ring[r]=ids;
   }
@@ -1139,13 +1155,13 @@ function fieldAddRoofMoss(record){
 }
 let fieldLabReport=null;
 function buildFieldLab(){
- clearStage();const years=state.year,seed=state.seed,kind=state.trioFamily==='cover'?'cover':'pan',both=state.specimen==='both';
+ clearStage();const years=state.care==='maintained'?0:state.year,seed=state.seed,kind=state.trioFamily==='cover'?'cover':'pan',both=state.specimen==='both';
  const makeTile=()=>{
   const demand=fieldTileDemand(kind,years,seed,state.rainInput,state.loadFactor),gap=state.openCut*.065;
   const group=new THREE.Group();group.position.set(both?-.28:0,both?.105:0,0);group.rotation.x=-.20;group.scale.setScalar(both?1.9:2.35);stageRoot.add(group);
   const items=[];
-  if(demand.failed&&state.fieldMode){for(const side of [-1,1]){const g=fieldTileHalf(kind,seed,side,demand.s),mat=state.mode==='clay'?new THREE.MeshStandardMaterial({color:0x9c9d96,roughness:.86}):waveMaterial(kind,1,state.initialAge+years),m=new THREE.Mesh(g,mat);m.position.x=side*gap*.5;m.castShadow=m.receiveShadow=true;group.add(m);const moss=fieldMossGroup([{geometry:g,seed:seed+side*731,patches:2}],state.mossThickness,5);if(moss)m.add(moss);}}
-  else{const m=tileMesh(kind,1,state.initialAge+years);group.add(m);const moss=fieldMossGroup([{geometry:m.geometry,seed,patches:3}],state.mossThickness,4);if(moss)m.add(moss);}
+  if(demand.failed&&state.fieldMode){for(const side of [-1,1]){const g=fieldTileHalf(kind,seed,side,demand.s),mat=state.mode==='clay'?new THREE.MeshStandardMaterial({color:0x9c9d96,roughness:.86}):studyClayMaterial(kind,1,state.initialAge+state.year),m=new THREE.Mesh(g,mat);m.position.x=side*gap*.5;m.castShadow=m.receiveShadow=true;group.add(m);const moss=fieldMossGroup([{geometry:g,seed:seed+side*731,patches:2}],state.mossThickness,5);if(moss)m.add(moss);}}
+  else{const m=tileMesh(kind,1,state.initialAge+state.year);group.add(m);const moss=fieldMossGroup([{geometry:m.geometry,seed,patches:3}],state.mossThickness,4);if(moss)m.add(moss);}
   return {demand,inspectionGap:gap};
  };
  const makeWood=()=>{
@@ -1157,9 +1173,9 @@ function buildFieldLab(){
   return {demand,inspectionGap:gap,uv:woodUVGate(g),geometry:g};
  };
  const tile=state.specimen!=='wood'?makeTile():null,wood=state.specimen!=='tile'?makeWood():null;
- fieldLabReport={year:years,tile:tile?.demand??null,wood:wood?.demand??null,woodUV:wood?.uv??null,inspectionExploded:true,fullStructuralSolver:false};
+ fieldLabReport={year:state.year,exposureYears:years,care:state.care,tile:tile?.demand??null,wood:wood?.demand??null,woodUV:wood?.uv??null,inspectionExploded:true,fullStructuralSolver:false};
  $('#sceneStats').innerHTML=`<b>噪波材质 · 受水与断口样台</b><span>失养经过 ${years} 年；原房龄 ${state.initialAge} 年。统一种子与局部坐标，噪波不随相机游动。</span><span>${tile?'陶瓦相对失效指标 '+tile.demand.ratio.toFixed(2)+'，断口横向位置 '+tile.demand.s.toFixed(3):''} ${wood?'木材相对失效指标 '+wood.demand.ratio.toFixed(2)+'，峰值在长度的 '+(wood.demand.t*100).toFixed(1)+'%':''}</span><span>值达到 1 触发本示意模型的断裂。受力简化与材料参数未标定；展开断口用于检查，不表示刚体坠落。</span><span>纯计算材质；苔厚独立几何；顺纤维参差断面。可切回上一版表面作同机位比较。</span>`;
- const box=new THREE.Box3().setFromObject(stageRoot),centre=box.getCenter(new THREE.Vector3());target.copy(centre);yaw=-.38;pitch=.48;distance=(both?2.75:1.95)*Math.max(1,.95/camera.aspect);updateCamera();
+ const box=new THREE.Box3().setFromObject(stageRoot),centre=box.getCenter(new THREE.Vector3());target.copy(centre);yaw=-.38;pitch=.48;distance=(both?2.15:1.40)*Math.max(1,.95/camera.aspect);updateCamera();
  $('#contactGate').textContent='断口示意 · 非承载校核';$('#contactGate').className='pill';
 }
 
@@ -1177,7 +1193,7 @@ function fieldSyncUI(){
  $('#lifeControls').hidden=false;$('#fieldSpecimens').hidden=state.scene!=='fracture';
  $('#revisionInfo').textContent='V0.9.11 · 共用噪波场 / 受水断口';
  $('#waveSwitch').textContent=state.waveSurface?'D 噪波材质已启用':'D 切换噪波材质';$('#waveSwitch').classList.toggle('active',state.waveSurface);
- $('#mossSwitch').classList.toggle('active',state.mossEnabled);
+ $('#mossSwitch').classList.toggle('active',state.mossEnabled);document.body.classList.toggle('wave-selected',state.waveSurface);if(state.waveSurface)$$('[data-study]').forEach(b=>b.classList.remove('active')); 
  $('#fieldGateText').textContent='简化受水与受力模型 · 参数未标定';
  $('#studyLabel').textContent=state.waveSurface?'D · 共用场 / 纯计算材质':state.geometryRevision?'C · 保留上版材质对照':'A · 原形原材质';
  $$('[data-specimen]').forEach(b=>b.classList.toggle('active',b.dataset.specimen===state.specimen));

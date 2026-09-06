@@ -19,24 +19,28 @@ uniform vec4 waveControl;uniform vec4 waveCause;uniform vec4 identity;uniform ve
 vec3 waveColorResult;vec3 waveGradientResult;float waveRoughResult;float waveAOResult;
 void waveEvaluate(){
  vec3 p=wP;vec3 id=identity.xyz;
- vec4 low=wn(p*11.+id),middle=wn(p*55.+id+vec3(11.,7.,3.)),fine=wn(p*245.+id+27.),grain=wn(p*2100.+id+41.);
+ float waveFootprint=max(length(dFdx(p)),length(dFdy(p)));
+ float wf=1.-smoothstep(.25,.90,waveFootprint*245.),wgf=1.-smoothstep(.20,.75,waveFootprint*2100.);
+ vec4 low=wn(p*11.+id),middle=wn(p*55.+id+vec3(11.,7.,3.)),fine=vec4(.5,0,0,0),grain=vec4(.5,0,0,0);
+ if(wf>.001){fine=wn(p*245.+id+27.);fine=vec4(mix(.5,fine.x,wf),fine.yzw*wf);}
+ if(wgf>.001){grain=wn(p*2100.+id+41.);grain=vec4(mix(.5,grain.x,wgf),grain.yzw*wgf);}
  float warm=smoothstep(.48,.73,low.x+(middle.x-.5)*.20+identity.w*.7);
  float ash=smoothstep(.48,.76,middle.x+(fine.x-.5)*.27);
  float deep=smoothstep(.67,.84,low.x*.32+middle.x*.68);
  vec3 c=vec3(.365,.405,.421)+identity.w*.055;
- c=mix(c,vec3(.50,.40,.305),warm*.52*waveControl.x);
- c=mix(c,vec3(.62,.602,.557),ash*.48*waveControl.x);
+ c=mix(c,vec3(.50,.40,.305),warm*.32*waveControl.x);
+ c=mix(c,vec3(.62,.602,.557),ash*.32*waveControl.x);
  c=mix(c,vec3(.235,.27,.287),deep*.36*waveControl.x);
- c+=(fine.x-.5)*.060+(grain.x-.5)*.039;
+ c+=(fine.x-.5)*.035+(grain.x-.5)*.022;
  // Sparse 3D pore cells. Feature sphere remains within its cell (no cell cutoffs).
  vec3 cp=p*680.+id,cell=floor(cp),cf=fract(cp);
  float h=wh(cell+3.);vec3 centre=vec3(.35+.28*h,.35+.28*wh(cell+7.),.35+.28*wh(cell+13.));
  vec3 delta=cf-centre;float r=.14+.13*h,rr=length(delta),pore=(1.-smoothstep(r*.50,r,rr))*step(.80,h);
  float lip=exp(-pow((rr-r)/.048,2.))*step(.80,h);
- vec3 poreGrad=delta/max(rr,.001)*pore*.42;
+ float wp=1.-smoothstep(.20,.70,waveFootprint*680.);pore*=wp;lip*=wp;vec3 poreGrad=delta/max(rr,.001)*pore*.42;
  // Forming striations share the medium field. No secondary octave stack.
  float phase=p.x*4700.+p.z*135.+middle.x*4.;float band=sin(phase);
- float stripe=smoothstep(.91,.998,band)*smoothstep(.43,.72,fine.x)*waveControl.y;
+ float stripe=smoothstep(.91,.998,band)*smoothstep(.43,.72,fine.x)*waveControl.y*(1.-smoothstep(.20,.70,waveFootprint*760.));
  float moisture=clamp(waveCause.x+ceramic.z*.65,0.,1.);
  float patina=waveCause.y*smoothstep(.24,.8,wUV.y)*smoothstep(.38,.65,middle.x);
  c-=pore*.070+stripe*.016;c+=lip*.013;
@@ -62,7 +66,7 @@ function waveMaterial(kind,variant,age,wet=0){
  if(materialCache.has(key))return materialCache.get(key);
  const seed=hash32(state.seed+variant*8191+(kind==='cover'?1337:0));
  const u={identity:{value:new THREE.Vector4(hash01(seed,1)*97,hash01(seed,2)*97,hash01(seed,3)*97,(hash01(seed,4)-.5)*.22)},ceramic:{value:new THREE.Vector4(1,1,wet,0)},waveControl:{value:new THREE.Vector4(state.colorLayer??1,state.striations??.7,0,0)},waveCause:{value:new THREE.Vector4()}};
- const m=new THREE.MeshStandardMaterial({color:0xffffff,roughness:.80,metalness:0,envMapIntensity:.68,side:THREE.FrontSide});m.userData.uniforms=u;m.userData.wave=true;
+ const m=new THREE.MeshStandardMaterial({color:0xffffff,roughness:.80,metalness:0,envMapIntensity:.68,side:THREE.FrontSide});m.userData.uniforms=u;m.userData.wave=true;m.userData.waveKind=kind;
  m.onBeforeCompile=s=>{
   Object.assign(s.uniforms,u);
   s.vertexShader=s.vertexShader.replace('#include <common>',`#include <common>
@@ -88,27 +92,28 @@ wX=normalMatrix*localRotation*vec3(1,0,0);wY=normalMatrix*localRotation*vec3(0,1
 function waveUpdateMaterial(m){
  const u=m.userData.uniforms;if(!m.userData.wave||!u)return;
  const wet=state.care==='abandoned'?1-Math.exp(-state.year*.12*state.rainInput):.12;
- const demand=fieldTileDemand('pan',state.year,state.seed,state.rainInput,state.loadFactor);
+ const demand=fieldTileDemand(m.userData.waveKind||'pan',state.care==='maintained'?0:state.year,state.seed,state.rainInput,state.loadFactor);
  u.waveControl.value.set(state.colorLayer??1,state.striations??.7,0,0);
  u.waveCause.value.set(wet*.58,Math.min(1,state.year/12),state.scene==='fracture'?demand.damage:(state.care==='abandoned'?Math.min(1,state.year/11):.05),demand.s*.110);
  u.ceramic.value.z=state.light==='rain'?1:0;
 }
-function waveUpdateAll(){for(const m of materialCache.values())waveUpdateMaterial(m);perfRequest();}
+function waveUpdateAll(){for(const m of materialCache.values())waveUpdateMaterial(m);if(waveWoodMaterials)for(const m of waveWoodMaterials)m.userData.woodExposure.value=state.care==='abandoned'?1-Math.exp(-state.year*.17*state.rainInput):.08;perfRequest();}
 let waveWoodMaterials=null,waveMossMat=null;
 function waveWood(check=false){
  if(check)return getWoodMaterialsV0910(true);
  if(waveWoodMaterials)return waveWoodMaterials;
  waveWoodMaterials=[false,true].map(end=>{
- const m=new THREE.MeshStandardMaterial({vertexColors:true,roughness:.91,metalness:0,envMapIntensity:.40});
- m.onBeforeCompile=s=>{
+ const m=new THREE.MeshStandardMaterial({vertexColors:true,roughness:.91,metalness:0,envMapIntensity:.40});m.userData.woodExposure={value:state.care==='abandoned'?1-Math.exp(-state.year*.17*state.rainInput):.08};
+ m.onBeforeCompile=s=>{s.uniforms.woodExposure=m.userData.woodExposure;
  s.vertexShader=s.vertexShader.replace('#include <common>','#include <common>\nvarying vec3 woodP;').replace('#include <begin_vertex>','#include <begin_vertex>\nwoodP=position;');
- s.fragmentShader=s.fragmentShader.replace('#include <common>','#include <common>\nvarying vec3 woodP;\n'+waveNoiseGLSL)
+ s.fragmentShader=s.fragmentShader.replace('#include <common>','#include <common>\nvarying vec3 woodP;uniform float woodExposure;\n'+waveNoiseGLSL)
  .replace('#include <color_fragment>',`#include <color_fragment>
 vec4 fib=wn(vec3(woodP.xy*155.,woodP.z*4.));
 float rings=sin(length(woodP.xy+vec2(.013,-.009))*1050.+fib.x*3.);
 float fibres=pow(.5+.5*sin(woodP.x*1850.+woodP.y*1570.+fib.x*5.),12.);
 float streak=mix(.88,1.12,fib.x)-fibres*.13;
-diffuseColor.rgb*=streak${end?'+.08*rings':''};`);
+diffuseColor.rgb*=streak${end?'+.08*rings':''};
+${end?'':`vec4 weather=wn(vec3(woodP.xy*38.,woodP.z*7.)+13.);float groove=pow(.5+.5*sin(woodP.x*390.+woodP.y*470.+fib.x*3.),28.)*smoothstep(.32,.65,weather.x);diffuseColor.rgb=mix(diffuseColor.rgb,vec3(.115,.111,.098),woodExposure*(.32+.25*weather.x));diffuseColor.rgb*=1.-groove*woodExposure*.42;`} `);
  };m.customProgramCacheKey=()=>`tm0911-fibre-${end}`;PERSISTENT_MATERIALS.add(m);return m;
  });return waveWoodMaterials;
 }

@@ -13,9 +13,9 @@ measure="""async()=>{
   const query=ext?g.createQuery():null;const start=performance.now();
   if(query)g.beginQuery(ext.TIME_ELAPSED_EXT,query);
   D.renderer.render(D.scene,D.camera);
-  if(query)g.endQuery(ext.TIME_ELAPSED_EXT);
+  if(query){g.endQuery(ext.TIME_ELAPSED_EXT);g.flush();}
   const submitMs=performance.now()-start;let timerMs=null,disjoint=null;
-  if(query){const limit=performance.now()+10000;while(!g.getQueryParameter(query,g.QUERY_RESULT_AVAILABLE)&&performance.now()<limit)await sleep(10);
+  if(query){const limit=performance.now()+5000;while(!g.getQueryParameter(query,g.QUERY_RESULT_AVAILABLE)&&performance.now()<limit)await sleep(10);
    disjoint=!!g.getParameter(ext.GPU_DISJOINT_EXT);if(g.getQueryParameter(query,g.QUERY_RESULT_AVAILABLE)&&!disjoint)timerMs=g.getQueryParameter(query,g.QUERY_RESULT)/1e6;g.deleteQuery(query);}
   result.push({submitMs,timerMs,disjoint});
  }

@@ -6,12 +6,23 @@ function fieldRoughWood(g,seed){
  if(!broken.length)return g;
  const P=Array.from(g.attributes.position.array),U=Array.from(g.attributes.uv.array),C=Array.from(g.attributes.color.array),oldI=g.index.array,newI=[],faces=[];
  const radius=g.userData.radius,radial=g.userData.radial,ringCount=8;
+ const fieldRaggedRim=(theta,seed)=>.08+.20*(.5+.5*Math.sin(theta*3+seed*.13))+.65*Math.pow(.5+.5*Math.sin(theta*7+seed*.17),5);
+ const ends=broken.map(part=>{const ix=oldI[part.start]*3;return {part,cx:P[ix],cy:P[ix+1],cz:P[ix+2],sign:part.name==='end'?1:-1};});
+ const fieldAmp=Math.min(radius*.62,.027,...ends.flatMap(a=>ends.filter(b=>Math.abs(a.cz-b.cz)>1e-7).map(b=>Math.abs(a.cz-b.cz)*.30)));
+ // Move duplicated shell/end boundary vertices together. Original intact ends stay flat.
+ for(const e of ends)for(let j=0;j<P.length;j+=3)if(Math.abs(P[j+2]-e.cz)<1e-7){
+  const theta=Math.atan2(P[j+1]-e.cy,P[j]-e.cx),rho=Math.min(1,Math.hypot(P[j]-e.cx,P[j+1]-e.cy)/radius);
+  P[j+2]+=e.sign*fieldAmp*rho*fieldRaggedRim(theta,seed);
+ }
+ // Follow the actual fibre coordinate on the moved side ring; cap UVs stay separate.
+ const sidePart=g.userData.surfaces.find(part=>part.name==='side');
+ for(let k=sidePart.start;k<sidePart.start+sidePart.count;k++){const i=oldI[k];U[i*2+1]=P[i*3+2]/g.userData.length+.5;}
  for(const part of g.userData.surfaces){
   const start=newI.length;
   if(!part.broken){for(let k=part.start;k<part.start+part.count;k++)newI.push(oldI[k]);faces.push({...part,start,count:newI.length-start});continue;}
-  const centre=oldI[part.start],cx=P[centre*3],cy=P[centre*3+1],cz=P[centre*3+2],end=part.name==='end',sign=end?1:-1;
+  const centre=oldI[part.start],cx=P[centre*3],cy=P[centre*3+1],cz=ends.find(e=>e.part===part).cz,end=part.name==='end',sign=end?1:-1;
   const originalRim=[];for(let k=part.start;k<part.start+part.count;k+=3){const ix=oldI[k+(end?1:2)];originalRim.push(ix);}
-  const ring=[[]],amp=Math.min(radius*.22,.014);
+  const ring=[[]],amp=fieldAmp;
   const add=(x,y,z,rho,theta)=>{
    const i=P.length/3,noise=noise2((x-cx)/radius*5.2,(y-cy)/radius*5.2,seed+933);
    P.push(x,y,z);U.push(.5+(end?1:-1)*(x-cx)/(radius*2),.5+(y-cy)/(radius*2));
@@ -24,8 +35,8 @@ function fieldRoughWood(g,seed){
     const a=originalRim[i],x=lerp(cx,P[a*3],rho),y=lerp(cy,P[a*3+1],rho);
     const n=noise2((x-cx)/radius*6,(y-cy)/radius*6,seed+977),n2=noise2((x-cx)/radius*13,(y-cy)/radius*13,seed+991);
     const splinter=(n-.4)*1.05+Math.pow(n2,4)*.55;
-    // Zero at the shell rim: watertight boundary, signed depth along fibre axis.
-    const z=cz+sign*amp*(1-rho*rho)*splinter;
+    // Match the moved shell rim exactly, with signed depth along the fibre axis.
+    const z=lerp(cz,P[a*3+2],rho*rho)+sign*amp*(1-rho*rho)*splinter;
     ids.push(add(x,y,z,rho,i/radial*Math.PI*2));
    }ring[r]=ids;
   }
@@ -133,13 +144,13 @@ function fieldAddRoofMoss(record){
 }
 let fieldLabReport=null;
 function buildFieldLab(){
- clearStage();const years=state.year,seed=state.seed,kind=state.trioFamily==='cover'?'cover':'pan',both=state.specimen==='both';
+ clearStage();const years=state.care==='maintained'?0:state.year,seed=state.seed,kind=state.trioFamily==='cover'?'cover':'pan',both=state.specimen==='both';
  const makeTile=()=>{
   const demand=fieldTileDemand(kind,years,seed,state.rainInput,state.loadFactor),gap=state.openCut*.065;
   const group=new THREE.Group();group.position.set(both?-.28:0,both?.105:0,0);group.rotation.x=-.20;group.scale.setScalar(both?1.9:2.35);stageRoot.add(group);
   const items=[];
-  if(demand.failed&&state.fieldMode){for(const side of [-1,1]){const g=fieldTileHalf(kind,seed,side,demand.s),mat=state.mode==='clay'?new THREE.MeshStandardMaterial({color:0x9c9d96,roughness:.86}):waveMaterial(kind,1,state.initialAge+years),m=new THREE.Mesh(g,mat);m.position.x=side*gap*.5;m.castShadow=m.receiveShadow=true;group.add(m);const moss=fieldMossGroup([{geometry:g,seed:seed+side*731,patches:2}],state.mossThickness,5);if(moss)m.add(moss);}}
-  else{const m=tileMesh(kind,1,state.initialAge+years);group.add(m);const moss=fieldMossGroup([{geometry:m.geometry,seed,patches:3}],state.mossThickness,4);if(moss)m.add(moss);}
+  if(demand.failed&&state.fieldMode){for(const side of [-1,1]){const g=fieldTileHalf(kind,seed,side,demand.s),mat=state.mode==='clay'?new THREE.MeshStandardMaterial({color:0x9c9d96,roughness:.86}):studyClayMaterial(kind,1,state.initialAge+state.year),m=new THREE.Mesh(g,mat);m.position.x=side*gap*.5;m.castShadow=m.receiveShadow=true;group.add(m);const moss=fieldMossGroup([{geometry:g,seed:seed+side*731,patches:2}],state.mossThickness,5);if(moss)m.add(moss);}}
+  else{const m=tileMesh(kind,1,state.initialAge+state.year);group.add(m);const moss=fieldMossGroup([{geometry:m.geometry,seed,patches:3}],state.mossThickness,4);if(moss)m.add(moss);}
   return {demand,inspectionGap:gap};
  };
  const makeWood=()=>{
@@ -151,8 +162,8 @@ function buildFieldLab(){
   return {demand,inspectionGap:gap,uv:woodUVGate(g),geometry:g};
  };
  const tile=state.specimen!=='wood'?makeTile():null,wood=state.specimen!=='tile'?makeWood():null;
- fieldLabReport={year:years,tile:tile?.demand??null,wood:wood?.demand??null,woodUV:wood?.uv??null,inspectionExploded:true,fullStructuralSolver:false};
+ fieldLabReport={year:state.year,exposureYears:years,care:state.care,tile:tile?.demand??null,wood:wood?.demand??null,woodUV:wood?.uv??null,inspectionExploded:true,fullStructuralSolver:false};
  $('#sceneStats').innerHTML=`<b>噪波材质 · 受水与断口样台</b><span>失养经过 ${years} 年；原房龄 ${state.initialAge} 年。统一种子与局部坐标，噪波不随相机游动。</span><span>${tile?'陶瓦相对失效指标 '+tile.demand.ratio.toFixed(2)+'，断口横向位置 '+tile.demand.s.toFixed(3):''} ${wood?'木材相对失效指标 '+wood.demand.ratio.toFixed(2)+'，峰值在长度的 '+(wood.demand.t*100).toFixed(1)+'%':''}</span><span>值达到 1 触发本示意模型的断裂。受力简化与材料参数未标定；展开断口用于检查，不表示刚体坠落。</span><span>纯计算材质；苔厚独立几何；顺纤维参差断面。可切回上一版表面作同机位比较。</span>`;
- const box=new THREE.Box3().setFromObject(stageRoot),centre=box.getCenter(new THREE.Vector3());target.copy(centre);yaw=-.38;pitch=.48;distance=(both?2.75:1.95)*Math.max(1,.95/camera.aspect);updateCamera();
+ const box=new THREE.Box3().setFromObject(stageRoot),centre=box.getCenter(new THREE.Vector3());target.copy(centre);yaw=-.38;pitch=.48;distance=(both?2.15:1.40)*Math.max(1,.95/camera.aspect);updateCamera();
  $('#contactGate').textContent='断口示意 · 非承载校核';$('#contactGate').className='pill';
 }

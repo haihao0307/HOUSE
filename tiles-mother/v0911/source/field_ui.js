@@ -12,7 +12,7 @@ function fieldSyncUI(){
  $('#lifeControls').hidden=false;$('#fieldSpecimens').hidden=state.scene!=='fracture';
  $('#revisionInfo').textContent='V0.9.11 · 共用噪波场 / 受水断口';
  $('#waveSwitch').textContent=state.waveSurface?'D 噪波材质已启用':'D 切换噪波材质';$('#waveSwitch').classList.toggle('active',state.waveSurface);
- $('#mossSwitch').classList.toggle('active',state.mossEnabled);
+ $('#mossSwitch').classList.toggle('active',state.mossEnabled);document.body.classList.toggle('wave-selected',state.waveSurface);if(state.waveSurface)$$('[data-study]').forEach(b=>b.classList.remove('active')); 
  $('#fieldGateText').textContent='简化受水与受力模型 · 参数未标定';
  $('#studyLabel').textContent=state.waveSurface?'D · 共用场 / 纯计算材质':state.geometryRevision?'C · 保留上版材质对照':'A · 原形原材质';
  $$('[data-specimen]').forEach(b=>b.classList.toggle('active',b.dataset.specimen===state.specimen));

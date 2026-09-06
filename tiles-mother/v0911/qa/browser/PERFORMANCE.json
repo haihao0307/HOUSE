@@ -1,0 +1,410 @@
+{
+  "scope": "Same-session Linux software WebGL; not user hardware power or temperature",
+  "trials": [
+    {
+      "samples": [
+        {
+          "submitMs": 1,
+          "timerMs": 324.733078,
+          "disjoint": false
+        },
+        {
+          "submitMs": 0.6000000000058208,
+          "timerMs": 320.983772,
+          "disjoint": false
+        },
+        {
+          "submitMs": 0.40000000002328306,
+          "timerMs": 322.071623,
+          "disjoint": false
+        },
+        {
+          "submitMs": 0.7000000000116415,
+          "timerMs": 321.156367,
+          "disjoint": false
+        },
+        {
+          "submitMs": 0.5,
+          "timerMs": 323.379086,
+          "disjoint": false
+        },
+        {
+          "submitMs": 0.5999999999767169,
+          "timerMs": 322.687752,
+          "disjoint": false
+        },
+        {
+          "submitMs": 0.7999999999883585,
+          "timerMs": 323.613394,
+          "disjoint": false
+        },
+        {
+          "submitMs": 0.6000000000058208,
+          "timerMs": 324.47853,
+          "disjoint": false
+        }
+      ],
+      "triangles": 25782,
+      "calls": 6,
+      "timerExtension": true,
+      "scene": "trio",
+      "waveSurface": false,
+      "medianTimerMs": 323.033419
+    },
+    {
+      "samples": [
+        {
+          "submitMs": 1.8000000000174623,
+          "timerMs": 179.258278,
+          "disjoint": false
+        },
+        {
+          "submitMs": 0.6999999999825377,
+          "timerMs": 177.542973,
+          "disjoint": false
+        },
+        {
+          "submitMs": 0.6000000000058208,
+          "timerMs": 179.558753,
+          "disjoint": false
+        },
+        {
+          "submitMs": 0.5,
+          "timerMs": 179.427611,
+          "disjoint": false
+        },
+        {
+          "submitMs": 0.5999999999767169,
+          "timerMs": 179.804828,
+          "disjoint": false
+        },
+        {
+          "submitMs": 0.5,
+          "timerMs": 179.67322,
+          "disjoint": false
+        },
+        {
+          "submitMs": 0.5999999999767169,
+          "timerMs": 180.012625,
+          "disjoint": false
+        },
+        {
+          "submitMs": 1.7000000000116415,
+          "timerMs": 179.653876,
+          "disjoint": false
+        }
+      ],
+      "triangles": 25782,
+      "calls": 6,
+      "timerExtension": true,
+      "scene": "trio",
+      "waveSurface": true,
+      "medianTimerMs": 179.663548
+    },
+    {
+      "samples": [
+        {
+          "submitMs": 0.5,
+          "timerMs": 322.07089,
+          "disjoint": false
+        },
+        {
+          "submitMs": 2.5,
+          "timerMs": 320.652605,
+          "disjoint": false
+        },
+        {
+          "submitMs": 0.5999999999767169,
+          "timerMs": 323.796466,
+          "disjoint": false
+        },
+        {
+          "submitMs": 1,
+          "timerMs": 323.58807,
+          "disjoint": false
+        },
+        {
+          "submitMs": 0.5,
+          "timerMs": 324.123168,
+          "disjoint": false
+        },
+        {
+          "submitMs": 0.5999999999767169,
+          "timerMs": 323.734052,
+          "disjoint": false
+        },
+        {
+          "submitMs": 0.5,
+          "timerMs": 329.099393,
+          "disjoint": false
+        },
+        {
+          "submitMs": 0.40000000002328306,
+          "timerMs": 324.082558,
+          "disjoint": false
+        }
+      ],
+      "triangles": 25782,
+      "calls": 6,
+      "timerExtension": true,
+      "scene": "trio",
+      "waveSurface": false,
+      "medianTimerMs": 323.93951200000004
+    },
+    {
+      "samples": [
+        {
+          "submitMs": 0.7000000000116415,
+          "timerMs": 177.826324,
+          "disjoint": false
+        },
+        {
+          "submitMs": 0.9000000000232831,
+          "timerMs": 177.742243,
+          "disjoint": false
+        },
+        {
+          "submitMs": 0.5,
+          "timerMs": 178.040682,
+          "disjoint": false
+        },
+        {
+          "submitMs": 1.2999999999883585,
+          "timerMs": 178.47618,
+          "disjoint": false
+        },
+        {
+          "submitMs": 3.1000000000349246,
+          "timerMs": 179.126207,
+          "disjoint": false
+        },
+        {
+          "submitMs": 0.5,
+          "timerMs": 179.963114,
+          "disjoint": false
+        },
+        {
+          "submitMs": 0.7000000000116415,
+          "timerMs": 179.802471,
+          "disjoint": false
+        },
+        {
+          "submitMs": 0.9000000000232831,
+          "timerMs": 180.524322,
+          "disjoint": false
+        }
+      ],
+      "triangles": 25782,
+      "calls": 6,
+      "timerExtension": true,
+      "scene": "trio",
+      "waveSurface": true,
+      "medianTimerMs": 179.464339
+    },
+    {
+      "samples": [
+        {
+          "submitMs": 1.5,
+          "timerMs": null,
+          "disjoint": false
+        },
+        {
+          "submitMs": 2.400000000023283,
+          "timerMs": null,
+          "disjoint": false
+        },
+        {
+          "submitMs": 2.199999999953434,
+          "timerMs": null,
+          "disjoint": false
+        },
+        {
+          "submitMs": 2.7000000000116415,
+          "timerMs": null,
+          "disjoint": false
+        },
+        {
+          "submitMs": 1.400000000023283,
+          "timerMs": null,
+          "disjoint": false
+        },
+        {
+          "submitMs": 1.099999999976717,
+          "timerMs": null,
+          "disjoint": false
+        },
+        {
+          "submitMs": 1.2999999999883585,
+          "timerMs": null,
+          "disjoint": false
+        },
+        {
+          "submitMs": 2.7999999999883585,
+          "timerMs": null,
+          "disjoint": false
+        }
+      ],
+      "triangles": 936208,
+      "calls": 87,
+      "timerExtension": true,
+      "scene": "roof",
+      "waveSurface": false,
+      "medianTimerMs": null
+    },
+    {
+      "samples": [
+        {
+          "submitMs": 1.3000000000465661,
+          "timerMs": null,
+          "disjoint": false
+        },
+        {
+          "submitMs": 0.8999999999650754,
+          "timerMs": null,
+          "disjoint": false
+        },
+        {
+          "submitMs": 3.400000000023283,
+          "timerMs": null,
+          "disjoint": false
+        },
+        {
+          "submitMs": 1.1999999999534339,
+          "timerMs": null,
+          "disjoint": false
+        },
+        {
+          "submitMs": 1.2000000000116415,
+          "timerMs": null,
+          "disjoint": false
+        },
+        {
+          "submitMs": 1.2999999999883585,
+          "timerMs": null,
+          "disjoint": false
+        },
+        {
+          "submitMs": 1.2999999999883585,
+          "timerMs": null,
+          "disjoint": false
+        },
+        {
+          "submitMs": 2.2000000000116415,
+          "timerMs": null,
+          "disjoint": false
+        }
+      ],
+      "triangles": 936208,
+      "calls": 87,
+      "timerExtension": true,
+      "scene": "roof",
+      "waveSurface": true,
+      "medianTimerMs": null
+    },
+    {
+      "samples": [
+        {
+          "submitMs": 1.099999999976717,
+          "timerMs": null,
+          "disjoint": false
+        },
+        {
+          "submitMs": 3,
+          "timerMs": null,
+          "disjoint": false
+        },
+        {
+          "submitMs": 1,
+          "timerMs": null,
+          "disjoint": false
+        },
+        {
+          "submitMs": 4.099999999976717,
+          "timerMs": null,
+          "disjoint": false
+        },
+        {
+          "submitMs": 1,
+          "timerMs": null,
+          "disjoint": false
+        },
+        {
+          "submitMs": 1.1999999999534339,
+          "timerMs": null,
+          "disjoint": false
+        },
+        {
+          "submitMs": 1,
+          "timerMs": null,
+          "disjoint": false
+        },
+        {
+          "submitMs": 2.7999999999883585,
+          "timerMs": null,
+          "disjoint": false
+        }
+      ],
+      "triangles": 936208,
+      "calls": 87,
+      "timerExtension": true,
+      "scene": "roof",
+      "waveSurface": false,
+      "medianTimerMs": null
+    },
+    {
+      "samples": [
+        {
+          "submitMs": 1,
+          "timerMs": null,
+          "disjoint": false
+        },
+        {
+          "submitMs": 2.099999999976717,
+          "timerMs": null,
+          "disjoint": false
+        },
+        {
+          "submitMs": 1.1999999999534339,
+          "timerMs": null,
+          "disjoint": false
+        },
+        {
+          "submitMs": 1.400000000023283,
+          "timerMs": null,
+          "disjoint": false
+        },
+        {
+          "submitMs": 2.2999999999883585,
+          "timerMs": null,
+          "disjoint": false
+        },
+        {
+          "submitMs": 1.099999999976717,
+          "timerMs": null,
+          "disjoint": false
+        },
+        {
+          "submitMs": 2.099999999976717,
+          "timerMs": null,
+          "disjoint": false
+        },
+        {
+          "submitMs": 0.7999999999883585,
+          "timerMs": null,
+          "disjoint": false
+        }
+      ],
+      "triangles": 936208,
+      "calls": 87,
+      "timerExtension": true,
+      "scene": "roof",
+      "waveSurface": true,
+      "medianTimerMs": null
+    }
+  ],
+  "errors": [],
+  "visualApproved": false,
+  "productionApproved": false,
+  "browser": "143.0.7499.4",
+  "completed": true
+}

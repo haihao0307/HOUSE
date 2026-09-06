@@ -43,12 +43,21 @@ try:
   report['sameSessionDisplayBench']=benches
   # Compact functional roof cases; point-in-time contact regressions.
   for name,view in [('08_forty8_zero',{'scene':'forty8','year':0,'care':'maintained','mossEnabled':True,'waveSurface':True}),('09_forty8_seven',{'scene':'forty8','year':7,'care':'abandoned'}),('10_forty8_ten',{'scene':'forty8','year':10,'care':'abandoned'}),('11_roof_zero',{'scene':'roof','year':0,'care':'maintained'}),('12_roof_ten',{'scene':'roof','year':10,'care':'abandoned'})]:
-   d=snap(name,view);q=d['roof']['contacts'];assert not q['timber']['penetrations'],q['timber'];assert q['actualGeometry']['allPassed'],q['actualGeometry']
+   d=snap(name,view);d['actualPairAudit']=page.evaluate((root.parent/'v099/qa/audit_runtime.js').read_text());assert not d['actualPairAudit']['penetrations'] and not d['actualPairAudit']['geometryFailures'],d['actualPairAudit'];q=d['roof']['contacts'];assert not q['timber']['penetrations'],q['timber'];assert q['actualGeometry']['allPassed'],q['actualGeometry']
    if view['year']==0:assert d['roof']['counts']['missing']==0,d['roof']['counts']
   page.evaluate("()=>{window.TilesMotherV0911.setView({scene:'forty8',year:7,care:'abandoned'});window.TilesMotherV0911.setCamera(.72,-.35,3.0);}");snap('13_forty8_under')
   before=page.evaluate('()=>window.TilesMotherV0911.getPerformance()');page.wait_for_timeout(6000);after=page.evaluate('()=>window.TilesMotherV0911.getPerformance()');report['idle']={'frames':after['frames']-before['frames'],'callbacks':after['frameCallbacks']-before['frameCallbacks']};assert report['idle']['frames']==0
   page.set_viewport_size({'width':390,'height':844});snap('14_mobile_lab',{'scene':'fracture','specimen':'both','year':8});
   page.locator('[data-specimen="wood"]').click();settle();snap('15_mobile_wood')
+  page.set_viewport_size({'width':1440,'height':960})
+  d=snap('16_maintained_lab',{'scene':'fracture','specimen':'both','year':10,'care':'maintained','waveSurface':True})
+  assert d['field']['exposureYears']==0 and not d['field']['tile']['failed'] and not d['field']['wood']['failed'],'maintenance scenario wrongly aged as neglected'
+  a=snap('17_fracture_legacy',{'scene':'fracture','specimen':'tile','year':8,'care':'abandoned','waveSurface':False,'mossEnabled':False})
+  bb=snap('18_fracture_wave',{'scene':'fracture','specimen':'tile','year':8,'care':'abandoned','waveSurface':True,'mossEnabled':False})
+  assert a['perf']['renderer']['triangles']==bb['perf']['renderer']['triangles']
+  from PIL import ImageChops
+  assert ImageChops.difference(Image.open(out/'17_fracture_legacy.png').convert('RGB'),Image.open(out/'18_fracture_wave.png').convert('RGB')).getbbox(),'surface switch did not change rendered appearance'
+  snap('19_roof_fifteen',{'scene':'roof','year':15,'care':'abandoned','waveSurface':True,'mossEnabled':True})
   report['functionalPassed']=True;report['performanceGatePassed']=False
   report['performanceScope']='display turnaround samples for 8 changing views, no hardware GPU timing or full three-window acceptance'
   b.close()
