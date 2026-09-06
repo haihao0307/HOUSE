@@ -1,0 +1,57 @@
+name: Tiles Mother V0.9.11 Shared Fields and Fracture
+on:
+  push:
+    branches: [feature/tiles-mother-v0.1-workbench]
+    paths:
+      - 'tiles-mother/v0911/transport/**'
+      - 'tiles-mother/v0911/source/**'
+      - 'tiles-mother/v0911/tools/**'
+      - 'tiles-mother/v0911/qa/*.py'
+      - 'tiles-mother/v0911/qa/*.cjs'
+      - '.github/workflows/tiles-mother-v0911-fields.yml'
+permissions:
+  contents: write
+jobs:
+  fields:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Recover verified source and rebuild from untouched V0.9.10
+        run: |
+          python tiles-mother/v0911/transport/reassemble.py
+          python tiles-mother/v0911/tools/build.py
+          node --check tiles-mother/v0911/source/app.js
+          node tiles-mother/v0911/qa/geometry.cjs
+      - name: Install pinned browser runtime
+        run: |
+          pip install playwright==1.57.0 pillow
+          playwright install --with-deps chromium
+      - name: Real WebGL fractures moss states contacts comparison and mobile
+        run: python tiles-mother/v0911/qa/browser.py
+      - name: Preserve validated candidate on original feature branch
+        run: |
+          git fetch origin feature/tiles-mother-v0.1-workbench
+          test "$(git rev-parse FETCH_HEAD)" = "${{ github.sha }}"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -f tiles-mother/v0911
+          if ! git diff --cached --quiet; then
+            git commit -m 'feat(tiles-mother): materialize tested V0.9.11 shared field and fracture candidate'
+            git push origin HEAD:feature/tiles-mother-v0.1-workbench
+          fi
+      - name: Preserve results including failed checks
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Tiles_Mother_V0911_Field_Candidate
+          path: tiles-mother/v0911
+          retention-days: 30
