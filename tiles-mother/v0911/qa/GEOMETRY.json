@@ -1,0 +1,138 @@
+{
+  "version": "0.9.11",
+  "runtime": "v22.23.2",
+  "geometryCases": 22,
+  "failures": [],
+  "allPassed": true,
+  "assertions": 5,
+  "progress": [
+    {
+      "rows": 6,
+      "cols": 4,
+      "y": 0,
+      "panMissing": 0,
+      "maxRafter": 0,
+      "maxBeam": 0
+    },
+    {
+      "rows": 6,
+      "cols": 4,
+      "y": 3,
+      "panMissing": 0,
+      "maxRafter": 0.011026623781457578,
+      "maxBeam": 0.0023507890543672527
+    },
+    {
+      "rows": 6,
+      "cols": 4,
+      "y": 5,
+      "panMissing": 0,
+      "maxRafter": 0.0749706481170298,
+      "maxBeam": 0.054890541460211995
+    },
+    {
+      "rows": 6,
+      "cols": 4,
+      "y": 7,
+      "panMissing": 1,
+      "maxRafter": 0.21697492190587475,
+      "maxBeam": 0.18727488693263517
+    },
+    {
+      "rows": 6,
+      "cols": 4,
+      "y": 10,
+      "panMissing": 14,
+      "maxRafter": 0.4445353719087596,
+      "maxBeam": 0.43129756742330827
+    },
+    {
+      "rows": 6,
+      "cols": 4,
+      "y": 15,
+      "panMissing": 24,
+      "maxRafter": 0.738174267747675,
+      "maxBeam": 0.65
+    },
+    {
+      "rows": 20,
+      "cols": 22,
+      "y": 0,
+      "panMissing": 0,
+      "maxRafter": 0,
+      "maxBeam": 0
+    },
+    {
+      "rows": 20,
+      "cols": 22,
+      "y": 3,
+      "panMissing": 0,
+      "maxRafter": 0.03636921924712899,
+      "maxBeam": 0.024378831236305576
+    },
+    {
+      "rows": 20,
+      "cols": 22,
+      "y": 5,
+      "panMissing": 0,
+      "maxRafter": 0.1839477392346306,
+      "maxBeam": 0.13060532947947256
+    },
+    {
+      "rows": 20,
+      "cols": 22,
+      "y": 7,
+      "panMissing": 5,
+      "maxRafter": 0.36266633755224165,
+      "maxBeam": 0.28928241495544893
+    },
+    {
+      "rows": 20,
+      "cols": 22,
+      "y": 10,
+      "panMissing": 240,
+      "maxRafter": 0.6167466614332496,
+      "maxBeam": 0.533769074881013
+    },
+    {
+      "rows": 20,
+      "cols": 22,
+      "y": 15,
+      "panMissing": 440,
+      "maxRafter": 0.74,
+      "maxBeam": 0.65
+    }
+  ],
+  "lab": {
+    "tile": {
+      "ratio": 1.9890361295320236,
+      "s": -0.34375,
+      "damage": 0.6709688067239944,
+      "stressPa": 244525.75683593753,
+      "strengthPa": 122936.8100485279,
+      "moisture": 0.8014439223663308,
+      "failed": true,
+      "calibrated": false
+    },
+    "wood": {
+      "ratio": 2.223846996088371,
+      "t": 0.65625,
+      "moment": 45.525498046875,
+      "stressPa": 2081870.944764888,
+      "strengthPa": 936157.4552686353,
+      "moisture": 0.8894506009809757,
+      "dose": 6.492989387161122,
+      "damage": 0.7087775828235573,
+      "loss": 0.3685643430682498,
+      "failed": true,
+      "units": {
+        "moment": "N m",
+        "stress": "Pa"
+      },
+      "calibrated": false
+    }
+  },
+  "scope": "Geometry and CPU schematic fields; not GPU, measured material strength or structural safety",
+  "visualApproved": false,
+  "productionApproved": false
+}

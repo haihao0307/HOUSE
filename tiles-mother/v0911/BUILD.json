@@ -1,0 +1,33 @@
+{
+  "version": "0.9.11",
+  "parentSourceCommit": "7ca99f831cd6ae1bb5d4a20274cd9a272bd2bd3c",
+  "baseVersion": "0.9.10",
+  "htmlSHA256": "5d93263df6a9ad15edb498dd64311351a0a76ea2db3beaf1645b4fd519d97209",
+  "appSHA256": "a3384639662c6385f0344268225ea33406b23a51203cc05cad40e351d09be84f",
+  "bytes": 1508249,
+  "inheritedBlocks": {
+    "tileShape": {
+      "old": "f5d5e253119940186ad859530556c226c2b599cd316f5698ccfbe9cfb526b61f",
+      "new": "a9364cdb8e22c1cbfb5cc883c1df3026c94ebcc80117781600c701991561dde3",
+      "byteIdentical": false
+    },
+    "oldClayCore": {
+      "old": "57c2ce32bfdfd9df97213ae1a19e6d1f17d92bea9dd3de9c9d200bd5bdd2eb0a",
+      "new": "57c2ce32bfdfd9df97213ae1a19e6d1f17d92bea9dd3de9c9d200bd5bdd2eb0a",
+      "byteIdentical": true
+    },
+    "detail": {
+      "old": "43a899aa7602fab829d5b78f977213a325dec1dd626d6402b82d42b869486bc0",
+      "new": "43a899aa7602fab829d5b78f977213a325dec1dd626d6402b82d42b869486bc0",
+      "byteIdentical": true
+    },
+    "lighting": {
+      "old": "4c7fba6d35aa552718966d1a3a221c172e5d51614a5e216a05c4749c90dc9dea",
+      "new": "4c7fba6d35aa552718966d1a3a221c172e5d51614a5e216a05c4749c90dc9dea",
+      "byteIdentical": true
+    }
+  },
+  "visualApproved": false,
+  "productionApproved": false,
+  "publicSiteDeployed": false
+}

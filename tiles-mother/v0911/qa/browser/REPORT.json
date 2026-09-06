@@ -1,0 +1,2265 @@
+{
+  "version": "0.9.11",
+  "cases": [
+    {
+      "state": {
+        "fieldMode": 1,
+        "waveSurface": true,
+        "evolution": 1,
+        "mossEnabled": true,
+        "mossThickness": 0.8,
+        "fibreEnds": true,
+        "rainInput": 1,
+        "loadFactor": 1,
+        "initialAge": 25,
+        "openCut": 0.7,
+        "specimen": "both",
+        "geometryRevision": 1,
+        "surfaceRevision": 1,
+        "edgeStrength": 1,
+        "colorLayer": 1,
+        "striations": 0.7,
+        "focusSingle": false,
+        "showContacts": false,
+        "timberOnly": false,
+        "scene": "fracture",
+        "trioFamily": "pan",
+        "uvFamily": "both",
+        "year": 8,
+        "care": "abandoned",
+        "light": "neutral",
+        "mode": "material",
+        "seed": 314159,
+        "autoRotate": false,
+        "selectedFace": "all",
+        "cameraSide": "iso"
+      },
+      "perf": {
+        "version": "0.9.10",
+        "sceneHits": 0,
+        "sceneMisses": 0,
+        "lastBuildMs": 0,
+        "lastBuildMode": "",
+        "frames": 2,
+        "frameCallbacks": 2,
+        "sceneCacheLimit": 2,
+        "compactFits": 0,
+        "pendingFrame": false,
+        "cacheKeys": [],
+        "instanceBytes": 0,
+        "instanceSlots": 0,
+        "geometryCount": 5,
+        "materialCount": 16,
+        "renderer": {
+          "calls": 9,
+          "triangles": 17352,
+          "memory": {
+            "geometries": 5,
+            "textures": 2
+          }
+        },
+        "hidden": false
+      },
+      "field": {
+        "year": 8,
+        "tile": {
+          "ratio": 1.9890361295320236,
+          "s": -0.34375,
+          "damage": 0.6709688067239944,
+          "stressPa": 244525.75683593753,
+          "strengthPa": 122936.8100485279,
+          "moisture": 0.8014439223663308,
+          "failed": true,
+          "calibrated": false
+        },
+        "wood": {
+          "ratio": 2.223846996088371,
+          "t": 0.65625,
+          "moment": 45.525498046875,
+          "stressPa": 2081870.944764888,
+          "strengthPa": 936157.4552686353,
+          "moisture": 0.8894506009809757,
+          "dose": 6.492989387161122,
+          "damage": 0.7087775828235573,
+          "loss": 0.3685643430682498,
+          "failed": true,
+          "units": {
+            "moment": "N m",
+            "stress": "Pa"
+          },
+          "calibrated": false
+        },
+        "woodUV": {
+          "allPassed": true,
+          "faces": [
+            {
+              "face": "side",
+              "minOutwardDot": 0.9940236388251843,
+              "outwardCriterion": "positive radial dot against local centreline",
+              "finite": true,
+              "uvRange": true,
+              "nonzeroArea": true,
+              "nonMirrored": true,
+              "longitudinalV": true,
+              "outward": true,
+              "triangles": 2544,
+              "passed": true
+            },
+            {
+              "face": "start",
+              "minOutwardDot": 0.2988550723925764,
+              "outwardCriterion": "positive signed fibre-axis component on nonplanar end",
+              "finite": true,
+              "uvRange": true,
+              "nonzeroArea": true,
+              "nonMirrored": true,
+              "longitudinalV": true,
+              "outward": true,
+              "triangles": 384,
+              "passed": true
+            },
+            {
+              "face": "end",
+              "minOutwardDot": 0.3022923188329987,
+              "outwardCriterion": "positive signed fibre-axis component on nonplanar end",
+              "finite": true,
+              "uvRange": true,
+              "nonzeroArea": true,
+              "nonMirrored": true,
+              "longitudinalV": true,
+              "outward": true,
+              "triangles": 384,
+              "passed": true
+            }
+          ]
+        },
+        "inspectionExploded": true,
+        "fullStructuralSolver": false
+      },
+      "roof": null,
+      "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+      "programs": [
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        }
+      ],
+      "width": 1440,
+      "bodyWidth": 1440,
+      "name": "01_field_lab",
+      "elapsedSeconds": 1.137
+    },
+    {
+      "state": {
+        "fieldMode": 1,
+        "waveSurface": true,
+        "evolution": 1,
+        "mossEnabled": true,
+        "mossThickness": 0.8,
+        "fibreEnds": true,
+        "rainInput": 1,
+        "loadFactor": 1,
+        "initialAge": 25,
+        "openCut": 0.7,
+        "specimen": "wood",
+        "geometryRevision": 1,
+        "surfaceRevision": 1,
+        "edgeStrength": 1,
+        "colorLayer": 1,
+        "striations": 0.7,
+        "focusSingle": false,
+        "showContacts": false,
+        "timberOnly": false,
+        "scene": "fracture",
+        "trioFamily": "pan",
+        "uvFamily": "both",
+        "year": 8,
+        "care": "abandoned",
+        "light": "neutral",
+        "mode": "material",
+        "seed": 314159,
+        "autoRotate": false,
+        "selectedFace": "all",
+        "cameraSide": "iso"
+      },
+      "perf": {
+        "version": "0.9.10",
+        "sceneHits": 0,
+        "sceneMisses": 0,
+        "lastBuildMs": 0,
+        "lastBuildMode": "",
+        "frames": 3,
+        "frameCallbacks": 3,
+        "sceneCacheLimit": 2,
+        "compactFits": 0,
+        "pendingFrame": false,
+        "cacheKeys": [],
+        "instanceBytes": 0,
+        "instanceSlots": 0,
+        "geometryCount": 1,
+        "materialCount": 15,
+        "renderer": {
+          "calls": 5,
+          "triangles": 3312,
+          "memory": {
+            "geometries": 1,
+            "textures": 2
+          }
+        },
+        "hidden": false
+      },
+      "field": {
+        "year": 8,
+        "tile": null,
+        "wood": {
+          "ratio": 2.223846996088371,
+          "t": 0.65625,
+          "moment": 45.525498046875,
+          "stressPa": 2081870.944764888,
+          "strengthPa": 936157.4552686353,
+          "moisture": 0.8894506009809757,
+          "dose": 6.492989387161122,
+          "damage": 0.7087775828235573,
+          "loss": 0.3685643430682498,
+          "failed": true,
+          "units": {
+            "moment": "N m",
+            "stress": "Pa"
+          },
+          "calibrated": false
+        },
+        "woodUV": {
+          "allPassed": true,
+          "faces": [
+            {
+              "face": "side",
+              "minOutwardDot": 0.9940236388251843,
+              "outwardCriterion": "positive radial dot against local centreline",
+              "finite": true,
+              "uvRange": true,
+              "nonzeroArea": true,
+              "nonMirrored": true,
+              "longitudinalV": true,
+              "outward": true,
+              "triangles": 2544,
+              "passed": true
+            },
+            {
+              "face": "start",
+              "minOutwardDot": 0.2988550723925764,
+              "outwardCriterion": "positive signed fibre-axis component on nonplanar end",
+              "finite": true,
+              "uvRange": true,
+              "nonzeroArea": true,
+              "nonMirrored": true,
+              "longitudinalV": true,
+              "outward": true,
+              "triangles": 384,
+              "passed": true
+            },
+            {
+              "face": "end",
+              "minOutwardDot": 0.3022923188329987,
+              "outwardCriterion": "positive signed fibre-axis component on nonplanar end",
+              "finite": true,
+              "uvRange": true,
+              "nonzeroArea": true,
+              "nonMirrored": true,
+              "longitudinalV": true,
+              "outward": true,
+              "triangles": 384,
+              "passed": true
+            }
+          ]
+        },
+        "inspectionExploded": true,
+        "fullStructuralSolver": false
+      },
+      "roof": null,
+      "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+      "programs": [
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        }
+      ],
+      "width": 1440,
+      "bodyWidth": 1440,
+      "name": "02_wood_fracture",
+      "elapsedSeconds": 0.316
+    },
+    {
+      "state": {
+        "fieldMode": 1,
+        "waveSurface": true,
+        "evolution": 1,
+        "mossEnabled": true,
+        "mossThickness": 0.8,
+        "fibreEnds": true,
+        "rainInput": 1,
+        "loadFactor": 1,
+        "initialAge": 25,
+        "openCut": 0.7,
+        "specimen": "tile",
+        "geometryRevision": 1,
+        "surfaceRevision": 1,
+        "edgeStrength": 1,
+        "colorLayer": 1,
+        "striations": 0.7,
+        "focusSingle": false,
+        "showContacts": false,
+        "timberOnly": false,
+        "scene": "fracture",
+        "trioFamily": "pan",
+        "uvFamily": "both",
+        "year": 8,
+        "care": "abandoned",
+        "light": "neutral",
+        "mode": "material",
+        "seed": 314159,
+        "autoRotate": false,
+        "selectedFace": "all",
+        "cameraSide": "iso"
+      },
+      "perf": {
+        "version": "0.9.10",
+        "sceneHits": 0,
+        "sceneMisses": 0,
+        "lastBuildMs": 0,
+        "lastBuildMode": "",
+        "frames": 4,
+        "frameCallbacks": 4,
+        "sceneCacheLimit": 2,
+        "compactFits": 0,
+        "pendingFrame": false,
+        "cacheKeys": [],
+        "instanceBytes": 0,
+        "instanceSlots": 0,
+        "geometryCount": 4,
+        "materialCount": 16,
+        "renderer": {
+          "calls": 4,
+          "triangles": 14040,
+          "memory": {
+            "geometries": 4,
+            "textures": 2
+          }
+        },
+        "hidden": false
+      },
+      "field": {
+        "year": 8,
+        "tile": {
+          "ratio": 1.9890361295320236,
+          "s": -0.34375,
+          "damage": 0.6709688067239944,
+          "stressPa": 244525.75683593753,
+          "strengthPa": 122936.8100485279,
+          "moisture": 0.8014439223663308,
+          "failed": true,
+          "calibrated": false
+        },
+        "wood": null,
+        "woodUV": null,
+        "inspectionExploded": true,
+        "fullStructuralSolver": false
+      },
+      "roof": null,
+      "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+      "programs": [
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        }
+      ],
+      "width": 1440,
+      "bodyWidth": 1440,
+      "name": "03_tile_fracture",
+      "elapsedSeconds": 0.617
+    },
+    {
+      "state": {
+        "fieldMode": 1,
+        "waveSurface": true,
+        "evolution": 1,
+        "mossEnabled": true,
+        "mossThickness": 0.8,
+        "fibreEnds": true,
+        "rainInput": 1,
+        "loadFactor": 1,
+        "initialAge": 25,
+        "openCut": 0.7,
+        "specimen": "tile",
+        "geometryRevision": 1,
+        "surfaceRevision": 1,
+        "edgeStrength": 1,
+        "colorLayer": 1,
+        "striations": 0.7,
+        "focusSingle": false,
+        "showContacts": false,
+        "timberOnly": false,
+        "scene": "fracture",
+        "trioFamily": "pan",
+        "uvFamily": "both",
+        "year": 0,
+        "care": "abandoned",
+        "light": "neutral",
+        "mode": "material",
+        "seed": 314159,
+        "autoRotate": false,
+        "selectedFace": "all",
+        "cameraSide": "iso"
+      },
+      "perf": {
+        "version": "0.9.10",
+        "sceneHits": 0,
+        "sceneMisses": 0,
+        "lastBuildMs": 0,
+        "lastBuildMode": "",
+        "frames": 5,
+        "frameCallbacks": 5,
+        "sceneCacheLimit": 2,
+        "compactFits": 0,
+        "pendingFrame": false,
+        "cacheKeys": [],
+        "instanceBytes": 0,
+        "instanceSlots": 0,
+        "geometryCount": 2,
+        "materialCount": 16,
+        "renderer": {
+          "calls": 2,
+          "triangles": 8970,
+          "memory": {
+            "geometries": 2,
+            "textures": 2
+          }
+        },
+        "hidden": false
+      },
+      "field": {
+        "year": 0,
+        "tile": {
+          "ratio": 0.3107928831238063,
+          "s": -0.0625,
+          "damage": 0,
+          "stressPa": 276208.49609375,
+          "strengthPa": 888722.0753498418,
+          "moisture": 0.6383995114036833,
+          "failed": false,
+          "calibrated": false
+        },
+        "wood": null,
+        "woodUV": null,
+        "inspectionExploded": true,
+        "fullStructuralSolver": false
+      },
+      "roof": null,
+      "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+      "programs": [
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        }
+      ],
+      "width": 1440,
+      "bodyWidth": 1440,
+      "name": "04_tile_intact",
+      "elapsedSeconds": 0.613
+    },
+    {
+      "state": {
+        "fieldMode": 1,
+        "waveSurface": true,
+        "evolution": 1,
+        "mossEnabled": true,
+        "mossThickness": 0.8,
+        "fibreEnds": true,
+        "rainInput": 1,
+        "loadFactor": 1,
+        "initialAge": 25,
+        "openCut": 0.7,
+        "specimen": "tile",
+        "geometryRevision": 1,
+        "surfaceRevision": 1,
+        "edgeStrength": 1,
+        "colorLayer": 1,
+        "striations": 0.7,
+        "focusSingle": false,
+        "showContacts": false,
+        "timberOnly": false,
+        "scene": "trio",
+        "trioFamily": "pan",
+        "uvFamily": "both",
+        "year": 5,
+        "care": "maintained",
+        "light": "neutral",
+        "mode": "material",
+        "seed": 314159,
+        "autoRotate": false,
+        "selectedFace": "all",
+        "cameraSide": "iso"
+      },
+      "perf": {
+        "version": "0.9.10",
+        "sceneHits": 0,
+        "sceneMisses": 0,
+        "lastBuildMs": 0,
+        "lastBuildMode": "",
+        "frames": 6,
+        "frameCallbacks": 6,
+        "sceneCacheLimit": 2,
+        "compactFits": 0,
+        "pendingFrame": false,
+        "cacheKeys": [],
+        "instanceBytes": 0,
+        "instanceSlots": 0,
+        "geometryCount": 7,
+        "materialCount": 21,
+        "renderer": {
+          "calls": 9,
+          "triangles": 26538,
+          "memory": {
+            "geometries": 7,
+            "textures": 5
+          }
+        },
+        "hidden": false
+      },
+      "field": {
+        "year": 0,
+        "tile": {
+          "ratio": 0.3107928831238063,
+          "s": -0.0625,
+          "damage": 0,
+          "stressPa": 276208.49609375,
+          "strengthPa": 888722.0753498418,
+          "moisture": 0.6383995114036833,
+          "failed": false,
+          "calibrated": false
+        },
+        "wood": null,
+        "woodUV": null,
+        "inspectionExploded": true,
+        "fullStructuralSolver": false
+      },
+      "roof": null,
+      "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+      "programs": [
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        }
+      ],
+      "width": 1440,
+      "bodyWidth": 1440,
+      "name": "05_trio_wave",
+      "elapsedSeconds": 0.909
+    },
+    {
+      "state": {
+        "fieldMode": 1,
+        "waveSurface": false,
+        "evolution": 1,
+        "mossEnabled": true,
+        "mossThickness": 0.8,
+        "fibreEnds": true,
+        "rainInput": 1,
+        "loadFactor": 1,
+        "initialAge": 25,
+        "openCut": 0.7,
+        "specimen": "tile",
+        "geometryRevision": 1,
+        "surfaceRevision": 1,
+        "edgeStrength": 1,
+        "colorLayer": 1,
+        "striations": 0.7,
+        "focusSingle": false,
+        "showContacts": false,
+        "timberOnly": false,
+        "scene": "trio",
+        "trioFamily": "pan",
+        "uvFamily": "both",
+        "year": 5,
+        "care": "maintained",
+        "light": "neutral",
+        "mode": "material",
+        "seed": 314159,
+        "autoRotate": false,
+        "selectedFace": "all",
+        "cameraSide": "iso"
+      },
+      "perf": {
+        "version": "0.9.10",
+        "sceneHits": 0,
+        "sceneMisses": 0,
+        "lastBuildMs": 0,
+        "lastBuildMode": "",
+        "frames": 7,
+        "frameCallbacks": 7,
+        "sceneCacheLimit": 2,
+        "compactFits": 0,
+        "pendingFrame": false,
+        "cacheKeys": [],
+        "instanceBytes": 0,
+        "instanceSlots": 0,
+        "geometryCount": 7,
+        "materialCount": 21,
+        "renderer": {
+          "calls": 9,
+          "triangles": 26538,
+          "memory": {
+            "geometries": 7,
+            "textures": 7
+          }
+        },
+        "hidden": false
+      },
+      "field": {
+        "year": 0,
+        "tile": {
+          "ratio": 0.3107928831238063,
+          "s": -0.0625,
+          "damage": 0,
+          "stressPa": 276208.49609375,
+          "strengthPa": 888722.0753498418,
+          "moisture": 0.6383995114036833,
+          "failed": false,
+          "calibrated": false
+        },
+        "wood": null,
+        "woodUV": null,
+        "inspectionExploded": true,
+        "fullStructuralSolver": false
+      },
+      "roof": null,
+      "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+      "programs": [
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        }
+      ],
+      "width": 1440,
+      "bodyWidth": 1440,
+      "name": "06_trio_legacy",
+      "elapsedSeconds": 1.443
+    },
+    {
+      "state": {
+        "fieldMode": 1,
+        "waveSurface": true,
+        "evolution": 1,
+        "mossEnabled": false,
+        "mossThickness": 0.8,
+        "fibreEnds": true,
+        "rainInput": 1,
+        "loadFactor": 1,
+        "initialAge": 25,
+        "openCut": 0.7,
+        "specimen": "tile",
+        "geometryRevision": 1,
+        "surfaceRevision": 1,
+        "edgeStrength": 1,
+        "colorLayer": 1,
+        "striations": 0.7,
+        "focusSingle": false,
+        "showContacts": false,
+        "timberOnly": false,
+        "scene": "trio",
+        "trioFamily": "pan",
+        "uvFamily": "both",
+        "year": 5,
+        "care": "maintained",
+        "light": "neutral",
+        "mode": "material",
+        "seed": 314159,
+        "autoRotate": false,
+        "selectedFace": "all",
+        "cameraSide": "iso"
+      },
+      "perf": {
+        "version": "0.9.10",
+        "sceneHits": 0,
+        "sceneMisses": 0,
+        "lastBuildMs": 0,
+        "lastBuildMode": "",
+        "frames": 8,
+        "frameCallbacks": 8,
+        "sceneCacheLimit": 2,
+        "compactFits": 0,
+        "pendingFrame": false,
+        "cacheKeys": [],
+        "instanceBytes": 0,
+        "instanceSlots": 0,
+        "geometryCount": 4,
+        "materialCount": 21,
+        "renderer": {
+          "calls": 6,
+          "triangles": 25782,
+          "memory": {
+            "geometries": 4,
+            "textures": 7
+          }
+        },
+        "hidden": false
+      },
+      "field": {
+        "year": 0,
+        "tile": {
+          "ratio": 0.3107928831238063,
+          "s": -0.0625,
+          "damage": 0,
+          "stressPa": 276208.49609375,
+          "strengthPa": 888722.0753498418,
+          "moisture": 0.6383995114036833,
+          "failed": false,
+          "calibrated": false
+        },
+        "wood": null,
+        "woodUV": null,
+        "inspectionExploded": true,
+        "fullStructuralSolver": false
+      },
+      "roof": null,
+      "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+      "programs": [
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        }
+      ],
+      "width": 1440,
+      "bodyWidth": 1440,
+      "name": "07_trio_without_moss",
+      "elapsedSeconds": 0.779
+    },
+    {
+      "state": {
+        "fieldMode": 1,
+        "waveSurface": true,
+        "evolution": 1,
+        "mossEnabled": true,
+        "mossThickness": 0.8,
+        "fibreEnds": true,
+        "rainInput": 1,
+        "loadFactor": 1,
+        "initialAge": 25,
+        "openCut": 0.7,
+        "specimen": "tile",
+        "geometryRevision": 1,
+        "surfaceRevision": 1,
+        "edgeStrength": 1,
+        "colorLayer": 1,
+        "striations": 0.7,
+        "focusSingle": false,
+        "showContacts": false,
+        "timberOnly": false,
+        "scene": "forty8",
+        "trioFamily": "pan",
+        "uvFamily": "both",
+        "year": 0,
+        "care": "maintained",
+        "light": "neutral",
+        "mode": "material",
+        "seed": 314159,
+        "autoRotate": false,
+        "selectedFace": "all",
+        "cameraSide": "iso"
+      },
+      "perf": {
+        "version": "0.9.10",
+        "sceneHits": 0,
+        "sceneMisses": 1,
+        "lastBuildMs": 2238,
+        "lastBuildMode": "新状态精确计算",
+        "frames": 45,
+        "frameCallbacks": 45,
+        "sceneCacheLimit": 2,
+        "compactFits": 48,
+        "pendingFrame": false,
+        "cacheKeys": [
+          "v0911/forty8/1/1/0/314159/maintained/material/true/1/1/1/true/0.8/true"
+        ],
+        "instanceBytes": 10944,
+        "instanceSlots": 144,
+        "geometryCount": 13,
+        "materialCount": 22,
+        "renderer": {
+          "calls": 34,
+          "triangles": 110484,
+          "memory": {
+            "geometries": 12,
+            "textures": 4
+          }
+        },
+        "hidden": false
+      },
+      "field": {
+        "year": 0,
+        "tile": {
+          "ratio": 0.3107928831238063,
+          "s": -0.0625,
+          "damage": 0,
+          "stressPa": 276208.49609375,
+          "strengthPa": 888722.0753498418,
+          "moisture": 0.6383995114036833,
+          "failed": false,
+          "calibrated": false
+        },
+        "wood": null,
+        "woodUV": null,
+        "inspectionExploded": true,
+        "fullStructuralSolver": false
+      },
+      "roof": {
+        "maxRafterLoss": 0,
+        "maxBeamLoss": 0,
+        "moss": {
+          "kind": "field-moss",
+          "patches": 14,
+          "triangles": 1764,
+          "minimumSurfaceClearance": 0.00022,
+          "maximumCandidateThickness": 0.002038124740767843
+        },
+        "counts": {
+          "design": 48,
+          "panVisible": 24,
+          "coverVisible": 24,
+          "missing": 0,
+          "damaged": 0,
+          "replaced": 0,
+          "unsupported": 0
+        },
+        "contacts": {
+          "tested": 48,
+          "maxSeatGapMm": 0.2282942485253986,
+          "minSeatGapMm": 0.1799999999999996,
+          "minOverlapGapMm": 0.09051487174435713,
+          "unresolved": 0,
+          "clearanceToleranceMm": 0.18000000000000002,
+          "timber": {
+            "tested": 20,
+            "minGapMm": 0.18009817610355888,
+            "penetrations": [],
+            "absentStations": 0
+          },
+          "actualGeometry": {
+            "tested": 15,
+            "failures": [],
+            "allPassed": true
+          }
+        }
+      },
+      "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+      "programs": [
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        }
+      ],
+      "width": 1440,
+      "bodyWidth": 1440,
+      "name": "08_forty8_zero",
+      "elapsedSeconds": 3.797
+    },
+    {
+      "state": {
+        "fieldMode": 1,
+        "waveSurface": true,
+        "evolution": 1,
+        "mossEnabled": true,
+        "mossThickness": 0.8,
+        "fibreEnds": true,
+        "rainInput": 1,
+        "loadFactor": 1,
+        "initialAge": 25,
+        "openCut": 0.7,
+        "specimen": "tile",
+        "geometryRevision": 1,
+        "surfaceRevision": 1,
+        "edgeStrength": 1,
+        "colorLayer": 1,
+        "striations": 0.7,
+        "focusSingle": false,
+        "showContacts": false,
+        "timberOnly": false,
+        "scene": "forty8",
+        "trioFamily": "pan",
+        "uvFamily": "both",
+        "year": 7,
+        "care": "abandoned",
+        "light": "neutral",
+        "mode": "material",
+        "seed": 314159,
+        "autoRotate": false,
+        "selectedFace": "all",
+        "cameraSide": "iso"
+      },
+      "perf": {
+        "version": "0.9.10",
+        "sceneHits": 0,
+        "sceneMisses": 2,
+        "lastBuildMs": 1689.300000000003,
+        "lastBuildMode": "新状态精确计算",
+        "frames": 46,
+        "frameCallbacks": 46,
+        "sceneCacheLimit": 2,
+        "compactFits": 41,
+        "pendingFrame": false,
+        "cacheKeys": [
+          "v0911/forty8/1/1/0/314159/maintained/material/true/1/1/1/true/0.8/true",
+          "v0911/forty8/1/1/7/314159/abandoned/material/true/1/1/1/true/0.8/true"
+        ],
+        "instanceBytes": 9348,
+        "instanceSlots": 123,
+        "geometryCount": 31,
+        "materialCount": 24,
+        "renderer": {
+          "calls": 44,
+          "triangles": 96120,
+          "memory": {
+            "geometries": 29,
+            "textures": 4
+          }
+        },
+        "hidden": false
+      },
+      "field": {
+        "year": 0,
+        "tile": {
+          "ratio": 0.3107928831238063,
+          "s": -0.0625,
+          "damage": 0,
+          "stressPa": 276208.49609375,
+          "strengthPa": 888722.0753498418,
+          "moisture": 0.6383995114036833,
+          "failed": false,
+          "calibrated": false
+        },
+        "wood": null,
+        "woodUV": null,
+        "inspectionExploded": true,
+        "fullStructuralSolver": false
+      },
+      "roof": {
+        "maxRafterLoss": 0.21697492190587475,
+        "maxBeamLoss": 0.18727488693263517,
+        "moss": {
+          "kind": "field-moss",
+          "patches": 12,
+          "triangles": 1512,
+          "minimumSurfaceClearance": 0.00022,
+          "maximumCandidateThickness": 0.009250680216598292
+        },
+        "counts": {
+          "design": 48,
+          "panVisible": 23,
+          "coverVisible": 18,
+          "missing": 7,
+          "damaged": 35,
+          "replaced": 0,
+          "unsupported": 6
+        },
+        "contacts": {
+          "tested": 41,
+          "maxSeatGapMm": 0.2293365776856321,
+          "minSeatGapMm": 0.1799999999999996,
+          "minOverlapGapMm": 0.0905693331511026,
+          "unresolved": 0,
+          "clearanceToleranceMm": 0.18000000000000002,
+          "timber": {
+            "tested": 20,
+            "minGapMm": 0.18009820704539825,
+            "penetrations": [],
+            "absentStations": 0
+          },
+          "actualGeometry": {
+            "tested": 15,
+            "failures": [],
+            "allPassed": true
+          }
+        }
+      },
+      "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+      "programs": [
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        }
+      ],
+      "width": 1440,
+      "bodyWidth": 1440,
+      "name": "09_forty8_seven",
+      "elapsedSeconds": 2.74
+    },
+    {
+      "state": {
+        "fieldMode": 1,
+        "waveSurface": true,
+        "evolution": 1,
+        "mossEnabled": true,
+        "mossThickness": 0.8,
+        "fibreEnds": true,
+        "rainInput": 1,
+        "loadFactor": 1,
+        "initialAge": 25,
+        "openCut": 0.7,
+        "specimen": "tile",
+        "geometryRevision": 1,
+        "surfaceRevision": 1,
+        "edgeStrength": 1,
+        "colorLayer": 1,
+        "striations": 0.7,
+        "focusSingle": false,
+        "showContacts": false,
+        "timberOnly": false,
+        "scene": "forty8",
+        "trioFamily": "pan",
+        "uvFamily": "both",
+        "year": 10,
+        "care": "abandoned",
+        "light": "neutral",
+        "mode": "material",
+        "seed": 314159,
+        "autoRotate": false,
+        "selectedFace": "all",
+        "cameraSide": "iso"
+      },
+      "perf": {
+        "version": "0.9.10",
+        "sceneHits": 0,
+        "sceneMisses": 3,
+        "lastBuildMs": 176,
+        "lastBuildMode": "新状态精确计算",
+        "frames": 47,
+        "frameCallbacks": 47,
+        "sceneCacheLimit": 2,
+        "compactFits": 7,
+        "pendingFrame": false,
+        "cacheKeys": [
+          "v0911/forty8/1/1/7/314159/abandoned/material/true/1/1/1/true/0.8/true",
+          "v0911/forty8/1/1/10/314159/abandoned/material/true/1/1/1/true/0.8/true"
+        ],
+        "instanceBytes": 1596,
+        "instanceSlots": 21,
+        "geometryCount": 33,
+        "materialCount": 25,
+        "renderer": {
+          "calls": 43,
+          "triangles": 28698,
+          "memory": {
+            "geometries": 31,
+            "textures": 4
+          }
+        },
+        "hidden": false
+      },
+      "field": {
+        "year": 0,
+        "tile": {
+          "ratio": 0.3107928831238063,
+          "s": -0.0625,
+          "damage": 0,
+          "stressPa": 276208.49609375,
+          "strengthPa": 888722.0753498418,
+          "moisture": 0.6383995114036833,
+          "failed": false,
+          "calibrated": false
+        },
+        "wood": null,
+        "woodUV": null,
+        "inspectionExploded": true,
+        "fullStructuralSolver": false
+      },
+      "roof": {
+        "maxRafterLoss": 0.4445353719087596,
+        "maxBeamLoss": 0.43129756742330827,
+        "moss": {
+          "kind": "field-moss",
+          "patches": 3,
+          "triangles": 378,
+          "minimumSurfaceClearance": 0.00022,
+          "maximumCandidateThickness": 0.009250680216598292
+        },
+        "counts": {
+          "design": 48,
+          "panVisible": 6,
+          "coverVisible": 1,
+          "missing": 41,
+          "damaged": 7,
+          "replaced": 0,
+          "unsupported": 12
+        },
+        "contacts": {
+          "tested": 7,
+          "maxSeatGapMm": 0.2243383319196629,
+          "minSeatGapMm": 0.1799999999999996,
+          "minOverlapGapMm": 0.14793736674661995,
+          "unresolved": 0,
+          "clearanceToleranceMm": 0.18000000000000002,
+          "timber": {
+            "tested": 18,
+            "minGapMm": 0.18009837523809413,
+            "penetrations": [],
+            "absentStations": 2
+          },
+          "actualGeometry": {
+            "tested": 15,
+            "failures": [],
+            "allPassed": true
+          }
+        }
+      },
+      "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+      "programs": [
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        }
+      ],
+      "width": 1440,
+      "bodyWidth": 1440,
+      "name": "10_forty8_ten",
+      "elapsedSeconds": 0.773
+    },
+    {
+      "state": {
+        "fieldMode": 1,
+        "waveSurface": true,
+        "evolution": 1,
+        "mossEnabled": true,
+        "mossThickness": 0.8,
+        "fibreEnds": true,
+        "rainInput": 1,
+        "loadFactor": 1,
+        "initialAge": 25,
+        "openCut": 0.7,
+        "specimen": "tile",
+        "geometryRevision": 1,
+        "surfaceRevision": 1,
+        "edgeStrength": 1,
+        "colorLayer": 1,
+        "striations": 0.7,
+        "focusSingle": false,
+        "showContacts": false,
+        "timberOnly": false,
+        "scene": "roof",
+        "trioFamily": "pan",
+        "uvFamily": "both",
+        "year": 0,
+        "care": "maintained",
+        "light": "neutral",
+        "mode": "material",
+        "seed": 314159,
+        "autoRotate": false,
+        "selectedFace": "all",
+        "cameraSide": "iso"
+      },
+      "perf": {
+        "version": "0.9.10",
+        "sceneHits": 0,
+        "sceneMisses": 4,
+        "lastBuildMs": 14236,
+        "lastBuildMode": "新状态精确计算",
+        "frames": 48,
+        "frameCallbacks": 48,
+        "sceneCacheLimit": 2,
+        "compactFits": 860,
+        "pendingFrame": false,
+        "cacheKeys": [
+          "v0911/forty8/1/1/10/314159/abandoned/material/true/1/1/1/true/0.8/true",
+          "v0911/roof/1/1/0/314159/maintained/material/true/1/1/1/true/0.8/true"
+        ],
+        "instanceBytes": 196080,
+        "instanceSlots": 2580,
+        "geometryCount": 46,
+        "materialCount": 28,
+        "renderer": {
+          "calls": 88,
+          "triangles": 946792,
+          "memory": {
+            "geometries": 44,
+            "textures": 4
+          }
+        },
+        "hidden": false
+      },
+      "field": {
+        "year": 0,
+        "tile": {
+          "ratio": 0.3107928831238063,
+          "s": -0.0625,
+          "damage": 0,
+          "stressPa": 276208.49609375,
+          "strengthPa": 888722.0753498418,
+          "moisture": 0.6383995114036833,
+          "failed": false,
+          "calibrated": false
+        },
+        "wood": null,
+        "woodUV": null,
+        "inspectionExploded": true,
+        "fullStructuralSolver": false
+      },
+      "roof": {
+        "maxRafterLoss": 0,
+        "maxBeamLoss": 0,
+        "moss": {
+          "kind": "field-moss",
+          "patches": 84,
+          "triangles": 10584,
+          "minimumSurfaceClearance": 0.00022,
+          "maximumCandidateThickness": 0.0021715449737661693
+        },
+        "counts": {
+          "design": 860,
+          "panVisible": 440,
+          "coverVisible": 420,
+          "missing": 0,
+          "damaged": 0,
+          "replaced": 0,
+          "unsupported": 0
+        },
+        "contacts": {
+          "tested": 860,
+          "maxSeatGapMm": 0.22996059510276,
+          "minSeatGapMm": 0.1799999999999996,
+          "minOverlapGapMm": 0.09002997276158498,
+          "unresolved": 0,
+          "clearanceToleranceMm": 0.18000000000000002,
+          "timber": {
+            "tested": 92,
+            "minGapMm": 0.17991824227081565,
+            "penetrations": [],
+            "absentStations": 0
+          },
+          "actualGeometry": {
+            "tested": 33,
+            "failures": [],
+            "allPassed": true
+          }
+        }
+      },
+      "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+      "programs": [
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        }
+      ],
+      "width": 1440,
+      "bodyWidth": 1440,
+      "name": "11_roof_zero",
+      "elapsedSeconds": 16.868
+    },
+    {
+      "state": {
+        "fieldMode": 1,
+        "waveSurface": true,
+        "evolution": 1,
+        "mossEnabled": true,
+        "mossThickness": 0.8,
+        "fibreEnds": true,
+        "rainInput": 1,
+        "loadFactor": 1,
+        "initialAge": 25,
+        "openCut": 0.7,
+        "specimen": "tile",
+        "geometryRevision": 1,
+        "surfaceRevision": 1,
+        "edgeStrength": 1,
+        "colorLayer": 1,
+        "striations": 0.7,
+        "focusSingle": false,
+        "showContacts": false,
+        "timberOnly": false,
+        "scene": "roof",
+        "trioFamily": "pan",
+        "uvFamily": "both",
+        "year": 10,
+        "care": "abandoned",
+        "light": "neutral",
+        "mode": "material",
+        "seed": 314159,
+        "autoRotate": false,
+        "selectedFace": "all",
+        "cameraSide": "iso"
+      },
+      "perf": {
+        "version": "0.9.10",
+        "sceneHits": 0,
+        "sceneMisses": 5,
+        "lastBuildMs": 2981.100000000006,
+        "lastBuildMode": "新状态精确计算",
+        "frames": 49,
+        "frameCallbacks": 49,
+        "sceneCacheLimit": 2,
+        "compactFits": 259,
+        "pendingFrame": false,
+        "cacheKeys": [
+          "v0911/roof/1/1/0/314159/maintained/material/true/1/1/1/true/0.8/true",
+          "v0911/roof/1/1/10/314159/abandoned/material/true/1/1/1/true/0.8/true"
+        ],
+        "instanceBytes": 59052,
+        "instanceSlots": 777,
+        "geometryCount": 67,
+        "materialCount": 24,
+        "renderer": {
+          "calls": 121,
+          "triangles": 381182,
+          "memory": {
+            "geometries": 65,
+            "textures": 4
+          }
+        },
+        "hidden": false
+      },
+      "field": {
+        "year": 0,
+        "tile": {
+          "ratio": 0.3107928831238063,
+          "s": -0.0625,
+          "damage": 0,
+          "stressPa": 276208.49609375,
+          "strengthPa": 888722.0753498418,
+          "moisture": 0.6383995114036833,
+          "failed": false,
+          "calibrated": false
+        },
+        "wood": null,
+        "woodUV": null,
+        "inspectionExploded": true,
+        "fullStructuralSolver": false
+      },
+      "roof": {
+        "maxRafterLoss": 0.6167466614332496,
+        "maxBeamLoss": 0.533769074881013,
+        "moss": {
+          "kind": "field-moss",
+          "patches": 57,
+          "triangles": 7182,
+          "minimumSurfaceClearance": 0.00022,
+          "maximumCandidateThickness": 0.009848238215899578
+        },
+        "counts": {
+          "design": 860,
+          "panVisible": 187,
+          "coverVisible": 72,
+          "missing": 601,
+          "damaged": 257,
+          "replaced": 0,
+          "unsupported": 168
+        },
+        "contacts": {
+          "tested": 259,
+          "maxSeatGapMm": 0.273383425439519,
+          "minSeatGapMm": 0.1799999999999996,
+          "minOverlapGapMm": 0.09016358710654772,
+          "unresolved": 0,
+          "clearanceToleranceMm": 0.18000000000000002,
+          "timber": {
+            "tested": 88,
+            "minGapMm": 0.1800967650336105,
+            "penetrations": [],
+            "absentStations": 4
+          },
+          "actualGeometry": {
+            "tested": 33,
+            "failures": [],
+            "allPassed": true
+          }
+        }
+      },
+      "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+      "programs": [
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        }
+      ],
+      "width": 1440,
+      "bodyWidth": 1440,
+      "name": "12_roof_ten",
+      "elapsedSeconds": 4.411
+    },
+    {
+      "state": {
+        "fieldMode": 1,
+        "waveSurface": true,
+        "evolution": 1,
+        "mossEnabled": true,
+        "mossThickness": 0.8,
+        "fibreEnds": true,
+        "rainInput": 1,
+        "loadFactor": 1,
+        "initialAge": 25,
+        "openCut": 0.7,
+        "specimen": "tile",
+        "geometryRevision": 1,
+        "surfaceRevision": 1,
+        "edgeStrength": 1,
+        "colorLayer": 1,
+        "striations": 0.7,
+        "focusSingle": false,
+        "showContacts": false,
+        "timberOnly": false,
+        "scene": "forty8",
+        "trioFamily": "pan",
+        "uvFamily": "both",
+        "year": 7,
+        "care": "abandoned",
+        "light": "neutral",
+        "mode": "material",
+        "seed": 314159,
+        "autoRotate": false,
+        "selectedFace": "all",
+        "cameraSide": "iso"
+      },
+      "perf": {
+        "version": "0.9.10",
+        "sceneHits": 0,
+        "sceneMisses": 6,
+        "lastBuildMs": 136.60000000000582,
+        "lastBuildMode": "新状态精确计算",
+        "frames": 50,
+        "frameCallbacks": 50,
+        "sceneCacheLimit": 2,
+        "compactFits": 41,
+        "pendingFrame": false,
+        "cacheKeys": [
+          "v0911/roof/1/1/10/314159/abandoned/material/true/1/1/1/true/0.8/true",
+          "v0911/forty8/1/1/7/314159/abandoned/material/true/1/1/1/true/0.8/true"
+        ],
+        "instanceBytes": 9348,
+        "instanceSlots": 123,
+        "geometryCount": 54,
+        "materialCount": 31,
+        "renderer": {
+          "calls": 44,
+          "triangles": 96120,
+          "memory": {
+            "geometries": 52,
+            "textures": 4
+          }
+        },
+        "hidden": false
+      },
+      "field": {
+        "year": 0,
+        "tile": {
+          "ratio": 0.3107928831238063,
+          "s": -0.0625,
+          "damage": 0,
+          "stressPa": 276208.49609375,
+          "strengthPa": 888722.0753498418,
+          "moisture": 0.6383995114036833,
+          "failed": false,
+          "calibrated": false
+        },
+        "wood": null,
+        "woodUV": null,
+        "inspectionExploded": true,
+        "fullStructuralSolver": false
+      },
+      "roof": {
+        "maxRafterLoss": 0.21697492190587475,
+        "maxBeamLoss": 0.18727488693263517,
+        "moss": {
+          "kind": "field-moss",
+          "patches": 12,
+          "triangles": 1512,
+          "minimumSurfaceClearance": 0.00022,
+          "maximumCandidateThickness": 0.009250680216598292
+        },
+        "counts": {
+          "design": 48,
+          "panVisible": 23,
+          "coverVisible": 18,
+          "missing": 7,
+          "damaged": 35,
+          "replaced": 0,
+          "unsupported": 6
+        },
+        "contacts": {
+          "tested": 41,
+          "maxSeatGapMm": 0.2293365776856321,
+          "minSeatGapMm": 0.1799999999999996,
+          "minOverlapGapMm": 0.0905693331511026,
+          "unresolved": 0,
+          "clearanceToleranceMm": 0.18000000000000002,
+          "timber": {
+            "tested": 20,
+            "minGapMm": 0.18009820704539825,
+            "penetrations": [],
+            "absentStations": 0
+          },
+          "actualGeometry": {
+            "tested": 15,
+            "failures": [],
+            "allPassed": true
+          }
+        }
+      },
+      "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+      "programs": [
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        }
+      ],
+      "width": 1440,
+      "bodyWidth": 1440,
+      "name": "13_forty8_under",
+      "elapsedSeconds": 1.163
+    },
+    {
+      "state": {
+        "fieldMode": 1,
+        "waveSurface": true,
+        "evolution": 1,
+        "mossEnabled": true,
+        "mossThickness": 0.8,
+        "fibreEnds": true,
+        "rainInput": 1,
+        "loadFactor": 1,
+        "initialAge": 25,
+        "openCut": 0.7,
+        "specimen": "both",
+        "geometryRevision": 1,
+        "surfaceRevision": 1,
+        "edgeStrength": 1,
+        "colorLayer": 1,
+        "striations": 0.7,
+        "focusSingle": false,
+        "showContacts": false,
+        "timberOnly": false,
+        "scene": "fracture",
+        "trioFamily": "pan",
+        "uvFamily": "both",
+        "year": 8,
+        "care": "abandoned",
+        "light": "neutral",
+        "mode": "material",
+        "seed": 314159,
+        "autoRotate": false,
+        "selectedFace": "all",
+        "cameraSide": "iso"
+      },
+      "perf": {
+        "version": "0.9.10",
+        "sceneHits": 0,
+        "sceneMisses": 6,
+        "lastBuildMs": 136.60000000000582,
+        "lastBuildMode": "新状态精确计算",
+        "frames": 52,
+        "frameCallbacks": 52,
+        "sceneCacheLimit": 2,
+        "compactFits": 41,
+        "pendingFrame": false,
+        "cacheKeys": [
+          "v0911/roof/1/1/10/314159/abandoned/material/true/1/1/1/true/0.8/true",
+          "v0911/forty8/1/1/7/314159/abandoned/material/true/1/1/1/true/0.8/true"
+        ],
+        "instanceBytes": 0,
+        "instanceSlots": 0,
+        "geometryCount": 59,
+        "materialCount": 32,
+        "renderer": {
+          "calls": 9,
+          "triangles": 17352,
+          "memory": {
+            "geometries": 57,
+            "textures": 4
+          }
+        },
+        "hidden": false
+      },
+      "field": {
+        "year": 8,
+        "tile": {
+          "ratio": 1.9890361295320236,
+          "s": -0.34375,
+          "damage": 0.6709688067239944,
+          "stressPa": 244525.75683593753,
+          "strengthPa": 122936.8100485279,
+          "moisture": 0.8014439223663308,
+          "failed": true,
+          "calibrated": false
+        },
+        "wood": {
+          "ratio": 2.223846996088371,
+          "t": 0.65625,
+          "moment": 45.525498046875,
+          "stressPa": 2081870.944764888,
+          "strengthPa": 936157.4552686353,
+          "moisture": 0.8894506009809757,
+          "dose": 6.492989387161122,
+          "damage": 0.7087775828235573,
+          "loss": 0.3685643430682498,
+          "failed": true,
+          "units": {
+            "moment": "N m",
+            "stress": "Pa"
+          },
+          "calibrated": false
+        },
+        "woodUV": {
+          "allPassed": true,
+          "faces": [
+            {
+              "face": "side",
+              "minOutwardDot": 0.9940236388251843,
+              "outwardCriterion": "positive radial dot against local centreline",
+              "finite": true,
+              "uvRange": true,
+              "nonzeroArea": true,
+              "nonMirrored": true,
+              "longitudinalV": true,
+              "outward": true,
+              "triangles": 2544,
+              "passed": true
+            },
+            {
+              "face": "start",
+              "minOutwardDot": 0.2988550723925764,
+              "outwardCriterion": "positive signed fibre-axis component on nonplanar end",
+              "finite": true,
+              "uvRange": true,
+              "nonzeroArea": true,
+              "nonMirrored": true,
+              "longitudinalV": true,
+              "outward": true,
+              "triangles": 384,
+              "passed": true
+            },
+            {
+              "face": "end",
+              "minOutwardDot": 0.3022923188329987,
+              "outwardCriterion": "positive signed fibre-axis component on nonplanar end",
+              "finite": true,
+              "uvRange": true,
+              "nonzeroArea": true,
+              "nonMirrored": true,
+              "longitudinalV": true,
+              "outward": true,
+              "triangles": 384,
+              "passed": true
+            }
+          ]
+        },
+        "inspectionExploded": true,
+        "fullStructuralSolver": false
+      },
+      "roof": null,
+      "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+      "programs": [
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        }
+      ],
+      "width": 390,
+      "bodyWidth": 390,
+      "name": "14_mobile_lab",
+      "elapsedSeconds": 1.066
+    },
+    {
+      "state": {
+        "fieldMode": 1,
+        "waveSurface": true,
+        "evolution": 1,
+        "mossEnabled": true,
+        "mossThickness": 0.8,
+        "fibreEnds": true,
+        "rainInput": 1,
+        "loadFactor": 1,
+        "initialAge": 25,
+        "openCut": 0.7,
+        "specimen": "wood",
+        "geometryRevision": 1,
+        "surfaceRevision": 1,
+        "edgeStrength": 1,
+        "colorLayer": 1,
+        "striations": 0.7,
+        "focusSingle": false,
+        "showContacts": false,
+        "timberOnly": false,
+        "scene": "fracture",
+        "trioFamily": "pan",
+        "uvFamily": "both",
+        "year": 8,
+        "care": "abandoned",
+        "light": "neutral",
+        "mode": "material",
+        "seed": 314159,
+        "autoRotate": false,
+        "selectedFace": "all",
+        "cameraSide": "iso"
+      },
+      "perf": {
+        "version": "0.9.10",
+        "sceneHits": 0,
+        "sceneMisses": 6,
+        "lastBuildMs": 136.60000000000582,
+        "lastBuildMode": "新状态精确计算",
+        "frames": 53,
+        "frameCallbacks": 53,
+        "sceneCacheLimit": 2,
+        "compactFits": 41,
+        "pendingFrame": false,
+        "cacheKeys": [
+          "v0911/roof/1/1/10/314159/abandoned/material/true/1/1/1/true/0.8/true",
+          "v0911/forty8/1/1/7/314159/abandoned/material/true/1/1/1/true/0.8/true"
+        ],
+        "instanceBytes": 0,
+        "instanceSlots": 0,
+        "geometryCount": 55,
+        "materialCount": 31,
+        "renderer": {
+          "calls": 5,
+          "triangles": 3312,
+          "memory": {
+            "geometries": 53,
+            "textures": 4
+          }
+        },
+        "hidden": false
+      },
+      "field": {
+        "year": 8,
+        "tile": null,
+        "wood": {
+          "ratio": 2.223846996088371,
+          "t": 0.65625,
+          "moment": 45.525498046875,
+          "stressPa": 2081870.944764888,
+          "strengthPa": 936157.4552686353,
+          "moisture": 0.8894506009809757,
+          "dose": 6.492989387161122,
+          "damage": 0.7087775828235573,
+          "loss": 0.3685643430682498,
+          "failed": true,
+          "units": {
+            "moment": "N m",
+            "stress": "Pa"
+          },
+          "calibrated": false
+        },
+        "woodUV": {
+          "allPassed": true,
+          "faces": [
+            {
+              "face": "side",
+              "minOutwardDot": 0.9940236388251843,
+              "outwardCriterion": "positive radial dot against local centreline",
+              "finite": true,
+              "uvRange": true,
+              "nonzeroArea": true,
+              "nonMirrored": true,
+              "longitudinalV": true,
+              "outward": true,
+              "triangles": 2544,
+              "passed": true
+            },
+            {
+              "face": "start",
+              "minOutwardDot": 0.2988550723925764,
+              "outwardCriterion": "positive signed fibre-axis component on nonplanar end",
+              "finite": true,
+              "uvRange": true,
+              "nonzeroArea": true,
+              "nonMirrored": true,
+              "longitudinalV": true,
+              "outward": true,
+              "triangles": 384,
+              "passed": true
+            },
+            {
+              "face": "end",
+              "minOutwardDot": 0.3022923188329987,
+              "outwardCriterion": "positive signed fibre-axis component on nonplanar end",
+              "finite": true,
+              "uvRange": true,
+              "nonzeroArea": true,
+              "nonMirrored": true,
+              "longitudinalV": true,
+              "outward": true,
+              "triangles": 384,
+              "passed": true
+            }
+          ]
+        },
+        "inspectionExploded": true,
+        "fullStructuralSolver": false
+      },
+      "roof": null,
+      "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+      "programs": [
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        },
+        {
+          "name": "",
+          "runnable": null
+        }
+      ],
+      "width": 390,
+      "bodyWidth": 390,
+      "name": "15_mobile_wood",
+      "elapsedSeconds": 0.183
+    }
+  ],
+  "errors": [],
+  "consoleErrors": [],
+  "requests": [],
+  "visualApproved": false,
+  "productionApproved": false,
+  "publicDeployed": false,
+  "browser": "143.0.7499.4",
+  "sameSessionDisplayBench": [
+    {
+      "times": [
+        475.3999999999942,
+        53.59999999999127,
+        33.40000000000873,
+        334.1000000000058,
+        351.5,
+        42.39999999999418,
+        358.6999999999971,
+        359.3000000000029
+      ],
+      "triangles": 25782,
+      "calls": 6,
+      "timerExtension": true,
+      "waveSurface": false
+    },
+    {
+      "times": [
+        360.1999999999971,
+        481.3000000000029,
+        368,
+        87.39999999999418,
+        280.8000000000029,
+        256.1999999999971,
+        270.8000000000029,
+        278.8000000000029
+      ],
+      "triangles": 25782,
+      "calls": 6,
+      "timerExtension": true,
+      "waveSurface": true
+    },
+    {
+      "times": [
+        10.80000000000291,
+        33.39999999999418,
+        466.6000000000058,
+        84.59999999999127,
+        481.40000000000873,
+        474.59999999999127,
+        472.1999999999971,
+        476.3000000000029
+      ],
+      "triangles": 25782,
+      "calls": 6,
+      "timerExtension": true,
+      "waveSurface": false
+    },
+    {
+      "times": [
+        3.3000000000029104,
+        383.6000000000058,
+        370.3000000000029,
+        64.59999999999127,
+        209.3000000000029,
+        208.10000000000582,
+        211.59999999999127,
+        213.5
+      ],
+      "triangles": 25782,
+      "calls": 6,
+      "timerExtension": true,
+      "waveSurface": true
+    }
+  ],
+  "idle": {
+    "frames": 0,
+    "callbacks": 0
+  },
+  "functionalPassed": true,
+  "performanceGatePassed": false,
+  "performanceScope": "display turnaround samples for 8 changing views, no hardware GPU timing or full three-window acceptance"
+}
