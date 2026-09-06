@@ -1,0 +1,32 @@
+{
+  "version": "R5.0.0",
+  "publicURL": "https://haihao0307.github.io/HOUSE/brick-mother/experiments/atelier-r5/web/",
+  "sourceHead": "7390c27e83995e4f68f703d6476f40a35ef1e38a",
+  "materializedCommit": "c77190dd37a00149d488a343eef0f5135f0fb686",
+  "buildRun": 34020663493,
+  "buildArtifact": 9985400524,
+  "htmlSHA256": "83b36384cc6eed0416a3c57d1340926bf84651b0656c777f2f68b6983ef63428",
+  "bytes": 80401,
+  "statusAtRequest": "CI geometry and HTTP browser checks passed; live publication verification pending",
+  "changes": [
+    "normal aged fired brick, kiln brick and adobe retain broad faces and rounded worn edges",
+    "heavy damage is an explicit optional preset",
+    "granite, sandstone, basalt and quartzite appearance recipes independent of stone shape",
+    "pebble micro-relief attenuated with parent lithology retained",
+    "layered stone defaults to preserved R4 material",
+    "seven visible material entries and compact lithology controls"
+  ],
+  "preservedR4HTMLSHA256": "d7ed5db0c389029b359fcb51894f8e3600de4d25670964f284f35f480172cf00",
+  "originalRockGeometryPreservedInTests": true,
+  "originalSixGLBReferencePackageLoaded": false,
+  "wholeRiceHusks": 0,
+  "strawBladeRimRemodelled": false,
+  "geometryMatrixConfigurations": 56,
+  "finalMeshAnchorPointsTested": 1956,
+  "finalMeshAnchorFailures": 0,
+  "CIHTTPBrowserChecks": 29,
+  "fullMultiWindowPerformanceGate": "not_completed; local and CI software renderer measurements differ and remain separately reported",
+  "userDevicePerformanceTested": false,
+  "humanVisualApproved": false,
+  "productionApproved": false
+}
