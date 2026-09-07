@@ -3,112 +3,113 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>云南建筑三模型成果演示</title>
-<meta name="description" content="大理、乌龙村、团结乡三个云南建筑 GLB 的在线自动展示、对比和知识提取。">
+<title>云南建筑三模型高清证据查看器</title>
+<meta name="description" content="大理、乌龙村、团结乡三个云南建筑 GLB 的高清在线对比和证据查看。">
 <link rel="icon" href="data:,">
 <style>
-:root{color-scheme:dark;--bg:#0a100e;--panel:#111916;--panel2:#17221e;--line:#304139;--text:#f2eee5;--muted:#a9b7af;--dim:#718078;--gold:#d5ab69;--ok:#8ac09a;--warn:#e0ae71;--bad:#df8b80}
+:root{color-scheme:dark;--bg:#08100d;--panel:#111916;--panel2:#17221e;--line:#304139;--text:#f2eee5;--muted:#a9b7af;--dim:#718078;--gold:#d5ab69;--ok:#8ac09a;--warn:#e0ae71;--bad:#df8b80}
 *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:Inter,"PingFang SC","Microsoft YaHei",system-ui,sans-serif}button,a{font:inherit}a{color:inherit;text-decoration:none}
 header{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px 16px;background:#0d1512ee;border-bottom:1px solid var(--line);backdrop-filter:blur(12px)}
 .brand{display:flex;gap:11px;align-items:center}.seal{width:42px;height:42px;border:1px solid #765d37;border-radius:10px;display:grid;place-items:center;color:var(--gold);background:#1d1811;font:23px serif}.brand h1{margin:0;font-size:17px}.brand p{margin:4px 0 0;color:var(--dim);font-size:10px}
 .nav{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}.btn{border:1px solid var(--line);border-radius:7px;background:#16211d;color:var(--text);padding:8px 10px;font-size:10px;cursor:pointer}.btn:hover,.btn.active{border-color:#876c42;background:#2b2418;color:#f1d3a0}.btn.primary{background:#332817;border-color:#967346;color:#f5d7a0}
 .statusbar{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;padding:9px 16px;background:#101814;border-bottom:1px solid var(--line);font-size:10px;color:var(--muted)}.progress{height:5px;border-radius:8px;background:#2b3933;overflow:hidden}.progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,#af8148,#e3bf7e);transition:width .25s}
-main{padding:14px;display:grid;gap:14px}.models{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.model{min-width:0;border:1px solid var(--line);border-radius:12px;background:var(--panel);overflow:hidden;box-shadow:0 18px 48px #0005}.model[hidden]{display:none}.modelHead{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:11px 12px;background:var(--panel2);border-bottom:1px solid var(--line)}.modelHead h2{font-size:13px;margin:0}.modelHead small{display:block;margin-top:4px;color:var(--dim);font-size:8px}.state{font-size:9px;color:var(--warn);text-align:right}.state.ok{color:var(--ok)}.state.bad{color:var(--bad)}
-.viewport{height:min(56vh,540px);min-height:390px;position:relative;background:linear-gradient(#dfe6df,#a7b3a9)}canvas{width:100%;height:100%;display:block;touch-action:none;cursor:grab}.viewport canvas:active{cursor:grabbing}.modelBadge{position:absolute;left:10px;top:10px;border:1px solid #526158;border-radius:999px;padding:5px 8px;background:#101914dd;color:#efe6d6;font-size:8px;pointer-events:none}.empty{position:absolute;inset:0;display:grid;place-items:center;text-align:center;color:#34433b;background:linear-gradient(145deg,#dfe7e0,#adb9af)}.empty[hidden]{display:none}.empty b{display:block;font-size:15px}.empty span{display:block;font-size:10px;margin-top:7px}
+main{padding:14px;display:grid;gap:14px}.models{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.models.single{grid-template-columns:minmax(0,1fr);max-width:1500px;margin:0 auto;width:100%}.model{min-width:0;border:1px solid var(--line);border-radius:12px;background:var(--panel);overflow:hidden;box-shadow:0 18px 48px #0005}.model[hidden]{display:none}.modelHead{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:11px 12px;background:var(--panel2);border-bottom:1px solid var(--line)}.modelHead h2{font-size:13px;margin:0}.modelHead small{display:block;margin-top:4px;color:var(--dim);font-size:8px}.state{font-size:9px;color:var(--warn);text-align:right}.state.ok{color:var(--ok)}.state.bad{color:var(--bad)}
+.viewport{height:min(62vh,680px);min-height:430px;position:relative;background:linear-gradient(#dfe6df,#a7b3a9)}.models.single .viewport{height:min(74vh,820px);min-height:560px}canvas{width:100%;height:100%;display:block;touch-action:none;cursor:grab}.viewport canvas:active{cursor:grabbing}.modelBadge{position:absolute;left:10px;top:10px;border:1px solid #526158;border-radius:999px;padding:5px 8px;background:#101914dd;color:#efe6d6;font-size:8px;pointer-events:none}.qualityBadge{position:absolute;right:10px;top:10px;border:1px solid #8a6a3d;border-radius:999px;padding:5px 8px;background:#2b2114dd;color:#f2d29a;font-size:8px;pointer-events:none}.empty{position:absolute;inset:0;display:grid;place-items:center;text-align:center;color:#34433b;background:linear-gradient(145deg,#dfe7e0,#adb9af)}.empty[hidden]{display:none}.empty b{display:block;font-size:15px}.empty span{display:block;font-size:10px;margin-top:7px}
 .controls{display:flex;gap:5px;flex-wrap:wrap;padding:8px 10px;border-top:1px solid var(--line)}.controls button{border:1px solid var(--line);border-radius:6px;background:#17211d;color:#dce5de;padding:7px 8px;font-size:9px;cursor:pointer}.controls button:hover,.controls button.active{border-color:#8c7147;color:#f1d29c;background:#2a2419}
-.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;padding:0 10px 10px}.metric{border:1px solid #2a3a33;border-radius:7px;background:#0d1612;padding:7px}.metric b{display:block;color:#e2c18a;font-size:10px;overflow:hidden;text-overflow:ellipsis}.metric span{font-size:7px;color:var(--dim)}
+.metrics{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;padding:0 10px 10px}.metric{border:1px solid #2a3a33;border-radius:7px;background:#0d1612;padding:7px}.metric b{display:block;color:#e2c18a;font-size:10px;overflow:hidden;text-overflow:ellipsis}.metric span{font-size:7px;color:var(--dim)}
 .knowledge{display:grid;grid-template-columns:1.1fr .9fr;gap:12px}.panel{border:1px solid var(--line);border-radius:12px;background:var(--panel);padding:14px}.panel h2{font-size:13px;margin:0 0 10px;color:#e8d9bd}.rules{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.rule{border:1px solid #2c3c35;border-radius:8px;background:#0e1713;padding:10px}.rule b{font-size:10px;color:#d9b77c}.rule p{font-size:9px;line-height:1.65;color:var(--muted);margin:5px 0 0}.evidence{display:grid;gap:7px}.ev{border:1px solid #2c3c35;border-radius:8px;background:#0e1713;padding:9px}.ev strong{font-size:10px}.ev small{display:block;color:var(--dim);font-size:8px;margin-top:4px;line-height:1.5}.pill{display:inline-block;border:1px solid #4a5a52;border-radius:99px;padding:3px 6px;font-size:7px;color:var(--muted);margin-left:5px}.pill.ok{border-color:#42644d;color:#a4cdb0}.pill.warn{border-color:#6b5137;color:#dfb47a}
 footer{padding:12px 16px;border-top:1px solid var(--line);color:var(--dim);font-size:9px;line-height:1.6;background:#0d1411}
-@media(max-width:1100px){.models{grid-template-columns:1fr}.viewport{height:58vh}.knowledge{grid-template-columns:1fr}}@media(max-width:620px){header{align-items:flex-start}.brand p{white-space:normal}.nav{display:none}.rules{grid-template-columns:1fr}.metrics{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:1100px){.models{grid-template-columns:1fr}.viewport{height:58vh}.models.single .viewport{height:68vh;min-height:470px}.knowledge{grid-template-columns:1fr}.metrics{grid-template-columns:repeat(3,1fr)}}@media(max-width:620px){header{align-items:flex-start}.brand p{white-space:normal}.nav a{display:none}.rules{grid-template-columns:1fr}.metrics{grid-template-columns:repeat(2,1fr)}.viewport,.models.single .viewport{height:60vh;min-height:410px}}
 </style>
 </head>
 <body>
 <header>
-  <div class="brand"><div class="seal">滇</div><div><h1>云南建筑三模型成果演示</h1><p>大理、乌龙村、团结乡真实 GLB 自动载入，直接观察瓦顶、墙面、材质与错落屋面</p></div></div>
+  <div class="brand"><div class="seal">滇</div><div><h1>云南建筑三模型高清证据查看器</h1><p>大理、乌龙村、团结乡真实 GLB，按需载入，增强近景纹理、法线和高 DPI 清晰度</p></div></div>
   <div class="nav">
     <a class="btn" href="index.html">返回生产线</a>
-    <a class="btn" href="reference-model-lab.html">本地模型实验室</a>
-    <button class="btn primary active" data-mode="all">三模型</button>
+    <a class="btn" href="component-studio/wall-lab.html">墙面工作室</a>
+    <button class="btn primary" data-mode="all">三模型</button>
     <button class="btn" data-mode="dali">大理</button>
     <button class="btn" data-mode="wulong">乌龙村</button>
     <button class="btn" data-mode="tuanjie">团结乡</button>
   </div>
 </header>
 <div class="statusbar">
-  <div><span id="globalStatus">正在准备三个模型…</span><div class="progress"><i id="progress"></i></div></div>
-  <div>WebGL 深度测试 <span class="pill ok">启用</span> · 原始高精度档 <span class="pill warn">本地证据层</span></div>
+  <div><span id="globalStatus">正在准备模型查看器……</span><div class="progress"><i id="progress"></i></div></div>
+  <div>高清补丁 <span class="pill ok">启用</span> · 公开档几何 <span class="pill ok">保持</span> · 原始超高分辨率贴图 <span class="pill warn">本地证据层</span></div>
 </div>
 <main>
 <section class="models" id="models">
   <article class="model" data-id="dali">
-    <div class="modelHead"><div><h2>大理参考建筑</h2><small>YN_DALI_001_REFERENCE_WEB.glb</small></div><div class="state" id="state-dali">等待载入</div></div>
-    <div class="viewport"><canvas id="canvas-dali"></canvas><div class="empty" id="empty-dali"><div><b>正在载入大理模型</b><span>保留原几何与材质分配的网页标准档</span></div></div><div class="modelBadge">大理 · 扫描曲面证据</div></div>
+    <div class="modelHead"><div><h2>大理参考建筑</h2><small>YN_DALI_001_REFERENCE_WEB.glb · 4096 底色</small></div><div class="state" id="state-dali">等待载入</div></div>
+    <div class="viewport"><canvas id="canvas-dali"></canvas><div class="empty" id="empty-dali"><div><b>正在载入大理模型</b><span>约 99.8 万三角面，网页标准档</span></div></div><div class="modelBadge">大理 · 扫描曲面证据</div><div class="qualityBadge">高清检查</div></div>
     <div class="controls"><button data-fit="dali">完整入镜</button><button data-auto="dali">自动旋转</button><button data-shot="dali">保存截图</button></div>
     <div class="metrics" id="metrics-dali"></div>
   </article>
   <article class="model" data-id="wulong">
-    <div class="modelHead"><div><h2>乌龙村参考建筑</h2><small>YN_HAOSI1_WULONG_WL_001_REFERENCE_WEB.glb</small></div><div class="state" id="state-wulong">等待载入</div></div>
-    <div class="viewport"><canvas id="canvas-wulong"></canvas><div class="empty" id="empty-wulong"><div><b>正在载入乌龙村模型</b><span>底色与法线贴图网页标准档</span></div></div><div class="modelBadge">乌龙村 · 扫描曲面证据</div></div>
+    <div class="modelHead"><div><h2>乌龙村参考建筑</h2><small>YN_HAOSI1_WULONG_WL_001_REFERENCE_WEB.glb · 4096 底色 / 2048 法线</small></div><div class="state" id="state-wulong">等待载入</div></div>
+    <div class="viewport"><canvas id="canvas-wulong"></canvas><div class="empty" id="empty-wulong"><div><b>正在载入乌龙村模型</b><span>墙皮风化、修补和材料过渡重点样本</span></div></div><div class="modelBadge">乌龙村 · 扫描曲面 + 法线</div><div class="qualityBadge">高清检查</div></div>
     <div class="controls"><button data-fit="wulong">完整入镜</button><button data-auto="wulong">自动旋转</button><button data-shot="wulong">保存截图</button></div>
     <div class="metrics" id="metrics-wulong"></div>
   </article>
   <article class="model" data-id="tuanjie">
-    <div class="modelHead"><div><h2>团结乡参考建筑</h2><small>YN_TUANJIE_001_EDITABLE.glb</small></div><div class="state" id="state-tuanjie">等待载入</div></div>
-    <div class="viewport"><canvas id="canvas-tuanjie"></canvas><div class="empty" id="empty-tuanjie"><div><b>正在载入团结乡模型</b><span>48 网格可编辑分组标准档</span></div></div><div class="modelBadge">团结乡 · 分组扫描证据</div></div>
+    <div class="modelHead"><div><h2>团结乡参考建筑</h2><small>YN_TUANJIE_001_EDITABLE.glb · 48 网格分组</small></div><div class="state" id="state-tuanjie">等待载入</div></div>
+    <div class="viewport"><canvas id="canvas-tuanjie"></canvas><div class="empty" id="empty-tuanjie"><div><b>正在载入团结乡模型</b><span>用户确认的墙面、瓦作和旧木综合色参考</span></div></div><div class="modelBadge">团结乡 · 分组扫描证据</div><div class="qualityBadge">高清检查</div></div>
     <div class="controls"><button data-fit="tuanjie">完整入镜</button><button data-auto="tuanjie">自动旋转</button><button data-roof="tuanjie">隐藏屋顶组</button><button data-shot="tuanjie">保存截图</button></div>
     <div class="metrics" id="metrics-tuanjie"></div>
   </article>
 </section>
 <section class="knowledge">
   <div class="panel">
-    <h2>已经写入云南建筑生产线的视觉规则</h2>
+    <h2>三个样本已经进入生产线的视觉规则</h2>
     <div class="rules">
-      <div class="rule"><b>屋顶必须分成独立屋面单元</b><p>正房、耳房、倒座、门楼、大厦与小厦分别生成，保存各自屋脊、檐口、坡向和排水目标。标准模型不再使用一张连续灰色大屋面。</p></div>
-      <div class="rule"><b>错落关系由平面和剖面共同控制</b><p>屋顶高低、前后遮挡、附属披檐和转角关系跟随单体等级与楼层标高，不能靠整体拉伸或随机抬高。</p></div>
-      <div class="rule"><b>瓦面厚度拆为多层</b><p>椽列、椽上基层、板瓦水槽、筒瓦盖缝、檐口端件和脊部构件分别表达。可见厚度由这些层共同形成。</p></div>
-      <div class="rule"><b>瓦色采用分层变化</b><p>基础烧成色、屋面朝向、积尘、苔痕、雨蚀、破损与修补分层叠加，同一屋面内保持连续变化，不使用均匀纯灰。</p></div>
-      <div class="rule"><b>墙面保留材料转换和时间痕迹</b><p>土墙、抹灰、砖包角、石勒脚、墙脚返潮、冲刷、剥落和修补分别建层，外墙与院内墙面的风化强度可独立控制。</p></div>
-      <div class="rule"><b>参考模型只提供证据，不覆盖测绘</b><p>大理和乌龙村当前以整片扫描曲面为主，用于外观、颜色、风化和屋面层级校准。精确厚度、瓦片搭接和隐蔽基层仍由测绘与节点资料锁定。</p></div>
+      <div class="rule"><b>墙面由几何层和表面层共同构成</b><p>墙体本体、收分、石勒脚、包角、山墙和洞口先形成几何，抹灰、裸土、纤维、返潮、雨痕、裂缝与修补再按空间逻辑叠加。</p></div>
+      <div class="rule"><b>大尺度分区优先</b><p>先建立完整抹灰、基层暴露、墙脚湿区和维修片区，再增加粗颗粒与细纤维。禁止把历史墙面简化成满墙随机噪声。</p></div>
+      <div class="rule"><b>风化服从重力与遮蔽</b><p>返潮从墙脚向上衰减，雨痕顺重力下行，檐下、洞口角、转角和材料交界拥有不同的老化与开裂概率。</p></div>
+      <div class="rule"><b>扫描缺陷不进入建筑规则</b><p>摄影测量孔洞、拉伸三角形、浮片、贴图接缝和背景污染只作为扫描质量问题，不转译成墙体破损。</p></div>
     </div>
   </div>
   <div class="panel">
-    <h2>三个样本的证据定位</h2>
+    <h2>网页档清晰度与证据边界</h2>
     <div class="evidence">
-      <div class="ev"><strong>大理样本</strong><span class="pill warn">扫描曲面</span><small>1 个主网格，约 99.8 万三角面；4096 像素底色网页档。重点观察屋面群高差、墙面色层、石脚与转角处理。</small></div>
-      <div class="ev"><strong>乌龙村样本</strong><span class="pill warn">扫描曲面 + 法线</span><small>1 个主网格，约 30.0 万三角面；4096 像素底色与 2048 像素法线。重点观察瓦面凹凸、墙皮风化、修补和材料过渡。</small></div>
-      <div class="ev"><strong>团结乡样本</strong><span class="pill ok">48 网格分组</span><small>48 个网格，约 46.4 万三角面；3072 像素底色与 1024 像素法线。可用于屋顶、一层、二层、场地与细部分组对照。</small></div>
-      <div class="ev"><strong>生产规则状态</strong><span class="pill ok">已接入</span><small>参考资产目录、发布前验证、三模型在线展示与视觉规则说明已经进入 HOUSE。精确营造尺寸继续由一颗印测绘个案和刘致平图录控制。</small></div>
+      <div class="ev"><strong>大理</strong><span class="pill ok">几何保持</span><small>公开档保留约 99.8 万三角面，底色由原始 8192 缩至 4096。高清补丁提高画布 DPR、各向异性过滤与细节对比。</small></div>
+      <div class="ev"><strong>乌龙村</strong><span class="pill ok">法线启用</span><small>公开档保留约 30.0 万三角面、4096 底色和 2048 法线。适合观察墙皮风化、修补、瓦面凹凸与材料过渡。</small></div>
+      <div class="ev"><strong>团结乡</strong><span class="pill ok">48 网格</span><small>网页档为 3072 底色和 1024 法线，可按屋顶、一层、二层、场地与细节分组。高精度 7000/2500 档继续作为本地证据。</small></div>
+      <div class="ev"><strong>限制</strong><span class="pill warn">仍需测绘</span><small>模型可以校准可见外观、综合色、粗糙度和构件分区，墙厚、材料配比、隐蔽节点与历史年代仍需测绘和档案。</small></div>
     </div>
   </div>
 </section>
 </main>
-<footer>演示页面直接读取 HOUSE 仓库中的网页标准档。几何与材质分配保持不变，公开档仅对嵌入贴图降采样。页面加载较大，第一次打开请等待模型依次完成读取。</footer>
+<footer>本页按查询参数只加载当前需要的模型。示例：<code>?mode=wulong</code>。公开档的几何与材质分配保持不变，清晰度增强不能恢复已经在公开档中降采样掉的原始像素。</footer>
 <script src="assets/js/tuanjie-glb-viewer.js"></script>
+<script src="assets/js/reference-viewer-quality.js"></script>
 <script>
 (function(){
 'use strict';
 const defs={
- dali:{label:'大理',path:'assets/models/YN_DALI_001_REFERENCE_WEB.glb',expected:{meshes:1,triangles:997659}},
- wulong:{label:'乌龙村',path:'assets/models/YN_HAOSI1_WULONG_WL_001_REFERENCE_WEB.glb',expected:{meshes:1,triangles:300084}},
- tuanjie:{label:'团结乡',path:'assets/models/YN_TUANJIE_001_EDITABLE.glb',expected:{meshes:48,triangles:464288}}
+  dali:{label:'大理',path:'assets/models/YN_DALI_001_REFERENCE_WEB.glb',expected:{meshes:1,triangles:997659}},
+  wulong:{label:'乌龙村',path:'assets/models/YN_HAOSI1_WULONG_WL_001_REFERENCE_WEB.glb',expected:{meshes:1,triangles:300084}},
+  tuanjie:{label:'团结乡',path:'assets/models/YN_TUANJIE_001_EDITABLE.glb',expected:{meshes:48,triangles:464288}}
 };
-const state={mode:'all',loaded:0,failed:0,viewers:{},stats:{},roofVisible:true};
-const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const requested=new URLSearchParams(location.search).get('mode');
+const initialMode=defs[requested]?requested:'all';
+const state={mode:initialMode,loaded:0,failed:0,viewers:{},stats:{},roofVisible:true,loading:new Set(),loadedIds:new Set()};
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 function fmt(n){return Number(n||0).toLocaleString('zh-CN')}
 function metric(v,k){return '<div class="metric"><b>'+v+'</b><span>'+k+'</span></div>'}
 function setState(id,text,kind=''){const e=$('#state-'+id);e.textContent=text;e.className='state '+kind}
-function renderMetrics(id,s){const t=s.textures||{},base=t.base,normal=t.normal;$('#metrics-'+id).innerHTML=metric(fmt(s.meshes),'网格')+metric(fmt(s.triangles),'三角面')+metric(base?base.width+'×'+base.height:'无','底色贴图')+metric(normal?normal.width+'×'+normal.height:'无','法线贴图')}
-function updateGlobal(){const total=Object.keys(defs).length,done=state.loaded+state.failed;$('#progress').style.width=(done/total*100)+'%';$('#globalStatus').textContent=state.failed?('已载入 '+state.loaded+' 个，'+state.failed+' 个失败'):done===total?('三个真实参考模型已全部载入 · 可旋转、缩放和单独观察'):('正在载入 '+done+'/'+total+'…')}
-function setMode(mode){state.mode=mode;$$('.model').forEach(card=>card.hidden=mode!=='all'&&card.dataset.id!==mode);$$('[data-mode]').forEach(b=>b.classList.toggle('active',b.dataset.mode===mode));requestAnimationFrame(()=>Object.values(state.viewers).forEach(v=>v.resize()))}
-function downloadCanvas(id){const canvas=$('#canvas-'+id);canvas.toBlob(blob=>{if(!blob)return;const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='yunnan-'+id+'-reference.png';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)},'image/png')}
-async function loadOne(id){const d=defs[id],canvas=$('#canvas-'+id);const viewer=TuanjieGLBViewer.create(canvas,{onState:e=>{if(e.kind==='loading')setState(id,e.text)}});state.viewers[id]=viewer;try{setState(id,'正在下载网页标准档');const stats=await viewer.load(d.path);state.stats[id]=stats;state.loaded++;$('#empty-'+id).hidden=true;setState(id,'已载入 · '+fmt(stats.triangles)+' 三角面','ok');renderMetrics(id,stats);if(stats.meshes!==d.expected.meshes||stats.triangles!==d.expected.triangles)console.warn(id,'模型统计与目录记录不同',stats,d.expected)}catch(err){state.failed++;setState(id,'载入失败：'+(err.message||err),'bad');console.error(id,err)}finally{updateGlobal()}}
+function renderMetrics(id,s){const t=s.textures||{},base=t.base,normal=t.normal,q=s.qualityProfile||{};$('#metrics-'+id).innerHTML=metric(fmt(s.meshes),'网格')+metric(fmt(s.triangles),'三角面')+metric(base?base.width+'×'+base.height:'无','底色')+metric(normal?normal.width+'×'+normal.height:'无','法线')+metric((s.dpr||1).toFixed(2)+'×','画布 DPR')+metric(q.anisotropy?Math.round(q.anisotropy)+'×':'1×','各向异性')}
+function updateGlobal(){const target=state.mode==='all'?3:1,done=state.loadedIds.size+state.failed;$('#progress').style.width=Math.min(100,done/target*100)+'%';$('#globalStatus').textContent=state.failed?('已载入 '+state.loadedIds.size+' 个，'+state.failed+' 个失败'):done>=target?('当前模型已完成高清载入，可旋转、缩放和保存截图'):('正在载入 '+done+'/'+target+'…')}
+function setMode(mode){state.mode=mode;$('#models').classList.toggle('single',mode!=='all');$$('.model').forEach(card=>card.hidden=mode!=='all'&&card.dataset.id!==mode);$$('[data-mode]').forEach(b=>b.classList.toggle('active',b.dataset.mode===mode));history.replaceState(null,'',mode==='all'?location.pathname:location.pathname+'?mode='+mode);const ids=mode==='all'?Object.keys(defs):[mode];ids.forEach(ensureLoaded);requestAnimationFrame(()=>Object.values(state.viewers).forEach(v=>v.resize()));updateGlobal()}
+function downloadCanvas(id){const canvas=$('#canvas-'+id);canvas.toBlob(blob=>{if(!blob)return;const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='yunnan-'+id+'-reference-hq.png';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)},'image/png')}
+async function ensureLoaded(id){if(state.loadedIds.has(id)||state.loading.has(id))return;state.loading.add(id);const d=defs[id],canvas=$('#canvas-'+id);const viewer=TuanjieGLBViewer.create(canvas,{detailBoost:id==='tuanjie'?.72:.92,normalStrength:id==='wulong'?1.28:1.14,onState:e=>{if(e.kind==='loading')setState(id,e.text)}});state.viewers[id]=viewer;try{setState(id,'正在下载网页标准档');const stats=await viewer.load(d.path);state.stats[id]=stats;state.loadedIds.add(id);state.loaded=state.loadedIds.size;$('#empty-'+id).hidden=true;setState(id,'已载入 · '+fmt(stats.triangles)+' 三角面','ok');renderMetrics(id,stats);if(stats.meshes!==d.expected.meshes||stats.triangles!==d.expected.triangles)console.warn(id,'模型统计与目录记录不同',stats,d.expected)}catch(err){state.failed++;setState(id,'载入失败：'+(err.message||err),'bad');console.error(id,err)}finally{state.loading.delete(id);updateGlobal()}}
 $$('[data-mode]').forEach(b=>b.onclick=()=>setMode(b.dataset.mode));
 $$('[data-fit]').forEach(b=>b.onclick=()=>state.viewers[b.dataset.fit]?.fit());
 $$('[data-auto]').forEach(b=>b.onclick=()=>{const id=b.dataset.auto,v=state.viewers[id];if(!v)return;v.setAuto(!v.auto);b.classList.toggle('active',v.auto);b.textContent=v.auto?'停止旋转':'自动旋转'});
 $$('[data-shot]').forEach(b=>b.onclick=()=>downloadCanvas(b.dataset.shot));
 const roofBtn=$('[data-roof]');if(roofBtn)roofBtn.onclick=()=>{const v=state.viewers.tuanjie;if(!v)return;state.roofVisible=!state.roofVisible;v.setGroup('roof',state.roofVisible);roofBtn.textContent=state.roofVisible?'隐藏屋顶组':'显示屋顶组';roofBtn.classList.toggle('active',!state.roofVisible)};
-window.__YUNNAN_REFERENCE_SHOWCASE__={state,stats:()=>({loaded:state.loaded,failed:state.failed,mode:state.mode,models:state.stats})};
-updateGlobal();(async()=>{for(const id of ['dali','wulong','tuanjie'])await loadOne(id);setMode('all')})();
+window.__YUNNAN_REFERENCE_SHOWCASE__={state,stats:()=>({loaded:state.loadedIds.size,failed:state.failed,mode:state.mode,models:state.stats})};
+setMode(initialMode);
 })();
 </script>
 </body>

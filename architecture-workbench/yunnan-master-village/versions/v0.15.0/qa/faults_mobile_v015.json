@@ -1,0 +1,124 @@
+{
+  "fault_harness_injected_only_in_test": true,
+  "faults": [
+    {
+      "id": "upper_overlap",
+      "detected": true,
+      "failed_checks": [
+        "TOP_DOES_NOT_COVER_TREADS",
+        "NO_TREAD_LANDING_OVERLAP"
+      ]
+    },
+    {
+      "id": "height_mismatch",
+      "detected": true,
+      "failed_checks": [
+        "TOP_LANDING_FLUSH"
+      ]
+    },
+    {
+      "id": "floating_base",
+      "detected": true,
+      "failed_checks": [
+        "BOTTOM_PAD_BEARING"
+      ]
+    },
+    {
+      "id": "missing_bearer",
+      "detected": true,
+      "failed_checks": [
+        "TREADS_TOUCH_BOTH_STRINGERS"
+      ]
+    },
+    {
+      "id": "closed_door",
+      "detected": true,
+      "examples": [
+        {
+          "t": 3.75,
+          "hits": [
+            {
+              "worker": "PERSON-6",
+              "part": "torso",
+              "obstacle": "ENC-LEAF-2-1-1"
+            },
+            {
+              "worker": "PERSON-6",
+              "part": "torso",
+              "obstacle": "ENC-LEAF-2-1-2"
+            }
+          ]
+        },
+        {
+          "t": 4.0,
+          "hits": [
+            {
+              "worker": "PERSON-6",
+              "part": "torso",
+              "obstacle": "ENC-LEAF-2-1-1"
+            },
+            {
+              "worker": "PERSON-6",
+              "part": "torso",
+              "obstacle": "ENC-LEAF-2-1-2"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sunken_foot",
+      "detected": true,
+      "examples": [
+        {
+          "worker": "PERSON-6",
+          "id": "TERRAIN",
+          "penetration": 0.06842856854336428
+        },
+        {
+          "worker": "PERSON-6",
+          "id": "TERRAIN",
+          "penetration": 0.065703904229706
+        },
+        {
+          "worker": "PERSON-6",
+          "id": "TERRAIN",
+          "penetration": 0.07360037864587934
+        },
+        {
+          "worker": "PERSON-6",
+          "id": "TERRAIN",
+          "penetration": 0.07235091037693908
+        }
+      ]
+    }
+  ],
+  "mobile": [
+    {
+      "width": 390,
+      "height": 844,
+      "metrics": {
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "body": 390
+      },
+      "walk_button": "completed_building_replay",
+      "cinema_enter": true,
+      "cinema_exit": true,
+      "errors": []
+    },
+    {
+      "width": 430,
+      "height": 932,
+      "metrics": {
+        "innerWidth": 430,
+        "scrollWidth": 430,
+        "body": 430
+      },
+      "walk_button": "completed_building_replay",
+      "cinema_enter": true,
+      "cinema_exit": true,
+      "errors": []
+    }
+  ]
+}

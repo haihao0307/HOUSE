@@ -1,0 +1,24 @@
+{
+  "purpose": "学习和测量证据，与运行资产分离",
+  "original_files": [
+    {
+      "name": "云南民居dokumen.pub_1-9787512399761.pdf",
+      "bytes": 38496040,
+      "sha256": "31af272791c4a10093a97afa1f449c3c33aa237561f0f2aed41294f6f1547444",
+      "distribution": "user_attachment_only; original binary excluded from public engineering archive"
+    },
+    {
+      "name": "SU云南传统民居古建筑一颗印三房四耳云南古建筑民房老房子SU模型.skp",
+      "bytes": 20915850,
+      "sha256": "b589df607b90367f08222867d7a9f762fd48c9ccec03bdec6fe8159076abacf5",
+      "distribution": "user_attachment_only; original binary excluded from public engineering archive"
+    }
+  ],
+  "skp_status": {
+    "measurement_truth_approved": false,
+    "note": "用户声明尺度准确、存在改造钢加固。原始模型待可靠单位与实例变换校验；不得将钢加固或原网格直接作为历史生产资产。"
+  },
+  "pdf_status": {
+    "note": "原文件标题为云南民居；正文混有恩施、土家、侗族等案例。沿用既有分地域证据记录，不把比较材料视为昆明一颗印测量真值。"
+  }
+}

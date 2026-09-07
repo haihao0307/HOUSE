@@ -1,0 +1,237 @@
+{
+  "version": "0.15.0",
+  "checked_at_utc": "2026-09-05T07:22:12Z",
+  "html_sha256": "bdd566b7c1817a21c9fc136e23b53adaa1c018adaa6e4aa25a43ef292aaedae9",
+  "rebuild_byte_identical": true,
+  "baseline_sha256": "9fd104d6d95604351e041faa8dc39516d4337d85569601e1b6e3ca162dd5b587",
+  "renderer": "Chromium / SwiftShader",
+  "hosted_public_site_tested": false,
+  "physical_mobile_tested": false,
+  "historical_truth_approved": false,
+  "load_method": "file navigation",
+  "ready": true,
+  "staircase": {
+    "passed": 6,
+    "total": 6,
+    "pass": true,
+    "tests": [
+      {
+        "id": "TOP_LANDING_FLUSH",
+        "pass": true,
+        "detail": {
+          "landing": 3.07599999922514,
+          "floor": 3.076
+        }
+      },
+      {
+        "id": "TOP_DOES_NOT_COVER_TREADS",
+        "pass": true,
+        "detail": "上跑踏步终止于平台前缘"
+      },
+      {
+        "id": "BOTTOM_PAD_BEARING",
+        "pass": true,
+        "detail": {
+          "bottom": -0.17999999284744264,
+          "top": 0.2099999928474426
+        }
+      },
+      {
+        "id": "RISERS_UNIFORM",
+        "pass": true,
+        "detail": {
+          "count": 16,
+          "rise": 0.179125,
+          "min": 0.17912499880790708,
+          "max": 0.17912500119209307
+        }
+      },
+      {
+        "id": "NO_TREAD_LANDING_OVERLAP",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "id": "TREADS_TOUCH_BOTH_STRINGERS",
+        "pass": true,
+        "detail": [
+          {
+            "id": "STAIR-LOWER-TREAD-0",
+            "side": -1,
+            "gap": -1.8095192011458039e-09
+          },
+          {
+            "id": "STAIR-LOWER-TREAD-0",
+            "side": 1,
+            "gap": -1.8095192011458039e-09
+          },
+          {
+            "id": "STAIR-UPPER-TREAD-0",
+            "side": -1,
+            "gap": -1.8095192011458039e-09
+          },
+          {
+            "id": "STAIR-UPPER-TREAD-0",
+            "side": 1,
+            "gap": -1.8095192011458039e-09
+          },
+          {
+            "id": "STAIR-LOWER-TREAD-1",
+            "side": -1,
+            "gap": -1.809518979101199e-09
+          },
+          {
+            "id": "STAIR-LOWER-TREAD-1",
+            "side": 1,
+            "gap": -1.809518979101199e-09
+          },
+          {
+            "id": "STAIR-UPPER-TREAD-1",
+            "side": -1,
+            "gap": -1.809518979101199e-09
+          },
+          {
+            "id": "STAIR-UPPER-TREAD-1",
+            "side": 1,
+            "gap": -1.809518979101199e-09
+          },
+          {
+            "id": "STAIR-LOWER-TREAD-2",
+            "side": -1,
+            "gap": -1.8095192011458039e-09
+          },
+          {
+            "id": "STAIR-LOWER-TREAD-2",
+            "side": 1,
+            "gap": -1.8095192011458039e-09
+          },
+          {
+            "id": "STAIR-UPPER-TREAD-2",
+            "side": -1,
+            "gap": -1.809518757056594e-09
+          },
+          {
+            "id": "STAIR-UPPER-TREAD-2",
+            "side": 1,
+            "gap": -1.809518757056594e-09
+          },
+          {
+            "id": "STAIR-LOWER-TREAD-3",
+            "side": -1,
+            "gap": -1.8095197562573162e-09
+          },
+          {
+            "id": "STAIR-LOWER-TREAD-3",
+            "side": 1,
+            "gap": -1.8095197562573162e-09
+          },
+          {
+            "id": "STAIR-UPPER-TREAD-3",
+            "side": -1,
+            "gap": -1.8095192011458039e-09
+          },
+          {
+            "id": "STAIR-UPPER-TREAD-3",
+            "side": 1,
+            "gap": -1.8095192011458039e-09
+          },
+          {
+            "id": "STAIR-LOWER-TREAD-4",
+            "side": -1,
+            "gap": -1.8095194231904088e-09
+          },
+          {
+            "id": "STAIR-LOWER-TREAD-4",
+            "side": 1,
+            "gap": -1.8095194231904088e-09
+          },
+          {
+            "id": "STAIR-UPPER-TREAD-4",
+            "side": -1,
+            "gap": -1.8095192011458039e-09
+          },
+          {
+            "id": "STAIR-UPPER-TREAD-4",
+            "side": 1,
+            "gap": -1.8095192011458039e-09
+          },
+          {
+            "id": "STAIR-LOWER-TREAD-5",
+            "side": -1,
+            "gap": -1.8095194231904088e-09
+          },
+          {
+            "id": "STAIR-LOWER-TREAD-5",
+            "side": 1,
+            "gap": -1.8095194231904088e-09
+          },
+          {
+            "id": "STAIR-UPPER-TREAD-5",
+            "side": -1,
+            "gap": -1.8095192011458039e-09
+          },
+          {
+            "id": "STAIR-UPPER-TREAD-5",
+            "side": 1,
+            "gap": -1.8095192011458039e-09
+          },
+          {
+            "id": "STAIR-LOWER-TREAD-6",
+            "side": -1,
+            "gap": -1.8095194231904088e-09
+          },
+          {
+            "id": "STAIR-LOWER-TREAD-6",
+            "side": 1,
+            "gap": -1.8095194231904088e-09
+          },
+          {
+            "id": "STAIR-UPPER-TREAD-6",
+            "side": -1,
+            "gap": -1.8095196452350137e-09
+          },
+          {
+            "id": "STAIR-UPPER-TREAD-6",
+            "side": 1,
+            "gap": -1.8095196452350137e-09
+          }
+        ]
+      }
+    ]
+  },
+  "stage_count": 26,
+  "state_samples": 78,
+  "failed_states": [],
+  "walk_samples": 125,
+  "body_hits": 0,
+  "sole_hits": 0,
+  "atmosphere_isolation": true,
+  "component_count": 946,
+  "mobile": [
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "width": 390,
+      "scroll": 390,
+      "ready": true,
+      "page_errors": []
+    },
+    {
+      "viewport": [
+        430,
+        932
+      ],
+      "width": 430,
+      "scroll": 430,
+      "ready": true,
+      "page_errors": []
+    }
+  ],
+  "page_errors": [],
+  "console_messages": [],
+  "failed_requests": [],
+  "external_requests": [],
+  "pass": true
+}

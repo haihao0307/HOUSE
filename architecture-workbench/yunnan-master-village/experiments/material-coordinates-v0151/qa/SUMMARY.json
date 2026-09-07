@@ -1,0 +1,79 @@
+{
+  "checked_at_utc": "2026-09-05T08:39:55Z",
+  "three_revision": "162",
+  "stage_samples": 78,
+  "stages_identical": true,
+  "walk_samples": 125,
+  "walk_identical": true,
+  "body_hits": 0,
+  "sole_hits": 0,
+  "component_graph_identical": true,
+  "component_count": 946,
+  "staircase_identical": true,
+  "atmosphere_isolation": true,
+  "baseline_restored_pixel_identical": true,
+  "baseline_restored_channel_mean_absolute_difference": [
+    0.0,
+    0.0,
+    0.0
+  ],
+  "desktop_errors": [],
+  "desktop_console": [],
+  "external_requests": [],
+  "pass": true,
+  "staircase_checks": [
+    6,
+    6
+  ],
+  "axis_checks": [
+    23,
+    23
+  ],
+  "html_sha256": "0978fd5c669f9008a68ee76ae49f7f18a64bb69f914e5ac85b4dafb201f1feb1",
+  "base_sha256": "bdd566b7c1817a21c9fc136e23b53adaa1c018adaa6e4aa25a43ef292aaedae9",
+  "mobile": [
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "width": 390,
+      "scroll": 390,
+      "mode": "endgrain",
+      "control_within_view": true,
+      "errors": [],
+      "console": []
+    },
+    {
+      "viewport": [
+        430,
+        932
+      ],
+      "width": 430,
+      "scroll": 430,
+      "mode": "endgrain",
+      "control_within_view": true,
+      "errors": [],
+      "console": []
+    }
+  ],
+  "mode": "Chromium headed + Xvfb + SwiftShader; set_content of full HTML",
+  "physical_mobile_tested": false,
+  "public_site_deployed": false,
+  "measurementTruthApproved": false,
+  "visualApproved": false,
+  "productionApproved": false,
+  "registered_axis_changes": 16,
+  "unresolved_count": 41,
+  "stair_region_A_B_difference_bbox": [
+    317,
+    0,
+    554,
+    390
+  ],
+  "stair_region_A_B_channel_mean_absolute_difference": [
+    0.21663060897435898,
+    0.23308092948717948,
+    0.1940224358974359
+  ]
+}

@@ -1,0 +1,294 @@
+{
+  "schemaVersion": "1.0.0",
+  "updatedAt": "2026-08-30",
+  "source": {
+    "id": "YN-LIT-2025-DIQING-TUSI-MANORS",
+    "title": "A Study on the Architectural Form and Characteristics of Tusi Manors in the Yunnan–Tibet Region",
+    "authors": [
+      "Yanwei Su",
+      "Man Li",
+      "Mengshuai Cheng",
+      "Mingli Qiang",
+      "Xuebing Zhou"
+    ],
+    "journal": "Buildings",
+    "year": 2025,
+    "volume": 15,
+    "article": 1134,
+    "pages": 26,
+    "doi": "10.3390/buildings15071134",
+    "license": "CC BY 4.0"
+  },
+  "humanReview": {
+    "reviewer": "project owner",
+    "assessment": "Average value. Retain and distill useful architectural evidence, but do not over-promote it.",
+    "classification": "B1_REGIONAL_ARCHITECTURAL_REFERENCE",
+    "productionRuleStatus": "candidate-only",
+    "humanVisualApproved": false,
+    "productionApproved": false
+  },
+  "scope": {
+    "region": "Diqing Tibetan Autonomous Prefecture, focused on Tibetan-inhabited parts of Deqin County and Shangri-La City",
+    "buildingType": "Tusi administrative-residential manors",
+    "historicalScope": "samples reported as built before 1912, with present-day survey and possible later alterations",
+    "sampleNamesUsedInComparativeTables": [
+      "Gushui Tusi Manor",
+      "Gongshui Tusi Manor",
+      "Xingfu Tusi Manor",
+      "Liutongjiang Tusi Manor",
+      "Xiaozhongdian Tusi Manor",
+      "Tangman Tusi Manor"
+    ],
+    "forbiddenGeneralization": [
+      "all Yunnan vernacular dwellings",
+      "Kunming Yikeyin",
+      "Dali Bai courtyard houses",
+      "Jianshui or Shiping courtyard houses",
+      "province-wide standard dimensions"
+    ]
+  },
+  "surveyEvidence": {
+    "reportedMethods": [
+      "field survey",
+      "on-site measurement",
+      "Canon photography",
+      "GPS mapping",
+      "laser rangefinders",
+      "UAV photogrammetry",
+      "AutoCAD 2020 two-dimensional documentation"
+    ],
+    "publishedEvidenceTypes": [
+      "site and settlement photographs",
+      "courtyard diagrams",
+      "floor plans with scale bars",
+      "front, side and rear elevation drawings",
+      "comparative dimensional tables",
+      "functional-space distribution diagrams"
+    ],
+    "missingPrimaryAssets": [
+      "raw point clouds",
+      "UAV source imagery",
+      "complete CAD files",
+      "full field notebooks",
+      "complete joint-detail sheets",
+      "material laboratory tests"
+    ]
+  },
+  "distilledFacts": {
+    "settlementAndSite": {
+      "candidateTypes": [
+        "mountain settlement",
+        "river-valley settlement",
+        "flat basin or agricultural-land settlement"
+      ],
+      "reportedSelectionFactors": [
+        "terrain",
+        "water source",
+        "cultivated land",
+        "field of view",
+        "transportation",
+        "defense",
+        "foundation stability"
+      ],
+      "status": "regional candidate, cross-check required"
+    },
+    "materialAndStructuralSystem": {
+      "primaryMaterials": [
+        "timber",
+        "rammed earth",
+        "stone"
+      ],
+      "reportedComponents": [
+        "foundation bases",
+        "earthen enclosure walls",
+        "internal timber column frames",
+        "flooring systems",
+        "roofing assemblies"
+      ],
+      "coreRelationship": "external rammed-earth enclosure with internal timber support appears repeatedly in the surveyed manor group",
+      "status": "usable only for the Diqing Tusi-manor branch"
+    },
+    "courtyardAndPlan": {
+      "courtyardTypes": [
+        "main building enclosed by courtyard walls",
+        "main building enclosed by side rooms and courtyard walls"
+      ],
+      "planAndElevationForms": [
+        "concave or recessed courtyard form",
+        "U-shaped arrangement",
+        "L-shaped setback elevation",
+        "multi-level L-shaped variation"
+      ],
+      "gateTendency": "main gate commonly placed on one side of the courtyard enclosure in the illustrated samples",
+      "status": "typology reference, not a universal template"
+    },
+    "roof": {
+      "types": [
+        "flat-roofed enclosed manor",
+        "sloped-roofed manor"
+      ],
+      "reportedSlopedRoofAngleDegrees": 15,
+      "reportedClimateAssociation": {
+        "flatRoof": "dry-hot valley context and crop drying",
+        "slopedRoof": "higher-rainfall alpine context above about 3000 m in the authors' sample interpretation"
+      },
+      "status": "candidate relation requiring independent climatic and measured-roof verification"
+    },
+    "facadeAndOpenings": {
+      "frontFacade": "more openings and decoration, with door and window lintels emphasized",
+      "sideAndRearFacades": "few or small openings, limited decoration",
+      "wallForm": "rammed-earth facade commonly represented as wider at the base and narrower at the top",
+      "heightToWidthRatioRange": [
+        0.22,
+        0.47
+      ],
+      "gateWidthToBuildingWidthRatioRange": [
+        0.07,
+        0.11
+      ],
+      "secondFloorWindowWidthToBuildingWidthRatioRange": [
+        0.03,
+        0.07
+      ],
+      "thirdFloorWindowWidthToBuildingWidthRatioRange": [
+        0.05,
+        0.07
+      ],
+      "status": "measured comparative ranges for the named samples only"
+    },
+    "verticalDimensions": {
+      "firstFloorHeightMetersRange": [
+        2.0,
+        2.5
+      ],
+      "secondFloorHeightMetersRange": [
+        2.2,
+        3.0
+      ],
+      "thirdFloorHeightMetersRange": [
+        2.3,
+        3.2
+      ],
+      "buildingWidthMetersRange": [
+        18.8,
+        38.9
+      ],
+      "buildingTotalHeightMetersRange": [
+        8.4,
+        12.9
+      ],
+      "sampleMeasurements": [
+        {
+          "sample": "Gongshui Tusi Manor",
+          "widthM": 27.4,
+          "floorHeightsM": [2.5, 2.9, 3.2],
+          "totalHeightM": 12.9,
+          "heightToWidth": 0.47
+        },
+        {
+          "sample": "Liutongjiang Tusi Manor",
+          "widthM": 18.8,
+          "floorHeightsM": [2.3, 2.2, 2.5],
+          "totalHeightM": 8.4,
+          "heightToWidth": 0.45
+        },
+        {
+          "sample": "Gushui Tusi Manor",
+          "widthM": 20.7,
+          "floorHeightsM": [2.0, 2.6, 2.3],
+          "totalHeightM": 8.9,
+          "heightToWidth": 0.43
+        },
+        {
+          "sample": "Xiaozhongdian Tusi Manor",
+          "widthM": 38.9,
+          "floorHeightsM": [2.4, 3.0],
+          "totalHeightM": 8.7,
+          "heightToWidth": 0.22
+        },
+        {
+          "sample": "Xingfu Tusi Manor",
+          "widthM": 28.1,
+          "floorHeightsM": [2.3, 2.6, 2.6],
+          "totalHeightM": 10.5,
+          "heightToWidth": 0.37
+        },
+        {
+          "sample": "Tangman Tusi Manor",
+          "widthM": 21.1,
+          "floorHeightsM": [2.1, 2.5, 2.5],
+          "totalHeightM": 9.4,
+          "heightToWidth": 0.45
+        }
+      ],
+      "status": "retain as sample-level evidence; do not average into a province default"
+    },
+    "functionalOrganization": {
+      "reportedSpaces": [
+        "council chamber",
+        "hall",
+        "bedrooms",
+        "scripture hall",
+        "monastic hall",
+        "storerooms",
+        "animal pens"
+      ],
+      "verticalTendency": [
+        "ground floor used for livestock and storage in several samples",
+        "middle floor used for living and administration",
+        "upper floor commonly contains religious space"
+      ],
+      "groundFloorLogSupportHeightMetersRange": [
+        1.2,
+        1.5
+      ],
+      "hallCoreElementsReported": [
+        "center pillar",
+        "fire pit",
+        "Buddha niche",
+        "water tank pavilion"
+      ],
+      "status": "sample-group tendency, not a mandatory assembly rule"
+    },
+    "defense": {
+      "reportedElements": [
+        "rammed-earth enclosure walls",
+        "watchtowers",
+        "small defensive openings",
+        "shooting holes"
+      ],
+      "status": "relevant to Tusi manor defense systems only"
+    }
+  },
+  "qualityLimits": [
+    "The article is architectural and measured, but publishes a limited comparative sample rather than a complete regional inventory.",
+    "Many causal explanations about culture, climate and defense are interpretive and require independent checking.",
+    "The authors report precise measurement of structural nodes, yet the paper does not publish a complete construction-node atlas.",
+    "Repairs, rebuilding and later alterations are not separated consistently enough for exact historical reconstruction.",
+    "The source concerns elite administrative-residential manors and cannot define ordinary vernacular house defaults.",
+    "Floor heights, opening ratios and wall forms remain sample evidence until cross-checked against original survey drawings or another independent source."
+  ],
+  "allowedUses": [
+    "Diqing Tusi-manor regional prototype studies",
+    "candidate massing and facade proportion ranges",
+    "rammed-earth enclosure and internal timber-frame relationship",
+    "site, courtyard and vertical-function hypotheses",
+    "search leads for the six named manor samples"
+  ],
+  "forbiddenUses": [
+    "automatic province-wide production defaults",
+    "direct generation of Kunming Yikeyin or Dali Bai dwellings",
+    "exact timber joint generation",
+    "exact rammed-earth material recipes",
+    "historical reconstruction without case-specific corroboration",
+    "claiming visual or production approval"
+  ],
+  "nextVerification": [
+    "obtain original CAD or measured drawing sets for the six named manors",
+    "compare dimensions with county chronicles, conservation records and independent surveys",
+    "separate original fabric from later repairs for each sample",
+    "verify the reported 15-degree roof relation using measured sections",
+    "document wall thickness, taper, foundation section and timber-to-earth junctions",
+    "retain all human visual approval and production approval flags as false"
+  ]
+}

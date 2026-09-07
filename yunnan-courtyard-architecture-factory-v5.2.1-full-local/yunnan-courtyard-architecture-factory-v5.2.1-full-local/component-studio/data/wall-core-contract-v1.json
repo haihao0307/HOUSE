@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "1.0.0",
+  "recordId": "YUNNAN-WALL-CORE-OPENING-CONTRACT-V1",
+  "studioVersion": "2.9.0",
+  "scope": "independent wall core width, wall batter, door-frame closure and deep-brown earthen body",
+  "geometryContract": {
+    "coreSegments": ["left-lower-pier", "right-lower-pier", "upper-header-wall"],
+    "requiredClosedSegments": 3,
+    "openSurfaceCount": 0,
+    "doorOpeningSource": "door clear width plus frame section minus adjustable masonry overlap",
+    "frameRelationship": "wall core overlaps the timber frame by closureOverlap and the lintel embeds into both piers",
+    "taperRelationship": "bottom width, top width, bottom depth and top depth are solved from one wall-core contract",
+    "dependentLayers": ["stone-plinth", "adobe-blocks", "plaster", "timber-frame"]
+  },
+  "parameters": {
+    "wallCoreWidth": { "unit": "m", "range": [6.2, 14.0] },
+    "wallCoreHeight": { "unit": "m", "range": [3.8, 7.2] },
+    "wallCoreDepth": { "unit": "m", "range": [0.38, 1.1] },
+    "wallSideTaper": { "unit": "m", "range": [0.0, 1.2] },
+    "wallDepthTaper": { "unit": "m", "range": [0.0, 0.36] },
+    "doorWidth": { "unit": "m", "range": [0.85, 2.4] },
+    "doorHeight": { "unit": "m", "range": [1.9, 3.45] },
+    "closureOverlap": { "unit": "m", "range": [0.0, 0.065] },
+    "soilDarkness": { "unit": "normalized", "range": [0.0, 1.0] }
+  },
+  "acceptance": {
+    "coreBoundaryEdges": 0,
+    "minimumPierWidthRespected": true,
+    "frameAndCoreOverlapPositive": true,
+    "surfaceBlocksExcludedFromOpening": true,
+    "wallTopShowsDeepBrownCore": true
+  }
+}

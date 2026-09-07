@@ -1,0 +1,142 @@
+[
+  {
+    "file": "01_workers_descending.png",
+    "probe": {
+      "t": 293.08,
+      "stage": 20,
+      "stageKey": "descend",
+      "stageProgress": 0.33999999999999975,
+      "view": "walk",
+      "light": "sunny",
+      "director": false,
+      "occlusion": {
+        "blocked": false,
+        "hit": null
+      },
+      "bounds": {
+        "width": 1352,
+        "height": 920
+      }
+    }
+  },
+  {
+    "file": "02_completed_stair_passage.png",
+    "probe": {
+      "t": 369.999,
+      "stage": 23,
+      "stageKey": "groundfloor",
+      "stageProgress": 0.9999166666666687,
+      "view": "walk",
+      "light": "sunny",
+      "director": false,
+      "occlusion": {
+        "blocked": false,
+        "hit": null
+      },
+      "bounds": {
+        "width": 1352,
+        "height": 920
+      }
+    }
+  },
+  {
+    "file": "03_open_upstairs_door.png",
+    "probe": {
+      "t": 369.988,
+      "stage": 23,
+      "stageKey": "groundfloor",
+      "stageProgress": 0.999,
+      "view": "door",
+      "light": "sunny",
+      "director": false,
+      "occlusion": {
+        "blocked": false,
+        "hit": null
+      },
+      "bounds": {
+        "width": 1352,
+        "height": 920
+      }
+    }
+  },
+  {
+    "file": "04_carrying_table_to_front_court.png",
+    "probe": {
+      "t": 380,
+      "stage": 24,
+      "stageKey": "feastsetup",
+      "stageProgress": 0.5,
+      "view": "feast",
+      "light": "sunny",
+      "director": false,
+      "occlusion": {
+        "blocked": false,
+        "hit": null
+      },
+      "bounds": {
+        "width": 1352,
+        "height": 920
+      }
+    }
+  },
+  {
+    "file": "05_front_courtyard_feast.png",
+    "probe": {
+      "t": 400.98,
+      "stage": 25,
+      "stageKey": "feast",
+      "stageProgress": 0.610000000000001,
+      "view": "feast",
+      "light": "sunny",
+      "director": false,
+      "occlusion": {
+        "blocked": false,
+        "hit": null
+      },
+      "bounds": {
+        "width": 1352,
+        "height": 920
+      }
+    }
+  },
+  {
+    "file": "08_four_cooked_chicken_legs.png",
+    "probe": {
+      "t": 400.98,
+      "stage": 25,
+      "stageKey": "feast",
+      "stageProgress": 0.610000000000001,
+      "view": "food",
+      "light": "sunny",
+      "director": false,
+      "occlusion": {
+        "blocked": false,
+        "hit": null
+      },
+      "bounds": {
+        "width": 1352,
+        "height": 920
+      }
+    }
+  },
+  {
+    "file": "09_same_pole_brace_preserved.png",
+    "probe": {
+      "t": 136.4,
+      "stage": 9,
+      "stageKey": "brace1",
+      "stageProgress": 0.8000000000000007,
+      "view": "raising",
+      "light": "sunny",
+      "director": false,
+      "occlusion": {
+        "blocked": false,
+        "hit": null
+      },
+      "bounds": {
+        "width": 1352,
+        "height": 920
+      }
+    }
+  }
+]

@@ -1,0 +1,70 @@
+name: Yunnan Archive Persist
+on:
+  push:
+    branches: [feature/yunnan-component-studio-v1]
+    paths: [.github/workflows/yunnan-archive-persist.yml]
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: yunnan-master-handoff
+  cancel-in-progress: false
+jobs:
+  persist:
+    if: github.ref == 'refs/heads/feature/yunnan-component-studio-v1'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: yunnan-master-v015-full-handoff
+          run-id: 33952333895
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path: /tmp/yunnan-verified-artifact
+      - name: Verify ZIP and every manifest entry
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib,json,zipfile,shutil,subprocess,os
+          root=Path('architecture-workbench/yunnan-master-village')
+          current=json.loads((root/'CURRENT.json').read_text())
+          archive=current['archive']; src=Path('/tmp/yunnan-verified-artifact/packages')/archive
+          data=src.read_bytes(); digest=hashlib.sha256(data).hexdigest()
+          assert digest=='cd3a438708152182fd9ff457f6a0a53c35fbff620ce1cbd72ed18be74571989a'
+          assert digest==current['archive_sha256'] and len(data)==current['archive_bytes']==9927426
+          with zipfile.ZipFile(src) as z:
+              assert z.testzip() is None
+              names=z.namelist(); assert len(names)==51
+              prefix='Yunnan_Master_and_Village_V0.15.0_Restart/'
+              manifest=json.loads(z.read(prefix+'MANIFEST.json'))
+              for row in manifest['files']:
+                  b=z.read(prefix+row['path'])
+                  assert len(b)==row['bytes'] and hashlib.sha256(b).hexdigest()==row['sha256'],row['path']
+              html=z.read(prefix+current['html'])
+              assert hashlib.sha256(html).hexdigest()==current['html_sha256']
+              assert html==(root/'versions/v0.15.0'/current['html']).read_bytes()
+          dest=root/'packages'/archive; shutil.copyfile(src,dest)
+          # Root .gitignore contains **/*.zip. Override only this explicitly authorized archive.
+          subprocess.run(['git','add','-f','--',str(dest)],check=True)
+          staged=subprocess.check_output(['git','show',':'+str(dest)])
+          assert staged==data, 'The staged object must contain ZIP bytes, not an LFS pointer.'
+          receipt={'version':'0.15.0','archive':archive,'archive_bytes':len(data),'archive_sha256':digest,'files':51,'manifest_verified_entries':len(manifest['files']),'runtime_byte_identical':True,'zip_in_git':True,'source_archive_run':33952333895,'source_archive_commit':'34cb5f1b1843a457b98b3d8d93dca52232edf1c0','persist_trigger_commit':os.environ['GITHUB_SHA'],'public_site_deployed':False}
+          (root/'PERSISTENCE_RECEIPT.json').write_text(json.dumps(receipt,ensure_ascii=False,indent=2)+'\n')
+          subprocess.run(['git','add','--',str(root/'PERSISTENCE_RECEIPT.json')],check=True)
+          print(json.dumps(receipt,ensure_ascii=False,indent=2))
+          PY
+      - name: Commit exact verified archive on the existing branch
+        run: |
+          set -euo pipefail
+          BRANCH=feature/yunnan-component-studio-v1
+          REMOTE=$(git ls-remote origin "refs/heads/$BRANCH" | cut -f1)
+          test "$REMOTE" = "$GITHUB_SHA"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git diff --cached --name-only | python3 -c 'import sys; p=sys.stdin.read().splitlines(); assert len(p)==2 and all(x.startswith("architecture-workbench/yunnan-master-village/") for x in p),p'
+          git commit -m 'archive(yunnan): persist verified V0.15.0 full restart ZIP in Git [skip ci]'
+          git push origin "HEAD:refs/heads/$BRANCH"

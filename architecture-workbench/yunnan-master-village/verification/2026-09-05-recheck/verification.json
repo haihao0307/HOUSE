@@ -1,0 +1,101 @@
+{
+  "schema": "yunnan-handoff-recheck/1.0",
+  "version": "0.15.0",
+  "checked_at_utc": "2026-09-05T08:20:15Z",
+  "repository": "haihao0307/HOUSE",
+  "branch": "feature/yunnan-component-studio-v1",
+  "pr_number": 13,
+  "observed_head": "7ef84958c92a610bb5796b77fd96063d436d0b21",
+  "archive_preexisted_this_recheck": true,
+  "this_change_scope": "fresh cold-start recheck and continuation handoff only; no runtime or frozen ZIP modification",
+  "archive": {
+    "path": "packages/Yunnan_Master_and_Village_V0.15.0_Full_Restart_2026-09-05.zip",
+    "bytes": 9927426,
+    "sha256": "cd3a438708152182fd9ff457f6a0a53c35fbff620ce1cbd72ed18be74571989a",
+    "git_blob_sha1": "eec4a48eb4c73546408c1f2d27acc6c7766d9d1d",
+    "matches_git_contents_blob_sha": true,
+    "zip_crc_pass": true,
+    "files": 51,
+    "manifest_checked_entries": 49,
+    "manifest_failures": 0
+  },
+  "downloaded_artifact": {
+    "id": 9965243741,
+    "run_id": 33952333895,
+    "sha256": "2ff3a3f9b0f3f8e2033609d850a13544875081f99caf2cbf0406a9db666a8125"
+  },
+  "html_sha256": "bdd566b7c1817a21c9fc136e23b53adaa1c018adaa6e4aa25a43ef292aaedae9",
+  "baseline_sha256": "9fd104d6d95604351e041faa8dc39516d4337d85569601e1b6e3ca162dd5b587",
+  "baseline_matches_user_v014_attachment": true,
+  "rebuild_byte_identical": true,
+  "fresh_runtime": {
+    "renderer": "Chromium / SwiftShader",
+    "load_method": "in-memory DOM of unchanged HTML bytes",
+    "file_navigation_unavailable": "Page.goto: net::ERR_BLOCKED_BY_ADMINISTRATOR at file:///mnt/data/yunnan_git_handoff_20260905/v015_recheck/Yunnan_Master_and_Village_V0.15.0.html\nCall log:\n  - navigating to \"file:///mnt/data/yunnan_git_handoff_20260905/v015_recheck/Yunnan_Master_and_Village_V0.15.0.html\", waiting until \"load\"\n",
+    "ready": true,
+    "stage_count": 26,
+    "state_samples": 78,
+    "failed_states": [],
+    "walk_samples": 125,
+    "body_hits": 0,
+    "sole_hits": 0,
+    "atmosphere_isolation": true,
+    "component_count": 946,
+    "mobile": [
+      {
+        "viewport": [390, 844],
+        "width": 390,
+        "scroll": 390,
+        "ready": true,
+        "page_errors": []
+      },
+      {
+        "viewport": [430, 932],
+        "width": 430,
+        "scroll": 430,
+        "ready": true,
+        "page_errors": []
+      }
+    ],
+    "page_errors": [],
+    "console_messages": [],
+    "failed_requests": [],
+    "external_requests": [],
+    "pass": true
+  },
+  "stair_check": {"passed": 6, "total": 6, "pass": true},
+  "reproduced_archived_traces": [
+    {
+      "path_in_frozen_version": "qa/restart/stage_checks.json",
+      "bytes": 2138072,
+      "sha256": "79b1d84dd23dda878b21f425f773b99448c783b41720c7327b6944fe35dfe505",
+      "fresh_output_matches_archived_output_byte_for_byte": true
+    },
+    {
+      "path_in_frozen_version": "qa/restart/walk_trace.json",
+      "bytes": 448426,
+      "sha256": "e337d32dbff94c61bb3db436b9554c77b94795cb5eaa069519f53d7d5925e8b1",
+      "fresh_output_matches_archived_output_byte_for_byte": true
+    },
+    {
+      "path_in_frozen_version": "qa/restart/component_graph.json",
+      "bytes": 248218,
+      "sha256": "78475b658c8dae3199a66ad1f9265930c129619bbf0de365628e301b3ce72720",
+      "fresh_output_matches_archived_output_byte_for_byte": true
+    }
+  ],
+  "limits": [
+    "file URL navigation is blocked by this test environment; exact unchanged HTML bytes were loaded into a browser DOM",
+    "sampled collision results are not a universal collision or structural-safety proof",
+    "real phone hardware and public hosting were not tested",
+    "SU measurement units/transforms, ear-room connection, full joinery, tile roof and regional ritual/song evidence remain unverified"
+  ],
+  "public_site_deployed": false,
+  "approvals": {
+    "measurementTruthApproved": false,
+    "constructionTruthApproved": false,
+    "historicReconstructionApproved": false,
+    "visualApproved": false,
+    "productionApproved": false
+  }
+}

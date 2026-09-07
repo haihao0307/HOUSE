@@ -1,0 +1,99 @@
+{
+  "schemaVersion": "1.0.0",
+  "date": "2026-08-31",
+  "scope": "Two user-returned Yunnan architecture references; literature intake only.",
+  "decision": {
+    "reviewer": "project owner",
+    "assessment": "两份资料价值不高，先保留作为支持资料，用于了解云南建筑。",
+    "retentionApproved": true,
+    "evidencePriority": "low",
+    "productionApproved": false,
+    "humanVisualApproved": false,
+    "policyNote": "文件收存与独立验证、建筑结论批准、生产使用批准分别记录。"
+  },
+  "receipts": [
+    {
+      "sourceId": "YN-LIT-2023-COURTYARD-SPATIAL-DATABASE",
+      "doi": "10.3390/buildings13122956",
+      "fileName": "01_Yunnan_Courtyard_Typology_Spatial_Database_432_Samples_2023(1).pdf",
+      "bytes": 26523370,
+      "sha256": "2d463d5d4814906cfde0b9a65a23fb4b36906c6fbb93a82e57e6ae2bb220895e",
+      "pages": 19,
+      "relation": "byte-identical to the previously downloaded candidate, newly admitted to the project registry after this user decision",
+      "matchingCandidate": "01_Yunnan_Courtyard_Typology_Spatial_Database_432_Samples_2023.pdf",
+      "newRegistryEntry": true,
+      "independentSourceCount": 1
+    },
+    {
+      "sourceId": "YN-LIT-2025-DIQING-TUSI-MANORS",
+      "doi": "10.3390/buildings15071134",
+      "fileName": "04_Yunnan_Tibet_Tusi_Manors_Architectural_Form_2025(2).pdf",
+      "bytes": 55022522,
+      "sha256": "e2ed306467af564bb656ff833f19a965d926503ef540693b423d29310962801f",
+      "pages": 26,
+      "relation": "byte-identical to the previously user-uploaded and registered paper",
+      "matchingPriorUpload": "04_Yunnan_Tibet_Tusi_Manors_Architectural_Form_2025(1).pdf",
+      "newRegistryEntry": false,
+      "additionalIndependentEvidenceCount": 0,
+      "independentSourceCount": 1
+    }
+  ],
+  "sourceReviewNotes": [
+    {
+      "sourceId": "YN-LIT-2023-COURTYARD-SPATIAL-DATABASE",
+      "pageReferences": [8, 10, 12, 13, 14, 15, 16],
+      "retainFor": "low-priority data-field and record-linking method support",
+      "rawDatasetObtained": false,
+      "sourceReportedSampleCount": 432,
+      "projectAcquiredCompleteBuildingSurveySets": 0,
+      "sourceDefinitionsPreserved": ["B1d = B1b / B1a", "B1e = B1a / (B1a + B1b)"],
+      "supportFile": "yunnan-courtyard-spatial-database-support-v1.json"
+    },
+    {
+      "sourceId": "YN-LIT-2025-DIQING-TUSI-MANORS",
+      "existingSupportFile": "yunnan-tibet-tusi-manor-knowledge-v1.json",
+      "retainFor": "low-priority Diqing manor context and author-reported case comparisons only",
+      "pageReferences": [3, 4, 6, 7, 8, 9, 10, 11, 12, 13, 25],
+      "authorScope": "Tibetan-inhabited parts of Deqin and Shangri-La; Tusi administrative-residential manors",
+      "sourceSelfAssessment": {"page": 25, "paraphrase": "The authors describe the study as qualitative with inherent limitations."},
+      "independentValidationPassed": false,
+      "dataPreservation": "Retain earlier extracted numbers as author-reported Table 4 entries. No silently revised value or averaged production default.",
+      "internalConsistencyFlags": [
+        {
+          "id": "TUSI-P12-SECOND-FLOOR-MAX",
+          "page": 12,
+          "sourceLocations": ["paragraph before Table 4", "Table 4, Xiaozhongdian row"],
+          "paragraphRangeM": [2.2, 2.9],
+          "tableSecondFloorValueM": 3.0,
+          "assessment": "正文范围与表格数值不一致；同时保留，等待原始测绘核验。",
+          "resolved": false
+        },
+        {
+          "id": "TUSI-P12-FLOOR-ORDER",
+          "page": 12,
+          "sourceLocations": ["paragraph before Table 4", "Table 4, Liutongjiang and Gushui rows"],
+          "paragraphClaim": "progressively increasing floor heights",
+          "tableCounterexamples": [
+            {"sample": "Liutongjiang", "floorHeightsM": [2.3, 2.2, 2.5]},
+            {"sample": "Gushui", "floorHeightsM": [2.0, 2.6, 2.3]}
+          ],
+          "assessment": "表内个案不全部支持逐层增高；不将该表述转成生成器强制规则。",
+          "resolved": false
+        }
+      ]
+    }
+  ],
+  "deduplicationPolicy": {
+    "bibliographicKey": "normalized DOI",
+    "binaryKey": "SHA256",
+    "sameSourceUploadsDoNotIncreaseEvidenceWeight": true,
+    "samePaperCaseCountIsNotIndependentSourceCount": true
+  },
+  "executionBoundary": {
+    "productionGeometryChanged": false,
+    "productionParametersChanged": false,
+    "websiteReleaseClaimed": false,
+    "publicRepositoryContainsOriginalPdfsFromThisIntake": false,
+    "originalPdfs": "Original uploaded files retained in the conversation and local intake archive; only structured references and review notes are committed."
+  }
+}

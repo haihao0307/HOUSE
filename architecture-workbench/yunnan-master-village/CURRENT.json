@@ -1,0 +1,16 @@
+{
+  "version": "0.15.0",
+  "archive": "Yunnan_Master_and_Village_V0.15.0_Full_Restart_2026-09-05.zip",
+  "archive_bytes": 9927426,
+  "archive_sha256": "cd3a438708152182fd9ff457f6a0a53c35fbff620ce1cbd72ed18be74571989a",
+  "html": "Yunnan_Master_and_Village_V0.15.0.html",
+  "html_sha256": "bdd566b7c1817a21c9fc136e23b53adaa1c018adaa6e4aa25a43ef292aaedae9",
+  "included_files": 51,
+  "original_delivery_bytes_preserved_for_code": true,
+  "fresh_evidence": true,
+  "cold_start_passed": true,
+  "public_site_deployed": false,
+  "branch": "feature/yunnan-component-studio-v1",
+  "pr_number": 13,
+  "source_commit": "3453d752cf1ea2a8fc21d87c4955417fe3e71ca1"
+}

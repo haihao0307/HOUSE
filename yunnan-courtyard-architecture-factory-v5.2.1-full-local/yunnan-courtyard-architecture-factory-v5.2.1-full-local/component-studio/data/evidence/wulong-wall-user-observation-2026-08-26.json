@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "1.0.0",
+  "recordId": "WULONG-WALL-USER-OBSERVATION-2026-08-26",
+  "sampleId": "REFERENCE-HAOSI1-WULONG-001",
+  "sourceAsset": "assets/models/YN_HAOSI1_WULONG_WL_001_REFERENCE_WEB.glb",
+  "authority": "user visual review of the separately loaded Wulong GLB",
+  "observations": [
+    "The lower part of the wall has a prominent stone masonry zone rather than a thin decorative strip.",
+    "The upper wall reads as discrete earthen bricks with serious surface weathering.",
+    "Surviving plaster remains over parts of the earthen-brick wall.",
+    "The wall is generally straight and globally intact; local damage is limited and should not be exaggerated into collapse.",
+    "Visible structural timber pieces are embedded in or associated with the wall.",
+    "At the door opening, a horizontal timber board or lintel passes into the wall piers.",
+    "The wall above the door opening remains continuous with the surrounding wall."
+  ],
+  "implementationConsequences": [
+    "Generate a real lower stone masonry assembly with individual stones, mortar joints, adjustable height and slight projection.",
+    "Generate upper earthen-brick courses as discrete units with running bond, adjustable brick dimensions and joints.",
+    "Treat plaster as a thin overlay with coherent loss areas that reveal the brick courses underneath.",
+    "Keep the wall profile nearly vertical and limit geometric damage while allowing heavy surface weathering.",
+    "Generate a true door void, an embedded timber lintel that extends into both piers, and continuous masonry above the lintel."
+  ],
+  "evidenceBoundary": {
+    "supported": [
+      "visible stone-to-earth vertical zoning",
+      "discrete earthen-brick reading",
+      "surviving plaster over the brick substrate",
+      "near-vertical globally intact wall",
+      "embedded horizontal timber lintel relationship",
+      "continuous wall above the opening"
+    ],
+    "unresolved": [
+      "exact stone-base height and projection",
+      "stone sizes and bond",
+      "earthen-brick length, height, depth and mortar composition",
+      "timber lintel section, species, count and embed depth",
+      "identity of other embedded timber members"
+    ]
+  }
+}
