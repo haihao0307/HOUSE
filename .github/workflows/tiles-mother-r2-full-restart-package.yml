@@ -1,0 +1,238 @@
+name: Tiles Mother R2 Full Restart Package
+
+on:
+  push:
+    branches:
+      - feature/tiles-mother-r2-restart-20260907
+    paths:
+      - .github/workflows/tiles-mother-r2-full-restart-package.yml
+      - tiles-mother/restarts/2026-09-07-r2-full/**
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: tiles-mother-r2-full-restart-20260907
+  cancel-in-progress: false
+
+env:
+  RESTART_ROOT: tiles-mother/restarts/2026-09-07-r2-full
+  PACKAGE_NAME: Tiles_Mother_R2_Full_Restart_2026-09-07
+  XIAOMA_REPO: haihao0307/guilin-dem-pipeline
+  XIAOMA_COMMIT: 0fcb4d6ee22c5d9b96d3648a8b9e186c4aa80745
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout restart branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Materialize restart documents from verified seed
+        shell: bash
+        run: |
+          set -euo pipefail
+          seed_dir="$RESTART_ROOT/seed-transport"
+          cat "$seed_dir"/part*.b64 | tr -d '\n\r' | base64 -d > "$RUNNER_TEMP/restart_seed.tar.xz"
+          echo "5f844c497afba9aea6feef82019ba5d3809dbca09c408b4f961dce1977a45034  $RUNNER_TEMP/restart_seed.tar.xz" | sha256sum -c -
+          python3 - <<'PYSEED'
+          from pathlib import Path
+          import io,lzma,tarfile
+          src=Path(__import__('os').environ['RUNNER_TEMP'])/'restart_seed.tar.xz'
+          raw=lzma.decompress(src.read_bytes())
+          with tarfile.open(fileobj=io.BytesIO(raw),mode='r:') as tf:
+              for m in tf:
+                  q=Path(m.name)
+                  assert not q.is_absolute() and '..' not in q.parts
+                  assert m.isfile() and m.size < 2_000_000
+                  target=Path(m.name)
+                  target.parent.mkdir(parents=True,exist_ok=True)
+                  target.write_bytes(tf.extractfile(m).read())
+          PYSEED
+          rm -rf "$seed_dir"
+          test -s "$RESTART_ROOT/00_START_HERE.md"
+          test -s "$RESTART_ROOT/CHAT_TRANSCRIPT_CURRENT_WINDOW.md"
+          test -s tiles-mother/CURRENT_RESTART.json
+
+      - name: Assemble recoverable full package
+        shell: bash
+        run: |
+          set -euo pipefail
+          tmp="$RUNNER_TEMP/$PACKAGE_NAME"
+          rm -rf "$tmp"
+          mkdir -p "$tmp/project/tiles-mother" "$tmp/external/xiaoma-r2" "$tmp/restart"
+
+          copy_path() {
+            local src="$1"
+            if [ -e "$src" ]; then
+              mkdir -p "$tmp/project/$(dirname "$src")"
+              cp -a "$src" "$tmp/project/$src"
+            fi
+          }
+
+          # Root contracts and receipts.
+          for p in \
+            tiles-mother/AGENTS.md \
+            tiles-mother/README.md \
+            tiles-mother/RESTART_START_HERE.md \
+            tiles-mother/CURRENT_BASELINE.json \
+            tiles-mother/CURRENT_CANDIDATE.json \
+            tiles-mother/JIANGWUTANG_SOURCE_RECEIPT.json \
+            tiles-mother/check-package.html; do
+            copy_path "$p"
+          done
+
+          # Recovery chain and current implementation. Copy exact repository bytes.
+          for p in \
+            tiles-mother/v098 \
+            tiles-mother/v099 \
+            tiles-mother/v0910 \
+            tiles-mother/v0911 \
+            tiles-mother/r2-progress-01 \
+            tiles-mother/clean-02 \
+            tiles-mother/knowledge \
+            tiles-mother/experiments \
+            tiles-mother/releases; do
+            copy_path "$p"
+          done
+
+          # Restart documents, excluding generated zip/receipts from any prior rerun.
+          rsync -a \
+            --exclude "$PACKAGE_NAME.zip" \
+            --exclude 'PACKAGE_RECEIPT.json' \
+            --exclude 'CHECKSUMS.sha256' \
+            --exclude 'MANIFEST.json' \
+            "$RESTART_ROOT/" "$tmp/restart/"
+
+          # Fixed Xiaoma R2 teaching assets. These are knowledge references, never production source.
+          base="https://raw.githubusercontent.com/$XIAOMA_REPO/$XIAOMA_COMMIT/docs/mother_coordination/learning-r1-20260905/skills/macroscopic-microscope-masterclass"
+          curl -fsSL "$base/SKILL.md" -o "$tmp/external/xiaoma-r2/SKILL.md"
+          curl -fsSL "$base/TEACHBACK.md" -o "$tmp/external/xiaoma-r2/TEACHBACK.md"
+          curl -fsSL "$base/lab.html" -o "$tmp/external/xiaoma-r2/lab.html"
+
+          cat > "$tmp/PACKAGE_IDENTITY.json" <<JSON
+          {
+            "package": "$PACKAGE_NAME",
+            "builtFromCommit": "$GITHUB_SHA",
+            "restartBranch": "$GITHUB_REF_NAME",
+            "frozenPreRestartHead": "2de52375bdfa8427c6d9c08fa1ce18e709c1820f",
+            "xiaomaR2Commit": "$XIAOMA_COMMIT",
+            "conversationPolicy": "current visible chat subset plus explicitly labeled historical summary; no private chain-of-thought",
+            "visualApproved": false,
+            "productionApproved": false
+          }
+          JSON
+
+          python3 - "$tmp" <<'PY'
+          import hashlib, json, sys
+          from pathlib import Path
+          root=Path(sys.argv[1])
+          records=[]
+          for p in sorted(root.rglob('*')):
+              if not p.is_file() or p.name in {'MANIFEST.json','CHECKSUMS.sha256'}:
+                  continue
+              data=p.read_bytes()
+              records.append({
+                  'path':p.relative_to(root).as_posix(),
+                  'bytes':len(data),
+                  'sha256':hashlib.sha256(data).hexdigest(),
+              })
+          (root/'MANIFEST.json').write_text(json.dumps({
+              'schema':'tiles-mother-r2-full-restart-v1',
+              'fileCount':len(records),
+              'payloadBytes':sum(r['bytes'] for r in records),
+              'files':records,
+          },ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+          lines=[f"{r['sha256']}  {r['path']}" for r in records]
+          lines.append(f"{hashlib.sha256((root/'MANIFEST.json').read_bytes()).hexdigest()}  MANIFEST.json")
+          (root/'CHECKSUMS.sha256').write_text('\n'.join(lines)+'\n',encoding='utf-8')
+          PY
+
+          # Verify every payload before compression.
+          (cd "$tmp" && sha256sum -c CHECKSUMS.sha256)
+
+          # Build deterministic-enough single ZIP. Keep repository file timestamps; identity is SHA256, not byte reproducibility across zip tools.
+          python3 - "$tmp" "$RUNNER_TEMP/$PACKAGE_NAME.zip" <<'PY'
+          import sys, zipfile
+          from pathlib import Path
+          root=Path(sys.argv[1]); out=Path(sys.argv[2])
+          with zipfile.ZipFile(out,'w',compression=zipfile.ZIP_DEFLATED,compresslevel=9,allowZip64=True) as z:
+              for p in sorted(root.rglob('*')):
+                  if p.is_file():
+                      z.write(p,(root.name+'/'+p.relative_to(root)).as_posix())
+          with zipfile.ZipFile(out) as z:
+              bad=z.testzip()
+              assert bad is None,bad
+          PY
+
+          size=$(stat -c%s "$RUNNER_TEMP/$PACKAGE_NAME.zip")
+          if [ "$size" -ge 99000000 ]; then
+            echo "Package is $size bytes and would exceed safe GitHub single-file limit" >&2
+            exit 1
+          fi
+          sha=$(sha256sum "$RUNNER_TEMP/$PACKAGE_NAME.zip" | awk '{print $1}')
+          cp "$RUNNER_TEMP/$PACKAGE_NAME.zip" "$RESTART_ROOT/$PACKAGE_NAME.zip"
+          printf '%s  %s\n' "$sha" "$PACKAGE_NAME.zip" > "$RESTART_ROOT/CHECKSUMS.sha256"
+
+          python3 - <<'PY'
+          import json, os, hashlib, zipfile
+          from pathlib import Path
+          root=Path(os.environ['RESTART_ROOT'])
+          z=root/(os.environ['PACKAGE_NAME']+'.zip')
+          with zipfile.ZipFile(z) as a:
+              names=a.namelist(); assert any(n.endswith('/00_START_HERE.md') for n in names)
+              assert any(n.endswith('/CHAT_TRANSCRIPT_CURRENT_WINDOW.md') for n in names)
+              assert any(n.endswith('/CHAT_HISTORY_SUMMARY.md') for n in names)
+              assert any(n.endswith('/project/tiles-mother/r2-progress-01/START_HERE.html') for n in names)
+              assert any(n.endswith('/external/xiaoma-r2/SKILL.md') for n in names)
+          receipt={
+              'package':z.name,
+              'bytes':z.stat().st_size,
+              'sha256':hashlib.sha256(z.read_bytes()).hexdigest(),
+              'zipEntries':len(names),
+              'sourceCommit':os.environ['GITHUB_SHA'],
+              'restartBranch':os.environ['GITHUB_REF_NAME'],
+              'frozenPreRestartHead':'2de52375bdfa8427c6d9c08fa1ce18e709c1820f',
+              'containsCurrentVisibleConversation':True,
+              'earlierConversationIsLabeledSummary':True,
+              'containsPrivateChainOfThought':False,
+              'containsR2Progress01':True,
+              'containsV0910Recovery':any('/v0910/' in n for n in names),
+              'containsV0911Recovery':any('/v0911/' in n for n in names),
+              'containsClean02FailedComparison':any('/clean-02/' in n for n in names),
+              'containsXiaomaR2Teaching':True,
+              'visualApproved':False,
+              'productionApproved':False,
+          }
+          (root/'PACKAGE_RECEIPT.json').write_text(json.dumps(receipt,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+          print(json.dumps(receipt,ensure_ascii=False))
+          PY
+
+      - name: Upload complete restart package artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Tiles_Mother_R2_Full_Restart_2026-09-07
+          path: |
+            ${{ env.RESTART_ROOT }}/${{ env.PACKAGE_NAME }}.zip
+            ${{ env.RESTART_ROOT }}/PACKAGE_RECEIPT.json
+            ${{ env.RESTART_ROOT }}/CHECKSUMS.sha256
+          retention-days: 30
+          if-no-files-found: error
+
+      - name: Commit package to restart branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A "$RESTART_ROOT" tiles-mother/RESTART_START_HERE.md tiles-mother/CURRENT_RESTART.json
+          if git diff --cached --quiet; then
+            echo "Package already committed."
+            exit 0
+          fi
+          git commit -m "release(tiles): full R2 restart package and restart checkpoint [skip ci]"
+          git push origin "HEAD:$GITHUB_REF_NAME"
