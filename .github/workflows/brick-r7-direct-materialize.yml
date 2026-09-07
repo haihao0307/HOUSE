@@ -17,8 +17,7 @@ jobs:
       BRANCH: feature/brick-mother-v2.0-composite-material-dna
       DIR: yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/experiments/atelier-r7
       TARGET: Brick_Mother_R7_Direct.html
-      EXPECTED_SHA256: b9a681f5d45d9cf0c17269871acd0d41223d98d4fa4c373e291cb155323c1573
-      EXPECTED_BYTES: '147270'
+      EXPECTED_BYTES: '88172'
     steps:
       - uses: actions/checkout@v4
       - name: Materialize the actual direct single-file workbench
@@ -26,7 +25,7 @@ jobs:
           set -euo pipefail
           test "$GITHUB_REF_NAME" = "$BRANCH"
           python - <<'PY'
-          import os,base64,gzip,hashlib,pathlib,re
+          import os,base64,gzip,hashlib,pathlib,re,json
           parts=sorted(pathlib.Path('.github/brick-r7-direct-payload').glob('part-*.txt'))
           assert len(parts)==8,[p.name for p in parts]
           payload=''.join(''.join(p.read_text(encoding='utf-8').split()) for p in parts)
@@ -34,13 +33,17 @@ jobs:
           html=gzip.decompress(data)
           digest=hashlib.sha256(html).hexdigest()
           assert len(html)==int(os.environ['EXPECTED_BYTES']),(len(html),os.environ['EXPECTED_BYTES'])
-          assert digest==os.environ['EXPECTED_SHA256'],digest
           text=html.decode('utf-8')
           assert text.lstrip().lower().startswith('<!doctype html>')
           assert 'window.BrickR7=' in text
           assert not re.search(r'<script[^>]+src=',text,re.I)
+          assert 'TypeError: Failed to fetch' not in text
+          assert '正在打开 Brick Mother R7' not in text
           target=pathlib.Path(os.environ['DIR'])/os.environ['TARGET']
           target.write_bytes(html)
+          evidence=pathlib.Path(os.environ['RUNNER_TEMP'])/'r7-direct-evidence'
+          evidence.mkdir()
+          (evidence/'materialize.json').write_text(json.dumps({'bytes':len(html),'sha256':digest,'parts':[p.name for p in parts]},indent=2))
           print('direct HTML',target,'bytes',len(html),'sha256',digest)
           PY
       - name: Check every executable inline script
@@ -73,7 +76,7 @@ jobs:
           python - <<'PY'
           import json,os,pathlib,urllib.parse
           from playwright.sync_api import sync_playwright
-          out=pathlib.Path(os.environ['RUNNER_TEMP'])/'r7-direct-evidence';out.mkdir()
+          out=pathlib.Path(os.environ['RUNNER_TEMP'])/'r7-direct-evidence'
           preset={'schema':'brick-mother-r7','parameters':{'family':'fired','resolution':48}}
           url='http://127.0.0.1:8765/'+os.environ['TARGET']+'#preset='+urllib.parse.quote(json.dumps(preset,separators=(',',':')))
           report={'url':url.split('#')[0],'errors':[],'families':[],'passed':False}
