@@ -1,0 +1,124 @@
+name: Brick Mother R7 Direct HTML Materialize
+on:
+  push:
+    branches: [feature/brick-mother-v2.0-composite-material-dna]
+    paths: [.github/workflows/brick-r7-direct-materialize.yml]
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: brick-r7-direct-materialize
+  cancel-in-progress: false
+jobs:
+  materialize-and-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      BRANCH: feature/brick-mother-v2.0-composite-material-dna
+      DIR: yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/experiments/atelier-r7
+      SOURCE: Brick_Mother_R7_Standalone.html
+      TARGET: Brick_Mother_R7_Direct.html
+      EXPECTED_SHA256: b9a681f5d45d9cf0c17269871acd0d41223d98d4fa4c373e291cb155323c1573
+      EXPECTED_BYTES: '147270'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Decode the existing fixed source into a direct HTML file
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REF_NAME" = "$BRANCH"
+          python - <<'PY'
+          import os,re,base64,gzip,hashlib,pathlib
+          root=pathlib.Path(os.environ['DIR'])
+          wrapper=(root/os.environ['SOURCE']).read_text(encoding='utf-8')
+          match=re.search(r"const p='([A-Za-z0-9+/=\s]+)'",wrapper,re.S)
+          assert match,'embedded R7 payload not found'
+          payload=''.join(match.group(1).split())
+          payload=payload.rstrip('=')+'='*((4-len(payload.rstrip('='))%4)%4)
+          data=base64.b64decode(payload,validate=True)
+          html=gzip.decompress(data)
+          assert len(html)==int(os.environ['EXPECTED_BYTES']),(len(html),os.environ['EXPECTED_BYTES'])
+          assert hashlib.sha256(html).hexdigest()==os.environ['EXPECTED_SHA256']
+          text=html.decode('utf-8')
+          assert text.lstrip().lower().startswith('<!doctype html>')
+          assert 'window.BrickR7=' in text
+          assert not re.search(r'<script[^>]+src=',text,re.I)
+          assert 'fetch(' not in text
+          (root/os.environ['TARGET']).write_bytes(html)
+          print('direct HTML bytes',len(html),'sha256',hashlib.sha256(html).hexdigest())
+          PY
+      - name: Check all executable inline JavaScript
+        run: |
+          python - <<'PY'
+          import os,re,pathlib,subprocess,tempfile
+          p=pathlib.Path(os.environ['DIR'])/os.environ['TARGET']
+          html=p.read_text(encoding='utf-8')
+          count=0
+          with tempfile.TemporaryDirectory() as d:
+            for i,m in enumerate(re.finditer(r'<script([^>]*)>(.*?)</script>',html,re.S|re.I)):
+              attrs=m.group(1).lower()
+              if 'application/octet-stream' in attrs: continue
+              f=pathlib.Path(d)/f'script-{i}.js';f.write_text(m.group(2),encoding='utf-8')
+              subprocess.run(['node','--check',str(f)],check=True)
+              count+=1
+          assert count>=3,count
+          print('inline scripts checked',count)
+          PY
+      - name: Install browser
+        run: |
+          python -m pip install playwright==1.55.0
+          python -m playwright install --with-deps chromium
+      - name: Open direct HTML through HTTP and exercise all materials
+        run: |
+          set -euo pipefail
+          python -m http.server 8765 --bind 127.0.0.1 --directory "$DIR" > "$RUNNER_TEMP/r7-direct-http.log" 2>&1 &
+          PID=$!
+          trap 'kill "$PID" || true' EXIT
+          python - <<'PY'
+          import json,os,pathlib
+          from playwright.sync_api import sync_playwright
+          url='http://127.0.0.1:8765/'+os.environ['TARGET']
+          out=pathlib.Path(os.environ['RUNNER_TEMP'])/'r7-direct-evidence';out.mkdir()
+          report={'url':url,'errors':[],'families':[],'passed':False}
+          with sync_playwright() as p:
+            browser=p.chromium.launch(headless=True,args=['--use-angle=swiftshader','--enable-unsafe-swiftshader','--no-sandbox'])
+            page=browser.new_page(viewport={'width':1280,'height':800})
+            page.on('pageerror',lambda e:report['errors'].append(str(e)))
+            response=page.goto(url,wait_until='load',timeout=60000)
+            assert response and response.status==200
+            page.wait_for_function("window.BrickR7 && BrickR7.audit.ready && !BrickR7.stats().busy",timeout=120000)
+            assert page.locator('#error').is_hidden(),page.locator('#error').inner_text()
+            for family in ['fired','kiln','adobe','dressed','rubble','stone','pebble']:
+              page.locator('[data-family="'+family+'"]').click()
+              page.wait_for_function('(f)=>window.BrickR7 && !BrickR7.stats().busy && BrickR7.stats().geometry?.family===f',arg=family,timeout=120000)
+              assert page.locator('#error').is_hidden(),page.locator('#error').inner_text()
+              state=page.evaluate('BrickR7.stats()')
+              report['families'].append({'family':family,'triangles':state['geometry']['triangles'],'buildMs':state['geometry']['buildMs']})
+            assert not report['errors'],report['errors']
+            assert page.evaluate('BrickR7.renderer.gl.getError()')==0
+            page.screenshot(path=str(out/'direct-r7.png'))
+            report['passed']=True
+            browser.close()
+          (out/'report.json').write_text(json.dumps(report,ensure_ascii=False,indent=2))
+          print(json.dumps(report,ensure_ascii=False))
+          PY
+      - name: Commit the direct file only after browser success
+        run: |
+          set -euo pipefail
+          test "$(git ls-remote origin "refs/heads/$BRANCH" | cut -f1)" = "$GITHUB_SHA"
+          git config user.name 'Brick Mother direct HTML verification'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- "$DIR/$TARGET"
+          git diff --cached --name-only | grep -Fx "$DIR/$TARGET"
+          test "$(git diff --cached --name-only | wc -l)" = 1
+          git commit -m 'fix(brick): add browser-verified direct R7 single HTML [skip ci]'
+          git push origin "HEAD:refs/heads/$BRANCH"
+          git rev-parse HEAD | tee "$RUNNER_TEMP/r7-direct-evidence/commit.txt"
+      - name: Retain direct-open evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: brick-r7-direct-html-${{ github.run_id }}
+          path: |
+            ${{ runner.temp }}/r7-direct-evidence
+            ${{ runner.temp }}/r7-direct-http.log
+          retention-days: 30
