@@ -1,0 +1,88 @@
+name: Materialize Xiaoli V0.17.0 fixed HTML
+
+on:
+  push:
+    branches:
+      - feature/yunnan-component-studio-v1
+    paths:
+      - architecture-workbench/yunnan-master-village/releases/v0.17.0-source/READY
+
+permissions:
+  contents: write
+
+jobs:
+  materialize:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/yunnan-component-studio-v1
+          fetch-depth: 0
+
+      - name: Verify and unpack V0.17.0 source pack
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import base64, hashlib, json, tarfile
+          root = Path('architecture-workbench/yunnan-master-village/releases/v0.17.0-source')
+          manifest = json.loads((root / 'source-pack/MANIFEST.json').read_text())
+          b64 = ''.join((root / 'source-pack' / name).read_text().strip() for name in manifest['chunks'])
+          assert len(b64) == manifest['base64_chars'], (len(b64), manifest['base64_chars'])
+          archive = base64.b64decode(b64)
+          assert len(archive) == manifest['archive_bytes'], (len(archive), manifest['archive_bytes'])
+          assert hashlib.sha256(archive).hexdigest() == manifest['archive_sha256']
+          tmp = Path('/tmp/xiaoli-v017-source')
+          tmp.mkdir(parents=True, exist_ok=True)
+          archive_path = tmp / 'source.tar.xz'
+          archive_path.write_bytes(archive)
+          with tarfile.open(archive_path, 'r:xz') as tf:
+              for member in tf.getmembers():
+                  p = Path(member.name)
+                  assert not p.is_absolute() and '..' not in p.parts, member.name
+              tf.extractall(tmp)
+          assert (tmp / 'v016/src/build_v016.py').is_file()
+          assert (tmp / 'v017/src/build_v017.py').is_file()
+          print('source pack verified:', hashlib.sha256(archive).hexdigest())
+          PY
+
+      - name: Rebuild exact standalone HTML
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE='architecture-workbench/yunnan-master-village/versions/v0.15.0/Yunnan_Master_and_Village_V0.15.0.html'
+          V151SRC='architecture-workbench/yunnan-master-village/experiments/material-coordinates-v0151/src'
+          TMP='/tmp/xiaoli-v017-source'
+          python3 "$V151SRC/build_v0151.py" "$BASE" "$TMP/V0.15.1.html"
+          python3 "$TMP/v016/src/build_v016.py" "$TMP/V0.15.1.html" "$TMP/V0.16.0.html"
+          python3 "$TMP/v017/src/build_v017.py" "$TMP/V0.16.0.html" "$TMP/Xiaoli_V0.17.0.html"
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib, json
+          manifest = json.loads(Path('architecture-workbench/yunnan-master-village/releases/v0.17.0-source/source-pack/MANIFEST.json').read_text())
+          p = Path('/tmp/xiaoli-v017-source/Xiaoli_V0.17.0.html')
+          assert p.stat().st_size == manifest['final_html_bytes'], p.stat().st_size
+          digest = hashlib.sha256(p.read_bytes()).hexdigest()
+          assert digest == manifest['final_html_sha256'], digest
+          out = Path(manifest['final_html_path'])
+          out.parent.mkdir(parents=True, exist_ok=True)
+          out.write_bytes(p.read_bytes())
+          print('exact HTML verified:', digest, out.stat().st_size)
+          PY
+
+      - name: Commit immutable standalone HTML to branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          TARGET='architecture-workbench/yunnan-master-village/releases/v0.17.0/Xiaoli_V0.17.0.html'
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add "$TARGET"
+          if git diff --cached --quiet; then
+            echo 'Exact V0.17.0 HTML already present.'
+            exit 0
+          fi
+          git commit -m 'release(yunnan): materialize Xiaoli V0.17.0 standalone HTML'
+          git push origin HEAD:feature/yunnan-component-studio-v1
