@@ -1,0 +1,105 @@
+name: Brick Mother Full Restart Handoff
+
+on:
+  push:
+    branches:
+      - feature/brick-mother-v2.0-composite-material-dna
+    paths:
+      - '.github/workflows/brick-mother-full-restart-handoff.yml'
+      - 'yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/handoffs/BRICK_MOTHER_FULL_RESTART_2026-09-07/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  build-full-handoff:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+
+      - name: Build full restart handoff
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          ROOT='yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother'
+          OUT='/tmp/BRICK_MOTHER_FULL_RESTART_2026-09-07'
+          mkdir -p "$OUT/repository" "$OUT/previous-actions" "$OUT/meta"
+
+          cp -a "$ROOT" "$OUT/repository/brick-mother"
+          for p in .github/brick-r5 .github/brick-r6 .github/brick-public-source-repair; do
+            if [ -d "$p" ]; then cp -a "$p" "$OUT/repository/"; fi
+          done
+          mkdir -p "$OUT/repository/workflows"
+          find .github/workflows -maxdepth 1 -type f \( -name 'brick-mother-*.yml' -o -name 'brick-mother-*.yaml' \) -print0 | xargs -0 -r cp -t "$OUT/repository/workflows/"
+
+          cat > "$OUT/meta/CURRENT_STATUS.json" <<JSON
+          {
+            "date": "2026-09-07",
+            "repository": "${GITHUB_REPOSITORY}",
+            "branch": "${GITHUB_REF_NAME}",
+            "source_commit": "${GITHUB_SHA}",
+            "pr": 15,
+            "pr_state": "open",
+            "draft": true,
+            "merged": false,
+            "visual_baseline": "R5.0.0",
+            "r6_status": "quarantined_visual_regression",
+            "humanVisualApproved": false,
+            "productionApproved": false,
+            "delivery_rule": "single HTML -> fixed Git commit SHA -> raw.githack direct link"
+          }
+          JSON
+
+          fetch_artifact() {
+            local id="$1" name="$2"
+            if curl -fsSL -H "Authorization: Bearer ${GH_TOKEN}" -H 'X-GitHub-Api-Version: 2022-11-28' \
+              "https://api.github.com/repos/${REPO}/actions/artifacts/${id}/zip" -o "$OUT/previous-actions/$name"; then
+              echo "$id $name downloaded" >> "$OUT/meta/PREVIOUS_ARTIFACTS.txt"
+            else
+              rm -f "$OUT/previous-actions/$name"
+              echo "$id $name unavailable" >> "$OUT/meta/PREVIOUS_ARTIFACTS.txt"
+            fi
+          }
+
+          fetch_artifact 9930669833 'V2.7.6_full_handoff_artifact.zip'
+          fetch_artifact 9986319641 'R6_CI_artifact.zip'
+          fetch_artifact 9986419133 'R6_public_verification_artifact.zip'
+
+          cp "$ROOT/handoffs/BRICK_MOTHER_FULL_RESTART_2026-09-07/00_START_HERE.md" "$OUT/00_START_HERE.md"
+
+          python3 - <<'PY'
+          import hashlib, json
+          from pathlib import Path
+          root=Path('/tmp/BRICK_MOTHER_FULL_RESTART_2026-09-07')
+          rows={}
+          for p in sorted(root.rglob('*')):
+              if p.is_file():
+                  b=p.read_bytes()
+                  rows[str(p.relative_to(root))]={"bytes":len(b),"sha256":hashlib.sha256(b).hexdigest()}
+          (root/'meta'/'MANIFEST_SHA256.json').write_text(json.dumps(rows,ensure_ascii=False,indent=2),encoding='utf-8')
+          PY
+
+          cd /tmp
+          zip -q -r BRICK_MOTHER_FULL_RESTART_2026-09-07.zip BRICK_MOTHER_FULL_RESTART_2026-09-07
+          sha256sum BRICK_MOTHER_FULL_RESTART_2026-09-07.zip | tee BRICK_MOTHER_FULL_RESTART_2026-09-07.zip.sha256
+          unzip -tq BRICK_MOTHER_FULL_RESTART_2026-09-07.zip
+          printf 'source_commit=%s\n' "$GITHUB_SHA" > BRICK_MOTHER_FULL_RESTART_RECEIPT.txt
+          cat BRICK_MOTHER_FULL_RESTART_2026-09-07.zip.sha256 >> BRICK_MOTHER_FULL_RESTART_RECEIPT.txt
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: brick-mother-full-restart-handoff-${{ github.sha }}
+          path: |
+            /tmp/BRICK_MOTHER_FULL_RESTART_2026-09-07.zip
+            /tmp/BRICK_MOTHER_FULL_RESTART_2026-09-07.zip.sha256
+            /tmp/BRICK_MOTHER_FULL_RESTART_RECEIPT.txt
+          if-no-files-found: error
+          retention-days: 30
