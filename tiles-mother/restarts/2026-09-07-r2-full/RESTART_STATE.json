@@ -1,0 +1,33 @@
+{
+  "schema": "tiles-mother-r2-restart-v1",
+  "date": "2026-09-07",
+  "repository": "haihao0307/HOUSE",
+  "sourceBranch": "feature/tiles-mother-v0.1-workbench",
+  "sourceHead": "2de52375bdfa8427c6d9c08fa1ce18e709c1820f",
+  "restartBranch": "feature/tiles-mother-r2-restart-20260907",
+  "currentPreview": {
+    "path": "tiles-mother/r2-progress-01/START_HERE.html",
+    "bytes": 55293,
+    "sha256": "2f1e782f0b4fdf7579267e8e7e571cbbe4bb4a706a3327e19cea182995b7b884"
+  },
+  "protectedAnchors": [
+    "314159 visual/material identity",
+    "Yunnan cool-gray roof baseline",
+    "existing pan/cover support and overlap",
+    "3/5/7 year abandonment rhythm",
+    "V0.9.10 recovery anchor"
+  ],
+  "finalGates": [
+    "visible Macroscopic microscope R2 without main-color drift",
+    "10-year central collapse with zero unsupported floating tiles",
+    "restored per-tile kiln/color variation",
+    "environment-driven moss clusters from small to broad"
+  ],
+  "conversation": {
+    "currentVisibleWindow": "CHAT_TRANSCRIPT_CURRENT_WINDOW.md",
+    "earlierHistory": "CHAT_HISTORY_SUMMARY.md",
+    "verbatimCompleteness": "current visible subset only; earlier history is summarized because a full literal export is not available to this runtime"
+  },
+  "visualApproved": false,
+  "productionApproved": false
+}

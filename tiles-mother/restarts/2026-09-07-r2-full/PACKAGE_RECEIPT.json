@@ -1,0 +1,19 @@
+{
+  "package": "Tiles_Mother_R2_Full_Restart_2026-09-07.zip",
+  "bytes": 21053467,
+  "sha256": "16d34698e5f863228babb9832f9cf2ef81133619b8f7becc02203395ab4ca836",
+  "zipEntries": 287,
+  "sourceCommit": "9e31d1d31eda65cde651372a29ae5aec05967ed8",
+  "restartBranch": "feature/tiles-mother-r2-restart-20260907",
+  "frozenPreRestartHead": "2de52375bdfa8427c6d9c08fa1ce18e709c1820f",
+  "containsCurrentVisibleConversation": true,
+  "earlierConversationIsLabeledSummary": true,
+  "containsPrivateChainOfThought": false,
+  "containsR2Progress01": true,
+  "containsV0910Recovery": true,
+  "containsV0911Recovery": true,
+  "containsClean02FailedComparison": true,
+  "containsXiaomaR2Teaching": true,
+  "visualApproved": false,
+  "productionApproved": false
+}

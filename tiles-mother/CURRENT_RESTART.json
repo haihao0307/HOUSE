@@ -1,0 +1,12 @@
+{
+  "date": "2026-09-07",
+  "status": "active_restart",
+  "repository": "haihao0307/HOUSE",
+  "branch": "feature/tiles-mother-r2-restart-20260907",
+  "frozenPreRestartHead": "2de52375bdfa8427c6d9c08fa1ce18e709c1820f",
+  "entry": "tiles-mother/restarts/2026-09-07-r2-full/00_START_HERE.md",
+  "package": "tiles-mother/restarts/2026-09-07-r2-full/Tiles_Mother_R2_Full_Restart_2026-09-07.zip",
+  "currentPreview": "tiles-mother/r2-progress-01/START_HERE.html",
+  "visualApproved": false,
+  "productionApproved": false
+}

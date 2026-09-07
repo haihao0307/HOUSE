@@ -1,0 +1,60 @@
+{
+  "date": "2026-09-07",
+  "files": [
+    {
+      "path": "00_START_HERE.md",
+      "bytes": 2628,
+      "sha256": "1df0a1392ccc38a3cd4d782cbb89203884794d8c4c8a1fd4fda7b51e469319a6"
+    },
+    {
+      "path": "CHAT_HISTORY_SUMMARY.md",
+      "bytes": 3054,
+      "sha256": "e815da6725c4be94ab9f1bfde2130c81e4d9f2e20f529a4c78ee11f3642cad77"
+    },
+    {
+      "path": "CHAT_TRANSCRIPT_CURRENT_WINDOW.md",
+      "bytes": 4385,
+      "sha256": "c2eedf050d26316b12bf1dfc088d38859496baefdd37039dfbf4c814907891e9"
+    },
+    {
+      "path": "CURRENT_STATE.md",
+      "bytes": 1108,
+      "sha256": "121a9399c4931b759a8cc02775619a9cbd7e06f7f6ef431651efce3b55325f7a"
+    },
+    {
+      "path": "KNOWN_GAPS.md",
+      "bytes": 873,
+      "sha256": "1911d3e3542255f511ad1610c0dd13e9da1900e4350d96e320cf0fe8a5bdbb13"
+    },
+    {
+      "path": "NEXT_TASK.md",
+      "bytes": 1495,
+      "sha256": "351bfa4cc2cb6c349f651b4a513825f791fd9a6de7677a1b5033ff1f436bb6d7"
+    },
+    {
+      "path": "PACKAGE_BUILD_SPEC.md",
+      "bytes": 847,
+      "sha256": "de6a4b86ff45f3e801142034e1db195bd81fb3c971e63dc0a56c047d0ca68313"
+    },
+    {
+      "path": "README_GITHUB_RESTART.md",
+      "bytes": 778,
+      "sha256": "2bb2b29b57c31d59730910abd14b0c310cde2f62d887596b3b188565e04a6466"
+    },
+    {
+      "path": "RESTART_STATE.json",
+      "bytes": 1303,
+      "sha256": "c4e523afe3c0b3a536d7daab479191d820a937866c9f6f483b607b643b2c778e"
+    },
+    {
+      "path": "SOURCE_REFERENCES.md",
+      "bytes": 1511,
+      "sha256": "cf6b0f0b4e8394b4fbed6f7b2fe84e01169feb56f12ee7e1b3839df8a695b183"
+    },
+    {
+      "path": "USER_DECISIONS.md",
+      "bytes": 1783,
+      "sha256": "18d001827d16cff7316524f045c8dce1bdda18fb89cb587ff74d59b244d19b6c"
+    }
+  ]
+}
