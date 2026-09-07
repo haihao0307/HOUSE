@@ -1,0 +1,147 @@
+name: Brick Mother R7 True Direct Standalone
+on:
+  push:
+    branches: [feature/brick-mother-v2.0-composite-material-dna]
+    paths: [.github/workflows/brick-mother-r7-direct-standalone.yml]
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: brick-mother-r7-true-direct
+  cancel-in-progress: false
+jobs:
+  materialize-test-publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    env:
+      BRANCH: feature/brick-mother-v2.0-composite-material-dna
+      DIR: yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/experiments/atelier-r7
+      WRAPPER: Brick_Mother_R7_Standalone.html
+      DIRECT: Brick_Mother_R7_Direct.html
+      EXPECTED_SHA256: b9a681f5d45d9cf0c17269871acd0d41223d98d4fa4c373e291cb155323c1573
+    steps:
+      - uses: actions/checkout@v4
+      - name: Recover exact direct HTML from frozen R7 payload
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import os,re,base64,gzip,hashlib
+          root=Path(os.environ['DIR'])
+          wrapper=(root/os.environ['WRAPPER']).read_text(encoding='utf-8')
+          m=re.search(r"const p='([^']+)'",wrapper)
+          if not m: raise SystemExit('payload not found')
+          payload=re.sub(r'[^A-Za-z0-9+/=]','',m.group(1))
+          payload=payload.rstrip('=')+'='*((4-len(payload.rstrip('='))%4)%4)
+          raw=base64.b64decode(payload,validate=False)
+          if raw[:2]!=b'\x1f\x8b': raise SystemExit('decoded payload is not gzip')
+          html=gzip.decompress(raw)
+          sha=hashlib.sha256(html).hexdigest()
+          if sha!=os.environ['EXPECTED_SHA256']:
+              raise SystemExit(f'identity mismatch {sha}')
+          text=html.decode('utf-8')
+          required=['<!doctype html>','window.BrickR7','Brick Mother R7','<canvas id="view"']
+          missing=[x for x in required if x not in text]
+          if missing: raise SystemExit('missing '+repr(missing))
+          if 'fetch(' in text[:3000]: raise SystemExit('unexpected startup fetch')
+          (root/os.environ['DIRECT']).write_bytes(html)
+          print('Recovered',len(html),'bytes',sha)
+          PY
+      - name: Check embedded JavaScript syntax
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import os,re,subprocess,tempfile
+          html=(Path(os.environ['DIR'])/os.environ['DIRECT']).read_text()
+          scripts=re.findall(r'<script[^>]*>(.*?)</script>',html,re.S)
+          if not scripts: raise SystemExit('no scripts')
+          for i,script in enumerate(scripts):
+              p=Path(os.environ['RUNNER_TEMP'])/f'r7-direct-{i}.js'
+              p.write_text(script)
+              subprocess.run(['node','--check',str(p)],check=True)
+          print('syntax scripts',len(scripts))
+          PY
+      - name: Install browser
+        run: |
+          python -m pip install playwright==1.55.0
+          python -m playwright install --with-deps chromium
+      - name: Test direct file through local HTTP
+        run: |
+          set -euo pipefail
+          python -m http.server 8765 --bind 127.0.0.1 --directory "$DIR" > "$RUNNER_TEMP/r7-direct-http.log" 2>&1 &
+          PID=$!
+          trap 'kill "$PID" || true' EXIT
+          python - <<'PY'
+          from playwright.sync_api import sync_playwright
+          import os,json
+          url='http://127.0.0.1:8765/'+os.environ['DIRECT']
+          report={'url':url,'errors':[]}
+          with sync_playwright() as p:
+              b=p.chromium.launch(headless=True,args=['--use-angle=swiftshader','--enable-unsafe-swiftshader','--no-sandbox'])
+              page=b.new_page(viewport={'width':1280,'height':800})
+              page.on('pageerror',lambda e:report['errors'].append(str(e)))
+              r=page.goto(url,wait_until='load',timeout=60000)
+              assert r and r.status==200
+              page.wait_for_function("window.BrickR7 && BrickR7.audit && BrickR7.audit.ready",timeout=120000)
+              assert page.locator('#error').is_hidden()
+              assert not report['errors'],report['errors']
+              report['title']=page.title();report['ready']=True
+              report['geometry']=page.evaluate('BrickR7.stats().geometry')
+              page.screenshot(path=os.path.join(os.environ['RUNNER_TEMP'],'r7-direct-local.png'))
+              b.close()
+          open(os.path.join(os.environ['RUNNER_TEMP'],'r7-direct-local.json'),'w').write(json.dumps(report,ensure_ascii=False,indent=2))
+          print(json.dumps(report,ensure_ascii=False))
+          PY
+      - name: Commit exact direct HTML
+        run: |
+          set -euo pipefail
+          current=$(git ls-remote origin "refs/heads/$BRANCH" | cut -f1)
+          test "$current" = "$GITHUB_SHA"
+          git config user.name 'Brick Mother R7 direct release'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- "$DIR/$DIRECT"
+          git commit -m 'fix(brick): add true self-contained R7 direct HTML [skip ci]'
+          git push origin "HEAD:refs/heads/$BRANCH"
+          git rev-parse HEAD > "$RUNNER_TEMP/direct-commit.txt"
+      - name: Verify raw.githack fixed-commit page in real browser
+        run: |
+          set -euo pipefail
+          SHA=$(cat "$RUNNER_TEMP/direct-commit.txt")
+          URL="https://raw.githack.com/haihao0307/HOUSE/$SHA/$DIR/$DIRECT"
+          export URL
+          python - <<'PY'
+          from playwright.sync_api import sync_playwright
+          import os,time,json
+          url=os.environ['URL'];last=None
+          for attempt in range(24):
+              try:
+                  with sync_playwright() as p:
+                      b=p.chromium.launch(headless=True,args=['--use-angle=swiftshader','--enable-unsafe-swiftshader','--no-sandbox'])
+                      page=b.new_page(viewport={'width':1280,'height':800})
+                      errors=[];page.on('pageerror',lambda e:errors.append(str(e)))
+                      r=page.goto(url,wait_until='load',timeout=60000)
+                      if not r or r.status!=200: raise RuntimeError('HTTP '+str(r.status if r else None))
+                      page.wait_for_function("window.BrickR7 && BrickR7.audit && BrickR7.audit.ready",timeout=120000)
+                      if not page.locator('#error').is_hidden(): raise RuntimeError(page.locator('#error').inner_text())
+                      if errors: raise RuntimeError(str(errors))
+                      page.screenshot(path=os.path.join(os.environ['RUNNER_TEMP'],'r7-direct-public.png'))
+                      report={'url':url,'httpStatus':r.status,'contentType':r.headers.get('content-type'),'ready':True,'errors':errors,'title':page.title()}
+                      open(os.path.join(os.environ['RUNNER_TEMP'],'r7-direct-public.json'),'w').write(json.dumps(report,ensure_ascii=False,indent=2))
+                      print(json.dumps(report,ensure_ascii=False));b.close();break
+              except Exception as e:
+                  last=e;print('waiting',attempt,str(e),flush=True);time.sleep(5)
+          else: raise last
+          PY
+      - name: Keep evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: brick-mother-r7-true-direct-${{ github.run_id }}
+          path: |
+            ${{ runner.temp }}/r7-direct-local.json
+            ${{ runner.temp }}/r7-direct-local.png
+            ${{ runner.temp }}/r7-direct-public.json
+            ${{ runner.temp }}/r7-direct-public.png
+            ${{ runner.temp }}/direct-commit.txt
+            ${{ runner.temp }}/r7-direct-http.log
+          retention-days: 30
