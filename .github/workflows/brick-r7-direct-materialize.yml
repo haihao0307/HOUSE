@@ -110,7 +110,7 @@ jobs:
           set -euo pipefail
           git config user.name 'Brick Mother direct HTML verification'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add -- "$DIR/$TARGET"
+          git add -f -- "$DIR/$TARGET"
           git diff --cached --name-only | grep -Fx "$DIR/$TARGET"
           test "$(git diff --cached --name-only | wc -l)" = 1
           git commit -m 'fix(brick): add self-contained browser-verified R7 direct HTML [skip ci]'
