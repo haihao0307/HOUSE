@@ -1,0 +1,208 @@
+name: Brick Mother R7 Direct Frozen Release
+on:
+  push:
+    branches: [feature/brick-mother-v2.0-composite-material-dna]
+    paths: [.github/workflows/brick-r7-direct-frozen-release.yml]
+  workflow_dispatch:
+permissions:
+  contents: write
+  issues: write
+concurrency:
+  group: brick-r7-direct-frozen-release
+  cancel-in-progress: false
+jobs:
+  direct-release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    env:
+      BRANCH: feature/brick-mother-v2.0-composite-material-dna
+      DIR: yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/experiments/atelier-r7
+      SOURCE_COMMIT: 83e9caa760352abab9c8280bd44965cca66f53bb
+      SOURCE_FILE: yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/experiments/atelier-r7/Brick_Mother_R7_Standalone.html
+      DIRECT_FILE: Brick_Mother_R7_Direct.html
+      FROZEN_TAG: brick-r7-direct-v703-verified
+      RECEIPT_COMMENT_ID: 5569041090
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Build direct uncompressed single HTML from fixed source payload
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/r7-direct"
+          git show "$SOURCE_COMMIT:$SOURCE_FILE" > "$RUNNER_TEMP/r7-direct/wrapper.html"
+          python - <<'PY'
+          from pathlib import Path
+          import base64,gzip,hashlib,json,re,os
+          root=Path(os.environ['RUNNER_TEMP'])/'r7-direct'
+          wrapper=(root/'wrapper.html').read_text(encoding='utf-8')
+          m=re.search(r"const p='([^']+)';\(async",wrapper,re.S)
+          assert m,'payload missing'
+          text=re.sub(r'[^A-Za-z0-9+/=]','',m.group(1)).rstrip('=')
+          text+='='*((4-len(text)%4)%4)
+          packed=base64.b64decode(text,validate=False)
+          assert packed[:2]==b'\x1f\x8b'
+          html=gzip.decompress(packed).decode('utf-8')
+          assert html.lstrip().lower().startswith('<!doctype html>')
+          assert 'Brick Mother R7' in html
+          assert html.count('data-family=')>=7
+          assert "const p='" not in html
+          assert 'Failed to fetch' not in html
+          assert '<script src=' not in html.lower()
+          (root/os.environ['DIRECT_FILE']).write_text(html,encoding='utf-8')
+          info={'version':'R7.0.3-direct','bytes':len(html.encode()),'sha256':hashlib.sha256(html.encode()).hexdigest(),'runtimeFetch':False,'runtimeAtob':False,'runtimeDecompression':False,'sourceCommit':os.environ['SOURCE_COMMIT'],'humanVisualApproved':False,'productionApproved':False}
+          (root/'BUILD.json').write_text(json.dumps(info,ensure_ascii=False,indent=2)+'\n')
+          print(json.dumps(info,ensure_ascii=False))
+          PY
+      - name: Syntax check inline JavaScript
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import os,re,subprocess
+          root=Path(os.environ['RUNNER_TEMP'])/'r7-direct';html=(root/os.environ['DIRECT_FILE']).read_text()
+          count=0
+          for i,m in enumerate(re.finditer(r'<script([^>]*)>(.*?)</script>',html,re.S|re.I)):
+              if 'application/octet-stream' in m.group(1).lower() or 'application/json' in m.group(1).lower():continue
+              p=root/f'check-{i}.js';p.write_text(m.group(2));subprocess.run(['node','--check',str(p)],check=True);p.unlink();count+=1
+          assert count>0
+          PY
+      - name: Install browser
+        run: |
+          python -m pip install playwright==1.55.0
+          python -m playwright install --with-deps chromium
+      - name: Verify direct HTML locally with real browser
+        run: |
+          set -euo pipefail
+          python -m http.server 8765 --bind 127.0.0.1 --directory "$RUNNER_TEMP/r7-direct" > "$RUNNER_TEMP/r7-http.log" 2>&1 &
+          PID=$!
+          trap 'kill "$PID" || true' EXIT
+          xvfb-run -a python - <<'PY'
+          from playwright.sync_api import sync_playwright
+          from pathlib import Path
+          import os,json
+          root=Path(os.environ['RUNNER_TEMP'])/'r7-direct';url='http://127.0.0.1:8765/'+os.environ['DIRECT_FILE'];report={'url':url,'checks':[],'errors':[],'passed':False}
+          with sync_playwright() as p:
+              b=p.chromium.launch(headless=False,args=['--use-angle=swiftshader','--enable-unsafe-swiftshader','--no-sandbox'])
+              g=b.new_page(viewport={'width':1280,'height':820});g.on('pageerror',lambda e:report['errors'].append(str(e)))
+              try:
+                  r=g.goto(url,wait_until='load',timeout=60000);assert r and r.status==200
+                  g.wait_for_function("document.querySelectorAll('[data-family]').length>=7",timeout=30000)
+                  g.wait_for_function("document.querySelector('#error:not([hidden])') || window.BrickR7 || window.BrickR6 || window.BrickR5",timeout=90000)
+                  e=g.locator('#error')
+                  if e.count():assert e.is_hidden(),e.inner_text()
+                  assert g.locator('canvas').first.is_visible()
+                  for f in ['fired','kiln','adobe','dressed','rubble','stone','pebble']:
+                      q=g.locator('[data-family="'+f+'"]');assert q.count()==1 and q.is_visible();q.click();g.wait_for_timeout(450);report['checks'].append(f)
+                  g.screenshot(path=str(root/'local-direct.png'))
+                  g.set_viewport_size({'width':390,'height':844});g.wait_for_timeout(600)
+                  for f in ['fired','kiln','adobe','dressed','rubble','stone','pebble']:assert g.locator('[data-family="'+f+'"]').is_visible()
+                  g.screenshot(path=str(root/'local-mobile.png'))
+                  assert not report['errors'];report['passed']=True
+              finally:b.close()
+          (root/'LOCAL_BROWSER_QA.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n');assert report['passed']
+          PY
+      - name: Save direct file on current branch with race-safe retry
+        run: |
+          set -euo pipefail
+          git config user.name 'Brick Mother direct release'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          for attempt in 1 2 3 4; do
+            git fetch origin "$BRANCH"
+            git reset --hard "origin/$BRANCH"
+            mkdir -p "$DIR"
+            cp "$RUNNER_TEMP/r7-direct/$DIRECT_FILE" "$DIR/$DIRECT_FILE"
+            cp "$RUNNER_TEMP/r7-direct/BUILD.json" "$DIR/R7_DIRECT_BUILD.json"
+            cp "$RUNNER_TEMP/r7-direct/LOCAL_BROWSER_QA.json" "$DIR/R7_DIRECT_BROWSER_QA.json"
+            git add -- "$DIR/$DIRECT_FILE" "$DIR/R7_DIRECT_BUILD.json" "$DIR/R7_DIRECT_BROWSER_QA.json"
+            if git diff --cached --quiet; then
+              echo 'Direct file already current'; break
+            fi
+            git commit -m 'fix(brick): commit verified direct R7 single HTML [skip ci]'
+            if git push origin "HEAD:refs/heads/$BRANCH"; then break; fi
+            test "$attempt" -lt 4
+            sleep 3
+          done
+          git fetch origin "$BRANCH"
+          git reset --hard "origin/$BRANCH"
+          DIRECT_COMMIT=$(git rev-parse HEAD)
+          test -f "$DIR/$DIRECT_FILE"
+          echo "DIRECT_COMMIT=$DIRECT_COMMIT" >> "$GITHUB_ENV"
+          echo "$DIRECT_COMMIT" | tee "$RUNNER_TEMP/r7-direct/DIRECT_COMMIT.txt"
+      - name: Create immutable frozen tag
+        run: |
+          set -euo pipefail
+          existing=$(git ls-remote origin "refs/tags/$FROZEN_TAG" | cut -f1)
+          if [ -n "$existing" ]; then
+            test "$existing" = "$DIRECT_COMMIT"
+          else
+            git tag "$FROZEN_TAG" "$DIRECT_COMMIT"
+            git push origin "refs/tags/$FROZEN_TAG"
+          fi
+      - name: Verify exact commit and frozen-tag raw.githack pages
+        run: |
+          set -euo pipefail
+          COMMIT_URL="https://raw.githack.com/haihao0307/HOUSE/$DIRECT_COMMIT/$DIR/$DIRECT_FILE"
+          TAG_URL="https://raw.githack.com/haihao0307/HOUSE/$FROZEN_TAG/$DIR/$DIRECT_FILE"
+          printf '%s\n' "$COMMIT_URL" > "$RUNNER_TEMP/r7-direct/COMMIT_URL.txt"
+          printf '%s\n' "$TAG_URL" > "$RUNNER_TEMP/r7-direct/TAG_URL.txt"
+          python - <<'PY'
+          import os,time,urllib.request,hashlib,json
+          from pathlib import Path
+          root=Path(os.environ['RUNNER_TEMP'])/'r7-direct';info=json.loads((root/'BUILD.json').read_text());results=[]
+          for name in ['COMMIT_URL.txt','TAG_URL.txt']:
+              url=(root/name).read_text().strip();good=False;last=''
+              for i in range(72):
+                  try:
+                      req=urllib.request.Request(url+'?v='+info['sha256'],headers={'Cache-Control':'no-cache'})
+                      with urllib.request.urlopen(req,timeout=20) as r:data=r.read();status=r.status;ct=r.headers.get('Content-Type','');cd=r.headers.get('Content-Disposition','')
+                      sha=hashlib.sha256(data).hexdigest()
+                      if status==200 and 'text/html' in ct and 'attachment' not in cd and sha==info['sha256']:good=True;break
+                      last=f'{status} {ct} {sha}'
+                  except Exception as e:last=str(e)
+                  print(name,i,last,flush=True);time.sleep(5)
+              assert good,name+' failed '+last
+              results.append({'url':url,'status':status,'contentType':ct,'contentDisposition':cd,'bytes':len(data),'sha256':sha,'passed':True})
+          (root/'RAW_GITHACK_HTTP_QA.json').write_text(json.dumps(results,indent=2)+'\n')
+          PY
+          xvfb-run -a python - <<'PY'
+          from playwright.sync_api import sync_playwright
+          from pathlib import Path
+          import os,json
+          root=Path(os.environ['RUNNER_TEMP'])/'r7-direct';report=[]
+          with sync_playwright() as p:
+              b=p.chromium.launch(headless=False,args=['--use-angle=swiftshader','--enable-unsafe-swiftshader','--no-sandbox'])
+              for name in ['COMMIT_URL.txt','TAG_URL.txt']:
+                  url=(root/name).read_text().strip();errors=[];g=b.new_page(viewport={'width':1280,'height':820});g.on('pageerror',lambda e,errors=errors:errors.append(str(e)))
+                  r=g.goto(url,wait_until='load',timeout=60000);assert r and r.status==200
+                  g.wait_for_function("document.querySelectorAll('[data-family]').length>=7",timeout=30000)
+                  g.wait_for_function("document.querySelector('#error:not([hidden])') || window.BrickR7 || window.BrickR6 || window.BrickR5",timeout=90000)
+                  e=g.locator('#error')
+                  if e.count():assert e.is_hidden(),e.inner_text()
+                  assert g.locator('canvas').first.is_visible()
+                  for f in ['fired','adobe','dressed','pebble']:g.locator('[data-family="'+f+'"]').click();g.wait_for_timeout(400)
+                  g.screenshot(path=str(root/(name.replace('.txt','')+'.png')));assert not errors;report.append({'url':url,'errors':errors,'passed':True});g.close()
+              b.close()
+          (root/'RAW_GITHACK_BROWSER_QA.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n')
+          PY
+      - name: Publish exact fixed link into existing handoff comment
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python - <<'PY'
+          import os,json,urllib.request
+          root=os.path.join(os.environ['RUNNER_TEMP'],'r7-direct')
+          commit=open(os.path.join(root,'DIRECT_COMMIT.txt')).read().strip();commit_url=open(os.path.join(root,'COMMIT_URL.txt')).read().strip();tag_url=open(os.path.join(root,'TAG_URL.txt')).read().strip()
+          body=f'''Brick R7 direct-file repair completed.\n\nFixed commit: `{commit}`\n\nDirect raw.githack link:\n{commit_url}\n\nFrozen verified tag fallback:\n{tag_url}\n\nThe delivered HTML is the full uncompressed workbench. It performs no runtime fetch, no Base64 decoding and no gzip decompression. Both the exact commit URL and frozen tag URL returned `text/html` and passed real Chromium checks. The former launcher links are withdrawn. Visual approval remains false.'''
+          url=f"https://api.github.com/repos/haihao0307/HOUSE/issues/comments/{os.environ['RECEIPT_COMMENT_ID']}"
+          data=json.dumps({'body':body}).encode();req=urllib.request.Request(url,data=data,method='PATCH',headers={'Authorization':'Bearer '+os.environ['GH_TOKEN'],'Accept':'application/vnd.github+json','Content-Type':'application/json','User-Agent':'brick-r7-action'})
+          with urllib.request.urlopen(req,timeout=30) as r:assert r.status==200
+          PY
+      - name: Keep all direct-release evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: brick-r7-direct-frozen-${{ github.run_id }}
+          path: |
+            ${{ runner.temp }}/r7-direct
+            ${{ runner.temp }}/r7-http.log
+          retention-days: 30
