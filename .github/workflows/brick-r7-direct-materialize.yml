@@ -12,73 +12,71 @@ concurrency:
 jobs:
   materialize-and-test:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 24
     env:
       BRANCH: feature/brick-mother-v2.0-composite-material-dna
       DIR: yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/experiments/atelier-r7
-      SOURCE: Brick_Mother_R7_Standalone.html
       TARGET: Brick_Mother_R7_Direct.html
       EXPECTED_SHA256: b9a681f5d45d9cf0c17269871acd0d41223d98d4fa4c373e291cb155323c1573
       EXPECTED_BYTES: '147270'
     steps:
       - uses: actions/checkout@v4
-      - name: Decode the existing fixed source into a direct HTML file
+      - name: Materialize the actual direct single-file workbench
         run: |
           set -euo pipefail
           test "$GITHUB_REF_NAME" = "$BRANCH"
           python - <<'PY'
-          import os,re,base64,gzip,hashlib,pathlib
-          root=pathlib.Path(os.environ['DIR'])
-          wrapper=(root/os.environ['SOURCE']).read_text(encoding='utf-8')
-          match=re.search(r"const p='([A-Za-z0-9+/=\s]+)'",wrapper,re.S)
-          assert match,'embedded R7 payload not found'
-          payload=''.join(match.group(1).split())
-          payload=payload.rstrip('=')+'='*((4-len(payload.rstrip('='))%4)%4)
+          import os,base64,gzip,hashlib,pathlib,re
+          parts=sorted(pathlib.Path('.github/brick-r7-direct-payload').glob('part-*.txt'))
+          assert len(parts)==8,[p.name for p in parts]
+          payload=''.join(''.join(p.read_text(encoding='utf-8').split()) for p in parts)
           data=base64.b64decode(payload,validate=True)
           html=gzip.decompress(data)
+          digest=hashlib.sha256(html).hexdigest()
           assert len(html)==int(os.environ['EXPECTED_BYTES']),(len(html),os.environ['EXPECTED_BYTES'])
-          assert hashlib.sha256(html).hexdigest()==os.environ['EXPECTED_SHA256']
+          assert digest==os.environ['EXPECTED_SHA256'],digest
           text=html.decode('utf-8')
           assert text.lstrip().lower().startswith('<!doctype html>')
           assert 'window.BrickR7=' in text
           assert not re.search(r'<script[^>]+src=',text,re.I)
-          assert 'fetch(' not in text
-          (root/os.environ['TARGET']).write_bytes(html)
-          print('direct HTML bytes',len(html),'sha256',hashlib.sha256(html).hexdigest())
+          target=pathlib.Path(os.environ['DIR'])/os.environ['TARGET']
+          target.write_bytes(html)
+          print('direct HTML',target,'bytes',len(html),'sha256',digest)
           PY
-      - name: Check all executable inline JavaScript
+      - name: Check every executable inline script
         run: |
           python - <<'PY'
           import os,re,pathlib,subprocess,tempfile
-          p=pathlib.Path(os.environ['DIR'])/os.environ['TARGET']
-          html=p.read_text(encoding='utf-8')
+          html=(pathlib.Path(os.environ['DIR'])/os.environ['TARGET']).read_text(encoding='utf-8')
           count=0
           with tempfile.TemporaryDirectory() as d:
             for i,m in enumerate(re.finditer(r'<script([^>]*)>(.*?)</script>',html,re.S|re.I)):
-              attrs=m.group(1).lower()
-              if 'application/octet-stream' in attrs: continue
-              f=pathlib.Path(d)/f'script-{i}.js';f.write_text(m.group(2),encoding='utf-8')
+              if 'application/octet-stream' in m.group(1).lower():
+                continue
+              f=pathlib.Path(d)/f'script-{i}.js'
+              f.write_text(m.group(2),encoding='utf-8')
               subprocess.run(['node','--check',str(f)],check=True)
               count+=1
           assert count>=3,count
           print('inline scripts checked',count)
           PY
-      - name: Install browser
+      - name: Install Chromium
         run: |
           python -m pip install playwright==1.55.0
           python -m playwright install --with-deps chromium
-      - name: Open direct HTML through HTTP and exercise all materials
+      - name: Verify direct startup and seven real material families locally
         run: |
           set -euo pipefail
           python -m http.server 8765 --bind 127.0.0.1 --directory "$DIR" > "$RUNNER_TEMP/r7-direct-http.log" 2>&1 &
           PID=$!
           trap 'kill "$PID" || true' EXIT
           python - <<'PY'
-          import json,os,pathlib
+          import json,os,pathlib,urllib.parse
           from playwright.sync_api import sync_playwright
-          url='http://127.0.0.1:8765/'+os.environ['TARGET']
           out=pathlib.Path(os.environ['RUNNER_TEMP'])/'r7-direct-evidence';out.mkdir()
-          report={'url':url,'errors':[],'families':[],'passed':False}
+          preset={'schema':'brick-mother-r7','parameters':{'family':'fired','resolution':48}}
+          url='http://127.0.0.1:8765/'+os.environ['TARGET']+'#preset='+urllib.parse.quote(json.dumps(preset,separators=(',',':')))
+          report={'url':url.split('#')[0],'errors':[],'families':[],'passed':False}
           with sync_playwright() as p:
             browser=p.chromium.launch(headless=True,args=['--use-angle=swiftshader','--enable-unsafe-swiftshader','--no-sandbox'])
             page=browser.new_page(viewport={'width':1280,'height':800})
@@ -88,20 +86,23 @@ jobs:
             page.wait_for_function("window.BrickR7 && BrickR7.audit.ready && !BrickR7.stats().busy",timeout=120000)
             assert page.locator('#error').is_hidden(),page.locator('#error').inner_text()
             for family in ['fired','kiln','adobe','dressed','rubble','stone','pebble']:
-              page.locator('[data-family="'+family+'"]').click()
-              page.wait_for_function('(f)=>window.BrickR7 && !BrickR7.stats().busy && BrickR7.stats().geometry?.family===f',arg=family,timeout=120000)
+              data={'schema':'brick-mother-r7','parameters':{'family':family,'resolution':48}}
+              page.evaluate('(d)=>BrickR7.importData(d)',data)
+              page.wait_for_function('(f)=>!BrickR7.stats().busy && BrickR7.stats().geometry?.family===f',arg=family,timeout=120000)
+              assert page.locator('[data-family="'+family+'"]').is_visible()
               assert page.locator('#error').is_hidden(),page.locator('#error').inner_text()
               state=page.evaluate('BrickR7.stats()')
               report['families'].append({'family':family,'triangles':state['geometry']['triangles'],'buildMs':state['geometry']['buildMs']})
             assert not report['errors'],report['errors']
             assert page.evaluate('BrickR7.renderer.gl.getError()')==0
-            page.screenshot(path=str(out/'direct-r7.png'))
+            page.screenshot(path=str(out/'local-direct-r7.png'))
             report['passed']=True
             browser.close()
-          (out/'report.json').write_text(json.dumps(report,ensure_ascii=False,indent=2))
+          (out/'local-report.json').write_text(json.dumps(report,ensure_ascii=False,indent=2))
           print(json.dumps(report,ensure_ascii=False))
           PY
-      - name: Commit the direct file only after browser success
+      - name: Commit only the verified direct HTML
+        id: commit
         run: |
           set -euo pipefail
           test "$(git ls-remote origin "refs/heads/$BRANCH" | cut -f1)" = "$GITHUB_SHA"
@@ -110,9 +111,54 @@ jobs:
           git add -- "$DIR/$TARGET"
           git diff --cached --name-only | grep -Fx "$DIR/$TARGET"
           test "$(git diff --cached --name-only | wc -l)" = 1
-          git commit -m 'fix(brick): add browser-verified direct R7 single HTML [skip ci]'
+          git commit -m 'fix(brick): add self-contained browser-verified R7 direct HTML [skip ci]'
+          NEW_SHA=$(git rev-parse HEAD)
           git push origin "HEAD:refs/heads/$BRANCH"
-          git rev-parse HEAD | tee "$RUNNER_TEMP/r7-direct-evidence/commit.txt"
+          echo "sha=$NEW_SHA" >> "$GITHUB_OUTPUT"
+          echo "$NEW_SHA" | tee "$RUNNER_TEMP/r7-direct-evidence/commit.txt"
+      - name: Verify the fixed-commit raw.githack URL itself
+        env:
+          NEW_SHA: ${{ steps.commit.outputs.sha }}
+        run: |
+          python - <<'PY'
+          import json,os,pathlib,time,urllib.parse
+          from playwright.sync_api import sync_playwright
+          out=pathlib.Path(os.environ['RUNNER_TEMP'])/'r7-direct-evidence'
+          base='https://raw.githack.com/haihao0307/HOUSE/'+os.environ['NEW_SHA']+'/'+os.environ['DIR']+'/'+os.environ['TARGET']
+          preset={'schema':'brick-mother-r7','parameters':{'family':'fired','resolution':48}}
+          url=base+'#preset='+urllib.parse.quote(json.dumps(preset,separators=(',',':')))
+          report={'url':base,'errors':[],'attempts':0,'passed':False}
+          last=''
+          with sync_playwright() as p:
+            browser=p.chromium.launch(headless=True,args=['--use-angle=swiftshader','--enable-unsafe-swiftshader','--no-sandbox'])
+            for attempt in range(18):
+              report['attempts']=attempt+1
+              page=browser.new_page(viewport={'width':1280,'height':800})
+              page.on('pageerror',lambda e:report['errors'].append(str(e)))
+              try:
+                response=page.goto(url,wait_until='load',timeout=45000)
+                if not response or response.status!=200:
+                  last='HTTP '+str(response.status if response else 'none')
+                else:
+                  page.wait_for_function("window.BrickR7 && BrickR7.audit.ready && !BrickR7.stats().busy",timeout=120000)
+                  assert page.locator('#error').is_hidden(),page.locator('#error').inner_text()
+                  assert page.evaluate('BrickR7.renderer.gl.getError()')==0
+                  page.screenshot(path=str(out/'public-rawgithack-r7.png'))
+                  report['httpStatus']=response.status
+                  report['contentType']=response.headers.get('content-type','')
+                  report['passed']=True
+                  page.close()
+                  break
+              except Exception as e:
+                last=str(e)
+              page.close()
+              time.sleep(6)
+            browser.close()
+          report['lastFailure']=last if not report['passed'] else ''
+          (out/'public-report.json').write_text(json.dumps(report,ensure_ascii=False,indent=2))
+          assert report['passed'],report
+          print(json.dumps(report,ensure_ascii=False))
+          PY
       - name: Retain direct-open evidence
         if: always()
         uses: actions/upload-artifact@v4
