@@ -6,7 +6,7 @@ on:
       - feature/tiles-mother-v0.1-workbench
     paths:
       - .github/workflows/tiles-mother-r2-progress-materialize.yml
-      - tiles-mother/r2-progress-01/source_payload.xz
+      - tiles-mother/r2-progress-01/transport/**
 
 permissions:
   contents: write
@@ -19,40 +19,33 @@ jobs:
       - name: Checkout exact branch head
         uses: actions/checkout@v4
 
-      - name: Materialize exact standalone HTML
+      - name: Reassemble and verify exact standalone HTML
         shell: bash
         run: |
           set -euo pipefail
-          payload="tiles-mother/r2-progress-01/source_payload.xz"
-          output="tiles-mother/r2-progress-01/START_HERE.html"
-          if [ ! -f "$payload" ]; then
-            echo "Payload already consumed; nothing to do."
-            exit 0
-          fi
+          root="tiles-mother/r2-progress-01"
+          output="$root/START_HERE.html"
+          test -f "$root/transport/part00.b64"
+          cat "$root"/transport/part*.b64 | base64 --decode > "$root/payload.xz"
           python3 - <<'PY'
           from pathlib import Path
           import hashlib, lzma
-          payload = Path('tiles-mother/r2-progress-01/source_payload.xz')
-          output = Path('tiles-mother/r2-progress-01/START_HERE.html')
-          data = lzma.decompress(payload.read_bytes())
+          root = Path('tiles-mother/r2-progress-01')
+          data = lzma.decompress((root / 'payload.xz').read_bytes())
           expected = '2f1e782f0b4fdf7579267e8e7e571cbbe4bb4a706a3327e19cea182995b7b884'
           actual = hashlib.sha256(data).hexdigest()
           assert actual == expected, (actual, expected)
           assert len(data) == 55293, len(data)
-          output.parent.mkdir(parents=True, exist_ok=True)
-          output.write_bytes(data)
+          (root / 'START_HERE.html').write_bytes(data)
           PY
-          rm "$payload"
+          rm -f "$root/payload.xz" "$root/source_payload.xz"
+          rm -rf "$root/transport"
           echo "2f1e782f0b4fdf7579267e8e7e571cbbe4bb4a706a3327e19cea182995b7b884  $output" | sha256sum -c -
 
       - name: Commit immutable progress preview
         shell: bash
         run: |
           set -euo pipefail
-          if git diff --quiet -- tiles-mother/r2-progress-01; then
-            echo "No materialization diff."
-            exit 0
-          fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A tiles-mother/r2-progress-01
