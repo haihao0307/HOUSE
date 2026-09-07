@@ -1,0 +1,22 @@
+{
+  "version": "0.17.0",
+  "archive_format": "tar.xz + base64",
+  "archive_bytes": 35112,
+  "archive_sha256": "3e132297399d47604f8b5baf2a6743b9a067c4489138f407c12513e238a71c2f",
+  "base64_chars": 46816,
+  "chunks": [
+    "part00.txt",
+    "part01.txt",
+    "part02.txt",
+    "part03.txt",
+    "part04.txt",
+    "part05.txt"
+  ],
+  "base_html_path": "architecture-workbench/yunnan-master-village/versions/v0.15.0/Yunnan_Master_and_Village_V0.15.0.html",
+  "base_html_sha256": "bdd566b7c1817a21c9fc136e23b53adaa1c018adaa6e4aa25a43ef292aaedae9",
+  "v0151_sha256": "0978fd5c669f9008a68ee76ae49f7f18a64bb69f914e5ac85b4dafb201f1feb1",
+  "v0160_sha256": "f13d111e9d35b4e7acb324c7718b2ade3ea7c591e0f218013810332dc2e385e3",
+  "final_html_path": "architecture-workbench/yunnan-master-village/releases/v0.17.0/Xiaoli_V0.17.0.html",
+  "final_html_bytes": 1599635,
+  "final_html_sha256": "d0ba6d06d879e0a371c87aba6a3a8882ff99693c6c267378b63610aed6a916f6"
+}
