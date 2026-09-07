@@ -230,6 +230,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A "$RESTART_ROOT" tiles-mother/RESTART_START_HERE.md tiles-mother/CURRENT_RESTART.json
+          git add -f "$RESTART_ROOT/$PACKAGE_NAME.zip"
           if git diff --cached --quiet; then
             echo "Package already committed."
             exit 0
