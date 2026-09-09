@@ -1,0 +1,5 @@
+Brick Mother R7.7 inherit-real-stone closeout
+2026-09-09
+source=46d066aeca01e6bbc779e7def59592b083c64b63
+frozen=rubble,adobe,pebble
+target=dressed,stone,fired,kiln
