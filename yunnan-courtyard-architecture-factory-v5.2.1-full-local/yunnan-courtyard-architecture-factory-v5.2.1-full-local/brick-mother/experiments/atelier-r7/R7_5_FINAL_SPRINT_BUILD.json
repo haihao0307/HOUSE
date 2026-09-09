@@ -1,0 +1,47 @@
+{
+  "version": "R7.5.0-final-sprint-candidate",
+  "sourceCommit": "29c84e1108697c0d1d0698835fa922512a4295f5",
+  "sourceSha256": "12b1f6ab83e039c7d0aa5d06c06d439af3d1ee126443c4c3c683654a8e70c71d",
+  "candidateSha256": "9fc49d4cdc4b1f5293f4a21dbd5edf552137a6bbe1587150d70ac0ab146ee05a",
+  "bytes": 90339,
+  "changes": [
+    "version-r72-to-r75-x3",
+    "pebble-matte-default",
+    "fired-brick-structured-default",
+    "kiln-brick-structured-default",
+    "dressed-hard-stone-default",
+    "layered-stone-structured-default",
+    "target-family-default-lithology",
+    "dressed-hard-seed-planes",
+    "family-specific-edge-radius",
+    "separate-hard-stone-volume-noise",
+    "target-stone-damage-count",
+    "target-stone-angular-damage",
+    "stable-stone-and-pebble-orientation-frames",
+    "dressed-crisp-chisel-response",
+    "pebble-oriented-color-zones",
+    "pebble-dry-matte-optics",
+    "brick-red-gradient-ramp",
+    "brick-warm-zone-restraint",
+    "brick-micro-speckle-reduction",
+    "brick-smoke-zone-darkening",
+    "kiln-reduction-maroon",
+    "kiln-oxidation-not-orange",
+    "kiln-ash-suppression",
+    "brick-roughness-separated-and-matte"
+  ],
+  "inlineScriptsChecked": 3,
+  "frozenFamilies": [
+    "rubble",
+    "adobe"
+  ],
+  "targetFamilies": [
+    "dressed",
+    "stone",
+    "pebble",
+    "fired",
+    "kiln"
+  ],
+  "humanVisualApproved": false,
+  "productionApproved": false
+}
