@@ -1,0 +1,4 @@
+Brick Mother R7.4 planar-facet stone closeout
+2026-09-09
+source=23174124f630bc683e11f8e34a98f965497ee9fe
+scope=stone-planar-facets-only
