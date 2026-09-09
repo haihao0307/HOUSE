@@ -1,0 +1,37 @@
+{
+  "version": "R2-closeout-03",
+  "parent": "R2-closeout-02",
+  "parentCommit": "fd1cbb32de2b0731de3ee09455f4058f896642ec",
+  "scope": [
+    "replace fixed ceramic material rotation with a stable tile/mineral/local continuous orientation field",
+    "reorder ceramic material generation to structure first, structure-derived color second, independent roughness third"
+  ],
+  "preserved": {
+    "PROFILE": true,
+    "SEATS": true,
+    "tilePoint": true,
+    "ceramicGeometry": true,
+    "lossFraction": true,
+    "roofState": true,
+    "candidate02PathUnchanged": true
+  },
+  "checks": {
+    "javascriptSyntax": "pass",
+    "vertexShaderCompileES3": "pass",
+    "fragmentShaderCompileES3": "pass",
+    "depthVertexShaderCompileES3": "pass",
+    "depthFragmentShaderCompileES3": "pass",
+    "oldFixedCeramicRotationRemoved": true,
+    "continuousOrientationFieldPresent": true,
+    "materialOrderStructureColorRoughness": true,
+    "independentRoughnessFieldPresent": true,
+    "standaloneRoundtripExact": true
+  },
+  "defaultContinuousTurnBoundDegrees": 15.9784,
+  "sourceBytes": 60384,
+  "sourceSHA256": "5ad053603b397eebf4f30c63f296cfcc4b9fb825dd22f1c28c8705fa0d17a745",
+  "standaloneSHA256": "503f97c7bd6e68f45fd1e0f4a3f7603538e915bc12b8551afdc223babe705d24",
+  "browserVisualQA": "not_run_in_current_runtime: WebGL2 unavailable in managed Chromium; user visual review remains required",
+  "visualApproved": false,
+  "productionApproved": false
+}
