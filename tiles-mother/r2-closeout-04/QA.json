@@ -1,0 +1,33 @@
+{
+  "version": "R2-closeout-04",
+  "parent": "R2-closeout-03",
+  "parentSourceSHA256": "5ad053603b397eebf4f30c63f296cfcc4b9fb825dd22f1c28c8705fa0d17a745",
+  "scope": [
+    "mobile parameter panel explicit close/re-entry",
+    "remove regular microtexture alignment with bounded domain warp",
+    "per-tile/mineral/local colony hierarchy",
+    "cluster-gated sparse pores and R2 detail"
+  ],
+  "preserved": {
+    "function tilePoint": true,
+    "function lossFraction": true,
+    "function roofState": true,
+    "candidate02PathUnchanged": true,
+    "candidate03PathUnchanged": true
+  },
+  "checks": {
+    "sourceParentIdentity": "pass",
+    "legacyFixedCeramicRotationAbsent": true,
+    "boundedDomainWarpPresent": true,
+    "colonyHierarchyPresent": true,
+    "uniformPepperPitReplaced": true,
+    "mobilePanelCloseInjected": true,
+    "independentRoughnessRetained": true,
+    "structureDerivedColorRetained": true
+  },
+  "sourceBytes": 64522,
+  "sourceSHA256": "7734bdb8bf9913feedd7c69ad0fa95de71ff1f93f866d74685c53549ae6bd311",
+  "wrapperSHA256": "147342ddf188f9f08fd734ad500f46ef6b9b3deab8e4f0a1ded340b93240e1d5",
+  "visualApproved": false,
+  "productionApproved": false
+}
