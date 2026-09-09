@@ -1,0 +1,34 @@
+{
+  "version": "R8.0.0-final-sprint-candidate",
+  "sourceCommit": "29c84e1108697c0d1d0698835fa922512a4295f5",
+  "sourceSha256": "12b1f6ab83e039c7d0aa5d06c06d439af3d1ee126443c4c3c683654a8e70c71d",
+  "candidateSha256": "4769154127d05895bfd1fe30de4c221942dc1013f8f015e955641df6ee80ed29",
+  "bytes": 90220,
+  "guardedReplacements": [
+    "version-r72-to-r8-x3",
+    "correct-dressed-and-layered-stone-default-lithology",
+    "dressed-stone-hard-worked-facets",
+    "layered-stone-object-space-rotated-bedding-frame",
+    "layered-stone-microscope-rotated-multiscale-bands",
+    "brick-substance-style-muted-fired-clay-palette",
+    "brick-reduce-uniform-micro-speckle",
+    "kiln-deeper-reduction-zone",
+    "pebble-microscope-rotated-multiscale-color-field",
+    "pebble-correct-dry-stone-gloss-and-microrelief",
+    "pebble-default-roughness-and-relief"
+  ],
+  "acceptedLocks": [
+    "rubble-default-DNA",
+    "adobe-default-DNA"
+  ],
+  "targets": [
+    "dressed identity",
+    "layered stone",
+    "fired brick",
+    "kiln brick",
+    "pebble"
+  ],
+  "inlineScriptsChecked": 3,
+  "humanVisualApproved": false,
+  "productionApproved": false
+}
