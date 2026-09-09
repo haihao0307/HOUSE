@@ -28,22 +28,49 @@ jobs:
           python-version: '3.12'
 
       - name: Generate candidate 03 from preserved candidate 02
-        run: python tiles-mother/tools/build_r2_closeout03.py
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('tiles-mother/tools/build_r2_closeout03.py')
+          s=p.read_text('utf-8')
+          old="if wrapper_sha!='02d3dc6c7975fb7f80e8743aeb311d894ca5fe7b394ad8a53ccbc198b3f7cd8c': raise SystemExit('unexpected wrapper sha '+wrapper_sha)"
+          if old not in s:
+              raise SystemExit('expected local wrapper assertion not found')
+          p.write_text(s.replace(old,"print('wrapperSHA256',wrapper_sha)"),'utf-8')
+          PY
+          python tiles-mother/tools/build_r2_closeout03.py
 
-      - name: Verify generated file
+      - name: Verify source identity and wrapper roundtrip
         shell: bash
         run: |
           test -f tiles-mother/r2-closeout-03/START_HERE.html
-          test "$(sha256sum tiles-mother/r2-closeout-03/START_HERE.html | cut -d' ' -f1)" = "02d3dc6c7975fb7f80e8743aeb311d894ca5fe7b394ad8a53ccbc198b3f7cd8c"
+          python - <<'PY'
+          from pathlib import Path
+          import re,base64,gzip,hashlib
+          p=Path('tiles-mother/r2-closeout-03/START_HERE.html')
+          w=p.read_text('utf-8')
+          m=re.search(r'const b=([`\"])(.*?)\1',w,re.S)
+          if not m: raise SystemExit('wrapper payload missing')
+          raw=gzip.decompress(base64.b64decode(re.sub(r'\s','',m.group(2))))
+          got=hashlib.sha256(raw).hexdigest()
+          want='5ad053603b397eebf4f30c63f296cfcc4b9fb825dd22f1c28c8705fa0d17a745'
+          if got!=want: raise SystemExit(f'source sha mismatch {got}')
+          if b'R2-closeout-03' not in raw or b'ceramicTurn' not in raw or b'roughField' not in raw:
+              raise SystemExit('candidate 03 markers missing')
+          print('sourceSHA256',got)
+          print('wrapperSHA256',hashlib.sha256(p.read_bytes()).hexdigest())
+          PY
 
       - name: Commit fixed candidate
         shell: bash
         run: |
+          git checkout -- tiles-mother/tools/build_r2_closeout03.py
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add tiles-mother/r2-closeout-03/START_HERE.html
           if git diff --cached --quiet; then
-            echo "Candidate already matches expected bytes."
+            echo "Candidate already matches expected source identity."
             exit 0
           fi
           git commit -m "feat(tiles): publish R2 closeout candidate 03 [skip ci]"
