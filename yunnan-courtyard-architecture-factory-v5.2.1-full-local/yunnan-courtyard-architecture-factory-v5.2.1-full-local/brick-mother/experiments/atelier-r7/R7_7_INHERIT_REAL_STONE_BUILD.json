@@ -1,0 +1,38 @@
+{
+  "version": "R7.7.0-inherit-real-stone",
+  "sourceCommit": "46d066aeca01e6bbc779e7def59592b083c64b63",
+  "sourceSha256": "fb011905cd454d60ac4cd97163f0452e85b1ecc5e61a67bd097b6dcc197ebb63",
+  "candidateSha256": "34010ad9838df93be6fd0aa348d36327bd27bbafa4936d46aab0ec1c907de7fe",
+  "bytes": 92217,
+  "changes": [
+    "version-r76-to-r77-x3",
+    "dressed-block-proportion",
+    "inherit-rubble-proportion-logic",
+    "layered-stone-rubble-derived-facets",
+    "dressed-visible-hewn-facets",
+    "layered-stone-remove-pillow-band",
+    "layered-cleavage-shorter-irregular",
+    "dressed-less-terrazzo-colour",
+    "dressed-readable-chisel",
+    "layered-stone-subtle-material-seams",
+    "brick-seed-derived-kiln-direction",
+    "fired-brick-visible-broad-zones",
+    "kiln-directional-reduction-oxidation",
+    "kiln-deeper-reduction-zone",
+    "kiln-visible-oxidation-zone"
+  ],
+  "inlineScriptsChecked": 3,
+  "frozenFamilies": [
+    "rubble",
+    "adobe",
+    "pebble"
+  ],
+  "targetFamilies": [
+    "dressed",
+    "stone",
+    "fired",
+    "kiln"
+  ],
+  "humanVisualApproved": false,
+  "productionApproved": false
+}
