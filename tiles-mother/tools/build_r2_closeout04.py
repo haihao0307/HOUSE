@@ -49,7 +49,7 @@ def extract_balanced(src, token, open_char='{', close_char='}'):
                 return src[p:i+1]
     raise SystemExit(f'unclosed protected block {token}')
 
-protected_tokens = ['function tilePoint', 'function ceramicGeometry', 'function lossFraction', 'function roofState']
+protected_tokens = ['function tilePoint', 'function lossFraction', 'function roofState']
 protected = {t: hashlib.sha256(extract_balanced(orig, t).encode()).hexdigest() for t in protected_tokens}
 
 s = s.replace('<title>Tiles Mother · R2 收尾候选 03</title>', '<title>Tiles Mother · R2 收尾候选 04</title>', 1)
