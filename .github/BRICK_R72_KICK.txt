@@ -1,0 +1,4 @@
+Brick Mother R7.2 layered-stone closeout
+2026-09-09
+source=a534aa0503bbc80a2ff8b94193cfcada8a1efd3c
+scope=stone-only
