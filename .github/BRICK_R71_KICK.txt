@@ -2,4 +2,4 @@ Brick Mother R7.1 closeout trigger
 2026-09-09
 source=a12ec716f57b8a503099e627159428e5f08d3041
 workflow=.github/workflows/brick-r71-closeout.yml
-revision=2
+revision=3
