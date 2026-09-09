@@ -1,0 +1,68 @@
+name: Tiles Mother R2 Closeout 04
+
+on:
+  push:
+    branches:
+      - feature/tiles-mother-r2-restart-20260907
+    paths:
+      - .github/workflows/tiles-mother-r2-closeout-04.yml
+      - tiles-mother/tools/build_r2_closeout04.py
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          ref: feature/tiles-mother-r2-restart-20260907
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Generate candidate 04 from preserved candidate 03
+        run: python tiles-mother/tools/build_r2_closeout04.py
+
+      - name: Verify source identity, organic hierarchy and UI escape
+        shell: bash
+        run: |
+          test -f tiles-mother/r2-closeout-04/START_HERE.html
+          test -f tiles-mother/r2-closeout-04/QA.json
+          python - <<'PY'
+          from pathlib import Path
+          import re,base64,gzip,hashlib,json
+          root=Path('.')
+          q=json.loads((root/'tiles-mother/r2-closeout-04/QA.json').read_text('utf-8'))
+          w=(root/'tiles-mother/r2-closeout-04/START_HERE.html').read_text('utf-8')
+          m=re.search(r'const b=([`\"])(.*?)\1',w,re.S)
+          if not m: raise SystemExit('wrapper payload missing')
+          raw=gzip.decompress(base64.b64decode(re.sub(r'\s','',m.group(2))))
+          got=hashlib.sha256(raw).hexdigest()
+          if got!=q['sourceSHA256']: raise SystemExit(f'source sha mismatch {got}')
+          text=raw.decode('utf-8')
+          for marker in ['R2-closeout-04','ceramicWarp(','ceramicColony(','tileIdentity(','r2-param-close-04','pitThreshold=mix(.79,.88,tileId)']:
+              if marker not in text: raise SystemExit('missing '+marker)
+          if 'mat2(.932,-.362,.362,.932)' in text: raise SystemExit('legacy fixed ceramic rotation returned')
+          print('sourceSHA256',got)
+          print('wrapperSHA256',hashlib.sha256(Path('tiles-mother/r2-closeout-04/START_HERE.html').read_bytes()).hexdigest())
+          PY
+
+      - name: Commit candidate 04
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tiles-mother/r2-closeout-04/START_HERE.html tiles-mother/r2-closeout-04/QA.json
+          if git diff --cached --quiet; then
+            echo "Candidate 04 already matches generator output."
+            exit 0
+          fi
+          git commit -m "feat(tiles): publish R2 closeout candidate 04 [skip ci]"
+          git push origin HEAD:feature/tiles-mother-r2-restart-20260907
