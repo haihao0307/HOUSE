@@ -68,9 +68,21 @@ jobs:
               "const t=j/segments,curve=bend*Math.sin(t*Math.PI)+waviness*Math.sin(t*Math.PI*2+wavePhase)*Math.sin(t*Math.PI),q=p.map((v,k)=>v+U[k]*(t-.5)*length+V[k]*curve),hit=surface(q,N);if(!hit){valid=false;break;}",
               'adobe-bounded-secondary-waviness-application'
           )
+          once(
+              "function selectFamily(f){if(!catalog[f])return;leaveLegacy(false);stop();",
+              "function selectFamily(f){if(!catalog[f])return;stop();",
+              'remove-stale-leaveLegacy-family-call'
+          )
+          once(
+              "$('pause').onclick=()=>{if(oldView){leaveLegacy();return;}const on=!renderer.state.paused;",
+              "$('pause').onclick=()=>{const on=!renderer.state.paused;",
+              'remove-stale-leaveLegacy-pause-call'
+          )
           for token in ['<!doctype html>','Brick Mother R7','R7.1.0','innerOuterAndRim:true','stoneSlopeX=.10+.11*Math.sin(phase*.73)','waviness*Math.sin(t*Math.PI*2+wavePhase)*Math.sin(t*Math.PI)']:
               if token not in out:
                   raise SystemExit('missing token: ' + token)
+          if 'leaveLegacy(' in out:
+              raise SystemExit('stale leaveLegacy call remains')
           if out.count('data-family=') < 7:
               raise SystemExit('seven families were not retained')
           if '<script src=' in out.lower() or 'Failed to fetch' in out:
