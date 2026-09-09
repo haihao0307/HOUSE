@@ -9,14 +9,13 @@ on:
 
 permissions:
   contents: write
-  issues: write
 
 concurrency:
   group: brick-r71-closeout
   cancel-in-progress: false
 
 jobs:
-  build-verify-publish:
+  closeout:
     runs-on: ubuntu-latest
     timeout-minutes: 35
     env:
@@ -30,126 +29,88 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Build guarded R7.1 candidate from frozen R7 direct source
+      - name: Build guarded R7.1 candidate
         run: |
           set -euo pipefail
           mkdir -p "$RUNNER_TEMP/brick-r71"
           git show "$SOURCE_COMMIT:$R7_DIR/$SOURCE_FILE" > "$RUNNER_TEMP/brick-r71/source.html"
           python - <<'PY'
           from pathlib import Path
-          import hashlib, json, os
-
+          import hashlib, json, os, re, subprocess
           root = Path(os.environ['RUNNER_TEMP']) / 'brick-r71'
           src = (root / 'source.html').read_text(encoding='utf-8')
-          original_sha = hashlib.sha256(src.encode()).hexdigest()
-
-          replacements = []
-          def replace_once(text, old, new, label):
-              count = text.count(old)
-              if count != 1:
-                  raise SystemExit(f'{label}: expected exactly 1 match, got {count}')
-              replacements.append(label)
-              return text.replace(old, new, 1)
-
-          out = src
-          out = out.replace('R7.0.0', 'R7.1.0')
-          if out == src:
-              raise SystemExit('version replacement did not change source')
-
-          out = replace_once(
-              out,
+          out = src.replace('R7.0.0', 'R7.1.0')
+          changes = []
+          def once(old, new, label):
+              global out
+              n = out.count(old)
+              if n != 1:
+                  raise SystemExit(f'{label}: expected 1 match, got {n}')
+              out = out.replace(old, new, 1)
+              changes.append(label)
+          once(
               " const beds=[];let level=-h[1]*1.1;while(level<h[1]*1.2){level+=.09+R()*.22;beds.push([level,(R()-.5)*.16]);}",
               " const beds=[];let level=-h[1]*1.1;while(level<h[1]*1.2){level+=.09+R()*.22;beds.push([level,(R()-.5)*.16]);}\n const stoneSlopeX=.10+.11*Math.sin(phase*.73),stoneSlopeZ=.07+.10*Math.cos(phase*.61);",
               'stone-seed-dominant-bedding-direction'
           )
-          out = replace_once(
-              out,
+          once(
               "if(family==='stone'){const w=py+px*.14+pz*.10;for(const b of beds){if(w>b[0])bedOffset=b[1];else break;}}",
               "if(family==='stone'){const w=py+px*stoneSlopeX+pz*stoneSlopeZ;for(const b of beds){if(w>b[0])bedOffset=b[1];else break;}}",
               'stone-bedding-direction-application'
           )
-          out = replace_once(
-              out,
+          once(
               "thick=typ===1?width:width*(typ===4?.62:.24),bend=(F()-.5)*.055,segments=12,sides=5,start=P.length/3,node=F()>.5?F()*.55+.24:-10,enter=.20+F()*.14,exit=.20+F()*.14;",
               "thick=typ===1?width:width*(typ===4?.62:.24),bend=(F()-.5)*.055,waviness=(F()-.5)*.018,wavePhase=F()*6.283185,segments=12,sides=5,start=P.length/3,node=F()>.5?F()*.55+.24:-10,enter=.20+F()*.14,exit=.20+F()*.14;",
               'adobe-bounded-secondary-waviness-parameters'
           )
-          out = replace_once(
-              out,
+          once(
               "const t=j/segments,q=p.map((v,k)=>v+U[k]*(t-.5)*length+V[k]*bend*Math.sin(t*Math.PI)),hit=surface(q,N);if(!hit){valid=false;break;}",
               "const t=j/segments,curve=bend*Math.sin(t*Math.PI)+waviness*Math.sin(t*Math.PI*2+wavePhase)*Math.sin(t*Math.PI),q=p.map((v,k)=>v+U[k]*(t-.5)*length+V[k]*curve),hit=surface(q,N);if(!hit){valid=false;break;}",
               'adobe-bounded-secondary-waviness-application'
           )
-
-          # The new secondary bend is mathematically zero at t=0 and t=1, so
-          # the existing two-ended host anchoring contract remains untouched.
-          required = [
-              '<!doctype html>', 'Brick Mother R7', 'R7.1.0',
-              "stoneSlopeX=.10+.11*Math.sin(phase*.73)",
-              'waviness*Math.sin(t*Math.PI*2+wavePhase)*Math.sin(t*Math.PI)',
-              'innerOuterAndRim:true'
-          ]
-          for token in required:
+          for token in ['<!doctype html>','Brick Mother R7','R7.1.0','innerOuterAndRim:true','stoneSlopeX=.10+.11*Math.sin(phase*.73)','waviness*Math.sin(t*Math.PI*2+wavePhase)*Math.sin(t*Math.PI)']:
               if token not in out:
-                  raise SystemExit(f'missing required token: {token}')
+                  raise SystemExit('missing token: ' + token)
           if out.count('data-family=') < 7:
-              raise SystemExit('seven material families not retained')
-          if '<script src=' in out.lower():
-              raise SystemExit('external script dependency introduced')
-          if 'Failed to fetch' in out:
-              raise SystemExit('runtime fetch failure marker present')
-
+              raise SystemExit('seven families were not retained')
+          if '<script src=' in out.lower() or 'Failed to fetch' in out:
+              raise SystemExit('external/runtime dependency marker detected')
           candidate = root / os.environ['CANDIDATE_FILE']
           candidate.write_text(out, encoding='utf-8')
-          info = {
-              'version': 'R7.1.0-closeout-candidate',
-              'sourceCommit': os.environ['SOURCE_COMMIT'],
-              'sourceFile': os.environ['SOURCE_FILE'],
-              'sourceSha256': original_sha,
-              'candidateSha256': hashlib.sha256(out.encode()).hexdigest(),
-              'bytes': len(out.encode()),
-              'guardedReplacements': replacements,
-              'retainedFamilies': 7,
-              'humanVisualApproved': False,
-              'productionApproved': False,
-              'scope': [
-                  'stone per-seed dominant bedding direction',
-                  'adobe endpoint-preserving secondary fiber waviness'
-              ]
-          }
-          (root / 'BUILD.json').write_text(json.dumps(info, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
-          print(json.dumps(info, ensure_ascii=False, indent=2))
-          PY
-
-      - name: Syntax-check every executable inline script
-        run: |
-          set -euo pipefail
-          python - <<'PY'
-          from pathlib import Path
-          import os, re, subprocess
-          root = Path(os.environ['RUNNER_TEMP']) / 'brick-r71'
-          html = (root / os.environ['CANDIDATE_FILE']).read_text(encoding='utf-8')
           checked = 0
-          for i, m in enumerate(re.finditer(r'<script([^>]*)>(.*?)</script>', html, re.S | re.I)):
+          for i, m in enumerate(re.finditer(r'<script([^>]*)>(.*?)</script>', out, re.S | re.I)):
               attrs = m.group(1).lower()
               if 'application/json' in attrs or 'application/octet-stream' in attrs:
                   continue
               p = root / f'inline-{i}.js'
               p.write_text(m.group(2), encoding='utf-8')
-              subprocess.run(['node', '--check', str(p)], check=True)
+              subprocess.run(['node','--check',str(p)], check=True)
               p.unlink()
               checked += 1
           if checked < 2:
-              raise SystemExit(f'expected executable scripts, checked={checked}')
-          print('checked scripts:', checked)
+              raise SystemExit(f'only {checked} executable scripts checked')
+          info = {
+              'version':'R7.1.0-closeout-candidate',
+              'sourceCommit':os.environ['SOURCE_COMMIT'],
+              'sourceSha256':hashlib.sha256(src.encode()).hexdigest(),
+              'candidateSha256':hashlib.sha256(out.encode()).hexdigest(),
+              'bytes':len(out.encode()),
+              'guardedReplacements':changes,
+              'inlineScriptsChecked':checked,
+              'retainedFamilies':7,
+              'humanVisualApproved':False,
+              'productionApproved':False
+          }
+          (root/'BUILD.json').write_text(json.dumps(info,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+          print(json.dumps(info,ensure_ascii=False,indent=2))
           PY
 
-      - name: Install Chromium QA runtime
+      - name: Install Chromium
         run: |
           python -m pip install playwright==1.55.0
           python -m playwright install --with-deps chromium
 
-      - name: Verify seven families and mobile layout in real Chromium
+      - name: Local desktop and mobile Chromium QA
         run: |
           set -euo pipefail
           python -m http.server 8765 --bind 127.0.0.1 --directory "$RUNNER_TEMP/brick-r71" > "$RUNNER_TEMP/brick-r71/http.log" 2>&1 &
@@ -158,69 +119,43 @@ jobs:
           xvfb-run -a python - <<'PY'
           from playwright.sync_api import sync_playwright
           from pathlib import Path
-          import json, os, time
-
+          import json, os
           root = Path(os.environ['RUNNER_TEMP']) / 'brick-r71'
           url = 'http://127.0.0.1:8765/' + os.environ['CANDIDATE_FILE']
-          report = {'url': url, 'families': [], 'mobile': {}, 'errors': [], 'passed': False}
-
-          def wait_ready(page):
-              page.wait_for_function("""
-                  () => {
-                    const e=document.querySelector('#error');
-                    const b=document.querySelector('#busy');
-                    const c=document.querySelector('canvas');
-                    return c && (!e || e.hidden) && (!b || b.hidden) && !c.classList.contains('loading');
-                  }
-              """, timeout=120000)
-
+          report = {'url':url,'families':[],'errors':[],'mobile':{},'passed':False}
+          def ready(page):
+              page.wait_for_function("""() => { const e=document.querySelector('#error'); const b=document.querySelector('#busy'); const c=document.querySelector('canvas'); return c && (!e || e.hidden) && (!b || b.hidden) && !c.classList.contains('loading'); }""", timeout=120000)
           with sync_playwright() as p:
-              browser = p.chromium.launch(headless=False, args=['--use-angle=swiftshader','--enable-unsafe-swiftshader','--no-sandbox'])
-              page = browser.new_page(viewport={'width': 1280, 'height': 820})
-              page.on('pageerror', lambda e: report['errors'].append(str(e)))
-              response = page.goto(url, wait_until='load', timeout=60000)
+              browser = p.chromium.launch(headless=False,args=['--use-angle=swiftshader','--enable-unsafe-swiftshader','--no-sandbox'])
+              page = browser.new_page(viewport={'width':1280,'height':820})
+              page.on('pageerror',lambda e:report['errors'].append(str(e)))
+              response = page.goto(url,wait_until='load',timeout=60000)
               assert response and response.status == 200
-              page.wait_for_function("document.querySelectorAll('[data-family]').length===7", timeout=30000)
-              wait_ready(page)
-              assert page.locator('canvas').first.is_visible()
-
+              page.wait_for_function("document.querySelectorAll('[data-family]').length===7",timeout=30000)
+              ready(page)
               for family in ['fired','kiln','adobe','dressed','rubble','stone','pebble']:
-                  button = page.locator(f'[data-family="{family}"]')
-                  assert button.count() == 1 and button.is_visible()
-                  button.click()
-                  wait_ready(page)
-                  page.wait_for_timeout(700)
-                  status = page.locator('#status').inner_text()
-                  if page.locator('#error').count() and not page.locator('#error').is_hidden():
-                      raise AssertionError(page.locator('#error').inner_text())
-                  shot = root / f'desktop-{family}.png'
-                  page.screenshot(path=str(shot), full_page=True)
-                  report['families'].append({'family': family, 'status': status, 'screenshot': shot.name})
-
-              page.set_viewport_size({'width': 390, 'height': 844})
-              page.wait_for_timeout(700)
+                  q = page.locator(f'[data-family="{family}"]')
+                  assert q.count()==1 and q.is_visible()
+                  q.click(); ready(page); page.wait_for_timeout(650)
+                  e = page.locator('#error')
+                  if e.count() and not e.is_hidden():
+                      raise AssertionError(e.inner_text())
+                  page.screenshot(path=str(root/f'desktop-{family}.png'),full_page=True)
+                  report['families'].append({'family':family,'status':page.locator('#status').inner_text()})
+              page.set_viewport_size({'width':390,'height':844}); page.wait_for_timeout(650)
               for family in ['adobe','stone','fired']:
-                  button = page.locator(f'[data-family="{family}"]')
-                  assert button.is_visible()
-                  button.click()
-                  wait_ready(page)
-                  page.wait_for_timeout(450)
-              page.screenshot(path=str(root / 'mobile-390x844.png'), full_page=True)
-              report['mobile'] = {
-                  'viewport': [390, 844],
-                  'sevenButtonsVisible': all(page.locator(f'[data-family="{f}"]').is_visible() for f in ['fired','kiln','adobe','dressed','rubble','stone','pebble']),
-                  'canvasVisible': page.locator('canvas').first.is_visible()
-              }
-              assert report['mobile']['sevenButtonsVisible'] and report['mobile']['canvasVisible']
+                  q=page.locator(f'[data-family="{family}"]'); assert q.is_visible(); q.click(); ready(page); page.wait_for_timeout(350)
+              page.screenshot(path=str(root/'mobile-390x844.png'),full_page=True)
+              report['mobile']={'viewport':[390,844],'canvasVisible':page.locator('canvas').first.is_visible(),'sevenButtonsVisible':all(page.locator(f'[data-family="{f}"]').is_visible() for f in ['fired','kiln','adobe','dressed','rubble','stone','pebble'])}
+              assert report['mobile']['canvasVisible'] and report['mobile']['sevenButtonsVisible']
               assert not report['errors'], report['errors']
-              report['passed'] = True
+              report['passed']=True
               browser.close()
-
-          (root / 'LOCAL_BROWSER_QA.json').write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+          (root/'LOCAL_BROWSER_QA.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
           assert report['passed']
           PY
 
-      - name: Commit candidate without overwriting R7
+      - name: Commit candidate as a new file
         run: |
           set -euo pipefail
           git config user.name 'Brick Mother R7.1 closeout'
@@ -231,9 +166,7 @@ jobs:
           cp "$RUNNER_TEMP/brick-r71/BUILD.json" "$R7_DIR/R7_1_CLOSEOUT_BUILD.json"
           cp "$RUNNER_TEMP/brick-r71/LOCAL_BROWSER_QA.json" "$R7_DIR/R7_1_LOCAL_BROWSER_QA.json"
           git add -- "$R7_DIR/$CANDIDATE_FILE" "$R7_DIR/R7_1_CLOSEOUT_BUILD.json" "$R7_DIR/R7_1_LOCAL_BROWSER_QA.json"
-          if git diff --cached --quiet; then
-            echo 'candidate already current'
-          else
+          if ! git diff --cached --quiet; then
             git commit -m 'feat(brick): add R7.1 guarded closeout candidate [skip ci]'
             git push origin "HEAD:refs/heads/$BRANCH"
           fi
@@ -244,7 +177,7 @@ jobs:
           echo "CANDIDATE_COMMIT=$CANDIDATE_COMMIT" >> "$GITHUB_ENV"
           printf '%s\n' "$CANDIDATE_COMMIT" > "$RUNNER_TEMP/brick-r71/CANDIDATE_COMMIT.txt"
 
-      - name: Verify immutable raw.githack HTTP and Chromium
+      - name: Verify fixed raw.githack delivery
         run: |
           set -euo pipefail
           PUBLIC_URL="https://raw.githack.com/haihao0307/HOUSE/$CANDIDATE_COMMIT/$R7_DIR/$CANDIDATE_FILE"
@@ -252,84 +185,59 @@ jobs:
           python - <<'PY'
           from pathlib import Path
           import hashlib, json, os, time, urllib.request
-          root = Path(os.environ['RUNNER_TEMP']) / 'brick-r71'
-          info = json.loads((root / 'BUILD.json').read_text(encoding='utf-8'))
-          url = (root / 'PUBLIC_URL.txt').read_text().strip()
-          last = ''
+          root=Path(os.environ['RUNNER_TEMP'])/'brick-r71'
+          info=json.loads((root/'BUILD.json').read_text())
+          url=(root/'PUBLIC_URL.txt').read_text().strip()
+          last=''
           for attempt in range(72):
               try:
-                  req = urllib.request.Request(url + '?sha=' + info['candidateSha256'], headers={'Cache-Control':'no-cache','User-Agent':'BrickMotherR71QA'})
-                  with urllib.request.urlopen(req, timeout=20) as r:
-                      data = r.read(); status = r.status; ct = r.headers.get('Content-Type',''); cd = r.headers.get('Content-Disposition','')
-                  sha = hashlib.sha256(data).hexdigest()
-                  if status == 200 and 'text/html' in ct and 'attachment' not in cd.lower() and sha == info['candidateSha256']:
-                      result = {'url':url,'status':status,'contentType':ct,'contentDisposition':cd,'bytes':len(data),'sha256':sha,'passed':True}
-                      (root/'PUBLIC_HTTP_QA.json').write_text(json.dumps(result,indent=2)+'\n')
+                  req=urllib.request.Request(url+'?v='+info['candidateSha256'],headers={'Cache-Control':'no-cache','User-Agent':'BrickMotherR71QA'})
+                  with urllib.request.urlopen(req,timeout=20) as r:
+                      data=r.read(); status=r.status; ct=r.headers.get('Content-Type',''); cd=r.headers.get('Content-Disposition','')
+                  sha=hashlib.sha256(data).hexdigest()
+                  if status==200 and 'text/html' in ct and 'attachment' not in cd.lower() and sha==info['candidateSha256']:
+                      (root/'PUBLIC_HTTP_QA.json').write_text(json.dumps({'url':url,'status':status,'contentType':ct,'contentDisposition':cd,'bytes':len(data),'sha256':sha,'passed':True},indent=2)+'\n')
                       break
-                  last = f'status={status} ct={ct} sha={sha}'
+                  last=f'{status} {ct} {sha}'
               except Exception as e:
-                  last = repr(e)
-              print('public retry', attempt, last, flush=True)
-              time.sleep(5)
+                  last=repr(e)
+              print('public retry',attempt,last,flush=True); time.sleep(5)
           else:
-              raise SystemExit('raw.githack HTTP verification failed: ' + last)
+              raise SystemExit('public HTTP verification failed: '+last)
           PY
           xvfb-run -a python - <<'PY'
           from playwright.sync_api import sync_playwright
           from pathlib import Path
           import json, os
-          root = Path(os.environ['RUNNER_TEMP']) / 'brick-r71'
-          url = (root / 'PUBLIC_URL.txt').read_text().strip()
-          report = {'url':url,'errors':[],'families':[],'passed':False}
+          root=Path(os.environ['RUNNER_TEMP'])/'brick-r71'
+          url=(root/'PUBLIC_URL.txt').read_text().strip()
+          report={'url':url,'errors':[],'families':[],'passed':False}
           with sync_playwright() as p:
-              b = p.chromium.launch(headless=False,args=['--use-angle=swiftshader','--enable-unsafe-swiftshader','--no-sandbox'])
-              g = b.new_page(viewport={'width':1280,'height':820})
-              g.on('pageerror',lambda e:report['errors'].append(str(e)))
-              r = g.goto(url,wait_until='load',timeout=60000); assert r and r.status==200
+              b=p.chromium.launch(headless=False,args=['--use-angle=swiftshader','--enable-unsafe-swiftshader','--no-sandbox'])
+              g=b.new_page(viewport={'width':1280,'height':820}); g.on('pageerror',lambda e:report['errors'].append(str(e)))
+              r=g.goto(url,wait_until='load',timeout=60000); assert r and r.status==200
               g.wait_for_function("document.querySelectorAll('[data-family]').length===7",timeout=30000)
               for family in ['fired','adobe','stone','pebble']:
                   g.locator(f'[data-family="{family}"]').click()
                   g.wait_for_function("!document.querySelector('#busy') || document.querySelector('#busy').hidden",timeout=120000)
-                  g.wait_for_timeout(450)
-                  report['families'].append(family)
+                  g.wait_for_timeout(400); report['families'].append(family)
               e=g.locator('#error')
               if e.count(): assert e.is_hidden(),e.inner_text()
               assert g.locator('canvas').first.is_visible()
               assert not report['errors'],report['errors']
               g.screenshot(path=str(root/'public-desktop.png'),full_page=True)
-              g.set_viewport_size({'width':390,'height':844});g.wait_for_timeout(700)
+              g.set_viewport_size({'width':390,'height':844}); g.wait_for_timeout(600)
               assert g.locator('canvas').first.is_visible()
               g.screenshot(path=str(root/'public-mobile.png'),full_page=True)
-              report['passed']=True;b.close()
+              report['passed']=True; b.close()
           (root/'PUBLIC_BROWSER_QA.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n')
           assert report['passed']
           PY
 
-      - name: Publish verified candidate receipt to PR
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          set -euo pipefail
-          URL=$(cat "$RUNNER_TEMP/brick-r71/PUBLIC_URL.txt")
-          SHA=$(cat "$RUNNER_TEMP/brick-r71/CANDIDATE_COMMIT.txt")
-          gh api -X POST "repos/${GITHUB_REPOSITORY}/issues/15/comments" -f body="## Brick Mother R7.1 收尾候选（自动验证完成）
-
-固定提交：\`$SHA\`
-
-固定公网单文件：
-$URL
-
-本候选只做两项受控改动：层状石按 seed 派生稳定主导层理方向；土坯纤维加入端点为零的二级微弯曲，保留既有双端埋入检查。R5/R6/R7 历史文件均未覆盖。
-
-已通过：内联 JS 语法检查、七类桌面 Chromium 切换、390×844 移动端检查、固定提交 raw.githack HTTP 哈希核验、固定公网 Chromium 复测。截图和 QA JSON 保留在 run artifact。
-
-自动验证不等于人工视觉批准：\`humanVisualApproved=false\`、\`productionApproved=false\`。PR #15 保持 open / Draft / 未合并。"
-
-      - name: Upload complete closeout evidence
+      - name: Upload closeout evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: brick-r71-closeout-${{ github.run_id }}
-          path: |
-            ${{ runner.temp }}/brick-r71
+          path: ${{ runner.temp }}/brick-r71
           retention-days: 30
