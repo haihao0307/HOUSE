@@ -1,0 +1,184 @@
+name: Brick Mother R7.7 Inherit Real Stone Closeout
+
+on:
+  push:
+    branches:
+      - feature/brick-mother-v2.0-composite-material-dna
+    paths:
+      - .github/BRICK_R77_KICK.txt
+
+permissions:
+  contents: write
+
+concurrency:
+  group: brick-r77-inherit-real-stone
+  cancel-in-progress: false
+
+jobs:
+  build-verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      BRANCH: feature/brick-mother-v2.0-composite-material-dna
+      SOURCE_COMMIT: 46d066aeca01e6bbc779e7def59592b083c64b63
+      R7_DIR: yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/experiments/atelier-r7
+      SOURCE_FILE: Brick_Mother_R7_6_FinalMaterialIdentity.html
+      CANDIDATE_FILE: Brick_Mother_R7_7_InheritRealStone.html
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Build guarded R7.7 candidate
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/brick-r77"
+          git show "$SOURCE_COMMIT:$R7_DIR/$SOURCE_FILE" > "$RUNNER_TEMP/brick-r77/source.html"
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib,json,os,re,subprocess
+          root=Path(os.environ['RUNNER_TEMP'])/'brick-r77';src=(root/'source.html').read_text(encoding='utf-8');out=src;changes=[]
+          def once(old,new,label):
+              global out
+              n=out.count(old)
+              if n!=1: raise SystemExit(f'{label}: expected 1 match, got {n}')
+              out=out.replace(old,new,1);changes.append(label)
+          vc=out.count('R7.6.0')
+          if vc<2: raise SystemExit(f'unexpected R7.6.0 count {vc}')
+          out=out.replace('R7.6.0','R7.7.0');changes.append(f'version-r76-to-r77-x{vc}')
+
+          # Dressed masonry should be a stone block, not a brick-shaped slab.
+          once("dressed:{shape:'long',damage:.10,relief:.16,grain:.64,color:.98,wet:0,rough:.94}","dressed:{shape:'sample',damage:.11,relief:.16,grain:.58,color:.96,wet:0,rough:.95}",'dressed-block-proportion')
+
+          # Layered stone inherits the successful rubble idea: irregular faceted rock first,
+          # but its facet normals are constrained by one bedding family instead of fully random.
+          once(
+            " if(family==='rubble'){h[0]*=.90+R()*.13;h[1]*=.92+R()*.19;h[2]*=1.32+R()*.28;}if(family==='stone'){h[2]*=1.1;}",
+            " if(family==='rubble'){h[0]*=.90+R()*.13;h[1]*=.92+R()*.19;h[2]*=1.32+R()*.28;}\n if(family==='stone'){h[0]*=.90+R()*.14;h[1]*=.86+R()*.17;h[2]*=1.18+R()*.22;}\n if(family==='dressed'){h[0]*=.94+R()*.07;h[1]*=.93+R()*.08;h[2]*=1.04+R()*.08;}",
+            'inherit-rubble-proportion-logic')
+          once(
+            " if(family==='stone')for(let j=0;j<5;j++){let n=norm([R()*2-1,R()*1.25-.625,(R()*2-1)*.24]);planes.push([...n,(Math.abs(n[0])*h[0]+Math.abs(n[1])*h[1]+Math.abs(n[2])*h[2])*(.80+R()*.10)]);}",
+            " if(family==='stone')for(let j=0;j<9;j++){let n=norm([R()*2-1,(R()*2-1)*.58,(R()*2-1)*.72]);planes.push([...n,(Math.abs(n[0])*h[0]+Math.abs(n[1])*h[1]+Math.abs(n[2])*h[2])*(.64+R()*.24)]);}",
+            'layered-stone-rubble-derived-facets')
+          once(
+            " if(family==='dressed')for(let j=0;j<9;j++){const axis=j%3,sign=(j&1)?1:-1,n=[0,0,0];n[axis]=sign;n[(axis+1)%3]=(R()-.5)*.19;n[(axis+2)%3]=(R()-.5)*.14;const nn=norm(n);planes.push([...nn,(Math.abs(nn[0])*h[0]+Math.abs(nn[1])*h[1]+Math.abs(nn[2])*h[2])*(.895+R()*.065)]);}",
+            " if(family==='dressed')for(let j=0;j<11;j++){const axis=j%3,sign=(j&1)?1:-1,n=[0,0,0];n[axis]=sign;n[(axis+1)%3]=(R()-.5)*.24;n[(axis+2)%3]=(R()-.5)*.18;const nn=norm(n);planes.push([...nn,(Math.abs(nn[0])*h[0]+Math.abs(nn[1])*h[1]+Math.abs(nn[2])*h[2])*(.84+R()*.105)]);}",
+            'dressed-visible-hewn-facets')
+
+          # No broad sinusoidal pillow on layered stone. Cleavage geometry owns the macro identity.
+          once(
+            "  const stoneSkin=family==='stone'?stoneBand*(.008+.012*c.relief):0;",
+            "  const stoneSkin=family==='stone'?stoneBand*(.0012+.0022*c.relief):0;",
+            'layered-stone-remove-pillow-band')
+
+          # R7.6 proved cross-face structure; now use shorter irregular segments so it does not read as carved grooves.
+          once(
+            "  const yy=(k/6-.5)*h[1]*1.55+(D()-.5)*.11,xx=(D()-.5)*.48*h[0],zz=(D()-.5)*.34*h[2];\n  const ru=.34+D()*.42,rv=.010+D()*.012,rd=(.026+D()*.040)*(.50+.50*c.damage),ang=stoneBeddingAngle+(D()-.5)*.08;",
+            "  const yy=(k/6-.5)*h[1]*1.48+(D()-.5)*.14,xx=(D()-.5)*.62*h[0],zz=(D()-.5)*.40*h[2];\n  const ru=.20+D()*.32,rv=.009+D()*.010,rd=(.020+D()*.032)*(.50+.50*c.damage),ang=stoneBeddingAngle+(D()-.5)*.11;",
+            'layered-cleavage-shorter-irregular')
+
+          # Dressed granite: reduce confetti while making the chisel/face hierarchy readable.
+          once(
+            "   base=mix(vec3(grey)*vec3(1.025,1.0,.965),base,.48);base*=.95+.10*(macroTool-.5);",
+            "   base=mix(vec3(grey)*vec3(1.025,1.0,.965),base,.32);base*=.94+.12*(macroTool-.5);",
+            'dressed-less-terrazzo-colour')
+          once(
+            "   detail-=gouge*.0072;base*=1.-gouge*.050;rough=clamp(rough+.070*gouge,.72,1.);",
+            "   detail-=gouge*.0090;base*=1.-gouge*.070;rough=clamp(rough+.085*gouge,.76,1.);",
+            'dressed-readable-chisel')
+
+          # Layer material becomes broad slab-to-slab mineral tone; dark seam is only a very thin helper.
+          once(
+            "   float layerWave=.5+.5*sin(layerPhase);\n   float layerGate=noise(vec3(rq.x*1.15,rq.y*3.4,rq.z*1.08)+vec3(7.3,-2.9,11.4));\n   float seam=smoothstep(.88,.975,layerWave)*smoothstep(.38,.66,layerGate);\n   float slab=noise(vec3(rq.x*.72,rq.y*5.2,rq.z*.78)+vec3(-9.1,4.6,2.8));\n   vec3 slabTone=mix(vec3(.285,.260,.215),vec3(.535,.455,.335),clamp(.32+.78*slab,0.,1.));\n   base=mix(base,slabTone,.46);base=mix(base,vec3(.145,.130,.112),seam*.42);\n   rough=clamp(mix(rough,.94,.38)+seam*.035,.70,.998);detail-=seam*.0024;",
+            "   float layerWave=.5+.5*sin(layerPhase);\n   float layerGate=noise(vec3(rq.x*1.15,rq.y*3.4,rq.z*1.08)+vec3(7.3,-2.9,11.4));\n   float seam=smoothstep(.965,.995,layerWave)*smoothstep(.52,.74,layerGate);\n   float slab=noise(vec3(rq.x*.72,rq.y*5.2,rq.z*.78)+vec3(-9.1,4.6,2.8));\n   vec3 slabTone=mix(vec3(.305,.286,.252),vec3(.505,.438,.340),clamp(.28+.82*slab,0.,1.));\n   base=mix(base,slabTone,.54);base=mix(base,vec3(.205,.186,.158),seam*.14);\n   rough=clamp(mix(rough,.95,.42)+seam*.018,.76,.998);detail-=seam*.0009;",
+            'layered-stone-subtle-material-seams')
+
+          # Brick kiln placement: a seed-derived firing direction guarantees broad coherent zones,
+          # while low-frequency noise warps the transition so it is never a straight half-and-half mask.
+          once(
+            "  float fireLens=noise(q*.78+vec3(13.8,-5.1,2.4)),oxideLens=noise(q*2.05+vec3(-7.4,11.9,5.3));",
+            "  float fireLens=noise(q*.78+vec3(13.8,-5.1,2.4)),oxideLens=noise(q*2.05+vec3(-7.4,11.9,5.3));\n  float fa=uPhase*.37,fb=uPhase*.21;vec3 fireDir=normalize(vec3(cos(fa),.26*sin(fb),sin(fa)));\n  float fireCoord=dot(q,fireDir)*.58+(noise(q*1.12+vec3(5.8,-7.1,12.3))-.5)*.42;\n  float flashWarm=smoothstep(-.10,.48,fireCoord),flashDark=smoothstep(.02,.54,-fireCoord);",
+            'brick-seed-derived-kiln-direction')
+          once(
+            "  base=mix(base,redWarm,broadWarm*.16);base=mix(base,redDark,broadDark*.15);",
+            "  base=mix(base,redWarm,broadWarm*.13+flashWarm*.07);base=mix(base,redDark,broadDark*.12+flashDark*.08);",
+            'fired-brick-visible-broad-zones')
+          once(
+            "   float reduction=smoothstep(.47,.66,.48*kilnFlow+.27*fireLens+.16*noise(q*1.65+vec3(6.4,-8.1,2.7))+.09*mesoRed)*uKiln;\n   float oxidised=smoothstep(.50,.68,.46*oxideLens+.34*mesoRed+.20*noise(q*2.85+vec3(-9.2,3.7,5.8)))*uKiln*(1.-reduction);",
+            "   float reduction=max(smoothstep(.47,.66,.48*kilnFlow+.27*fireLens+.16*noise(q*1.65+vec3(6.4,-8.1,2.7))+.09*mesoRed),flashDark*.78)*uKiln;\n   float oxidised=max(smoothstep(.50,.68,.46*oxideLens+.34*mesoRed+.20*noise(q*2.85+vec3(-9.2,3.7,5.8))),flashWarm*.60)*uKiln*(1.-reduction);",
+            'kiln-directional-reduction-oxidation')
+          once("   base=mix(base,vec3(.145,.027,.025),reduction*.68);","   base=mix(base,vec3(.125,.025,.024),reduction*.72);",'kiln-deeper-reduction-zone')
+          once("   base=mix(base,vec3(.610,.176,.061),oxidised*.42);","   base=mix(base,vec3(.630,.190,.068),oxidised*.46);",'kiln-visible-oxidation-zone')
+
+          checks=["if(family==='stone'){h[0]*=.90+R()*.14","if(family==='stone')for(let j=0;j<9;j++","stoneBand*(.0012+.0022*c.relief)","base,slabTone,.54","vec3 fireDir=normalize","flashDark*.78","dressed:{shape:'sample'"]
+          for token in checks:
+              if token not in out: raise SystemExit('missing '+token)
+          if out.count('data-family=')<7 or 'leaveLegacy(' in out or '<script src=' in out.lower(): raise SystemExit('runtime/family regression')
+          candidate=root/os.environ['CANDIDATE_FILE'];candidate.write_text(out,encoding='utf-8')
+          checked=0
+          for i,m in enumerate(re.finditer(r'<script([^>]*)>(.*?)</script>',out,re.S|re.I)):
+              attrs=m.group(1).lower()
+              if 'application/json' in attrs or 'application/octet-stream' in attrs: continue
+              p=root/f'inline-{i}.js';p.write_text(m.group(2),encoding='utf-8');subprocess.run(['node','--check',str(p)],check=True);p.unlink();checked+=1
+          info={'version':'R7.7.0-inherit-real-stone','sourceCommit':os.environ['SOURCE_COMMIT'],'sourceSha256':hashlib.sha256(src.encode()).hexdigest(),'candidateSha256':hashlib.sha256(out.encode()).hexdigest(),'bytes':len(out.encode()),'changes':changes,'inlineScriptsChecked':checked,'frozenFamilies':['rubble','adobe','pebble'],'targetFamilies':['dressed','stone','fired','kiln'],'humanVisualApproved':False,'productionApproved':False}
+          (root/'BUILD.json').write_text(json.dumps(info,ensure_ascii=False,indent=2)+'\n',encoding='utf-8');print(json.dumps(info,ensure_ascii=False,indent=2))
+          PY
+
+      - name: Install Chromium and comparator
+        run: |
+          python -m pip install playwright==1.55.0 pillow==11.3.0
+          python -m playwright install --with-deps chromium
+
+      - name: Frozen regression and full visual QA
+        run: |
+          set -euo pipefail
+          python -m http.server 8765 --bind 127.0.0.1 --directory "$RUNNER_TEMP/brick-r77" > "$RUNNER_TEMP/brick-r77/http.log" 2>&1 &
+          PID=$!;trap 'kill "$PID" || true' EXIT
+          xvfb-run -a python - <<'PY'
+          from playwright.sync_api import sync_playwright
+          from pathlib import Path
+          from PIL import Image,ImageChops,ImageStat
+          import json,os
+          root=Path(os.environ['RUNNER_TEMP'])/'brick-r77';report={'frozen':{},'candidate':{'families':[],'errors':[],'consoleErrors':[],'mobile':{}},'passed':False}
+          def ready(page): page.wait_for_function("""() => {const e=document.querySelector('#error'),b=document.querySelector('#busy'),c=document.querySelector('canvas');return c&&(!e||e.hidden)&&(!b||b.hidden)&&!c.classList.contains('loading');}""",timeout=120000)
+          def cap(browser,file,fam,path):
+              page=browser.new_page(viewport={'width':1280,'height':820});errs=[];page.on('pageerror',lambda e:errs.append(str(e)));r=page.goto('http://127.0.0.1:8765/'+file,wait_until='load',timeout=60000);assert r and r.status==200;page.wait_for_function("document.querySelectorAll('[data-family]').length===7",timeout=30000);ready(page);page.locator(f'[data-family="{fam}"]').click();ready(page);page.wait_for_timeout(650);page.evaluate("BrickR7.face('front')");page.wait_for_timeout(220);page.locator('#view').screenshot(path=str(path));stats=page.evaluate('BrickR7.stats()');assert not errs;page.close();return stats
+          def mae(a,b):
+              ia,ib=Image.open(a).convert('RGB'),Image.open(b).convert('RGB');assert ia.size==ib.size;return sum(ImageStat.Stat(ImageChops.difference(ia,ib)).mean)/3
+          with sync_playwright() as p:
+              browser=p.chromium.launch(headless=False,args=['--use-angle=swiftshader','--enable-unsafe-swiftshader','--no-sandbox'])
+              for fam in ['rubble','adobe','pebble']:
+                  a=root/f'source-{fam}.png';b=root/f'candidate-{fam}.png';sa=cap(browser,'source.html',fam,a);sb=cap(browser,os.environ['CANDIDATE_FILE'],fam,b);ga=sa.get('geometry') or {};gb=sb.get('geometry') or {};same={}
+                  for k in ['triangles','bodyVertices','fibers','riceHusks']:
+                      if ga.get(k) is not None or gb.get(k) is not None:same[k]=[ga.get(k),gb.get(k)];assert ga.get(k)==gb.get(k),(fam,k)
+                  d=mae(a,b);assert d<=.55,(fam,d);report['frozen'][fam]={'geometry':same,'pixelMAE':d,'passed':True}
+              page=browser.new_page(viewport={'width':1280,'height':820});page.on('pageerror',lambda e:report['candidate']['errors'].append(str(e)));page.on('console',lambda m:report['candidate']['consoleErrors'].append(m.text) if m.type=='error' else None);r=page.goto('http://127.0.0.1:8765/'+os.environ['CANDIDATE_FILE'],wait_until='load',timeout=60000);assert r and r.status==200;page.wait_for_function("document.querySelectorAll('[data-family]').length===7",timeout=30000);ready(page)
+              for fam in ['fired','kiln','adobe','dressed','rubble','stone','pebble']:
+                  q=page.locator(f'[data-family="{fam}"]');assert q.is_visible();q.click();ready(page);page.wait_for_timeout(650);e=page.locator('#error');assert not e.count() or e.is_hidden(),e.inner_text() if e.count() else '';page.screenshot(path=str(root/f'desktop-{fam}.png'),full_page=True)
+                  if fam in ['fired','kiln','dressed','stone']:
+                      for face in ['front','left','top']:
+                          page.evaluate(f"BrickR7.face('{face}')");page.wait_for_timeout(220);page.locator('#view').screenshot(path=str(root/f'{fam}-{face}.png'))
+                      page.evaluate('BrickR7.fit()');page.wait_for_timeout(180)
+                  report['candidate']['families'].append({'family':fam,'status':page.locator('#status').inner_text(),'stats':page.evaluate('BrickR7.stats().geometry')})
+              page.set_viewport_size({'width':390,'height':844});page.wait_for_timeout(600)
+              for fam in ['fired','kiln','dressed','stone','pebble','adobe','rubble']:
+                  q=page.locator(f'[data-family="{fam}"]');assert q.is_visible();q.click();ready(page);page.wait_for_timeout(260)
+              page.screenshot(path=str(root/'mobile-390x844.png'),full_page=True);report['candidate']['mobile']={'viewport':[390,844],'canvasVisible':page.locator('canvas').first.is_visible(),'sevenButtonsVisible':all(page.locator(f'[data-family="{f}"]').is_visible() for f in ['fired','kiln','adobe','dressed','rubble','stone','pebble'])};assert report['candidate']['mobile']['canvasVisible'] and report['candidate']['mobile']['sevenButtonsVisible'];assert not report['candidate']['errors'];report['passed']=True;browser.close()
+          (root/'LOCAL_BROWSER_QA.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n',encoding='utf-8');assert report['passed']
+          PY
+
+      - name: Commit immutable candidate
+        run: |
+          set -euo pipefail
+          git config user.name 'Brick Mother R7.7 closeout';git config user.email '41898282+github-actions[bot]@users.noreply.github.com';git fetch origin "$BRANCH";git reset --hard "origin/$BRANCH"
+          cp "$RUNNER_TEMP/brick-r77/$CANDIDATE_FILE" "$R7_DIR/$CANDIDATE_FILE";cp "$RUNNER_TEMP/brick-r77/BUILD.json" "$R7_DIR/R7_7_INHERIT_REAL_STONE_BUILD.json";cp "$RUNNER_TEMP/brick-r77/LOCAL_BROWSER_QA.json" "$R7_DIR/R7_7_LOCAL_BROWSER_QA.json"
+          git add -- "$R7_DIR/$CANDIDATE_FILE" "$R7_DIR/R7_7_INHERIT_REAL_STONE_BUILD.json" "$R7_DIR/R7_7_LOCAL_BROWSER_QA.json";if ! git diff --cached --quiet;then git commit -m 'feat(brick): add R7.7 inherit-real-stone closeout candidate [skip ci]';git push origin "HEAD:refs/heads/$BRANCH";fi
+          git fetch origin "$BRANCH";git reset --hard "origin/$BRANCH";git log -1 --format=%H -- "$R7_DIR/$CANDIDATE_FILE" > "$RUNNER_TEMP/brick-r77/CANDIDATE_COMMIT.txt"
+
+      - name: Upload R7.7 evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: brick-r77-inherit-real-stone-${{ github.run_id }}
+          path: ${{ runner.temp }}/brick-r77
+          retention-days: 30
