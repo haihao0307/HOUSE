@@ -1,0 +1,50 @@
+name: Tiles Mother R2 Closeout 03
+
+on:
+  push:
+    branches:
+      - feature/tiles-mother-r2-restart-20260907
+    paths:
+      - .github/workflows/tiles-mother-r2-closeout-03.yml
+      - tiles-mother/tools/build_r2_closeout03.py
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          ref: feature/tiles-mother-r2-restart-20260907
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Generate candidate 03 from preserved candidate 02
+        run: python tiles-mother/tools/build_r2_closeout03.py
+
+      - name: Verify generated file
+        shell: bash
+        run: |
+          test -f tiles-mother/r2-closeout-03/START_HERE.html
+          test "$(sha256sum tiles-mother/r2-closeout-03/START_HERE.html | cut -d' ' -f1)" = "02d3dc6c7975fb7f80e8743aeb311d894ca5fe7b394ad8a53ccbc198b3f7cd8c"
+
+      - name: Commit fixed candidate
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tiles-mother/r2-closeout-03/START_HERE.html
+          if git diff --cached --quiet; then
+            echo "Candidate already matches expected bytes."
+            exit 0
+          fi
+          git commit -m "feat(tiles): publish R2 closeout candidate 03 [skip ci]"
+          git push origin HEAD:feature/tiles-mother-r2-restart-20260907
