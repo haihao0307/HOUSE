@@ -1,0 +1,12 @@
+{
+  "version": "R2-closeout-02",
+  "preserve": true,
+  "reason": "User explicitly asked to keep this already-good version while making only a small material/orientation refinement in the next candidate.",
+  "preservedCommit": "fd1cbb32de2b0731de3ee09455f4058f896642ec",
+  "workbench": "tiles-mother/r2-closeout-02/START_HERE.html",
+  "workbenchBlob": "3300b47b9713ece1263f1998735e248cab4849b5",
+  "protectedFromOverwrite": true,
+  "visualApproved": false,
+  "productionApproved": false,
+  "note": "Positive user assessment is a preserve-baseline instruction, not final production approval. Derivatives must use new versioned paths."
+}
