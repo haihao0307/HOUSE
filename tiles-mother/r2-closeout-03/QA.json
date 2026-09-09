@@ -2,6 +2,8 @@
   "version": "R2-closeout-03",
   "parent": "R2-closeout-02",
   "parentCommit": "fd1cbb32de2b0731de3ee09455f4058f896642ec",
+  "generatedCommit": "4f354216e2deb7d36cda29cdf8d0e4695b69003e",
+  "workflowRun": 34362231244,
   "scope": [
     "replace fixed ceramic material rotation with a stable tile/mineral/local continuous orientation field",
     "reorder ceramic material generation to structure first, structure-derived color second, independent roughness third"
@@ -25,12 +27,15 @@
     "continuousOrientationFieldPresent": true,
     "materialOrderStructureColorRoughness": true,
     "independentRoughnessFieldPresent": true,
-    "standaloneRoundtripExact": true
+    "standaloneRoundtripExact": true,
+    "ciSourceIdentityRoundtrip": "pass"
   },
   "defaultContinuousTurnBoundDegrees": 15.9784,
   "sourceBytes": 60384,
   "sourceSHA256": "5ad053603b397eebf4f30c63f296cfcc4b9fb825dd22f1c28c8705fa0d17a745",
-  "standaloneSHA256": "503f97c7bd6e68f45fd1e0f4a3f7603538e915bc12b8551afdc223babe705d24",
+  "publishedStandaloneBytes": 31745,
+  "publishedStandaloneSHA256": "546281773b863a7910ec7705f76a4abf8142be8ab4e61b08a92758ae47c209f7",
+  "identityRule": "The decompressed source SHA is authoritative. The gzip wrapper SHA is recorded for this published artifact but is not treated as cross-platform content identity.",
   "browserVisualQA": "not_run_in_current_runtime: WebGL2 unavailable in managed Chromium; user visual review remains required",
   "visualApproved": false,
   "productionApproved": false
