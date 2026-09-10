@@ -1,0 +1,74 @@
+name: Tiles Mother R2 Closeout 04 Direct
+
+on:
+  push:
+    branches:
+      - feature/tiles-mother-r2-restart-20260907
+    paths:
+      - .github/workflows/tiles-mother-r2-closeout-04-direct.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  publish-direct:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          ref: feature/tiles-mother-r2-restart-20260907
+          fetch-depth: 0
+
+      - name: Build direct single-file HTML from preserved candidate 04
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re, base64, gzip, hashlib
+
+          src = Path('tiles-mother/r2-closeout-04/START_HERE.html')
+          w = src.read_text('utf-8')
+          m = re.search(r'const b=([`\"])(.*?)\1', w, re.S)
+          if not m:
+              raise SystemExit('candidate 04 compressed payload missing')
+          raw = gzip.decompress(base64.b64decode(re.sub(r'\s', '', m.group(2))))
+          sha = hashlib.sha256(raw).hexdigest()
+          expected = '7734bdb8bf9913feedd7c69ad0fa95de71ff1f93f866d74685c53549ae6bd311'
+          if sha != expected:
+              raise SystemExit(f'candidate 04 source mismatch: {sha}')
+
+          text = raw.decode('utf-8')
+          required = [
+              'R2 收尾候选 04',
+              'ceramicWarp',
+              'ceramicColony',
+              'panel-close',
+              'roughField'
+          ]
+          for token in required:
+              if token not in text:
+                  raise SystemExit(f'missing expected marker: {token}')
+          if 'DecompressionStream' in text:
+              raise SystemExit('direct source unexpectedly contains decompression launcher')
+
+          out = Path('tiles-mother/r2-closeout-04-direct/START_HERE.html')
+          out.parent.mkdir(parents=True, exist_ok=True)
+          out.write_text(text, 'utf-8')
+          print('directBytes', out.stat().st_size)
+          print('directSHA256', hashlib.sha256(out.read_bytes()).hexdigest())
+          PY
+
+      - name: Commit direct HTML
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tiles-mother/r2-closeout-04-direct/START_HERE.html
+          if git diff --cached --quiet; then
+            echo "Direct HTML already present."
+            exit 0
+          fi
+          git commit -m "fix(tiles): publish direct iPhone-safe R2 closeout 04 [skip ci]"
+          git push origin HEAD:feature/tiles-mother-r2-restart-20260907
