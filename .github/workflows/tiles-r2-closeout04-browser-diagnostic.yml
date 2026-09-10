@@ -1,0 +1,56 @@
+name: Tiles R2 Closeout 04 Browser Diagnostic
+
+on:
+  push:
+    branches:
+      - feature/tiles-mother-r2-restart-20260907
+    paths:
+      - .github/workflows/tiles-r2-closeout04-browser-diagnostic.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/tiles-mother-r2-restart-20260907
+      - name: Locate Chrome
+        run: |
+          which google-chrome || which chromium || true
+          which chromedriver || true
+      - name: Install Selenium
+        run: python -m pip install --quiet selenium
+      - name: Open candidate locally and capture runtime errors
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import time, json
+          from selenium import webdriver
+          from selenium.webdriver.chrome.options import Options
+          from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+
+          p=Path('tiles-mother/r2-closeout-04-direct/START_HERE.html').resolve()
+          opt=Options()
+          for a in ['--headless=new','--no-sandbox','--disable-dev-shm-usage','--use-angle=swiftshader','--enable-webgl','--ignore-gpu-blocklist','--allow-file-access-from-files','--window-size=390,844']:
+              opt.add_argument(a)
+          opt.set_capability('goog:loggingPrefs', {'browser':'ALL'})
+          d=webdriver.Chrome(options=opt)
+          try:
+              d.get(p.as_uri())
+              time.sleep(5)
+              state=d.execute_script("return {ready:document.body.dataset.ready||'',busy:document.querySelector('#busy')?.hidden,fail:document.querySelector('.fail')?.textContent||'',webgl2:!!document.querySelector('#stage')?.getContext('webgl2')}")
+              logs=d.get_log('browser')
+              print('STATE',json.dumps(state,ensure_ascii=False))
+              print('BROWSER_LOGS')
+              for x in logs: print(json.dumps(x,ensure_ascii=False))
+              d.save_screenshot('/tmp/tiles04.png')
+              if state['ready']!='true':
+                  raise SystemExit('candidate did not reach ready state')
+          finally:
+              d.quit()
+          PY
