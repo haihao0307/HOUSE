@@ -1,0 +1,78 @@
+name: Tiles R2 Closeout 05 Mobile
+
+on:
+  push:
+    branches:
+      - feature/tiles-mother-r2-restart-20260907
+    paths:
+      - tiles-mother/tools/build_r2_closeout05_mobile.py
+      - .github/workflows/tiles-r2-closeout05-mobile.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-test-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/tiles-mother-r2-restart-20260907
+          fetch-depth: 0
+      - name: Build candidate 05
+        run: python tiles-mother/tools/build_r2_closeout05_mobile.py
+      - name: JavaScript syntax gate
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          s=Path('tiles-mother/r2-closeout-05-mobile/START_HERE.html').read_text('utf-8')
+          scripts=re.findall(r'<script(?:\s[^>]*)?>(.*?)</script>',s,re.S|re.I)
+          print('scripts',len(scripts))
+          for i,b in enumerate(scripts): Path(f'/tmp/tiles05-{i}.js').write_text(b,'utf-8')
+          PY
+          for f in /tmp/tiles05-*.js; do node --check "$f"; done
+      - name: Install Selenium
+        run: python -m pip install --quiet selenium
+      - name: Real browser initialization gate
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import time,json
+          from selenium import webdriver
+          from selenium.webdriver.chrome.options import Options
+          p=Path('tiles-mother/r2-closeout-05-mobile/START_HERE.html').resolve()
+          o=Options()
+          for a in ['--headless=new','--no-sandbox','--disable-dev-shm-usage','--use-angle=swiftshader','--enable-unsafe-swiftshader','--enable-webgl','--ignore-gpu-blocklist','--allow-file-access-from-files','--window-size=390,844']:
+              o.add_argument(a)
+          o.set_capability('goog:loggingPrefs',{'browser':'ALL'})
+          d=webdriver.Chrome(options=o)
+          d.set_page_load_timeout(25)
+          try:
+              try: d.get(p.as_uri())
+              except Exception as e: print('GET_EXCEPTION',repr(e))
+              end=time.time()+12
+              state={}
+              while time.time()<end:
+                  state=d.execute_script("return {ready:document.body.dataset.ready||'',busy:document.querySelector('#busy')?.hidden,fail:document.querySelector('.fail')?.textContent||'',webgl2:!!document.querySelector('#stage')?.getContext('webgl2')}")
+                  if state.get('ready')=='true' or state.get('fail'): break
+                  time.sleep(.5)
+              print('STATE',json.dumps(state,ensure_ascii=False))
+              for x in d.get_log('browser'): print('BROWSER',json.dumps(x,ensure_ascii=False))
+              d.save_screenshot('/tmp/tiles05.png')
+              if state.get('ready')!='true': raise SystemExit('browser did not reach ready')
+              if state.get('fail'): raise SystemExit(state['fail'])
+          finally: d.quit()
+          PY
+      - name: Commit candidate 05
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tiles-mother/r2-closeout-05-mobile/START_HERE.html
+          if git diff --cached --quiet; then echo 'candidate already present'; exit 0; fi
+          git commit -m "feat(tiles): publish mobile-safe R2 closeout 05 [skip ci]"
+          git push origin HEAD:feature/tiles-mother-r2-restart-20260907
