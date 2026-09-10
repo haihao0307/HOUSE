@@ -1,0 +1,43 @@
+name: Tiles R2 Closeout 04 JS Diagnostic
+
+on:
+  push:
+    branches:
+      - feature/tiles-mother-r2-restart-20260907
+    paths:
+      - .github/workflows/tiles-r2-closeout04-js-diagnostic.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  syntax:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/tiles-mother-r2-restart-20260907
+      - name: Extract inline scripts
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          p=Path('tiles-mother/r2-closeout-04-direct/START_HERE.html')
+          s=p.read_text('utf-8')
+          scripts=re.findall(r'<script(?:\s[^>]*)?>(.*?)</script>',s,re.S|re.I)
+          print('inlineScripts',len(scripts))
+          for i,body in enumerate(scripts):
+              q=Path(f'/tmp/tiles04-script-{i}.js')
+              q.write_text(body,'utf-8')
+              print(i,len(body),q)
+          PY
+      - name: Node syntax check each inline script
+        shell: bash
+        run: |
+          set -o pipefail
+          for f in /tmp/tiles04-script-*.js; do
+            echo "=== $f ==="
+            node --check "$f"
+          done
