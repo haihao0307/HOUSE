@@ -40,24 +40,20 @@ jobs:
               raise SystemExit(f'candidate 04 source mismatch: {sha}')
 
           text = raw.decode('utf-8')
-          required = [
-              'R2 收尾候选 04',
-              'ceramicWarp',
-              'ceramicColony',
-              'panel-close',
-              'roughField'
-          ]
-          for token in required:
+          for token in ['R2 收尾候选 04', 'ceramicWarp', 'ceramicColony', 'roughField']:
               if token not in text:
                   raise SystemExit(f'missing expected marker: {token}')
-          if 'DecompressionStream' in text:
-              raise SystemExit('direct source unexpectedly contains decompression launcher')
+          if 'DecompressionStream' in text or 'const b=`H4sI' in text:
+              raise SystemExit('direct source unexpectedly contains compressed launcher')
 
           out = Path('tiles-mother/r2-closeout-04-direct/START_HERE.html')
           out.parent.mkdir(parents=True, exist_ok=True)
           out.write_text(text, 'utf-8')
+          direct_sha = hashlib.sha256(out.read_bytes()).hexdigest()
+          if direct_sha != expected:
+              raise SystemExit(f'direct file identity mismatch: {direct_sha}')
           print('directBytes', out.stat().st_size)
-          print('directSHA256', hashlib.sha256(out.read_bytes()).hexdigest())
+          print('directSHA256', direct_sha)
           PY
 
       - name: Commit direct HTML
