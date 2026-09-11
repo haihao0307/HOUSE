@@ -1,0 +1,30 @@
+{
+  "version": "R2-closeout-06-handmade",
+  "parent": "R2-closeout-05-mobile",
+  "parentCommitAtDesign": "e9cf0ed2a118a6eed19b294dcc6cf80e60393195",
+  "scope": [
+    "replace mould-perfect ceramic form with broad hand-forming variation",
+    "make every ceramic instance receive a stable seed-driven belly/twist deformation",
+    "add irregular end/side lips and materially plausible thickness drift",
+    "keep lateral seating height protected by a zero-displacement gate",
+    "match the shadow depth pass to the deformed visible geometry"
+  ],
+  "preserved": [
+    "R2 closeout 05 material hierarchy and cold-gray baseline",
+    "roof support closure / neglect history logic",
+    "pan-cover dimensions and nominal seating system",
+    "mobile close-panel interaction"
+  ],
+  "constraints": {
+    "handmadeCenterDisplacementDesignMaxMmApprox": 2.9,
+    "sideEdgeVerticalDisplacementMm": 0.0,
+    "sideLipHorizontalDesignMaxMmApprox": 0.26,
+    "endLipLongitudinalDesignMaxMmApprox": 0.42,
+    "thicknessVariation": "broad two-band drift, approximately within +/- 5.25% before lip rounding",
+    "noUniqueMeshPer860Tile": "per-instance vertex deformation keeps mobile draw-call budget bounded; individuality comes from stable instance seed plus material identity"
+  },
+  "sourceBytes": 66517,
+  "sourceSHA256": "d9ef30d5d9284a2ffb831793d8114534e20982bc2476ffc2e3d1d7f382eaaa8e",
+  "visualApproved": false,
+  "productionApproved": false
+}
