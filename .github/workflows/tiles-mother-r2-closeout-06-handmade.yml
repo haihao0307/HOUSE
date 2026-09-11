@@ -1,0 +1,94 @@
+name: Tiles Mother R2 Closeout 06 Handmade
+
+on:
+  push:
+    branches:
+      - feature/tiles-mother-r2-restart-20260907
+    paths:
+      - .github/workflows/tiles-mother-r2-closeout-06-handmade.yml
+      - tiles-mother/tools/build_r2_closeout06_handmade.py
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          ref: feature/tiles-mother-r2-restart-20260907
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Generate handmade candidate 06 from preserved 05
+        run: python tiles-mother/tools/build_r2_closeout06_handmade.py
+
+      - name: Verify source and JavaScript syntax
+        shell: bash
+        run: |
+          test -f tiles-mother/r2-closeout-06-handmade/START_HERE.html
+          test -f tiles-mother/r2-closeout-06-handmade/QA.json
+          python - <<'PY'
+          from pathlib import Path
+          import re, json, hashlib
+          p=Path('tiles-mother/r2-closeout-06-handmade/START_HERE.html')
+          s=p.read_text('utf-8')
+          q=json.loads(Path('tiles-mother/r2-closeout-06-handmade/QA.json').read_text('utf-8'))
+          got=hashlib.sha256(p.read_bytes()).hexdigest()
+          assert got==q['sourceSHA256'], (got,q['sourceSHA256'])
+          for m in ['R2-closeout-06','handmadeOffset','depthTypeLoc','tag=kind===\'pan\'?1:2']:
+              assert m in s, m
+          scripts=re.findall(r'<script>(.*?)</script>',s,re.S)
+          assert scripts
+          Path('/tmp/tiles06.js').write_text('\n'.join(scripts),'utf-8')
+          print('sourceSHA256',got)
+          print('sourceBytes',len(p.read_bytes()))
+          PY
+          node --check /tmp/tiles06.js
+
+      - name: Verify handmade displacement contract
+        shell: bash
+        run: |
+          python - <<'PY'
+          import math
+          # CPU mirror of the gate terms: vertical hand-form displacement must
+          # collapse to zero on both lateral seating edges u=+-1.
+          def gate(u,t):
+              side=max(0.0,1-u*u)**2
+              end=math.sin(math.pi*t)**2
+              return side*end
+          for t in [0,.1,.25,.5,.75,.9,1]:
+              assert abs(gate(-1,t)) < 1e-12
+              assert abs(gate(1,t)) < 1e-12
+          assert gate(0,.5) == 1.0
+          # Designed extrema from coefficient half-ranges.
+          center_mm=(.00280+.00140+.00090+.00070)*.5*1000
+          side_mm=(.00034+.00018)*.5*1000
+          end_mm=(.00055+.00028)*.5*1000
+          assert center_mm <= 3.0
+          assert side_mm <= .30
+          assert end_mm <= .45
+          print('handmade center bound mm',center_mm)
+          print('side lip bound mm',side_mm)
+          print('end lip bound mm',end_mm)
+          PY
+
+      - name: Commit generated candidate
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tiles-mother/r2-closeout-06-handmade/START_HERE.html tiles-mother/r2-closeout-06-handmade/QA.json
+          if git diff --cached --quiet; then
+            echo "Candidate already current."
+            exit 0
+          fi
+          git commit -m "feat(tiles): publish R2 closeout 06 handmade form [skip ci]"
+          git push origin HEAD:feature/tiles-mother-r2-restart-20260907
