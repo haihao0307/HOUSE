@@ -1,0 +1,18 @@
+{
+  "version": "R2-closeout-07-visible-handmade",
+  "parent": "R2-closeout-06-handmade",
+  "goal": "make handmade form visible in silhouette before material judgement",
+  "changes": [
+    "per-tile visible width drift",
+    "broad camber and long-axis bow",
+    "twist across tile body",
+    "wavy side silhouette",
+    "irregular end cut",
+    "12-piece comparison scene"
+  ],
+  "materialHierarchy": "inherited from 06",
+  "visualApproved": false,
+  "productionApproved": false,
+  "sourceSHA256": "4801cb50b8a4f48771110026ecbc85006d7b5dca226d478248ea01ece3fa581e",
+  "note": "automatic checks can only prove code identity; fixed-view human visual comparison is still required"
+}
