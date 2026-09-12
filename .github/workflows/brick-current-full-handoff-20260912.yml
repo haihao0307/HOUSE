@@ -44,12 +44,10 @@ jobs:
           rm -rf "$WORK"
           mkdir -p "$WORK/repository/brick-mother" "$WORK/repository/workflows" "$WORK/qa/material-microscope-lab-r1" "$WORK/meta"
 
-          # Full current Brick Mother source/knowledge/experiments, excluding nested archive payloads.
           rsync -a --exclude='distributions/' --exclude='*.zip' --exclude='*.tar' --exclude='*.tar.gz' "$ROOT/" "$WORK/repository/brick-mother/"
           find .github/workflows -maxdepth 1 -type f \( -name 'brick*.yml' -o -name 'brick*.yaml' \) -print0 | xargs -0 -r cp -t "$WORK/repository/workflows/"
           for f in .github/BRICK_*; do [ -f "$f" ] && cp "$f" "$WORK/repository/" || true; done
 
-          # Preserve the latest real-browser evidence that validated the fixed lab.
           gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts/${QA_ARTIFACT}/zip" > "$RUNNER_TEMP/latest-qa.zip"
           unzip -q "$RUNNER_TEMP/latest-qa.zip" -d "$WORK/qa/material-microscope-lab-r1"
 
@@ -231,7 +229,6 @@ jobs:
           (root/'08_PACKAGE_CHECKLIST.json').write_text(json.dumps(checklist,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
           PY
 
-          # Regenerate manifest once so the checklist is included.
           python3 - <<'PY'
           import hashlib, json, os
           from pathlib import Path
@@ -266,13 +263,13 @@ jobs:
           Start inside the ZIP at 00_START_HERE.md.
           EOF
 
-          # Fail closed if the branch moved while the package was being built.
           REMOTE="$(git ls-remote origin "refs/heads/$BRANCH" | cut -f1)"
           [ "$REMOTE" = "$SOURCE_COMMIT" ] || { echo "branch moved during packaging: $SOURCE_COMMIT -> $REMOTE"; exit 1; }
 
           git config user.name 'Brick Mother Handoff Bot'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add "$DIST/$PACKAGE.zip" "$DIST/$PACKAGE.zip.sha256" "$DIST/CURRENT_FULL_HANDOFF.md"
+          git add "$DIST/$PACKAGE.zip.sha256" "$DIST/CURRENT_FULL_HANDOFF.md"
+          git add -f "$DIST/$PACKAGE.zip"
           git commit -m 'chore(brick): publish current full handoff R1 2026-09-12 [skip ci]'
           git push origin HEAD:"$BRANCH"
 
