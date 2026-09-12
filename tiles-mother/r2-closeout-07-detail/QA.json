@@ -1,0 +1,32 @@
+{
+  "version": "R2-closeout-07-detail",
+  "parent": "R2-closeout-06-handmade",
+  "sourceSHA256": "d101a20b0290cc20a148d65f64dfad1c4a00d402143e2492508138566100200b",
+  "sourceBytes": 69342,
+  "geometryVertexDepthAndHistoryUnchanged": true,
+  "referenceSHA256": "ae5510c0e2eaec236adff0b94d978688f6c17a9412407c6c7ec54968222dd365",
+  "detailAmplitudes": "design display-relief values, not measured reference heights",
+  "browserVerified": false,
+  "publicBrowserVerified": false,
+  "visualApproved": false,
+  "productionApproved": false,
+  "javascriptSyntaxPassed": true,
+  "nativeGPUShaderCompilePassed": true,
+  "nativeGPUOnly": true,
+  "baselineAEquals06Pixelwise": true,
+  "nativeGPUScenes": [
+    "pan",
+    "cover",
+    "roof48",
+    "roof860",
+    "wood"
+  ],
+  "woodUnchanged": true,
+  "roof860UnsupportedByYear": {
+    "0": 0,
+    "3": 0,
+    "5": 0,
+    "7": 0,
+    "10": 0
+  }
+}
