@@ -1,0 +1,288 @@
+name: Brick Mother Current Full Handoff 2026-09-12
+
+on:
+  push:
+    branches:
+      - feature/brick-mother-v2.0-composite-material-dna
+    paths:
+      - .github/BRICK_CURRENT_FULL_HANDOFF_KICK_20260912.txt
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: brick-current-full-handoff-20260912
+  cancel-in-progress: false
+
+jobs:
+  package-and-publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      BRANCH: feature/brick-mother-v2.0-composite-material-dna
+      ROOT: yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother
+      DIST: yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/distributions/current-full-handoff-r1-20260912
+      PACKAGE: BRICK_MOTHER_CURRENT_FULL_HANDOFF_R1_2026-09-12
+      QA_RUN: '34662919726'
+      QA_ARTIFACT: '10288406212'
+      FIXED_LAB_COMMIT: 201fb2c22eaa31d3783bbf35d4294c33eb1bcc81
+      LAB_PATH: yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/experiments/material-microscope-lab-r1/Brick_Material_Microscope_Lab_R1.html
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Build verified current handoff
+        shell: bash
+        run: |
+          set -euo pipefail
+          SOURCE_COMMIT="$(git rev-parse HEAD)"
+          WORK="$RUNNER_TEMP/$PACKAGE"
+          rm -rf "$WORK"
+          mkdir -p "$WORK/repository/brick-mother" "$WORK/repository/workflows" "$WORK/qa/material-microscope-lab-r1" "$WORK/meta"
+
+          # Full current Brick Mother source/knowledge/experiments, excluding nested archive payloads.
+          rsync -a --exclude='distributions/' --exclude='*.zip' --exclude='*.tar' --exclude='*.tar.gz' "$ROOT/" "$WORK/repository/brick-mother/"
+          find .github/workflows -maxdepth 1 -type f \( -name 'brick*.yml' -o -name 'brick*.yaml' \) -print0 | xargs -0 -r cp -t "$WORK/repository/workflows/"
+          for f in .github/BRICK_*; do [ -f "$f" ] && cp "$f" "$WORK/repository/" || true; done
+
+          # Preserve the latest real-browser evidence that validated the fixed lab.
+          gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts/${QA_ARTIFACT}/zip" > "$RUNNER_TEMP/latest-qa.zip"
+          unzip -q "$RUNNER_TEMP/latest-qa.zip" -d "$WORK/qa/material-microscope-lab-r1"
+
+          cat > "$WORK/00_START_HERE.md" <<EOF
+          # Brick Mother Current Full Handoff R1
+
+          Date: 2026-09-12
+          Repository: ${GITHUB_REPOSITORY}
+          Branch: ${BRANCH}
+          Source snapshot: ${SOURCE_COMMIT}
+          PR: #15 — open / Draft / unmerged
+
+          ## Current user-approved direction
+
+          1. The old independent-noise fired-brick path is a failed "fake roughness" reference. Do not use it as the production path again.
+          2. The Process + fragment-level Macroscopic microscope path is the only forward material direction for fired brick.
+          3. User judged the new B direction as having the correct brick material identity; the remaining immediate task is to expose stronger adjustable microscope contribution, not to reinvent the material.
+          4. Add adjustable controls next: microscope strength, scale, height contribution and roughness contribution.
+          5. Irregular rubble stone is user-approved and must remain frozen. Adobe is basically approved and remains frozen except future isolated detail work.
+          6. humanVisualApproved=false and productionApproved=false until explicit later approval.
+
+          ## Start here next
+
+          Open repository/brick-mother/experiments/material-microscope-lab-r1/Brick_Material_Microscope_Lab_R1.html and continue only the B/Process path. Keep A only as historical failed evidence if comparison is needed; remove it from the future production path.
+          EOF
+
+          cat > "$WORK/01_HANDOFF_STATE.md" <<EOF
+          # Current state
+
+          - Source snapshot: ${SOURCE_COMMIT}
+          - Current feature branch: ${BRANCH}
+          - PR #15 remains open / Draft / unmerged.
+          - Latest successful Material Microscope browser QA: run ${QA_RUN}; artifact ${QA_ARTIFACT}.
+          - Fixed public lab source commit: ${FIXED_LAB_COMMIT}.
+          - Fixed public lab URL: https://rawcdn.githack.com/haihao0307/HOUSE/${FIXED_LAB_COMMIT}/${LAB_PATH}
+          - First raw.githack visit may show External Content Notice; press Open the page.
+
+          The package freezes the current state before the requested next implementation round. It does not claim production approval.
+          EOF
+
+          cat > "$WORK/02_SOURCE_LOCKS.json" <<EOF
+          {
+            "repository": "${GITHUB_REPOSITORY}",
+            "branch": "${BRANCH}",
+            "sourceCommit": "${SOURCE_COMMIT}",
+            "pr": 15,
+            "prOpen": true,
+            "prDraft": true,
+            "prMerged": false,
+            "fixedMaterialLabCommit": "${FIXED_LAB_COMMIT}",
+            "materialLabQaRun": ${QA_RUN},
+            "materialLabQaArtifact": ${QA_ARTIFACT},
+            "acceptedLocks": {
+              "irregularRubbleStone": "user_approved_100_percent_freeze",
+              "adobe": "user_basically_approved_freeze",
+              "firedBrickMaterialDirection": "process_plus_fragment_level_macroscopic_microscope"
+            },
+            "rejectedProductionPath": "old_independent_noise_fake_roughness",
+            "humanVisualApproved": false,
+            "productionApproved": false
+          }
+          EOF
+
+          cat > "$WORK/03_PACKAGE_SCOPE.md" <<EOF
+          # Package scope
+
+          Included:
+          - the complete current Brick Mother text/source/knowledge/experiment tree at the source snapshot;
+          - all Brick-related GitHub workflow files and kick records present at the snapshot;
+          - latest successful Material Microscope Lab real-browser QA evidence;
+          - current user acceptance/freeze decisions and next-step contract;
+          - SHA256 manifest and verifier.
+
+          Excluded intentionally:
+          - nested historical ZIP/TAR archives, to avoid recursive archive bloat;
+          - unrelated HOUSE / Tiles / architecture source trees;
+          - approval claims not explicitly granted by the user.
+          EOF
+
+          cat > "$WORK/04_USER_ACCEPTANCE_AND_FREEZES.md" <<'EOF'
+          # User acceptance and freezes
+
+          ## Freeze / preserve
+          - Irregular rubble stone: user said it passed 100%; do not alter its accepted default DNA.
+          - Adobe: user said it is basically correct; preserve current default DNA and isolate any later detail edits.
+          - Fired brick B direction: Process-driven shared masks plus fragment-level Macroscopic microscope is the accepted direction.
+
+          ## Reject from the production path
+          - Old independent-noise / fake-roughness material path. It can remain only as historical comparison evidence inside this frozen handoff; it must not drive future production.
+
+          ## Not yet approved
+          - Final fired-brick material strength and shape.
+          - Layered stone, dressed masonry stone and pebble final appearance.
+          - Any production-ready claim.
+          EOF
+
+          cat > "$WORK/05_PENDING_AND_NEXT.md" <<'EOF'
+          # Pending and next
+
+          Next implementation round is deliberately narrow:
+
+          1. Fired brick only.
+          2. Keep Process + fragment-level Macroscopic microscope as the sole forward path.
+          3. Add user-facing sliders for:
+             - Microscope Strength
+             - Microscope Scale
+             - Microscope Height Contribution
+             - Microscope Roughness Contribution
+          4. Increase the useful microscope contribution without reintroducing unrelated random noise.
+          5. Preserve fixed camera/light A/B diagnostics: Beauty, Height, Roughness, Material Masks, Microscope OFF/ON.
+          6. Only after the material controls read correctly, continue brick body shape/edge/chip refinement.
+
+          Do not broaden the round into all seven families.
+          EOF
+
+          cat > "$WORK/06_QA_EVIDENCE.md" <<EOF
+          # QA evidence
+
+          Material Microscope Lab R1 first browser attempt failed on a WebGL/ESSL structure ternary and was not accepted as evidence.
+          The shader was corrected and the next real-browser run succeeded:
+          - run: ${QA_RUN}
+          - artifact: ${QA_ARTIFACT}
+          - fixed HTML commit: ${FIXED_LAB_COMMIT}
+          - evidence copied into qa/material-microscope-lab-r1/
+
+          The QA evidence covers local Chromium/WebGL2 modes and fixed public mobile opening. It proves the experiment runs; it does not by itself prove visual approval.
+          EOF
+
+          cat > "$WORK/07_XIAOMA_REVIEW.md" <<'EOF'
+          # Xiaoma review / root-cause checkpoint
+
+          Before the Material Microscope Lab, the production path had two structural mistakes:
+          1. the Macroscopic microscope field was baked per vertex and linearly interpolated, suppressing high-frequency gradient detail;
+          2. formal stone/pebble presets with uRock>0 bypassed that microscope scalar altogether.
+
+          The isolated lab therefore evaluates the 17-layer microscope per fragment with screen-footprint octave gating and uses shared process masks for fired-brick BaseColor / Roughness / Height. Yohei-style scale organization is a detail organizer, not a substitute for material identity.
+          EOF
+
+          cat > "$WORK/verify_package.py" <<'PY'
+          import hashlib, json, pathlib, sys
+          root=pathlib.Path(__file__).resolve().parent
+          manifest=json.loads((root/'MANIFEST_SHA256.json').read_text(encoding='utf-8'))
+          bad=[]
+          for rel, meta in manifest.items():
+              p=root/rel
+              if not p.is_file():
+                  bad.append((rel,'missing')); continue
+              b=p.read_bytes(); h=hashlib.sha256(b).hexdigest()
+              if h!=meta['sha256'] or len(b)!=meta['bytes']:
+                  bad.append((rel,'mismatch'))
+          if bad:
+              print(json.dumps({'ok':False,'bad':bad},ensure_ascii=False,indent=2)); sys.exit(1)
+          print(json.dumps({'ok':True,'files':len(manifest)},ensure_ascii=False))
+          PY
+
+          python3 - <<'PY'
+          import hashlib, json, os
+          from pathlib import Path
+          root=Path(os.environ['RUNNER_TEMP'])/os.environ['PACKAGE']
+          rows={}
+          for p in sorted(root.rglob('*')):
+              if not p.is_file() or p.name=='MANIFEST_SHA256.json':
+                  continue
+              b=p.read_bytes()
+              rows[str(p.relative_to(root))]={'bytes':len(b),'sha256':hashlib.sha256(b).hexdigest()}
+          (root/'MANIFEST_SHA256.json').write_text(json.dumps(rows,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+          checklist={
+              'package':os.environ['PACKAGE'],
+              'sourceCommit':os.popen('git rev-parse HEAD').read().strip(),
+              'manifestFiles':len(rows),
+              'latestQaIncluded':True,
+              'oldIndependentNoiseProductionPathRejected':True,
+              'processMicroscopeForwardPathRecorded':True,
+              'irregularRubbleFrozen':True,
+              'adobeFrozen':True,
+              'humanVisualApproved':False,
+              'productionApproved':False
+          }
+          (root/'08_PACKAGE_CHECKLIST.json').write_text(json.dumps(checklist,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+          PY
+
+          # Regenerate manifest once so the checklist is included.
+          python3 - <<'PY'
+          import hashlib, json, os
+          from pathlib import Path
+          root=Path(os.environ['RUNNER_TEMP'])/os.environ['PACKAGE']
+          rows={}
+          for p in sorted(root.rglob('*')):
+              if not p.is_file() or p.name=='MANIFEST_SHA256.json': continue
+              b=p.read_bytes(); rows[str(p.relative_to(root))]={'bytes':len(b),'sha256':hashlib.sha256(b).hexdigest()}
+          (root/'MANIFEST_SHA256.json').write_text(json.dumps(rows,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+          PY
+          python3 "$WORK/verify_package.py"
+
+          mkdir -p "$DIST"
+          rm -f "$DIST/$PACKAGE.zip" "$DIST/$PACKAGE.zip.sha256" "$DIST/CURRENT_FULL_HANDOFF.md"
+          (cd "$RUNNER_TEMP" && zip -q -r "$PACKAGE.zip" "$PACKAGE")
+          unzip -tq "$RUNNER_TEMP/$PACKAGE.zip"
+          SIZE=$(stat -c%s "$RUNNER_TEMP/$PACKAGE.zip")
+          [ "$SIZE" -lt 99000000 ] || { echo "package exceeds safe GitHub file limit: $SIZE"; exit 1; }
+          cp "$RUNNER_TEMP/$PACKAGE.zip" "$DIST/$PACKAGE.zip"
+          sha256sum "$DIST/$PACKAGE.zip" | tee "$DIST/$PACKAGE.zip.sha256"
+          ZIP_SHA=$(cut -d' ' -f1 "$DIST/$PACKAGE.zip.sha256")
+
+          cat > "$DIST/CURRENT_FULL_HANDOFF.md" <<EOF
+          # Brick Mother Current Full Handoff
+
+          Package: ${PACKAGE}.zip
+          Source snapshot: ${SOURCE_COMMIT}
+          ZIP SHA256: ${ZIP_SHA}
+          Latest Material Microscope QA run: ${QA_RUN}
+          Fixed lab commit: ${FIXED_LAB_COMMIT}
+
+          Start inside the ZIP at 00_START_HERE.md.
+          EOF
+
+          # Fail closed if the branch moved while the package was being built.
+          REMOTE="$(git ls-remote origin "refs/heads/$BRANCH" | cut -f1)"
+          [ "$REMOTE" = "$SOURCE_COMMIT" ] || { echo "branch moved during packaging: $SOURCE_COMMIT -> $REMOTE"; exit 1; }
+
+          git config user.name 'Brick Mother Handoff Bot'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add "$DIST/$PACKAGE.zip" "$DIST/$PACKAGE.zip.sha256" "$DIST/CURRENT_FULL_HANDOFF.md"
+          git commit -m 'chore(brick): publish current full handoff R1 2026-09-12 [skip ci]'
+          git push origin HEAD:"$BRANCH"
+
+      - name: Upload package evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: brick-mother-current-full-handoff-r1-${{ github.sha }}
+          path: |
+            ${{ env.DIST }}/${{ env.PACKAGE }}.zip
+            ${{ env.DIST }}/${{ env.PACKAGE }}.zip.sha256
+            ${{ env.DIST }}/CURRENT_FULL_HANDOFF.md
+          if-no-files-found: error
+          retention-days: 90
