@@ -1,0 +1,58 @@
+{
+  "checks": {
+    "processMaterial_unchanged": true,
+    "map_unchanged": true,
+    "continuous_pole_0.25_-0.5": true,
+    "continuous_pole_0.25_0.5": true,
+    "continuous_pole_1_-0.5": true,
+    "continuous_pole_1_0.5": true,
+    "continuous_pole_4_-0.5": true,
+    "continuous_pole_4_0.5": true
+  },
+  "results": [
+    {
+      "scale": 0.25,
+      "z": -0.5,
+      "oldAngularSpread": 0.8097638546558559,
+      "newAngularSpread": 2.027377665747565e-07,
+      "newOuterSpread": 2.6466640179689804e-05
+    },
+    {
+      "scale": 0.25,
+      "z": 0.5,
+      "oldAngularSpread": 0.8293350670140371,
+      "newAngularSpread": 6.813735264898924e-08,
+      "newOuterSpread": 3.146815026258687e-05
+    },
+    {
+      "scale": 1,
+      "z": -0.5,
+      "oldAngularSpread": 1.8344920466295882,
+      "newAngularSpread": 1.3744851701247285e-06,
+      "newOuterSpread": 0.00015719861306262572
+    },
+    {
+      "scale": 1,
+      "z": 0.5,
+      "oldAngularSpread": 0.6535698242887213,
+      "newAngularSpread": 3.4036481144639197e-07,
+      "newOuterSpread": 6.216716445867077e-05
+    },
+    {
+      "scale": 4,
+      "z": -0.5,
+      "oldAngularSpread": 0.6488048390156858,
+      "newAngularSpread": 3.5166459511071224e-07,
+      "newOuterSpread": 3.516645949495911e-05
+    },
+    {
+      "scale": 4,
+      "z": 0.5,
+      "oldAngularSpread": 0.6108841158373602,
+      "newAngularSpread": 4.052683405530999e-07,
+      "newOuterSpread": 4.0526834034271264e-05
+    }
+  ],
+  "passed": true,
+  "note": "CPU field continuity without screen gating; complementary to real-browser validation."
+}
