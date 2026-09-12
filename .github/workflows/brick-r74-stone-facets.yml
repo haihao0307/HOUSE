@@ -1,0 +1,110 @@
+name: Brick Mother R7.4 Planar Facet Stone Closeout
+
+on:
+  push:
+    branches:
+      - feature/brick-mother-v2.0-composite-material-dna
+    paths:
+      - .github/BRICK_R74_KICK.txt
+
+permissions:
+  contents: write
+
+concurrency:
+  group: brick-r74-layered-stone
+  cancel-in-progress: false
+
+jobs:
+  build-and-local-verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      BRANCH: feature/brick-mother-v2.0-composite-material-dna
+      SOURCE_COMMIT: 23174124f630bc683e11f8e34a98f965497ee9fe
+      R7_DIR: yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/experiments/atelier-r7
+      SOURCE_FILE: Brick_Mother_R7_3_StoneHardening.html
+      CANDIDATE_FILE: Brick_Mother_R7_4_StoneFacets.html
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Build guarded R7.4 planar-facet candidate
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/brick-r74"
+          git show "$SOURCE_COMMIT:$R7_DIR/$SOURCE_FILE" > "$RUNNER_TEMP/brick-r74/source.html"
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib,json,os,re,subprocess
+          root=Path(os.environ['RUNNER_TEMP'])/'brick-r74';src=(root/'source.html').read_text(encoding='utf-8');out=src;changes=[]
+          def once(old,new,label):
+              global out
+              n=out.count(old)
+              if n!=1:raise SystemExit(f'{label}: expected 1 match, got {n}')
+              out=out.replace(old,new,1);changes.append(label)
+          vc=out.count('R7.3.0')
+          if vc<2:raise SystemExit(f'unexpected R7.3.0 count {vc}')
+          out=out.replace('R7.3.0','R7.4.0');changes.append(f'version-r73-to-r74-x{vc}')
+          once(
+            " if(family==='stone')for(let j=0;j<5;j++){let n=norm([R()*2-1,R()*1.25-.625,(R()*2-1)*.24]);planes.push([...n,(Math.abs(n[0])*h[0]+Math.abs(n[1])*h[1]+Math.abs(n[2])*h[2])*(.80+R()*.10)]);}",
+            " if(family==='stone')for(let j=0;j<5;j++){let n=norm([R()*2-1,R()*1.25-.625,(R()*2-1)*.24]);planes.push([...n,(Math.abs(n[0])*h[0]+Math.abs(n[1])*h[1]+Math.abs(n[2])*h[2])*(.80+R()*.10)]);}\n // Large fracture faces: three shallow planes per broad side. They create angular\n // facets without stacking shelves and without asking high-frequency noise to define macro shape.\n if(family==='stone')for(let j=0;j<6;j++){const sign=j<3?1:-1,n=norm([(R()-.5)*.070,(R()-.5)*.055,sign]);planes.push([...n,h[2]*(.945+R()*.035)]);}",
+            'layered-stone-broad-planar-fracture-faces')
+          for token in ['R7.4.0',"for(let j=0;j<6;j++){const sign=j<3?1:-1", "h[2]*(.945+R()*.035)", "broadAmp=family==='stone'?.022"]:
+              if token not in out:raise SystemExit('missing token '+token)
+          for forbidden in ['R7.3.0','leaveLegacy(','-bedOffset*c.relief','for(const b of beds)']:
+              if forbidden in out:raise SystemExit('forbidden token '+forbidden)
+          if out.count('data-family=')<7:raise SystemExit('seven families lost')
+          candidate=root/os.environ['CANDIDATE_FILE'];candidate.write_text(out,encoding='utf-8')
+          checked=0
+          for i,m in enumerate(re.finditer(r'<script([^>]*)>(.*?)</script>',out,re.S|re.I)):
+              attrs=m.group(1).lower()
+              if 'application/json' in attrs or 'application/octet-stream' in attrs:continue
+              p=root/f'inline-{i}.js';p.write_text(m.group(2),encoding='utf-8');subprocess.run(['node','--check',str(p)],check=True);p.unlink();checked+=1
+          info={'version':'R7.4.0-planar-facet-stone-candidate','sourceCommit':os.environ['SOURCE_COMMIT'],'sourceSha256':hashlib.sha256(src.encode()).hexdigest(),'candidateSha256':hashlib.sha256(out.encode()).hexdigest(),'bytes':len(out.encode()),'guardedReplacements':changes,'inlineScriptsChecked':checked,'retainedFamilies':7,'scope':'layered-stone macro fracture facets only; six other families frozen','humanVisualApproved':False,'productionApproved':False}
+          (root/'BUILD.json').write_text(json.dumps(info,ensure_ascii=False,indent=2)+'\n',encoding='utf-8');print(json.dumps(info,ensure_ascii=False,indent=2))
+          PY
+
+      - name: Install Chromium
+        run: |
+          python -m pip install playwright==1.55.0
+          python -m playwright install --with-deps chromium
+
+      - name: Real-browser QA and visual captures
+        run: |
+          set -euo pipefail
+          python -m http.server 8765 --bind 127.0.0.1 --directory "$RUNNER_TEMP/brick-r74" > "$RUNNER_TEMP/brick-r74/http.log" 2>&1 &
+          PID=$!;trap 'kill "$PID" || true' EXIT
+          xvfb-run -a python - <<'PY'
+          from playwright.sync_api import sync_playwright
+          from pathlib import Path
+          import json,os
+          root=Path(os.environ['RUNNER_TEMP'])/'brick-r74';url='http://127.0.0.1:8765/'+os.environ['CANDIDATE_FILE'];report={'url':url,'families':[],'errors':[],'consoleErrors':[],'mobile':{},'passed':False}
+          def ready(page):page.wait_for_function("""() => {const e=document.querySelector('#error'),b=document.querySelector('#busy'),c=document.querySelector('canvas');return c&&(!e||e.hidden)&&(!b||b.hidden)&&!c.classList.contains('loading');}""",timeout=120000)
+          with sync_playwright() as p:
+              browser=p.chromium.launch(headless=False,args=['--use-angle=swiftshader','--enable-unsafe-swiftshader','--no-sandbox']);page=browser.new_page(viewport={'width':1280,'height':820});page.on('pageerror',lambda e:report['errors'].append(str(e)));page.on('console',lambda m:report['consoleErrors'].append(m.text) if m.type=='error' else None)
+              r=page.goto(url,wait_until='load',timeout=60000);assert r and r.status==200;page.wait_for_function("document.querySelectorAll('[data-family]').length===7",timeout=30000);ready(page)
+              for family in ['fired','kiln','adobe','dressed','rubble','stone','pebble']:
+                  q=page.locator(f'[data-family="{family}"]');assert q.is_visible();q.click();ready(page);page.wait_for_timeout(700);e=page.locator('#error');assert not e.count() or e.is_hidden(),e.inner_text() if e.count() else '';shot=root/f'desktop-{family}.png';page.screenshot(path=str(shot),full_page=True);report['families'].append({'family':family,'status':page.locator('#status').inner_text(),'screenshot':shot.name})
+              page.set_viewport_size({'width':390,'height':844});page.wait_for_timeout(650)
+              for family in ['stone','adobe','fired']:
+                  q=page.locator(f'[data-family="{family}"]');assert q.is_visible();q.click();ready(page);page.wait_for_timeout(350)
+              page.screenshot(path=str(root/'mobile-390x844.png'),full_page=True);report['mobile']={'viewport':[390,844],'canvasVisible':page.locator('canvas').first.is_visible(),'sevenButtonsVisible':all(page.locator(f'[data-family="{f}"]').is_visible() for f in ['fired','kiln','adobe','dressed','rubble','stone','pebble'])};assert report['mobile']['canvasVisible'] and report['mobile']['sevenButtonsVisible'];assert not report['errors'];report['passed']=True;browser.close()
+          (root/'LOCAL_BROWSER_QA.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n',encoding='utf-8');assert report['passed']
+          PY
+
+      - name: Commit candidate as a new immutable file
+        run: |
+          set -euo pipefail
+          git config user.name 'Brick Mother R7.4 facets';git config user.email '41898282+github-actions[bot]@users.noreply.github.com';git fetch origin "$BRANCH";git reset --hard "origin/$BRANCH"
+          cp "$RUNNER_TEMP/brick-r74/$CANDIDATE_FILE" "$R7_DIR/$CANDIDATE_FILE";cp "$RUNNER_TEMP/brick-r74/BUILD.json" "$R7_DIR/R7_4_STONE_FACETS_BUILD.json";cp "$RUNNER_TEMP/brick-r74/LOCAL_BROWSER_QA.json" "$R7_DIR/R7_4_LOCAL_BROWSER_QA.json"
+          git add -- "$R7_DIR/$CANDIDATE_FILE" "$R7_DIR/R7_4_STONE_FACETS_BUILD.json" "$R7_DIR/R7_4_LOCAL_BROWSER_QA.json";if ! git diff --cached --quiet;then git commit -m 'feat(brick): add R7.4 planar-facet stone candidate [skip ci]';git push origin "HEAD:refs/heads/$BRANCH";fi
+          git fetch origin "$BRANCH";git reset --hard "origin/$BRANCH";git log -1 --format=%H -- "$R7_DIR/$CANDIDATE_FILE" > "$RUNNER_TEMP/brick-r74/CANDIDATE_COMMIT.txt"
+
+      - name: Upload facet evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: brick-r74-layered-stone-${{ github.run_id }}
+          path: ${{ runner.temp }}/brick-r74
+          retention-days: 30

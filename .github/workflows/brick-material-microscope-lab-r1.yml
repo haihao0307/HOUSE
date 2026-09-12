@@ -1,0 +1,100 @@
+name: Brick Material Microscope Lab R1 QA
+
+on:
+  push:
+    branches:
+      - feature/brick-mother-v2.0-composite-material-dna
+    paths:
+      - .github/BRICK_MATERIAL_MICROSCOPE_LAB_R1_KICK.txt
+
+permissions:
+  contents: read
+
+jobs:
+  visual-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      FIXED_COMMIT: 201fb2c22eaa31d3783bbf35d4294c33eb1bcc81
+      LAB_PATH: yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/experiments/material-microscope-lab-r1/Brick_Material_Microscope_Lab_R1.html
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Static guards
+        run: |
+          set -euo pipefail
+          F="$LAB_PATH"
+          test -f "$F"
+          grep -q "17层片元级显微结构" "$F"
+          grep -q "float microscope(vec3 q)" "$F"
+          grep -q "dFdx(xi)" "$F"
+          grep -q "struct Mat" "$F"
+          grep -q "m.mask=vec4(firing,reduction,pore,skin)" "$F"
+          grep -q "vec3 F=vec3(.04)" "$F"
+          ! grep -q "aMM" "$F"
+          ! grep -q "Mat m=id<.5?" "$F"
+
+      - name: Install Chromium
+        run: |
+          python -m pip install playwright==1.55.0
+          python -m playwright install --with-deps chromium
+
+      - name: Local browser QA and evidence
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/brick-lab-r1"
+          python -m http.server 8765 --bind 127.0.0.1 --directory . > "$RUNNER_TEMP/brick-lab-r1/http.log" 2>&1 &
+          PID=$!; trap 'kill "$PID" || true' EXIT
+          xvfb-run -a python - <<'PY'
+          from playwright.sync_api import sync_playwright
+          from pathlib import Path
+          import json, os
+          out=Path(os.environ['RUNNER_TEMP'])/'brick-lab-r1'
+          local='http://127.0.0.1:8765/'+os.environ['LAB_PATH']
+          public='https://rawcdn.githack.com/haihao0307/HOUSE/'+os.environ['FIXED_COMMIT']+'/'+os.environ['LAB_PATH']
+          report={'local':local,'public':public,'errors':[],'consoleErrors':[],'publicGateClicked':False,'passed':False}
+          with sync_playwright() as p:
+              b=p.chromium.launch(headless=False,args=['--use-angle=swiftshader','--enable-unsafe-swiftshader','--no-sandbox'])
+              page=b.new_page(viewport={'width':1280,'height':820})
+              page.on('pageerror',lambda e:report['errors'].append(str(e)))
+              page.on('console',lambda m:report['consoleErrors'].append(m.text) if m.type=='error' else None)
+              r=page.goto(local,wait_until='load',timeout=60000); assert r and r.status==200
+              page.wait_for_timeout(1800)
+              assert 'Material Microscope Lab R1' in page.title()
+              assert page.locator('canvas').count()==1
+              assert page.locator('[data-mode]').count()==4
+              assert page.locator('#mm').count()==1
+              ok=page.evaluate("() => !!document.getElementById('c').getContext('webgl2')")
+              assert ok
+              page.screenshot(path=str(out/'01_beauty.png'),full_page=True)
+              for mode,name in [('1','02_height.png'),('2','03_roughness.png'),('3','04_masks.png')]:
+                  page.locator(f'[data-mode="{mode}"]').click(); page.wait_for_timeout(350); page.screenshot(path=str(out/name),full_page=True)
+              page.locator('[data-mode="0"]').click();page.locator('#mm').click();page.wait_for_timeout(350);page.screenshot(path=str(out/'05_microscope_off.png'),full_page=True)
+              page.locator('#mm').click();page.wait_for_timeout(350);page.screenshot(path=str(out/'06_microscope_on.png'),full_page=True)
+              assert not report['errors'], report['errors']
+
+              pub=b.new_page(viewport={'width':390,'height':844})
+              pub.on('pageerror',lambda e:report['errors'].append('public:'+str(e)))
+              pub.goto(public,wait_until='domcontentloaded',timeout=60000)
+              if pub.get_by_text('Open the page',exact=True).count():
+                  pub.get_by_text('Open the page',exact=True).click(); report['publicGateClicked']=True
+                  pub.wait_for_load_state('load',timeout=60000)
+              pub.wait_for_timeout(2000)
+              assert 'Material Microscope Lab R1' in pub.title(), pub.title()
+              assert pub.locator('canvas').count()==1
+              assert pub.locator('[data-mode]').count()==4
+              pub.screenshot(path=str(out/'07_public_mobile.png'),full_page=True)
+              assert not report['errors'], report['errors']
+              report['passed']=True
+              b.close()
+          (out/'QA.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+          print(json.dumps(report,ensure_ascii=False,indent=2))
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: brick-material-microscope-lab-r1-evidence
+          path: ${{ runner.temp }}/brick-lab-r1
+          if-no-files-found: error

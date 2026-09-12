@@ -1,0 +1,28 @@
+{
+  "version": "R7.8.0-final-three",
+  "sourceCommit": "e8effd7eb007887a73f8fc56e3847b05b5282e68",
+  "sourceSha256": "34010ad9838df93be6fd0aa348d36327bd27bbafa4936d46aab0ec1c907de7fe",
+  "candidateSha256": "c38b27381b3da619cee01e93bee370438e179fa5a448c5b3e93711b2e20fd67d",
+  "bytes": 92688,
+  "changes": [
+    "version-r77-to-r78-x3",
+    "layered-stone-sand-grain-and-thin-weak-seams",
+    "brick-object-space-kiln-placement",
+    "fired-brick-readable-macro-gradient",
+    "kiln-strong-visible-reduction-and-oxidation"
+  ],
+  "inlineScriptsChecked": 3,
+  "frozenFamilies": [
+    "rubble",
+    "adobe",
+    "pebble",
+    "dressed"
+  ],
+  "targetFamilies": [
+    "stone",
+    "fired",
+    "kiln"
+  ],
+  "humanVisualApproved": false,
+  "productionApproved": false
+}

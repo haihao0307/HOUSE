@@ -1,0 +1,141 @@
+# Exact-head direct verification marker; behavior is unchanged.
+name: Brick Mother V2.7.5 Composite Evidence Smoke
+
+on:
+  push:
+    branches:
+      - feature/brick-mother-v2.0-composite-material-dna
+    paths:
+      - "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/**"
+      - ".github/workflows/brick-mother-v2-smoke.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: brick-mother-v275-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  v275-composite-evidence:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: Checkout exact pushed head
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate V2.7.5 source contracts
+        shell: bash
+        run: |
+          set -euo pipefail
+          brick="yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother"
+          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+          node --check "$brick/brick-mother-gaea-kernel-v1.js"
+          node --check "$brick/brick-mother-geometry-v2.js"
+          node --check "$brick/brick-mother-renderer-v2.js"
+          node --check "$brick/brick-mother-app-v2.js"
+          python3 -m json.tool "$brick/data/brick-material-profiles-v2.json" >/dev/null
+          python3 -m json.tool "$brick/qa/v27-visual-truth-contract.json" >/dev/null
+          python3 -m json.tool "$brick/qa/evidence-manifest-v275.json" >/dev/null
+          python3 -m json.tool "$brick/VERSION.json" >/dev/null
+          grep -q '"version": "2.7.5-alpha.1"' "$brick/VERSION.json"
+          grep -q 'REBUILD_CONTROL_KEYS' "$brick/brick-mother-app-v2.js"
+          grep -q "'inclusion'" "$brick/brick-mother-app-v2.js"
+          grep -q 'eventGeometryEnabled' "$brick/brick-mother-geometry-v2.js"
+          grep -q 'formationEventQA' "$brick/brick-mother-geometry-v2.js"
+          grep -q 'requiredGeometryFailures' "$brick/brick-mother-geometry-v2.js"
+          grep -q 'pullout-aligned-to-fiber-bundle' "$brick/brick-mother-geometry-v2.js"
+          grep -q 'uInclusionLayerA' "$brick/brick-mother-renderer-v2.js"
+          grep -q 'inclusionDNA' "$brick/data/brick-material-profiles-v2.json"
+          grep -q 'finalTopologyHitCount' "$brick/brick-mother-app-v2.js"
+          grep -q 'data-channel="9"' "$brick/index.html"
+          grep -q 'data-channel="10"' "$brick/index.html"
+          standalone="$brick/brick-mother-standalone-v2.7.5.html"
+          test -s "$standalone"
+          test "$(wc -c < "$standalone")" -gt 190000
+          ! grep -q '<script src=' "$standalone"
+          ! grep -q '<link rel="stylesheet"' "$standalone"
+          grep -q 'window.__BRICK_MOTHER_INLINE_DATA__' "$standalone"
+
+      - name: Install evidence metric dependency
+        run: python3 -m pip install --disable-pip-version-check --quiet pillow
+
+      - name: Capture 24 fixed material evidence images
+        shell: bash
+        env:
+          JRB_REFERENCE_PATH: ${{ vars.JRB_REFERENCE_PATH }}
+        run: |
+          set -euo pipefail
+          brick="yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother"
+          chrome="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)"
+          args=(
+            --chrome "$chrome"
+            --html "$brick/brick-mother-standalone-v2.7.5.html"
+            --out /tmp/brick-mother-v275-evidence
+            --virtual-time-budget 30000
+            --workers 1
+            --evidence-quality 0.56
+          )
+          if [ -n "${JRB_REFERENCE_PATH:-}" ] && [ -f "${JRB_REFERENCE_PATH}" ]; then
+            args+=(--reference "${JRB_REFERENCE_PATH}")
+          fi
+          python3 "$brick/tools/capture_evidence_v275.py" "${args[@]}"
+          test "$(find /tmp/brick-mother-v275-evidence -maxdepth 1 -name '*.png' | wc -l)" -eq 24
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          report=json.loads(Path('/tmp/brick-mother-v275-evidence/evidence-manifest.json').read_text())
+          assert report['imageCount'] == 24, report['imageCount']
+          assert report['canvas'] == [1600,1000]
+          assert report['manualApprovals'] == {
+              'jrbReferenceColorApproved': False,
+              'stoneDetailApproved': False,
+              'adobeInclusionApproved': False,
+              'productionApproved': False,
+          }
+          assert not report['finalLuminanceStdDevFailures'], report['finalLuminanceStdDevFailures']
+          assert not report['requiredGeometryFailures'], report['requiredGeometryFailures']
+          qa = report.get('qaByFamily', {})
+          assert set(qa) == {'old-pbr-fired', 'stone-block', 'raw-clay'}, sorted(qa)
+          for profile, payload in qa.items():
+              assert payload.get('controlsByFamily'), profile
+              assert payload.get('seedDNAByFamily'), profile
+              assert payload.get('seedDerivation'), profile
+              controls = next(iter(payload['controlsByFamily'].values()))[0]
+              assert {'benchmarkSlab', 'mobilePreview'}.issubset(controls), profile
+          snapshots = report.get('qaSeedSnapshotsByFamily', {})
+          assert set(snapshots) == set(qa), sorted(snapshots)
+          for profile, rows in snapshots.items():
+              assert len(rows) == 3, (profile, len(rows))
+              assert len({row['masterSeed'] for row in rows}) == 3, profile
+              assert all(row.get('controls') and row.get('seedDNA') and row.get('seedDerivation') for row in rows), profile
+          supplemental = report.get('supplementalEvidence', {})
+          assert len(supplemental.get('closeups', [])) == 2, supplemental
+          for item in report['records']:
+              assert item['size'] == [1600,1000], item
+          PY
+
+      - name: Upload exact-head V2.7.5 evidence and QA
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: brick-mother-v275-composite-evidence-${{ github.sha }}
+          path: |
+            /tmp/brick-mother-v275-evidence/*.png
+            /tmp/brick-mother-v275-evidence/*.dom.html
+            /tmp/brick-mother-v275-evidence/*.chrome.log
+            /tmp/brick-mother-v275-evidence/evidence-manifest.json
+            /tmp/brick-mother-v275-evidence/evidence-report.md
+            /tmp/brick-mother-v275-evidence/qa-family-controls.json
+            /tmp/brick-mother-v275-evidence/closeups/*.png
+            /tmp/brick-mother-v275-evidence/jrb-side-by-side.json
+            /tmp/brick-mother-v275-evidence/jrb-side-by-side.png
+            yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/brick-mother-standalone-v2.7.5.html
+            yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/VERSION.json
+            yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/qa/evidence-manifest-v275.json
+          compression-level: 1
+          if-no-files-found: ignore
+

@@ -1,0 +1,4 @@
+Brick Mother R7.3 layered-stone hardening
+2026-09-09
+source=29c84e1108697c0d1d0698835fa922512a4295f5
+scope=stone-hardening-only

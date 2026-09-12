@@ -1,0 +1,21 @@
+{
+  "version": "R5",
+  "sampleSeed": 4517,
+  "resolution": 72,
+  "method": "positive-x final triangle-mesh parity with yz candidate bounds",
+  "testedAnchorPoints": 1956,
+  "anchorFailures": [],
+  "negativeControls": 24,
+  "falsePositiveControls": 0,
+  "fibers": 284,
+  "sixFaces": [
+    "x+",
+    "x-",
+    "y+",
+    "y-",
+    "z+",
+    "z-"
+  ],
+  "wholeStrandContactProof": false,
+  "passed": true
+}

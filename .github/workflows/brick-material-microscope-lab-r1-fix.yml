@@ -1,0 +1,39 @@
+name: Brick Material Microscope Lab R1 Shader Fix
+
+on:
+  push:
+    branches:
+      - feature/brick-mother-v2.0-composite-material-dna
+    paths:
+      - .github/BRICK_MATERIAL_MICROSCOPE_LAB_R1_FIX_KICK.txt
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Replace unsupported struct ternary
+        env:
+          LAB_PATH: yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/experiments/material-microscope-lab-r1/Brick_Material_Microscope_Lab_R1.html
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import os
+          p=Path(os.environ['LAB_PATH'])
+          s=p.read_text(encoding='utf-8')
+          old="Mat m=id<.5?oldMaterial(q):processMaterial(q);"
+          new="Mat m;if(id<.5)m=oldMaterial(q);else m=processMaterial(q);"
+          if s.count(old)!=1: raise SystemExit(f'expected one struct ternary, got {s.count(old)}')
+          p.write_text(s.replace(old,new,1),encoding='utf-8')
+          PY
+          git config user.name "Brick Mother Lab QA"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "$LAB_PATH"
+          git commit -m "fix(brick): make material lab shader WebGL2 portable [skip ci]"
+          git push origin HEAD:feature/brick-mother-v2.0-composite-material-dna

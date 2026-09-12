@@ -1,0 +1,31 @@
+{
+  "version": "R4-public-1",
+  "purpose": "User-requested one-click public HTTPS review workbench",
+  "candidateSourceHead": "a43a46d12e0db8920ac0c146bab563d17659ccbf",
+  "materializedCommit": "9d72a371cf235c099cea8fa5e5919d5360abb8cf",
+  "verifiedBuildRun": 34018035520,
+  "verifiedBuildArtifact": 9984552428,
+  "htmlSHA256": "d7ed5db0c389029b359fcb51894f8e3600de4d25670964f284f35f480172cf00",
+  "bytes": 69628,
+  "publicURL": "https://haihao0307.github.io/HOUSE/brick-mother/experiments/atelier-r4/web/",
+  "publicationStateAtRequest": "local HTTP browser passed; live deployment and live browser verification pending",
+  "reviewedCoreRestoredExactly": true,
+  "mainMaterialAndGeometryChangesThisRelease": false,
+  "publicLayout": "compact seven-material layout, minimal title, one active renderer",
+  "historicalHTML": "preserved in existing full-source backups; not loaded by this public entry",
+  "humanVisualApproved": false,
+  "productionApproved": false,
+  "knownIssues": [
+    "kiln and fired brick require stronger distinction",
+    "straw blade edges need independent geometry and shading review",
+    "dressed stone material appears cement-like",
+    "pebble material is not yet accepted"
+  ],
+  "protectedFeedback": [
+    "retain improved fired-brick material",
+    "retain adobe material and straw embedding progress",
+    "retain irregular rubble shape",
+    "keep layered stone as present for now"
+  ],
+  "sourceRepair": "The first remote package did not match the reviewed offline source. Its failed build was not published. Four reviewed core source identities now match exactly; public CSS is separately named."
+}

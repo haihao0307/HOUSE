@@ -606,3 +606,156 @@ button { color: inherit; }
   .reference-backdrop { display: none; }
   .reference-sheet { border-left: 0; }
 }
+
+/* Brick Mother V2 composite material DNA controls */
+.pill.accent {
+  border-color: #d7a66b66;
+  background: #d7a66b14;
+  color: var(--gold);
+}
+.pill.accent::before { background: var(--gold); }
+.side {
+  max-height: calc(100vh - 112px);
+  overflow: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #d7a66b55 #ffffff08;
+}
+.toolbar { max-width: min(560px, 62%); }
+.composite-controls {
+  padding: 13px;
+  margin-left: -4px;
+  margin-right: -4px;
+  border: 1px solid #d7a66b32;
+  border-radius: 13px;
+  background: linear-gradient(145deg, #d7a66b0d, #ffffff03);
+}
+.section + .composite-controls {
+  margin-top: 19px;
+  padding-top: 13px;
+}
+.slider-list {
+  display: grid;
+  gap: 11px;
+}
+.slider-list label {
+  display: grid;
+  gap: 5px;
+}
+.slider-list label > span {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  color: var(--muted);
+  font-size: 10px;
+}
+.slider-list label b {
+  color: #ded7ce;
+  font-weight: 700;
+}
+.slider-list output {
+  min-width: 38px;
+  color: var(--gold);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+.slider-list input[type="range"] {
+  width: 100%;
+  height: 4px;
+  margin: 0;
+  accent-color: var(--gold);
+  cursor: ew-resize;
+}
+.control-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 7px;
+  margin-top: 13px;
+}
+.control-actions .tool-button {
+  width: 100%;
+  background: #0d0f0dcc;
+}
+.accent-button {
+  border-color: #d7a66b66;
+  color: var(--gold);
+}
+.seed-lab details {
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  background: #ffffff04;
+}
+.seed-lab summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 11px;
+  list-style: none;
+  cursor: pointer;
+}
+.seed-lab summary::-webkit-details-marker { display: none; }
+.seed-lab summary span { display: grid; gap: 2px; }
+.seed-lab summary small {
+  color: var(--gold);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .12em;
+}
+.seed-lab summary b { font-size: 11px; }
+.seed-lab summary i {
+  color: var(--muted);
+  font-size: 9px;
+  font-style: normal;
+}
+.seed-lab details[open] summary {
+  border-bottom: 1px solid var(--line);
+}
+.seed-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+  padding: 10px;
+}
+.seed-grid label {
+  display: grid;
+  gap: 4px;
+}
+.seed-grid label:first-child {
+  grid-column: 1 / -1;
+}
+.seed-grid span {
+  color: var(--muted);
+  font-size: 9px;
+}
+.seed-grid input {
+  width: 100%;
+  min-width: 0;
+  padding: 7px 8px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  outline: 0;
+  background: #090b09;
+  color: var(--text);
+  font: 10px/1.2 ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-variant-numeric: tabular-nums;
+}
+.seed-grid input:focus {
+  border-color: #d7a66b77;
+  box-shadow: 0 0 0 2px #d7a66b12;
+}
+.dna.organic {
+  border-color: #b5a26355;
+  background: #8f7c3512;
+}
+.dna.organic b { color: #d8c786; }
+
+@media (max-width: 1120px) {
+  .side { max-height: none; overflow: visible; }
+}
+
+@media (max-width: 800px) {
+  .toolbar { max-width: none; }
+  .seed-grid { grid-template-columns: 1fr 1fr; }
+  .composite-controls { margin-left: 0; margin-right: 0; }
+}

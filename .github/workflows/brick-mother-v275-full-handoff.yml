@@ -1,0 +1,223 @@
+name: Brick Mother V2.7.5 Full Handoff Package
+
+on:
+  push:
+    branches:
+      - feature/brick-mother-v2.0-composite-material-dna
+    paths:
+      - ".github/workflows/brick-mother-v275-full-handoff.yml"
+      - "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/handoffs/BRICK_MOTHER_V2.7.5_FULL_HANDOFF_2026-09-02/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: brick-mother-v275-full-handoff
+  cancel-in-progress: false
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      BRICK_ROOT: yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother
+      PROJECT_ROOT: yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local
+      HANDOFF_NAME: BRICK_MOTHER_V2.7.5_FULL_HANDOFF_2026-09-02
+      RUNTIME_BASE_HEAD: b25508b8b57d45f9333286ab7b883644181039e7
+      CORE_EVIDENCE_RUN: "33458112053"
+      CORE_EVIDENCE_NAME: brick-mother-v275-composite-evidence-b25508b8b57d45f9333286ab7b883644181039e7
+      STONE_EVIDENCE_RUN: "33458112049"
+      STONE_EVIDENCE_NAME: stone-study-s1-b25508b8b57d45f9333286ab7b883644181039e7
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Checkout exact handoff head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+
+      - name: Validate identities and source contracts
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          test -d "$BRICK_ROOT"
+          test -d "$BRICK_ROOT/handoffs/$HANDOFF_NAME"
+          test "$(git merge-base "$RUNTIME_BASE_HEAD" "$GITHUB_SHA")" = "$RUNTIME_BASE_HEAD"
+          test -z "$(git diff --name-only "$RUNTIME_BASE_HEAD" "$GITHUB_SHA" -- "$BRICK_ROOT/releases/v1.0")"
+          node --check "$BRICK_ROOT/brick-mother-geometry-v2.js"
+          node --check "$BRICK_ROOT/brick-mother-renderer-v2.js"
+          node --check "$BRICK_ROOT/brick-mother-app-v2.js"
+          node --check "$BRICK_ROOT/stone-response-study.js"
+          python3 -m json.tool "$BRICK_ROOT/VERSION.json" >/dev/null
+          python3 -m json.tool "$BRICK_ROOT/handoffs/$HANDOFF_NAME/CURRENT_STATE.json" >/dev/null
+          python3 -m json.tool "$BRICK_ROOT/handoffs/$HANDOFF_NAME/MOTHER_UNIFIED_POLICY_V1.0.0.json" >/dev/null
+          grep -q '"version": "2.7.5-alpha.1"' "$BRICK_ROOT/VERSION.json"
+          grep -q "stone-response-s1.1" "$BRICK_ROOT/stone-response-study.js"
+
+      - name: Download exact existing evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/handoff-evidence/core /tmp/handoff-evidence/stone
+          gh run download "$CORE_EVIDENCE_RUN" --repo "$GITHUB_REPOSITORY" --name "$CORE_EVIDENCE_NAME" --dir /tmp/handoff-evidence/core
+          gh run download "$STONE_EVIDENCE_RUN" --repo "$GITHUB_REPOSITORY" --name "$STONE_EVIDENCE_NAME" --dir /tmp/handoff-evidence/stone
+          test -f /tmp/handoff-evidence/core/tmp/brick-mother-v275-evidence/evidence-manifest.json
+          test -f /tmp/handoff-evidence/core/tmp/brick-mother-v275-evidence/fired-5045-final.png
+          test -f /tmp/handoff-evidence/core/tmp/brick-mother-v275-evidence/stone-8231-final.png
+          test -f /tmp/handoff-evidence/core/tmp/brick-mother-v275-evidence/adobe-4517-final.png
+          test -f /tmp/handoff-evidence/stone/BRICK_MOTHER_STONE_STUDY_S1.html
+          test -f /tmp/handoff-evidence/stone/qa-report.json
+
+      - name: Assemble full handoff
+        shell: bash
+        run: |
+          set -euo pipefail
+          short="${GITHUB_SHA:0:12}"
+          pkg="/tmp/$HANDOFF_NAME-$short"
+          mkdir -p "$pkg/source/brick-mother" "$pkg/repository-rules" "$pkg/workflows" "$pkg/workbenches" "$pkg/evidence" "$pkg/handoff"
+
+          rsync -a \
+            --exclude 'releases/v1.0/' \
+            --exclude 'handoffs/' \
+            --exclude 'node_modules/' \
+            --exclude '__pycache__/' \
+            --exclude '*.pyc' \
+            "$BRICK_ROOT/" "$pkg/source/brick-mother/"
+
+          cp "$PROJECT_ROOT/AGENTS.md" "$pkg/repository-rules/AGENTS.md"
+          cp "$PROJECT_ROOT/README.md" "$pkg/repository-rules/README.md"
+          cp "$PROJECT_ROOT/PROJECT_STATE.md" "$pkg/repository-rules/PROJECT_STATE.md"
+          cp "$PROJECT_ROOT/docs/SYSTEM_ARCHITECTURE.md" "$pkg/repository-rules/SYSTEM_ARCHITECTURE.md"
+
+          for wf in \
+            brick-mother-observation-studio-smoke.yml \
+            brick-mother-smoke.yml \
+            brick-mother-v2-smoke.yml \
+            brick-mother-v27-source-retry.yml \
+            brick-mother-stone-study.yml; do
+            cp ".github/workflows/$wf" "$pkg/workflows/$wf"
+          done
+
+          cp -a "$BRICK_ROOT/handoffs/$HANDOFF_NAME/." "$pkg/handoff/"
+          cp -a /tmp/handoff-evidence/core "$pkg/evidence/core"
+          cp -a /tmp/handoff-evidence/stone "$pkg/evidence/stone"
+
+          cp "$BRICK_ROOT/brick-mother-standalone-v2.7.5.html" "$pkg/workbenches/brick-mother-standalone-v2.7.5.html"
+          cp "$BRICK_ROOT/brick-mother-standalone-v2.6.html" "$pkg/workbenches/brick-mother-standalone-v2.6.html"
+          cp "$BRICK_ROOT/brick-mother-observation-studio.html" "$pkg/workbenches/brick-mother-observation-studio.html"
+          cp /tmp/handoff-evidence/stone/BRICK_MOTHER_STONE_STUDY_S1.html "$pkg/workbenches/BRICK_MOTHER_STONE_STUDY_S1.html"
+
+          cat > "$pkg/FROZEN_BASE_REFERENCE.json" <<EOF
+          {
+            "branch": "release/brick-mother-v1.0",
+            "sha": "77ce0a1bc63d301829942c14e5708fc16a06cdcd",
+            "immutable": true,
+            "copiedIntoPackage": false,
+            "reason": "frozen baseline remains in Git history and is not duplicated into the active handoff"
+          }
+          EOF
+
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          pkg=next(Path('/tmp').glob('BRICK_MOTHER_V2.7.5_FULL_HANDOFF_2026-09-02-*'))
+          identity={
+            'packageId': pkg.name,
+            'repository': os.environ['GITHUB_REPOSITORY'],
+            'branch': os.environ['GITHUB_REF_NAME'],
+            'handoffBuildCommit': os.environ['GITHUB_SHA'],
+            'runtimeBaseHead': os.environ['RUNTIME_BASE_HEAD'],
+            'mainRuntimeVersion': '2.7.5-alpha.1',
+            'stoneStudyVersion': 'stone-response-s1.1',
+            'pr': {'number': 15, 'state': 'open', 'draft': True, 'merged': False},
+            'frozenBase': {'branch':'release/brick-mother-v1.0','sha':'77ce0a1bc63d301829942c14e5708fc16a06cdcd'},
+            'evidence': {
+              'core': {'run': int(os.environ['CORE_EVIDENCE_RUN']), 'artifactName': os.environ['CORE_EVIDENCE_NAME'], 'status': 'success'},
+              'stone': {'run': int(os.environ['STONE_EVIDENCE_RUN']), 'artifactName': os.environ['STONE_EVIDENCE_NAME'], 'localPassed': True, 'standalonePassed': True, 'publicPassed': False}
+            },
+            'unifiedMethodology': {'version':'1.0.0','received':True,'runtimeIntegrationVerified':False},
+            'approvals': {'visualApproved':False,'productionApproved':False,'stoneDetailApproved':False,'adobeInclusionApproved':False,'jrbReferenceColorApproved':False}
+          }
+          (pkg/'GITHUB_BUILD_IDENTITY.json').write_text(json.dumps(identity,ensure_ascii=False,indent=2)+'\n')
+          PY
+
+          cat > "$pkg/START_WINDOWS.bat" <<'BAT'
+          @echo off
+          cd /d "%~dp0"
+          start "" "http://127.0.0.1:8765/START_HERE.html"
+          py -3 -m http.server 8765 --bind 127.0.0.1
+          BAT
+
+          cat > "$pkg/START_MAC_LINUX.sh" <<'SH'
+          #!/usr/bin/env sh
+          cd "$(dirname "$0")"
+          python3 -m http.server 8765 --bind 127.0.0.1
+          SH
+          chmod +x "$pkg/START_MAC_LINUX.sh"
+
+          cat > "$pkg/START_HERE.html" <<'HTML'
+          <!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Brick Mother V2.7.5 全量交接</title><style>
+          :root{color-scheme:dark;font-family:system-ui,"Microsoft YaHei",sans-serif;background:#0c0e0f;color:#eee}*{box-sizing:border-box}body{margin:0}header{height:50px;display:flex;align-items:center;gap:10px;padding:0 14px;border-bottom:1px solid #303638;background:#131718}header b{font-size:14px}.tag{font-size:11px;color:#bac0bc;border:1px solid #343b3d;border-radius:999px;padding:5px 8px}.layout{height:calc(100vh - 50px);display:grid;grid-template-columns:190px minmax(0,1fr)}nav{padding:10px;background:#121617;border-right:1px solid #303638;overflow:auto}button,a.nav{display:block;width:100%;text-align:left;color:#d6dad7;background:transparent;border:1px solid transparent;border-radius:7px;padding:10px;margin:0 0 6px;text-decoration:none;cursor:pointer}button:hover,a.nav:hover,button.on{background:#232827;border-color:#4e5149;color:#f1ddb7}main{min-width:0;position:relative;background:#050606}.panel{display:none;position:absolute;inset:0}.panel.on{display:block}iframe{width:100%;height:100%;border:0;background:#000}.gallery{height:100%;overflow:auto;padding:14px}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.card{border:1px solid #303638;background:#15191a;border-radius:8px;overflow:hidden}.card b{display:block;padding:9px;font-size:11px}.card img{width:100%;display:block;background:#000}.docs{max-width:850px;padding:26px;line-height:1.75;color:#c2c8c4}.docs h1{color:#fff}.docs a{color:#e3bd82}.warn{padding:12px;border:1px solid #5a4b35;background:#252016;border-radius:8px}@media(max-width:800px){.layout{grid-template-columns:1fr;grid-template-rows:auto minmax(0,1fr)}nav{display:flex;overflow:auto;border-right:0;border-bottom:1px solid #303638;padding:6px}button,a.nav{width:auto;white-space:nowrap;margin:0 5px 0 0}.grid{grid-template-columns:1fr}}
+          </style></head><body><header><b>Brick Mother V2.7.5 全量交接</b><span class="tag">当前源提交见 GITHUB_BUILD_IDENTITY.json</span><span class="tag">视觉批准等待中</span></header><div class="layout"><nav>
+          <button class="on" data-view="main">三材质三维</button><button data-view="stone">四种石材三维</button><button data-view="v26">V2.6 高变化对照</button><button data-view="evidence">中性证据</button><button data-view="docs">交接说明</button>
+          </nav><main><section id="main" class="panel on"><iframe data-src="workbenches/brick-mother-standalone-v2.7.5.html" title="三材质三维"></iframe></section><section id="stone" class="panel"><iframe data-src="workbenches/BRICK_MOTHER_STONE_STUDY_S1.html" title="四种石材三维"></iframe></section><section id="v26" class="panel"><iframe data-src="workbenches/brick-mother-standalone-v2.6.html" title="高变化对照"></iframe></section><section id="evidence" class="panel"><div class="gallery"><div class="grid">
+          <div class="card"><b>烧结砖 5045</b><img src="evidence/core/tmp/brick-mother-v275-evidence/fired-5045-final.png"></div><div class="card"><b>石材 8231</b><img src="evidence/core/tmp/brick-mother-v275-evidence/stone-8231-final.png"></div><div class="card"><b>土砖 4517</b><img src="evidence/core/tmp/brick-mother-v275-evidence/adobe-4517-final.png"></div><div class="card"><b>石灰岩候选</b><img src="evidence/stone/stone-0-final.png"></div><div class="card"><b>砂岩候选</b><img src="evidence/stone/stone-1-final.png"></div><div class="card"><b>花岗岩候选</b><img src="evidence/stone/stone-2-final.png"></div>
+          </div></div></section><section id="docs" class="panel"><div class="docs"><h1>新窗口从这里开始</h1><p>先读取 <a href="handoff/00_START_HERE.md">00_START_HERE.md</a>、<a href="handoff/NEXT_WINDOW_PROMPT.md">NEXT_WINDOW_PROMPT.md</a>、<a href="handoff/CURRENT_STATE.json">CURRENT_STATE.json</a> 和 <a href="GITHUB_BUILD_IDENTITY.json">GITHUB_BUILD_IDENTITY.json</a>。</p><p class="warn">统一方法论已接收并审计。完整运行时接入、视觉批准和生产批准均未完成。</p><p><a href="handoff/BRICK_MOTHER_ADOPTION_AUDIT.md">接入前审计</a>　<a href="handoff/MOTHER_UNIFIED_POLICY_V1.0.0.json">规则 JSON</a>　<a href="handoff/PACKAGE_CONTENTS.md">包内容</a></p></div></section></main></div><script>
+          const load=id=>{const f=document.querySelector('#'+id+' iframe');if(f&&!f.src)f.src=f.dataset.src};document.querySelectorAll('button[data-view]').forEach(b=>b.onclick=()=>{document.querySelectorAll('button[data-view]').forEach(x=>x.classList.toggle('on',x===b));document.querySelectorAll('.panel').forEach(x=>x.classList.toggle('on',x.id===b.dataset.view));load(b.dataset.view)});load('main');
+          </script></body></html>
+          HTML
+
+      - name: Validate package and create manifest
+        shell: bash
+        run: |
+          set -euo pipefail
+          pkg="$(find /tmp -maxdepth 1 -type d -name "$HANDOFF_NAME-*" | head -n 1)"
+          test -n "$pkg"
+          test -s "$pkg/START_HERE.html"
+          test -s "$pkg/workbenches/brick-mother-standalone-v2.7.5.html"
+          test -s "$pkg/workbenches/BRICK_MOTHER_STONE_STUDY_S1.html"
+          test -s "$pkg/handoff/NEXT_WINDOW_PROMPT.md"
+          test -z "$(find "$pkg" -type d \( -name node_modules -o -name .git -o -name __pycache__ \) -print -quit)"
+          python3 - <<'PY'
+          import hashlib, json
+          from pathlib import Path
+          pkg=next(Path('/tmp').glob('BRICK_MOTHER_V2.7.5_FULL_HANDOFF_2026-09-02-*'))
+          files=[]
+          for p in sorted(pkg.rglob('*')):
+              if not p.is_file() or p.name=='PACKAGE_MANIFEST_SHA256.json': continue
+              data=p.read_bytes()
+              files.append({'path':p.relative_to(pkg).as_posix(),'bytes':len(data),'sha256':hashlib.sha256(data).hexdigest()})
+          manifest={'package':pkg.name,'fileCount':len(files),'totalBytes':sum(x['bytes'] for x in files),'files':files}
+          (pkg/'PACKAGE_MANIFEST_SHA256.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2)+'\n')
+          for item in files:
+              p=pkg/item['path']
+              assert hashlib.sha256(p.read_bytes()).hexdigest()==item['sha256']
+          print(json.dumps({'fileCount':manifest['fileCount'],'totalBytes':manifest['totalBytes']},indent=2))
+          PY
+          cd /tmp
+          zip -q -r "$HANDOFF_NAME-${GITHUB_SHA:0:12}.zip" "$HANDOFF_NAME-${GITHUB_SHA:0:12}"
+          sha256sum "$HANDOFF_NAME-${GITHUB_SHA:0:12}.zip" > "$HANDOFF_NAME-${GITHUB_SHA:0:12}.zip.sha256"
+          unzip -t "$HANDOFF_NAME-${GITHUB_SHA:0:12}.zip" >/dev/null
+          python3 - <<'PY'
+          import hashlib, json, os
+          from pathlib import Path
+          short=os.environ['GITHUB_SHA'][:12]
+          z=Path('/tmp')/f"{os.environ['HANDOFF_NAME']}-{short}.zip"
+          report={'package':z.name,'bytes':z.stat().st_size,'sha256':hashlib.sha256(z.read_bytes()).hexdigest(),'integrity':'passed','sourceHead':os.environ['GITHUB_SHA'],'runtimeBaseHead':os.environ['RUNTIME_BASE_HEAD'],'visualApproved':False,'productionApproved':False}
+          (Path('/tmp')/'PACKAGE_BUILD_REPORT.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n')
+          print(json.dumps(report,indent=2))
+          PY
+
+      - name: Upload complete handoff package
+        uses: actions/upload-artifact@v4
+        with:
+          name: brick-mother-v275-full-handoff-${{ github.sha }}
+          path: |
+            /tmp/BRICK_MOTHER_V2.7.5_FULL_HANDOFF_2026-09-02-*.zip
+            /tmp/BRICK_MOTHER_V2.7.5_FULL_HANDOFF_2026-09-02-*.zip.sha256
+            /tmp/PACKAGE_BUILD_REPORT.json
+          if-no-files-found: error
+          retention-days: 90

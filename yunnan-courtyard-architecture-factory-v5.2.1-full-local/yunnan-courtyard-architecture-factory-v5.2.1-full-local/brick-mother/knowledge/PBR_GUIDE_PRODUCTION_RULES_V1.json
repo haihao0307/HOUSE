@@ -1,0 +1,83 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": {
+    "title": "The PBR Guide",
+    "author": "Wes McDermott",
+    "edition": "Third edition, February 2018",
+    "basis": "user supplied complete manual"
+  },
+  "manualRules": [
+    {
+      "id": "linear-space",
+      "pages": [38, 39, 40],
+      "rule": "Lighting and color computations occur in linear space. Visible color maps are interpreted as sRGB, while roughness, metallic and height are linear data."
+    },
+    {
+      "id": "dielectric-f0",
+      "pages": [31, 32, 36, 37, 48, 49, 69, 70],
+      "rule": "Common dielectrics usually use F0 from 0.02 to 0.05 linear. The metal roughness workflow commonly uses 0.04."
+    },
+    {
+      "id": "base-color-range",
+      "pages": [51, 52, 53],
+      "rule": "Dielectric base color stays comparatively flat, excludes baked lighting and AO apart from limited micro occlusion, usually remains above 30 to 50 sRGB in dark regions and below 240 sRGB in bright regions."
+    },
+    {
+      "id": "roughness-story",
+      "pages": [22, 25, 26, 27, 59, 60],
+      "rule": "Roughness represents sub texel micro surface orientation. Rougher surfaces spread highlights. Key surface structures in the normal map should inform roughness, while roughness also tells the history and condition of the surface."
+    },
+    {
+      "id": "ao-role",
+      "pages": [74, 75],
+      "rule": "AO describes access to ambient environment lighting, affects diffuse contribution only and must remain separate from specular contribution and base color."
+    },
+    {
+      "id": "height-normal-frequency-split",
+      "pages": [75, 76, 77, 78, 79],
+      "rule": "Realtime height should emphasize overall forms and silhouette with reduced high frequency detail. Normal carries high frequency surface detail."
+    },
+    {
+      "id": "multi-channel-propagation",
+      "pages": [56, 57, 58],
+      "rule": "A material effect is propagated coherently across the channels it physically changes."
+    },
+    {
+      "id": "validation",
+      "pages": [82, 83, 84, 85],
+      "rule": "PBR Validate checks base color and metallic ranges with a heat map. PBR Safe Color constrains base color or diffuse values to valid dielectric brightness ranges."
+    }
+  ],
+  "brickMotherTranslations": [
+    {
+      "event": "cavity",
+      "status": "project interpretation built from manual channel rules",
+      "channels": {
+        "height": "negative low and mid frequency form",
+        "normal": "rim and interior micro structure",
+        "roughness": "interior, rim and exposed face respond differently",
+        "ao": "ambient diffuse accessibility inside cavity",
+        "baseColor": "material color change without baked macro shadow"
+      }
+    },
+    {
+      "event": "fired-shell-and-spall",
+      "status": "project interpretation built from manual channel rules",
+      "channels": {
+        "baseColor": "kiln and oxidation color domains",
+        "roughness": "dense fired skin differs from powdery spall",
+        "height": "spall thickness and missing flakes",
+        "normal": "clay grain and broken face detail",
+        "ao": "only local ambient accessibility"
+      }
+    }
+  ],
+  "nonNegotiableForBrickStoneAdobe": {
+    "metallic": 0,
+    "defaultDielectricF0": 0.04,
+    "aoMayDarkenSpecular": false,
+    "baseColorMayContainBakedMacroLighting": false,
+    "heightOwnsHighFrequencyNoise": false,
+    "normalOwnsHighFrequencySurfaceDetail": true
+  }
+}

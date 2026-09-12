@@ -1,0 +1,309 @@
+{
+  "schemaVersion": "1.0.0",
+  "pipeline": "brick-mother-gaea-distilled-field-graph",
+  "implementationPolicy": "Independent implementation of documented procedural workflow concepts. No Gaea runtime or proprietary algorithm dependency.",
+  "operatorFamilies": {
+    "primitives": [
+      "multi-fractal",
+      "ridged-noise",
+      "cellular-plates",
+      "anisotropic-fibers"
+    ],
+    "warps": [
+      "domain-warp",
+      "directional-warp",
+      "profile-recurve"
+    ],
+    "adjustments": [
+      "autolevel",
+      "clarity",
+      "soft-clip",
+      "gamma",
+      "threshold",
+      "combine",
+      "multi-combine"
+    ],
+    "erosion": [
+      "rugged-breakage",
+      "stratify",
+      "micro-erosion",
+      "flow-deposition"
+    ],
+    "data": [
+      "slope",
+      "curvature-proxy",
+      "cavity",
+      "protrusion",
+      "rock-map",
+      "flow",
+      "separation-mask"
+    ],
+    "color": [
+      "clut-5",
+      "quick-color",
+      "synth-palette",
+      "splat-weights",
+      "color-fx"
+    ],
+    "render": [
+      "linear-srgb",
+      "correlated-roughness",
+      "micro-normal",
+      "ambient-occlusion"
+    ]
+  },
+  "recipes": [
+    {
+      "id": "fired-brick-rich-color-v1",
+      "families": [
+        "FIRED_CLAY"
+      ],
+      "graph": [
+        {
+          "node": "multi-fractal",
+          "outputs": [
+            "macro-height",
+            "firing-driver"
+          ]
+        },
+        {
+          "node": "domain-warp",
+          "inputs": [
+            "macro-height"
+          ],
+          "outputs": [
+            "warped-height"
+          ]
+        },
+        {
+          "node": "rugged-breakage",
+          "strength": "low",
+          "passes": 2,
+          "outputs": [
+            "rugged",
+            "plate-edge"
+          ]
+        },
+        {
+          "node": "micro-erosion",
+          "mask": "plate-edge+cavity",
+          "outputs": [
+            "micro-erosion"
+          ]
+        },
+        {
+          "node": "data-extract",
+          "outputs": [
+            "cavity",
+            "protrusion",
+            "flow",
+            "separation-mask"
+          ]
+        },
+        {
+          "node": "clut-5",
+          "palette": [
+            "dark-aggregate",
+            "wet-dark",
+            "clay-base",
+            "warm-fired",
+            "pale-mineral"
+          ]
+        },
+        {
+          "node": "splat-weights",
+          "channels": [
+            "dark-aggregate",
+            "oxide",
+            "pale-mineral",
+            "warm-fired"
+          ]
+        },
+        {
+          "node": "color-fx",
+          "operations": [
+            "autolevel",
+            "clarity",
+            "mask-sharpness",
+            "saturation",
+            "gamma"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "adobe-organic-inclusions-v1",
+      "families": [
+        "ADOBE"
+      ],
+      "graph": [
+        {
+          "node": "multi-fractal",
+          "outputs": [
+            "earth-base"
+          ]
+        },
+        {
+          "node": "directional-warp",
+          "outputs": [
+            "pressed-earth-flow"
+          ]
+        },
+        {
+          "node": "anisotropic-fibers",
+          "independentSeeds": [
+            "long-straw",
+            "chopped-straw",
+            "rice-husk",
+            "seed-grain",
+            "missing-inclusion-pit"
+          ]
+        },
+        {
+          "node": "micro-erosion",
+          "mask": "fiber-boundary+missing-inclusion-pit"
+        },
+        {
+          "node": "synth-palette",
+          "palette": [
+            "cool-earth",
+            "warm-earth",
+            "straw",
+            "husk",
+            "seed",
+            "wet-dark"
+          ]
+        },
+        {
+          "node": "splat-weights",
+          "channels": [
+            "earth-base",
+            "fiber",
+            "husk-seed",
+            "cavity"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "stone-strata-rugged-v1",
+      "families": [
+        "STONE"
+      ],
+      "graph": [
+        {
+          "node": "multi-fractal",
+          "outputs": [
+            "stone-body"
+          ]
+        },
+        {
+          "node": "domain-warp",
+          "outputs": [
+            "warped-body"
+          ]
+        },
+        {
+          "node": "rugged-breakage",
+          "strength": "low",
+          "passes": 2,
+          "outputs": [
+            "rugged",
+            "plate-edge"
+          ]
+        },
+        {
+          "node": "stratify",
+          "mask": "slope+broken-face",
+          "outputs": [
+            "strata"
+          ]
+        },
+        {
+          "node": "micro-erosion",
+          "mask": "plate-edge+strata+cavity",
+          "outputs": [
+            "micro-erosion"
+          ]
+        },
+        {
+          "node": "rock-map",
+          "inputs": [
+            "rugged",
+            "plate-edge",
+            "slope"
+          ],
+          "outputs": [
+            "rock-map"
+          ]
+        },
+        {
+          "node": "clut-5",
+          "palette": [
+            "deep-cavity",
+            "wet-mineral",
+            "stone-base",
+            "oxide-vein",
+            "pale-strata"
+          ]
+        },
+        {
+          "node": "splat-weights",
+          "channels": [
+            "deep-cavity",
+            "oxide-vein",
+            "pale-strata",
+            "rock-map"
+          ]
+        }
+      ]
+    }
+  ],
+  "controls": {
+    "rockDetail": {
+      "min": 0,
+      "max": 1.6,
+      "meaning": "Rugged plate breakup and local protrusion strength"
+    },
+    "strata": {
+      "min": 0,
+      "max": 1.6,
+      "meaning": "Localized discontinuous layer strength"
+    },
+    "microErosion": {
+      "min": 0,
+      "max": 1.6,
+      "meaning": "Crevice and flow-structure enhancement"
+    },
+    "colorClarity": {
+      "min": 0,
+      "max": 1.6,
+      "meaning": "Localized contrast applied to color-driving masks"
+    },
+    "colorGamut": {
+      "min": 0,
+      "max": 1.6,
+      "meaning": "Blend amount of CLUT and normalized Splat colors"
+    },
+    "maskSharpness": {
+      "min": 0,
+      "max": 1.6,
+      "meaning": "Boundary sharpness for strata, erosion and color separation"
+    }
+  },
+  "officialReferences": [
+    "https://docs.quadspinner.com/Reference/",
+    "https://docs.quadspinner.com/Guide/Using-Gaea/Modify-Shapes.html",
+    "https://docs.quadspinner.com/Reference/Adjustments/Combine.html",
+    "https://docs.quadspinner.com/Reference/LookDev/Rugged.html",
+    "https://docs.quadspinner.com/Reference/LookDev/Surface.html",
+    "https://docs.quadspinner.com/Guide/Using-Gaea/LookDev.html",
+    "https://docs.quadspinner.com/Reference/Erosion/MicroErosion.html",
+    "https://docs.quadspinner.com/Reference/Erosion/Stratify.html",
+    "https://docs.quadspinner.com/Reference/Data/RockMap.html",
+    "https://docs.quadspinner.com/Reference/Color/CLUTer.html",
+    "https://docs.quadspinner.com/Reference/Color/Synth.html",
+    "https://docs.quadspinner.com/Reference/Color/Splat.html",
+    "https://docs.quadspinner.com/Reference/Color/ColorFX.html"
+  ]
+}

@@ -1,0 +1,5 @@
+Brick Mother R8 final sprint
+2026-09-09
+source=29c84e1108697c0d1d0698835fa922512a4295f5
+freeze=rubble,adobe
+fix=dressed,stone,pebble,fired,kiln

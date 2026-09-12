@@ -1,0 +1,833 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="description" content="Brick Mother R7，砖、石、土坯与卵石程序化实物工作台。"><meta name="source-parent" content="4dd826da93c0db36d9b60ff7e180945525678bbc"><meta name="release-version" content="R7.4.0"><title>Brick Mother R7</title><style>:root{color-scheme:dark;font:12px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif;color:#e1e0d7;background:#111612;--accent:#cfb982}*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden}body{display:grid;grid-template-rows:32px auto 28px 34px minmax(0,1fr) 43px;height:100dvh}button,input,select{font:inherit;color:inherit}button{padding:6px 9px;border:1px solid #ffffff12;border-radius:5px;background:#222b23;cursor:pointer;white-space:nowrap}button:hover{background:#354033}button.active{color:#fff1c8;border-color:#cfb98288;background:#3b382a}button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}header{display:flex;align-items:center;padding:0 11px;border-bottom:1px solid #ffffff0e}.brand{font-size:10px;letter-spacing:1px}.brand small{color:var(--accent);margin-left:5px}nav{margin-left:auto;display:flex;gap:4px}nav button{font-size:11px;padding:3px 8px;background:transparent}#catalog{padding:5px 7px;background:#171d17}#families{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}#families button{min-width:0;padding:8px 2px;font-size:12px;border-color:transparent}#families button.active{border-color:#cfb98266}#identity{display:flex;align-items:center;gap:9px;padding:0 11px;border-bottom:1px solid #ffffff0c;font-size:11px}#specimenName{font-weight:500;color:#eadfc5}#shapeName{color:#9eaa98}#materialName{margin-left:auto;color:#9eaa98;font-size:10px}#recipes{display:flex;align-items:center;justify-content:space-between;padding:0 10px;border-bottom:1px solid #ffffff0b;background:#141a15}#rockControls,#rockButtons{display:flex;align-items:center;gap:4px}#rockControls label{font-size:10px;color:#9eaa98}#rockControls select{background:#222b23;border:1px solid #607050;border-radius:5px;padding:3px 6px;font-size:11px}#rockButtons button{font-size:10px;padding:3px 7px}.gesture{margin-left:auto;color:#859182;font-size:9px}main{position:relative;min-height:0;overflow:hidden;background:radial-gradient(ellipse at 48% 40%,#273027,#111713 76%)}canvas{display:block;width:100%;height:100%;touch-action:none}canvas.loading{opacity:.15}#views{position:absolute;top:8px;right:9px;display:flex;gap:3px}#views button{font-size:10px;padding:4px 7px;background:#1a221dcc}#status{position:absolute;left:10px;bottom:8px;color:#93a18f;font:10px ui-monospace,system-ui;pointer-events:none}#busy{position:absolute;left:50%;bottom:40px;transform:translateX(-50%);padding:8px 11px;background:#243124;border:1px solid #cfb98266;border-radius:6px;white-space:nowrap}#busy button{font-size:10px;margin-left:8px}#error{position:absolute;top:48px;left:10%;right:10%;padding:13px;background:#562f28;z-index:9}#oldStage,#oldStage iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#101510}footer{display:flex;align-items:center;justify-content:center;gap:20px;padding:4px 7px;border-top:1px solid #ffffff0e;background:#161d16}footer>div{display:flex;gap:4px}footer button{font-size:11px;padding:5px 9px}aside{position:absolute;top:142px;bottom:53px;right:8px;z-index:8;width:282px;max-width:95vw;overflow:auto;padding:13px;background:#192219fa;border:1px solid #6c795f66;border-radius:9px;box-shadow:0 16px 40px #0007}.panelHead,.row,.seedRow{display:flex;align-items:center;justify-content:space-between;gap:6px}.panelHead{margin-bottom:10px}.panelHead button{font-size:10px;padding:3px 7px}.row,.seedRow{margin:8px 0}.row input,.row select,.seedRow input{width:138px;max-width:145px;background:#283425;border:1px solid #ffffff20;border-radius:4px;padding:5px;font-size:11px}.seedRow small{font-size:10px}.seedRow input[type=checkbox]{width:auto;accent-color:var(--accent)}summary{cursor:pointer;color:#aab7a1;font-size:11px;margin:10px 0}.slider{display:block;margin:12px 0;color:#c5cebd;font-size:11px}.slider output{float:right;color:var(--accent);font:10px ui-monospace,monospace}.slider input{display:block;width:100%;height:18px;margin:5px 0 0;padding:0;accent-color:var(--accent)}.buttons{display:flex;gap:4px;margin:13px 0}.buttons button{flex:1;font-size:10px;padding:5px}#share{font-size:10px}#shareText{width:100%;margin-top:8px;padding:5px;background:#202c1f;border:1px solid #607050;color:#ddd;font-size:9px}.note{color:#8f9e89;font-size:9px;line-height:1.6}[hidden]{display:none!important}
+@media(max-width:760px){body{grid-template-rows:31px auto 27px 32px minmax(0,1fr) calc(44px + env(safe-area-inset-bottom))}header{padding:0 7px}.brand{font-size:9px}nav button{font-size:10px;padding:3px 6px}#families{grid-template-columns:repeat(4,minmax(0,1fr));gap:3px}#families button{font-size:10px;padding:6px 2px}#identity{padding:0 7px;gap:5px;font-size:10px}#materialName{font-size:9px;white-space:nowrap}#recipes{padding:0 7px}#rockButtons{display:none}.gesture{font-size:8px}#views{left:6px;right:auto;top:6px}#views button{font-size:9px;padding:4px 6px}#status{font-size:8px;max-width:96%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}aside{top:171px;right:5px;bottom:55px}footer{gap:7px;padding:4px 3px calc(4px + env(safe-area-inset-bottom))}footer>div{gap:3px}footer button{font-size:10px;padding:5px 6px}}
+@media(max-height:450px){body{grid-template-rows:27px auto 22px 28px minmax(0,1fr) 34px}#families{grid-template-columns:repeat(7,minmax(0,1fr));padding:2px 5px}#families button{font-size:9px;padding:4px 1px}.gesture{display:none}#views{left:auto;right:6px}footer button{font-size:9px;padding:4px 6px}aside{top:111px;bottom:38px}}
+</style></head><body data-version="R7.4.0">
+<header><span class="brand">BRICK MOTHER <small>R7</small></span><nav><button id="strongCompare">V2.6 强烈版</button><button id="togglePanel" aria-expanded="false">调材质</button></nav></header>
+<section id="catalog" aria-label="七类实物"><div id="families"><button data-family="fired" class="active">烧结旧砖</button><button data-family="kiln">窑变旧砖</button><button data-family="adobe">纤维土坯</button><button data-family="dressed">粗凿砌筑石</button><button data-family="rubble">不规则毛石</button><button data-family="stone">层状毛石</button><button data-family="pebble">建筑卵石</button></div></section>
+<div id="identity"><strong id="specimenName">砖 / 烧结旧砖</strong><span id="shapeName">长条块</span><span id="materialName">红砖主体 · 淡灰黑窑痕</span></div>
+<section id="recipes"><div id="rockControls" hidden><label for="rock">岩性</label><select id="rock"><option value="1">花岗岩</option><option value="2">砂岩</option><option value="3">玄武岩</option><option value="4">石英岩</option><option value="5">石灰岩</option></select><div id="rockButtons"><button data-rock="1">花岗</button><button data-rock="2">砂岩</button><button data-rock="3">玄武</button><button data-rock="4">石英</button><button data-rock="5">石灰</button></div></div><span class="gesture">拖动旋转 · 滚轮缩放 · Shift 平移</span></section>
+<main id="stage"><canvas id="view" aria-label="三维成品"></canvas><div id="oldStage" hidden></div><div id="views"><button data-face="front">正</button><button data-face="back">背</button><button data-face="left">左</button><button data-face="right">右</button><button data-face="top">顶</button><button data-face="bottom">底</button><button id="resetView">归位</button></div><div id="status" role="status">正在准备砖块</div><div id="busy" hidden>生成中 <button id="cancel">取消</button></div><div id="error" hidden role="alert"></div></main>
+<footer><div id="quickShapes"><button data-shape="long">长条</button><button data-shape="sample">厚块</button><button data-shape="half">断块</button><button data-shape="thin">薄片</button></div><div class="quick"><button id="nextSeed">换一块</button><button id="spin">转台</button><button id="pause">暂停</button></div></footer>
+<aside id="panel" hidden><div class="panelHead"><span>成品属性</span><button id="closePanel">收起</button></div><label class="row">形态<select id="shape"><option value="long">长条</option><option value="sample">厚块</option><option value="half">断块</option><option value="thin">薄片</option></select></label><label class="row">主种子<input id="seed" type="number" min="0" max="4294967295"></label><details><summary>分层种子</summary><div id="layerSeeds"></div></details><div id="sliders"></div><div class="buttons"><button id="exportPreset">存参数</button><button id="importPreset">载入</button><button id="resetAll">重置本类</button></div><button id="share">复制当前视图链接</button><input id="shareText" hidden readonly aria-label="当前视图链接"><input id="presetFile" type="file" accept="application/json,.json" hidden><p class="note">页面只显示成品。孔洞、断边、凿痕、稻草和稻壳由几何承载；颜色、粗糙度、湿润和显微层级只影响表面。R5保持为历史基线，V2.6强烈版从固定提交另页打开，不占用当前渲染资源。</p></aside>
+<script>/* Brick Mother R7. Independent procedural specimen kernel, 2026-09-06.
+   No imports, network, external meshes or image textures. A regular sampled
+   signed field is NOT guaranteed to be an exact Euclidean distance field.
+   Body field evaluations are cached. Only local cutters touch local voxels.
+   Surface-net quads reuse vertices. Normals are accumulated from triangles. */
+function createBrickKernel(){
+'use strict';
+const clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,x)), mix=(a,b,t)=>a+(b-a)*t;
+const norm=v=>{const d=Math.hypot(...v)||1;return v.map(x=>x/d)};
+const cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];
+function rng(s){return()=>{s=(s+0x6d2b79f5)|0;let t=Math.imul(s^s>>>15,1|s);t^=t+Math.imul(t^t>>>7,61|t);return((t^t>>>14)>>>0)/4294967296;}}
+function hash(x,y,z,s){let h=Math.imul(x,374761393)^Math.imul(y,668265263)^Math.imul(z,1274126177)^s;h=Math.imul(h^(h>>>13),1274126177);return((h^(h>>>16))>>>0)/4294967295;}
+function noise(x,y,z,s){const ix=Math.floor(x),iy=Math.floor(y),iz=Math.floor(z);x-=ix;y-=iy;z-=iz;x=x*x*(3-2*x);y=y*y*(3-2*y);z=z*z*(3-2*z);return mix(mix(mix(hash(ix,iy,iz,s),hash(ix+1,iy,iz,s),x),mix(hash(ix,iy+1,iz,s),hash(ix+1,iy+1,iz,s),x),y),mix(mix(hash(ix,iy,iz+1,s),hash(ix+1,iy,iz+1,s),x),mix(hash(ix,iy+1,iz+1,s),hash(ix+1,iy+1,iz+1,s),x),y),z);}
+function derive(master,layer){let v=master>>>0;for(let i=0;i<layer.length;i++){v=Math.imul(v^layer.charCodeAt(i),16777619)>>>0;}return v;}
+const defaults={kiln:{shape:'long',damage:.26,relief:.40,edgeWear:.52,grain:.62,color:1.02,wet:0,rough:.85},dressed:{shape:'long',damage:.12,relief:.22,grain:.74,color:1.08,wet:0,rough:.92},pebble:{shape:'sample',damage:.05,relief:.065,grain:.38,color:1.08,wet:0,rough:.67},fired:{shape:'long',damage:.25,relief:.39,edgeWear:.50,grain:.64,color:1.00,wet:0,rough:.89},stone:{shape:'sample',damage:.46,relief:.64,grain:.54,color:.98,wet:0,rough:.91},rubble:{shape:'sample',damage:.54,relief:.62,grain:.57,color:1.00,wet:0,rough:.91},adobe:{shape:'sample',damage:.25,relief:.46,edgeWear:.50,grain:.66,color:1.03,wet:0,rough:.97}};
+function validate(c){for(const k of ['strawDensity','huskDensity','chisel'])if(c?.[k]!==undefined&&(!Number.isFinite(c[k])||c[k]<0||c[k]>1))throw Error('参数越界 '+k);if(c?.rock!==undefined&&(!Number.isInteger(c.rock)||c.rock<0||c.rock>5))throw Error('岩性越界');if(c?.edgeWear!==undefined&&(!Number.isFinite(c.edgeWear)||c.edgeWear<0||c.edgeWear>1))throw Error('圆蚀参数越界');if(!c||typeof c!=='object'||!Object.prototype.hasOwnProperty.call(defaults,c.family))throw Error('未知材料');for(const k of ['damage','relief'])if(!Number.isFinite(c[k])||c[k]<0||c[k]>1)throw Error('形体参数越界');if(!['sample','long','half','thin'].includes(c.shape))throw Error('未知形态');if(!Number.isInteger(c.seed)||c.seed<0||c.seed>4294967295)throw Error('主种子需为32位非负整数');if(!Number.isInteger(c.resolution)||c.resolution<40||c.resolution>120)throw Error('采样精度越界');for(const k of ['shapeSeed','damageSeed','colorSeed','fiberSeed'])if(c[k]!==undefined&&(!Number.isInteger(c[k])||c[k]<0||c[k]>4294967295))throw Error('子种子越界');}
+function build(c){
+ validate(c);const begin=performance.now(),family=c.family,isStone=family==='stone'||family==='rubble'||family==='dressed',isBrick=family==='fired'||family==='kiln',isPebble=family==='pebble';
+ const seed=c.seed>>>0,ss=(c.shapeSeed??derive(seed,'shape'))>>>0,ds=(c.damageSeed??derive(seed,'damage'))>>>0,cs=(c.colorSeed??derive(seed,'color'))>>>0,fs=(c.fiberSeed??derive(seed,'fiber'))>>>0;
+ const hard=isStone&&[1,3,4].includes(c.rock),chisel=c.chisel??(family==='dressed'?.82:family==='rubble'?.30:.16);
+ const R=rng(ss),D=rng(ds),h=c.shape==='thin'?[1.24,.66,.24]:c.shape==='long'?[1.32,.56,.43]:c.shape==='half'?[.74,.80,.44]:[1.17,.80,.44];
+ if(isPebble){const ph=c.shape==='long'?[1.18,.54,.50]:c.shape==='thin'?[.99,.41,.64]:c.shape==='half'?[.74,.68,.55]:[.94,.72,.56];h.splice(0,3,...ph);h[0]*=.96+R()*.08;h[1]*=.96+R()*.08;h[2]*=.96+R()*.08;}
+ if(family==='rubble'){h[0]*=.90+R()*.13;h[1]*=.92+R()*.19;h[2]*=1.32+R()*.28;}if(family==='stone'){h[2]*=1.1;}
+ const dx=2*(Math.max(...h)+.16)/(c.resolution-1),padding=isStone?.24:.17,dims=h.map(a=>Math.ceil(2*(a+padding)/dx)+1),[nx,ny,nz]=dims,N=nx*ny*nz,org=dims.map(n=>-(n-1)*dx/2),stride=nx*ny;
+ const field=new Float32Array(N),jitter=new Float32Array(N),baseValues=N;let stampValues=0;
+ const planes=[];if(family==='rubble')for(let j=0;j<9;j++){let n=norm([R()*2-1,R()*2-1,R()*2-1]);planes.push([...n,(Math.abs(n[0])*h[0]+Math.abs(n[1])*h[1]+Math.abs(n[2])*h[2])*(.61+R()*.27)]);}
+ if(family==='stone')for(let j=0;j<5;j++){let n=norm([R()*2-1,R()*1.25-.625,(R()*2-1)*.24]);planes.push([...n,(Math.abs(n[0])*h[0]+Math.abs(n[1])*h[1]+Math.abs(n[2])*h[2])*(.80+R()*.10)]);}
+ // Large fracture faces: three shallow planes per broad side. They create angular
+ // facets without stacking shelves and without asking high-frequency noise to define macro shape.
+ if(family==='stone')for(let j=0;j<6;j++){const sign=j<3?1:-1,n=norm([(R()-.5)*.070,(R()-.5)*.055,sign]);planes.push([...n,h[2]*(.945+R()*.035)]);}
+ // Radius is a bounded, nominal modelling scale. No historical dimensions are claimed.
+ const soft=isBrick||family==='adobe',wear=c.edgeWear??(family==='adobe'?.78:.62);
+ const phase=R()*20,radius=soft?(family==='adobe'?.038+wear*.052:.028+wear*.058):(family==='stone'?.020:.036);
+ const legacyBeds=[];let level=-h[1]*1.1;while(level<h[1]*1.2){level+=.09+R()*.22;legacyBeds.push([level,(R()-.5)*.16]);}
+ // Preserve the old RNG consumption above so every non-stone family keeps the same seed identity.
+ // Layered stone now uses one stable seed-derived plane direction plus bounded continuous skin variation.
+ const stoneSlopeX=.10+.11*Math.sin(phase*.73),stoneSlopeZ=.07+.10*Math.cos(phase*.61),stoneBeddingAngle=Math.atan2(-stoneSlopeX,1);
+ for(let z=0;z<nz;z++)for(let y=0;y<ny;y++)for(let x=0;x<nx;x++){
+  const i=x+nx*y+stride*z,px=org[0]+x*dx,py=org[1]+y*dx,pz=org[2]+z*dx;
+  const a=noise(px*2.8+phase,py*2.8,pz*2.8,ss)-.5,b=noise(px*12,py*12,pz*12,ss+711)-.5;
+  jitter[i]=b;
+  const stoneW=family==='stone'?py+px*stoneSlopeX+pz*stoneSlopeZ:0;
+  const stoneBand=family==='stone'?(Math.sin(stoneW*9.4+phase*.37)*.58+Math.sin(stoneW*18.7+phase*.83)*.27+Math.sin(stoneW*37.1+phase*1.19)*.15):0;
+  const stoneSkin=family==='stone'?stoneBand*(.008+.012*c.relief):0;
+  const localRadius=family==='adobe'?radius*(.84+.22*(a+.5)+.12*(b+.5)):radius;
+  const adobeTilt=family==='adobe'?(.010*px-.006*pz):0;
+  const adobeRecess=family==='adobe'?.010*Math.max(0,noise(px*3.9,py*3.6,pz*4.3,ss+718)-.53):0;
+  const qx=Math.abs(px+.018*a)-h[0]+localRadius+adobeRecess,qy=Math.abs(py+.02*a+adobeTilt)-h[1]+localRadius+adobeRecess,qz=Math.abs(pz)-h[2]+stoneSkin+localRadius+adobeRecess;
+  let sd=Math.hypot(Math.max(qx,0),Math.max(qy,0),Math.max(qz,0))+Math.min(Math.max(qx,qy,qz),0)-localRadius;
+  if(isPebble){const ex=px+.04*a,ey=py+.05*a,ez=pz;const k0=Math.hypot(ex/h[0],ey/h[1],ez/h[2]),k1=Math.hypot(ex/(h[0]*h[0]),ey/(h[1]*h[1]),ez/(h[2]*h[2]));sd=k1>1e-9?k0*(k0-1)/k1:-Math.min(...h);}
+  for(const p of planes)sd=Math.max(sd,px*p[0]+py*p[1]+pz*p[2]-p[3]);
+  if(soft){
+   // Keep broad moulded faces. Round exposed edges before adding small surface changes.
+   const margins=[h[0]-Math.abs(px),h[1]-Math.abs(py),h[2]-Math.abs(pz)].sort((a,b)=>a-b);
+   const faceWeight=clamp(margins[1]/Math.max(radius*1.7,dx));
+   sd+=(a*(family==='adobe'?.050:.032)+b*.024*(.16+.84*faceWeight))*c.relief;
+  }else{const broadAmp=family==='stone'?.022:family==='rubble'?.16:family==='dressed'?.034:.060,fineAmp=family==='stone'?.028:family==='dressed'?.038:isStone?.065:.052;sd+=a*broadAmp*c.relief+(b*fineAmp+Math.pow(clamp((b+.5-.38)/.34),.36)*(family==='stone'?.009:family==='dressed'?.012:.030))*c.relief*(hard?.38:1);}
+  if(isPebble)sd-=a*.026*c.relief+b*.016*c.relief;
+  field[i]=sd;
+ }
+ const baseEnd=performance.now(),eventLog=[];
+ function cut(center,U,V,W,r,kind){
+  const ext=[0,1,2].map(a=>Math.abs(U[a])*r[0]+Math.abs(V[a])*r[1]+Math.abs(W[a])*r[2]+dx+(soft?.04:0));
+  const lo=center.map((p,a)=>clamp(Math.floor((p-ext[a]-org[a])/dx),1,dims[a]-2)),hi=center.map((p,a)=>clamp(Math.ceil((p+ext[a]-org[a])/dx),1,dims[a]-2));
+  const mm=Math.min(...r);let hits=0;
+  for(let z=lo[2];z<=hi[2];z++)for(let y=lo[1];y<=hi[1];y++)for(let x=lo[0];x<=hi[0];x++){
+   const i=x+y*nx+z*stride,px=org[0]+x*dx-center[0],py=org[1]+y*dx-center[1],pz=org[2]+z*dx-center[2];
+   const u=(px*U[0]+py*U[1]+pz*U[2])/r[0],v=(px*V[0]+py*V[1]+pz*V[2])/r[1],w=(px*W[0]+py*W[1]+pz*W[2])/r[2];
+   stampValues++;
+   // Compact, softly faceted cutters. Meso jitter was cached with the base.
+   const n=kind==='chip'?Math.max(Math.abs(u)*.92+Math.abs(v)*.27,Math.abs(v)*.96+Math.abs(w)*.18,Math.abs(w)*.86+Math.abs(u)*.22,(Math.abs(u)+Math.abs(v)+Math.abs(w))*.53):Math.hypot(u,v,w);
+   const d=(n-1)*mm+jitter[i]*Math.min(soft?.018:.095,mm*(soft?.38:1.12));
+   if(soft){
+    // Smooth union of voids rounds shallow chip mouths; it never adds material.
+    const k=.013+wear*.018,u=clamp(1-Math.abs(field[i]+d)/k);
+    const next=Math.max(field[i],-d)+k*u*u*.25;
+    if(next>field[i]){field[i]=next;hits++;}
+   }else if(-d>field[i]){field[i]=-d;hits++;}
+  }
+  eventLog.push({kind,center,r,hits});
+ }
+ function faceEvent(axis,sign,u,v,ru,rv,rd,angle,kind){
+  const other=[0,1,2].filter(a=>a!==axis),W=[0,0,0],A=[0,0,0],B=[0,0,0],C=[0,0,0];W[axis]=sign;A[other[0]]=1;B[other[1]]=1;
+  C[other[0]]=u;C[other[1]]=v;C[axis]=sign*(h[axis]+rd*.30);
+  let U=A.map((a,k)=>a*Math.cos(angle)+B[k]*Math.sin(angle)),V=A.map((a,k)=>-a*Math.sin(angle)+B[k]*Math.cos(angle));
+  cut(C,U,V,W,[ru,rv,rd],kind);
+ }
+ const count=Math.round(c.damage*(isPebble?3:isStone?(family==='dressed'?12:family==='stone'?(hard?12:16):hard?28:48):isBrick?64:44));
+ for(let k=0;k<count;k++){
+  const axis=isBrick?[2,2,1,0][Math.floor(k/2)%4]:[2,2,1,0][Math.floor(k/2)%4],sign=k%2?1:-1,oth=[0,1,2].filter(a=>a!==axis);
+  const a=(D()*1.92-.96)*h[oth[0]],b=(D()*1.90-.95)*h[oth[1]],large=soft?(c.damage>.60&&k%14===0):k%10===0;
+  let ru=large?.20+D()*.26:.035+D()*.11,rv=large?.12+D()*.14:ru*(.55+D()*.55),rd=large?.10+D()*.085:.038+D()*.085;
+  if(soft){const severity=.48+.52*c.damage;ru*=severity;rv*=severity;rd*=.28+.50*c.damage;
+   // Common aged blocks retain most of their skin; deep loss is an explicit high-damage case.
+  }
+  if(isStone){if(family==='stone'){ru*=hard?.58:.72;rv*=hard?.42:.38;rd*=hard?.20:.34;}else{ru*=hard?.74:1.05;rv*=hard?.70:.60;rd*=hard?.32:.82;}}
+  const ang=family==='stone'?stoneBeddingAngle+(D()-.5)*.16:isStone?-.16+(D()-.5)*.32:D()*6.28;
+  faceEvent(axis,sign,a,b,ru,rv,rd,ang,large||isStone?'chip':'pit');
+ }
+ // A few irregular, shallow pore mouths remain visible on normally aged fired clay.
+ if(isBrick){
+  const pores=family==='kiln'?3:2;
+  for(let k=0;k<pores;k++){
+   const sign=k%2?1:-1,u=(D()*1.54-.77)*h[0],v=(D()*1.45-.725)*h[1];
+   faceEvent(2,sign,u,v,.050+D()*.050,.038+D()*.045,.028+D()*.035,D()*6.283,'pit');
+  }
+ }
+ // Sparse cleavage is local geometry, not a repeated full-face shelf.
+ if(family==='stone')for(let k=0;k<4;k++){
+  const yy=(k/3-.5)*h[1]*1.42+(D()-.5)*.18,xx=(D()-.5)*.82*h[0];
+  faceEvent(2,k===0?-1:1,xx,yy,.28+D()*.34,.016+D()*.020,(.040+D()*.060)*(.45+.55*c.damage),stoneBeddingAngle+(D()-.5)*.12,'chip');
+ }
+ // Keep the legacy local-fracture behavior byte-for-byte for the other families.
+ if(family!=='stone'&&c.damage>(soft?.50:0)&&!isPebble&&!hard)for(let k=0;k<(isStone?7:3);k++){
+  const yy=(k/(isStone?9:5)-.46)*h[1]*1.8+(D()-.5)*.24,xx=(D()-.5)*1.25*h[0];
+  faceEvent(2,(isStone&&k%3===0)?-1:1,xx,yy,.24+D()*.38,(isStone?.025:.035)+D()*.035,(.08+D()*.11)*c.damage,-.13+(D()-.5)*.2,'chip');
+ }
+ if(isStone&&chisel>0){
+  const marks=Math.round((family==='dressed'?54:family==='rubble'?15:8)*chisel),groupPhase=(D()-.5)*.48;
+  for(let k=0;k<marks;k++){
+   const primary=family==='dressed'&&k%6!==5,ax=primary?2:[2,0,1][k%3],sign=k%2?1:-1,o=[0,1,2].filter(a=>a!==ax);
+   const u=(D()*1.78-.89)*h[o[0]],v=(D()*1.76-.88)*h[o[1]],group=Math.floor(k/7);
+   const angle=family==='dressed'?groupPhase+(group%3-1)*.23+(D()-.5)*.16:-.22+(D()-.5)*.66;
+   const ru=family==='dressed'?.085+D()*.19:.070+D()*.16,rv=family==='dressed'?.040+D()*.045:.012+D()*.015;
+   const rd=family==='dressed'?.009+D()*.014:.018+chisel*.036+(hard?.004:c.damage*.020);
+   faceEvent(ax,sign,u,v,ru,rv,rd,angle,'chip');
+  }
+ }
+ if(c.shape==='half')faceEvent(0,1,.08,.04,.54,.44,.20,0,'chip');
+ const stampsEnd=performance.now();
+ function sample(px,py,pz){
+  const q=[(px-org[0])/dx,(py-org[1])/dx,(pz-org[2])/dx];if(q.some((v,a)=>v<0||v>=dims[a]-1))return dx*3;
+  const x=Math.floor(q[0]),y=Math.floor(q[1]),z=Math.floor(q[2]),i=x+y*nx+z*stride,t=q.map((v,a)=>v-Math.floor(v));
+  return mix(mix(mix(field[i],field[i+1],t[0]),mix(field[i+nx],field[i+nx+1],t[0]),t[1]),mix(mix(field[i+stride],field[i+stride+1],t[0]),mix(field[i+stride+nx],field[i+stride+nx+1],t[0]),t[1]),t[2]);
+ }
+ // Face-consistent, multi-component surface nets. Each face resolves its
+ // four-edge ambiguity from its own cached samples, shared by both cells.
+ // Separate contour loops receive separate vertices, avoiding the pinches of
+ // a single-vertex-per-cell implementation. Normals still use zero field calls.
+ const cell=new Int32Array(N);cell.fill(-1);const cellEdges=[],P=[],I=[],C=[],K=[],faceSplitMap=new Map();
+ const offsets=[0,1,nx,nx+1,stride,stride+1,stride+nx,stride+nx+1],edges=[[0,1],[2,3],[4,5],[6,7],[0,2],[1,3],[4,6],[5,7],[0,4],[1,5],[2,6],[3,7]];
+ const faces=[[0,2,6,4],[1,3,7,5],[0,4,5,1],[2,3,7,6],[0,1,3,2],[4,6,7,5]];
+ const edgeNum=(a,b)=>edges.findIndex(e=>e.includes(a)&&e.includes(b));
+ const faceEdges=faces.map(f=>f.map((c,j)=>edgeNum(c,f[(j+1)%4])));
+ let ambiguousCells=0;
+ for(let z=0;z<nz-1;z++)for(let y=0;y<ny-1;y++)for(let x=0;x<nx-1;x++){
+  const i=x+y*nx+z*stride;let mask=0;const vals=offsets.map(o=>field[i+o]);for(let j=0;j<8;j++)if(vals[j]<0)mask|=1<<j;if(mask===0||mask===255)continue;
+  const points=new Array(12),parents=Array.from({length:12},(_,j)=>j),root=a=>{while(parents[a]!==a){parents[a]=parents[parents[a]];a=parents[a];}return a;},join=(a,b)=>{parents[root(a)]=root(b);};
+  for(let e=0;e<12;e++){const[a,b]=edges[e];if(((mask>>a)&1)===((mask>>b)&1))continue;const t=clamp(vals[a]/(vals[a]-vals[b]),.01,.99);points[e]=[mix(a&1,b&1,t),mix((a>>1)&1,(b>>1)&1,t),mix((a>>2)&1,(b>>2)&1,t)];}
+  for(let f=0;f<6;f++){
+   const face=faces[f],fe=faceEdges[f],crosses=fe.filter(e=>points[e]);
+   if(crosses.length===2)join(crosses[0],crosses[1]);
+   if(crosses.length===4){
+    const inside=face.reduce((v,c)=>v+vals[c],0)<0;
+    const fKey=(i+[0,1,0,nx,0,stride][f])*3+Math.floor(f/2);
+    let arc=faceSplitMap.get(fKey);const isNew=!arc;if(isNew){arc=new Map();faceSplitMap.set(fKey,arc);}
+    for(let j=0;j<4;j++)if((vals[face[j]]<0)!==inside){
+     const e0=fe[(j+3)%4],e1=fe[j];join(e0,e1);
+     if(isNew){const p0=points[e0],p1=points[e1],vi=P.length/3;P.push(org[0]+(x+(p0[0]+p1[0])*.5)*dx,org[1]+(y+(p0[1]+p1[1])*.5)*dx,org[2]+(z+(p0[2]+p1[2])*.5)*dx);K.push(0);
+      for(const e of[e0,e1])arc.set((i+offsets[edges[e][0]])*3+Math.floor(e/4),vi);
+     }
+    }
+   }
+  }
+  const groups=new Map();for(let e=0;e<12;e++)if(points[e]){let r=root(e);if(!groups.has(r))groups.set(r,[]);groups.get(r).push(e);}
+  if(groups.size>1)ambiguousCells++;const edgeV=new Array(12).fill(-1);
+  for(const es of groups.values()){
+   let sx=0,sy=0,sz=0;for(const e of es){sx+=points[e][0];sy+=points[e][1];sz+=points[e][2];}
+   const v=P.length/3;P.push(org[0]+(x+sx/es.length)*dx,org[1]+(y+sy/es.length)*dx,org[2]+(z+sz/es.length)*dx);K.push(0);for(const e of es)edgeV[e]=v;
+  }
+  cell[i]=cellEdges.length;cellEdges.push(...edgeV);
+ }
+ function vertex(i,e){return cell[i]>=0?cellEdges[cell[i]+e]:-1;}
+ function quad(a,b,c,d,flip,faceKeys,edgeKey){
+  if(a<0||b<0||c<0||d<0)return;const v=[a,b,c,d],poly=[];
+  for(let j=0;j<4;j++){poly.push(v[j]);const mid=faceSplitMap.get(faceKeys[j])?.get(edgeKey);if(mid!==undefined)poly.push(mid);}
+  if(poly.length===4){if(flip)I.push(a,c,b,a,d,c);else I.push(a,b,c,a,c,d);return;}
+  // A face may have two distinct contour arcs with the same endpoints.
+  // Their shared face-midpoints keep those arcs topologically separate.
+  let q=[0,0,0];for(const vi of poly)for(let a=0;a<3;a++)q[a]+=P[vi*3+a]/poly.length;
+  const center=P.length/3;P.push(...q);K.push(0);
+  for(let j=0;j<poly.length;j++){const k=(j+1)%poly.length;if(flip)I.push(center,poly[k],poly[j]);else I.push(center,poly[j],poly[k]);}
+ }
+ for(let z=1;z<nz-1;z++)for(let y=1;y<ny-1;y++)for(let x=1;x<nx-1;x++){
+  const i=x+y*nx+z*stride,sg=field[i]<0;
+  if(sg!==(field[i+1]<0))quad(vertex(i,0),vertex(i-nx,1),vertex(i-nx-stride,3),vertex(i-stride,2),!sg,[i*3+1,(i-nx)*3+2,(i-stride)*3+1,i*3+2],i*3);
+  if(sg!==(field[i+nx]<0))quad(vertex(i,4),vertex(i-stride,6),vertex(i-stride-1,7),vertex(i-1,5),!sg,[i*3+2,(i-stride)*3,(i-1)*3+2,i*3],i*3+1);
+  if(sg!==(field[i+stride]<0))quad(vertex(i,8),vertex(i-1,9),vertex(i-1-nx,11),vertex(i-nx,10),!sg,[i*3,(i-1)*3+1,(i-nx)*3,i*3+1],i*3+2);
+ }
+ // The specimen is one retained solid; discard isolated numerical crumbs.
+ const parent=new Int32Array(P.length/3);for(let j=0;j<parent.length;j++)parent[j]=j;
+ function rootOf(a){while(parent[a]!==a){parent[a]=parent[parent[a]];a=parent[a];}return a;}
+ for(let j=0;j<I.length;j+=3){parent[rootOf(I[j+1])]=rootOf(I[j]);parent[rootOf(I[j+2])]=rootOf(I[j]);}
+ const comp=new Map();for(let j=0;j<I.length;j+=3){const r=rootOf(I[j]);comp.set(r,(comp.get(r)||0)+1);}
+ let largest=-1,best=0;for(const[r,n]of comp)if(n>best){largest=r;best=n;}
+ const removedBodyComponents=Math.max(0,comp.size-1),removedBodyTriangles=I.length/3-best;
+ if(removedBodyComponents){const map=new Map(),p=[],ix=[];for(let j=0;j<I.length;j+=3)if(rootOf(I[j])===largest)for(let a=0;a<3;a++){const v=I[j+a];if(!map.has(v)){map.set(v,p.length/3);p.push(P[v*3],P[v*3+1],P[v*3+2]);}ix.push(map.get(v));}
+  P.length=0;I.length=0;K.length=0;for(const v of p)P.push(v);for(const v of ix)I.push(v);for(let i=0;i<P.length/3;i++)K.push(0);
+ }
+ const bodyVertices=P.length/3,bodyIndexCount=I.length,normals=new Array(P.length).fill(0);
+ for(let i=0;i<I.length;i+=3){const a=I[i]*3,b=I[i+1]*3,d=I[i+2]*3,v=[P[b]-P[a],P[b+1]-P[a+1],P[b+2]-P[a+2]],w=[P[d]-P[a],P[d+1]-P[a+1],P[d+2]-P[a+2]],n=cross(v,w);for(const j of[a,b,d])for(let t=0;t<3;t++)normals[j+t]+=n[t];}
+ const hullEnd=performance.now();
+ for(let i=0;i<bodyVertices;i++){
+  const p=P.slice(i*3,i*3+3),n=norm(normals.slice(i*3,i*3+3));normals.splice(i*3,3,...n);
+  const macro=noise(p[0]*2.2,p[1]*2.2,p[2]*2.2,cs),meso=noise(p[0]*7.5,p[1]*7.5,p[2]*7.5,cs+88),fine=noise(p[0]*26,p[1]*26,p[2]*26,cs+19);
+  let ao=0;for(const d of[.045,.095,.18]){const f=sample(p[0]+n[0]*d,p[1]+n[1]*d,p[2]+n[2]*d);ao+=clamp((d-f)/d)*.16;}
+  C.push(macro,meso,fine,1-ao);
+ }
+ const bodyBounds={min:[0,1,2].map(a=>{let m=Infinity;for(let i=a;i<P.length;i+=3)m=Math.min(m,P[i]);return m}),max:[0,1,2].map(a=>{let m=-Infinity;for(let i=a;i<P.length;i+=3)m=Math.max(m,P[i]);return m})};
+ const fiberAudit=[],rejectedFibers=[],huskAudit=[];
+ if(family==='adobe'){
+  const F=rng(fs);
+  function surface(p,N){let lo=null,hi=.19;const value=t=>sample(...p.map((v,k)=>v+N[k]*t));if(value(hi)<=0)return null;for(let j=1;j<=64;j++){const t=.19-.77*j/64;if(value(t)<0){lo=t;break;}hi=t;}if(lo===null)return null;for(let j=0;j<22;j++){const mid=(lo+hi)/2;if(value(mid)<0)lo=mid;else hi=mid;}return p.map((v,k)=>v+N[k]*(lo+hi)/2);}
+  const strawCount=Math.round(315*(c.strawDensity??.86));
+  for(let f=0;f<strawCount;f++){
+   const face=f<6?f:Math.floor(F()*6),axis=face<2?0:face<4?1:2,sign=face%2?1:-1,N=[0,0,0];N[axis]=sign;const oth=[0,1,2].filter(a=>a!==axis),p=[0,0,0];p[axis]=sign*h[axis];p[oth[0]]=(F()*1.65-.825)*h[oth[0]];p[oth[1]]=(F()*1.65-.825)*h[oth[1]];
+   const typ=f%11===0?1:f%5===0?3:f%3===0?2:4,ang=F()*Math.PI*2,U=[0,0,0];U[oth[0]]=Math.cos(ang);U[oth[1]]=Math.sin(ang);const V=norm(cross(N,U));
+   const length=typ===1?.15+F()*.17:typ===3?.075+F()*.18:.055+F()*.17,width=typ===1?.0058+F()*.0037:typ===3?.0075+F()*.0065:typ===2?.0048+F()*.0058:.0025+F()*.0022,
+      thick=typ===1?width:width*(typ===4?.62:.24),bend=(F()-.5)*.055,waviness=(F()-.5)*.018,wavePhase=F()*6.283185,segments=12,sides=5,start=P.length/3,node=F()>.5?F()*.55+.24:-10,enter=.20+F()*.14,exit=.20+F()*.14;
+   const centers=[],values=[],points=[],meta=[],snorm=[];let valid=true;
+   for(let j=0;j<=segments;j++){
+    const t=j/segments,curve=bend*Math.sin(t*Math.PI)+waviness*Math.sin(t*Math.PI*2+wavePhase)*Math.sin(t*Math.PI),q=p.map((v,k)=>v+U[k]*(t-.5)*length+V[k]*curve),hit=surface(q,N);if(!hit){valid=false;break;}
+    // Both ends lie inside by multiple cell widths. Surface follows the host.
+    const ea=clamp(t/enter),eb=clamp((1-t)/exit),hump=Math.min(ea*ea*(3-2*ea),eb*eb*(3-2*eb)),depth=mix(-dx*2.35-thick,thick*(.25+.18*Math.sin(t*8.3+f*.73)),hump),center=hit.map((v,k)=>v+N[k]*depth),tip=.30+.70*Math.pow(Math.sin(t*Math.PI),.30),ring=typ===1?Math.exp(-Math.pow((t-node)/.030,2)):0;
+    centers.push(center);values.push(sample(...center));
+    for(let a=0;a<sides;a++){
+     const an=a/sides*Math.PI*2,rr=(1+ring*.17),pt=center.map((v,k)=>v+V[k]*Math.cos(an)*width*tip*rr+N[k]*Math.sin(an)*thick*tip*rr);
+     points.push(...pt);snorm.push(...norm(V.map((v,k)=>v*Math.cos(an)/width+N[k]*Math.sin(an)/thick)));
+     meta.push(t,ring,a/sides,clamp(-sample(...pt)/Math.max(thick,dx*.10)));  // Stable pseudo-random tint, geometry unchanged on color edits.
+    }
+   }
+   if(!valid){rejectedFibers.push({id:'straw-'+f,reason:'no bracketed host surface'});continue;}
+   const buried=values.filter(v=>v< -dx*.65).length,exposed=values.filter(v=>v>0).length;
+   if(buried<4||values[0]>=-dx*.65||values.at(-1)>=-dx*.65){rejectedFibers.push({id:'straw-'+f,reason:'insufficient two-ended anchor'});continue;}
+   P.push(...points);normals.push(...snorm);C.push(...meta);for(let j=0;j<points.length/3;j++)K.push(typ);
+   for(let j=0;j<segments;j++)for(let a=0;a<sides;a++){const k=start+j*sides+a,l=start+j*sides+(a+1)%sides;I.push(k,l,k+sides,l,l+sides,k+sides);}
+   // End caps close each individual strand; all endpoints are buried.
+   for(let a=1;a<sides-1;a++)I.push(start,start+a+1,start+a,start+segments*sides,start+segments*sides+a,start+segments*sides+a+1);
+   for(let n=I.length-(segments*sides*6+(sides-2)*6);n<I.length;n+=3){
+    const a=I[n]*3,b=I[n+1]*3,d=I[n+2]*3;
+    const v=[P[b]-P[a],P[b+1]-P[a+1],P[b+2]-P[a+2]],w=[P[d]-P[a],P[d+1]-P[a+1],P[d+2]-P[a+2]],cr=cross(v,w);
+    if(cr[0]*(normals[a]+normals[b]+normals[d])+cr[1]*(normals[a+1]+normals[b+1]+normals[d+1])+cr[2]*(normals[a+2]+normals[b+2]+normals[d+2])<0){const z=I[n+1];I[n+1]=I[n+2];I[n+2]=z;}
+   }
+   fiberAudit.push({id:'straw-'+f,type:typ,face:['x','y','z'][axis]+(sign>0?'+':'-'),buriedSamples:buried,exposedCenterSamples:exposed,head:centers[0],tail:centers.at(-1),headField:values[0],tailField:values.at(-1),anchorSamples:centers.filter((p,i)=>values[i]<-dx*.65),vertexStart:start,vertexCount:points.length/3});
+  }
+  const H=rng(derive(fs,'rice-hull'));
+  function finishPart(start,indexStart){
+   for(let j=start*3;j<P.length;j++)normals[j]=0;
+   for(let i=indexStart;i<I.length;i+=3){const a=I[i]*3,b=I[i+1]*3,d=I[i+2]*3,n=cross([P[b]-P[a],P[b+1]-P[a+1],P[b+2]-P[a+2]],[P[d]-P[a],P[d+1]-P[a+1],P[d+2]-P[a+2]]);for(const v of[a,b,d])for(let k=0;k<3;k++)normals[v+k]+=n[k];}
+   for(let j=start;j<P.length/3;j++){const n=norm(normals.slice(j*3,j*3+3));for(let k=0;k<3;k++)normals[j*3+k]=n[k];}
+  }
+  const huskCount=Math.round(100*(c.huskDensity??.48));
+  for(let f=0;f<huskCount;f++){
+   const face=f<6?f:Math.floor(H()*6),axis=face<2?0:face<4?1:2,sign=face%2?1:-1,N=[0,0,0];N[axis]=sign;
+   const oth=[0,1,2].filter(a=>a!==axis),p=[0,0,0];p[axis]=sign*h[axis];for(const a of oth)p[a]=(H()*1.62-.81)*h[a];
+   const hit=surface(p,N);if(!hit)continue;
+   const angle=H()*6.283185,U=[0,0,0];U[oth[0]]=Math.cos(angle);U[oth[1]]=Math.sin(angle);const V=norm(cross(N,U));
+   const halfLength=.024+H()*.015,halfWidth=halfLength*(.31+H()*.14),depth=.0038+H()*.0026,wall=.00155+H()*.00085;
+   const tilt=(H()-.5)*.18,raise=-.0004+H()*.0018,start=P.length/3,idxStart=I.length,S=12,RINGS=2;
+   const point=(r,ang,outer)=>{const x=halfLength*r*Math.cos(ang),y=halfWidth*r*Math.sin(ang)*(.70+.30*Math.abs(Math.sin(ang)));const z=raise-depth*(1-r*r)-wall*outer+tilt*x;return hit.map((v,k)=>v+U[k]*x+V[k]*y+N[k]*z);};
+   const anchor=point(0,0,1);if(sample(...anchor)>=-wall*.35)continue;
+   const emit=(r,a,o)=>{const pt=point(r,a,o);P.push(...pt);K.push(5);C.push((Math.cos(a)*r+1)*.5,o,r,clamp(-sample(...pt)/Math.max(wall,dx*.1)));normals.push(0,0,0);};
+   for(let outer=0;outer<2;outer++){
+    const off=P.length/3;emit(0,0,outer);
+    for(let ring=1;ring<=RINGS;ring++)for(let a=0;a<S;a++)emit(ring/RINGS,a/S*6.283185,outer);
+    function tri(a,b,c){if(outer)I.push(a,c,b);else I.push(a,b,c);}
+    for(let a=0;a<S;a++)tri(off,off+1+a,off+1+(a+1)%S);
+    for(let ring=1;ring<RINGS;ring++)for(let a=0;a<S;a++){const x=off+1+(ring-1)*S+a,y=off+1+(ring-1)*S+(a+1)%S;tri(x,x+S,y);tri(y,x+S,y+S);}
+   }
+   const side=1+S*RINGS,lip0=start+1+(RINGS-1)*S,lip1=lip0+side;
+   for(let a=0;a<S;a++){const j=(a+1)%S;I.push(lip0+a,lip1+a,lip0+j,lip0+j,lip1+a,lip1+j);}
+   finishPart(start,idxStart);
+   huskAudit.push({id:'husk-'+f,face:['x','y','z'][axis]+(sign>0?'+':'-'),length:2*halfLength,width:2*halfWidth,wall,anchor,anchorField:sample(...anchor),vertexStart:start,vertexCount:P.length/3-start,innerOuterAndRim:true});
+  }
+ }
+ const allEnd=performance.now();
+ return {position:new Float32Array(P),normal:new Float32Array(normals),data:new Float32Array(C),kind:new Float32Array(K),index:new Uint32Array(I),stats:{version:'R7.4.0',edgeWear:soft?wear:null,roundRadius:radius,family,seed,shape:c.shape,shapeSeed:ss,damageSeed:ds,colorSeed:cs,fiberSeed:fs,grid:dims,spacing:dx,gridPadding:padding,baseFieldEvaluations:baseValues,localCutterEvaluations:stampValues,normalFieldEvaluations:0,ambiguousCellsResolved:ambiguousCells,removedBodyComponents,removedBodyTriangles,bodyVertices,bodyTriangles:bodyIndexCount/3,bodyIndexCount,vertices:P.length/3,triangles:I.length/3,buildMs:allEnd-begin,stages:{baseMs:baseEnd-begin,cutMs:stampsEnd-baseEnd,meshMs:hullEnd-stampsEnd,attributesAndFibersMs:allEnd-hullEnd},bounds:bodyBounds,fibers:fiberAudit.length,riceHusks:huskAudit.length,huskAudit,fiberAudit,rejectedFibers,eventCount:eventLog.length,liveAnimation:false},debug:c.debug?{field,dims,org,dx,events:eventLog}:undefined};
+}
+return{build,derive,defaults,noise,validate};
+}
+if(typeof module!=='undefined'&&module.exports)module.exports=createBrickKernel();
+</script><script>/* Brick Mother R7 retained-mode WebGL2 specimen renderer. No per-frame CPU geometry-field evaluation. Visible fragments still evaluate material functions.
+   Only camera/light/material uniforms change while inspecting the object. */
+function createBrickRenderer(canvas){
+'use strict';
+const gl=canvas.getContext('webgl2',{alpha:true,antialias:true,powerPreference:'low-power',preserveDrawingBuffer:false});
+if(!gl)throw Error('当前浏览器未提供 WebGL 2，请启用图形加速后重开。');
+const norm=a=>{let d=Math.hypot(...a)||1;return a.map(v=>v/d)},cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]],dot=(a,b)=>a.reduce((s,v,i)=>s+v*b[i],0);
+function mul(a,b){const o=new Float32Array(16);for(let c=0;c<4;c++)for(let r=0;r<4;r++)for(let k=0;k<4;k++)o[c*4+r]+=a[k*4+r]*b[c*4+k];return o;}
+function look(eye,tgt){const z=norm(eye.map((v,i)=>v-tgt[i])),x=norm(cross([0,1,0],z)),y=cross(z,x);return new Float32Array([x[0],y[0],z[0],0,x[1],y[1],z[1],0,x[2],y[2],z[2],0,-dot(x,eye),-dot(y,eye),-dot(z,eye),1]);}
+function persp(fov,aspect){const f=1/Math.tan(fov/2),n=.05,fa=40;return new Float32Array([f/aspect,0,0,0,0,f,0,0,0,0,(fa+n)/(n-fa),-1,0,0,2*fa*n/(n-fa),0]);}
+function ortho(s){return new Float32Array([1/s,0,0,0,0,1/s,0,0,0,0,-2/20,0,0,0,-1,1]);}
+const domainVS=`#version 300 es
+precision highp float;
+layout(location=0)in vec3 aPosition;layout(location=1)in vec3 aNormal;layout(location=2)in vec4 aData;layout(location=3)in float aKind;
+uniform mat4 uVP;uniform mat4 uLightVP;
+out vec3 vQ;out float vMM;out vec3 vP;out vec3 vN;out vec4 vD;out vec4 vShadow;out float vKind;
+uniform int uTwists;uniform int uLevels;uniform float uStrength;uniform float uPhase;uniform float uFrequency;
+float h(vec3 p){p=fract(p*.1031);p+=dot(p,p.yzx+33.33);return fract((p.x+p.y)*p.z);}
+float noise(vec3 p){vec3 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(mix(h(i),h(i+vec3(1,0,0)),f.x),mix(h(i+vec3(0,1,0)),h(i+vec3(1,1,0)),f.x),f.y),mix(mix(h(i+vec3(0,0,1)),h(i+vec3(1,0,1)),f.x),mix(h(i+vec3(0,1,1)),h(i+vec3(1,1,1)),f.x),f.y),f.z);}
+
+// Coordinate twists are project experiments. The source scalar alone is studied from Macroscopic microscope.
+vec3 localTwist(vec3 p, vec3 center, vec3 axis, float radius, float freq, float amp, float phase){
+ vec3 v=p-center;axis=normalize(axis);
+ float angle=amp*uStrength*exp(-dot(v,v)/(radius*radius))*sin(freq*dot(axis,v)+phase);
+ float c=cos(angle),s=sin(angle);
+ return center+c*v+s*cross(axis,v)+(1.-c)*axis*dot(axis,v);
+}
+vec3 detailCoordinates(vec3 p){
+ // Stable per-specimen centers and axes derived from uPhase. Camera and time never enter.
+ vec3 c1=vec3(.12+.11*sin(uPhase*.71),-.08+.09*cos(uPhase*.53),.04+.07*sin(uPhase*.37+1.1));
+ vec3 a1=normalize(vec3(.38+.24*sin(uPhase*.31),.82+.14*cos(uPhase*.47),.42+.18*sin(uPhase*.59+2.0)));
+ vec3 c2=vec3(-.16+.08*cos(uPhase*.43),.13+.10*sin(uPhase*.67),-.06+.07*cos(uPhase*.29+1.7));
+ vec3 a2=normalize(vec3(-.67+.18*cos(uPhase*.61),.15+.17*sin(uPhase*.41),.73+.12*cos(uPhase*.73+1.3)));
+ if(uTwists>0)p=localTwist(p,c1,a1,2.4,1.35,.36,uPhase);
+ if(uTwists>1)p=localTwist(p,c2,a2,2.1,3.7,.12,uPhase+1.3);
+ if(uTwists>0){vec3 x=p*5.7+vec3(uPhase);p+=.018*uStrength*(vec3(noise(x),noise(x+vec3(14.7,-6.3,4.2)),noise(x+vec3(-3.7,17.2,12.4)))-.5);}
+ return p;
+}
+
+float microscopeCellVertex(vec3 p){vec3 c=cos(p);return cos(c.z*c.x+c.y*c.y+c.y*c.x);}
+float microscopeVertex(vec3 q){
+ float r=max(length(q),1e-4);vec3 xi=vec3(log2(r)-2.,-q.z/r,atan(q.x,q.y));
+ float sum=0.,scale=1.;
+ for(int j=0;j<17;j++){if(j>=uLevels)break;sum+=(microscopeCellVertex(xi*scale)-.6556965)/scale;scale*=2.;}
+ return sum;
+}
+
+void main(){vQ=aKind>.5?aPosition:detailCoordinates(aPosition);vMM=aKind>.5?0.:microscopeVertex(vQ*uFrequency*2.4);vP=aPosition;vN=aNormal;vD=aData;vKind=aKind;vShadow=uLightVP*vec4(aPosition,1.);gl_Position=uVP*vec4(aPosition,1.);}`;
+const vs=domainVS.replace('layout(location=0)in vec3 aPosition;', 'layout(location=4)in vec3 aCoordinates;layout(location=5)in float aMM;layout(location=0)in vec3 aPosition;').replace('vQ=aKind>.5?aPosition:detailCoordinates(aPosition);vMM=aKind>.5?0.:microscopeVertex(vQ*uFrequency*2.4);','vQ=aCoordinates;vMM=aMM;');
+const fs=`#version 300 es
+precision highp float;
+in vec3 vQ;in float vMM;in vec3 vP;in vec3 vN;in vec4 vD;in vec4 vShadow;in float vKind;
+uniform int uTwists;uniform int uLevels;uniform float uStrength;uniform float uPhase;uniform float uFrequency;
+uniform vec3 uEye;uniform vec3 uLight;uniform int uRock;uniform int uFamily;uniform int uMode;uniform float uWet;uniform float uRough;uniform float uGrain;uniform float uColor;uniform float uSoot;uniform float uKiln;uniform float uChisel;uniform float uExposure;uniform float uClip;uniform highp sampler2DShadow uDepth;
+out vec4 frag;
+float h(vec3 p){p=fract(p*.1031);p+=dot(p,p.yzx+33.33);return fract((p.x+p.y)*p.z);}
+float noise(vec3 p){vec3 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(mix(h(i),h(i+vec3(1,0,0)),f.x),mix(h(i+vec3(0,1,0)),h(i+vec3(1,1,0)),f.x),f.y),mix(mix(h(i+vec3(0,0,1)),h(i+vec3(1,0,1)),f.x),mix(h(i+vec3(0,1,1)),h(i+vec3(1,1,1)),f.x),f.y),f.z);}
+vec3 srgb(vec3 c){return mix(12.92*c,1.055*pow(max(c,vec3(0)),vec3(1./2.4))-.055,step(vec3(.0031308),c));}
+vec3 linear(vec3 c){return mix(c/12.92,pow((c+.055)/1.055,vec3(2.4)),step(vec3(.04045),c));}
+vec3 tonemap(vec3 x){return max(x,vec3(0))/(1.+max(x,vec3(0)));}
+float shadow(vec3 n){vec3 q=vShadow.xyz/vShadow.w*.5+.5;if(any(lessThan(q,vec3(0)))||any(greaterThan(q,vec3(1))))return 1.;float bias=max(.0005*(1.-dot(n,uLight)),.00012);float s=0.;for(int i=0;i<4;i++){vec2 offset=vec2(float(i%2),float(i/2))-.5;s+=texture(uDepth,vec3(q.xy+offset/1024.,q.z-bias));}return s*.25;}
+vec3 perturb(vec3 n,float height){vec3 x=dFdx(vP),y=dFdy(vP),r1=cross(y,n),r2=cross(n,x);float det=dot(x,r1);vec3 grad=sign(det)*(dFdx(height)*r1+dFdy(height)*r2)/max(abs(det),1e-8);return normalize(n-grad);}
+
+// A sparse, seeded short-gouge field. It is evaluated triplanarly so all faces
+// use the same object-space identity, while each cell receives a different mark.
+float chiselSegment(vec2 p,float seed){
+ vec2 id=floor(p),f=fract(p)-.5;
+ float a=h(vec3(id,seed)),b=h(vec3(id+vec2(19.1,7.3),seed+11.7)),c=h(vec3(id+vec2(-5.4,23.8),seed+4.9));
+ float ang=(a-.5)*1.25;vec2 dir=vec2(cos(ang),sin(ang)),side=vec2(-dir.y,dir.x);
+ vec2 center=(vec2(b,c)-.5)*.42;float along=dot(f-center,dir),across=dot(f-center,side);
+ float halfLen=.12+.21*a,width=.040+.035*c;
+ float box=max(abs(along)-halfLen,abs(across)-width);
+ float body=1.-smoothstep(.0,.035,box);
+ float gate=smoothstep(.34,.72,h(vec3(id+vec2(3.2,-8.7),seed+31.)));
+ return body*gate;
+}
+float chiselField(vec3 q,vec3 n){
+ vec3 w=pow(abs(n),vec3(5.));w/=max(w.x+w.y+w.z,1e-5);
+ float sx=chiselSegment(q.yz*7.4+vec2(uPhase*.17,-uPhase*.09),uPhase+2.1);
+ float sy=chiselSegment(q.xz*7.0+vec2(-uPhase*.12,uPhase*.14),uPhase+7.3);
+ float sz=chiselSegment(q.xy*7.8+vec2(uPhase*.11,uPhase*.07),uPhase+13.9);
+ return dot(vec3(sx,sy,sz),w);
+}
+
+// R5 lithology is retained and tuned conservatively for the R7 review.
+// Bounded appearance recipes, not measured reflectance or geological proof.
+// A single jittered-cell pass supplies crystal identity, contact edges and grain
+// scale. Color, roughness and relief use distinct responses to those fields.
+vec3 cellHash(vec3 p){vec3 a=vec3(dot(p,vec3(127.1,311.7,74.7)),dot(p,vec3(269.5,183.3,246.1)),dot(p,vec3(113.5,271.9,124.6)));a=fract(a*.01347);a+=dot(a,a.yzx+19.19);return fract((a.xxy+a.yzz)*a.zyx);}
+vec4 crystal(vec3 p){
+ vec3 ip=floor(p),fp=fract(p),r0=cellHash(ip),v0=.5+.80*(r0-.5)-fp;
+ float first=dot(v0,v0),second=20.,id=r0.x,sub=r0.y;
+ for(int z=-1;z<=1;z++)for(int y=-1;y<=1;y++)for(int x=-1;x<=1;x++){
+  if(x==0&&y==0&&z==0)continue;
+  vec3 g=vec3(float(x),float(y),float(z));
+  // Exact lower bound for the jittered site's [.1,.9]^3 cell support.
+  vec3 nearBox=max(abs(fp-g-.5)-.4,vec3(0.));
+  if(dot(nearBox,nearBox)>=second)continue;
+  vec3 r=cellHash(ip+g),v=g+.5+.80*(r-.5)-fp;
+  float dd=dot(v,v);
+  if(dd<first){second=first;first=dd;id=r.x;sub=r.y;}
+  else second=min(second,dd);
+ }
+ // second-first is a boundary indicator, not a true distance to a grain edge.
+ return vec4(sqrt(first),sqrt(second)-sqrt(first),id,sub);
+}
+void rockMaterial(vec3 q,float macro,float meso,float micro,float fp,out vec3 base,out float rough,out float height){
+ bool worn=uFamily==6;float wear=worn?1.:0.;float w=clamp(uColor,0.,1.5);
+ float g=noise(q*139.7+vec3(2.8,15.7,7.1));
+ float gAA=1.-smoothstep(.004,.018,fp);g=mix(.5,g,gAA);
+ float broad=noise(q*3.4+vec3(14.1,-8.3,2.7));
+ if(uRock==1){
+  // Interlocking feldspar/quartz/dark-mica populations, with distinct response.
+  vec3 gp=q*vec3(44.3,49.1,41.7);vec3 ng=q*52.3;
+  gp+=.34*(vec3(noise(ng),noise(ng+vec3(7.1,11.4,2.7)),noise(ng+vec3(13.7,-7.8,3.1)))-.5);
+  vec4 cr=crystal(gp);
+  float resolved=1.-smoothstep(.22,.92,fp*48.1);
+  float zone=noise(q*11.7+vec3(6.2,3.4,19.1));
+  float mica=(1.-smoothstep(.075,.12,cr.z))*(.45+.55*smoothstep(.26,.57,g));
+  float quartz=smoothstep(.14,.20,cr.z)*(1.-smoothstep(.42,.48,cr.z));
+  float warm=smoothstep(.49,.78,cr.w)*(.32+.48*zone);
+  vec3 feldspar=mix(vec3(.60,.585,.55),vec3(.55,.36,.28),warm);
+  vec3 mineral=mix(feldspar,vec3(.43,.455,.45),quartz*.82);
+  mineral=mix(mineral,vec3(.14,.15,.145),mica*.72);
+  float splinter=smoothstep(.67,.82,noise(q*vec3(170.,121.,183.)+vec3(7.9,14.1,-2.3)));
+  mineral=mix(mineral,vec3(.205,.211,.198),splinter*.52*quartz);
+  mineral*=.88+.20*g+.04*cr.w;
+  float localMineral=.42+.42*zone;base=mix(vec3(.49,.475,.445),mineral,resolved*localMineral);
+  base=mix(vec3(dot(base,vec3(.26,.62,.12))),base,.72+.28*w);
+  base*=.96+.08*(macro-.5);
+  rough=clamp(mix(worn?.66:.84,uRough,.76)+resolved*(.055*(cr.w-.5)-.055*quartz-.070*mica),.38,.98);
+  // Grain contact relief is very shallow; no black outline around every crystal.
+  float edge=(1.-smoothstep(.0,.090,cr.y));
+  height=resolved*(edge*(-.0008)+(.0008*(cr.w-.5))*smoothstep(0.,.15,cr.y))*(1.-wear*.78);
+  height+=(g-.5)*(worn?.00020:.0018);
+ }else if(uRock==2){
+  // Cemented sandstone: subdued matrix, many tiny grains and irregular bedding.
+  float grain=noise(q*vec3(148.,169.,157.)+vec3(19.,2.,7.));
+  float grain2=noise(q*vec3(247.,219.,273.)+vec3(-4.,13.,21.));
+  float res=1.-smoothstep(.28,1.05,fp*157.);grain=mix(.5,grain,res);grain2=mix(.5,grain2,res);
+  float lamina=noise(vec3(q.x*3.7,q.y*20.5+macro*.38+noise(q*3.2)*.45,q.z*4.1));
+  float matrix=clamp(.47+.50*(macro-.5)+.15*(lamina-.5),0.,1.);
+  base=mix(vec3(.285,.265,.225),vec3(.585,.535,.425),matrix);
+  float pale=smoothstep(.72,.91,grain2)*smoothstep(.38,.76,grain);
+  float dark=smoothstep(.73,.90,1.-grain)*smoothstep(.35,.78,grain2);
+  base=mix(base,vec3(.73,.69,.59),pale*.16*w);
+  base=mix(base,vec3(.205,.205,.19),dark*.15*w);
+  float oxide=smoothstep(.64,.84,broad)*smoothstep(.43,.74,meso);
+  base=mix(base,vec3(.39,.285,.195),oxide*.20*w);
+  base*=.96+.16*(grain-.5)*(.35+.65*w);
+  rough=clamp(mix(worn?.75:.93,uRough,.74)+.055*(grain-.5)+.025*dark,.48,.998);
+  height=(grain-.5)*(worn?.00016:.0023)+(grain2-.5)*(worn?.00010:.00125)+(lamina-.5)*(worn?.00014:.0010);
+ }else if(uRock==3){
+  // Compact fine-grained basalt: dense dark matrix, sparse light laths.
+  float fine=noise(q*vec3(86.,190.,123.)+vec3(14.2,2.7,-8.3));
+  float res=1.-smoothstep(.3,1.2,fp*160.);
+  float fleck=smoothstep(.76,.90,fine)*res;
+  base=mix(vec3(.255,.273,.283),vec3(.357,.371,.362),clamp(.46+.72*(macro-.5),0.,1.));
+  base*=.97+.10*(g-.5);
+  base=mix(base,vec3(.57,.566,.493),fleck*.44*w);
+  float rind=smoothstep(.66,.86,broad)*smoothstep(.54,.75,meso);
+  base=mix(base,vec3(.367,.301,.243),rind*.3*w);
+  rough=clamp(mix(worn?.63:.84,uRough,.78)+.045*(g-.5),.36,.98);
+  height=(g-.5)*(worn?.00018:.0012)+fleck*(worn?.00005:.00045);
+ }else if(uRock==4){
+  // Dense quartz-rich aggregate: pale intergrown grain and irregular fine seam.
+  float gran=noise(q*68.2+vec3(14.,6.,1.)),res=1.-smoothstep(.4,1.1,fp*68.2);
+  gran=mix(.5,gran,res);
+  float inner=noise(q*7.4+vec3(18.7,5.3,7.4));
+  float seam=(1.-smoothstep(.009,.038,abs(inner-.51)))*smoothstep(.49,.69,meso);
+  base=mix(vec3(.516,.507,.454),vec3(.742,.709,.607),clamp(.5+.9*(macro-.5),0.,1.));
+  base=mix(base,vec3(.79,.775,.684),smoothstep(.52,.72,inner)*.22*w);
+  base*=.97+.13*(gran-.5);
+  rough=clamp(mix(.80,uRough,.78)-.08*seam+.045*(gran-.5)-(worn?.07:0.),.34,.97);
+  height=(gran-.5)*(worn?.00022:.0015);
+ }else{
+  // Warm grey limestone: fine matrix, sparse calcite flecks and irregular seams.
+  float fine=noise(q*82.1+vec3(8.4,-3.7,11.2));
+  fine=mix(.5,fine,1.-smoothstep(.35,1.15,fp*82.1));
+  float cloud=noise(q*4.6+vec3(-6.2,15.1,2.9));
+  float seam=(1.-smoothstep(.012,.050,abs(noise(q*9.3+vec3(3.7,9.1,-4.8))-.52)))*smoothstep(.46,.72,meso);
+  base=mix(vec3(.36,.37,.35),vec3(.58,.55,.46),clamp(.48+.72*(macro-.5)+.18*(cloud-.5),0.,1.));
+  base=mix(base,vec3(.71,.68,.59),smoothstep(.79,.92,fine)*.16*w);
+  base=mix(base,vec3(.31,.32,.30),seam*.20);
+  rough=clamp(mix(worn?.72:.88,uRough,.74)+.035*(fine-.5)-.04*seam,.48,.99);
+  height=(fine-.5)*(worn?.00020:.0012)-seam*(worn?.00012:.0007);
+ }
+ // Very low amplitude, multi-direction fracture texture only on masonry stone.
+ // Worn pebbles retain the parent mineral pattern with attenuated micro-relief.
+ if(!worn){float coarse=noise(q*18.7+vec3(7.3,-12.1,11.));height+=(coarse-.5)*.0014;}else height*=.58;
+}
+
+void main(){
+ if(uClip>0.5&&vP.x>0.)discard;
+ vec3 N=normalize(vN),V=normalize(uEye-vP);if(!gl_FrontFacing)N=-N;
+ float rough=uRough,ao=vD.a;vec3 base;float weight=clamp(uColor,0.,1.7);
+ float a=vD.x,b=vD.y,c=vD.z,detail=0.;
+ if(vKind<-.5){
+  float s=shadow(N);float fade=1.-smoothstep(1.8,4.4,length(vP.xz));
+  base=vec3(.10,.108,.105)*(.60+.40*s);frag=vec4(base,fade*.78);return;
+ }
+ float field=0.,drift=.5;
+ if(vKind<.5){
+ // A continuous material volume is evaluated on ALL faces in object coordinates.
+ vec3 q=vQ+vec3(uPhase*.47,-uPhase*.31,uPhase*.19);
+ float footprint=max(length(dFdx(q)),length(dFdy(q)));
+ if(uRock==0)field=vMM;
+ float grain=.5;if(uRock==0)grain=noise(q*211.7+vec3(4.1,8.3,-2.1));
+ float fineFilter=1.-smoothstep(.0015,.006,footprint);
+ grain=mix(.5,grain,fineFilter);
+ float midGrain=noise(q*38.3+vec3(-5.2,11.7,3.1))-.5;
+ float fineGrain=(noise(q*91.7+vec3(9.4,-2.7,14.1))-.5)*(1.-smoothstep(.003,.014,footprint));
+ drift=noise(q*4.3+vec3(7.8,-11.3,4.1));
+ float weather=smoothstep(.34,.69,a+.17*(drift-.5));
+ float mineral=smoothstep(.68,.86,grain+.2*(b-.5));
+ float meso=clamp(.5+field*.42,0.,1.);
+ if(uRock>0){
+  rockMaterial(q*(uFrequency/13.),a,b,c,footprint*(uFrequency/13.),base,rough,detail);field=detail*70.;
+  if(uFamily==5){
+   float gouge=chiselField(q,normalize(vN))*uChisel;
+   detail-=gouge*.0038;base*=1.-gouge*.018;rough=clamp(rough+.035*gouge,.45,1.);
+  }
+  // Pebbles retain parent lithology while water-worn relief stays restrained.
+  if(uFamily==6){
+   float river=noise(q*2.45+vec3(19.2,-4.7,8.1));
+   float band=noise(vec3(q.x*3.2+river*.35,q.y*4.8,q.z*2.7)+vec3(-6.7,12.1,4.2));
+   vec3 cool=vec3(.84,.91,1.04),warm=vec3(1.13,.97,.80),olive=vec3(.91,.97,.78);
+   vec3 tint=mix(cool,warm,clamp(.40+(river-.5)*uColor*1.45,0.,1.));
+   tint=mix(tint,olive,smoothstep(.68,.86,band)*.24*uColor);
+   base*=tint;
+   rough=clamp(mix(rough,uRough,.80),.28,.96);detail*=.24;
+  }
+ }else if(uFamily==0||uFamily==4){
+  // Fired-clay identity: red body first, coherent firing regions second, sparse
+  // pores and micro-relief last. No bright mineral dots or black paint patches.
+  float macroRed=noise(q*1.42+vec3(-8.7,5.2,11.3));
+  float mesoRed=noise(q*6.4+vec3(3.1,-7.9,14.2)+vec3(midGrain*.45));
+  float kilnFlow=noise(q*2.55+vec3(12.7,-3.8,6.1)+vec3(macroRed*.37,-mesoRed*.23,mesoRed*.19));
+  float colorAmp=.34+.42*clamp(weight/1.5,0.,1.);float bodyZone=clamp(.50+(macroRed-.5)*colorAmp+(mesoRed-.5)*(.10+.15*weight)+(b-.5)*(.08+.12*weight),0.,1.);
+  vec3 redDark=vec3(.315,.072,.032),redMid=vec3(.565,.170,.067),redWarm=vec3(.735,.295,.110);
+  base=mix(redDark,redMid,smoothstep(.08,.72,bodyZone));
+  base=mix(base,redWarm,smoothstep(.54,.95,bodyZone)*.42);
+  // Fine, irregular fired-clay mottling that remains inside the red family.
+  float redFleck=noise(q*18.5+vec3(9.1,4.8,-6.2)+vec3(kilnFlow*.7));
+  base*=.96+(.075+.075*weight)*(redFleck-.5)+(.035+.060*weight)*(c-.5);
+  float smokeSource=.62*kilnFlow+.22*macroRed+.16*noise(q*4.8+vec3(-2.4,18.1,7.7));
+  float smoke=smoothstep(.57,.76,smokeSource)*uSoot;
+  base=mix(base,vec3(.245,.205,.188),smoke*(uFamily==0?.55:.72));
+  if(uFamily==4){
+   // Kiln variation remains a red brick. Reduction patches are maroon/brown,
+   // oxidised zones are warmer, and pale ash is rare and muted.
+   float reduction=smoothstep(.49,.72,.58*kilnFlow+.27*noise(q*1.75+vec3(6.4,-8.1,2.7))+.15*mesoRed)*uKiln;
+   float oxidised=smoothstep(.47,.72,.55*mesoRed+.45*noise(q*3.3+vec3(-9.2,3.7,5.8)))*uKiln*(1.-reduction);
+   base=mix(base,vec3(.255,.060,.050),reduction*.72);
+   base=mix(base,vec3(.80,.300,.095),oxidised*.46);
+   float mutedAsh=smoothstep(.91,.985,noise(q*31.7+vec3(5.2,17.1,-8.4))+.08*mesoRed)*uKiln;
+   base=mix(base,vec3(.44,.385,.325),mutedAsh*.055);
+   rough=clamp(mix(.86,uRough,.78)-reduction*.085+oxidised*.025+.025*(mesoRed-.5),.48,.995);
+  }else rough=clamp(mix(.90,uRough,.82)+.035*(mesoRed-.5)-smoke*.025,.58,.998);
+  // Sparse pore mouths need two unrelated fields to coincide, avoiding rows of dots.
+  float poreA=noise(q*37.0+vec3(1.9,13.7,-4.6)+vec3(macroRed));
+  float poreB=noise(q*71.0+vec3(-11.4,3.5,18.7));
+  float pore=smoothstep(.77,.93,poreA)*smoothstep(.61,.84,poreB)*(1.-smoothstep(.0025,.012,footprint));
+  base=mix(base,base*vec3(.67,.62,.58),pore*.32);
+  // R2 field contributes mostly to normal/roughness. Broad colour remains clay-led.
+  detail=field*.0062+(midGrain)*.0068+fineGrain*.0027+(redFleck-.5)*.0028-pore*.0046;
+  rough=clamp(rough+.045*(redFleck-.5)+.05*pore,.48,.998);
+ }else if(uFamily==3){
+  // Earthen matrix: clods, compacted flakes, fine granules and broken hairline
+  // cracks. R2 modulates tiny relief; it never paints large looping contours.
+  float broad=noise(q*2.8+vec3(5.4,-9.3,12.7));
+  float clod=noise(q*8.7+vec3(-3.1,15.2,6.8)+vec3(broad*.55));
+  float flake=noise(q*21.5+vec3(11.2,4.8,-7.3)+vec3(clod*.35));
+  float soilFine=noise(q*96.0+vec3(-8.1,2.7,19.4));
+  float clay=clamp(.49+(broad-.5)*.55+(clod-.5)*.22+(a-.5)*.20,0.,1.);
+  base=mix(vec3(.315,.205,.108),vec3(.585,.405,.218),clay);
+  float compact=smoothstep(.57,.79,flake)*smoothstep(.36,.75,clod);
+  base=mix(base,vec3(.66,.49,.285),compact*.18*weight);
+  float dryEdge=smoothstep(.66,.86,soilFine)*smoothstep(.45,.72,flake);
+  base=mix(base,vec3(.71,.56,.34),dryEdge*.075);
+  // Fine contours are fragmented by an independent gate and remain visually quiet.
+  float crackBase=abs(noise(q*15.2+vec3(broad*1.7,-clod*.8,flake*.6))-.50);
+  float crackGate=smoothstep(.48,.72,noise(q*4.1+vec3(7.7,-2.6,13.4)));
+  float fissure=(1.-smoothstep(.012,.035,crackBase))*crackGate;
+  base=mix(base,base*vec3(.72,.68,.62),fissure*.10);
+  base*=.96+.10*(soilFine-.5)+.07*(c-.5);
+  detail=field*.0035+(clod-.5)*.0072+(flake-.5)*.0042+(soilFine-.5)*.0021-fissure*.0020;
+  rough=clamp(mix(.965,uRough,.84)+.035*(soilFine-.5)+.025*fissure,.76,1.);
+ }else if(uFamily==6){
+  // Fallback only; normal public pebble presets always choose a lithology.
+  base=mix(vec3(.35,.37,.35),vec3(.52,.50,.44),clamp(.5+(a-.5)*weight,0.,1.));
+  detail=(grain-.5)*.0005;rough=clamp(mix(.70,uRough,.8),.42,.95);
+ }else{
+  // R5 generic rock fallback retained for comparison mode.
+  float vein=noise(vec3(q.x*3.1+drift*.25,q.y*7.2,q.z*3.4)+vec3(11.7,6.2,-8.3));
+  float seams=(1.-smoothstep(.012,.056,abs(vein-.54)))*smoothstep(.43,.69,b);
+  if(uFamily!=1)seams*=.33;
+  base=mix(vec3(.255,.287,.298),vec3(.59,.56,.47),clamp(.50+(a-.5)*1.15*weight,0.,1.));
+  base=mix(base,vec3(.38,.294,.196),smoothstep(.58,.77,drift)*.18*weight);
+  base=mix(base,vec3(.66,.659,.60),seams*.18*weight);
+  float fresh=smoothstep(.32,.77,c);
+  base=mix(base,vec3(.55,.554,.522),mineral*fresh*.16*weight);
+  base*=.97+.18*(grain-.5)+.08*field;
+  detail=field*.006+(grain-.5)*.0028-(1.-meso)*seams*.0008;
+  rough=clamp(mix(.88,uRough,.78)+.08*(drift-.5)-mineral*fresh*.06,.50,.99);
+ }
+ }else{
+  drift=vD.x;
+  if(vKind>4.5){
+   float rim=smoothstep(.68,.96,vD.z),inner=step(.5,vD.y);
+   float rib=.5+.5*sin(vD.x*42.+vD.z*4.3+uPhase*.31);
+   float tip=smoothstep(.78,1.,abs(vD.x*2.-1.));
+   base=mix(vec3(.39,.285,.145),vec3(.69,.535,.275),.30+.34*rim+.13*rib);
+   base=mix(base,vec3(.285,.195,.098),inner*.24);
+   base=mix(base,vec3(.70,.56,.31),rim*.31);
+   base=mix(base,vec3(.33,.235,.135),clamp(vD.w*.48,0.,.70));
+   base=mix(base,vec3(.72,.53,.27),tip*.15);
+   detail=(rib-.5)*.00022+rim*.00018-tip*.00008;rough=.83;ao=.94;
+  }else{
+   float fiber=sin(vD.z*6.283185*3.+sin(vD.x*5.)*.3);
+   base=mix(vec3(.32,.245,.135),vec3(.64,.505,.275),.48+.12*fiber+.16*(drift-.5));
+   base*=1.-vD.y*.27;
+   base=mix(base,vec3(.38,.278,.165),clamp(vD.w*.68,0.,.86));
+   detail=fiber*.00020;rough=.91;ao=.92;
+  }
+ }
+ if(uMode==4){frag=vec4(vec3(clamp(.5+.33*field,0.,1.)),1.);return;}
+ if(uMode==5){frag=vec4(vec3(rough),1.);return;}
+
+ vec3 faceN=normalize(cross(dFdx(vP),dFdy(vP)));faceN*=sign(dot(faceN,N));
+ if(vKind<.5)N=normalize(mix(N,faceN,uFamily==5?.38:(uFamily==1||uFamily==2)?.20:uFamily==6?.01:.02));
+ N=perturb(N,detail*uGrain);
+ if(uMode==1){base=vec3(.49);N=normalize(vN);}if(uMode==2){frag=vec4(base,1);return;}if(uMode==3){frag=vec4(N*.5+.5,1);return;}
+ base=linear(clamp(base,0.,1.))*(1.-uWet*.27);rough=clamp(mix(rough,max(.15,rough*.30),uWet),.14,1.);
+ vec3 H=normalize(V+uLight);float nl=max(dot(N,uLight),0.),nv=max(dot(N,V),.03),nh=max(dot(N,H),0.),vh=max(dot(V,H),0.);
+ float alpha=rough*rough,aa=alpha*alpha,den=nh*nh*(aa-1.)+1.;float D=aa/(3.14159*den*den);
+ float visibleG=.5/max(nl*sqrt(nv*nv*(1.-aa)+aa)+nv*sqrt(nl*nl*(1.-aa)+aa),1e-5);
+ vec3 F=vec3(.04)+.96*pow(1.-vh,5.);vec3 spec=D*visibleG*F;
+ float visibility=shadow(N);
+ vec3 hemi=mix(vec3(.18,.174,.16),vec3(.44,.455,.47),N.y*.5+.5);
+ vec3 color=base*hemi*ao + ((1.-F)*base/3.14159+spec)*vec3(3.6,3.4,3.17)*nl*visibility;
+ color+=base*vec3(.29,.31,.34)*max(dot(N,normalize(vec3(3.,1.,-2.))),0.);
+ // A visible thin wet lobe makes the wetness control readable without changing geometry.
+ float coatR=mix(.20,.075,uWet),coatA=coatR*coatR,coatAA=coatA*coatA,coatDen=nh*nh*(coatAA-1.)+1.;
+ float coatD=coatAA/(3.14159*coatDen*coatDen),coatG=.5/max(nl*sqrt(nv*nv*(1.-coatAA)+coatAA)+nv*sqrt(nl*nl*(1.-coatAA)+coatAA),1e-5);
+ vec3 coatF=vec3(.025)+.975*pow(1.-vh,5.);color+=uWet*coatD*coatG*coatF*vec3(2.7,2.85,3.0)*nl*visibility;
+ frag=vec4(srgb(tonemap(color*uExposure)),1.);
+}`;
+// Straw uses the same lighting model through a short, specialized shader.
+// It never enters the rock/brick microstructure program. Geometry and quality are unchanged.
+const fiberFS=fs.slice(0,fs.indexOf(' if(vKind<.5){\n // A continuous'))+' {'+fs.slice(fs.indexOf('  drift=vD.x;'));
+const floorFS=`#version 300 es
+precision highp float;
+in vec3 vP;in vec4 vShadow;
+uniform highp sampler2DShadow uDepth;uniform vec3 uLight;
+out vec4 frag;
+void main(){vec3 q=vShadow.xyz/vShadow.w*.5+.5;float s=1.;
+ if(all(greaterThanEqual(q,vec3(0)))&&all(lessThanEqual(q,vec3(1)))){s=0.;float bias=max(.0005*(1.-uLight.y),.00012);for(int i=0;i<4;i++){vec2 offset=vec2(float(i%2),float(i/2))-.5;s+=texture(uDepth,vec3(q.xy+offset/1024.,q.z-bias));}s*=.25;}
+ float fade=1.-smoothstep(1.8,4.4,length(vP.xz));frag=vec4(vec3(.10,.108,.105)*(.60+.40*s),fade*.78);
+}`;
+const depthVS=`#version 300 es
+layout(location=0)in vec3 aPosition;uniform mat4 uVP;void main(){gl_Position=uVP*vec4(aPosition,1.);}`;
+const depthFS=`#version 300 es
+precision mediump float;void main(){}`;
+function program(v,f,feedback=null){const p=gl.createProgram();for(const [type,s]of[[gl.VERTEX_SHADER,v],[gl.FRAGMENT_SHADER,f]]){const sh=gl.createShader(type);gl.shaderSource(sh,s);gl.compileShader(sh);if(!gl.getShaderParameter(sh,gl.COMPILE_STATUS))throw Error(gl.getShaderInfoLog(sh));gl.attachShader(p,sh);gl.deleteShader(sh);}if(feedback)gl.transformFeedbackVaryings(p,feedback,gl.INTERLEAVED_ATTRIBS);gl.linkProgram(p);if(!gl.getProgramParameter(p,gl.LINK_STATUS)){const log=gl.getProgramInfoLog(p)+' '+gl.getAttachedShaders(p).map(s=>gl.getShaderInfoLog(s)).join(' / ');throw Error('着色器编译失败 '+log);}return p;}
+const domainProg=program(domainVS,depthFS,['vQ','vMM']),domainTF=gl.createTransformFeedback(),domainU={};for(const n of ['uTwists','uLevels','uStrength','uPhase','uFrequency'])domainU[n]=gl.getUniformLocation(domainProg,n);
+// Specialize the selected lithology so dormant crystal/noise branches are compiled away.
+// Programs are cached on first use; changing camera never recompiles them.
+const uniformNames=['uVP','uLightVP','uEye','uLight','uFamily','uRock','uMode','uWet','uRough','uGrain','uColor','uSoot','uKiln','uChisel','uExposure','uClip','uDepth','uTwists','uLevels','uStrength','uPhase','uFrequency'];
+const materialPrograms=new Map();
+function materialProgram(rock){
+ rock=Math.max(0,Math.min(5,Math.round(rock)));
+ if(materialPrograms.has(rock))return materialPrograms.get(rock);
+ const p=program(vs,fs.replace('uniform int uRock;', 'const int uRock='+rock+';')),U={};for(const n of uniformNames)U[n]=gl.getUniformLocation(p,n);
+ const entry={prog:p,U};materialPrograms.set(rock,entry);return entry;
+}
+const baseProgram=materialProgram(0),prog=baseProgram.prog,depthProg=program(depthVS,depthFS);
+const fiberProg=program(vs,fiberFS),fiberU={};for(const n of uniformNames)fiberU[n]=gl.getUniformLocation(fiberProg,n);
+const depthU=gl.getUniformLocation(depthProg,'uVP');
+const floorProg=program(vs,floorFS),floorU={};for(const n of ['uVP','uLightVP','uLight','uDepth'])floorU[n]=gl.getUniformLocation(floorProg,n);
+const texture=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,texture);gl.texImage2D(gl.TEXTURE_2D,0,gl.DEPTH_COMPONENT24,1024,1024,0,gl.DEPTH_COMPONENT,gl.UNSIGNED_INT,null);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_COMPARE_MODE,gl.COMPARE_REF_TO_TEXTURE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_COMPARE_FUNC,gl.LEQUAL);
+const fb=gl.createFramebuffer();gl.bindFramebuffer(gl.FRAMEBUFFER,fb);gl.framebufferTexture2D(gl.FRAMEBUFFER,gl.DEPTH_ATTACHMENT,gl.TEXTURE_2D,texture,0);gl.drawBuffers([gl.NONE]);gl.readBuffer(gl.NONE);if(gl.checkFramebufferStatus(gl.FRAMEBUFFER)!==gl.FRAMEBUFFER_COMPLETE)throw Error('阴影缓冲区不可用');gl.bindFramebuffer(gl.FRAMEBUFFER,null);
+function mesh(a){const vao=gl.createVertexArray();gl.bindVertexArray(vao);const buffers=[];[a.position,a.normal,a.data,a.kind].forEach((v,i)=>{const b=gl.createBuffer();buffers.push(b);gl.bindBuffer(gl.ARRAY_BUFFER,b);gl.bufferData(gl.ARRAY_BUFFER,v,gl.STATIC_DRAW);gl.enableVertexAttribArray(i);gl.vertexAttribPointer(i,[3,3,4,1][i],gl.FLOAT,false,0,0);});const ib=gl.createBuffer();buffers.push(ib);gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,ib);gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,a.index,gl.STATIC_DRAW);const cb=gl.createBuffer();buffers.push(cb);gl.bindBuffer(gl.ARRAY_BUFFER,cb);gl.bufferData(gl.ARRAY_BUFFER,(a.position.length/3)*16,gl.DYNAMIC_COPY);gl.enableVertexAttribArray(4);gl.vertexAttribPointer(4,3,gl.FLOAT,false,16,0);gl.enableVertexAttribArray(5);gl.vertexAttribPointer(5,1,gl.FLOAT,false,16,12);gl.bindVertexArray(null);gl.bindBuffer(gl.ARRAY_BUFFER,null);
+ const domainVao=gl.createVertexArray();gl.bindVertexArray(domainVao);
+ for(const i of [0,3]){gl.bindBuffer(gl.ARRAY_BUFFER,buffers[i]);gl.enableVertexAttribArray(i);gl.vertexAttribPointer(i,i===0?3:1,gl.FLOAT,false,0,0);}gl.bindVertexArray(null);gl.bindBuffer(gl.ARRAY_BUFFER,null);
+ return{vao,domainVao,buffers,count:a.index.length,bodyCount:a.stats?.bodyIndexCount??a.index.length,vertices:a.position.length/3,coordinates:cb,coordinateKey:null};}
+let object=null,ground=null,lastGeometry=null,shadowDirty=true,light=[-3.1,4.4,5.2],lightVP=mul(ortho(2.8),look(light,[0,0,0]));
+const camera={yaw:-.48,pitch:.23,radius:4.05,panX:0,panY:0};
+const state={twists:2,levels:4,strength:1,phase:.7,frequency:14,family:2,rock:0,mode:0,wet:0,rough:.84,grain:.5,color:1,soot:.16,kiln:.62,chisel:.5,exposure:1,clip:0,pixelRatio:canvas.clientWidth<600?.94:.88,motionPixelRatio:canvas.clientWidth<600?.70:.54,interacting:false,auto:false,paused:false};
+const stats={coordinateBakes:0,frames:0,geometryUploads:0,attributeUploads:0,shadowPasses:0,canvasPixels:0,submittedCpuMs:0,lastFrameAt:0,idle:true,traceEnabled:false,frameTrace:[],autoThrottleMs:58};
+function remove(m){if(!m)return;for(const b of m.buffers)gl.deleteBuffer(b);gl.deleteVertexArray(m.vao);gl.deleteVertexArray(m.domainVao);}
+function upload(a){remove(object);remove(ground);object=mesh(a);lastGeometry=a;let y=a.stats.bounds.min[1]-.012;
+ ground=mesh({position:new Float32Array([-5,y,-5,5,y,-5,-5,y,5,5,y,5]),normal:new Float32Array([0,1,0,0,1,0,0,1,0,0,1,0]),data:new Float32Array(16).fill(1),kind:new Float32Array(4).fill(-1),index:new Uint32Array([0,2,1,2,3,1])});
+ shadowDirty=true;stats.geometryUploads++;invalidate();}
+function uploadData(a){lastGeometry={...lastGeometry,data:a};gl.bindBuffer(gl.ARRAY_BUFFER,object.buffers[2]);gl.bufferSubData(gl.ARRAY_BUFFER,0,a);stats.attributeUploads++;invalidate();}
+// Bake material-domain coordinates once per specimen / domain recipe on the GPU.
+// Camera motion reads the retained buffer; it does not repeat twists and domain noise.
+function bakeCoordinates(){
+ if(!object)return;const key=[state.twists,state.levels,state.strength,state.phase,state.frequency].join(':');if(object.coordinateKey===key)return;
+ gl.useProgram(domainProg);gl.uniform1i(domainU.uTwists,state.twists);gl.uniform1i(domainU.uLevels,state.levels);gl.uniform1f(domainU.uStrength,state.strength);gl.uniform1f(domainU.uPhase,state.phase);gl.uniform1f(domainU.uFrequency,state.frequency);
+ gl.bindVertexArray(object.domainVao);gl.bindBuffer(gl.ARRAY_BUFFER,null);gl.bindTransformFeedback(gl.TRANSFORM_FEEDBACK,domainTF);gl.bindBufferBase(gl.TRANSFORM_FEEDBACK_BUFFER,0,object.coordinates);
+ gl.enable(gl.RASTERIZER_DISCARD);gl.beginTransformFeedback(gl.POINTS);gl.drawArrays(gl.POINTS,0,object.vertices);gl.endTransformFeedback();gl.disable(gl.RASTERIZER_DISCARD);
+ gl.bindBufferBase(gl.TRANSFORM_FEEDBACK_BUFFER,0,null);gl.bindTransformFeedback(gl.TRANSFORM_FEEDBACK,null);gl.bindVertexArray(null);object.coordinateKey=key;stats.coordinateBakes++;
+}
+let dirty=true,raf=0,autoTimer=0,fence=null,previous=0,disposed=false;
+function schedule(delay=0){if(disposed||raf||autoTimer||document.hidden||state.paused)return;if(delay>0)autoTimer=setTimeout(()=>{autoTimer=0;if(!disposed&&!document.hidden&&!state.paused)raf=requestAnimationFrame(render);},delay);else raf=requestAnimationFrame(render);}
+function invalidate(){if(disposed)return;dirty=true;schedule();}
+function draw(m){if(!m)return;gl.bindVertexArray(m.vao);gl.drawElements(gl.TRIANGLES,m.count,gl.UNSIGNED_INT,0);}
+function render(t){raf=0;if(disposed||state.paused||document.hidden)return;
+ if(fence){const signal=gl.clientWaitSync(fence,0,0);if(signal===gl.TIMEOUT_EXPIRED){if(dirty||state.auto)schedule(state.auto?stats.autoThrottleMs:16);return;}gl.deleteSync(fence);fence=null;}
+ if(state.auto){camera.yaw+=Math.min(t-previous||16,80)*.00014;dirty=true;}previous=t;
+ if(!dirty){stats.idle=true;return;}dirty=false;const start=performance.now();
+ const rect=canvas.getBoundingClientRect(),activeRatio=(state.auto||state.interacting)?state.motionPixelRatio:state.pixelRatio,w=Math.max(2,Math.round(rect.width*activeRatio)),h=Math.max(2,Math.round(rect.height*activeRatio));if(w!==canvas.width||h!==canvas.height){canvas.width=w;canvas.height=h;}stats.canvasPixels=w*h;bakeCoordinates();
+ gl.enable(gl.DEPTH_TEST);gl.disable(gl.BLEND);gl.enable(gl.CULL_FACE);gl.cullFace(gl.BACK);
+ if(shadowDirty&&object){gl.bindFramebuffer(gl.FRAMEBUFFER,fb);gl.viewport(0,0,1024,1024);gl.clear(gl.DEPTH_BUFFER_BIT);gl.useProgram(depthProg);gl.uniformMatrix4fv(depthU,false,lightVP);gl.enable(gl.POLYGON_OFFSET_FILL);gl.polygonOffset(1.0,1.0);draw(object);gl.disable(gl.POLYGON_OFFSET_FILL);gl.bindFramebuffer(gl.FRAMEBUFFER,null);stats.shadowPasses++;shadowDirty=false;}
+ gl.viewport(0,0,w,h);gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);const selectedProgram=materialProgram(state.rock);gl.useProgram(selectedProgram.prog);
+ const target=[camera.panX,camera.panY,0],eye=[Math.sin(camera.yaw)*Math.cos(camera.pitch)*camera.radius+target[0],Math.sin(camera.pitch)*camera.radius+target[1],Math.cos(camera.yaw)*Math.cos(camera.pitch)*camera.radius];
+ const viewProjection=mul(persp(.67,w/h),look(eye,target));setUniforms(selectedProgram.U);
+ function setUniforms(L){
+gl.uniformMatrix4fv(L.uVP,false,viewProjection);gl.uniformMatrix4fv(L.uLightVP,false,lightVP);gl.uniform3fv(L.uEye,eye);gl.uniform3fv(L.uLight,norm(light));
+ gl.uniform1i(L.uTwists,state.twists);gl.uniform1i(L.uLevels,state.levels);gl.uniform1f(L.uStrength,state.strength);gl.uniform1f(L.uPhase,state.phase);gl.uniform1f(L.uFrequency,state.frequency);gl.uniform1i(L.uFamily,state.family);gl.uniform1i(L.uRock,state.rock);gl.uniform1i(L.uMode,state.mode);for(const [n,k]of[['uWet','wet'],['uRough','rough'],['uGrain','grain'],['uColor','color'],['uSoot','soot'],['uKiln','kiln'],['uChisel','chisel'],['uExposure','exposure'],['uClip','clip']])gl.uniform1f(L[n],state[k]);
+ gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,texture);gl.uniform1i(L.uDepth,0);
+}
+ if(!state.clip&&camera.pitch>-.28){gl.useProgram(floorProg);gl.uniformMatrix4fv(floorU.uVP,false,viewProjection);gl.uniformMatrix4fv(floorU.uLightVP,false,lightVP);gl.uniform3fv(floorU.uLight,norm(light));gl.uniform1i(floorU.uDepth,0);gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);draw(ground);gl.disable(gl.BLEND);gl.useProgram(selectedProgram.prog);}
+ if(state.clip)gl.disable(gl.CULL_FACE);else gl.enable(gl.CULL_FACE);
+ if(object){gl.bindVertexArray(object.vao);gl.drawElements(gl.TRIANGLES,object.bodyCount,gl.UNSIGNED_INT,0);
+  if(object.count>object.bodyCount){gl.useProgram(fiberProg);setUniforms(fiberU);gl.drawElements(gl.TRIANGLES,object.count-object.bodyCount,gl.UNSIGNED_INT,object.bodyCount*4);}}
+ // Closed geometry culls its back faces; cutaway remains two-sided.
+ stats.frames++;if(stats.traceEnabled){stats.frameTrace.push({t:performance.now(),yaw:camera.yaw,pitch:camera.pitch,pixels:w*h,family:state.family});if(stats.frameTrace.length>360)stats.frameTrace.shift();}stats.lastFrameAt=performance.now();stats.submittedCpuMs=stats.lastFrameAt-start;stats.idle=!state.auto;
+ fence=gl.fenceSync(gl.SYNC_GPU_COMMANDS_COMPLETE,0);gl.flush();if(state.auto)schedule(stats.autoThrottleMs);
+}
+function setLight(side){light=side==='rake'?[-5,1.8,3.4]:[-3.1,4.4,5.2];lightVP=mul(ortho(2.8),look(light,[0,0,0]));shadowDirty=true;invalidate();}
+function pause(on){state.paused=on;if(on&&raf){cancelAnimationFrame(raf);raf=0;}if(on&&autoTimer){clearTimeout(autoTimer);autoTimer=0;}if(!on)invalidate();}
+canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();state.paused=true;stats.contextLost=true;if(raf){cancelAnimationFrame(raf);raf=0;}if(autoTimer){clearTimeout(autoTimer);autoTimer=0;}});
+function reset(){Object.assign(camera,{yaw:-.48,pitch:.23,radius:canvas.clientWidth<600?7.3:4.05,panX:0,panY:0});invalidate();}
+let pointers=new Map(),prevPinch=0;canvas.addEventListener('contextmenu',e=>e.preventDefault());
+canvas.addEventListener('pointerdown',e=>{state.interacting=true;canvas.setPointerCapture(e.pointerId);pointers.set(e.pointerId,[e.clientX,e.clientY]);prevPinch=0;invalidate();});
+canvas.addEventListener('pointermove',e=>{const p=pointers.get(e.pointerId);if(!p)return;const dx=e.clientX-p[0],dy=e.clientY-p[1];pointers.set(e.pointerId,[e.clientX,e.clientY]);if(pointers.size===2){const [a,b]=[...pointers.values()],d=Math.hypot(a[0]-b[0],a[1]-b[1]);if(prevPinch)camera.radius=Math.max(1.4,Math.min(12,camera.radius*prevPinch/d));prevPinch=d;}else if(e.buttons===2||e.shiftKey){camera.panX-=dx*.003*camera.radius;camera.panY+=dy*.003*camera.radius;}else{camera.yaw-=dx*.006;camera.pitch=Math.max(-1.45,Math.min(1.45,camera.pitch+dy*.006));}invalidate();});
+for(const event of ['pointerup','pointercancel','lostpointercapture'])canvas.addEventListener(event,e=>{pointers.delete(e.pointerId);prevPinch=0;if(!pointers.size){state.interacting=false;invalidate();}});
+canvas.addEventListener('wheel',e=>{e.preventDefault();camera.radius=Math.max(1.4,Math.min(12,camera.radius*Math.exp(e.deltaY*.001)));invalidate();},{passive:false});canvas.addEventListener('dblclick',reset);
+const ro=new ResizeObserver(invalidate);ro.observe(canvas);document.addEventListener('visibilitychange',()=>{if(document.hidden){if(raf){cancelAnimationFrame(raf);raf=0;}if(autoTimer){clearTimeout(autoTimer);autoTimer=0;}}else invalidate();});
+function destroy(){disposed=true;if(raf)cancelAnimationFrame(raf);if(autoTimer)clearTimeout(autoTimer);if(fence)gl.deleteSync(fence);remove(object);remove(ground);ro.disconnect();gl.deleteFramebuffer(fb);gl.deleteTexture(texture);for(const m of materialPrograms.values())gl.deleteProgram(m.prog);materialPrograms.clear();gl.deleteProgram(depthProg);gl.deleteProgram(floorProg);gl.deleteProgram(fiberProg);gl.deleteProgram(domainProg);gl.deleteTransformFeedback(domainTF);}
+return{upload,uploadData,state,camera,stats,invalidate,pause,reset,setLight,destroy,gl,object:()=>lastGeometry};
+}
+</script><script>'use strict';
+(()=>{
+const $=id=>document.getElementById(id),K=createBrickKernel();
+const catalog={
+ fired:{name:'烧结旧砖',type:'砖',id:0,seed:5045},
+ kiln:{name:'窑变旧砖',type:'砖',id:4,seed:6112},
+ adobe:{name:'纤维土坯',type:'土坯',id:3,seed:4517},
+ dressed:{name:'粗凿砌筑石',type:'石',id:5,seed:8231},
+ rubble:{name:'不规则毛石',type:'石',id:2,seed:9298},
+ stone:{name:'层状毛石',type:'石',id:1,seed:10365},
+ pebble:{name:'建筑卵石',type:'石',id:6,seed:7213}
+};
+const families=Object.keys(catalog),rocks=['','花岗岩','砂岩','玄武岩','石英岩','石灰岩'];
+const stoneFamily=f=>['dressed','rubble','stone'].includes(f),rockFamily=f=>stoneFamily(f)||f==='pebble';
+const layers=[['shapeSeed','形体','shape'],['damageSeed','破损','damage'],['colorSeed','色区','color'],['fiberSeed','夹杂','fiber'],['detailSeed','肌理','detail']];
+const defs={
+ damage:['孔洞与掉块',0,1,.01,'geo'],relief:['形面起伏',0,1,.01,'geo'],edgeWear:['边角圆蚀',0,1,.01,'geo'],
+ chisel:['凿痕强度',0,1,.01,'geo'],strawDensity:['稻草数量',0,1,.01,'geo'],huskDensity:['小稻壳数量',0,1,.01,'geo'],
+ soot:['灰黑窑痕',0,1,.01,'surface'],kiln:['窑变强度',0,1,.01,'surface'],
+ grain:['微细起伏',0,1,.01,'surface'],color:['色彩层次',0,1.5,.01,'surface'],rough:['粗糙度',.3,1,.01,'surface'],
+ wet:['湿润外观',0,1,.01,'surface'],strength:['个体肌理',0,1.2,.01,'surface'],frequency:['细节尺度',6,22,.1,'surface'],levels:['显微层级',1,17,1,'surface']
+};
+function controls(f){
+ const common=['grain','color','rough','wet','strength','frequency'];
+ if(f==='fired')return ['damage','edgeWear','soot',...common];
+ if(f==='kiln')return ['damage','edgeWear','soot','kiln',...common];
+ if(f==='adobe')return ['damage','relief','edgeWear','strawDensity','huskDensity',...common];
+ if(f==='dressed')return ['damage','relief','chisel',...common];
+ if(f==='rubble')return ['damage','relief','chisel',...common];
+ if(f==='stone')return ['damage','relief',...common];
+ return ['relief',...common];
+}
+function fresh(f){
+ const p={family:f,...K.defaults[f],seed:catalog[f].seed,resolution:82,twists:2,strength:.50,frequency:f==='adobe'?12:f==='pebble'?10:f==='dressed'?14:13,levels:17,
+  rock:f==='dressed'?2:f==='rubble'?1:f==='stone'?5:f==='pebble'?2:0,soot:f==='kiln'?.17:.065,kiln:.82,
+  strawDensity:.86,huskDensity:.48,chisel:f==='dressed'?.88:f==='rubble'?.30:.14};
+ for(const [key,,tag] of layers)p[key]=K.derive(p.seed,tag);
+ return p;
+}
+const settings={},locks={};for(const f of families){settings[f]=fresh(f);locks[f]={};}
+let current='fired',params={...settings[current]},geometry=null,worker=null,ticket=0,busy=false,accepted=null,fitNext=true,renderer,oldView=false,debounce=0,disposed=false;
+const cache=new Map(),audit={ready:false,builds:0,cacheHits:0,cancelled:0,materialUpdates:0,errors:[],displayedFamily:null};
+function status(t){$('status').textContent=t;}
+try{renderer=createBrickRenderer($('view'));renderer.reset();}catch(e){$('error').hidden=false;$('error').textContent=String(e);return;}
+function stop(){clearTimeout(debounce);debounce=0;ticket++;if(worker){worker.terminate();worker=null;audit.cancelled++;}busy=false;$('busy').hidden=true;$('stage').setAttribute('aria-busy','false');}
+function fail(e){stop();$('error').hidden=false;$('error').textContent=String(e);audit.errors.push(String(e));if(accepted){current=accepted.family;params={...accepted.parameters};sync();material();$('view').classList.remove('loading');}}
+function shapeLabel(f,s){if(f==='pebble')return{long:'椭长卵石',sample:'圆卵石',half:'残缺卵石',thin:'扁卵石'}[s];return{long:'长条块',sample:'宽面厚块',half:'短块断端',thin:'薄片块'}[s];}
+function geometryKey(p=params){const keys=['family','shape','resolution','edgeWear','damage','relief','shapeSeed','damageSeed'];if(p.family==='adobe')keys.push('fiberSeed','strawDensity','huskDensity');if(stoneFamily(p.family))keys.push('rock','chisel');return JSON.stringify(keys.map(k=>p[k]));}
+function materialValues(){return{family:catalog[current].id,rock:params.rock,grain:params.grain,color:params.color,rough:params.rough,wet:params.wet,twists:params.twists,levels:params.levels,strength:params.strength,frequency:params.frequency,phase:(params.detailSeed>>>0)/4294967295*18.73,soot:params.soot,kiln:params.kiln,chisel:params.chisel,mode:0};}
+function material(){Object.assign(renderer.state,materialValues());audit.materialUpdates++;if(!busy&&!oldView)renderer.invalidate();}
+function identify(){
+ $('specimenName').textContent=catalog[current].type+' / '+catalog[current].name;
+ $('shapeName').textContent=shapeLabel(current,params.shape);
+ $('materialName').textContent=rockFamily(current)?rocks[params.rock]+(current==='pebble'?' · 圆磨':' · 砌筑'):(current==='kiln'?'红砖基底 · 局部窑变':current==='adobe'?'土体 · 稻草 · 小稻壳':'红砖主体 · 淡灰黑窑痕');
+ $('rockControls').hidden=!rockFamily(current);$('rock').value=String(params.rock);document.title='Brick Mother R7 · '+catalog[current].name;
+ document.querySelectorAll('[data-family]').forEach(b=>{const on=b.dataset.family===current;b.classList.toggle('active',on);b.setAttribute('aria-pressed',String(on));});
+ document.querySelectorAll('[data-rock]').forEach(b=>b.classList.toggle('active',Number(b.dataset.rock)===params.rock));
+ document.querySelectorAll('[data-shape]').forEach(b=>{b.classList.toggle('active',b.dataset.shape===params.shape);b.textContent=current==='pebble'?{long:'椭长',sample:'圆砾',half:'残缺',thin:'扁砾'}[b.dataset.shape]:{long:'长条',sample:'厚块',half:'断块',thin:'薄片'}[b.dataset.shape];});
+}
+let panelKey='';
+function sync(){
+ identify();$('shape').value=params.shape;$('seed').value=params.seed;
+ for(const [key] of layers){$(key).value=params[key];$('lock_'+key).checked=!!locks[current][key];}
+ const ks=controls(current),key=current+':'+ks.join(',');
+ if(panelKey!==key){$('sliders').replaceChildren();for(const k of ks){const [name,min,max,step]=defs[k],row=document.createElement('label');row.className='slider';row.innerHTML='<span>'+name+'</span><output id="'+k+'Out"></output><input id="'+k+'" data-param="'+k+'" type="range" min="'+min+'" max="'+max+'" step="'+step+'">';$('sliders').appendChild(row);}panelKey=key;}
+ for(const k of ks){$(k).value=params[k];$(k+'Out').value=Number(params[k]).toFixed(k==='levels'?0:k==='frequency'?1:2);}
+}
+for(const [key,label] of layers){const row=document.createElement('label');row.className='seedRow';row.dataset.layer=key==='fiberSeed'?'fiber':'common';row.innerHTML='<span>'+label+'</span><input id="'+key+'" type="number" min="0" max="4294967295"><small><input id="lock_'+key+'" type="checkbox">锁</small>';$('layerSeeds').appendChild(row);$(key).onchange=()=>{const n=Number($(key).value);if(!Number.isInteger(n)||n<0||n>4294967295){sync();return;}params[key]=n;if(key==='detailSeed')material();else if(key==='colorSeed')recolor();else if(key==='fiberSeed'&&current!=='adobe')settings[current]={...params};else build();};$('lock_'+key).onchange=()=>locks[current][key]=$('lock_'+key).checked;}
+function fit(){if(!geometry)return;const b=geometry.stats.bounds,w=b.max[0]-b.min[0],h=b.max[1]-b.min[1],d=b.max[2]-b.min[2],aspect=$('view').clientWidth/Math.max(1,$('view').clientHeight);renderer.reset();renderer.camera.radius=Math.min(12,Math.max(3.35,Math.max(h,w/aspect)/(2*Math.tan(.335))*1.20+d*.55));renderer.invalidate();}
+function recolorData(a){if(a.stats.colorSeed===(params.colorSeed>>>0))return a;const cs=params.colorSeed>>>0,data=new Float32Array(a.data);for(let i=0;i<a.stats.bodyVertices;i++){const x=a.position[i*3],y=a.position[i*3+1],z=a.position[i*3+2];data[i*4]=K.noise(x*2.2,y*2.2,z*2.2,cs);data[i*4+1]=K.noise(x*7.5,y*7.5,z*7.5,cs+88);data[i*4+2]=K.noise(x*26,y*26,z*26,cs+19);}return{...a,data,stats:{...a.stats,colorSeed:cs}};}
+function recolor(){if(!geometry||busy){build();return;}geometry=recolorData(geometry);renderer.uploadData(geometry.data);accepted={family:current,parameters:{...params}};settings[current]={...params};cache.set(geometryKey(),geometry);material();}
+function accept(a,key,cached=false){geometry=recolorData(a);busy=false;worker=null;material();renderer.upload(geometry);accepted={family:current,parameters:{...params}};settings[current]={...params};audit.ready=true;audit.displayedFamily=current;$('view').classList.remove('loading');$('stage').setAttribute('aria-busy','false');$('busy').hidden=true;$('error').hidden=true;cache.delete(key);cache.set(key,geometry);while(cache.size>4)cache.delete(cache.keys().next().value);sync();if(fitNext){fitNext=false;fit();}const s=geometry.stats;status(catalog[current].name+' · '+(cached?'缓存':Math.round(s.buildMs)+' ms')+' · '+(s.triangles/1000).toFixed(1)+'k 面'+(current==='adobe'?' · 稻草 '+s.fibers+' · 稻壳 '+s.riceHusks:''));}
+function build(){stop();if(oldView||disposed)return;if(renderer.state.paused){renderer.pause(false);$('pause').textContent='暂停';}sync();const key=geometryKey();if(cache.has(key)){audit.cacheHits++;accept(cache.get(key),key,true);return;}busy=true;audit.ready=false;$('busy').hidden=false;$('stage').setAttribute('aria-busy','true');$('view').classList.add('loading');status('正在生成 '+catalog[current].name);const id=ticket,source='const K=('+createBrickKernel.toString()+')();onmessage=e=>{try{const m=K.build(e.data);postMessage(m,[m.position.buffer,m.normal.buffer,m.data.buffer,m.kind.buffer,m.index.buffer]);}catch(e){postMessage({error:String(e)})}}',url=URL.createObjectURL(new Blob([source],{type:'text/javascript'}));try{worker=new Worker(url);URL.revokeObjectURL(url);worker.onmessage=e=>{if(id!==ticket)return;worker.terminate();worker=null;if(e.data.error){fail(e.data.error);return;}audit.builds++;accept(e.data,key);};worker.onerror=e=>fail(e.message||'建模线程出错');worker.postMessage({...params});}catch(e){URL.revokeObjectURL(url);fail(e);}}
+function setParam(k,v,commit=false){if(!defs[k]||!controls(current).includes(k))return false;const [,min,max,,dep]=defs[k];if(!Number.isFinite(v)||v<min||v>max)return false;params[k]=k==='levels'?Math.round(v):v;settings[current]={...params};if($(k)){$(k).value=params[k];$(k+'Out').value=Number(params[k]).toFixed(k==='levels'?0:k==='frequency'?1:2);}if(dep==='geo'){if(commit)build();else{stop();debounce=setTimeout(build,130);}}else{material();if(accepted)accepted.parameters={...params};}return true;}
+$('sliders').addEventListener('input',e=>{const k=e.target.dataset.param;if(k)setParam(k,Number(e.target.value));});$('sliders').addEventListener('change',e=>{const k=e.target.dataset.param;if(k&&defs[k][4]==='geo'){clearTimeout(debounce);build();}});
+function selectFamily(f){if(!catalog[f])return;stop();settings[current]={...params};current=f;params={...settings[f]};fitNext=true;build();}
+$('families').onclick=e=>{const b=e.target.closest('[data-family]');if(b)selectFamily(b.dataset.family);};
+function selectRock(n){if(!rockFamily(current)||!Number.isInteger(n)||n<1||n>5)return;params.rock=n;settings[current]={...params};sync();if(stoneFamily(current))build();else material();}
+$('rock').onchange=()=>selectRock(Number($('rock').value));$('rockButtons').onclick=e=>{const b=e.target.closest('[data-rock]');if(b)selectRock(Number(b.dataset.rock));};
+function master(n){if(!Number.isInteger(n)||n<0||n>4294967295){sync();return;}params.seed=n>>>0;for(const [key,,tag] of layers)if(!locks[current][key])params[key]=K.derive(params.seed,tag);build();}
+$('seed').onchange=()=>master(Number($('seed').value));$('nextSeed').onclick=()=>master((params.seed+1067)>>>0);$('quickShapes').onclick=e=>{const b=e.target.closest('[data-shape]');if(b){params.shape=b.dataset.shape;fitNext=true;build();}};$('shape').onchange=()=>{params.shape=$('shape').value;fitNext=true;build();};
+function face(f){const q={front:[0,0],back:[Math.PI,0],left:[-Math.PI/2,0],right:[Math.PI/2,0],top:[0,1.40],bottom:[0,-1.40]}[f];if(q){Object.assign(renderer.camera,{yaw:q[0],pitch:q[1],panX:0,panY:0});renderer.invalidate();}}
+$('views').onclick=e=>{const b=e.target.closest('[data-face]');if(b)face(b.dataset.face);};$('resetView').onclick=fit;
+$('spin').onclick=()=>{renderer.state.auto=!renderer.state.auto;$('spin').classList.toggle('active',renderer.state.auto);renderer.invalidate();};
+function panel(on){$('panel').hidden=!on;$('togglePanel').setAttribute('aria-expanded',String(on));}$('togglePanel').onclick=()=>panel($('panel').hidden);$('closePanel').onclick=()=>panel(false);
+$('pause').onclick=()=>{const on=!renderer.state.paused;if(on)stop();renderer.pause(on);$('pause').textContent=on?'继续':'暂停';if(!on)build();};$('cancel').onclick=()=>{stop();if(accepted){current=accepted.family;params={...accepted.parameters};sync();material();}};
+function preset(){return{schema:'brick-mother-r7',parameters:{...params},locks:{...locks[current]},camera:{...renderer.camera}};}
+function save(name,text){const url=URL.createObjectURL(new Blob([text],{type:'application/json'})),a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1200);}
+function importData(d){if(d.schema!=='brick-mother-r7'||!catalog[d.parameters?.family])throw Error('请选择 R7 参数文件');const p={...fresh(d.parameters.family),...d.parameters};K.validate(p);if(rockFamily(p.family)){if(!Number.isInteger(p.rock)||p.rock<1||p.rock>5)throw Error('岩性参数越界');}else p.rock=0;for(const k of controls(p.family)){const [,min,max]=defs[k];if(!Number.isFinite(p[k])||p[k]<min||p[k]>max)throw Error('参数越界 '+k);}for(const [key] of layers)if(!Number.isInteger(p[key])||p[key]<0||p[key]>4294967295)throw Error('种子越界');stop();current=p.family;params=p;locks[current]={...d.locks};fitNext=true;build();if(d.camera&&['yaw','pitch','radius','panX','panY'].every(k=>Number.isFinite(d.camera[k])))setTimeout(()=>{Object.assign(renderer.camera,d.camera);renderer.invalidate();},50);}
+$('exportPreset').onclick=()=>save('Brick_Mother_R7_'+current+'.json',JSON.stringify(preset(),null,2));$('importPreset').onclick=()=>$('presetFile').click();$('presetFile').onchange=async()=>{try{const f=$('presetFile').files[0];if(f&&f.size<25000)importData(JSON.parse(await f.text()));}catch(e){fail(e);}};$('resetAll').onclick=()=>{params=fresh(current);locks[current]={};fitNext=true;build();};
+$('share').onclick=async()=>{const url=location.href.split('#')[0]+'#preset='+encodeURIComponent(JSON.stringify(preset()));try{await navigator.clipboard.writeText(url);status('已复制当前材料与参数链接');}catch{$('shareText').hidden=false;$('shareText').value=url;$('shareText').select();}};
+const V26_URL='https://raw.githack.com/haihao0307/HOUSE/4dd826da93c0db36d9b60ff7e180945525678bbc/yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/brick-mother-standalone-v2.6.html';$('strongCompare').onclick=()=>window.open(V26_URL,'_blank','noopener');
+window.addEventListener('pagehide',()=>{disposed=true;stop();renderer.destroy();});document.addEventListener('keydown',e=>{if(/INPUT|SELECT/.test(document.activeElement.tagName))return;if(e.key==='Escape')panel(false);if(e.key.toLowerCase()==='f')fit();if(e.key>='1'&&e.key<='7')selectFamily(families[Number(e.key)-1]);});
+window.BrickR7={audit,catalog,defs,renderer,getGeometry:()=>geometry,parameters:()=>({...params}),controlKeys:()=>controls(current),stats:()=>({busy,workerAlive:!!worker,oldView,parameters:{...params},geometry:geometry?.stats,render:{...renderer.stats},audit:{...audit}}),selectFamily,selectRock,setParam,build,face,fit,master,preset,importData};
+let loaded=false;try{if(location.hash.startsWith('#preset=')){const text=decodeURIComponent(location.hash.slice(8));if(text.length<25000){importData(JSON.parse(text));loaded=true;}}}catch(e){status('参数链接无效，使用默认砖块');}if(!loaded){sync();build();}
+})();
+</script></body></html>

@@ -1,0 +1,76 @@
+name: Brick Mother R7 raw.githack Diagnostic
+on:
+  push:
+    branches: [feature/brick-mother-v2.0-composite-material-dna]
+    paths: [.github/workflows/brick-mother-r7-rawgithack-diagnostic.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      SHA: 76729dbd40c6f2cc98c4fd6e678dfc4d58bcfcce
+      PATH_HTML: yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/experiments/atelier-r7/Brick_Mother_R7_Direct.html
+      EXPECTED: b69b4b344fea713ec3d19044bdf60ceec8199a071402c84e6da2370a144a9a84
+    steps:
+      - uses: actions/checkout@v4
+      - name: Inspect raw.githack response
+        run: |
+          set -euo pipefail
+          URL="https://raw.githack.com/haihao0307/HOUSE/$SHA/$PATH_HTML"
+          echo "$URL"
+          for i in $(seq 1 30); do
+            code=$(curl -L -sS -o "$RUNNER_TEMP/body" -D "$RUNNER_TEMP/headers" -w '%{http_code}' "$URL" || true)
+            bytes=$(wc -c < "$RUNNER_TEMP/body" || echo 0)
+            digest=$(sha256sum "$RUNNER_TEMP/body" | cut -d' ' -f1)
+            ctype=$(grep -i '^content-type:' "$RUNNER_TEMP/headers" | tail -1 | tr -d '\r' || true)
+            echo "attempt=$i code=$code bytes=$bytes sha=$digest $ctype"
+            head -c 120 "$RUNNER_TEMP/body" | tr '\n' ' '; echo
+            if [ "$code" = 200 ] && [ "$digest" = "$EXPECTED" ]; then
+              cp "$RUNNER_TEMP/body" "$RUNNER_TEMP/verified.html"
+              exit 0
+            fi
+            sleep 6
+          done
+          exit 1
+      - name: Install browser
+        run: |
+          python -m pip install playwright==1.55.0
+          python -m playwright install --with-deps chromium
+      - name: Open exact public page
+        run: |
+          URL="https://raw.githack.com/haihao0307/HOUSE/$SHA/$PATH_HTML"
+          export URL
+          xvfb-run -a python - <<'PY'
+          from playwright.sync_api import sync_playwright
+          import os,json
+          result={'url':os.environ['URL'],'errors':[]}
+          with sync_playwright() as p:
+              b=p.chromium.launch(headless=False,args=['--use-angle=swiftshader','--enable-unsafe-swiftshader','--no-sandbox'])
+              page=b.new_page(viewport={'width':1280,'height':800})
+              page.on('pageerror',lambda e:result['errors'].append(str(e)))
+              r=page.goto(result['url'],wait_until='load',timeout=60000)
+              result['status']=r.status if r else None
+              result['headers']=r.headers if r else {}
+              page.wait_for_function('window.BrickR7 && BrickR7.audit.ready',timeout=120000)
+              result['ready']=True;result['title']=page.title();result['geometry']=page.evaluate('BrickR7.stats().geometry')
+              result['visibleError']=not page.locator('#error').is_hidden()
+              page.screenshot(path=os.path.join(os.environ['RUNNER_TEMP'],'rawgithack.png'))
+              b.close()
+          print(json.dumps(result,ensure_ascii=False,indent=2))
+          assert result['status']==200 and result['ready'] and not result['errors'] and not result['visibleError']
+          open(os.path.join(os.environ['RUNNER_TEMP'],'result.json'),'w').write(json.dumps(result,ensure_ascii=False,indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: brick-r7-rawgithack-diagnostic-${{ github.run_id }}
+          path: |
+            ${{ runner.temp }}/headers
+            ${{ runner.temp }}/body
+            ${{ runner.temp }}/verified.html
+            ${{ runner.temp }}/result.json
+            ${{ runner.temp }}/rawgithack.png
+          retention-days: 14

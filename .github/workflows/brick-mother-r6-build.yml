@@ -1,0 +1,81 @@
+name: Brick Mother R6 Candidate Build
+on:
+  push:
+    branches: [feature/brick-mother-v2.0-composite-material-dna]
+    paths: [.github/workflows/brick-mother-r6-build.yml]
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: brick-mother-r6-candidate
+  cancel-in-progress: false
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    env:
+      BRICK: yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother
+      BRANCH: feature/brick-mother-v2.0-composite-material-dna
+    steps:
+      - uses: actions/checkout@v4
+      - name: Protect original and current published assets
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REF_NAME" = "$BRANCH"
+          test "$(git hash-object "$BRICK/brick-mother-observation-studio.html")" = 7b2a18c6a886d0751ca2fc92530b7986d9e1a727
+          test "$(git hash-object "$BRICK/brick-mother-standalone-v2.7.5.html")" = 7b10389cb9367f7423619262820883cc94b07a61
+          test "$(git hash-object "$BRICK/brick-mother-standalone-v2.6.html")" = f64c65d87dc418bf1a923a4cf332b449efbe0eb9
+          echo "83b36384cc6eed0416a3c57d1340926bf84651b0656c777f2f68b6983ef63428  $BRICK/experiments/atelier-r5/web/index.html" | sha256sum -c -
+          echo "d7ed5db0c389029b359fcb51894f8e3600de4d25670964f284f35f480172cf00  $BRICK/experiments/atelier-r4/web/index.html" | sha256sum -c -
+      - name: Materialize exact clean R6 source
+        run: python .github/brick-r6/compose.py
+      - name: Install validation tools
+        run: |
+          python -m pip install playwright==1.55.0 numpy==2.2.6 pillow==11.3.0
+          python -m playwright install --with-deps chromium
+      - name: Check geometry and actual body mesh anchoring
+        run: |
+          node "$BRICK/experiments/atelier-r6/tests/geometry.cjs"
+          python "$BRICK/experiments/atelier-r6/tests/anchors.py"
+      - name: Check all default controls through real HTTP and finished canvas
+        run: |
+          set -euo pipefail
+          python -m http.server 8765 --bind 127.0.0.1 --directory "$BRICK/experiments/atelier-r6/web" > "$RUNNER_TEMP/r6-http.log" 2>&1 &
+          PID=$!
+          trap 'kill "$PID" || true' EXIT
+          xvfb-run -a python "$BRICK/experiments/atelier-r6/tests/browser.py" http://127.0.0.1:8765/
+      - name: Save only technically passing candidate on unchanged branch
+        run: |
+          set -euo pipefail
+          test "$(git ls-remote origin "refs/heads/$BRANCH" | cut -f1)" = "$GITHUB_SHA"
+          DEST="$BRICK/experiments/atelier-r6"
+          python - <<'PY'
+          from pathlib import Path
+          import json,os
+          p=Path(os.environ['BRICK'])/'experiments/atelier-r6'
+          b=json.loads((p/'qa/browser-report.json').read_text());m=json.loads((p/'web/RELEASE.json').read_text())
+          assert b['passed'] and not b['errors'] and not b['failures']
+          assert len(b['controls'])==79 and all(c['passed'] for c in b['controls'])
+          assert b['http']['sha256']==m['htmlSHA256'] and b['sourceHead']==os.environ['GITHUB_SHA']
+          assert json.loads((p/'qa/geometry-report.json').read_text())['passed']
+          assert json.loads((p/'qa/anchor-report.json').read_text())['passed']
+          assert len(b['performance'])==6
+          for w in b['performance']:assert w['fps']>=5 and w['frames']>=30 and w['uniquePositions']>=25,w
+          print('79 control-output pairs and desktop/mobile software performance windows passed. User visual approval remains false.')
+          PY
+          git config user.name 'Brick Mother R6 verification'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- "$DEST/src" "$DEST/build.py" "$DEST/tests" "$DEST/web" "$DEST/qa/geometry-report.json" "$DEST/qa/anchor-report.json" "$DEST/qa/browser-report.json"
+          git diff --cached --name-only | while IFS= read -r f; do case "$f" in "$DEST"/*) ;; *) exit 1;; esac; done
+          git commit -m 'feat(brick): save R6 verified finished-material candidate [skip ci]'
+          git push origin "HEAD:refs/heads/$BRANCH"
+          git rev-parse HEAD > "$DEST/qa/materialized-commit.txt"
+      - name: Retain exact source and full evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: brick-mother-r6-candidate-${{ github.run_id }}
+          path: |
+            yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/experiments/atelier-r6
+            ${{ runner.temp }}/r6-http.log
+          retention-days: 30

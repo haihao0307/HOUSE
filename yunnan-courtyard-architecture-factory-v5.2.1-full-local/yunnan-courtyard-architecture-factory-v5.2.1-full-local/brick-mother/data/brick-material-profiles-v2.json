@@ -1,0 +1,999 @@
+{
+  "schemaVersion": "2.7.4-alpha.1",
+  "generatedAt": "2026-08-29",
+  "pipelineId": "brick-mother-v27-visual-truth-formation-hierarchy",
+  "researchBasis": {
+    "userReference": "https://threejsroadmap.com/blog/10-noise-functions-for-threejs-tsl-shaders",
+    "primaryImplementationReferences": [
+      "https://github.com/mrdoob/three.js/blob/dev/src/nodes/materialx/MaterialXNoise.js",
+      "https://github.com/mrdoob/three.js/wiki/Three.js-Shading-Language"
+    ],
+    "adoptedNoiseFamilies": [
+      "gradient noise",
+      "fractal Brownian motion",
+      "ridged fBm",
+      "turbulence",
+      "domain warp",
+      "Worley cellular noise"
+    ],
+    "gaeaOfficialDocumentation": [
+      "https://docs.quadspinner.com/Reference/",
+      "https://docs.quadspinner.com/Guide/Using-Gaea/Modify-Shapes.html",
+      "https://docs.quadspinner.com/Reference/Adjustments/Combine.html",
+      "https://docs.quadspinner.com/Reference/LookDev/Rugged.html",
+      "https://docs.quadspinner.com/Guide/Using-Gaea/LookDev.html",
+      "https://docs.quadspinner.com/Reference/Erosion/MicroErosion.html",
+      "https://docs.quadspinner.com/Reference/Erosion/Stratify.html",
+      "https://docs.quadspinner.com/Reference/Data/RockMap.html",
+      "https://docs.quadspinner.com/Reference/Color/CLUTer.html",
+      "https://docs.quadspinner.com/Reference/Color/Synth.html",
+      "https://docs.quadspinner.com/Reference/Color/Splat.html",
+      "https://docs.quadspinner.com/Reference/Color/ColorFX.html"
+    ],
+    "gaeaDistillationPolicy": "Documented node roles and graph strategies distilled into an independent field implementation."
+  },
+  "rendererContract": {
+    "engine": "BrickMother WebGL2 Runtime V2.7 visual truth formation hierarchy",
+    "workingColorSpace": "linear-sRGB",
+    "outputColorSpace": "sRGB",
+    "toneMapping": "neutral exponential",
+    "metalnessPolicy": "all masonry runtime materials forced to 0.0 unless independently verified",
+    "damagePolicy": "Benchmark mode adds deterministic macro plate loss, shear bands, bedding, delamination, undercut shelves, cavity clusters, fracture branches, edge spalls, fibre bundles, pullout channels, compaction flakes and mineral seams. Historical production proportions remain available.",
+    "mutationPolicy": "independent seeded layers for shape, damage, pores, color, water, weathering, inclusions and micro detail",
+    "channelCorrelation": "Geometry, albedo, roughness, micro normal and ambient occlusion share uploaded deterministic V2.7 formation events, plus the existing independent seed layers.",
+    "gaeaFieldGraph": "Rugged, broken stratify, micro-erosion, rock-map, flow, separation-mask, CLUT5 and normalized Splat fields share geometry, color, roughness, normal and AO correlations; fired-clay color bands are event-gated to suppress regular contours."
+  },
+  "profiles": [
+    {
+      "id": "historical-fired",
+      "label": "历史手工烧结砖",
+      "family": "FIRED_CLAY",
+      "source": {
+        "filename": "12th_-14th_century_building_brick.glb",
+        "bytes": 3474792,
+        "sha256": "36848fd806fc251f3a754701aef71a1e09b3a2996c78783b9082346600e8ffb8",
+        "author": "pasquill",
+        "license": "CC BY 4.0",
+        "sourceUrl": "https://sketchfab.com/3d-models/12th-14th-century-building-brick-5f7758009c0b4599a36ecb2114c1a6a7"
+      },
+      "measured": {
+        "dimensionsMm": [
+          318.95884,
+          81.495,
+          147.39672
+        ],
+        "triangleCount": 19390,
+        "baseColorMeanSRGB": [
+          0.492622,
+          0.357764,
+          0.209922
+        ],
+        "baseColorP05SRGB": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "baseColorP95SRGB": [
+          0.694118,
+          0.505882,
+          0.298039
+        ],
+        "roughnessMean": 0.9577051495,
+        "normalTiltDegrees": {
+          "mean": 9.0951,
+          "p50": 6.5735,
+          "p95": 27.8144
+        }
+      },
+      "runtimeDNA": {
+        "shapeRatio": [
+          3.913,
+          1.0,
+          1.809
+        ],
+        "edgeRadius": 0.075,
+        "macroWarp": 0.03,
+        "surfaceRelief": 0.032,
+        "grainScale": 7.2,
+        "fineScale": 34.0,
+        "roughnessRange": [
+          0.92,
+          0.995
+        ],
+        "colorLowSRGB": [
+          0.035,
+          0.025,
+          0.02
+        ],
+        "colorMeanSRGB": [
+          0.36,
+          0.135,
+          0.055
+        ],
+        "colorHighSRGB": [
+          0.72,
+          0.4,
+          0.18
+        ],
+        "mineralFleck": 0.26,
+        "firingBand": 0.34,
+        "pitDensity": 0.48,
+        "edgeFragility": 0.64,
+        "crackAffinity": 0.52,
+        "seedBase": 1214
+      },
+      "noiseDNA": {
+        "warpStrength": 0.19,
+        "macroScale": 1.55,
+        "ridgedScale": 6.2,
+        "cellScale": 16.0,
+        "poreThreshold": 0.115,
+        "poreSharpness": 0.05,
+        "microScale": 44.0,
+        "colorContrast": 1.58,
+        "cavityStrength": 0.92,
+        "bumpStrength": 0.135,
+        "roughnessCorrelation": 0.5,
+        "mineralScale": 24.0,
+        "geometryPoreCount": 14,
+        "edgeRoundnessScale": 0.56,
+        "geometryWarp": 0.84,
+        "geometryRelief": 0.7,
+        "domainWarpScale": 0.82,
+        "geometryDeepPoreCount": 6,
+        "colorClusterScale": 3.1,
+        "waterRunoffScale": 5.4,
+        "weatherExposureScale": 1.82
+      },
+      "paletteDNA": {
+        "darkSRGB": [
+          0.018,
+          0.02,
+          0.022
+        ],
+        "warmSRGB": [
+          0.58,
+          0.24,
+          0.08
+        ],
+        "oxideSRGB": [
+          0.72,
+          0.18,
+          0.045
+        ],
+        "mineralSRGB": [
+          0.84,
+          0.78,
+          0.64
+        ],
+        "bioSRGB": [
+          0.13,
+          0.17,
+          0.08
+        ],
+        "wetSRGB": [
+          0.035,
+          0.05,
+          0.065
+        ],
+        "strawSRGB": [
+          0.59,
+          0.4,
+          0.16
+        ],
+        "huskSRGB": [
+          0.72,
+          0.54,
+          0.27
+        ],
+        "seedSRGB": [
+          0.26,
+          0.13,
+          0.055
+        ]
+      },
+      "compositeDefaults": {
+        "colorRichness": 1.64,
+        "damage": 0.66,
+        "poreDepth": 1.2,
+        "waterStain": 0.7,
+        "weathering": 0.88,
+        "inclusion": 0.22,
+        "shapeVariation": 0.96,
+        "rockDetail": 0.52,
+        "strata": 0.1,
+        "microErosion": 0.62,
+        "colorClarity": 1.1,
+        "colorGamut": 1.34,
+        "maskSharpness": 0.84,
+        "poreDensity": 1.38,
+        "poreVariety": 1.5
+      },
+      "seedLayerOffsets": {
+        "shape": 101,
+        "damage": 211,
+        "pore": 307,
+        "color": 401,
+        "water": 503,
+        "weather": 601,
+        "inclusion": 701,
+        "detail": 809
+      },
+      "gaeaDNA": {
+        "ruggedScale": 6.2,
+        "strataFrequency": 5.2,
+        "surfaceScale": 36.0,
+        "ruggedDepth": 0.0095,
+        "strataDepth": 0.0032,
+        "microErosionDepth": 0.0042,
+        "warpStrength": 0.22,
+        "strataTilt": 0.17,
+        "geometryStrength": 1.0
+      }
+    },
+    {
+      "id": "old-pbr-fired",
+      "label": "完整 PBR 老砖",
+      "family": "FIRED_CLAY",
+      "source": {
+        "filename": "brick.glb",
+        "bytes": 4218980,
+        "sha256": "b90d0b805926b684d62034deaf90ba922ac8c5c52bf0e9115fd2d0fd2bcdf5be",
+        "author": "Rigsters",
+        "license": "CC BY 4.0",
+        "sourceUrl": "https://sketchfab.com/3d-models/brick-504a59ef14a148809cec657d7c99367c"
+      },
+      "measured": {
+        "dimensionsMm": [
+          424.04932,
+          137.55632,
+          276.93737
+        ],
+        "triangleCount": 29996,
+        "baseColorMeanSRGB": [
+          0.623176,
+          0.560165,
+          0.435435
+        ],
+        "baseColorP05SRGB": [
+          0.501961,
+          0.439216,
+          0.282353
+        ],
+        "baseColorP95SRGB": [
+          0.737255,
+          0.678431,
+          0.572549
+        ],
+        "roughnessMean": 0.646511,
+        "roughnessP05": 0.529412,
+        "roughnessP95": 0.72549,
+        "normalTiltDegrees": {
+          "mean": 8.5061,
+          "p50": 5.7543,
+          "p95": 25.9049
+        }
+      },
+      "runtimeDNA": {
+        "shapeRatio": [
+          3.083,
+          1.0,
+          2.013
+        ],
+        "edgeRadius": 0.085,
+        "macroWarp": 0.024,
+        "surfaceRelief": 0.026,
+        "grainScale": 8.0,
+        "fineScale": 42.0,
+        "roughnessRange": [
+          0.78,
+          0.96
+        ],
+        "colorLowSRGB": [
+          0.035,
+          0.025,
+          0.02
+        ],
+        "colorMeanSRGB": [
+          0.36,
+          0.135,
+          0.055
+        ],
+        "colorHighSRGB": [
+          0.72,
+          0.4,
+          0.18
+        ],
+        "mineralFleck": 0.68,
+        "firingBand": 0.18,
+        "pitDensity": 0.56,
+        "edgeFragility": 0.47,
+        "crackAffinity": 0.34,
+        "seedBase": 5045
+      },
+      "noiseDNA": {
+        "warpStrength": 0.16,
+        "macroScale": 1.45,
+        "ridgedScale": 5.8,
+        "cellScale": 14.0,
+        "poreThreshold": 0.12,
+        "poreSharpness": 0.05,
+        "microScale": 42.0,
+        "colorContrast": 1.52,
+        "cavityStrength": 0.86,
+        "bumpStrength": 0.13,
+        "roughnessCorrelation": 0.48,
+        "mineralScale": 22.0,
+        "geometryPoreCount": 12,
+        "edgeRoundnessScale": 0.54,
+        "geometryWarp": 0.72,
+        "geometryRelief": 0.62,
+        "domainWarpScale": 0.78,
+        "geometryDeepPoreCount": 5,
+        "colorClusterScale": 3.1,
+        "waterRunoffScale": 5.4,
+        "weatherExposureScale": 1.82
+      },
+      "paletteDNA": {
+        "darkSRGB": [
+          0.018,
+          0.02,
+          0.022
+        ],
+        "warmSRGB": [
+          0.58,
+          0.24,
+          0.08
+        ],
+        "oxideSRGB": [
+          0.72,
+          0.18,
+          0.045
+        ],
+        "mineralSRGB": [
+          0.84,
+          0.78,
+          0.64
+        ],
+        "bioSRGB": [
+          0.14,
+          0.18,
+          0.085
+        ],
+        "wetSRGB": [
+          0.038,
+          0.054,
+          0.068
+        ],
+        "strawSRGB": [
+          0.62,
+          0.45,
+          0.2
+        ],
+        "huskSRGB": [
+          0.76,
+          0.61,
+          0.34
+        ],
+        "seedSRGB": [
+          0.27,
+          0.16,
+          0.075
+        ]
+      },
+      "compositeDefaults": {
+        "colorRichness": 1.6,
+        "damage": 0.66,
+        "poreDepth": 1.2,
+        "waterStain": 0.82,
+        "weathering": 0.84,
+        "inclusion": 0.2,
+        "shapeVariation": 0.9,
+        "rockDetail": 0.5,
+        "strata": 0.08,
+        "microErosion": 0.6,
+        "colorClarity": 1.08,
+        "colorGamut": 1.3,
+        "maskSharpness": 0.82,
+        "poreDensity": 1.38,
+        "poreVariety": 1.5
+      },
+      "seedLayerOffsets": {
+        "shape": 101,
+        "damage": 211,
+        "pore": 307,
+        "color": 401,
+        "water": 503,
+        "weather": 601,
+        "inclusion": 701,
+        "detail": 809
+      },
+      "gaeaDNA": {
+        "ruggedScale": 6.2,
+        "strataFrequency": 5.2,
+        "surfaceScale": 36.0,
+        "ruggedDepth": 0.0095,
+        "strataDepth": 0.0032,
+        "microErosionDepth": 0.0042,
+        "warpStrength": 0.22,
+        "strataTilt": 0.17,
+        "geometryStrength": 1.0
+      }
+    },
+    {
+      "id": "raw-clay",
+      "label": "原始黏土砖",
+      "family": "ADOBE",
+      "source": {
+        "filename": "clay_brick.glb",
+        "bytes": 10191844,
+        "sha256": "e15725edb10adf87b0bdc6d92a73d749f97b5d2f2a6b0f70c3deecfa8f57d02d",
+        "author": "Världskulturmuseerna",
+        "license": "CC BY-NC 4.0",
+        "sourceUrl": "https://sketchfab.com/3d-models/clay-brick-adc8de4f9d4a4091bf5b5dedf45fcba4"
+      },
+      "measured": {
+        "dimensionsMm": [
+          565.95757,
+          131.872305,
+          563.575051
+        ],
+        "triangleCount": 180782,
+        "baseColorMeanSRGB": [
+          0.644732,
+          0.579669,
+          0.497125
+        ],
+        "baseColorP05SRGB": [
+          0.466667,
+          0.415686,
+          0.360784
+        ],
+        "baseColorP95SRGB": [
+          0.760784,
+          0.690196,
+          0.6
+        ],
+        "roughnessMean": 0.7906289251,
+        "normalTiltDegrees": {
+          "mean": 6.6057,
+          "p50": 4.7973,
+          "p95": 19.7048
+        }
+      },
+      "runtimeDNA": {
+        "shapeRatio": [
+          4.291,
+          1.0,
+          4.273
+        ],
+        "edgeRadius": 0.105,
+        "macroWarp": 0.052,
+        "surfaceRelief": 0.041,
+        "grainScale": 5.6,
+        "fineScale": 28.0,
+        "roughnessRange": [
+          0.84,
+          0.985
+        ],
+        "colorLowSRGB": [
+          0.15,
+          0.095,
+          0.06
+        ],
+        "colorMeanSRGB": [
+          0.48,
+          0.32,
+          0.18
+        ],
+        "colorHighSRGB": [
+          0.76,
+          0.61,
+          0.39
+        ],
+        "mineralFleck": 0.36,
+        "firingBand": 0.0,
+        "pitDensity": 0.66,
+        "edgeFragility": 0.78,
+        "crackAffinity": 0.7,
+        "seedBase": 4517
+      },
+      "noiseDNA": {
+        "warpStrength": 0.23,
+        "macroScale": 1.25,
+        "ridgedScale": 4.4,
+        "cellScale": 10.5,
+        "poreThreshold": 0.155,
+        "poreSharpness": 0.052,
+        "microScale": 28.0,
+        "colorContrast": 1.42,
+        "cavityStrength": 0.72,
+        "bumpStrength": 0.145,
+        "roughnessCorrelation": 0.56,
+        "mineralScale": 17.0,
+        "geometryPoreCount": 13,
+        "edgeRoundnessScale": 0.72,
+        "geometryWarp": 1.05,
+        "geometryRelief": 0.86,
+        "domainWarpScale": 0.68,
+        "geometryDeepPoreCount": 5,
+        "colorClusterScale": 2.4,
+        "waterRunoffScale": 5.4,
+        "weatherExposureScale": 1.82
+      },
+      "paletteDNA": {
+        "darkSRGB": [
+          0.085,
+          0.06,
+          0.043
+        ],
+        "warmSRGB": [
+          0.63,
+          0.43,
+          0.24
+        ],
+        "oxideSRGB": [
+          0.53,
+          0.25,
+          0.11
+        ],
+        "mineralSRGB": [
+          0.79,
+          0.71,
+          0.56
+        ],
+        "bioSRGB": [
+          0.18,
+          0.25,
+          0.1
+        ],
+        "wetSRGB": [
+          0.065,
+          0.052,
+          0.044
+        ],
+        "strawSRGB": [
+          0.72,
+          0.56,
+          0.31
+        ],
+        "huskSRGB": [
+          0.83,
+          0.72,
+          0.46
+        ],
+        "seedSRGB": [
+          0.18,
+          0.07,
+          0.02
+        ]
+      },
+      "compositeDefaults": {
+        "colorRichness": 1.42,
+        "damage": 0.82,
+        "poreDepth": 1.36,
+        "waterStain": 0.84,
+        "weathering": 0.86,
+        "inclusion": 1.48,
+        "shapeVariation": 1.08,
+        "rockDetail": 0.38,
+        "strata": 0.1,
+        "microErosion": 0.64,
+        "colorClarity": 1.02,
+        "colorGamut": 1.18,
+        "maskSharpness": 0.76,
+        "poreDensity": 1.58,
+        "poreVariety": 1.46
+      },
+      "seedLayerOffsets": {
+        "shape": 101,
+        "damage": 211,
+        "pore": 307,
+        "color": 401,
+        "water": 503,
+        "weather": 601,
+        "inclusion": 701,
+        "detail": 809
+      },
+      "gaeaDNA": {
+        "ruggedScale": 4.8,
+        "strataFrequency": 3.4,
+        "surfaceScale": 29.0,
+        "ruggedDepth": 0.0075,
+        "strataDepth": 0.0022,
+        "microErosionDepth": 0.0054,
+        "warpStrength": 0.27,
+        "strataTilt": 0.11,
+        "geometryStrength": 0.92
+      },
+      "inclusionDNA": {
+        "brickScaleInvariant": true,
+        "layers": [
+          {
+            "id": "long-straw",
+            "seed": 17,
+            "density": 0.58,
+            "scale": 6.2,
+            "burialDepth": 0.58,
+            "direction": 0.18,
+            "clustering": 0.78,
+            "colorVariation": 0.34,
+            "thickness": 0.042,
+            "physicalScaleMm": [0.45, 4.8]
+          },
+          {
+            "id": "chopped-straw",
+            "seed": 29,
+            "density": 0.46,
+            "scale": 11.5,
+            "burialDepth": 0.68,
+            "direction": -0.32,
+            "clustering": 0.70,
+            "colorVariation": 0.42,
+            "thickness": 0.056,
+            "physicalScaleMm": [0.32, 2.2]
+          },
+          {
+            "id": "rice-husk",
+            "seed": 41,
+            "density": 0.34,
+            "scale": 16.0,
+            "burialDepth": 0.72,
+            "direction": 0.0,
+            "clustering": 0.64,
+            "colorVariation": 0.48,
+            "thickness": 0.11,
+            "physicalScaleMm": [0.28, 1.6]
+          },
+          {
+            "id": "seed-grain",
+            "seed": 53,
+            "density": 0.22,
+            "scale": 20.0,
+            "burialDepth": 0.76,
+            "direction": 0.0,
+            "clustering": 0.58,
+            "colorVariation": 0.52,
+            "thickness": 0.13,
+            "physicalScaleMm": [0.65, 1.8]
+          },
+          {
+            "id": "mineral-particle",
+            "seed": 67,
+            "density": 0.28,
+            "scale": 24.0,
+            "burialDepth": 0.84,
+            "direction": 0.0,
+            "clustering": 0.52,
+            "colorVariation": 0.30,
+            "thickness": 0.08,
+            "physicalScaleMm": [0.18, 0.75]
+          },
+          {
+            "id": "micro-pore",
+            "seed": 79,
+            "density": 0.38,
+            "scale": 28.0,
+            "burialDepth": 0.88,
+            "direction": 0.0,
+            "clustering": 0.46,
+            "colorVariation": 0.24,
+            "thickness": 0.05,
+            "physicalScaleMm": [0.08, 0.42]
+          }
+        ]
+      }
+    },
+    {
+      "id": "stone-block",
+      "label": "石块",
+      "family": "STONE",
+      "source": {
+        "filename": "stone_brick.glb",
+        "bytes": 23979900,
+        "sha256": "69a2be880fab4a209ee0d46e639b2ad458fdb327e15c738092b1ce55f5e68ebe",
+        "author": "LuthBird1",
+        "license": "CC BY 4.0",
+        "sourceUrl": "https://sketchfab.com/3d-models/stone-brick-8a31a831769f491f849f20715127d239"
+      },
+      "measured": {
+        "dimensionsMm": [
+          14.20577,
+          7.82418,
+          5.96787
+        ],
+        "dimensionUnitStatus": "source-units-pending-calibration",
+        "triangleCount": 263744,
+        "baseColorMeanSRGB": [
+          0.154841,
+          0.174215,
+          0.191687
+        ],
+        "baseColorP05SRGB": [
+          0.054902,
+          0.105882,
+          0.152941
+        ],
+        "baseColorP95SRGB": [
+          0.266667,
+          0.258824,
+          0.25098
+        ],
+        "rawRoughnessMean": 0.513786,
+        "rawMetalnessMean": 0.268394,
+        "normalTiltDegrees": {
+          "mean": 3.2268,
+          "p50": 1.9322,
+          "p95": 11.2616
+        },
+        "sourceExportAnomalies": [
+          "alphaMode BLEND",
+          "emissiveFactor 1,1,1 with black emissive map",
+          "non-zero metalness on masonry"
+        ]
+      },
+      "runtimeDNA": {
+        "shapeRatio": [
+          1.816,
+          1.0,
+          0.763
+        ],
+        "edgeRadius": 0.055,
+        "macroWarp": 0.044,
+        "surfaceRelief": 0.024,
+        "grainScale": 10.0,
+        "fineScale": 38.0,
+        "roughnessRange": [
+          0.78,
+          0.96
+        ],
+        "colorLowSRGB": [
+          0.04,
+          0.047,
+          0.052
+        ],
+        "colorMeanSRGB": [
+          0.31,
+          0.31,
+          0.29
+        ],
+        "colorHighSRGB": [
+          0.66,
+          0.63,
+          0.55
+        ],
+        "mineralFleck": 0.82,
+        "firingBand": 0.0,
+        "pitDensity": 0.38,
+        "edgeFragility": 0.56,
+        "crackAffinity": 0.84,
+        "seedBase": 8231,
+        "normalization": {
+          "metalness": 0.0,
+          "emissive": 0.0,
+          "alphaMode": "OPAQUE"
+        }
+      },
+      "noiseDNA": {
+        "warpStrength": 0.2,
+        "macroScale": 1.75,
+        "ridgedScale": 6.2,
+        "cellScale": 18.0,
+        "poreThreshold": 0.105,
+        "poreSharpness": 0.05,
+        "microScale": 36.0,
+        "colorContrast": 1.46,
+        "cavityStrength": 0.8,
+        "bumpStrength": 0.15,
+        "roughnessCorrelation": 0.34,
+        "mineralScale": 21.0,
+        "geometryPoreCount": 11,
+        "edgeRoundnessScale": 0.44,
+        "geometryWarp": 0.92,
+        "geometryRelief": 0.74,
+        "domainWarpScale": 0.88,
+        "geometryDeepPoreCount": 5,
+        "colorClusterScale": 3.1,
+        "waterRunoffScale": 5.4,
+        "weatherExposureScale": 1.82
+      },
+      "paletteDNA": {
+        "darkSRGB": [
+          0.034,
+          0.041,
+          0.048
+        ],
+        "warmSRGB": [
+          0.44,
+          0.34,
+          0.25
+        ],
+        "oxideSRGB": [
+          0.48,
+          0.25,
+          0.11
+        ],
+        "mineralSRGB": [
+          0.82,
+          0.8,
+          0.72
+        ],
+        "bioSRGB": [
+          0.18,
+          0.22,
+          0.14
+        ],
+        "wetSRGB": [
+          0.04,
+          0.058,
+          0.075
+        ],
+        "strawSRGB": [
+          0.52,
+          0.39,
+          0.18
+        ],
+        "huskSRGB": [
+          0.7,
+          0.56,
+          0.31
+        ],
+        "seedSRGB": [
+          0.21,
+          0.14,
+          0.07
+        ]
+      },
+      "compositeDefaults": {
+        "colorRichness": 1.34,
+        "damage": 0.76,
+        "poreDepth": 1.32,
+        "waterStain": 0.72,
+        "weathering": 0.88,
+        "inclusion": 0.1,
+        "shapeVariation": 1.02,
+        "rockDetail": 1.3,
+        "strata": 1.02,
+        "microErosion": 1.08,
+        "colorClarity": 1.12,
+        "colorGamut": 1.3,
+        "maskSharpness": 0.7,
+        "poreDensity": 1.46,
+        "poreVariety": 1.58
+      },
+      "seedLayerOffsets": {
+        "shape": 101,
+        "damage": 211,
+        "pore": 307,
+        "color": 401,
+        "water": 503,
+        "weather": 601,
+        "inclusion": 701,
+        "detail": 809
+      },
+      "gaeaDNA": {
+        "ruggedScale": 7.6,
+        "strataFrequency": 8.4,
+        "surfaceScale": 30.0,
+        "ruggedDepth": 0.027,
+        "strataDepth": 0.015,
+        "microErosionDepth": 0.0115,
+        "warpStrength": 0.31,
+        "strataTilt": 0.23,
+        "geometryStrength": 1.18
+      }
+    }
+  ],
+  "batchPresets": [
+    {
+      "id": "first-composite-batch-v2-alpha1",
+      "label": "首批复合材质 DNA V2",
+      "members": [
+        {
+          "profileId": "historical-fired",
+          "masterSeedOffset": 101,
+          "damageLevel": 0.24
+        },
+        {
+          "profileId": "raw-clay",
+          "masterSeedOffset": 202,
+          "damageLevel": 0.34
+        },
+        {
+          "profileId": "stone-block",
+          "masterSeedOffset": 303,
+          "damageLevel": 0.3
+        }
+      ]
+    }
+  ],
+  "v2CompositeContract": {
+    "status": "neutral-studio-rich-spectrum-alpha",
+    "seedLayers": [
+      "shape",
+      "damage",
+      "pore",
+      "color",
+      "water",
+      "weather",
+      "inclusion",
+      "detail"
+    ],
+    "adjustableControls": [
+      "colorRichness",
+      "damage",
+      "poreDepth",
+      "waterStain",
+      "weathering",
+      "inclusion",
+      "shapeVariation",
+      "rockDetail",
+      "strata",
+      "microErosion",
+      "colorClarity",
+      "colorGamut",
+      "maskSharpness"
+    ],
+    "adobeInclusionFamilies": [
+      "long-straw",
+      "chopped-straw",
+      "rice-husk",
+      "seed-grain",
+      "missing-inclusion-pit",
+      "physical-fiber-pullout-channel"
+    ],
+    "palettePolicy": "source-informed multi-cluster palette with a separate wet, weather, mineral, biological and organic inclusion color family",
+    "referenceCalibration": "V2.6 uses neutral studio illumination, high-roughness masonry, broad fired-red and charcoal kiln zones, blue-gray and olive stone regions, warm adobe clay zones, visible clustered fibers, and a stronger multi-scale pore spectrum. Manual visual approval remains required.",
+    "visualCalibration": {
+      "eventColorMasking": true,
+      "regularOxideContourSuppression": true,
+      "evidenceProfiles": [
+        "old-pbr-fired",
+        "stone-block",
+        "raw-clay"
+      ],
+      "productionApproved": false,
+      "jrbReferenceApproved": false,
+      "stoneDetailApproved": false,
+      "adobeInclusionApproved": false
+    },
+    "naturalEventColor": {
+      "connectedCellularColorNetworksSuppressed": true,
+      "broadMaterialPatches": true,
+      "sparseOxideEvents": true,
+      "familySpecificSaturation": true,
+      "naturalStonePalette": true,
+      "variedAdobeFiberAging": true
+    },
+    "spectralBalance": {
+      "firedClayChromaticZones": true,
+      "stoneReadableMidtones": true,
+      "familyLightingExposure": true,
+      "reducedMicroNoise": true,
+      "adobeInclusionClustering": true
+    },
+    "deepPoreSpectrum": {
+      "clusteredAnchors": true,
+      "microMediumLargeFamilies": true,
+      "collapsedMouths": true,
+      "brokenRimCuts": true,
+      "correlatedColorRoughnessNormalAO": true
+    },
+    "richMaterialFamilies": {
+      "firedClayChromaticZones": true,
+      "stoneBlueOliveWarmRustCalciteWetZones": true,
+      "adobeClayRedOchreDustDampInclusionZones": true
+    },
+    "manualVisualApprovalRequired": true,
+    "neutralStudioRichSpectrum": {
+      "neutralLighting": true,
+      "highRoughnessMasonry": true,
+      "firedRedCharcoalMineralZones": true,
+      "stoneBlueOliveRustCalciteZones": true,
+      "adobeClayDustDampZones": true,
+      "visibleAdobeLongFibers": true,
+      "strongerClusteredPoreSpectrum": true
+    }
+  },
+  "version": "2.7.3-alpha.1"
+}
