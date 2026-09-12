@@ -1,3 +1,3 @@
-run=2026-09-12T03:54:00Z
-purpose=package all current Brick Mother work into a verified full handoff and publish ZIP to GitHub
+run=2026-09-12T03:59:30Z
+purpose=rerun verified current full handoff publish after force-add fix
 package=BRICK_MOTHER_CURRENT_FULL_HANDOFF_R1_2026-09-12.zip
