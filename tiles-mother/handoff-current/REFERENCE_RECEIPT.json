@@ -1,0 +1,43 @@
+{
+  "referenceName": "讲武堂瓦片精细(2).zip",
+  "receivedDate": "2026-09-12",
+  "purpose": "detail-only learning reference for the existing Tiles Mother tile; do not redefine the frozen large silhouette or workbench architecture",
+  "archive": {
+    "bytes": 58671527,
+    "sha256": "ae5510c0e2eaec236adff0b94d978688f6c17a9412407c6c7ec54968222dd365"
+  },
+  "contents": [
+    {
+      "path": "讲武堂瓦片精细/01.fbx",
+      "bytes": 349088,
+      "sha256": "74053fe0a5978bd43e2d83dede03007a732bb3c4e625915161ecc1bbe56da3f9"
+    },
+    {
+      "path": "讲武堂瓦片精细/01.fbx.rsInfo",
+      "bytes": 2246,
+      "sha256": "028e3f022cffa7c9ef8b51e64ef22d417cc716b55aab49ff23ba8724436489cb"
+    },
+    {
+      "path": "讲武堂瓦片精细/01_u1_v1_diffuse.png",
+      "bytes": 58273168,
+      "sizePixels": [7000, 7000],
+      "sha256": "ad6917cba05c4e6de7319efa85bd088f6e5c4c2bc0b2c296896ab48a2301db61"
+    },
+    {
+      "path": "讲武堂瓦片精细/01_u1_v1_normal.png",
+      "bytes": 96199,
+      "sizePixels": [2500, 2500],
+      "sha256": "1839a0763e6342ce5bfd3ee98b7c7282a0aeb88f30925312fa78c23aa68dc5ee"
+    }
+  ],
+  "rsInfoSummary": {
+    "format": "FBX202000",
+    "exportBinary": true,
+    "exportVertices": true,
+    "exportVertexNormals": true,
+    "exportTriangles": true,
+    "exportMaterials": true,
+    "coordinateSystem": "local:1 - Euclidean"
+  },
+  "storageNote": "The exact original heavy reference attachment remains in the user's uploaded files/File Library. This GitHub handoff records its identity and current project context; on restart, retrieve that exact file by name rather than substituting another source."
+}
