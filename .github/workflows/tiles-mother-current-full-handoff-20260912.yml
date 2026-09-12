@@ -1,0 +1,87 @@
+name: Tiles Mother Current Full Handoff 2026-09-12
+
+on:
+  push:
+    branches:
+      - feature/tiles-mother-r2-restart-20260907
+    paths:
+      - .github/workflows/tiles-mother-current-full-handoff-20260912.yml
+      - tiles-mother/handoff-current/**
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-current-full-handoff:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout current Tiles branch
+        uses: actions/checkout@v4
+        with:
+          ref: feature/tiles-mother-r2-restart-20260907
+          fetch-depth: 0
+
+      - name: Build the one current handoff package
+        shell: bash
+        run: |
+          set -euo pipefail
+          PKG="Tiles_Mother_Current_Full_Handoff_2026-09-12"
+          ROOT="_handoff/$PKG"
+          OUT="tiles-mother/distributions/${PKG}.zip"
+          rm -rf _handoff
+          mkdir -p "$ROOT/project" "$ROOT/rules" "$(dirname "$OUT")"
+
+          cp tiles-mother/handoff-current/START_HERE.md "$ROOT/00_START_HERE.md"
+          cp tiles-mother/handoff-current/REFERENCE_RECEIPT.json "$ROOT/REFERENCE_RECEIPT.json"
+          cp tiles-mother/r2-closeout-06-handmade/START_HERE.html "$ROOT/project/START_HERE.html"
+          cp tiles-mother/r2-closeout-06-handmade/QA.json "$ROOT/project/QA.json"
+          cp tiles-mother/AGENTS.md "$ROOT/rules/TILES_AGENTS.md"
+
+          cat > "$ROOT/SOURCE_LOCK.json" <<EOF
+          {
+            "package": "$PKG",
+            "repository": "haihao0307/HOUSE",
+            "branch": "feature/tiles-mother-r2-restart-20260907",
+            "projectCandidateCommit": "95c97a96877a0b09660d1887ce858fe1c018a5c8",
+            "packageBuildSourceCommit": "$GITHUB_SHA",
+            "projectEntry": "project/START_HERE.html",
+            "visualApproved": false,
+            "productionApproved": false,
+            "currentTask": "detail-only Microscope refinement; do not change workbench architecture or large tile silhouette"
+          }
+          EOF
+
+          (cd "$ROOT" && find . -type f ! -name SHA256SUMS.txt -print0 | sort -z | xargs -0 sha256sum > SHA256SUMS.txt)
+          rm -f "$OUT"
+          (cd _handoff && zip -9 -r "../$OUT" "$PKG" >/dev/null)
+          unzip -t "$OUT"
+          unzip -Z1 "$OUT" | grep -Fx "$PKG/00_START_HERE.md"
+          unzip -Z1 "$OUT" | grep -Fx "$PKG/REFERENCE_RECEIPT.json"
+          unzip -Z1 "$OUT" | grep -Fx "$PKG/SOURCE_LOCK.json"
+          unzip -Z1 "$OUT" | grep -Fx "$PKG/project/START_HERE.html"
+          unzip -Z1 "$OUT" | grep -Fx "$PKG/project/QA.json"
+          unzip -Z1 "$OUT" | grep -Fx "$PKG/rules/TILES_AGENTS.md"
+          unzip -Z1 "$OUT" | grep -Fx "$PKG/SHA256SUMS.txt"
+          echo "PACKAGE_SHA256=$(sha256sum "$OUT" | cut -d' ' -f1)" >> "$GITHUB_ENV"
+          echo "PACKAGE_BYTES=$(stat -c%s "$OUT")" >> "$GITHUB_ENV"
+
+      - name: Commit only the current full handoff zip
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tiles-mother/distributions/Tiles_Mother_Current_Full_Handoff_2026-09-12.zip
+          if git diff --cached --quiet; then
+            echo "Current full handoff package already matches."
+            exit 0
+          fi
+          git commit -m "release(tiles): current full handoff 2026-09-12 [skip ci]"
+          git push origin HEAD:feature/tiles-mother-r2-restart-20260907
+
+      - name: Report package identity
+        run: |
+          echo "Tiles_Mother_Current_Full_Handoff_2026-09-12.zip"
+          echo "bytes=$PACKAGE_BYTES"
+          echo "sha256=$PACKAGE_SHA256"
