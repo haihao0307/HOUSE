@@ -72,7 +72,7 @@ jobs:
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add tiles-mother/distributions/Tiles_Mother_Current_Full_Handoff_2026-09-12.zip
+          git add -f tiles-mother/distributions/Tiles_Mother_Current_Full_Handoff_2026-09-12.zip
           if git diff --cached --quiet; then
             echo "Current full handoff package already matches."
             exit 0
