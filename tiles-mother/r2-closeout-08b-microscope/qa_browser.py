@@ -47,6 +47,14 @@ try:
    page=context.new_page();page.on('pageerror',lambda e:errors.append(str(e)))
    if url and not baseline:
     response=page.goto(url,wait_until='domcontentloaded',timeout=60000)
+    if page.title()=='External Content Notice | rawgit.hack':
+     # Follow the host's normal explicit navigation, only for this exact owned URL.
+     check('CDN notice destination matches requested workbench',page.locator('#phish-dest').input_value()==url)
+     page.screenshot(path=str(out/('mobile_host_notice.png' if mobile else 'desktop_host_notice.png')))
+     result['hostNoticeEncountered']=True
+     with page.expect_navigation(wait_until='domcontentloaded',timeout=60000) as navigation:
+      page.get_by_role('button',name='Open the page',exact=True).click()
+     response=navigation.value
     content=response.body() if response else b''
     status=response.status if response else 0
     ctype=response.headers.get('content-type','') if response else ''
