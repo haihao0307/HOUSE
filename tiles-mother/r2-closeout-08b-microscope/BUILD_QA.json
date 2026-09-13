@@ -1,0 +1,45 @@
+{
+  "version": "08B-microscope-pbr",
+  "source07SHA256": "d101a20b0290cc20a148d65f64dfad1c4a00d402143e2492508138566100200b",
+  "materialized08ASHA256": "36ff636d916d671f8c24dca4175bff12167969e4fea7e9423a1be5f827821cfa",
+  "outputSHA256": "6b372795deb3f51e80101f88375644fdfa88161bea9a28c1c6376aa58ab8ff7f",
+  "bytes": 67703,
+  "protected": {
+    "geometry_and_vertex_depth": {
+      "equal": true,
+      "sha256": "b2bd2fa95f1be6bca736bc154bd14f48dee1f38349459fd60dd4488d7af993ad"
+    },
+    "roof_state_and_workshop": {
+      "equal": true,
+      "sha256": "d206dfa55fdfb7450ad8b8b21bf2c6134960dd678c62a5e5db36c66fabdd5d30"
+    },
+    "camera_fit": {
+      "equal": true,
+      "sha256": "54acc10a767b5e7b5569cbaae66c9eaecfdf1242c067f6bc230882c2c9aad10b"
+    },
+    "pointer_controls": {
+      "equal": true,
+      "sha256": "7fa4f65f889a6d98ccc87359124e4e86112d834e17c73f25fb60f8cc7715bc0e"
+    }
+  },
+  "selfContained": true,
+  "oldTilePatternsRemoved": true,
+  "JSsyntaxPassed": true,
+  "microscopeFormula": "cos(dot(cos(xi.zyy*s),cos(xi.xyx*s)))/s",
+  "scaleCount": 17,
+  "noGuessedRotationSchedule": true,
+  "visualApproved": false,
+  "productionApproved": false,
+  "changes": [
+    "replace old tile pattern functions with source-verified Microscope",
+    "remove old ceramic rotation/warp path",
+    "preserve wood and moss fields; no old tile pattern evaluation",
+    "connect one Microscope field to existing tile PBR",
+    "register Microscope uniform",
+    "bind material controls without rebuilding geometry",
+    "add four bounded Microscope/PBR controls",
+    "existing panel controls",
+    "wire controls in same workbench",
+    "initialize controls after renderer"
+  ]
+}
