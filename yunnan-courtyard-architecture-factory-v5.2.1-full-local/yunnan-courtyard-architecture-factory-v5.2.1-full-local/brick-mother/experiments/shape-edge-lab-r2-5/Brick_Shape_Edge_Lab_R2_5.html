@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Brick Mother · R2.5 GLB形状收尾工作台</title>
+<style>:root{color-scheme:dark;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:#0f130f;color:#ece8dd}*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden}body{display:flex;flex-direction:column}.bar{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding:10px 16px;background:#151b16;border-bottom:1px solid #ffffff18;min-height:58px}.title{font-size:14px;letter-spacing:.06em}.meta{font-size:10px;color:#9fa89a;margin-top:4px}.lock{font-size:11px;color:#f0c995;border:1px solid #5c503d;background:#2b261d;padding:6px 9px;border-radius:7px}.framewrap{position:relative;flex:1;min-height:0;background:#151b16}iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#151b16}.loading,.error{position:absolute;inset:0;display:grid;place-content:center;text-align:center;padding:30px;background:#151b16;color:#b9c1b4;z-index:2;font-size:12px}.error{color:#efc3a8}.hidden{display:none}.badge{position:absolute;right:10px;top:10px;z-index:3;pointer-events:none;background:#151b16df;border:1px solid #ffffff22;border-radius:7px;padding:6px 9px;font-size:10px;color:#d9d5c9;backdrop-filter:blur(8px)}@media(max-width:700px){.bar{padding:9px 11px;min-height:64px}.title{font-size:12px}.lock{font-size:10px}.badge{top:6px;right:6px}}</style></head><body>
+<div class="bar"><div><div class="title">BRICK MOTHER · R2.5 GLB形状收尾工作台</div><div class="meta">左：R2.4 上一版 · 右：根据 scan_bricks_freepolyorg.glb 外包络重构 · 色彩/材质不参考GLB</div></div><div class="lock">3D WORKBENCH · MATERIAL FROZEN</div></div>
+<div class="framewrap"><div id="loading" class="loading">正在载入冻结材质并构建 GLB 参考形…</div><div id="error" class="error hidden"></div><div class="badge">GLB测得约 1 : 0.510 : 0.286（长:宽:厚）· 两端轻收 · 中段略饱满</div><iframe id="lab" title="Brick Mother R2.5 GLB-derived shape workbench"></iframe></div>
+<script>
+'use strict';
+const SOURCE='https://rawcdn.githack.com/haihao0307/HOUSE/030d84b979a8158d03398aa60da69e8e3315cd40/yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/experiments/material-microscope-lab-r2-1/Brick_Material_Microscope_Lab_R2_1.html';
+const loading=document.getElementById('loading'),error=document.getElementById('error'),frame=document.getElementById('lab');
+function fail(msg){loading.classList.add('hidden');error.textContent=msg;error.classList.remove('hidden');}
+function rr(text,oldText,newText,label){if(!text.includes(oldText))throw new Error('继承点不匹配：'+label);return text.replace(oldText,newText);}
+(async()=>{try{
+ const r=await fetch(SOURCE,{cache:'no-store'});if(!r.ok)throw new Error('HTTP '+r.status);let html=await r.text();
+ html=rr(html,'<title>Brick Mother · 显微材质 R2.1</title>','<title>Brick Mother · R2.5 GLB形状收尾工作台</title>','title');
+ html=rr(html,'BRICK MOTHER · 显微材质 R2.1','BRICK MOTHER · R2.5 GLB形状收尾工作台','heading');
+ html=rr(html,'烧结砖 / Process · 共享形成遮罩 · 片元级显微结构','烧结砖 / B材质冻结 · 左R2.4 / 右GLB参考形','subtitle');
+ html=rr(html,'<div class="label">B 基准 <small>基准参数 · 中心修复 · 显微开启</small></div><div class="label"><b>B 调参</b><small id="tunedLabel">增强预设 · 显微开启</small></div>','<div class="label">R2.4 上一版 <small>B材质 · 99%收尾基线</small></div><div class="label"><b>R2.5 GLB参考形</b><small id="tunedLabel">B材质 · GLB外包络 / 端部收窄 / 局部磨损</small></div>','labels');
+ html=rr(html,'<span class="paneltitle">调参侧 · 显微贡献</span>','<span class="paneltitle">只比较几何 · 材质参数完全冻结</span>','panel title');
+ html=rr(html,'</style></head>','#mm,#enhance,#reset,.sliders{display:none!important}\n</style></head>','lock UI');
+ html=rr(html,'uniform vec2 uRes;uniform vec2 uOrigin;uniform vec4 uMicro;uniform float uTime;uniform float uYaw;uniform float uPitch;uniform float uZoom;uniform int uMode;uniform float uMM;','uniform vec2 uRes;uniform vec2 uOrigin;uniform vec4 uMicro;uniform float uTime;uniform float uYaw;uniform float uPitch;uniform float uZoom;uniform int uMode;uniform float uMM;uniform float uShape;','shape uniform');
+ const oldMap='vec2 map(vec3 p){vec2 o=vec2(sdRoundBox(rotInv(p),vec3(1.04,.43,.50),.075),1.);float floorD=p.y+.72;if(floorD<o.x)o=vec2(floorD,2.);return o;}';
+ const newMap=`float chipSphere(vec3 p,vec3 c,float r){return length(p-c)-r;}
+float brickR24(vec3 q){
+ vec3 b=vec3(1.04,.265,.480);float rad=.055;float xn=q.x/1.04;
+ q.y-=.018*xn+.006*sin(1.45*xn+.35)*(1.-.35*xn*xn)+.0035*sin(3.1*q.z+.7);
+ q.z-=.006*sin(1.25*xn+.9)*(1.-.25*xn*xn);
+ b.y+=.010*sin(1.85*xn-.45)+.005*sin(3.4*xn+1.1);b.z+=.004*sin(1.65*xn+.4);
+ float d=sdRoundBox(q,b,rad);
+ d=max(d,-chipSphere(q,vec3(-.69,.282,.494),.030));d=max(d,-chipSphere(q,vec3(-.64,.279,.493),.018));
+ d=max(d,-chipSphere(q,vec3(-.16,-.279,.493),.021));d=max(d,-chipSphere(q,vec3(.38,-.278,.492),.016));
+ d=max(d,-chipSphere(q,vec3(.69,.281,-.494),.024));d=max(d,-chipSphere(q,vec3(.08,-.278,-.492),.018));
+ d=max(d,-chipSphere(q,vec3(-1.045,.273,-.476),.025));d=max(d,-chipSphere(q,vec3(1.046,-.272,.474),.022));
+ d=max(d,-chipSphere(q,vec3(.18,.278,.493),.013));d=max(d,-chipSphere(q,vec3(-.86,-.274,-.490),.014));
+ return d;
+}
+float brickR25(vec3 q){
+ // Uploaded scan GLB measured extents: X=0.448292, Y=0.127997, Z=0.228419.
+ // Rebuilt procedurally at the same normalized envelope: 1 : 0.510 : 0.286 (L:W:H).
+ float xn=q.x/1.04;float ax=abs(xn);float endTaper=smoothstep(.72,1.0,ax);
+ vec3 b=vec3(1.04,.297,.530);float rad=.052;
+ // Scan envelope: middle is slightly fuller; both ends tighten gently instead of staying perfectly parallel.
+ b.y+=.006*sin(1.75*xn-.30)+.004*sin(3.7*xn+.65)-.014*endTaper;
+ b.z+=.006*sin(1.25*xn+.45)+.004*sin(3.0*xn-.80)-.017*endTaper;
+ // Low-frequency hand-formed / fired distortion from scan silhouette; no high-frequency saw-tooth noise.
+ q.y-=.007*xn+.0045*sin(1.35*xn+.30)*(1.-.25*xn*xn)+.0025*sin(2.6*q.z+.4);
+ q.z-=.0035*sin(1.10*xn+.75)*(1.-.20*xn*xn);
+ float d=sdRoundBox(q,b,rad);
+ // Sparse scan-like edge losses: shallow, local and asymmetric.
+ d=max(d,-chipSphere(q,vec3(-.79,.307,.535),.024));
+ d=max(d,-chipSphere(q,vec3(-.70,.304,.534),.014));
+ d=max(d,-chipSphere(q,vec3(.16,.309,.533),.018));
+ d=max(d,-chipSphere(q,vec3(.63,.304,-.534),.020));
+ d=max(d,-chipSphere(q,vec3(-.22,-.305,.531),.015));
+ d=max(d,-chipSphere(q,vec3(.41,-.304,.530),.013));
+ d=max(d,-chipSphere(q,vec3(-1.043,.286,-.510),.021));
+ d=max(d,-chipSphere(q,vec3(1.043,-.284,.503),.019));
+ return d;
+}
+float brickBody(vec3 q,float shape){return shape<1.5?brickR24(q):brickR25(q);}
+vec2 map(vec3 p){vec2 o=vec2(brickBody(rotInv(p),uShape),1.);float floorD=p.y+(uShape<1.5?.55:.615);if(floorD<o.x)o=vec2(floorD,2.);return o;}`;
+ html=rr(html,oldMap,newMap,'GLB-derived geometry');
+ html=rr(html,"const U={};for(const n of ['uRes','uOrigin','uMicro','uTime','uYaw','uPitch','uZoom','uMode','uMM'])U[n]=gl.getUniformLocation(prog,n);","const U={};for(const n of ['uRes','uOrigin','uMicro','uTime','uYaw','uPitch','uZoom','uMode','uMM','uShape'])U[n]=gl.getUniformLocation(prog,n);",'uniform location');
+ html=rr(html,'let values=[...enhanced],yaw=-.22,pitch=.08,zoom=4.8,mode=0,mm=1,drag=false,last=[0,0],pending=false,lost=false;','let values=[...reference],yaw=-.22,pitch=.08,zoom=4.8,mode=0,mm=1,drag=false,last=[0,0],pending=false,lost=false;','frozen values');
+ html=rr(html,'gl.uniform4fv(U.uMicro,panel?values:reference);gl.uniform1f(U.uMM,panel?mm:1);gl.drawArrays(gl.TRIANGLES,0,3);','gl.uniform4fv(U.uMicro,reference);gl.uniform1f(U.uMM,1);gl.uniform1f(U.uShape,panel?2:1);gl.drawArrays(gl.TRIANGLES,0,3);','per-panel geometry');
+ html=rr(html,"document.getElementById('status').textContent='WebGL2 · R2.1 · '+['成品','高度','粗糙度','形成遮罩'][mode];","document.getElementById('status').textContent='WebGL2 · R2.5 GLB SHAPE · '+['成品','高度','粗糙度','形成遮罩'][mode];",'status');
+ html=rr(html,"refresh('增强预设');","refresh('基准参数');",'startup baseline');
+ html=rr(html,'<span>材质实验 · 待视觉验收 · 尺度为模型倍率</span>','<span>左R2.4 / 右R2.5 · 只改几何 · B材质完全相同 · 拖动旋转 / 滚轮缩放</span>','footer');
+ frame.addEventListener('load',()=>loading.classList.add('hidden'),{once:true});frame.srcdoc=html;
+}catch(e){console.error(e);fail('R2.5 构建失败：'+e.message+'。旧版本未被修改。');}})();
+</script></body></html>
