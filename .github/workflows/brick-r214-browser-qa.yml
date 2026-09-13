@@ -1,4 +1,4 @@
-name: Brick R2.14 Browser QA
+name: Brick R2.14.1 Browser QA
 
 on:
   push:
@@ -19,18 +19,18 @@ jobs:
           python -m pip install --upgrade pip
           pip install playwright pillow numpy
           python -m playwright install --with-deps chromium
-      - name: Verify R2.14 public preview and visible delta
+      - name: Verify R2.14.1 public preview and visible delta
         shell: bash
         run: |
           cat > /tmp/qa.py <<'PY'
           from playwright.sync_api import sync_playwright
           from PIL import Image
           import numpy as np
-          URL='https://rawcdn.githack.com/haihao0307/HOUSE/37f094a03dc9c8d9ee39706ba42cae8bd531353e/yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/experiments/shape-edge-lab-r2-14/Brick_Shape_Edge_Lab_R2_14.html'
+          URL='https://rawcdn.githack.com/haihao0307/HOUSE/7be5c5d5f5d5bf40dfa66ba93174994179be8f08/yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/experiments/shape-edge-lab-r2-14/Brick_Shape_Edge_Lab_R2_14.html'
           errors=[]
           with sync_playwright() as p:
               browser=p.chromium.launch(headless=True,args=['--use-angle=swiftshader','--enable-webgl','--ignore-gpu-blocklist'])
-              context=browser.new_context(viewport={'width':1440,'height':900},device_scale_factor=1,user_agent='Brick-Mother-QA/2.14')
+              context=browser.new_context(viewport={'width':1440,'height':900},device_scale_factor=1,user_agent='Brick-Mother-QA/2.14.1')
               context.add_cookies([{'name':'__Http-phish','value':'1','url':'https://rawcdn.githack.com/','secure':True,'httpOnly':True,'sameSite':'Lax'}])
               page=context.new_page()
               page.on('pageerror',lambda exc: errors.append('pageerror: '+str(exc)))
@@ -38,7 +38,7 @@ jobs:
               resp=page.goto(URL,wait_until='networkidle',timeout=120000)
               assert resp and resp.ok, f'public HTTP failed: {resp.status if resp else None}'
               page.wait_for_timeout(5000)
-              assert 'R2.14' in page.title(), page.title()
+              assert 'R2.14.1' in page.title(), page.title()
               inner=page.frame_locator('#lab')
               canvas=inner.locator('#c')
               canvas.wait_for(state='attached',timeout=30000)
@@ -50,8 +50,8 @@ jobs:
               print('ERRORS',errors)
               assert ready=='true', f'canvas not ready: {ready}; status={status}; inner={err}; errors={errors}'
               assert not errors, errors
-              canvas.screenshot(path='/tmp/r214-canvas.png')
-              im=np.asarray(Image.open('/tmp/r214-canvas.png').convert('RGB')).astype(np.int16)
+              canvas.screenshot(path='/tmp/r2141-canvas.png')
+              im=np.asarray(Image.open('/tmp/r2141-canvas.png').convert('RGB')).astype(np.int16)
               h,w,_=im.shape
               left=im[:, :w//2]
               right=im[:, w//2:w//2+left.shape[1]]
@@ -61,8 +61,8 @@ jobs:
               assert mean>1.10, f'visible delta too weak: {mean}'
               assert frac>0.055, f'changed pixel fraction too weak: {frac}'
               assert strong>0.012, f'strong local detail too weak: {strong}'
-              page.screenshot(path='/tmp/r214-page.png',full_page=True)
-              print('R2.14_BROWSER_QA_OK',status)
+              page.screenshot(path='/tmp/r2141-page.png',full_page=True)
+              print('R2.14.1_BROWSER_QA_OK',status)
               browser.close()
           PY
           python /tmp/qa.py
@@ -70,8 +70,8 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: brick-r214-browser-qa
+          name: brick-r2141-browser-qa
           path: |
-            /tmp/r214-canvas.png
-            /tmp/r214-page.png
+            /tmp/r2141-canvas.png
+            /tmp/r2141-page.png
           if-no-files-found: ignore
