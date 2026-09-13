@@ -1,0 +1,25 @@
+name: Brick R2.2 Public Smoke
+
+on:
+  push:
+    branches:
+      - codex/brick-r22-frozen-b-shape-workbench
+    paths:
+      - '.github/workflows/brick-r22-public-smoke.yml'
+
+jobs:
+  public-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify immutable public preview
+        shell: bash
+        run: |
+          set -euo pipefail
+          URL='https://rawcdn.githack.com/haihao0307/HOUSE/0d6eb8b72db646574b451e4eda98361f19e0eefa/yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/experiments/shape-edge-lab-r2-2/Brick_Shape_Edge_Lab_R2_2.html'
+          curl --fail --silent --show-error --location --retry 3 --retry-delay 2 \
+            -H 'User-Agent: Brick-Mother-QA/2.2' \
+            "$URL" -o /tmp/brick-r22.html
+          grep -Fq '<title>Brick Mother · R2.2 冻结B基准 / 形状检查入口</title>' /tmp/brick-r22.html
+          grep -Fq 'B LOCK · 显微开 · 1 / 1 / 1 / 0' /tmp/brick-r22.html
+          grep -Fq "030d84b979a8158d03398aa60da69e8e3315cd40" /tmp/brick-r22.html
+          echo 'PUBLIC_SMOKE_OK'
