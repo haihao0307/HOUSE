@@ -26,7 +26,7 @@ jobs:
           from playwright.sync_api import sync_playwright
           from PIL import Image
           import numpy as np
-          URL='https://rawcdn.githack.com/haihao0307/HOUSE/610b5b5a16cb93cc22d46ddaa89f3465ae4e1a5a/yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/experiments/shape-edge-lab-r2-14/Brick_Shape_Edge_Lab_R2_14.html'
+          URL='https://rawcdn.githack.com/haihao0307/HOUSE/37f094a03dc9c8d9ee39706ba42cae8bd531353e/yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/experiments/shape-edge-lab-r2-14/Brick_Shape_Edge_Lab_R2_14.html'
           errors=[]
           with sync_playwright() as p:
               browser=p.chromium.launch(headless=True,args=['--use-angle=swiftshader','--enable-webgl','--ignore-gpu-blocklist'])
