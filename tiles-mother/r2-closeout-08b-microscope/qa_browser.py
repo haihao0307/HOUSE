@@ -1,5 +1,5 @@
 """Browser rendering and public-delivery checks. No user visual approval is inferred."""
-import argparse, base64, hashlib, io, json, math, os, time, urllib.request
+import argparse, base64, hashlib, io, json
 from pathlib import Path
 from PIL import Image, ImageChops, ImageStat
 from playwright.sync_api import sync_playwright
@@ -32,16 +32,8 @@ target=HERE/'START_HERE.html'; expected=sha(target.read_bytes())
 url=None;response_hash=None
 if a.public:
  url=f'https://raw.githack.com/haihao0307/HOUSE/{a.public}/tiles-mother/r2-closeout-08b-microscope/START_HERE.html'
- last=None
- for attempt in range(4):
-  try:
-   with urllib.request.urlopen(url,timeout=35) as r:
-    body=r.read();ctype=r.headers.get('Content-Type','');status=r.status
-   if status==200 and sha(body)==expected:break
-   last=f'HTTP {status}, content hash {sha(body)}';time.sleep(8)
-  except Exception as e:last=str(e);time.sleep(8)
- else:raise RuntimeError('Public bytes not available: '+str(last))
- response_hash=sha(body);check('public HTTP 200 HTML and exact byte identity',status==200 and 'text/html' in ctype and response_hash==expected,{'url':url,'sha256':response_hash})
+ # Inspect the actual browser navigation response, not a separate Python client.
+ # The earlier urllib 403 is retained in the previous CI log; it was not browser QA.
 
 result={'version':'08B-microscope-pbr','url':url,'pageSHA':a.public,'sourceSHA256':expected,'publicBytesSHA256':response_hash,'checks':checks,'screenshots':images,'browserErrors':errors,'visualApproved':False,'productionApproved':False,'actualIPhoneSafariVerified':False,'browserVerified':False,'publicBrowserVerified':False}
 try:
@@ -54,7 +46,16 @@ try:
    context=b.new_context(viewport={'width':390,'height':844} if mobile else {'width':960,'height':720},device_scale_factor=1,has_touch=mobile,is_mobile=mobile,accept_downloads=True)
    page=context.new_page();page.on('pageerror',lambda e:errors.append(str(e)))
    if url and not baseline:
-    page.goto(url,wait_until='domcontentloaded',timeout=60000)
+    response=page.goto(url,wait_until='domcontentloaded',timeout=60000)
+    content=response.body() if response else b''
+    status=response.status if response else 0
+    ctype=response.headers.get('content-type','') if response else ''
+    response_hash=sha(content)
+    result['publicBytesSHA256']=response_hash
+    if status!=200 or response_hash!=expected:
+     (out/('mobile_response.txt' if mobile else 'desktop_response.txt')).write_bytes(content)
+     page.screenshot(path=str(out/('mobile_response.png' if mobile else 'desktop_response.png')))
+    check(('mobile' if mobile else 'desktop')+' public browser HTTP 200 HTML and exact byte identity',status==200 and 'text/html' in ctype and response_hash==expected,{'url':page.url,'status':status,'contentType':ctype,'sha256':response_hash})
    else:
     page.set_content((HERE/('.qa-baseline08a.html' if baseline else 'START_HERE.html')).read_text(),wait_until='load')
    settle(page);return context,page
