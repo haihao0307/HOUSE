@@ -1,0 +1,28 @@
+name: Brick R2.3 Public Smoke
+
+on:
+  push:
+    branches:
+      - codex/brick-r22-frozen-b-shape-workbench
+    paths:
+      - '.github/workflows/brick-r23-public-smoke.yml'
+
+jobs:
+  public-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify immutable R2.3 preview and frozen source
+        shell: bash
+        run: |
+          set -euo pipefail
+          PAGE='https://rawcdn.githack.com/haihao0307/HOUSE/c1c67bb21f30b2ff0a7a9a32e160e19eb8ecc5a2/yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/experiments/shape-edge-lab-r2-3/Brick_Shape_Edge_Lab_R2_3.html'
+          SOURCE='https://rawcdn.githack.com/haihao0307/HOUSE/030d84b979a8158d03398aa60da69e8e3315cd40/yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/experiments/material-microscope-lab-r2-1/Brick_Material_Microscope_Lab_R2_1.html'
+          curl --fail --silent --show-error --location --retry 3 --retry-delay 2 -H 'User-Agent: Brick-Mother-QA/2.3' "$PAGE" -o /tmp/brick-r23.html
+          curl --fail --silent --show-error --location --retry 3 --retry-delay 2 -H 'User-Agent: Brick-Mother-QA/2.3' "$SOURCE" -o /tmp/brick-r21-source.html
+          grep -Fq '<title>Brick Mother · R2.3 参考形收尾候选</title>' /tmp/brick-r23.html
+          grep -Fq 'vec3(1.04,.265,.480)' /tmp/brick-r23.html
+          grep -Fq 'GEOMETRY ONLY · MATERIAL FROZEN' /tmp/brick-r23.html
+          grep -Fq 'vec2 map(vec3 p){vec2 o=vec2(sdRoundBox(rotInv(p),vec3(1.04,.43,.50),.075),1.);float floorD=p.y+.72;if(floorD<o.x)o=vec2(floorD,2.);return o;}' /tmp/brick-r21-source.html
+          grep -Fq 'const ids=[' /tmp/brick-r21-source.html
+          grep -Fq 'reference=[1,1,1,0]' /tmp/brick-r21-source.html
+          echo 'PUBLIC_SMOKE_R23_OK'
