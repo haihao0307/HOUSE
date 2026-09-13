@@ -1,0 +1,56 @@
+name: Brick R2.6 Browser QA
+
+on:
+  push:
+    branches:
+      - codex/brick-r25-glb-shape-final
+    paths:
+      - '.github/workflows/brick-r26-browser-qa.yml'
+
+jobs:
+  browser-qa:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install Playwright Chromium
+        run: |
+          python -m pip install --upgrade pip
+          pip install playwright
+          python -m playwright install --with-deps chromium
+      - name: Verify immutable R2.6 public preview in browser
+        shell: bash
+        run: |
+          cat > /tmp/qa.py <<'PY'
+          from playwright.sync_api import sync_playwright
+          URL='https://rawcdn.githack.com/haihao0307/HOUSE/8de3750ca4091bbc856e45373ca318a3269c9444/yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/experiments/shape-edge-lab-r2-6/Brick_Shape_Edge_Lab_R2_6.html'
+          errors=[]
+          with sync_playwright() as p:
+              browser=p.chromium.launch(headless=True,args=['--use-angle=swiftshader','--enable-webgl','--ignore-gpu-blocklist'])
+              context=browser.new_context(viewport={'width':1440,'height':900},device_scale_factor=1,user_agent='Brick-Mother-QA/2.6')
+              context.add_cookies([{'name':'__Http-phish','value':'1','url':'https://rawcdn.githack.com/','secure':True,'httpOnly':True,'sameSite':'Lax'}])
+              page=context.new_page()
+              page.on('pageerror',lambda exc: errors.append('pageerror: '+str(exc)))
+              page.on('console',lambda msg: errors.append('console: '+msg.text) if msg.type=='error' else None)
+              resp=page.goto(URL,wait_until='networkidle',timeout=120000)
+              assert resp and resp.ok, f'public HTTP failed: {resp.status if resp else None}'
+              assert 'R2.6' in page.title(), page.title()
+              inner=page.frame_locator('#lab')
+              inner.locator('#c').wait_for(state='attached',timeout=30000)
+              page.wait_for_timeout(2500)
+              ready=inner.locator('#c').get_attribute('data-ready')
+              status=inner.locator('#status').inner_text()
+              assert ready=='true', f'canvas not ready: {ready}; errors={errors}'
+              assert 'R2.6 EDGE DETAIL' in status, status
+              assert not errors, errors
+              page.screenshot(path='/tmp/brick-r26.png',full_page=True)
+              print('R2.6_BROWSER_QA_OK',status)
+              browser.close()
+          PY
+          python /tmp/qa.py
+      - name: Upload QA screenshot
+        uses: actions/upload-artifact@v4
+        with:
+          name: brick-r26-browser-qa
+          path: /tmp/brick-r26.png
