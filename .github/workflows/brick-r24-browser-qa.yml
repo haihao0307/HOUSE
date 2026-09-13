@@ -36,10 +36,9 @@ jobs:
               context.add_cookies([{
                   'name':'__Http-phish',
                   'value':'1',
-                  'domain':'rawcdn.githack.com',
-                  'path':'/',
+                  'url':'https://rawcdn.githack.com/',
                   'secure':True,
-                  'httpOnly':False,
+                  'httpOnly':True,
                   'sameSite':'Lax'
               }])
               page=context.new_page()
