@@ -37,10 +37,12 @@ jobs:
               page.on('console',lambda msg: errors.append('console: '+msg.text) if msg.type=='error' else None)
               resp=page.goto(URL,wait_until='networkidle',timeout=120000)
               assert resp and resp.ok, f'public HTTP failed: {resp.status if resp else None}'
-              page.wait_for_timeout(3500)
+              page.wait_for_timeout(4500)
+              print('BODY_TEXT',page.locator('body').inner_text())
+              print('ERRORS',errors)
               assert 'R2.14' in page.title(), page.title()
               canvas=page.locator('#c')
-              canvas.wait_for(state='attached',timeout=30000)
+              canvas.wait_for(state='attached',timeout=10000)
               ready=canvas.get_attribute('data-ready')
               status=page.locator('#status').inner_text()
               assert ready=='true', f'canvas not ready: {ready}; errors={errors}'
