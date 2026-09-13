@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Brick Mother · R2.5 扫描砖 Yohei 多尺度形体</title>
+<style>:root{color-scheme:dark;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:#0f130f;color:#ece8dd}*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden}body{display:flex;flex-direction:column}.bar{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding:10px 16px;background:#151b16;border-bottom:1px solid #ffffff18;min-height:58px}.title{font-size:14px;letter-spacing:.06em}.meta{font-size:10px;color:#9fa89a;margin-top:4px}.lock{font-size:11px;color:#f0c995;border:1px solid #5c503d;background:#2b261d;padding:6px 9px;border-radius:7px}.framewrap{position:relative;flex:1;min-height:0;background:#151b16}iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#151b16}.loading,.error{position:absolute;inset:0;display:grid;place-content:center;text-align:center;padding:30px;background:#151b16;color:#b9c1b4;z-index:2;font-size:12px}.error{color:#efc3a8}.hidden{display:none}.badge{position:absolute;right:10px;top:10px;z-index:3;pointer-events:none;background:#151b16df;border:1px solid #ffffff22;border-radius:7px;padding:6px 9px;font-size:10px;color:#d9d5c9;backdrop-filter:blur(8px)}@media(max-width:700px){.bar{padding:9px 11px;min-height:64px}.title{font-size:12px}.lock{font-size:10px}.badge{top:6px;right:6px}}</style></head><body>
+<div class="bar"><div><div class="title">BRICK MOTHER · R2.5 扫描砖 Yohei 多尺度形体</div><div class="meta">左：R2.4 固定缺口方案 · 右：GLB扫描比例 + 连续多尺度域变化 · B材质完全冻结</div></div><div class="lock">3D GEOMETRY ONLY · MATERIAL B FROZEN</div></div>
+<div class="framewrap"><div id="loading" class="loading">正在载入冻结材质并构建 R2.5 多尺度几何…</div><div id="error" class="error hidden"></div><div class="badge">扫描参考 ≈ 1 : 0.510 : 0.286 · 低/中/高频连续叠加</div><iframe id="lab" title="Brick Mother R2.5 scan-derived Yohei shape"></iframe></div>
+<script>
+'use strict';
+const SOURCE='https://rawcdn.githack.com/haihao0307/HOUSE/030d84b979a8158d03398aa60da69e8e3315cd40/yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/experiments/material-microscope-lab-r2-1/Brick_Material_Microscope_Lab_R2_1.html';
+const loading=document.getElementById('loading'),error=document.getElementById('error'),frame=document.getElementById('lab');
+function fail(msg){loading.classList.add('hidden');error.textContent=msg;error.classList.remove('hidden');}
+function rr(text,oldText,newText,label){if(!text.includes(oldText))throw new Error('继承点不匹配：'+label);return text.replace(oldText,newText);}
+(async()=>{try{
+ const r=await fetch(SOURCE,{cache:'no-store'});if(!r.ok)throw new Error('HTTP '+r.status);let html=await r.text();
+ html=rr(html,'<title>Brick Mother · 显微材质 R2.1</title>','<title>Brick Mother · R2.5 扫描砖 Yohei 多尺度形体</title>','title');
+ html=rr(html,'BRICK MOTHER · 显微材质 R2.1','BRICK MOTHER · R2.5 扫描砖 Yohei 多尺度形体','heading');
+ html=rr(html,'烧结砖 / Process · 共享形成遮罩 · 片元级显微结构','烧结砖 / B材质冻结 · 左R2.4 / 右GLB扫描规律重构','subtitle');
+ html=rr(html,'<div class="label">B 基准 <small>基准参数 · 中心修复 · 显微开启</small></div><div class="label"><b>B 调参</b><small id="tunedLabel">增强预设 · 显微开启</small></div>','<div class="label">R2.4 边缘方案 <small>B材质 · 固定小缺口</small></div><div class="label"><b>R2.5 扫描规律</b><small id="tunedLabel">B材质 · Yohei低/中/高频连续形变</small></div>','labels');
+ html=rr(html,'<span class="paneltitle">调参侧 · 显微贡献</span>','<span class="paneltitle">几何对比 · 材质锁定 B = 1 / 1 / 1 / 0</span>','panel title');
+ html=rr(html,'</style></head>','#mm,#enhance,#reset,.sliders{display:none!important}\n</style></head>','lock UI');
+ html=rr(html,'uniform vec2 uRes;uniform vec2 uOrigin;uniform vec4 uMicro;uniform float uTime;uniform float uYaw;uniform float uPitch;uniform float uZoom;uniform int uMode;uniform float uMM;','uniform vec2 uRes;uniform vec2 uOrigin;uniform vec4 uMicro;uniform float uTime;uniform float uYaw;uniform float uPitch;uniform float uZoom;uniform int uMode;uniform float uMM;uniform float uShape;','shape uniform');
+ const oldMap='vec2 map(vec3 p){vec2 o=vec2(sdRoundBox(rotInv(p),vec3(1.04,.43,.50),.075),1.);float floorD=p.y+.72;if(floorD<o.x)o=vec2(floorD,2.);return o;}';
+ const newMap=`float chipSphere(vec3 p,vec3 c,float r){return length(p-c)-r;}
+float yohei1(float x,float ph){
+ float w=x+.11*sin(1.37*x+ph)+.045*sin(3.71*x-.63*ph);
+ return .55*sin(2.13*w+ph)+.28*sin(4.77*w-.31*ph)+.12*sin(9.41*w+1.37*ph)+.05*sin(17.3*w-.8*ph);
+}
+float yohei2(vec2 p,float ph){
+ p+=.075*vec2(sin(1.41*p.y+ph),cos(1.17*p.x-.7*ph));
+ return .52*sin(1.9*p.x+1.25*p.y+ph)+.27*sin(3.8*p.x-2.2*p.y-.4*ph)+.14*sin(7.6*p.x+4.1*p.y+1.2*ph)+.07*sin(14.2*p.x-8.3*p.y+.3*ph);
+}
+float brickR24(vec3 q){
+ vec3 b=vec3(1.04,.265,.480);float rad=.055;float xn=q.x/1.04;
+ q.y-=.018*xn+.006*sin(1.45*xn+.35)*(1.-.35*xn*xn)+.0035*sin(3.1*q.z+.7);
+ q.z-=.006*sin(1.25*xn+.9)*(1.-.25*xn*xn);
+ b.y+=.010*sin(1.85*xn-.45)+.005*sin(3.4*xn+1.1);b.z+=.004*sin(1.65*xn+.4);
+ float d=sdRoundBox(q,b,rad);
+ d=max(d,-chipSphere(q,vec3(-.69,.282,.494),.030));d=max(d,-chipSphere(q,vec3(-.64,.279,.493),.018));
+ d=max(d,-chipSphere(q,vec3(-.16,-.279,.493),.021));d=max(d,-chipSphere(q,vec3(.38,-.278,.492),.016));
+ d=max(d,-chipSphere(q,vec3(.69,.281,-.494),.024));d=max(d,-chipSphere(q,vec3(.08,-.278,-.492),.018));
+ d=max(d,-chipSphere(q,vec3(-1.045,.273,-.476),.025));d=max(d,-chipSphere(q,vec3(1.046,-.272,.474),.022));
+ return d;
+}
+float brickR25(vec3 q){
+ // GLB measured proportions: L:W:H ~= 1 : 0.510 : 0.286.
+ vec3 b=vec3(1.04,.297,.530);float xn=q.x/1.04,zn=q.z/.530,yn=q.y/.297;
+ // Domain warp: keeps one coherent object-space field instead of unrelated noise patches.
+ float wx=xn+.060*yohei1(xn*1.15,.41)+.018*yohei1(zn*1.5,1.6);
+ float wz=zn+.045*yohei1(xn*1.05,2.1);
+ // Low frequency: hand-moulded body drift / firing warp.
+ q.y-=.0105*yohei1(wx*1.15,.72)+.0038*yohei1(wz*1.35,2.45);
+ q.z-=.0075*yohei1(wx*1.05,1.86);
+ // Mid frequency: edge lines do not remain perfectly parallel.
+ b.y+=.0058*yohei1(wx*2.25,1.21)+.0024*yohei1(wx*4.1,2.74);
+ b.z+=.0085*yohei1(wx*1.85,2.03)+.0035*yohei1(wx*3.9,.83);
+ // Measured scan bias: a subtle local shoulder/bulge around the positive-x front side.
+ b.z+=.010*exp(-18.*(xn-.36)*(xn-.36));
+ b.y+=.0045*exp(-20.*(xn-.19)*(xn-.19));
+ float d=sdRoundBox(q,b,.050);
+ // Meso surface shape: continuous multiscale correction, kept far below the frozen material micro-height.
+ float faceField=yohei2(vec2(q.x*1.8,q.z*2.2),.93);
+ float topFace=1.-smoothstep(.045,.125,abs(abs(q.y)-b.y));
+ d+=.0018*faceField*topFace;
+ // Edge-domain erosion: sparse-looking damage emerges from one continuous field, not repeated fixed holes.
+ float fx=abs(q.x)/b.x,fy=abs(q.y)/b.y,fz=abs(q.z)/b.z;
+ float ex=smoothstep(.80,.995,fx),ey=smoothstep(.76,.995,fy),ez=smoothstep(.78,.995,fz);
+ float edgeMask=max(max(min(ex,ey),min(ex,ez)),min(ey,ez));
+ float edgeField=.58*yohei1(wx*3.4+1.7*sign(q.z),1.13)+.27*yohei1(wx*7.1+2.4*sign(q.y),2.37)+.15*yohei1((wx+wz)*13.3,.51);
+ float erode=max(0.,edgeField-.26);
+ d+=edgeMask*(.0045*erode+.0018*erode*erode);
+ // A few scan-scale losses remain, but are subordinate to the continuous field.
+ d=max(d,-chipSphere(q,vec3(-.83,.301,.523),.018));
+ d=max(d,-chipSphere(q,vec3(.54,-.301,.526),.015));
+ d=max(d,-chipSphere(q,vec3(1.045,.286,-.506),.019));
+ return d;
+}
+vec2 map(vec3 p){vec3 q=rotInv(p);float bd=uShape>.5?brickR25(q):brickR24(q);vec2 o=vec2(bd,1.);float floorD=p.y+mix(.55,.59,uShape);if(floorD<o.x)o=vec2(floorD,2.);return o;}`;
+ html=rr(html,oldMap,newMap,'Yohei scan geometry');
+ html=rr(html,"const U={};for(const n of ['uRes','uOrigin','uMicro','uTime','uYaw','uPitch','uZoom','uMode','uMM'])U[n]=gl.getUniformLocation(prog,n);","const U={};for(const n of ['uRes','uOrigin','uMicro','uTime','uYaw','uPitch','uZoom','uMode','uMM','uShape'])U[n]=gl.getUniformLocation(prog,n);",'uniform location');
+ html=rr(html,'let values=[...enhanced],yaw=-.22,pitch=.08,zoom=4.8,mode=0,mm=1,drag=false,last=[0,0],pending=false,lost=false;','let values=[...reference],yaw=-.22,pitch=.10,zoom=4.9,mode=0,mm=1,drag=false,last=[0,0],pending=false,lost=false;','frozen values');
+ html=rr(html,'gl.uniform4fv(U.uMicro,panel?values:reference);gl.uniform1f(U.uMM,panel?mm:1);gl.drawArrays(gl.TRIANGLES,0,3);','gl.uniform4fv(U.uMicro,reference);gl.uniform1f(U.uMM,1);gl.uniform1f(U.uShape,panel?1:0);gl.drawArrays(gl.TRIANGLES,0,3);','per-panel geometry');
+ html=rr(html,"document.getElementById('status').textContent='WebGL2 · R2.1 · '+['成品','高度','粗糙度','形成遮罩'][mode];","document.getElementById('status').textContent='WebGL2 · R2.5 YOHEI · '+['成品','高度','粗糙度','形成遮罩'][mode];",'status');
+ html=rr(html,"refresh('增强预设');","refresh('基准参数');",'startup baseline');
+ html=rr(html,'<span>材质实验 · 待视觉验收 · 尺度为模型倍率</span>','<span>左R2.4 / 右R2.5 · 只改程序化几何 · B材质完全相同</span>','footer');
+ frame.addEventListener('load',()=>loading.classList.add('hidden'),{once:true});frame.srcdoc=html;
+}catch(e){console.error(e);fail('R2.5 构建失败：'+e.message+'。旧版本未被修改。');}})();
+</script></body></html>
