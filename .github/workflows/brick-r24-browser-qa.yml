@@ -1,0 +1,54 @@
+name: Brick R2.4 Browser QA
+
+on:
+  push:
+    branches:
+      - codex/brick-r22-frozen-b-shape-workbench
+    paths:
+      - '.github/workflows/brick-r24-browser-qa.yml'
+
+jobs:
+  browser-qa:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install Playwright Chromium
+        run: |
+          python -m pip install --upgrade pip
+          pip install playwright
+          python -m playwright install --with-deps chromium
+      - name: Verify immutable R2.4 public preview in browser
+        shell: bash
+        run: |
+          cat > /tmp/qa.py <<'PY'
+          from playwright.sync_api import sync_playwright
+          URL='https://rawcdn.githack.com/haihao0307/HOUSE/eb58f39ae68a8d9293df477a5f07f2b477fe784f/yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/experiments/shape-edge-lab-r2-4/Brick_Shape_Edge_Lab_R2_4.html'
+          errors=[]
+          with sync_playwright() as p:
+              browser=p.chromium.launch(headless=True,args=['--use-angle=swiftshader','--enable-webgl','--ignore-gpu-blocklist'])
+              page=browser.new_page(viewport={'width':1440,'height':900},device_scale_factor=1)
+              page.on('pageerror',lambda exc: errors.append('pageerror: '+str(exc)))
+              page.on('console',lambda msg: errors.append('console: '+msg.text) if msg.type=='error' else None)
+              resp=page.goto(URL,wait_until='networkidle',timeout=120000)
+              assert resp and resp.ok, f'public HTTP failed: {resp.status if resp else None}'
+              assert 'R2.4' in page.title(), page.title()
+              inner=page.frame_locator('#lab')
+              inner.locator('#c').wait_for(state='attached',timeout=30000)
+              page.wait_for_timeout(2500)
+              ready=inner.locator('#c').get_attribute('data-ready')
+              status=inner.locator('#status').inner_text()
+              assert ready=='true', f'canvas not ready: {ready}; errors={errors}'
+              assert 'R2.4 EDGE' in status, status
+              assert not errors, errors
+              page.screenshot(path='/tmp/brick-r24.png',full_page=True)
+              print('R2.4_BROWSER_QA_OK',status)
+              browser.close()
+          PY
+          python /tmp/qa.py
+      - name: Upload QA screenshot
+        uses: actions/upload-artifact@v4
+        with:
+          name: brick-r24-browser-qa
+          path: /tmp/brick-r24.png
