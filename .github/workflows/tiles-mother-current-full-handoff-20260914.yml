@@ -1,0 +1,45 @@
+name: Tiles Mother Current Full Handoff 2026-09-14
+
+on:
+  push:
+    branches: [feature/tiles-mother-r2-closeout-08a-micro-tune]
+    paths:
+      - .github/workflows/tiles-mother-current-full-handoff-20260914.yml
+      - tiles-mother/handoff-current-2026-09-14/**
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-current-full-handoff:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/tiles-mother-r2-closeout-08a-micro-tune
+          fetch-depth: 1
+      - name: Build and verify package
+        shell: bash
+        run: |
+          bash tiles-mother/handoff-current-2026-09-14/build_full_handoff.sh
+          cat _handoff/package.env >> "$GITHUB_ENV"
+      - name: Commit package and receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          PKG="Tiles_Mother_Current_Full_Handoff_R2_08B_2026-09-14"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f "tiles-mother/distributions/${PKG}.zip" "tiles-mother/distributions/${PKG}.receipt.json"
+          if ! git diff --cached --quiet; then
+            git commit -m "release(tiles): current full handoff R2 08B 2026-09-14 [skip ci]"
+            git push origin "HEAD:refs/heads/feature/tiles-mother-r2-closeout-08a-micro-tune"
+          fi
+      - name: Report identity
+        run: |
+          echo "Tiles_Mother_Current_Full_Handoff_R2_08B_2026-09-14.zip"
+          echo "bytes=$PACKAGE_BYTES"
+          echo "files=$PACKAGE_FILES"
+          echo "sha256=$PACKAGE_SHA256"
