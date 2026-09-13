@@ -1,0 +1,10 @@
+{
+  "source": "scan_bricks_freepolyorg.glb",
+  "use": "edge/corner residual observation only",
+  "macro": "R2.4 locked",
+  "faces": "interior protected",
+  "edges": 12,
+  "corners": 8,
+  "basis": "10-harmonic sine/cosine per edge after low-frequency trend removal",
+  "note": "The coefficients are embedded in Brick_Shape_Edge_Lab_R2_9.html; this file records the observation contract rather than duplicating the numeric payload."
+}
