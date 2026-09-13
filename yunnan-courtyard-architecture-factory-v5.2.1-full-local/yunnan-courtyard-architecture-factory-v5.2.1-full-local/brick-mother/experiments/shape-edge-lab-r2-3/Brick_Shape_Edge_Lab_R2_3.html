@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Brick Mother · R2.3 参考形收尾候选</title>
+<style>:root{color-scheme:dark;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:#0f130f;color:#ece8dd}*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden}body{display:flex;flex-direction:column}.bar{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding:10px 16px;background:#151b16;border-bottom:1px solid #ffffff18;min-height:58px}.title{font-size:14px;letter-spacing:.06em}.meta{font-size:10px;color:#9fa89a;margin-top:4px}.lock{font-size:11px;color:#f0c995;border:1px solid #5c503d;background:#2b261d;padding:6px 9px;border-radius:7px}.framewrap{position:relative;flex:1;min-height:0;background:#151b16}iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#151b16}.loading,.error{position:absolute;inset:0;display:grid;place-content:center;text-align:center;padding:30px;background:#151b16;color:#b9c1b4;z-index:2;font-size:12px}.error{color:#efc3a8}.hidden{display:none}.badge{position:absolute;right:10px;top:10px;z-index:3;pointer-events:none;background:#151b16df;border:1px solid #ffffff22;border-radius:7px;padding:6px 9px;font-size:10px;color:#d9d5c9;backdrop-filter:blur(8px)}@media(max-width:700px){.bar{padding:9px 11px;min-height:64px}.title{font-size:12px}.lock{font-size:10px}.badge{top:6px;right:6px}}</style></head><body>
+<div class="bar"><div><div class="title">BRICK MOTHER · R2.3 参考形收尾候选</div><div class="meta">左：R2.1 旧形对照 · 右：参考砖形 · 两侧材质均锁定 B = 1 / 1 / 1 / 0</div></div><div class="lock">GEOMETRY ONLY · MATERIAL FROZEN</div></div>
+<div class="framewrap"><div id="loading" class="loading">正在载入 R2.1 冻结材质并构建参考形…</div><div id="error" class="error hidden"></div><div class="badge">参考形：约 1 : 0.46 : 0.26 · 轻微低频翘曲</div><iframe id="lab" title="Brick Mother R2.3 reference shape candidate"></iframe></div>
+<script>
+'use strict';
+const SOURCE='https://rawcdn.githack.com/haihao0307/HOUSE/030d84b979a8158d03398aa60da69e8e3315cd40/yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/experiments/material-microscope-lab-r2-1/Brick_Material_Microscope_Lab_R2_1.html';
+const loading=document.getElementById('loading'),error=document.getElementById('error'),frame=document.getElementById('lab');
+function fail(msg){loading.classList.add('hidden');error.textContent=msg;error.classList.remove('hidden');}
+function rr(text,oldText,newText,label){if(!text.includes(oldText))throw new Error('继承点不匹配：'+label);return text.replace(oldText,newText);}
+(async()=>{try{
+ const r=await fetch(SOURCE,{cache:'no-store'});if(!r.ok)throw new Error('HTTP '+r.status);let html=await r.text();
+ html=rr(html,'<title>Brick Mother · 显微材质 R2.1</title>','<title>Brick Mother · R2.3 参考形收尾候选</title>','title');
+ html=rr(html,'BRICK MOTHER · 显微材质 R2.1','BRICK MOTHER · R2.3 参考形收尾候选','heading');
+ html=rr(html,'烧结砖 / Process · 共享形成遮罩 · 片元级显微结构','烧结砖 / B材质冻结 · 左旧形 / 右参考形','subtitle');
+ html=rr(html,'<div class="label">B 基准 <small>基准参数 · 中心修复 · 显微开启</small></div><div class="label"><b>B 调参</b><small id="tunedLabel">增强预设 · 显微开启</small></div>','<div class="label">R2.1 旧形 <small>B材质 · 仅作形状对照</small></div><div class="label"><b>R2.3 参考形</b><small id="tunedLabel">B材质 · 压薄 / 轻微翘曲 / 非完全平行边</small></div>','labels');
+ html=rr(html,'<span class="paneltitle">调参侧 · 显微贡献</span>','<span class="paneltitle">仅比较几何 · 材质参数已冻结</span>','panel title');
+ html=rr(html,'</style></head>','#mm,#enhance,#reset,.sliders{display:none!important}\n</style></head>','lock UI');
+ html=rr(html,'uniform vec2 uRes;uniform vec2 uOrigin;uniform vec4 uMicro;uniform float uTime;uniform float uYaw;uniform float uPitch;uniform float uZoom;uniform int uMode;uniform float uMM;','uniform vec2 uRes;uniform vec2 uOrigin;uniform vec4 uMicro;uniform float uTime;uniform float uYaw;uniform float uPitch;uniform float uZoom;uniform int uMode;uniform float uMM;uniform float uShape;','shape uniform');
+ const oldMap='vec2 map(vec3 p){vec2 o=vec2(sdRoundBox(rotInv(p),vec3(1.04,.43,.50),.075),1.);float floorD=p.y+.72;if(floorD<o.x)o=vec2(floorD,2.);return o;}';
+ const newMap='float brickBody(vec3 q,float shaped){vec3 b=mix(vec3(1.04,.43,.50),vec3(1.04,.265,.480),shaped);float rad=mix(.075,.055,shaped);if(shaped>.5){float xn=q.x/1.04;q.y-=.018*xn+.006*sin(1.45*xn+.35)*(1.-.35*xn*xn)+.0035*sin(3.1*q.z+.7);q.z-=.006*sin(1.25*xn+.9)*(1.-.25*xn*xn);b.y+=.010*sin(1.85*xn-.45)+.005*sin(3.4*xn+1.1);b.z+=.004*sin(1.65*xn+.4);}return sdRoundBox(q,b,rad);}\nvec2 map(vec3 p){vec2 o=vec2(brickBody(rotInv(p),uShape),1.);float floorD=p.y+mix(.72,.55,uShape);if(floorD<o.x)o=vec2(floorD,2.);return o;}';
+ html=rr(html,oldMap,newMap,'reference geometry');
+ html=rr(html,"const U={};for(const n of ['uRes','uOrigin','uMicro','uTime','uYaw','uPitch','uZoom','uMode','uMM'])U[n]=gl.getUniformLocation(prog,n);","const U={};for(const n of ['uRes','uOrigin','uMicro','uTime','uYaw','uPitch','uZoom','uMode','uMM','uShape'])U[n]=gl.getUniformLocation(prog,n);",'uniform location');
+ html=rr(html,'let values=[...enhanced],yaw=-.22,pitch=.08,zoom=4.8,mode=0,mm=1,drag=false,last=[0,0],pending=false,lost=false;','let values=[...reference],yaw=-.22,pitch=.08,zoom=4.8,mode=0,mm=1,drag=false,last=[0,0],pending=false,lost=false;','frozen values');
+ html=rr(html,'gl.uniform4fv(U.uMicro,panel?values:reference);gl.uniform1f(U.uMM,panel?mm:1);gl.drawArrays(gl.TRIANGLES,0,3);','gl.uniform4fv(U.uMicro,reference);gl.uniform1f(U.uMM,1);gl.uniform1f(U.uShape,panel?1:0);gl.drawArrays(gl.TRIANGLES,0,3);','per-panel geometry');
+ html=rr(html,"document.getElementById('status').textContent='WebGL2 · R2.1 · '+['成品','高度','粗糙度','形成遮罩'][mode];","document.getElementById('status').textContent='WebGL2 · R2.3 SHAPE · '+['成品','高度','粗糙度','形成遮罩'][mode];",'status');
+ html=rr(html,"refresh('增强预设');","refresh('基准参数');",'startup baseline');
+ html=rr(html,'<span>材质实验 · 待视觉验收 · 尺度为模型倍率</span>','<span>左旧形 / 右参考形 · 只有几何不同 · 材质完全相同</span>','footer');
+ frame.addEventListener('load',()=>loading.classList.add('hidden'),{once:true});frame.srcdoc=html;
+}catch(e){console.error(e);fail('R2.3 构建失败：'+e.message+'。旧版本未被修改。');}})();
+</script></body></html>
