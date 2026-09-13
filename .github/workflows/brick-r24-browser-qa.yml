@@ -33,6 +33,15 @@ jobs:
                   device_scale_factor=1,
                   user_agent='Brick-Mother-QA/2.4'
               )
+              context.add_cookies([{
+                  'name':'__Http-phish',
+                  'value':'1',
+                  'domain':'rawcdn.githack.com',
+                  'path':'/',
+                  'secure':True,
+                  'httpOnly':False,
+                  'sameSite':'Lax'
+              }])
               page=context.new_page()
               page.on('pageerror',lambda exc: errors.append('pageerror: '+str(exc)))
               page.on('console',lambda msg: errors.append('console: '+msg.text) if msg.type=='error' else None)
