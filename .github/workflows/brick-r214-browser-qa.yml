@@ -38,16 +38,17 @@ jobs:
               resp=page.goto(URL,wait_until='networkidle',timeout=120000)
               assert resp and resp.ok, f'public HTTP failed: {resp.status if resp else None}'
               page.wait_for_timeout(5000)
-              print('BODY_TEXT',page.locator('body').inner_text())
-              print('ERRORS',errors)
-              if page.locator('#error').count(): print('WEBGL_ERROR',page.locator('#error').inner_text())
-              if page.locator('#status').count(): print('STATUS',page.locator('#status').inner_text())
               assert 'R2.14' in page.title(), page.title()
-              canvas=page.locator('#c')
-              canvas.wait_for(state='attached',timeout=5000)
+              inner=page.frame_locator('#lab')
+              canvas=inner.locator('#c')
+              canvas.wait_for(state='attached',timeout=30000)
               ready=canvas.get_attribute('data-ready')
-              status=page.locator('#status').inner_text()
-              assert ready=='true', f'canvas not ready: {ready}; errors={errors}'
+              status=inner.locator('#status').inner_text()
+              err=inner.locator('#error').inner_text() if inner.locator('#error').count() else ''
+              print('STATUS',status)
+              print('INNER_ERROR',err)
+              print('ERRORS',errors)
+              assert ready=='true', f'canvas not ready: {ready}; status={status}; inner={err}; errors={errors}'
               assert not errors, errors
               canvas.screenshot(path='/tmp/r214-canvas.png')
               im=np.asarray(Image.open('/tmp/r214-canvas.png').convert('RGB')).astype(np.int16)
@@ -57,9 +58,9 @@ jobs:
               d=np.abs(left-right).mean(axis=2)
               mean=float(d.mean()); frac=float((d>4).mean()); strong=float((d>10).mean())
               print('VISIBLE_DELTA',mean,frac,strong)
-              assert mean>1.10
-              assert frac>0.055
-              assert strong>0.012
+              assert mean>1.10, f'visible delta too weak: {mean}'
+              assert frac>0.055, f'changed pixel fraction too weak: {frac}'
+              assert strong>0.012, f'strong local detail too weak: {strong}'
               page.screenshot(path='/tmp/r214-page.png',full_page=True)
               print('R2.14_BROWSER_QA_OK',status)
               browser.close()
