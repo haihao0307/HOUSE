@@ -1,0 +1,143 @@
+{
+  "scope": "CPU double-precision mirror of shader displacement; exact projected triangle intersections on representative seed 51, scale .5. Not GPU verification or exhaustive all-instance contact proof.",
+  "maxOffsetMm": 0.8537829174872751,
+  "bottomMaxMm": 0,
+  "contactRimsExact": true,
+  "results": [
+    {
+      "name": "pan lap",
+      "trianglePairs": 15097,
+      "minGapMm": 0.8417679734461712,
+      "where": [
+        0.11111632802825926,
+        0.09472695105363836
+      ],
+      "pass": true,
+      "strength": 0
+    },
+    {
+      "name": "cover lap",
+      "trianglePairs": 11501,
+      "minGapMm": 1.6412966624164138,
+      "where": [
+        -0.015657664904300823,
+        0.10662789060328089
+      ],
+      "pass": true,
+      "strength": 0
+    },
+    {
+      "name": "cover pan -1",
+      "trianglePairs": 26233,
+      "minGapMm": -0.5263891534522946,
+      "where": [
+        -0.0451042895298532,
+        -0.1157993089610262
+      ],
+      "pass": false,
+      "strength": 0
+    },
+    {
+      "name": "cover pan 1",
+      "trianglePairs": 25324,
+      "minGapMm": 1.257353684927326,
+      "where": [
+        0.0009428356428828194,
+        -0.1112970359306269
+      ],
+      "pass": true,
+      "strength": 0
+    },
+    {
+      "name": "rafter pan -1",
+      "trianglePairs": 12942,
+      "minGapMm": -0.303700498846992,
+      "where": [
+        -0.10665973398282425,
+        0.12088870794638748
+      ],
+      "pass": false,
+      "strength": 0
+    },
+    {
+      "name": "rafter pan 1",
+      "trianglePairs": 12942,
+      "minGapMm": 1.1362772562283316,
+      "where": [
+        0.10665973398282425,
+        0.12030140603255512
+      ],
+      "pass": true,
+      "strength": 0
+    },
+    {
+      "name": "pan lap",
+      "trianglePairs": 15125,
+      "minGapMm": 0.8417679734461712,
+      "where": [
+        0.11111632802825926,
+        0.09472695105363836
+      ],
+      "pass": true,
+      "strength": 3
+    },
+    {
+      "name": "cover lap",
+      "trianglePairs": 11501,
+      "minGapMm": 1.6412966624164138,
+      "where": [
+        -0.015657664904300823,
+        0.10662789060328089
+      ],
+      "pass": true,
+      "strength": 3
+    },
+    {
+      "name": "cover pan -1",
+      "trianglePairs": 26223,
+      "minGapMm": -0.5067237232553035,
+      "where": [
+        -0.04508290664960185,
+        -0.11539665037057092
+      ],
+      "pass": false,
+      "strength": 3
+    },
+    {
+      "name": "cover pan 1",
+      "trianglePairs": 25334,
+      "minGapMm": 1.257353684927326,
+      "where": [
+        0.0009428356428828194,
+        -0.1112970359306269
+      ],
+      "pass": true,
+      "strength": 3
+    },
+    {
+      "name": "rafter pan -1",
+      "trianglePairs": 12942,
+      "minGapMm": -0.303700498846992,
+      "where": [
+        -0.10665973398282425,
+        0.12088870794638748
+      ],
+      "pass": false,
+      "strength": 3
+    },
+    {
+      "name": "rafter pan 1",
+      "trianglePairs": 12942,
+      "minGapMm": 1.1362772562283316,
+      "where": [
+        0.10665973398282425,
+        0.12030140603255512
+      ],
+      "pass": true,
+      "strength": 3
+    }
+  ],
+  "allRepresentativeContactsPassed": false,
+  "visualApproved": false,
+  "productionApproved": false
+}

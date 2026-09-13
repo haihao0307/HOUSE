@@ -1,0 +1,11 @@
+{
+  "method": "Native GLES raster of exact vertex/fragment code and pan geometry, fixed camera and seed, no shadow map",
+  "meanRGBDifferences": {
+    "off_to_default": 0.36000868055555557,
+    "default_to_strong": 0.707791763117284,
+    "gray_off_to_gray_strong": 0.04320698302469136,
+    "color_off_to_color_full": 1.8681481481481483
+  },
+  "glError": 0,
+  "browserVerified": false
+}

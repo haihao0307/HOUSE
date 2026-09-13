@@ -231,7 +231,7 @@ void main(){
  vec4 p=aModel*vec4(local,1.);
  vec3 a=aModel[0].xyz,b=aModel[1].xyz,c=aModel[2].xyz;
  vNormal=normalize(a*localN.x/dot(a,a)+b*localN.y/dot(b,b)+c*localN.z/dot(c,c));
- vLocal=aPosition+handmadeOffset(aPosition,aMeta.xy,aState.x);
+ vLocal=aPosition;
  if(uType==1) vLocal=aPosition*vec3(length(a),length(b),length(c))+vec3(0,0,aState.w);
  vWorld=p.xyz;vShadow=uLightVP*p;vMeta=aMeta.xy;vState=aState;gl_Position=uVP*p;
 }`;
