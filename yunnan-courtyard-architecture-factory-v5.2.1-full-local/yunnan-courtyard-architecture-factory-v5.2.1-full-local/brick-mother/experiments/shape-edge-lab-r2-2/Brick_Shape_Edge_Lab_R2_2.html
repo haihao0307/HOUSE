@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Brick Mother · R2.2 冻结B基准 / 形状检查入口</title>
+<style>
+:root{color-scheme:dark;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:#0f130f;color:#ece8dd}*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden}body{display:flex;flex-direction:column}.bar{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding:10px 16px;background:#151b16;border-bottom:1px solid #ffffff18;min-height:58px}.title{font-size:14px;letter-spacing:.06em}.meta{font-size:10px;color:#9fa89a;margin-top:4px}.lock{font-size:11px;color:#f0c995;border:1px solid #5c503d;background:#2b261d;padding:6px 9px;border-radius:7px}.framewrap{position:relative;flex:1;min-height:0;background:#151b16}iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#151b16}.loading,.error{position:absolute;inset:0;display:grid;place-content:center;text-align:center;padding:30px;background:#151b16;color:#b9c1b4;z-index:2;font-size:12px}.error{color:#efc3a8}.hidden{display:none}.badge{position:absolute;right:10px;top:10px;z-index:3;pointer-events:none;background:#151b16df;border:1px solid #ffffff22;border-radius:7px;padding:6px 9px;font-size:10px;color:#d9d5c9;backdrop-filter:blur(8px)}@media(max-width:700px){.bar{padding:9px 11px;min-height:64px}.title{font-size:12px}.lock{font-size:10px}.badge{top:6px;right:6px}}
+</style>
+</head>
+<body>
+<div class="bar"><div><div class="title">BRICK MOTHER · R2.2 冻结基准检查版</div><div class="meta">继承 R2.1 中心修复源码 · 旧版不改写 · 下一阶段仅允许形状/边缘调整</div></div><div class="lock">B LOCK · 显微开 · 1 / 1 / 1 / 0</div></div>
+<div class="framewrap">
+  <div id="loading" class="loading">正在载入冻结的 R2.1 源码并应用 B 基准锁定…</div>
+  <div id="error" class="error hidden"></div>
+  <div class="badge">材质只读 · 形状参考待接入</div>
+  <iframe id="lab" title="Brick Mother R2.2 frozen B baseline"></iframe>
+</div>
+<script>
+'use strict';
+const SOURCE='https://rawcdn.githack.com/haihao0307/HOUSE/030d84b979a8158d03398aa60da69e8e3315cd40/yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/experiments/material-microscope-lab-r2-1/Brick_Material_Microscope_Lab_R2_1.html';
+const loading=document.getElementById('loading'),error=document.getElementById('error'),frame=document.getElementById('lab');
+function fail(msg){loading.classList.add('hidden');error.textContent=msg;error.classList.remove('hidden');}
+(async()=>{try{
+  const r=await fetch(SOURCE,{cache:'no-store'});if(!r.ok)throw new Error('HTTP '+r.status);
+  let html=await r.text();
+  // R2.1 shader/material/geometry are inherited byte-for-byte except the UI/start-state substitutions below.
+  html=html.replace('<title>Brick Mother · 显微材质 R2.1</title>','<title>Brick Mother · R2.2 冻结B基准</title>');
+  html=html.replace('BRICK MOTHER · 显微材质 R2.1','BRICK MOTHER · R2.2 冻结B基准');
+  html=html.replace('烧结砖 / Process · 共享形成遮罩 · 片元级显微结构','烧结砖 / B基准已冻结 · 当前只观察形状与边缘');
+  html=html.replace('<b>B 调参</b><small id="tunedLabel">增强预设 · 显微开启</small>','<b>B 冻结复核</b><small id="tunedLabel">基准参数 · 显微开启</small>');
+  html=html.replace('<span class="paneltitle">调参侧 · 显微贡献</span>','<span class="paneltitle">材质锁定 · B = 1 / 1 / 1 / 0</span>');
+  html=html.replace('<button id="enhance">增强预设</button>','<button id="enhance" hidden aria-hidden="true" tabindex="-1">增强预设</button>');
+  html=html.replace('value="2"><small>同时作用于高度与粗糙度</small>','value="1" disabled><small>冻结：1.00×</small>');
+  html=html.replace('value="1"><small>数值越大，显微纹理越密</small>','value="1" disabled><small>冻结：1.00×</small>');
+  html=html.replace('value="1.5"><small>表面凹凸响应，不改变砖体轮廓</small>','value="1" disabled><small>冻结：1.00×</small>');
+  html=html.replace('value="1"><small>沿同一显微结构改变表面反光</small>','value="0" disabled><small>冻结：0.00×</small>');
+  html=html.replace('let values=[...enhanced],yaw=-.22,pitch=.08,zoom=4.8,mode=0,mm=1,drag=false,last=[0,0],pending=false,lost=false;','let values=[...reference],yaw=-.22,pitch=.08,zoom=4.8,mode=0,mm=1,drag=false,last=[0,0],pending=false,lost=false;');
+  html=html.replace("document.getElementById('mm').onclick=()=>{mm=mm?0:1;refresh();};","document.getElementById('mm').disabled=true;document.getElementById('mm').onclick=()=>{};");
+  html=html.replace("refresh('增强预设');","refresh('基准参数');");
+  html=html.replace("'WebGL2 · R2.1 · '","'WebGL2 · R2.2 B LOCK · '");
+  frame.addEventListener('load',()=>{loading.classList.add('hidden');},{once:true});
+  frame.srcdoc=html;
+}catch(e){console.error(e);fail('R2.2 无法载入冻结源：'+e.message+'。旧 R2.1 未被修改。');}})();
+</script>
+</body>
+</html>
