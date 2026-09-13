@@ -1,0 +1,37 @@
+{
+  "schema": "tiles-mother-current-full-handoff-scope-v1",
+  "date": "2026-09-14",
+  "package": "Tiles_Mother_Current_Full_Handoff_R2_08B_2026-09-14",
+  "repository": "haihao0307/HOUSE",
+  "branch": "feature/tiles-mother-r2-closeout-08a-micro-tune",
+  "lastVerifiedCandidate": {
+    "version": "R2-closeout-08B-microscope-pbr",
+    "fixedCommit": "21bad87fffd654b1aaddee74af67e7cac6750a5d",
+    "publicBrowserVerified": true,
+    "visualApproved": false,
+    "productionApproved": false
+  },
+  "latestUserDirection": {
+    "nextVersion": "08C",
+    "microscopeMustAffectRealSurfaceAndEdgeShape": true,
+    "macroDimensionsMustRemain": true,
+    "seatingAndRoofLogicMustRemain": true,
+    "pbrColorControlsMustBeSeparate": true,
+    "colorRichnessReference": "Jiangwutang tiles",
+    "inventedPatternsForbidden": true,
+    "newWorkbenchForbidden": true,
+    "blenderRuntimeForbidden": true
+  },
+  "rawJiangwutangSourceIncluded": false,
+  "rawSourceReason": "Project rule: raw FBX and large texture reference bytes remain user-kept and must not be committed to Git history; receipt and lightweight analysis are included.",
+  "rejectedRoutesExcludedFromProduction": [
+    "R2-11",
+    "Macroscopic microscope R1 / field-core-r1"
+  ],
+  "handoffCompleteWhen": [
+    "zip CRC passes",
+    "internal SHA256SUMS passes",
+    "required current, baseline, source, knowledge and rules files are present",
+    "package receipt is committed next to zip"
+  ]
+}
