@@ -1,0 +1,38 @@
+{
+  "status": "staged_not_public_preview",
+  "cpuChecksPassed": 14,
+  "cpuChecksFailed": 0,
+  "nativeGLES": {
+    "shaderLanguage": "GLSL ES 3.00",
+    "context": "OpenGL ES 3.2 Mesa 25.0.7-2",
+    "renderer": "llvmpipe (LLVM 19.1.7, 256 bits)",
+    "vertexCompiled": true,
+    "fragmentCompiled": true,
+    "programLinked": true,
+    "nativeDrawReadbackPassed": true,
+    "pointLevelCases": 16,
+    "crossPrecisionPbrCases": 24,
+    "pbrAdapterSameFieldCases": 24,
+    "pbrAdapterSameFieldPassed": true,
+    "pbrAdapterMaxAbsoluteError": 6.078581937796201e-8,
+    "GLerror": 0,
+    "logs": ["", ""],
+    "crossPrecisionCompleteGatePassed": false,
+    "unfiltered17LevelPrecisionWarning": {
+      "point": [0.1, 0.3, 1.7],
+      "strength": 4,
+      "gpu": [1, 0.007158383261412382, 0.999950647354126, 0.006895582657307386],
+      "cpu": [1, 0.008927653489177706, 0.9999363646697874, 0.006896637887203846],
+      "maxAbsoluteError": 0.0017692702277653238,
+      "initialTarget": 0.001,
+      "passed": false
+    }
+  },
+  "scope": "Native core and isolated PBR adapter only. Not the tile shader, complete original rotation-node variant, browser or public URL.",
+  "rotationNodeNumericsVerified": false,
+  "tileSurfaceIntegrated": false,
+  "browserVerified": false,
+  "publicBrowserVerified": false,
+  "visualApproved": false,
+  "productionApproved": false
+}

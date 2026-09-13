@@ -1,0 +1,37 @@
+{
+  "status": "core01_02_and_pbr_adapter_staged_not_integrated",
+  "baselineCommit": "0adcadc4f070cec1560fae51b06b9ef8b419940c",
+  "baselinePath": "tiles-mother/r2-closeout-08a-micro-tune/START_HERE.html",
+  "baselineBlob": "8d8d7b486ddd4b6bf51e7752fd3a94561df62547",
+  "baselineModified": false,
+  "teachingSource": {
+    "repository": "haihao0307/HOUSE",
+    "commit": "030d84b979a8158d03398aa60da69e8e3315cd40",
+    "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/knowledge/macroscopic-microscope-r2-user-core-20260906/CORE_01_02.md",
+    "blob": "55fa102865b8d9aa3d25b472fc6d6b62fc324b80",
+    "origin": "User teaching recorded 2026-09-06",
+    "received": [1, 2],
+    "pendingAccordingToSource": [3, 4],
+    "readOnly": true
+  },
+  "authorPrimarySource": "https://tympanus.net/codrops/2025/02/18/rendering-the-simulation-theory-exploring-fractals-glsl-and-the-nature-of-reality/",
+  "formula": {
+    "xi": ["log2(length(p))-2-0.3*t", "-p.z/length(p)", "atan(p.x,p.y)"],
+    "scales": [1,2,4,8,16,32,64,128,256,512,1024,2048,4096,8192,16384,32768,65536],
+    "layer": "cos(dot(cos(xi.zyy*s),cos(xi.xyx*s)))/s",
+    "prefixRenormalized": false,
+    "extraXi1MinusOne": false
+  },
+  "authorVsUserConvention": "The published minified renderer contains --p.y. Recovered user teaching explicitly forbids an additional -1 on xi1. This implementation follows the user convention; it is not the complete original ray-marching renderer.",
+  "rotationNodeNumericsVerified": false,
+  "guessedRotationScheduleAdded": false,
+  "randomNoiseAdded": false,
+  "adapterNotOriginalConstants": ["PBR gains and centering", "tangent slope cap", "footprint filter weights"],
+  "notChanged": ["START_HERE.html", "tile geometry", "dimensions", "silhouette", "seating", "timber", "roof layout", "year state", "camera", "existing workbench", "Brick Mother baseline"],
+  "remaining": ["Verify full rotation-node values", "Verify tile-local domain away from poles", "Object-to-world gradient transform", "Remove old incised-pattern contributions without altering other systems", "Wire existing material controls", "Full workbench, public browser and target iPhone QA"],
+  "tileSurfaceIntegrated": false,
+  "browserVerified": false,
+  "publicBrowserVerified": false,
+  "visualApproved": false,
+  "productionApproved": false
+}
