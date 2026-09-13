@@ -1,0 +1,1 @@
+R2.9 accepts R2.4 macro geometry as immutable. The uploaded scan is sampled only for 12 edge residual profiles and 8 corner erosion differences. Face interiors are excluded from the correction field. The edge representation is multi-scale trigonometric; each profile is local to one edge domain. Scan color and scan overall dimensions are ignored.
