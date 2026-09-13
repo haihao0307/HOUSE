@@ -1,0 +1,16 @@
+{
+  "package": "Tiles_Mother_Current_Full_Handoff_R2_08B_2026-09-14.zip",
+  "repository": "haihao0307/HOUSE",
+  "branch": "feature/tiles-mother-r2-closeout-08a-micro-tune",
+  "buildSourceCommit": "60362edc159791244b156f4d137a2c46e0ddd05d",
+  "bytes": 3854955,
+  "sha256": "d871808cdab5975484a90ff559620c22a7bde51a2b76375b9174c0b96af49187",
+  "packageFileCount": 51,
+  "zipIntegrity": "passed",
+  "internalSHA256": "passed",
+  "requiredFiles": "passed",
+  "rawJiangwutangSourceIncluded": false,
+  "lastVerified08BCommit": "21bad87fffd654b1aaddee74af67e7cac6750a5d",
+  "visualApproved": false,
+  "productionApproved": false
+}
