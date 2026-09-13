@@ -1,0 +1,10 @@
+<section id="microscopeControls" aria-label="Microscope PBR 瓦面控制">
+<h3>Microscope · PBR</h3>
+<p class="tiny">Yohei Microscope · 17级公式。只调瓦面，不改变形状、尺寸和搭接。</p>
+<div class="row"><label for="micStrength">Microscope 起伏强度</label><output id="micStrengthVal">1.00×</output></div><input id="micStrength" type="range" min="0" max="3" step="0.05" value="1">
+<div class="row"><label for="micScale">Microscope 尺度</label><output id="micScaleVal">1.00×</output></div><input id="micScale" type="range" min="0.5" max="3" step="0.05" value="1">
+<div class="row"><label for="micColor">色彩微变化</label><output id="micColorVal">0.30</output></div><input id="micColor" type="range" min="0" max="1" step="0.01" value="0.30">
+<details><summary>PBR 反光微变化</summary><div class="row"><label for="micRough">粗糙度贡献</label><output id="micRoughVal">0.30</output></div><input id="micRough" type="range" min="0" max="1" step="0.01" value="0.30"></details>
+<div class="presets"><button id="micToggle" type="button">起伏：开</button><button id="micReset" type="button">恢复本版</button><button id="micCopy" type="button">复制数值</button></div>
+<p id="micValues" class="tiny" style="user-select:text"></p>
+</section>
