@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<title>Brick Mother · Wall + Plaster Workbench R1</title>
+<style>
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#151819;color:#e8e4da;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+#c{width:100%;height:100%;display:block;touch-action:none}
+#hud{position:fixed;left:12px;top:12px;z-index:3;background:rgba(19,22,22,.76);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.11);border-radius:10px;padding:10px 12px;max-width:min(420px,calc(100vw - 48px));font-size:12px;line-height:1.5;box-shadow:0 10px 28px rgba(0,0,0,.25)}
+#hud b{font-size:13px;font-weight:650}.muted{opacity:.7}.row{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}button{appearance:none;border:1px solid rgba(255,255,255,.16);background:#272c2d;color:#ece8de;border-radius:8px;padding:6px 10px;font:inherit;cursor:pointer}button:hover{background:#313738}.ok{color:#c9d7bd}
+#status{position:fixed;right:12px;bottom:10px;font-size:11px;color:#b9b9b3;background:rgba(0,0,0,.25);padding:5px 8px;border-radius:7px}
+@media(max-width:600px){#hud{left:8px;top:8px;padding:8px 10px;font-size:11px}.row{gap:6px}button{padding:6px 8px}#status{right:8px;bottom:8px}}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="hud">
+  <b>Brick Mother · 墙体工作台 R1</b><br/>
+  <span class="ok">砖块基线：R2.14.8.1（冻结，不改母体）</span><br/>
+  <span class="muted">每块砖仅做轻微尺寸 / 角度 / 表面 / 色差；抹灰为独立覆盖层。</span>
+  <div class="row"><button id="reset">重置镜头</button><button id="plaster">抹灰：开</button><button id="regen">换一组砖差异</button></div>
+  <span class="muted">拖拽旋转 · 滚轮/双指缩放 · 双击重置</span>
+</div>
+<div id="status">WebGL2 · loading</div>
+<script>
+'use strict';
+const canvas=document.getElementById('c');
+const gl=canvas.getContext('webgl2',{antialias:true,alpha:false,powerPreference:'high-performance'});
+const statusEl=document.getElementById('status');
+if(!gl){statusEl.textContent='需要 WebGL2';throw new Error('WebGL2 required');}
+
+const VS=`#version 300 es
+precision highp float;
+layout(location=0) in vec3 aPos;
+layout(location=1) in vec3 aColor;
+uniform mat4 uVP;
+out vec3 vWorld;
+out vec3 vColor;
+void main(){vWorld=aPos;vColor=aColor;gl_Position=uVP*vec4(aPos,1.0);}`;
+const FS=`#version 300 es
+precision highp float;
+in vec3 vWorld;
+in vec3 vColor;
+uniform vec3 uCam;
+out vec4 outColor;
+float hash31(vec3 p){p=fract(p*.1031);p+=dot(p,p.yzx+33.33);return fract((p.x+p.y)*p.z);}
+void main(){
+  vec3 dx=dFdx(vWorld),dy=dFdy(vWorld);
+  vec3 N=normalize(cross(dx,dy));
+  if(!gl_FrontFacing)N=-N;
+  vec3 L=normalize(vec3(-.38,.72,.58));
+  vec3 V=normalize(uCam-vWorld);
+  float ndl=max(dot(N,L),0.0);
+  float hemi=.34+.16*(N.y*.5+.5);
+  float grain=(hash31(floor(vWorld*115.0))-0.5)*0.055+(hash31(floor(vWorld*37.0))-0.5)*0.035;
+  vec3 base=vColor*(1.0+grain);
+  float spec=pow(max(dot(reflect(-L,N),V),0.0),18.0)*.035;
+  vec3 c=base*(hemi+.72*ndl)+spec;
+  c=c/(c+vec3(.30));
+  c=pow(c,vec3(.92));
+  outColor=vec4(c,1.0);
+}`;
+function shader(type,src){const s=gl.createShader(type);gl.shaderSource(s,src);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))throw new Error(gl.getShaderInfoLog(s));return s;}
+const prog=gl.createProgram();gl.attachShader(prog,shader(gl.VERTEX_SHADER,VS));gl.attachShader(prog,shader(gl.FRAGMENT_SHADER,FS));gl.linkProgram(prog);if(!gl.getProgramParameter(prog,gl.LINK_STATUS))throw new Error(gl.getProgramInfoLog(prog));
+const uVP=gl.getUniformLocation(prog,'uVP'),uCam=gl.getUniformLocation(prog,'uCam');
+
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return ((t^t>>>14)>>>0)/4294967296;}}
+let seed=21481;
+function rotXYZ(p,rx,ry,rz){let [x,y,z]=p;let c=Math.cos(rx),s=Math.sin(rx);[y,z]=[y*c-z*s,y*s+z*c];c=Math.cos(ry);s=Math.sin(ry);[x,z]=[x*c+z*s,-x*s+z*c];c=Math.cos(rz);s=Math.sin(rz);[x,y]=[x*c-y*s,x*s+y*c];return [x,y,z];}
+function clamp(x,a,b){return Math.max(a,Math.min(b,x));}
+function smooth(a,b,x){x=clamp((x-a)/(b-a),0,1);return x*x*(3-2*x);}
+function vlen(x,y,z){return Math.hypot(x,y,z)||1;}
+function h3(x,y,z,s){return Math.sin(x*12.9898+y*78.233+z*37.719+s*19.13)*43758.5453%1;}
+function triNoise(x,y,z,s){return .56*Math.sin(11.3*x+7.1*y+5.7*z+s*2.31)+.27*Math.sin(27.1*x-13.7*y+19.4*z+s*5.17)+.12*Math.sin(61.7*x+31.3*y-43.9*z+s*9.07);}
+
+function meshBuilder(){return {p:[],c:[]};}
+function pushTri(M,a,b,c,col){for(const q of [a,b,c]){M.p.push(q[0],q[1],q[2]);M.c.push(col[0],col[1],col[2]);}}
+function pushQuad(M,a,b,c,d,col,flip=false){if(!flip){pushTri(M,a,b,c,col);pushTri(M,a,c,d,col);}else{pushTri(M,a,c,b,col);pushTri(M,a,d,c,col);}}
+function transformPoint(p,T){let q=rotXYZ(p,T.rx,T.ry,T.rz);return [q[0]+T.x,q[1]+T.y,q[2]+T.z];}
+
+function addRoundedBrick(M,T,size,variant,col){
+  const [sx,sy,sz]=size,bx=sx*.5,by=sy*.5,bz=sz*.5;
+  const r=Math.min(sy*.24,sz*.18,.028+variant*.002);
+  const cx=Math.max(.001,bx-r),cy=Math.max(.001,by-r),cz=Math.max(.001,bz-r);
+  const faces=[
+    {axis:0,sg:1,nu:5,nv:4,flip:false},{axis:0,sg:-1,nu:5,nv:4,flip:true},
+    {axis:1,sg:1,nu:8,nv:4,flip:true},{axis:1,sg:-1,nu:8,nv:4,flip:false},
+    {axis:2,sg:1,nu:8,nv:4,flip:false},{axis:2,sg:-1,nu:8,nv:4,flip:true}
+  ];
+  function pt(face,u,v){
+    let q=[0,0,0];
+    if(face.axis===0){q=[face.sg*bx,(u*2-1)*by,(v*2-1)*bz];}
+    if(face.axis===1){q=[(u*2-1)*bx,face.sg*by,(v*2-1)*bz];}
+    if(face.axis===2){q=[(u*2-1)*bx,(v*2-1)*by,face.sg*bz];}
+    const cl=[clamp(q[0],-cx,cx),clamp(q[1],-cy,cy),clamp(q[2],-cz,cz)];
+    let dx=q[0]-cl[0],dy=q[1]-cl[1],dz=q[2]-cl[2];const L=vlen(dx,dy,dz);dx/=L;dy/=L;dz/=L;
+    let p=[cl[0]+dx*r,cl[1]+dy*r,cl[2]+dz*r];
+    const edgeCount=(Math.abs(q[0])>cx+.0001?1:0)+(Math.abs(q[1])>cy+.0001?1:0)+(Math.abs(q[2])>cz+.0001?1:0);
+    const edge=edgeCount>=2?1:0;
+    let amp=.00125+edge*.00165;
+    let d=amp*triNoise(p[0]/sx,p[1]/sy,p[2]/sz,variant+seed*.001);
+    const a1=.31+(.11*Math.sin((variant+3)*1.7)),a2=-.24+(.10*Math.cos((variant+5)*2.1));
+    const chip1=Math.exp(-((p[0]/sx-a1)**2/.010+(p[1]/sy-.38)**2/.035+(p[2]/sz-.42)**2/.11));
+    const chip2=Math.exp(-((p[0]/sx-a2)**2/.014+(p[1]/sy+.40)**2/.030+(p[2]/sz-.36)**2/.10));
+    d-=edge*(.0045*chip1+.0032*chip2);
+    p=[p[0]+dx*d,p[1]+dy*d,p[2]+dz*d];
+    return transformPoint(p,T);
+  }
+  for(const f of faces){for(let j=0;j<f.nv;j++)for(let i=0;i<f.nu;i++){
+    const u0=i/f.nu,u1=(i+1)/f.nu,v0=j/f.nv,v1=(j+1)/f.nv;
+    pushQuad(M,pt(f,u0,v0),pt(f,u1,v0),pt(f,u1,v1),pt(f,u0,v1),col,f.flip);
+  }}
+}
+
+function addBox(M,c,size,col){
+  const [x,y,z]=c,[sx,sy,sz]=size;const X=sx/2,Y=sy/2,Z=sz/2;
+  const v=[[x-X,y-Y,z-Z],[x+X,y-Y,z-Z],[x+X,y+Y,z-Z],[x-X,y+Y,z-Z],[x-X,y-Y,z+Z],[x+X,y-Y,z+Z],[x+X,y+Y,z+Z],[x-X,y+Y,z+Z]];
+  pushQuad(M,v[4],v[5],v[6],v[7],col,false);pushQuad(M,v[1],v[0],v[3],v[2],col,false);
+  pushQuad(M,v[0],v[4],v[7],v[3],col,false);pushQuad(M,v[5],v[1],v[2],v[6],col,false);
+  pushQuad(M,v[3],v[7],v[6],v[2],col,false);pushQuad(M,v[0],v[1],v[5],v[4],col,false);
+}
+
+function addPlasterPatch(M,box,seedOff,col){
+  const [x0,x1,y0,y1]=box,nx=22,ny=20;const sx=x1-x0,sy=y1-y0;
+  function field(x,y){
+    const u=(x-(x0+x1)*.5)/(sx*.5),v=(y-(y0+y1)*.5)/(sy*.5);
+    const n=.11*Math.sin(5.7*u+2.1*v+seedOff)+.07*Math.sin(11.3*u-7.8*v+seedOff*1.7)+.04*Math.sin(23.1*u+15.7*v+2.4);
+    return u*u*1.02+v*v*.92+n;
+  }
+  function zAt(x,y){
+    const f=field(x,y);const edge=clamp((1.03-f)/.20,0,1);const th=.006+.018*smooth(0,1,edge);
+    return .118+th+.0021*Math.sin(x*17+y*11+seedOff)+.0011*Math.sin(x*41-y*27+1.3);
+  }
+  for(let j=0;j<ny;j++)for(let i=0;i<nx;i++){
+    const xa=x0+sx*i/nx,xb=x0+sx*(i+1)/nx,ya=y0+sy*j/ny,yb=y0+sy*(j+1)/ny;
+    const xc=(xa+xb)*.5,yc=(ya+yb)*.5;if(field(xc,yc)>1.02)continue;
+    const a=[xa,ya,zAt(xa,ya)],b=[xb,ya,zAt(xb,ya)],c=[xb,yb,zAt(xb,yb)],d=[xa,yb,zAt(xa,yb)];
+    pushQuad(M,a,b,c,d,col,false);
+  }
+}
+
+function buildScene(seedInput){
+  seed=seedInput;const rng=mulberry32(seedInput);const M=meshBuilder();
+  const wallW=4.55,wallH=2.38,brickW=.355,brickH=.155,brickD=.205,gx=.018,gy=.018;
+  addBox(M,[0,wallH*.5-.03,-.105],[wallW+.08,wallH+.08,.075],[.31,.255,.205]);
+  const pitchX=brickW+gx,pitchY=brickH+gy,rows=Math.floor((wallH-.04)/pitchY);
+  let brickIndex=0;
+  for(let r=0;r<rows;r++){
+    const y=.05+brickH*.5+r*pitchY;
+    const offset=(r%2)*pitchX*.5;
+    for(let x=-wallW*.5+brickW*.5-offset;x<wallW*.5+brickW*.35;x+=pitchX){
+      if(x<-wallW*.5-.12||x>wallW*.5+.12)continue;
+      const width=brickW*(.965+rng()*.07),height=brickH*(.975+rng()*.045),depth=brickD*(.96+rng()*.075);
+      const xx=x+(rng()-.5)*.008,yy=y+(rng()-.5)*.006;
+      const rz=(rng()-.5)*.012,ry=(rng()-.5)*.010,rx=(rng()-.5)*.005;
+      const warm=(rng()-.5),dark=(rng()-.5),family=rng();
+      let col=[.47+.055*warm-.018*dark,.285+.035*warm-.012*dark,.205+.026*warm-.008*dark];
+      if(family>.82)col=[col[0]*.91,col[1]*.92,col[2]*.95];
+      if(family<.14)col=[col[0]*1.05,col[1]*.98,col[2]*.91];
+      addRoundedBrick(M,{x:xx,y:yy,z:0,rx,ry,rz},[width,height,depth],brickIndex%17,col);brickIndex++;
+    }
+  }
+  addBox(M,[0,-.008,.02],[wallW+.06,.055,.24],[.285,.225,.17]);
+  addPlasterPatch(M,[-2.22,-.50,1.40,2.36],1.7,[.61,.535,.42]);
+  addPlasterPatch(M,[.78,2.22,.48,2.28],4.1,[.63,.555,.445]);
+  addPlasterPatch(M,[-2.15,-1.05,.05,.78],7.4,[.59,.515,.405]);
+  addBox(M,[0,-.08,-.15],[7.0,.10,4.2],[.20,.205,.20]);
+  return M;
+}
+
+let plasterOn=true,currentSeed=21481;
+const vao=gl.createVertexArray(),vbo=gl.createBuffer(),cbo=gl.createBuffer();gl.bindVertexArray(vao);
+function upload(M){
+  const pos=new Float32Array(M.p),col=new Float32Array(M.c);window._vertexCount=pos.length/3;
+  gl.bindBuffer(gl.ARRAY_BUFFER,vbo);gl.bufferData(gl.ARRAY_BUFFER,pos,gl.STATIC_DRAW);gl.enableVertexAttribArray(0);gl.vertexAttribPointer(0,3,gl.FLOAT,false,0,0);
+  gl.bindBuffer(gl.ARRAY_BUFFER,cbo);gl.bufferData(gl.ARRAY_BUFFER,col,gl.STATIC_DRAW);gl.enableVertexAttribArray(1);gl.vertexAttribPointer(1,3,gl.FLOAT,false,0,0);
+  gl.bindVertexArray(null);
+}
+upload(buildScene(currentSeed));
+
+function mat4mul(a,b){const o=new Float32Array(16);for(let r=0;r<4;r++)for(let c=0;c<4;c++){let s=0;for(let k=0;k<4;k++)s+=a[k*4+r]*b[c*4+k];o[c*4+r]=s;}return o;}
+function perspective(fovy,aspect,n,f){const t=1/Math.tan(fovy/2),o=new Float32Array(16);o[0]=t/aspect;o[5]=t;o[10]=(f+n)/(n-f);o[11]=-1;o[14]=2*f*n/(n-f);return o;}
+function lookAt(e,c,u){let zx=e[0]-c[0],zy=e[1]-c[1],zz=e[2]-c[2];let L=Math.hypot(zx,zy,zz);zx/=L;zy/=L;zz/=L;let xx=u[1]*zz-u[2]*zy,xy=u[2]*zx-u[0]*zz,xz=u[0]*zy-u[1]*zx;L=Math.hypot(xx,xy,xz);xx/=L;xy/=L;xz/=L;let yx=zy*xz-zz*xy,yy=zz*xx-zx*xz,yz=zx*xy-zy*xx;const o=new Float32Array(16);o[0]=xx;o[1]=yx;o[2]=zx;o[3]=0;o[4]=xy;o[5]=yy;o[6]=zy;o[7]=0;o[8]=xz;o[9]=yz;o[10]=zz;o[11]=0;o[12]=-(xx*e[0]+xy*e[1]+xz*e[2]);o[13]=-(yx*e[0]+yy*e[1]+yz*e[2]);o[14]=-(zx*e[0]+zy*e[1]+zz*e[2]);o[15]=1;return o;}
+let yaw=-.52,pitch=.19,dist=6.15,target=[0,1.08,0];
+function resetCamera(){yaw=-.52;pitch=.19;dist=6.15;target=[0,1.08,0];}
+function cameraPos(){const cp=Math.cos(pitch);return [target[0]+dist*Math.sin(yaw)*cp,target[1]+dist*Math.sin(pitch),target[2]+dist*Math.cos(yaw)*cp];}
+
+function resize(){const dpr=Math.min(devicePixelRatio||1,1.8),w=Math.max(1,Math.floor(innerWidth*dpr)),h=Math.max(1,Math.floor(innerHeight*dpr));if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h;}gl.viewport(0,0,w,h);}
+let dragging=false,lx=0,ly=0;
+canvas.addEventListener('pointerdown',e=>{dragging=true;lx=e.clientX;ly=e.clientY;canvas.setPointerCapture(e.pointerId)});
+canvas.addEventListener('pointermove',e=>{if(!dragging)return;const dx=e.clientX-lx,dy=e.clientY-ly;lx=e.clientX;ly=e.clientY;yaw-=dx*.006;pitch=clamp(pitch-dy*.005,-1.0,1.0)});
+canvas.addEventListener('pointerup',()=>dragging=false);canvas.addEventListener('pointercancel',()=>dragging=false);
+canvas.addEventListener('wheel',e=>{e.preventDefault();dist=clamp(dist*Math.exp(e.deltaY*.001),3.1,10.5)},{passive:false});
+canvas.addEventListener('dblclick',resetCamera);
+let pinch=null;canvas.addEventListener('touchmove',e=>{if(e.touches.length===2){const dx=e.touches[0].clientX-e.touches[1].clientX,dy=e.touches[0].clientY-e.touches[1].clientY,d=Math.hypot(dx,dy);if(pinch)dist=clamp(dist*(pinch/d),3.1,10.5);pinch=d;}},{passive:true});canvas.addEventListener('touchend',()=>pinch=null);
+
+document.getElementById('reset').onclick=resetCamera;
+document.getElementById('regen').onclick=()=>{currentSeed=(currentSeed*1664525+1013904223)>>>0;rebuildWithPlaster();};
+function rebuildWithPlaster(){
+  const old=addPlasterPatch;if(plasterOn){upload(buildScene(currentSeed));return;}
+  addPlasterPatch=()=>{};upload(buildScene(currentSeed));addPlasterPatch=old;
+}
+document.getElementById('plaster').onclick=e=>{plasterOn=!plasterOn;e.currentTarget.textContent='抹灰：'+(plasterOn?'开':'关');rebuildWithPlaster();};
+
+function frame(){
+  resize();gl.enable(gl.DEPTH_TEST);gl.disable(gl.CULL_FACE);gl.clearColor(.085,.095,.098,1);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
+  const cam=cameraPos(),P=perspective(46*Math.PI/180,canvas.width/canvas.height,.05,40),V=lookAt(cam,target,[0,1,0]),VP=mat4mul(P,V);
+  gl.useProgram(prog);gl.uniformMatrix4fv(uVP,false,VP);gl.uniform3fv(uCam,new Float32Array(cam));gl.bindVertexArray(vao);gl.drawArrays(gl.TRIANGLES,0,window._vertexCount);gl.bindVertexArray(null);
+  statusEl.textContent=`WebGL2 · ${Math.round(window._vertexCount/3).toLocaleString()} tris · seed ${currentSeed}`;
+  requestAnimationFrame(frame);
+}
+canvas.dataset.ready='true';frame();
+</script>
+</body>
+</html>
