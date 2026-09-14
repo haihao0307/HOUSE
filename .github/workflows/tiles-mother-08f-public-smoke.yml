@@ -5,6 +5,7 @@ on:
     branches: [codex/tiles-08f-final-20260914]
     paths:
       - .github/workflows/tiles-mother-08f-public-smoke.yml
+      - tiles-mother/r2-closeout-08f-final/START_HERE.html
 
 jobs:
   public-smoke:
@@ -44,7 +45,8 @@ jobs:
               w.until(lambda x:x.execute_script('return arguments[0].width>0 && arguments[0].height>0',stage))
               brand=d.find_element(By.CSS_SELECTOR,'.brand').text
               if '08F' not in brand: raise RuntimeError('08F brand marker missing: '+brand)
-              if any(x.is_displayed() for x in d.find_elements(By.CSS_SELECTOR,'.fail')): raise RuntimeError('visible runtime failure panel')
+              fail=[x.text for x in d.find_elements(By.CSS_SELECTOR,'.fail') if x.is_displayed()]
+              if fail: raise RuntimeError('visible runtime failure panel: '+" | ".join(fail))
               time.sleep(2)
               d.find_element(By.CSS_SELECTOR,'button[data-view="under"]').click(); time.sleep(1); Path('/tmp/tiles08f-under.png').write_bytes(d.get_screenshot_as_png())
               d.find_element(By.CSS_SELECTOR,'button[data-view="edge"]').click(); d.find_element(By.ID,'shapePanel').click(); w.until(lambda x:x.find_element(By.ID,'panel').is_displayed()); time.sleep(1); Path('/tmp/tiles08f-edge.png').write_bytes(d.get_screenshot_as_png())
