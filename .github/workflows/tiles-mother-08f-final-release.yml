@@ -1,8 +1,8 @@
-name: Tiles Mother 08F final release verification R2
+name: Tiles Mother 08F.1 final continuity verification
 
 on:
   push:
-    branches: [codex/tiles-08f-final-20260914]
+    branches: [codex/tiles-08f1-final-20260914]
     paths:
       - .github/workflows/tiles-mother-08f-final-release.yml
       - tiles-mother/r2-closeout-08f-final/shape.glsl
@@ -15,8 +15,8 @@ permissions:
   contents: write
 
 concurrency:
-  group: tiles-mother-08f-final-release
-  cancel-in-progress: false
+  group: tiles-mother-08f1-final-continuity
+  cancel-in-progress: true
 
 jobs:
   verify-release:
@@ -30,7 +30,7 @@ jobs:
             tiles-mother/r2-closeout-08e-contact
             tiles-mother/r2-closeout-08f-final
 
-      - name: Build exact 08F candidate
+      - name: Build exact 08F.1 candidate
         run: |
           python tiles-mother/r2-closeout-08f-final/build.py
           python tiles-mother/r2-closeout-08f-final/qa_parity_patch.py
@@ -43,9 +43,9 @@ jobs:
           text=Path('tiles-mother/r2-closeout-08f-final/START_HERE.html').read_text(encoding='utf-8')
           m=re.search(r'<script>([\s\S]*?)</script>',text)
           if not m: raise SystemExit('inline script not found')
-          Path('/tmp/tiles08f.js').write_text(m.group(1),encoding='utf-8')
+          Path('/tmp/tiles08f1.js').write_text(m.group(1),encoding='utf-8')
           PY
-          node --check /tmp/tiles08f.js
+          node --check /tmp/tiles08f1.js
 
       - name: Solve bilateral seats and sample retained relations
         run: |
@@ -55,16 +55,16 @@ jobs:
       - name: Solve support window with numerical headroom
         run: python tiles-mother/r2-closeout-08f-final/solve_support_window.py
 
-      - name: Final full-shell and contact QA
+      - name: Final unified-shell and contact QA
         run: |
           node tiles-mother/r2-closeout-08f-final/qa_geometry.cjs
           node tiles-mother/r2-closeout-08f-final/qa_matrix.cjs
 
-      - name: Require full-shell geometry and all retained checks
+      - name: Require unified shell and all retained checks
         run: |
           python - <<'PY'
           from pathlib import Path
-          import json,re
+          import json
           root=Path('tiles-mother/r2-closeout-08f-final')
           contact=json.loads((root/'CONTACT_QA.json').read_text(encoding='utf-8'))
           matrix=json.loads((root/'CONTACT_MATRIX_QA.json').read_text(encoding='utf-8'))
@@ -72,38 +72,34 @@ jobs:
           build=json.loads((root/'BUILD_QA.json').read_text(encoding='utf-8'))
           if contact.get('bottomMicroZeroLegacyStatus')!='not_applicable_after_user_full_shell_goal_2026-09-14':
               raise SystemExit('obsolete 08D bottom-zero target not revised')
-          if not contact.get('shellFieldPresent'):
-              raise SystemExit('full-shell field missing')
+          if not contact.get('shellFieldPresent') or not build.get('singleFieldContinuity'):
+              raise SystemExit('unified full-shell field missing')
           if not contact.get('contactPassed'):
               raise SystemExit('known contacts failed')
           if not matrix.get('pass') or matrix.get('summary',{}).get('failed')!=0:
-              raise SystemExit('retained 54-relation matrix failed')
+              raise SystemExit('retained relation matrix failed')
           if cal.get('solverMarginMm')!=0.002:
               raise SystemExit('solver numerical headroom missing')
           build.update({
               'contactPassed': True,
               'expandedMatrixPassed': True,
               'shellFieldPresent': True,
+              'singleFieldContinuity': True,
               'actualContactQa': contact,
               'contactMatrixSummary': matrix['summary'],
               'seatCalibration': cal['solvedSeats'],
               'panRigidAdjust': cal['panRigidAdjust'],
               'coverRelativeRigidAdjust': cal['coverRelativeRigidAdjust'],
               'solverMarginMm': cal['solverMarginMm'],
-              'cpuGpuSupportFieldParity': 'workflow_synchronized_and_asserted',
+              'cpuGpuSupportFieldParity': 'one_field_equations_asserted',
               'visualApproved': False,
               'productionApproved': False
           })
           (root/'BUILD_QA.json').write_text(json.dumps(build,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
-          print(json.dumps({
-              'matrix':matrix['summary'],
-              'shapeEvidence':contact['shapeEvidence'],
-              'seats':cal['solvedSeats'],
-              'solverMarginMm':cal['solverMarginMm']
-          },ensure_ascii=False,indent=2))
+          print(json.dumps({'matrix':matrix['summary'],'shapeEvidence':contact['shapeEvidence'],'userMiddleDefaults':build['userMiddleDefaults']},ensure_ascii=False,indent=2))
           PY
 
-      - name: Commit verified self-contained 08F candidate
+      - name: Commit verified self-contained 08F.1 candidate
         run: |
           set -eu
           git config user.name 'github-actions[bot]'
@@ -119,12 +115,12 @@ jobs:
             tiles-mother/r2-closeout-08f-final/CONTACT_QA.json \
             tiles-mother/r2-closeout-08f-final/CONTACT_MATRIX_QA.json
           if ! git diff --cached --quiet; then
-            git commit -m 'build(tiles): materialize verified 08F final full-shell candidate'
+            git commit -m 'build(tiles): materialize verified 08F.1 unified-shell candidate'
             git push origin "HEAD:refs/heads/$GITHUB_REF_NAME"
           fi
           echo "PAGE_SHA=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
 
-      - name: Browser-check fixed public 08F
+      - name: Browser-check fixed public 08F.1
         env:
           PAGE_SHA: ${{ env.PAGE_SHA }}
         run: |
@@ -145,18 +141,18 @@ jobs:
               c=d.execute_cdp_cmd('Network.setCookie',{'name':'__Http-phish','value':'1','url':'https://raw.githack.com/','secure':True,'httpOnly':True,'sameSite':'Lax'})
               if c.get('success') is False: raise RuntimeError('rawgithack confirmation cookie rejected')
               d.get(url); w=WebDriverWait(d,35)
-              w.until(lambda x:'08F' in x.title)
+              w.until(lambda x:'08F.1' in x.title)
               stage=w.until(lambda x:x.find_element(By.ID,'stage'))
               w.until(lambda x:x.execute_script('return arguments[0].width>0 && arguments[0].height>0',stage))
               time.sleep(2)
               fail=[x.text for x in d.find_elements(By.CSS_SELECTOR,'.fail') if x.is_displayed()]
               if fail: raise RuntimeError('visible failure panel: '+" | ".join(fail))
-              brand=d.find_element(By.CSS_SELECTOR,'.brand').text
-              d.find_element(By.CSS_SELECTOR,'button[data-view="under"]').click(); time.sleep(1); Path('/tmp/tiles08f-under.png').write_bytes(d.get_screenshot_as_png())
-              d.find_element(By.CSS_SELECTOR,'button[data-view="edge"]').click(); d.find_element(By.ID,'shapePanel').click(); w.until(lambda x:x.find_element(By.ID,'panel').is_displayed()); time.sleep(1); Path('/tmp/tiles08f-edge.png').write_bytes(d.get_screenshot_as_png())
-              d.find_element(By.CSS_SELECTOR,'button[data-scene="roof48"]').click(); time.sleep(2); Path('/tmp/tiles08f-roof48.png').write_bytes(d.get_screenshot_as_png())
-              result={'url':url,'title':d.title,'brand':brand,'canvas':d.execute_script('return {w:innerWidth,h:innerHeight,cw:arguments[0].width,ch:arguments[0].height}',stage),'undersideView':True,'edgeView':True,'shapePanel':True,'roof48':True}
-              Path('/tmp/tiles08f-public.json').write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+              d.find_element(By.CSS_SELECTOR,'button[data-view="under"]').click(); time.sleep(1); Path('/tmp/tiles08f1-under.png').write_bytes(d.get_screenshot_as_png())
+              d.find_element(By.CSS_SELECTOR,'button[data-view="edge"]').click(); d.find_element(By.ID,'shapePanel').click(); w.until(lambda x:x.find_element(By.ID,'panel').is_displayed()); time.sleep(1); Path('/tmp/tiles08f1-edge.png').write_bytes(d.get_screenshot_as_png())
+              d.find_element(By.CSS_SELECTOR,'button[data-scene="roof48"]').click(); time.sleep(2); Path('/tmp/tiles08f1-roof48.png').write_bytes(d.get_screenshot_as_png())
+              d.find_element(By.CSS_SELECTOR,'button[data-scene="roof860"]').click(); time.sleep(3); Path('/tmp/tiles08f1-roof860.png').write_bytes(d.get_screenshot_as_png())
+              result={'url':url,'title':d.title,'brand':d.find_element(By.CSS_SELECTOR,'.brand').text,'canvas':d.execute_script('return {w:innerWidth,h:innerHeight,cw:arguments[0].width,ch:arguments[0].height}',stage),'undersideView':True,'edgeView':True,'shapePanel':True,'roof48':True,'roof860':True}
+              Path('/tmp/tiles08f1-public.json').write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
               print(json.dumps(result,ensure_ascii=False,indent=2))
           finally: d.quit()
           PY
@@ -164,12 +160,13 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: tiles-08f-final-release-${{ github.run_id }}
+          name: tiles-08f1-final-${{ github.run_id }}
           path: |
-            /tmp/tiles08f-public.json
-            /tmp/tiles08f-under.png
-            /tmp/tiles08f-edge.png
-            /tmp/tiles08f-roof48.png
+            /tmp/tiles08f1-public.json
+            /tmp/tiles08f1-under.png
+            /tmp/tiles08f1-edge.png
+            /tmp/tiles08f1-roof48.png
+            /tmp/tiles08f1-roof860.png
             tiles-mother/r2-closeout-08f-final/BUILD_QA.json
             tiles-mother/r2-closeout-08f-final/CONTACT_QA.json
             tiles-mother/r2-closeout-08f-final/CONTACT_MATRIX_QA.json
