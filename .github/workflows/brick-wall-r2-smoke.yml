@@ -18,18 +18,18 @@ jobs:
         run: |
           pip install playwright pillow numpy
           python -m playwright install --with-deps chromium
-      - name: Verify frozen-brick wall R2.1 visually
+      - name: Verify frozen-brick wall R2.2 visually
         shell: bash
         run: |
           cat > /tmp/qa.py <<'PY'
           from playwright.sync_api import sync_playwright
           from PIL import Image
           import numpy as np
-          URL='https://rawcdn.githack.com/haihao0307/HOUSE/d11a2ecc34489f8db7d9554c62c729befbca7e94/yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/experiments/wall-lab-r2/Brick_Wall_Plaster_Workbench_R2_1.html'
+          URL='https://rawcdn.githack.com/haihao0307/HOUSE/bfb1669e728f1321b62f60ddf627931b87a0b93e/yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/experiments/wall-lab-r2/Brick_Wall_Plaster_Workbench_R2_2.html'
           errors=[]
           with sync_playwright() as p:
               browser=p.chromium.launch(headless=True,args=['--use-angle=swiftshader','--enable-webgl','--ignore-gpu-blocklist'])
-              ctx=browser.new_context(viewport={'width':1440,'height':900},device_scale_factor=1,user_agent='Brick-Wall-R2.1-QA')
+              ctx=browser.new_context(viewport={'width':1440,'height':900},device_scale_factor=1,user_agent='Brick-Wall-R2.2-QA')
               ctx.add_cookies([{'name':'__Http-phish','value':'1','url':'https://rawcdn.githack.com/','secure':True,'httpOnly':True,'sameSite':'Lax'}])
               page=ctx.new_page(); page.set_default_timeout(120000)
               page.on('pageerror',lambda e: errors.append('pageerror:'+str(e)))
@@ -37,23 +37,23 @@ jobs:
               resp=page.goto(URL,wait_until='networkidle',timeout=120000); assert resp and resp.ok
               page.wait_for_function("document.querySelector('#c')?.dataset.ready==='true'",timeout=120000); page.wait_for_timeout(1300)
               print('STATUS',page.locator('#status').inner_text()); assert not errors, errors
-              page.screenshot(path='/tmp/wall-r21-front.png',full_page=True,timeout=120000)
+              page.screenshot(path='/tmp/wall-r22-front.png',full_page=True,timeout=120000)
               page.locator('#side').click(); page.wait_for_timeout(900)
-              page.screenshot(path='/tmp/wall-r21-side.png',full_page=True,timeout=120000)
+              page.screenshot(path='/tmp/wall-r22-side.png',full_page=True,timeout=120000)
               page.locator('#plaster').click(); page.wait_for_timeout(500); page.locator('#plaster').click(); page.locator('#regen').click(); page.wait_for_timeout(700); assert not errors, errors
               browser.close()
-          for fn in ['/tmp/wall-r21-front.png','/tmp/wall-r21-side.png']:
+          for fn in ['/tmp/wall-r22-front.png','/tmp/wall-r22-side.png']:
               a=np.asarray(Image.open(fn).convert('RGB'))
-              crop=a[120:830,260:1180]
+              crop=a[100:840,220:1220]
               print(fn,'STD',float(crop.std()),'RANGE',int(crop.max()-crop.min()))
-              assert crop.std()>10, fn+' center is visually blank/flat'
-              assert crop.max()-crop.min()>80, fn+' lacks visible 3D geometry'
+              assert crop.std()>12, fn+' center is visually blank/flat'
+              assert crop.max()-crop.min()>90, fn+' lacks visible 3D geometry'
           PY
           python /tmp/qa.py
       - name: Upload QA frames
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: brick-wall-r21-qa
-          path: /tmp/wall-r21-*.png
+          name: brick-wall-r22-qa
+          path: /tmp/wall-r22-*.png
           if-no-files-found: ignore
