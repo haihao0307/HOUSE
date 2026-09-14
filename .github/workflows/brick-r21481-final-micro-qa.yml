@@ -1,0 +1,82 @@
+name: Brick R2.14.8.1 Final Micro Edge QA
+
+on:
+  push:
+    branches:
+      - codex/brick-r2143-continuous-surface-20260914
+
+jobs:
+  browser-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install browser QA dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install playwright pillow numpy
+          python -m playwright install --with-deps chromium
+      - name: Verify R2.14.8.1 is only a micro trim of R2.14.8
+        shell: bash
+        run: |
+          cat > /tmp/qa.py <<'PY'
+          from playwright.sync_api import sync_playwright
+          from PIL import Image
+          import numpy as np
+
+          OLD='https://rawcdn.githack.com/haihao0307/HOUSE/d8b11f7b200d07e0f1c0afca36b6c5a307398281/yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/experiments/shape-edge-lab-r2-14/Brick_Shape_Edge_Lab_R2_14_8.html'
+          NEW='https://rawcdn.githack.com/haihao0307/HOUSE/7362f830bcac83a0883e7855fa5d41ee30e52718/yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/experiments/shape-edge-lab-r2-14/Brick_Shape_Edge_Lab_R2_14_8_1.html'
+
+          def open_one(context,url,label):
+              errors=[]
+              page=context.new_page(); page.set_default_timeout(120000)
+              page.on('pageerror',lambda exc: errors.append('pageerror: '+str(exc)))
+              page.on('console',lambda msg: errors.append('console: '+msg.text) if msg.type=='error' else None)
+              resp=page.goto(url,wait_until='networkidle',timeout=120000)
+              assert resp and resp.ok
+              page.wait_for_timeout(4000)
+              iframe=page.locator('#lab'); iframe.wait_for(state='attached',timeout=60000)
+              frame=iframe.element_handle().content_frame()
+              canvas=frame.locator('#c'); canvas.wait_for(state='attached',timeout=60000)
+              frame.wait_for_function("document.querySelector('#c')?.dataset.ready === 'true'",timeout=60000)
+              assert not errors, errors
+              canvas.screenshot(path=f'/tmp/{label}-front.png',timeout=120000)
+              return page,canvas
+
+          with sync_playwright() as p:
+              browser=p.chromium.launch(headless=True,args=['--use-angle=swiftshader','--enable-webgl','--ignore-gpu-blocklist'])
+              context=browser.new_context(viewport={'width':1440,'height':900},device_scale_factor=1,user_agent='Brick-Mother-QA/2.14.8.1')
+              context.add_cookies([{'name':'__Http-phish','value':'1','url':'https://rawcdn.githack.com/','secure':True,'httpOnly':True,'sameSite':'Lax'}])
+              old_page,_=open_one(context,OLD,'r2148'); old_page.close()
+              new_page,canvas=open_one(context,NEW,'r21481')
+              box=canvas.bounding_box(); assert box
+              x=box['x']+box['width']*.72; y=box['y']+box['height']*.45
+              new_page.mouse.move(x,y); new_page.mouse.down(); new_page.mouse.move(x+210,y+8,steps=8); new_page.mouse.up(); new_page.wait_for_timeout(1000)
+              new_page.screenshot(path='/tmp/r21481-side-a.png',full_page=True,timeout=120000)
+              new_page.mouse.move(x+210,y+8); new_page.mouse.down(); new_page.mouse.move(x-155,y-4,steps=10); new_page.mouse.up(); new_page.wait_for_timeout(1000)
+              new_page.screenshot(path='/tmp/r21481-side-b.png',full_page=True,timeout=120000)
+              browser.close()
+
+          a=np.asarray(Image.open('/tmp/r2148-front.png').convert('RGB')).astype(np.int16)
+          b=np.asarray(Image.open('/tmp/r21481-front.png').convert('RGB')).astype(np.int16)
+          d=np.abs(a-b).mean(axis=2)
+          print('MEAN_ABS_PIXEL_DELTA_FROM_R2148',float(d.mean()))
+          print('FRACTION_GT2',float((d>2).mean()))
+          print('FRACTION_GT6',float((d>6).mean()))
+          assert float((d>6).mean()) < 0.06, 'micro-fix changed too much of the accepted R2.14.8 image'
+          for fn in ['r21481-front.png','r21481-side-a.png','r21481-side-b.png']:
+              im=np.asarray(Image.open('/tmp/'+fn).convert('RGB'))
+              print(fn,'STD',float(im.std()))
+              assert im.std()>8
+          PY
+          python /tmp/qa.py
+      - name: Upload final micro-edge evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: brick-r21481-final-micro-edge-qa
+          path: /tmp/r2148*.png
+          if-no-files-found: ignore
