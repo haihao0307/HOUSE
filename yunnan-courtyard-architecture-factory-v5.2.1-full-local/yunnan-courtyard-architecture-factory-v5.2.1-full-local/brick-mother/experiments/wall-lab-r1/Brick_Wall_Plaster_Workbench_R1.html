@@ -122,15 +122,20 @@ function addBox(M,c,size,col){
 }
 
 function addPlasterPatch(M,box,seedOff,col){
-  const [x0,x1,y0,y1]=box,nx=22,ny=20;const sx=x1-x0,sy=y1-y0;
+  const [x0,x1,y0,y1]=box,nx=34,ny=28;const sx=x1-x0,sy=y1-y0;
   function field(x,y){
     const u=(x-(x0+x1)*.5)/(sx*.5),v=(y-(y0+y1)*.5)/(sy*.5);
-    const n=.11*Math.sin(5.7*u+2.1*v+seedOff)+.07*Math.sin(11.3*u-7.8*v+seedOff*1.7)+.04*Math.sin(23.1*u+15.7*v+2.4);
-    return u*u*1.02+v*v*.92+n;
+    const d0=u*u*1.02+v*v*.90;
+    const d1=((u+.46)/.78)**2+((v-.18)/.82)**2+.03;
+    const d2=((u-.38)/.82)**2+((v+.28)/.70)**2+.05;
+    const d3=((u+.05)/.62)**2+((v+.55)/.62)**2+.08;
+    const base=Math.min(d0,d1,d2,d3);
+    const n=.12*Math.sin(5.7*u+2.1*v+seedOff)+.075*Math.sin(11.3*u-7.8*v+seedOff*1.7)+.045*Math.sin(23.1*u+15.7*v+2.4);
+    return base+n;
   }
   function zAt(x,y){
-    const f=field(x,y);const edge=clamp((1.03-f)/.20,0,1);const th=.006+.018*smooth(0,1,edge);
-    return .118+th+.0021*Math.sin(x*17+y*11+seedOff)+.0011*Math.sin(x*41-y*27+1.3);
+    const f=field(x,y);const edge=clamp((1.04-f)/.18,0,1);const th=.005+.017*smooth(0,1,edge);
+    return .118+th+.0018*Math.sin(x*17+y*11+seedOff)+.0009*Math.sin(x*41-y*27+1.3);
   }
   for(let j=0;j<ny;j++)for(let i=0;i<nx;i++){
     const xa=x0+sx*i/nx,xb=x0+sx*(i+1)/nx,ya=y0+sy*j/ny,yb=y0+sy*(j+1)/ny;
@@ -151,20 +156,25 @@ function buildScene(seedInput){
     const offset=(r%2)*pitchX*.5;
     for(let x=-wallW*.5+brickW*.5-offset;x<wallW*.5+brickW*.35;x+=pitchX){
       if(x<-wallW*.5-.12||x>wallW*.5+.12)continue;
-      const width=brickW*(.965+rng()*.07),height=brickH*(.975+rng()*.045),depth=brickD*(.96+rng()*.075);
-      const xx=x+(rng()-.5)*.008,yy=y+(rng()-.5)*.006;
-      const rz=(rng()-.5)*.012,ry=(rng()-.5)*.010,rx=(rng()-.5)*.005;
+      let width=brickW*(.965+rng()*.07),height=brickH*(.975+rng()*.045),depth=brickD*(.96+rng()*.075);
+      let xx=x+(rng()-.5)*.006,yy=y+(rng()-.5)*.006;
+      const left=-wallW*.5,right=wallW*.5;let mn=xx-width*.5,mx=xx+width*.5;
+      if(mx<=left||mn>=right)continue;
+      if(mn<left){width=mx-left;xx=left+width*.5;}
+      if(mx>right){width=right-mn;xx=right-width*.5;}
+      if(width<.11)continue;
+      const rz=(rng()-.5)*.010,ry=(rng()-.5)*.009,rx=(rng()-.5)*.004;
       const warm=(rng()-.5),dark=(rng()-.5),family=rng();
-      let col=[.47+.055*warm-.018*dark,.285+.035*warm-.012*dark,.205+.026*warm-.008*dark];
-      if(family>.82)col=[col[0]*.91,col[1]*.92,col[2]*.95];
-      if(family<.14)col=[col[0]*1.05,col[1]*.98,col[2]*.91];
+      let col=[.405+.070*warm-.025*dark,.235+.045*warm-.015*dark,.165+.036*warm-.012*dark];
+      if(family>.82)col=[col[0]*.86,col[1]*.88,col[2]*.93];
+      if(family<.14)col=[col[0]*1.08,col[1]*1.00,col[2]*.91];
       addRoundedBrick(M,{x:xx,y:yy,z:0,rx,ry,rz},[width,height,depth],brickIndex%17,col);brickIndex++;
     }
   }
   addBox(M,[0,-.008,.02],[wallW+.06,.055,.24],[.285,.225,.17]);
-  addPlasterPatch(M,[-2.22,-.50,1.40,2.36],1.7,[.61,.535,.42]);
-  addPlasterPatch(M,[.78,2.22,.48,2.28],4.1,[.63,.555,.445]);
-  addPlasterPatch(M,[-2.15,-1.05,.05,.78],7.4,[.59,.515,.405]);
+  addPlasterPatch(M,[-2.22,-.50,1.40,2.36],1.7,[.50,.445,.355]);
+  addPlasterPatch(M,[.78,2.22,.48,2.28],4.1,[.515,.455,.365]);
+  addPlasterPatch(M,[-2.15,-1.05,.05,.78],7.4,[.485,.43,.345]);
   addBox(M,[0,-.08,-.15],[7.0,.10,4.2],[.20,.205,.20]);
   return M;
 }
