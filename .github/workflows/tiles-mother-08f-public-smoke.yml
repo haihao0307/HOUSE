@@ -1,0 +1,67 @@
+name: Tiles Mother 08F fixed public browser smoke
+
+on:
+  push:
+    branches: [codex/tiles-08f-final-20260914]
+    paths:
+      - .github/workflows/tiles-mother-08f-public-smoke.yml
+
+jobs:
+  public-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Open fixed public 08F and exercise underside edge roof
+        env:
+          PAGE_SHA: ${{ github.sha }}
+        run: |
+          python -m pip install --quiet selenium
+          python - <<'PY'
+          import json,os,time
+          from pathlib import Path
+          from selenium import webdriver
+          from selenium.webdriver.common.by import By
+          from selenium.webdriver.support.ui import WebDriverWait
+          from selenium.webdriver.support import expected_conditions as EC
+
+          sha=os.environ['PAGE_SHA']
+          url=f'https://raw.githack.com/haihao0307/HOUSE/{sha}/tiles-mother/r2-closeout-08f-final/START_HERE.html'
+          opt=webdriver.ChromeOptions()
+          for a in ['--headless=new','--no-sandbox','--window-size=1440,1000','--use-angle=swiftshader','--enable-unsafe-swiftshader','--disable-dev-shm-usage']:
+              opt.add_argument(a)
+          d=webdriver.Chrome(options=opt)
+          try:
+              d.execute_cdp_cmd('Network.enable',{})
+              c=d.execute_cdp_cmd('Network.setCookie',{'name':'__Http-phish','value':'1','url':'https://raw.githack.com/','secure':True,'httpOnly':True,'sameSite':'Lax'})
+              if c.get('success') is False: raise RuntimeError('rawgithack confirmation cookie rejected')
+              d.get(url)
+              w=WebDriverWait(d,35)
+              w.until(lambda x:'08F' in x.title)
+              stage=w.until(EC.presence_of_element_located((By.ID,'stage')))
+              w.until(lambda x:x.execute_script('return arguments[0].width>0 && arguments[0].height>0',stage))
+              brand=d.find_element(By.CSS_SELECTOR,'.brand').text
+              if '08F' not in brand: raise RuntimeError('08F brand marker missing: '+brand)
+              if any(x.is_displayed() for x in d.find_elements(By.CSS_SELECTOR,'.fail')): raise RuntimeError('visible runtime failure panel')
+              time.sleep(2)
+              d.find_element(By.CSS_SELECTOR,'button[data-view="under"]').click(); time.sleep(1); Path('/tmp/tiles08f-under.png').write_bytes(d.get_screenshot_as_png())
+              d.find_element(By.CSS_SELECTOR,'button[data-view="edge"]').click(); d.find_element(By.ID,'shapePanel').click(); w.until(lambda x:x.find_element(By.ID,'panel').is_displayed()); time.sleep(1); Path('/tmp/tiles08f-edge.png').write_bytes(d.get_screenshot_as_png())
+              d.find_element(By.CSS_SELECTOR,'button[data-scene="roof48"]').click(); time.sleep(2); Path('/tmp/tiles08f-roof48.png').write_bytes(d.get_screenshot_as_png())
+              result={'url':url,'title':d.title,'brand':brand,'canvas':d.execute_script('return {w:innerWidth,h:innerHeight,cw:arguments[0].width,ch:arguments[0].height}',stage),'undersideView':True,'edgeView':True,'shapePanelOpened':True,'roof48Clicked':True,'screenshots':{p.name:p.stat().st_size for p in map(Path,['/tmp/tiles08f-under.png','/tmp/tiles08f-edge.png','/tmp/tiles08f-roof48.png'])}}
+              Path('/tmp/tiles08f-public.json').write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+              print(json.dumps(result,ensure_ascii=False,indent=2))
+          finally:
+              d.quit()
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: tiles-08f-public-smoke-${{ github.run_id }}
+          path: |
+            /tmp/tiles08f-public.json
+            /tmp/tiles08f-under.png
+            /tmp/tiles08f-edge.png
+            /tmp/tiles08f-roof48.png
+          retention-days: 14
