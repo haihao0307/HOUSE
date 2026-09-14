@@ -1,0 +1,176 @@
+name: Tiles Mother 08F final release verification
+
+on:
+  push:
+    branches: [codex/tiles-08f-final-20260914]
+    paths:
+      - .github/workflows/tiles-mother-08f-final-release.yml
+      - tiles-mother/r2-closeout-08f-final/shape.glsl
+      - tiles-mother/r2-closeout-08f-final/build.py
+      - tiles-mother/r2-closeout-08f-final/qa_parity_patch.py
+      - tiles-mother/r2-closeout-08f-final/solve_support_window.py
+      - tiles-mother/r2-closeout-08f-final/REFERENCE_DISTILLATION_2026-09-14.json
+
+permissions:
+  contents: write
+
+concurrency:
+  group: tiles-mother-08f-final-release
+  cancel-in-progress: false
+
+jobs:
+  verify-release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          sparse-checkout: |
+            tiles-mother/r2-closeout-08e-contact
+            tiles-mother/r2-closeout-08f-final
+
+      - name: Build exact 08F candidate
+        run: |
+          python tiles-mother/r2-closeout-08f-final/build.py
+          python tiles-mother/r2-closeout-08f-final/qa_parity_patch.py
+
+      - name: Syntax check generated page
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          text=Path('tiles-mother/r2-closeout-08f-final/START_HERE.html').read_text(encoding='utf-8')
+          m=re.search(r'<script>([\s\S]*?)</script>',text)
+          if not m: raise SystemExit('inline script not found')
+          Path('/tmp/tiles08f.js').write_text(m.group(1),encoding='utf-8')
+          PY
+          node --check /tmp/tiles08f.js
+
+      - name: Solve bilateral seats and sample retained relations
+        run: |
+          node tiles-mother/r2-closeout-08f-final/calibrate_seats_v2.cjs
+          node tiles-mother/r2-closeout-08f-final/qa_matrix.cjs || true
+
+      - name: Solve support window with numerical headroom
+        run: python tiles-mother/r2-closeout-08f-final/solve_support_window.py
+
+      - name: Final full-shell and contact QA
+        run: |
+          node tiles-mother/r2-closeout-08f-final/qa_geometry.cjs
+          node tiles-mother/r2-closeout-08f-final/qa_matrix.cjs
+
+      - name: Require full-shell geometry and all retained checks
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json,re
+          root=Path('tiles-mother/r2-closeout-08f-final')
+          contact=json.loads((root/'CONTACT_QA.json').read_text(encoding='utf-8'))
+          matrix=json.loads((root/'CONTACT_MATRIX_QA.json').read_text(encoding='utf-8'))
+          cal=json.loads((root/'SEAT_CALIBRATION.json').read_text(encoding='utf-8'))
+          build=json.loads((root/'BUILD_QA.json').read_text(encoding='utf-8'))
+          if contact.get('bottomMicroZeroLegacyStatus')!='not_applicable_after_user_full_shell_goal_2026-09-14':
+              raise SystemExit('obsolete 08D bottom-zero target not revised')
+          if not contact.get('shellFieldPresent'):
+              raise SystemExit('full-shell field missing')
+          if not contact.get('contactPassed'):
+              raise SystemExit('known contacts failed')
+          if not matrix.get('pass') or matrix.get('summary',{}).get('failed')!=0:
+              raise SystemExit('retained 54-relation matrix failed')
+          if cal.get('solverMarginMm')!=0.002:
+              raise SystemExit('solver numerical headroom missing')
+          build.update({
+              'contactPassed': True,
+              'expandedMatrixPassed': True,
+              'shellFieldPresent': True,
+              'actualContactQa': contact,
+              'contactMatrixSummary': matrix['summary'],
+              'seatCalibration': cal['solvedSeats'],
+              'panRigidAdjust': cal['panRigidAdjust'],
+              'coverRelativeRigidAdjust': cal['coverRelativeRigidAdjust'],
+              'solverMarginMm': cal['solverMarginMm'],
+              'cpuGpuSupportFieldParity': 'workflow_synchronized_and_asserted',
+              'visualApproved': False,
+              'productionApproved': False
+          })
+          (root/'BUILD_QA.json').write_text(json.dumps(build,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+          print(json.dumps({
+              'matrix':matrix['summary'],
+              'shapeEvidence':contact['shapeEvidence'],
+              'seats':cal['solvedSeats'],
+              'solverMarginMm':cal['solverMarginMm']
+          },ensure_ascii=False,indent=2))
+          PY
+
+      - name: Commit verified self-contained 08F candidate
+        run: |
+          set -eu
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add \
+            tiles-mother/r2-closeout-08f-final/START_HERE.html \
+            tiles-mother/r2-closeout-08f-final/qa_geometry.cjs \
+            tiles-mother/r2-closeout-08f-final/contact-lib.cjs \
+            tiles-mother/r2-closeout-08f-final/calibrate_seats_v2.cjs \
+            tiles-mother/r2-closeout-08f-final/qa_matrix.cjs \
+            tiles-mother/r2-closeout-08f-final/BUILD_QA.json \
+            tiles-mother/r2-closeout-08f-final/SEAT_CALIBRATION.json \
+            tiles-mother/r2-closeout-08f-final/CONTACT_QA.json \
+            tiles-mother/r2-closeout-08f-final/CONTACT_MATRIX_QA.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'build(tiles): materialize verified 08F final full-shell candidate'
+            git push origin "HEAD:refs/heads/$GITHUB_REF_NAME"
+          fi
+          echo "PAGE_SHA=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+
+      - name: Browser-check fixed public 08F
+        env:
+          PAGE_SHA: ${{ env.PAGE_SHA }}
+        run: |
+          python -m pip install --quiet selenium
+          python - <<'PY'
+          import json,os,time
+          from pathlib import Path
+          from selenium import webdriver
+          from selenium.webdriver.common.by import By
+          from selenium.webdriver.support.ui import WebDriverWait
+          sha=os.environ['PAGE_SHA']
+          url=f'https://raw.githack.com/haihao0307/HOUSE/{sha}/tiles-mother/r2-closeout-08f-final/START_HERE.html'
+          opt=webdriver.ChromeOptions()
+          for a in ['--headless=new','--no-sandbox','--window-size=1440,1000','--use-angle=swiftshader','--enable-unsafe-swiftshader','--disable-dev-shm-usage']: opt.add_argument(a)
+          d=webdriver.Chrome(options=opt)
+          try:
+              d.execute_cdp_cmd('Network.enable',{})
+              c=d.execute_cdp_cmd('Network.setCookie',{'name':'__Http-phish','value':'1','url':'https://raw.githack.com/','secure':True,'httpOnly':True,'sameSite':'Lax'})
+              if c.get('success') is False: raise RuntimeError('rawgithack confirmation cookie rejected')
+              d.get(url); w=WebDriverWait(d,30)
+              w.until(lambda x:'08F' in x.title and x.execute_script("return document.body.dataset.ready==='true'"))
+              if any(x.is_displayed() for x in d.find_elements(By.CSS_SELECTOR,'.fail')): raise RuntimeError('visible failure panel')
+              brand=d.find_element(By.CSS_SELECTOR,'.brand').text
+              d.find_element(By.CSS_SELECTOR,'button[data-view="under"]').click(); time.sleep(1); Path('/tmp/tiles08f-under.png').write_bytes(d.get_screenshot_as_png())
+              d.find_element(By.CSS_SELECTOR,'button[data-view="edge"]').click(); d.find_element(By.ID,'shapePanel').click(); time.sleep(1); Path('/tmp/tiles08f-edge.png').write_bytes(d.get_screenshot_as_png())
+              d.find_element(By.CSS_SELECTOR,'button[data-scene="roof48"]').click(); time.sleep(2); Path('/tmp/tiles08f-roof48.png').write_bytes(d.get_screenshot_as_png())
+              stage=d.find_element(By.ID,'stage')
+              result={'url':url,'title':d.title,'brand':brand,'canvas':d.execute_script('return {w:innerWidth,h:innerHeight,cw:arguments[0].width,ch:arguments[0].height}',stage),'undersideView':True,'edgeView':True,'shapePanel':True,'roof48':True}
+              Path('/tmp/tiles08f-public.json').write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+              print(json.dumps(result,ensure_ascii=False,indent=2))
+          finally: d.quit()
+          PY
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: tiles-08f-final-release-${{ github.run_id }}
+          path: |
+            /tmp/tiles08f-public.json
+            /tmp/tiles08f-under.png
+            /tmp/tiles08f-edge.png
+            /tmp/tiles08f-roof48.png
+            tiles-mother/r2-closeout-08f-final/BUILD_QA.json
+            tiles-mother/r2-closeout-08f-final/CONTACT_QA.json
+            tiles-mother/r2-closeout-08f-final/CONTACT_MATRIX_QA.json
+          retention-days: 14
+
+      - name: Print fixed public URL
+        run: echo "https://raw.githack.com/haihao0307/HOUSE/${PAGE_SHA}/tiles-mother/r2-closeout-08f-final/START_HERE.html"
