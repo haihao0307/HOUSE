@@ -1,0 +1,55 @@
+name: Tiles Mother 08F public runtime diagnostic
+
+on:
+  push:
+    branches: [codex/tiles-08f-final-20260914]
+    paths:
+      - .github/workflows/tiles-mother-08f-public-diagnostic.yml
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Open fixed public 08F and print runtime failure
+        env:
+          PAGE_SHA: ${{ github.sha }}
+        run: |
+          python -m pip install --quiet selenium
+          python - <<'PY'
+          import json,os,time
+          from pathlib import Path
+          from selenium import webdriver
+          from selenium.webdriver.common.by import By
+          from selenium.webdriver.support.ui import WebDriverWait
+          sha=os.environ['PAGE_SHA']
+          url=f'https://raw.githack.com/haihao0307/HOUSE/{sha}/tiles-mother/r2-closeout-08f-final/START_HERE.html'
+          opt=webdriver.ChromeOptions()
+          for a in ['--headless=new','--no-sandbox','--window-size=1440,1000','--use-angle=swiftshader','--enable-unsafe-swiftshader','--disable-dev-shm-usage']:
+              opt.add_argument(a)
+          opt.set_capability('goog:loggingPrefs', {'browser':'ALL'})
+          d=webdriver.Chrome(options=opt)
+          try:
+              d.execute_cdp_cmd('Network.enable',{})
+              d.execute_cdp_cmd('Network.setCookie',{'name':'__Http-phish','value':'1','url':'https://raw.githack.com/','secure':True,'httpOnly':True,'sameSite':'Lax'})
+              d.get(url)
+              WebDriverWait(d,35).until(lambda x:'08F' in x.title)
+              time.sleep(8)
+              fail=[x.text for x in d.find_elements(By.CSS_SELECTOR,'.fail') if x.is_displayed()]
+              logs=d.get_log('browser')
+              result={'url':url,'title':d.title,'fail':fail,'logs':logs}
+              Path('/tmp/tiles08f-runtime.png').write_bytes(d.get_screenshot_as_png())
+              Path('/tmp/tiles08f-runtime.json').write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+              print(json.dumps(result,ensure_ascii=False,indent=2))
+              if fail: raise SystemExit(2)
+          finally:
+              d.quit()
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: tiles-08f-runtime-diagnostic-${{ github.run_id }}
+          path: |
+            /tmp/tiles08f-runtime.json
+            /tmp/tiles08f-runtime.png
+          retention-days: 7
