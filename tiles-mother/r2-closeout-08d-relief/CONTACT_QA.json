@@ -1,0 +1,77 @@
+{
+  "version": "08D",
+  "method": "CPU double precision mirror; actual default identities, production roof tessellation, projected triangle contacts. GPU vertex checks recorded separately.",
+  "contacts": [
+    {
+      "name": "pan-cover default first pair",
+      "trianglePairs": 26253,
+      "minGapMm": -0.5222757979708794,
+      "where": [
+        -0.04509032284745226,
+        -0.11560138500513713
+      ],
+      "pass": false,
+      "strength": 0
+    },
+    {
+      "name": "left rafter-pan",
+      "trianglePairs": 12959,
+      "minGapMm": -0.3097305168461122,
+      "where": [
+        -0.10665973398282425,
+        -0.47313339805057314
+      ],
+      "pass": false,
+      "strength": 0
+    },
+    {
+      "name": "pan-cover default first pair",
+      "trianglePairs": 26257,
+      "minGapMm": -0.5222757979708794,
+      "where": [
+        -0.04509032284745226,
+        -0.11560138500513713
+      ],
+      "pass": false,
+      "strength": 1.6
+    },
+    {
+      "name": "left rafter-pan",
+      "trianglePairs": 12959,
+      "minGapMm": -0.3097305168461122,
+      "where": [
+        -0.10665973398282425,
+        -0.47313339805057314
+      ],
+      "pass": false,
+      "strength": 1.6
+    },
+    {
+      "name": "pan-cover default first pair",
+      "trianglePairs": 26276,
+      "minGapMm": -0.5222757979708794,
+      "where": [
+        -0.04509032284745226,
+        -0.11560138500513713
+      ],
+      "pass": false,
+      "strength": 3
+    },
+    {
+      "name": "left rafter-pan",
+      "trianglePairs": 12959,
+      "minGapMm": -0.3097305168461122,
+      "where": [
+        -0.10665973398282425,
+        -0.47313339805057314
+      ],
+      "pass": false,
+      "strength": 3
+    }
+  ],
+  "visualApproved": false,
+  "productionApproved": false,
+  "contactPassed": false,
+  "maxOffsetMm": 7.40791308163958,
+  "bottomOffsetMm": 0
+}
