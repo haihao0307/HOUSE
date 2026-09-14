@@ -18,7 +18,7 @@ vec3 microshape(vec3 p,vec4 meta,float seed){
  if(meta.y<.5||uMicroscope.x<=0.)return vec3(0.);
  float len=meta.y>1.5?.222:.238;
  float u=meta.w,t=clamp(p.z/len+.5,0.,1.),q=clamp(meta.z,0.,1.);
- float scale=uMicroscope.y,strength=min(uMicroscope.x,4.5);
+ float scale=uMicroscope.y,strength=min(uMicroscope.x,3.3);
 
  // One field only. No dedicated top/side/underside random state exists.
  float broad=clamp(shapeBand(p,seed,6.*scale,.0012),-1.,1.);
@@ -40,11 +40,12 @@ vec3 microshape(vec3 p,vec4 meta,float seed){
  dy*=1.-.9998*seatRail;
 
  // The same broad/middle/pore field moves the side silhouette continuously through shell thickness.
- // Wider carrier + denser side bands in build.py remove the machine-extruded side reading.
+ // The rafter rail also stabilizes horizontal seat drift, but does not flatten the visible side wall.
  float wall=16.*q*q*(1.-q)*(1.-q);
  float through=.42+.58*wall;
  float sideCarrier=smoothstep(.68,.985,abs(u));
  float dx=sign(u)*strength*(.00040*broad+.00018*middle-.00027*pores)*through*sideCarrier;
+ dx*=1.-.985*seatRail;
 
  // Front/rear lips use the same field. They keep lateral/longitudinal irregularity even when vertical overlap
  // motion is protected, so visible corners remain hand-formed instead of becoming square CNC cuts.
