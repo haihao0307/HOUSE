@@ -1,4 +1,4 @@
-name: Brick R2.14.7 Frequency Split QA
+name: Brick R2.14.7 Performance Compare
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - codex/brick-r2143-continuous-surface-20260914
 
 jobs:
-  browser-qa:
+  browser-perf:
     runs-on: ubuntu-latest
     timeout-minutes: 12
     steps:
@@ -17,75 +17,75 @@ jobs:
       - name: Install browser QA dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install playwright pillow numpy
+          pip install playwright
           python -m playwright install --with-deps chromium
-      - name: Capture R2.14.7 and report silhouette stability
+      - name: Compare startup and drag redraw cost
         shell: bash
         run: |
-          cat > /tmp/qa.py <<'PY'
+          cat > /tmp/perf.py <<'PY'
           from playwright.sync_api import sync_playwright
-          from PIL import Image
-          import numpy as np
+          from time import perf_counter
+          from statistics import median
 
-          URL='https://rawcdn.githack.com/haihao0307/HOUSE/de0092625992455e30f7584477b572efadf21775/yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/experiments/shape-edge-lab-r2-14/Brick_Shape_Edge_Lab_R2_14_7.html'
+          URLS={
+            'R2.14.5':'https://rawcdn.githack.com/haihao0307/HOUSE/14090cdc494edd71eaa9717d802a43a46151eecf/yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/experiments/shape-edge-lab-r2-14/Brick_Shape_Edge_Lab_R2_14_5.html',
+            'R2.14.7':'https://rawcdn.githack.com/haihao0307/HOUSE/de0092625992455e30f7584477b572efadf21775/yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/experiments/shape-edge-lab-r2-14/Brick_Shape_Edge_Lab_R2_14_7.html'
+          }
 
-          def silhouette_roughness(a, top=True):
-              H,W,_=a.shape
-              xs=[]; ys=[]
-              rows=np.arange(H)
-              lo,hi=(120,560) if top else (250,550)
-              for x in range(30,W-50):
-                  col=a[:,x,:].astype(np.int16)
-                  mask=((col[:,0]-col[:,1]>18)&(col[:,0]>70)&(rows>lo)&(rows<hi))
-                  hit=np.where(mask)[0]
-                  if len(hit):
-                      xs.append(x); ys.append(int(hit.min() if top else hit.max()))
-              x=np.asarray(xs,dtype=float); y=np.asarray(ys,dtype=float)
-              p=np.polyfit(x,y,2 if top else 3)
-              res=y-np.polyval(p,x)
-              return float(res.std()),float(np.percentile(np.abs(res),95)),float(np.max(np.abs(res)))
-
-          errors=[]
-          with sync_playwright() as p:
-              browser=p.chromium.launch(headless=True,args=['--use-angle=swiftshader','--enable-webgl','--ignore-gpu-blocklist'])
-              context=browser.new_context(viewport={'width':1440,'height':900},device_scale_factor=1,user_agent='Brick-Mother-QA/2.14.7')
-              context.add_cookies([{'name':'__Http-phish','value':'1','url':'https://rawcdn.githack.com/','secure':True,'httpOnly':True,'sameSite':'Lax'}])
-              page=context.new_page()
+          def one(page,label,url,round_id):
+              errors=[]
               page.on('pageerror',lambda exc: errors.append('pageerror: '+str(exc)))
               page.on('console',lambda msg: errors.append('console: '+msg.text) if msg.type=='error' else None)
-              resp=page.goto(URL,wait_until='networkidle',timeout=120000)
-              assert resp and resp.ok, f'public HTTP failed: {resp.status if resp else None}'
-              page.wait_for_timeout(5000)
-              assert 'R2.14.7' in page.title(), page.title()
-              inner=page.frame_locator('#lab')
-              canvas=inner.locator('#c')
-              canvas.wait_for(state='attached',timeout=30000)
-              ready=canvas.get_attribute('data-ready')
-              status=inner.locator('#status').inner_text()
-              err=inner.locator('#error').inner_text() if inner.locator('#error').count() else ''
-              print('STATUS',status); print('INNER_ERROR',err); print('ERRORS',errors)
-              assert ready=='true', f'canvas not ready: {ready}; status={status}; inner={err}; errors={errors}'
+              t0=perf_counter()
+              resp=page.goto(url,wait_until='domcontentloaded',timeout=120000)
+              assert resp and resp.ok
+              iframe=page.locator('#lab')
+              iframe.wait_for(state='attached',timeout=60000)
+              frame=iframe.element_handle().content_frame()
+              frame.locator('#c').wait_for(state='attached',timeout=60000)
+              frame.wait_for_function("document.querySelector('#c')?.dataset.ready === 'true'",timeout=60000)
+              ready_ms=(perf_counter()-t0)*1000
               assert not errors, errors
-              canvas.screenshot(path='/tmp/r2147-canvas.png')
-              im=np.asarray(Image.open('/tmp/r2147-canvas.png').convert('RGB')).astype(np.int16)
-              h,w,_=im.shape
-              left=im[:, :w//2]; right=im[:, w//2:w//2+left.shape[1]]
-              d=np.abs(left-right).mean(axis=2)
-              print('MEAN_ABS_PIXEL_DELTA',float(d.mean()))
-              print('CHANGED_PIXEL_FRACTION_GT4',float((d>4).mean()))
-              print('STRONG_PIXEL_FRACTION_GT10',float((d>10).mean()))
-              for label,a in [('LEFT',left),('RIGHT',right)]:
-                  ts,tp,tm=silhouette_roughness(a,True)
-                  bs,bp,bm=silhouette_roughness(a,False)
-                  print(label+'_TOP_STD',ts); print(label+'_TOP_P95ABS',tp); print(label+'_TOP_MAXABS',tm)
-                  print(label+'_BOTTOM_STD',bs); print(label+'_BOTTOM_P95ABS',bp); print(label+'_BOTTOM_MAXABS',bm)
+              canvas=frame.locator('#c')
+              box=canvas.bounding_box()
+              assert box
+              x=box['x']+box['width']*.72; y=box['y']+box['height']*.45
+              t1=perf_counter()
+              page.mouse.move(x,y)
+              page.mouse.down()
+              page.mouse.move(x+55,y+18,steps=1)
+              page.mouse.move(x+90,y+8,steps=1)
+              page.mouse.up()
+              canvas.screenshot(path=f'/tmp/{label.replace(".","")}-r{round_id}.png')
+              redraw_ms=(perf_counter()-t1)*1000
+              print(label,'ROUND',round_id,'READY_MS',ready_ms,'DRAG_AND_SCREENSHOT_MS',redraw_ms)
+              return ready_ms,redraw_ms
+
+          results={k:[] for k in URLS}
+          with sync_playwright() as p:
+              browser=p.chromium.launch(headless=True,args=['--use-angle=swiftshader','--enable-webgl','--ignore-gpu-blocklist'])
+              context=browser.new_context(viewport={'width':1440,'height':900},device_scale_factor=1,user_agent='Brick-Mother-Perf-QA')
+              context.add_cookies([{'name':'__Http-phish','value':'1','url':'https://rawcdn.githack.com/','secure':True,'httpOnly':True,'sameSite':'Lax'}])
+              # Alternate order to reduce warm-cache bias.
+              for round_id,order in [(1,['R2.14.5','R2.14.7']),(2,['R2.14.7','R2.14.5'])]:
+                  for label in order:
+                      page=context.new_page()
+                      results[label].append(one(page,label,URLS[label],round_id))
+                      page.close()
               browser.close()
+          for label,vals in results.items():
+              print(label,'MEDIAN_READY_MS',median(v[0] for v in vals),'MEDIAN_DRAG_AND_SCREENSHOT_MS',median(v[1] for v in vals))
+          b=results['R2.14.5']; c=results['R2.14.7']
+          br=median(v[0] for v in b); cr=median(v[0] for v in c)
+          bd=median(v[1] for v in b); cd=median(v[1] for v in c)
+          print('READY_RATIO_R2147_OVER_R2145',cr/br)
+          print('REDRAW_RATIO_R2147_OVER_R2145',cd/bd)
           PY
-          python /tmp/qa.py
-      - name: Upload R2.14.7 QA evidence
+          python /tmp/perf.py
+      - name: Upload comparison frames
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: brick-r2147-frequency-split-qa
-          path: /tmp/r2147-canvas.png
+          name: brick-r2147-perf-compare
+          path: /tmp/R214*-r*.png
           if-no-files-found: ignore
