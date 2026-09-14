@@ -1,0 +1,92 @@
+name: Tiles Mother 08E contact correction
+
+on:
+  push:
+    branches: [codex/tiles-08e-contact-20260914]
+    paths:
+      - .github/workflows/tiles-mother-08e-contact.yml
+      - tiles-mother/r2-closeout-08e-contact/**
+
+permissions:
+  contents: write
+
+concurrency:
+  group: tiles-mother-08e-contact
+  cancel-in-progress: false
+
+jobs:
+  verify-and-materialize:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          sparse-checkout: |
+            tiles-mother/r2-closeout-08d-relief
+            tiles-mother/r2-closeout-08e-contact
+
+      - name: Build 08E from accepted 08D baseline
+        run: python tiles-mother/r2-closeout-08e-contact/build.py
+
+      - name: Parse-check generated inline JavaScript
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          p=Path('tiles-mother/r2-closeout-08e-contact/START_HERE.html')
+          text=p.read_text(encoding='utf-8')
+          m=re.search(r'<script>([\s\S]*?)</script>', text)
+          if not m:
+              raise SystemExit('inline script not found')
+          Path('/tmp/tiles08e-inline.js').write_text(m.group(1), encoding='utf-8')
+          PY
+          node --check /tmp/tiles08e-inline.js
+
+      - name: Run exact 08D-derived contact QA on 08E seats
+        run: node tiles-mother/r2-closeout-08e-contact/qa_geometry.cjs
+
+      - name: Require corrected contacts and record actual QA
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          root=Path('tiles-mother/r2-closeout-08e-contact')
+          contact=json.loads((root/'CONTACT_QA.json').read_text(encoding='utf-8'))
+          build=json.loads((root/'BUILD_QA.json').read_text(encoding='utf-8'))
+          if not contact.get('contactPassed'):
+              raise SystemExit('08E contact QA failed')
+          bad=[x for x in contact['contacts'] if x.get('minGapMm') is not None and x['minGapMm'] < -0.05]
+          if bad:
+              raise SystemExit('penetration remains: '+json.dumps(bad, ensure_ascii=False))
+          build['automaticPredictionOnly']=False
+          build['contactPassed']=True
+          build['actualContactQa']=contact
+          (root/'BUILD_QA.json').write_text(json.dumps(build, ensure_ascii=False, indent=2)+'\n', encoding='utf-8')
+          print(json.dumps({'contactPassed':True,'contacts':contact['contacts']}, ensure_ascii=False, indent=2))
+          PY
+
+      - name: Commit generated self-contained page and QA on same branch
+        shell: bash
+        run: |
+          set -eu
+          test "$GITHUB_REF_NAME" = 'codex/tiles-08e-contact-20260914'
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add \
+            tiles-mother/r2-closeout-08e-contact/START_HERE.html \
+            tiles-mother/r2-closeout-08e-contact/qa_geometry.cjs \
+            tiles-mother/r2-closeout-08e-contact/contact-lib.cjs \
+            tiles-mother/r2-closeout-08e-contact/BUILD_QA.json \
+            tiles-mother/r2-closeout-08e-contact/CONTACT_QA.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'build(tiles): materialize verified 08E contact correction'
+            git push origin "HEAD:refs/heads/$GITHUB_REF_NAME"
+          fi
+          echo "PAGE_SHA=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+
+      - name: Print fixed public URL
+        run: |
+          echo "https://raw.githack.com/haihao0307/HOUSE/${PAGE_SHA}/tiles-mother/r2-closeout-08e-contact/START_HERE.html"
