@@ -1,4 +1,4 @@
-name: Brick R2.14.4 SDF Stability QA
+name: Brick R2.14.5 Reference Erosion QA
 
 on:
   push:
@@ -19,7 +19,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install playwright pillow numpy
           python -m playwright install --with-deps chromium
-      - name: Capture R2.14.4 and report silhouette stability
+      - name: Capture R2.14.5 and report silhouette stability
         shell: bash
         run: |
           cat > /tmp/qa.py <<'PY'
@@ -27,7 +27,7 @@ jobs:
           from PIL import Image
           import numpy as np
 
-          URL='https://rawcdn.githack.com/haihao0307/HOUSE/7337d8fe95c96e52edff4e5833e0b046f4e56f65/yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/experiments/shape-edge-lab-r2-14/Brick_Shape_Edge_Lab_R2_14_4.html'
+          URL='https://rawcdn.githack.com/haihao0307/HOUSE/14090cdc494edd71eaa9717d802a43a46151eecf/yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/experiments/shape-edge-lab-r2-14/Brick_Shape_Edge_Lab_R2_14_5.html'
 
           def silhouette_roughness(a, top=True):
               H,W,_=a.shape
@@ -48,7 +48,7 @@ jobs:
           errors=[]
           with sync_playwright() as p:
               browser=p.chromium.launch(headless=True,args=['--use-angle=swiftshader','--enable-webgl','--ignore-gpu-blocklist'])
-              context=browser.new_context(viewport={'width':1440,'height':900},device_scale_factor=1,user_agent='Brick-Mother-QA/2.14.4')
+              context=browser.new_context(viewport={'width':1440,'height':900},device_scale_factor=1,user_agent='Brick-Mother-QA/2.14.5')
               context.add_cookies([{'name':'__Http-phish','value':'1','url':'https://rawcdn.githack.com/','secure':True,'httpOnly':True,'sameSite':'Lax'}])
               page=context.new_page()
               page.on('pageerror',lambda exc: errors.append('pageerror: '+str(exc)))
@@ -56,7 +56,7 @@ jobs:
               resp=page.goto(URL,wait_until='networkidle',timeout=120000)
               assert resp and resp.ok, f'public HTTP failed: {resp.status if resp else None}'
               page.wait_for_timeout(5000)
-              assert 'R2.14.4' in page.title(), page.title()
+              assert 'R2.14.5' in page.title(), page.title()
               inner=page.frame_locator('#lab')
               canvas=inner.locator('#c')
               canvas.wait_for(state='attached',timeout=30000)
@@ -66,8 +66,8 @@ jobs:
               print('STATUS',status); print('INNER_ERROR',err); print('ERRORS',errors)
               assert ready=='true', f'canvas not ready: {ready}; status={status}; inner={err}; errors={errors}'
               assert not errors, errors
-              canvas.screenshot(path='/tmp/r2144-canvas.png')
-              im=np.asarray(Image.open('/tmp/r2144-canvas.png').convert('RGB')).astype(np.int16)
+              canvas.screenshot(path='/tmp/r2145-canvas.png')
+              im=np.asarray(Image.open('/tmp/r2145-canvas.png').convert('RGB')).astype(np.int16)
               h,w,_=im.shape
               left=im[:, :w//2]; right=im[:, w//2:w//2+left.shape[1]]
               d=np.abs(left-right).mean(axis=2)
@@ -82,10 +82,10 @@ jobs:
               browser.close()
           PY
           python /tmp/qa.py
-      - name: Upload R2.14.4 QA evidence
+      - name: Upload R2.14.5 QA evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: brick-r2144-sdf-stability-qa
-          path: /tmp/r2144-canvas.png
+          name: brick-r2145-reference-erosion-qa
+          path: /tmp/r2145-canvas.png
           if-no-files-found: ignore
