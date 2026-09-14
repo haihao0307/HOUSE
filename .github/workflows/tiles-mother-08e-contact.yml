@@ -32,6 +32,37 @@ jobs:
       - name: Solve bilateral rigid seating
         run: node tiles-mother/r2-closeout-08e-contact/calibrate_seats_v2.cjs
 
+      - name: Add sampled worst-case cover headroom
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json, re
+          root=Path('tiles-mother/r2-closeout-08e-contact')
+          p=root/'SEAT_CALIBRATION.json'
+          cal=json.loads(p.read_text(encoding='utf-8'))
+          final=cal['coverSolve']['final']
+          samples=list(final['leftSamples'])+list(final['rightSamples'])
+          worst=min(samples)
+          target=0.02
+          lift=max(0.0,target-worst)
+          seats=dict(cal['solvedSeats'])
+          seats['coverY']+=lift/1000.0
+          cal['preHeadroomWorstMm']=worst
+          cal['headroomTargetMm']=target
+          cal['safetyLiftMm']=lift
+          cal['solvedSeats']=seats
+          p.write_text(json.dumps(cal,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+          hp=root/'START_HERE.html'
+          html=hp.read_text(encoding='utf-8')
+          pattern=r'const SEATS=Object\.freeze\((\{[^\n]+\})\);'
+          replacement='const SEATS=Object.freeze('+json.dumps(seats,separators=(',',':'))+');'
+          html,n=re.subn(pattern,replacement,html,count=1)
+          if n!=1: raise SystemExit('SEATS replacement failed')
+          hp.write_text(html,encoding='utf-8',newline='')
+          print(json.dumps({'worstBeforeMm':worst,'safetyLiftMm':lift,'solvedSeats':seats},indent=2))
+          PY
+
       - name: Parse-check calibrated inline JavaScript
         shell: bash
         run: |
@@ -41,8 +72,7 @@ jobs:
           p=Path('tiles-mother/r2-closeout-08e-contact/START_HERE.html')
           text=p.read_text(encoding='utf-8')
           m=re.search(r'<script>([\s\S]*?)</script>', text)
-          if not m:
-              raise SystemExit('inline script not found')
+          if not m: raise SystemExit('inline script not found')
           Path('/tmp/tiles08e-inline.js').write_text(m.group(1), encoding='utf-8')
           PY
           node --check /tmp/tiles08e-inline.js
@@ -64,21 +94,19 @@ jobs:
           matrix=json.loads((root/'CONTACT_MATRIX_QA.json').read_text(encoding='utf-8'))
           build=json.loads((root/'BUILD_QA.json').read_text(encoding='utf-8'))
           calibration=json.loads((root/'SEAT_CALIBRATION.json').read_text(encoding='utf-8'))
-          if not contact.get('contactPassed'):
-              raise SystemExit('08E known-contact QA failed')
+          if not contact.get('contactPassed'): raise SystemExit('08E known-contact QA failed')
           bad=[x for x in contact['contacts'] if x.get('minGapMm') is not None and x['minGapMm'] < -0.05]
-          if bad:
-              raise SystemExit('known penetration remains: '+json.dumps(bad, ensure_ascii=False))
-          if not matrix.get('pass'):
-              raise SystemExit('08E expanded contact matrix failed: '+json.dumps(matrix.get('failures',[]), ensure_ascii=False))
+          if bad: raise SystemExit('known penetration remains: '+json.dumps(bad,ensure_ascii=False))
+          if not matrix.get('pass'): raise SystemExit('08E expanded contact matrix failed: '+json.dumps(matrix.get('failures',[]),ensure_ascii=False))
           build['automaticPredictionOnly']=False
           build['contactPassed']=True
           build['expandedMatrixPassed']=True
           build['actualContactQa']=contact
           build['seatCalibration']=calibration['solvedSeats']
+          build['safetyLiftMm']=calibration['safetyLiftMm']
           build['contactMatrixSummary']=matrix['summary']
-          (root/'BUILD_QA.json').write_text(json.dumps(build, ensure_ascii=False, indent=2)+'\n', encoding='utf-8')
-          print(json.dumps({'knownContactPassed':True,'matrix':matrix['summary'],'seats':calibration['solvedSeats']}, ensure_ascii=False, indent=2))
+          (root/'BUILD_QA.json').write_text(json.dumps(build,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+          print(json.dumps({'knownContactPassed':True,'matrix':matrix['summary'],'seats':calibration['solvedSeats']},ensure_ascii=False,indent=2))
           PY
 
       - name: Commit generated self-contained page and QA on same branch
@@ -103,5 +131,4 @@ jobs:
           echo "PAGE_SHA=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
 
       - name: Print fixed public URL
-        run: |
-          echo "https://raw.githack.com/haihao0307/HOUSE/${PAGE_SHA}/tiles-mother/r2-closeout-08e-contact/START_HERE.html"
+        run: echo "https://raw.githack.com/haihao0307/HOUSE/${PAGE_SHA}/tiles-mother/r2-closeout-08e-contact/START_HERE.html"
