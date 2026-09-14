@@ -1,6 +1,6 @@
 // 08F.1: unified full-shell Microscope geometry. Coordinates are metres; amplitudes are production controls,
 // not direct measurements from the scan. One stable field drives top, side wall, front/rear edge and underside.
-// Only real longitudinal overlap and rafter seating bands are protected as structural boundary conditions.
+// Only real longitudinal overlap, rafter seating and cover-flank bearing bands are protected structurally.
 uniform vec4 uMicroscope;
 float shapeBand(vec3 p,float seed,float density,float footprint){
  vec3 q=vec3(p.x+(fract(sin(seed*12.9898+78.233)*43758.5453)-.5)*.11,p.z+.40,p.y+.27);
@@ -27,17 +27,21 @@ vec3 microshape(vec3 p,vec4 meta,float seed){
  float common=.00150*broad+.00062*middle-.00138*pores;
  float dy=clamp(strength*common,-.0048,.0042);
 
- // Structural end bands are symmetric for every face and both tile types. They suppress only the vertical
- // component where consecutive tiles actually overlap; this is an assembly boundary, not a different face state.
+ // Structural end bands are symmetric for every face and both tile types. They suppress only vertical motion
+ // where consecutive tiles actually overlap; this is an assembly boundary, not a different face state.
  float frontOverlap=1.-smoothstep(.16,.28,t);
  float rearOverlap=smoothstep(.74,.86,t);
  float overlapGuard=max(frontOverlap,rearOverlap);
  dy*=1.-.9995*overlapGuard;
 
- // The only face-local exception is the narrow underside rafter seating rail. Most of the underside remains free.
+ // Narrow underside structural bands. Most of every underside still uses the full common field.
  float bottomW=smoothstep(.78,.98,q);
  float seatRail=bottomW*smoothstep(.52,.70,abs(u));
  dy*=1.-.9998*seatRail;
+ // Cover tiles physically bear on their lower flanks. Stabilize only that narrow bearing wing vertically;
+ // the central underside, side wall, top face and all non-bearing regions remain on the same field.
+ float coverFlank=step(1.5,meta.y)*bottomW*smoothstep(.60,.74,abs(u));
+ dy*=1.-.9995*coverFlank;
 
  // The same broad/middle/pore field moves the side silhouette continuously through shell thickness.
  // The rafter rail also stabilizes horizontal seat drift, but does not flatten the visible side wall.
