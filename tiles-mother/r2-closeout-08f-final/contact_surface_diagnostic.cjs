@@ -56,9 +56,11 @@ function diagnosticGap(lower,lm,upper,um){
   const summarize=t=>({ids:t.ids,meta:t.meta,local:t.local,qRange:[Math.min(...t.meta.map(m=>m[2])),Math.max(...t.meta.map(m=>m[2]))],uRange:[Math.min(...t.meta.map(m=>m[3])),Math.max(...t.meta.map(m=>m[3]))],tagRange:[Math.min(...t.meta.map(m=>m[1])),Math.max(...t.meta.map(m=>m[1]))]});
   return {trianglePairs:count,minGapMm:Number.isFinite(min)?min*1000:null,where:best&&best.where,lower:best&&summarize(best.lower),upper:best&&summarize(best.upper)};
 }
+function hashDiag(n){n=Math.imul(n^(n>>>16),0x7feb352d);n=Math.imul(n^(n>>>15),0x846ca68b);return((n^(n>>>16))>>>0)/4294967295;}
+const sidDiag=n=>3+hashDiag(n)*97;
 const cases=[];
 for(const seed of [314159,161803])for(const strength of [3,3.3]){
-  const pan=mesh('pan',sid(seed),strength,.5),cover=mesh('cover',sid(seed+389),strength,.5);
+  const pan=mesh('pan',sidDiag(seed),strength,.5),cover=mesh('cover',sidDiag(seed+389),strength,.5);
   const r=diagnosticGap(pan,A.tileModel('pan',-S.spacing*.5,S.panY,0),cover,A.tileModel('cover',0,S.coverY,S.coverPhase));
   cases.push({seed,strength,...r});
 }
