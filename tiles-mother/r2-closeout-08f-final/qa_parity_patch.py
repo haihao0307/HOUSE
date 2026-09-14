@@ -3,14 +3,16 @@ from pathlib import Path
 root = Path(__file__).resolve().parent
 
 # Synchronize the CPU contact mirror with the current 08F.1 one-field shader.
+# All visible faces share one stable broad/middle/pore field. These masks are only narrow structural
+# boundary conditions confirmed by the contact diagnostic, not alternate face generators.
 p = root / "qa_geometry.cjs"
 text = p.read_text(encoding="utf-8")
 
 old_block = "let common=.00150*b+.00062*mid-.00138*pores,rearCarrier=1-.34*smooth(.88,1,t),dy=A.clamp(strength*common*rearCarrier,-.0048,.0042);\n let bottomW=smooth(.78,.98,q),seatRail=bottomW*smooth(.58,.76,Math.abs(u));dy*=1-.994*seatRail;\n let panBearing=(m[1]<1.5?1:0)*(1-bottomW)*smooth(.72,.88,Math.abs(u)),coverBearing=(m[1]>=1.5?1:0)*bottomW*(1-smooth(.22,.44,Math.abs(u))),bearingGuard=Math.max(panBearing,coverBearing);dy*=1-.997*bearingGuard;"
-new_block = "let common=.00150*b+.00062*mid-.00138*pores,dy=A.clamp(strength*common,-.0048,.0042);\n let frontOverlap=1-smooth(.16,.28,t),rearOverlap=smooth(.74,.86,t),overlapGuard=Math.max(frontOverlap,rearOverlap);dy*=1-.9995*overlapGuard;\n let bottomW=smooth(.78,.98,q),seatRail=bottomW*smooth(.52,.70,Math.abs(u));dy*=1-.9998*seatRail;\n let coverBearingDepth=smooth(.08,.28,q),coverFlank=(m[1]>=1.5?1:0)*coverBearingDepth*smooth(.60,.74,Math.abs(u));dy*=1-.9995*coverFlank;"
+new_block = "let common=.00150*b+.00062*mid-.00138*pores,dy=A.clamp(strength*common,-.0048,.0042);\n let frontOverlap=1-smooth(.16,.28,t),rearOverlap=smooth(.74,.86,t),overlapGuard=Math.max(frontOverlap,rearOverlap);dy*=1-.9995*overlapGuard;\n let bottomW=smooth(.78,.98,q),seatRail=bottomW*smooth(.52,.70,Math.abs(u));dy*=1-.9998*seatRail;\n let panTop=1-smooth(.06,.18,q),panCoverRail=(m[1]<1.5?1:0)*panTop*smooth(.56,.62,Math.abs(u))*(1-smooth(.76,.84,Math.abs(u)));dy*=1-.9997*panCoverRail;\n let coverFlank=(m[1]>=1.5?1:0)*bottomW*smooth(.60,.74,Math.abs(u));dy*=1-.9997*coverFlank;"
 count = text.count(old_block)
 if count != 1:
-    raise SystemExit(f"08F.1 parity patch expected one old structural block, got {count}")
+    raise SystemExit(f"08F.1 parity patch expected one legacy structural block, got {count}")
 text = text.replace(old_block, new_block, 1)
 
 replacements = [
@@ -34,8 +36,9 @@ required = [
     "frontOverlap=1-smooth(.16,.28,t)",
     "rearOverlap=smooth(.74,.86,t)",
     "seatRail=bottomW*smooth(.52,.70,Math.abs(u))",
-    "coverBearingDepth=smooth(.08,.28,q)",
-    "coverFlank=(m[1]>=1.5?1:0)*coverBearingDepth*smooth(.60,.74,Math.abs(u))",
+    "panTop=1-smooth(.06,.18,q)",
+    "panCoverRail=(m[1]<1.5?1:0)*panTop*smooth(.56,.62,Math.abs(u))",
+    "coverFlank=(m[1]>=1.5?1:0)*bottomW*smooth(.60,.74,Math.abs(u))",
     "dx*=1-.985*seatRail",
     "edgeField=.00031*b+.00015*mid-.00021*pores",
 ]
@@ -47,9 +50,9 @@ for obsolete in ["underPores", "sideField=A.clamp", "bodyDy=strength", "topDy=st
         raise SystemExit(f"08F.1 still contains obsolete face-specific geometry state: {obsolete}")
 
 p.write_text(text, encoding="utf-8", newline="")
-print("08F.1 CPU mirror synchronized: one field + overlap/rafter/lower-side cover bearing guards")
+print("08F.1 CPU mirror synchronized: one field + diagnostic-confirmed mating-strip guards")
 
-# Official weaker/middle/stronger envelope: 2.2 / 3.0 / 3.3. Middle is the user's screenshot state.
+# Official weaker/middle/stronger envelope. The user's screenshots define the middle state exactly.
 for name in ["calibrate_seats_v2.cjs", "qa_matrix.cjs"]:
     fp = root / name
     s = fp.read_text(encoding="utf-8")
