@@ -1,0 +1,42 @@
+name: Brick R2.14.2 Exact Handoff Verify
+
+on:
+  push:
+    branches:
+      - codex/brick-r2143-continuous-surface-20260914
+    paths:
+      - .github/workflows/brick-r2142-handoff-package-verify.yml
+
+jobs:
+  exact-package:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Checkout exact handoff commit
+        uses: actions/checkout@v4
+        with:
+          ref: 73ffd9ee56096b95dac658c3227f86bac6eba18d
+          fetch-depth: 1
+      - name: Verify exact R2.14.2 package
+        shell: bash
+        run: |
+          set -euo pipefail
+          PKG=BRICK_MOTHER_FULL_HANDOFF_R2_14_2_2026-09-14.zip
+          test -f "$PKG"
+          sha256sum "$PKG" | tee /tmp/BRICK_R2142_SHA256.txt
+          unzip -t "$PKG" | tee /tmp/BRICK_R2142_UNZIP_TEST.txt
+          mkdir -p /tmp/brick-r2142-extracted
+          unzip -q "$PKG" -d /tmp/brick-r2142-extracted
+          find /tmp/brick-r2142-extracted -type f -printf '%P\t%s bytes\n' | sort > /tmp/BRICK_R2142_MANIFEST.txt
+          echo 'FILES:' $(wc -l < /tmp/BRICK_R2142_MANIFEST.txt)
+          head -80 /tmp/BRICK_R2142_MANIFEST.txt
+      - name: Upload exact package and verification
+        uses: actions/upload-artifact@v4
+        with:
+          name: brick-r2142-exact-handoff
+          path: |
+            BRICK_MOTHER_FULL_HANDOFF_R2_14_2_2026-09-14.zip
+            /tmp/BRICK_R2142_SHA256.txt
+            /tmp/BRICK_R2142_UNZIP_TEST.txt
+            /tmp/BRICK_R2142_MANIFEST.txt
+          if-no-files-found: error
