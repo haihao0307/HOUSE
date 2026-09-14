@@ -1,0 +1,125 @@
+{
+  "version": "08E",
+  "sourceVersion": "08D",
+  "scope": "rigid seating correction only; 08D tile geometry, Microscope field, PBR, dimensions and layout are unchanged",
+  "targetClearanceMm": 0.02,
+  "sourceRecordedContactsMm": {
+    "leftRafterPan": -0.3097305168461122,
+    "panCoverDefaultFirstPair": -0.5222757979708794
+  },
+  "seatDeltaMm": {
+    "panY": 0.3297305168461122,
+    "coverY": 0.8720063148169916
+  },
+  "oldSeats": {
+    "step": 0.198,
+    "spacing": 0.242,
+    "rafterRadius": 0.023,
+    "panY": 0.005078458743291489,
+    "panAngle": 0.11500000000000007,
+    "panRoll": 0.0014608644540637082,
+    "coverY": 0.03861105347105794,
+    "coverAngle": 0.05000000000000002,
+    "coverRoll": 0.06122098204075048,
+    "coverPhase": -0.044
+  },
+  "newSeats": {
+    "step": 0.198,
+    "spacing": 0.242,
+    "rafterRadius": 0.023,
+    "panY": 0.0054081892601376014,
+    "panAngle": 0.11500000000000007,
+    "panRoll": 0.0014608644540637082,
+    "coverY": 0.039483059785874935,
+    "coverAngle": 0.05000000000000002,
+    "coverRoll": 0.06122098204075048,
+    "coverPhase": -0.044
+  },
+  "predictedContactsMm": {
+    "leftRafterPanMm": 0.020000000000000018,
+    "panCoverMm": 0.020000000000000018
+  },
+  "sourceHtmlSha256": "ab1b49e3097ca9e8f6f97db78565ad90cc5daf0ff1be9bba058961646efe893f",
+  "outputHtmlSha256": "da80d1b038c379e47d3a8a9c2678dfcc1ea54dc454b7df881dfb182274dc2bd0",
+  "automaticPredictionOnly": false,
+  "contactPassed": true,
+  "visualApproved": false,
+  "productionApproved": false,
+  "actualContactQa": {
+    "version": "08E",
+    "method": "CPU double precision mirror; actual default identities, production roof tessellation, projected triangle contacts. GPU vertex checks recorded separately.",
+    "contacts": [
+      {
+        "name": "pan-cover default first pair",
+        "trianglePairs": 26253,
+        "minGapMm": 0.019998412631165585,
+        "where": [
+          -0.04509032284745226,
+          -0.11560138500513713
+        ],
+        "pass": true,
+        "strength": 0
+      },
+      {
+        "name": "left rafter-pan",
+        "trianglePairs": 12959,
+        "minGapMm": 0.020000049744912235,
+        "where": [
+          -0.10665973398282425,
+          -0.47313339805057314
+        ],
+        "pass": true,
+        "strength": 0
+      },
+      {
+        "name": "pan-cover default first pair",
+        "trianglePairs": 26257,
+        "minGapMm": 0.019998412631165585,
+        "where": [
+          -0.04509032284745226,
+          -0.11560138500513713
+        ],
+        "pass": true,
+        "strength": 1.6
+      },
+      {
+        "name": "left rafter-pan",
+        "trianglePairs": 12959,
+        "minGapMm": 0.020000049744912235,
+        "where": [
+          -0.10665973398282425,
+          -0.47313339805057314
+        ],
+        "pass": true,
+        "strength": 1.6
+      },
+      {
+        "name": "pan-cover default first pair",
+        "trianglePairs": 26276,
+        "minGapMm": 0.019998412631165585,
+        "where": [
+          -0.04509032284745226,
+          -0.11560138500513713
+        ],
+        "pass": true,
+        "strength": 3
+      },
+      {
+        "name": "left rafter-pan",
+        "trianglePairs": 12959,
+        "minGapMm": 0.020000049744912235,
+        "where": [
+          -0.10665973398282425,
+          -0.47313339805057314
+        ],
+        "pass": true,
+        "strength": 3
+      }
+    ],
+    "visualApproved": false,
+    "productionApproved": false,
+    "contactPassed": true,
+    "maxOffsetMm": 7.40791308163958,
+    "bottomOffsetMm": 0
+  }
+}
