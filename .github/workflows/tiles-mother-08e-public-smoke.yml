@@ -43,7 +43,10 @@ jobs:
           driver=webdriver.Chrome(options=opt)
           try:
               driver.execute_cdp_cmd('Network.enable',{})
-              cookie=driver.execute_cdp_cmd('Network.setCookie',{'name':'__Http-phish','value':'1','url':'https://raw.githack.com/'})
+              cookie=driver.execute_cdp_cmd('Network.setCookie',{
+                  'name':'__Http-phish','value':'1','url':'https://raw.githack.com/',
+                  'secure':True,'httpOnly':True,'sameSite':'Lax'
+              })
               if cookie.get('success') is False: raise RuntimeError('CDP cookie rejected')
               driver.get(url)
               wait=WebDriverWait(driver,25)
