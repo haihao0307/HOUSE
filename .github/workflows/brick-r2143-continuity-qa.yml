@@ -1,0 +1,72 @@
+name: Brick R2.14.3 Continuity QA
+
+on:
+  push:
+    branches:
+      - codex/brick-r2143-continuous-surface-20260914
+
+jobs:
+  browser-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install browser QA dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install playwright pillow numpy
+          python -m playwright install --with-deps chromium
+      - name: Capture R2.14.3 and report visible delta
+        shell: bash
+        run: |
+          cat > /tmp/qa.py <<'PY'
+          from playwright.sync_api import sync_playwright
+          from PIL import Image
+          import numpy as np
+
+          URL='https://rawcdn.githack.com/haihao0307/HOUSE/fd0aba99d4c715923cf836df77be38fb9d19b62e/yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/experiments/shape-edge-lab-r2-14/Brick_Shape_Edge_Lab_R2_14_3.html'
+          errors=[]
+          with sync_playwright() as p:
+              browser=p.chromium.launch(headless=True,args=['--use-angle=swiftshader','--enable-webgl','--ignore-gpu-blocklist'])
+              context=browser.new_context(viewport={'width':1440,'height':900},device_scale_factor=1,user_agent='Brick-Mother-QA/2.14.3')
+              context.add_cookies([{'name':'__Http-phish','value':'1','url':'https://rawcdn.githack.com/','secure':True,'httpOnly':True,'sameSite':'Lax'}])
+              page=context.new_page()
+              page.on('pageerror',lambda exc: errors.append('pageerror: '+str(exc)))
+              page.on('console',lambda msg: errors.append('console: '+msg.text) if msg.type=='error' else None)
+              resp=page.goto(URL,wait_until='networkidle',timeout=120000)
+              assert resp and resp.ok, f'public HTTP failed: {resp.status if resp else None}'
+              page.wait_for_timeout(5000)
+              assert 'R2.14.3' in page.title(), page.title()
+              inner=page.frame_locator('#lab')
+              canvas=inner.locator('#c')
+              canvas.wait_for(state='attached',timeout=30000)
+              ready=canvas.get_attribute('data-ready')
+              status=inner.locator('#status').inner_text()
+              err=inner.locator('#error').inner_text() if inner.locator('#error').count() else ''
+              print('STATUS',status)
+              print('INNER_ERROR',err)
+              print('ERRORS',errors)
+              assert ready=='true', f'canvas not ready: {ready}; status={status}; inner={err}; errors={errors}'
+              assert not errors, errors
+              canvas.screenshot(path='/tmp/r2143-canvas.png')
+              im=np.asarray(Image.open('/tmp/r2143-canvas.png').convert('RGB')).astype(np.int16)
+              h,w,_=im.shape
+              left=im[:, :w//2]
+              right=im[:, w//2:w//2+left.shape[1]]
+              d=np.abs(left-right).mean(axis=2)
+              print('MEAN_ABS_PIXEL_DELTA',float(d.mean()))
+              print('CHANGED_PIXEL_FRACTION_GT4',float((d>4).mean()))
+              print('STRONG_PIXEL_FRACTION_GT10',float((d>10).mean()))
+              browser.close()
+          PY
+          python /tmp/qa.py
+      - name: Upload R2.14.3 QA evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: brick-r2143-continuity-qa
+          path: /tmp/r2143-canvas.png
+          if-no-files-found: ignore
