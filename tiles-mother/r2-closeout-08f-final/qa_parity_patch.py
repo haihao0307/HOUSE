@@ -3,8 +3,6 @@ from pathlib import Path
 root = Path(__file__).resolve().parent
 
 # Synchronize the CPU contact mirror with the current 08F.1 one-field shader.
-# The patch removes the old asymmetric pan/cover bearing guards and replaces them with one symmetric
-# front/rear overlap guard plus the narrow underside rafter rail.
 p = root / "qa_geometry.cjs"
 text = p.read_text(encoding="utf-8")
 
@@ -16,12 +14,14 @@ if count != 1:
 text = text.replace(old_block, new_block, 1)
 
 replacements = [
+    ("strength=Math.min(strength,4.5);", "strength=Math.min(strength,3.3);"),
     ("sideCarrier=smooth(.72,.985,Math.abs(u))", "sideCarrier=smooth(.68,.985,Math.abs(u))"),
-    ("(.00042*b+.00018*mid-.00030*pores)", "(.00040*b+.00018*mid-.00027*pores)"),
+    ("let dx=Math.sign(u)*strength*(.00042*b+.00018*mid-.00030*pores)*through*sideCarrier;", "let dx=Math.sign(u)*strength*(.00040*b+.00018*mid-.00027*pores)*through*sideCarrier;dx*=1-.985*seatRail;"),
     ("rearLip=smooth(.88,.98,t)", "rearLip=smooth(.84,.98,t)"),
     ("cornerCarry=.34+.66*(1-smooth(.72,.96,Math.abs(u)))", "cornerCarry=.38+.62*(1-smooth(.70,.96,Math.abs(u)))"),
     ("edgeField=.00034*b+.00015*mid-.00024*pores", "edgeField=.00031*b+.00015*mid-.00021*pores"),
     ("(front+.24*rearLip)", "(front+.05*rearLip)"),
+    ("for(const strength of [0,3,4.2])", "for(const strength of [0,3,3.3])"),
 ]
 for old, new in replacements:
     count = text.count(old)
@@ -34,6 +34,7 @@ required = [
     "frontOverlap=1-smooth(.16,.28,t)",
     "rearOverlap=smooth(.74,.86,t)",
     "seatRail=bottomW*smooth(.52,.70,Math.abs(u))",
+    "dx*=1-.985*seatRail",
     "edgeField=.00031*b+.00015*mid-.00021*pores",
 ]
 for marker in required:
@@ -44,10 +45,18 @@ for obsolete in ["underPores", "sideField=A.clamp", "bodyDy=strength", "topDy=st
         raise SystemExit(f"08F.1 still contains obsolete face-specific geometry state: {obsolete}")
 
 p.write_text(text, encoding="utf-8", newline="")
-print("08F.1 CPU mirror synchronized: one field + symmetric overlap guard + rafter rail")
+print("08F.1 CPU mirror synchronized: one field + symmetric overlap guard + stabilized rafter rail")
+
+# The official weaker/middle/stronger envelope is 2.2 / 3.0 / 3.3. Middle is the user's screenshot state.
+for name in ["calibrate_seats_v2.cjs", "qa_matrix.cjs"]:
+    fp = root / name
+    s = fp.read_text(encoding="utf-8")
+    s = s.replace("[0,3,4.2]", "[0,3,3.3]")
+    s = s.replace("stronger 4.2", "stronger 3.3")
+    fp.write_text(s, encoding="utf-8", newline="")
 
 # The 08E fragment already defines kilnDelta immediately before the replaced colour block.
-# Reuse that declaration so real GLSL compilation succeeds.
+# Reuse that declaration so real GLSL compilation succeeds, then set the user-facing envelope.
 hp = root / "START_HERE.html"
 html = hp.read_text(encoding="utf-8")
 marker = "   float kilnDelta=(tint-.5)*uColor.z;"
@@ -55,5 +64,7 @@ count = html.count(marker)
 if count != 2:
     raise SystemExit(f"08F.1 colour compile patch expected exactly two kilnDelta declarations, got {count}")
 html = html.replace(marker, "", 1)
+html = html.replace('id="micStrength" type="range" min="0" max="4.5"', 'id="micStrength" type="range" min="0" max="3.3"', 1)
+html = html.replace('<button data-shape="1.8">较弱</button><button data-shape="3">中值</button><button data-shape="4.2">较强</button>', '<button data-shape="2.2">较弱</button><button data-shape="3">中值</button><button data-shape="3.3">较强</button>', 1)
 hp.write_text(html, encoding="utf-8", newline="")
-print("08F.1 fragment compile patch: reused existing kilnDelta declaration")
+print("08F.1 public envelope: weaker 2.2 / user middle 3.0 / stronger 3.3")
