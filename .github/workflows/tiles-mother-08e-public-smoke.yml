@@ -42,8 +42,9 @@ jobs:
           opt.add_argument('--disable-dev-shm-usage')
           driver=webdriver.Chrome(options=opt)
           try:
-              driver.get('https://raw.githack.com/')
-              driver.add_cookie({'name':'__Http-phish','value':'1','path':'/'})
+              driver.execute_cdp_cmd('Network.enable',{})
+              cookie=driver.execute_cdp_cmd('Network.setCookie',{'name':'__Http-phish','value':'1','url':'https://raw.githack.com/'})
+              if cookie.get('success') is False: raise RuntimeError('CDP cookie rejected')
               driver.get(url)
               wait=WebDriverWait(driver,25)
               wait.until(lambda d: '08E' in d.title)
