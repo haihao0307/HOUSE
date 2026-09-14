@@ -23,7 +23,7 @@ jobs:
         run: |
           cat > /tmp/qa.py <<'PY'
           from playwright.sync_api import sync_playwright
-          URL='https://rawcdn.githack.com/haihao0307/HOUSE/de5e780a0b9c854bc47a3a28bbad6ef71f1291cd/yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/experiments/wall-lab-r1/Brick_Wall_Plaster_Workbench_R1.html'
+          URL='https://rawcdn.githack.com/haihao0307/HOUSE/697dbc6d41806e482cc7085bd4740255ec438b94/yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/experiments/wall-lab-r1/Brick_Wall_Plaster_Workbench_R1.html'
           errors=[]
           with sync_playwright() as p:
               browser=p.chromium.launch(headless=True,args=['--use-angle=swiftshader','--enable-webgl','--ignore-gpu-blocklist'])
