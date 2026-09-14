@@ -1,0 +1,31 @@
+name: Tiles Mother 08F.1 contact surface diagnostic
+
+on:
+  push:
+    branches: [codex/tiles-08f1-final-20260914]
+    paths:
+      - .github/workflows/tiles-mother-08f1-contact-surface-diagnostic.yml
+      - tiles-mother/r2-closeout-08f-final/contact_surface_diagnostic.cjs
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          sparse-checkout: |
+            tiles-mother/r2-closeout-08e-contact
+            tiles-mother/r2-closeout-08f-final
+      - name: Build current 08F.1 CPU mirror
+        run: |
+          python tiles-mother/r2-closeout-08f-final/build.py
+          python tiles-mother/r2-closeout-08f-final/qa_parity_patch.py
+      - name: Identify exact triangles and meta at failing left contact
+        run: node tiles-mother/r2-closeout-08f-final/contact_surface_diagnostic.cjs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tiles-08f1-contact-surface-${{ github.run_id }}
+          path: tiles-mother/r2-closeout-08f-final/CONTACT_SURFACE_DIAGNOSTIC.json
+          retention-days: 7
