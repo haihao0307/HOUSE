@@ -27,7 +27,7 @@ jobs:
           from PIL import Image
           import numpy as np
 
-          URL='https://rawcdn.githack.com/haihao0307/HOUSE/1bc086edff31d2f779e28e5cf9df224cf9af71fc/yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/experiments/shape-edge-lab-r2-14/Brick_Shape_Edge_Lab_R2_14_4.html'
+          URL='https://rawcdn.githack.com/haihao0307/HOUSE/7337d8fe95c96e52edff4e5833e0b046f4e56f65/yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/experiments/shape-edge-lab-r2-14/Brick_Shape_Edge_Lab_R2_14_4.html'
 
           def silhouette_roughness(a, top=True):
               H,W,_=a.shape
