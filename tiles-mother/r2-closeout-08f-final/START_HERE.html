@@ -510,7 +510,7 @@ void main(){
    MicroSurface micro=microscopeSurface(p,seed);
    float skin=smoothstep(.05,.92,vMeta.x);
    float individual=clamp(.50+(tint-.5)*uColor.z,0.,1.);
-   float kilnDelta=(tint-.5)*uColor.z;
+
    // 08F scan-guided palette breadth. The photogrammetry diffuse contains lighting/shadow;
    // use it only to widen stable colour families, never as measured albedo or a texture dependency.
    float kilnDelta=(tint-.5)*uColor.z;
