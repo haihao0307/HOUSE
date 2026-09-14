@@ -1,0 +1,61 @@
+{
+  "package": "讲武堂瓦片精细(4).zip",
+  "sourceReadVerified": true,
+  "referenceFiles": {
+    "01.fbx": {
+      "sha256": "74053fe0a5978bd43e2d83dede03007a732bb3c4e625915161ecc1bbe56da3f9",
+      "bytes": 349088
+    },
+    "01_u1_v1_diffuse.png": {
+      "sha256": "ad6917cba05c4e6de7319efa85bd088f6e5c4c2bc0b2c296896ab48a2301db61",
+      "pixels": [7000, 7000],
+      "bytes": 58273168
+    },
+    "01_u1_v1_normal.png": {
+      "sha256": "1839a0763e6342ce5bfd3ee98b7c7282a0aeb88f30925312fa78c23aa68dc5ee",
+      "pixels": [2500, 2500],
+      "bytes": 96199
+    },
+    "01.fbx.rsInfo": {
+      "sha256": "028e3f022cffa7c9ef8b51e64ef22d417cc716b55aab49ff23ba8724436489cb",
+      "bytes": 2246
+    }
+  },
+  "meshRead": {
+    "vertices": 4901,
+    "triangles": 9508,
+    "fbxVersion": 7700,
+    "creator": "RealityScan / FBX SDK 2020.3.7",
+    "uvDirectCount": 8159
+  },
+  "colorEvidence": {
+    "method": "Area-weighted face-centroid samples through the FBX UV mapping. Very dark scan samples with luminance <= 0.06 were excluded from palette clustering.",
+    "filteredMeshAreaFraction": 0.899059,
+    "palette7": [
+      {"areaFraction":0.226139,"rgb_srgb":[0.545544,0.534137,0.535584],"lab":[57.0353,1.1489,0.1882]},
+      {"areaFraction":0.224320,"rgb_srgb":[0.458787,0.421417,0.399573],"lab":[46.1106,2.6831,4.4647]},
+      {"areaFraction":0.160786,"rgb_srgb":[0.168597,0.123482,0.086268],"lab":[13.0900,3.9096,8.6009]},
+      {"areaFraction":0.130467,"rgb_srgb":[0.285836,0.250561,0.219451],"lab":[27.7153,2.3451,6.2735]},
+      {"areaFraction":0.106131,"rgb_srgb":[0.263526,0.282206,0.306024],"lab":[30.3533,-0.4985,-4.2883]},
+      {"areaFraction":0.091734,"rgb_srgb":[0.461853,0.338677,0.250723],"lab":[39.4444,9.8895,18.1175]},
+      {"areaFraction":0.060423,"rgb_srgb":[0.361940,0.194451,0.060857],"lab":[25.4819,16.4108,28.8664]}
+    ],
+    "orientationMeans": {
+      "top": {"meshAreaFractionAmongFiltered":0.604980,"meanRgb_srgb":[0.444067,0.408637,0.390434],"meanLab":[44.5142,3.1733,4.1177]},
+      "bottom": {"meshAreaFractionAmongFiltered":0.071047,"meanRgb_srgb":[0.207911,0.164963,0.123083],"meanLab":[17.8382,3.7528,8.1146]},
+      "side": {"meshAreaFractionAmongFiltered":0.323973,"meanRgb_srgb":[0.310917,0.260882,0.213895],"meanLab":[28.9795,4.2379,9.3544]}
+    },
+    "usageLimit": "The photogrammetry diffuse contains illumination and shadow. These values are evidence for color-family breadth and relative ordering, not measured material albedo or exact rendered ratios."
+  },
+  "geometryEvidence": {
+    "observation": "The scan visibly contains front, underside and side/edge surfaces across multiple curved and pan tiles. Side and underside surfaces carry irregular form rather than an ideal extruded shell.",
+    "physicalScaleAssumed": false,
+    "scaleReason": "The scan scale is not used to claim millimetre amplitudes for the production tile. Only continuity, topology and relative variation are distilled."
+  },
+  "productionImplication": {
+    "newGoal": "Extend the existing real geometry field continuously through top, side/edge and underside while retaining contact constraints.",
+    "old08DBottomMicroZero": "not_applicable_as_current_acceptance_target",
+    "contactChecks": "retain_and_re-run",
+    "absoluteAmplitude": "design_control_until_directly_measured"
+  }
+}
