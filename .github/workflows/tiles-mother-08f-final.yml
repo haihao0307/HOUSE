@@ -7,6 +7,7 @@ on:
       - .github/workflows/tiles-mother-08f-final.yml
       - tiles-mother/r2-closeout-08f-final/build.py
       - tiles-mother/r2-closeout-08f-final/shape.glsl
+      - tiles-mother/r2-closeout-08f-final/qa_parity_patch.py
       - tiles-mother/r2-closeout-08f-final/REFERENCE_DISTILLATION_2026-09-14.json
 
 permissions:
@@ -30,6 +31,9 @@ jobs:
 
       - name: Build 08F from verified 08E baseline
         run: python tiles-mother/r2-closeout-08f-final/build.py
+
+      - name: Synchronize CPU QA mirror with actual 08F seating-rail field
+        run: python tiles-mother/r2-closeout-08f-final/qa_parity_patch.py
 
       - name: Parse-check generated inline JavaScript
         shell: bash
@@ -141,6 +145,7 @@ jobs:
           build['seatCalibration']=cal['solvedSeats']
           build['panRigidAdjust']=cal['panRigidAdjust']
           build['coverRelativeRigidAdjust']=cal['coverRelativeRigidAdjust']
+          build['cpuGpuSupportFieldParity']='workflow_synchronized_and_asserted'
           (root/'BUILD_QA.json').write_text(json.dumps(build,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
           print(json.dumps({'shellFieldPresent':True,'contactMatrix':matrix['summary'],'shapeEvidence':contact['shapeEvidence'],'seats':cal['solvedSeats']},ensure_ascii=False,indent=2))
           PY
