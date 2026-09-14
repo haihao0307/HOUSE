@@ -1,3 +1,4 @@
+// Final rerun anchor after exact contact-surface diagnostic: pan top q=0, |u|~.60-.70 mates with cover underside q~1.
 // 08F.1: unified full-shell Microscope geometry. Coordinates are metres; amplitudes are production controls,
 // not direct measurements from the scan. One stable field drives top, side wall, front/rear edge and underside.
 // Only real longitudinal overlap, rafter seating, pan-cover bearing and cover-flank bearing bands are protected structurally.
