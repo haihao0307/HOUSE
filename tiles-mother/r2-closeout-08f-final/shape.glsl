@@ -34,13 +34,14 @@ vec3 microshape(vec3 p,vec4 meta,float seed){
  float overlapGuard=max(frontOverlap,rearOverlap);
  dy*=1.-.9995*overlapGuard;
 
- // Narrow underside structural bands. Most of every underside still uses the full common field.
+ // Narrow structural bands. Most of every underside and side wall still uses the full common field.
  float bottomW=smoothstep(.78,.98,q);
  float seatRail=bottomW*smoothstep(.52,.70,abs(u));
  dy*=1.-.9998*seatRail;
- // Cover tiles physically bear on their lower flanks. Stabilize only that narrow bearing wing vertically;
- // the central underside, side wall, top face and all non-bearing regions remain on the same field.
- float coverFlank=step(1.5,meta.y)*bottomW*smoothstep(.60,.74,abs(u));
+ // The actual cover-to-pan bearing wing spans the lower sidewall into the underside, not q==1 alone.
+ // Protect only vertical motion there; lateral silhouette remains driven by the common field.
+ float coverBearingDepth=smoothstep(.08,.28,q);
+ float coverFlank=step(1.5,meta.y)*coverBearingDepth*smoothstep(.60,.74,abs(u));
  dy*=1.-.9995*coverFlank;
 
  // The same broad/middle/pore field moves the side silhouette continuously through shell thickness.
