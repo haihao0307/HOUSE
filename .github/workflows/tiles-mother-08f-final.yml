@@ -48,35 +48,43 @@ jobs:
       - name: Solve bilateral rigid seating with new full-shell geometry
         run: node tiles-mother/r2-closeout-08f-final/calibrate_seats_v2.cjs
 
-      - name: Sample all retained contact relations before final headroom
+      - name: Sample all retained contact relations before final rigid adjustment
         shell: bash
         run: node tiles-mother/r2-closeout-08f-final/qa_matrix.cjs || true
 
-      - name: Add only sampled worst-case rigid headroom
+      - name: Solve feasible rigid adjustment from all retained support relations
         shell: bash
         run: |
           python - <<'PY'
           from pathlib import Path
-          import json,re
+          import json,re,statistics
           root=Path('tiles-mother/r2-closeout-08f-final')
           matrix=json.loads((root/'CONTACT_MATRIX_QA.json').read_text(encoding='utf-8'))
           cal=json.loads((root/'SEAT_CALIBRATION.json').read_text(encoding='utf-8'))
+          lower=-0.05
+          upper=0.50
           target=0.02
           support=[x for x in matrix['checks'] if x.get('minGapMm') is not None]
           rafter=[x['minGapMm'] for x in support if x['group']=='rafter-pan']
           pan_cover=[x['minGapMm'] for x in support if x['group']=='pan-cover']
-          if not rafter or not pan_cover: raise SystemExit('missing support groups in pre-headroom matrix')
-          worst_rafter=min(rafter); worst_pan_cover=min(pan_cover)
-          pan_lift=max(0.0,target-worst_rafter)
-          cover_relative_lift=max(0.0,target-worst_pan_cover)
+          if not rafter or not pan_cover: raise SystemExit('missing support groups in pre-adjustment matrix')
+          def solve(values,label):
+              lo=max(lower-g for g in values)
+              hi=min(upper-g for g in values)
+              if lo>hi+1e-9:
+                  raise SystemExit(f'{label} has no feasible common rigid adjustment: interval [{lo:.6f},{hi:.6f}] mm; geometry field must be fixed, not hidden by translation')
+              desired=target-statistics.mean(values)
+              delta=max(lo,min(hi,desired))
+              return {'minInputMm':min(values),'maxInputMm':max(values),'feasibleIntervalMm':[lo,hi],'desiredMm':desired,'chosenMm':delta}
+          pan=solve(rafter,'rafter-pan')
+          rel=solve(pan_cover,'pan-cover relative')
           seats=dict(cal['solvedSeats'])
-          seats['panY']+=pan_lift/1000.0
-          seats['coverY']+=(pan_lift+cover_relative_lift)/1000.0
-          cal['preHeadroomWorstRafterMm']=worst_rafter
-          cal['preHeadroomWorstPanCoverMm']=worst_pan_cover
-          cal['headroomTargetMm']=target
-          cal['panSafetyLiftMm']=pan_lift
-          cal['coverRelativeSafetyLiftMm']=cover_relative_lift
+          seats['panY']+=pan['chosenMm']/1000.0
+          seats['coverY']+=(pan['chosenMm']+rel['chosenMm'])/1000.0
+          cal['supportWindowMm']=[lower,upper]
+          cal['targetMm']=target
+          cal['panRigidAdjust']=pan
+          cal['coverRelativeRigidAdjust']=rel
           cal['solvedSeats']=seats
           (root/'SEAT_CALIBRATION.json').write_text(json.dumps(cal,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
           hp=root/'START_HERE.html'; html=hp.read_text(encoding='utf-8')
@@ -85,7 +93,7 @@ jobs:
           html,n=re.subn(pattern,replacement,html,count=1)
           if n!=1: raise SystemExit('SEATS replacement failed')
           hp.write_text(html,encoding='utf-8',newline='')
-          print(json.dumps({'worstRafterMm':worst_rafter,'worstPanCoverMm':worst_pan_cover,'panSafetyLiftMm':pan_lift,'coverRelativeSafetyLiftMm':cover_relative_lift,'seats':seats},indent=2))
+          print(json.dumps({'panRigidAdjust':pan,'coverRelativeRigidAdjust':rel,'seats':seats},indent=2))
           PY
 
       - name: Parse-check calibrated page
@@ -131,8 +139,8 @@ jobs:
           build['actualContactQa']=contact
           build['contactMatrixSummary']=matrix['summary']
           build['seatCalibration']=cal['solvedSeats']
-          build['panSafetyLiftMm']=cal['panSafetyLiftMm']
-          build['coverRelativeSafetyLiftMm']=cal['coverRelativeSafetyLiftMm']
+          build['panRigidAdjust']=cal['panRigidAdjust']
+          build['coverRelativeRigidAdjust']=cal['coverRelativeRigidAdjust']
           (root/'BUILD_QA.json').write_text(json.dumps(build,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
           print(json.dumps({'shellFieldPresent':True,'contactMatrix':matrix['summary'],'shapeEvidence':contact['shapeEvidence'],'seats':cal['solvedSeats']},ensure_ascii=False,indent=2))
           PY
