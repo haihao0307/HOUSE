@@ -1,0 +1,27 @@
+{
+  "package": "Tiles_Mother_Full_Handoff_08D_2026-09-14.zip",
+  "bytes": 4202516,
+  "files": 42,
+  "sha256": "5d8dd0f33bc6183d32f6cbfb1bee0e290e43330e222b5179db81c96b9003cd03",
+  "zipCrcPassed": true,
+  "internalSha256Passed": true,
+  "rebuildByteIdentical": true,
+  "source": {
+    "repository": "haihao0307/HOUSE",
+    "branch": "codex/tiles-08c-review-20260914",
+    "sourceCommit": "17f3c3b7f2dd2627243708949acce2da0657e1c9",
+    "publicCommit": "d3f5a1fc7683daf9838f67957e55b549319a92ef",
+    "publicUrl": "https://raw.githack.com/haihao0307/HOUSE/d3f5a1fc7683daf9838f67957e55b549319a92ef/tiles-mother/r2-closeout-08d-relief/START_HERE.html",
+    "referenceImageSha256": "30eb5f46b8acb3c8f29d86eb41b9d63f82b8f2a864dc73d1122b22e49cfcdb24"
+  },
+  "userAcceptance": {
+    "version": "08D",
+    "userStatement": "OK，OK，非常好，基本上成功了，就是还差一点点，我后续在其他的工作台去解决了，你压缩成一个全量包，把它推到 GitHub上。",
+    "visualAssessment": "user_confirmed_basically_successful_with_remaining_refinement",
+    "handoffAccepted": true,
+    "remainingRefinementDestination": "other workbenches as directed by user",
+    "productionApproved": false,
+    "contactPassed": false,
+    "historicalQaApprovalFields": "describe pre-review state; this acceptance record is newer"
+  }
+}
