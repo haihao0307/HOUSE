@@ -30,7 +30,7 @@ jobs:
         run: python tiles-mother/r2-closeout-08e-contact/build.py
 
       - name: Solve bilateral rigid seating
-        run: node tiles-mother/r2-closeout-08e-contact/calibrate_seats.cjs
+        run: node tiles-mother/r2-closeout-08e-contact/calibrate_seats_v2.cjs
 
       - name: Parse-check calibrated inline JavaScript
         shell: bash
