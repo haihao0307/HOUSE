@@ -1,0 +1,51 @@
+{
+  "scope": "Actual default roof seed314159, row0 col0 and cover seed314548; local roof frame before common rigid slope transform. Left rafter at first-row position.",
+  "results": [
+    {
+      "name": "actual default row0 col0 pan to cover",
+      "trianglePairs": 26253,
+      "minGapMm": -0.5222757979708794,
+      "where": [
+        -0.04509032284745226,
+        -0.11560138500513713
+      ],
+      "pass": false,
+      "strength": 0
+    },
+    {
+      "name": "actual default row0 col0 left rafter",
+      "trianglePairs": 12959,
+      "minGapMm": -0.3097305168461122,
+      "where": [
+        -0.10665973398282425,
+        -0.47313339805057314
+      ],
+      "pass": false,
+      "strength": 0
+    },
+    {
+      "name": "actual default row0 col0 pan to cover",
+      "trianglePairs": 26249,
+      "minGapMm": -0.5008198939469508,
+      "where": [
+        -0.045066992025146475,
+        -0.11516117371921487
+      ],
+      "pass": false,
+      "strength": 3
+    },
+    {
+      "name": "actual default row0 col0 left rafter",
+      "trianglePairs": 12959,
+      "minGapMm": -0.3097305168461122,
+      "where": [
+        -0.10665973398282425,
+        -0.47313339805057314
+      ],
+      "pass": false,
+      "strength": 3
+    }
+  ],
+  "passed": false,
+  "browserVerified": false
+}

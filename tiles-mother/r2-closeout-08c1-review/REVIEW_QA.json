@@ -1,0 +1,19 @@
+{
+  "version": "08C.1",
+  "publicCommit": "d75c9c21c0f2b4c66a79445922410ba166c66fd0",
+  "publicUrl": "https://raw.githack.com/haihao0307/HOUSE/d75c9c21c0f2b4c66a79445922410ba166c66fd0/tiles-mother/r2-closeout-08c1-review/START_HERE.html",
+  "desktopControlChecksPassed": 7,
+  "grayChangedPixels": 119106,
+  "grayRGBDelta": 686019,
+  "webglError": 0,
+  "mobileViewport": {
+    "width": 390,
+    "height": 844
+  },
+  "mobileLayoutVisuallyInspected": true,
+  "mobileInteractionCheck": "Passed: PBR and shape sliders in viewport, close panel, no horizontal overflow, no page initialization error",
+  "physicalPhoneTested": false,
+  "contactChecksPassed": false,
+  "visualApproved": false,
+  "productionApproved": false
+}
