@@ -1,6 +1,8 @@
 from pathlib import Path
 
 root = Path(__file__).resolve().parent
+
+# Keep the CPU contact mirror synchronized with the actual 08F full-shell shader.
 p = root / "qa_geometry.cjs"
 text = p.read_text(encoding="utf-8")
 
@@ -20,3 +22,16 @@ text = text.replace(old_dy, new_dy, 1)
 
 p.write_text(text, encoding="utf-8", newline="")
 print("08F CPU mirror synchronized: rafter rails + pan/cover bearing strips")
+
+# The 08E fragment already defines kilnDelta immediately before the replaced colour block.
+# 08F's scan-guided block must reuse that value rather than redeclare it; otherwise real GLSL compilation fails
+# even though JavaScript syntax checking passes.
+hp = root / "START_HERE.html"
+html = hp.read_text(encoding="utf-8")
+marker = "   float kilnDelta=(tint-.5)*uColor.z;"
+count = html.count(marker)
+if count != 2:
+    raise SystemExit(f"08F colour compile patch expected exactly two kilnDelta declarations, got {count}")
+html = html.replace(marker, "", 1)
+hp.write_text(html, encoding="utf-8", newline="")
+print("08F fragment compile patch: reused existing kilnDelta declaration")
