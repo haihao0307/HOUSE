@@ -14,7 +14,7 @@ const toleranceMm=.05;
 const supportMaxGapMm=.5;
 const matrix={
   version:'08E',
-  method:'Expanded CPU double precision projected-triangle matrix on the actual 08E self-contained page. Three deterministic identities x three Microscope strengths. This is a representative relation matrix, not an exhaustive proof over every seed or arbitrary damage state.',
+  method:'Expanded CPU double precision projected-triangle matrix on the actual 08E self-contained page. Three deterministic roof identity neighborhoods x three Microscope strengths. Adjacent pans use the real +1777 identity stride from roof generation. This is representative, not an exhaustive proof over every seed or arbitrary damage state.',
   seeds,
   strengths,
   toleranceMm,
@@ -34,11 +34,12 @@ const wood=A.timber();
 for(const strength of strengths){
   for(const seed of seeds){
     const pan=mesh('pan',sid(seed),strength,1);
+    const panRight=mesh('pan',sid(seed+1777),strength,1);
     const cover=mesh('cover',sid(seed+389),strength,1);
     const panNext=mesh('pan',sid(seed+97),strength,1);
     const coverNext=mesh('cover',sid(seed+486),strength,1);
     record('pan-cover','cover on left pan',pan,A.tileModel('pan',-S.spacing*.5,S.panY,0),cover,A.tileModel('cover',0,S.coverY,S.coverPhase),true,seed,strength);
-    record('pan-cover','cover on right pan',pan,A.tileModel('pan', S.spacing*.5,S.panY,0),cover,A.tileModel('cover',0,S.coverY,S.coverPhase),true,seed,strength);
+    record('pan-cover','cover on right adjacent pan',panRight,A.tileModel('pan', S.spacing*.5,S.panY,0),cover,A.tileModel('cover',0,S.coverY,S.coverPhase),true,seed,strength);
     record('rafter-pan','left rafter on pan',wood,A.model(-S.spacing*.5,0,0,0,0,[S.rafterRadius,S.rafterRadius,7*S.step+.06]),pan,A.tileModel('pan',0,S.panY,-3*S.step),true,seed,strength);
     record('rafter-pan','right rafter on pan',wood,A.model( S.spacing*.5,0,0,0,0,[S.rafterRadius,S.rafterRadius,7*S.step+.06]),pan,A.tileModel('pan',0,S.panY,-3*S.step),true,seed,strength);
     record('longitudinal','pan longitudinal overlap',pan,A.tileModel('pan',0,S.panY,0),panNext,A.tileModel('pan',0,S.panY,S.step),false,seed,strength);
