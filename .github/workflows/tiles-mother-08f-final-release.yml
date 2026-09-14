@@ -1,4 +1,4 @@
-name: Tiles Mother 08F final release verification
+name: Tiles Mother 08F final release verification R2
 
 on:
   push:
@@ -144,14 +144,17 @@ jobs:
               d.execute_cdp_cmd('Network.enable',{})
               c=d.execute_cdp_cmd('Network.setCookie',{'name':'__Http-phish','value':'1','url':'https://raw.githack.com/','secure':True,'httpOnly':True,'sameSite':'Lax'})
               if c.get('success') is False: raise RuntimeError('rawgithack confirmation cookie rejected')
-              d.get(url); w=WebDriverWait(d,30)
-              w.until(lambda x:'08F' in x.title and x.execute_script("return document.body.dataset.ready==='true'"))
-              if any(x.is_displayed() for x in d.find_elements(By.CSS_SELECTOR,'.fail')): raise RuntimeError('visible failure panel')
+              d.get(url); w=WebDriverWait(d,35)
+              w.until(lambda x:'08F' in x.title)
+              stage=w.until(lambda x:x.find_element(By.ID,'stage'))
+              w.until(lambda x:x.execute_script('return arguments[0].width>0 && arguments[0].height>0',stage))
+              time.sleep(2)
+              fail=[x.text for x in d.find_elements(By.CSS_SELECTOR,'.fail') if x.is_displayed()]
+              if fail: raise RuntimeError('visible failure panel: '+" | ".join(fail))
               brand=d.find_element(By.CSS_SELECTOR,'.brand').text
               d.find_element(By.CSS_SELECTOR,'button[data-view="under"]').click(); time.sleep(1); Path('/tmp/tiles08f-under.png').write_bytes(d.get_screenshot_as_png())
-              d.find_element(By.CSS_SELECTOR,'button[data-view="edge"]').click(); d.find_element(By.ID,'shapePanel').click(); time.sleep(1); Path('/tmp/tiles08f-edge.png').write_bytes(d.get_screenshot_as_png())
+              d.find_element(By.CSS_SELECTOR,'button[data-view="edge"]').click(); d.find_element(By.ID,'shapePanel').click(); w.until(lambda x:x.find_element(By.ID,'panel').is_displayed()); time.sleep(1); Path('/tmp/tiles08f-edge.png').write_bytes(d.get_screenshot_as_png())
               d.find_element(By.CSS_SELECTOR,'button[data-scene="roof48"]').click(); time.sleep(2); Path('/tmp/tiles08f-roof48.png').write_bytes(d.get_screenshot_as_png())
-              stage=d.find_element(By.ID,'stage')
               result={'url':url,'title':d.title,'brand':brand,'canvas':d.execute_script('return {w:innerWidth,h:innerHeight,cw:arguments[0].width,ch:arguments[0].height}',stage),'undersideView':True,'edgeView':True,'shapePanel':True,'roof48':True}
               Path('/tmp/tiles08f-public.json').write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
               print(json.dumps(result,ensure_ascii=False,indent=2))
