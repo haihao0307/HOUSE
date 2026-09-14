@@ -1,0 +1,242 @@
+{
+  "version": "08F",
+  "sourceVersion": "08E",
+  "scope": "final closeout candidate: preserve accepted top-face character, extend actual geometry continuously to side/edge/underside, widen procedural colour families from the supplied scan, then re-run retained contact constraints",
+  "referencePackage": "讲武堂瓦片精细(4).zip",
+  "referenceFiles": {
+    "01.fbx": {
+      "sha256": "74053fe0a5978bd43e2d83dede03007a732bb3c4e625915161ecc1bbe56da3f9",
+      "bytes": 349088
+    },
+    "01_u1_v1_diffuse.png": {
+      "sha256": "ad6917cba05c4e6de7319efa85bd088f6e5c4c2bc0b2c296896ab48a2301db61",
+      "pixels": [
+        7000,
+        7000
+      ],
+      "bytes": 58273168
+    },
+    "01_u1_v1_normal.png": {
+      "sha256": "1839a0763e6342ce5bfd3ee98b7c7282a0aeb88f30925312fa78c23aa68dc5ee",
+      "pixels": [
+        2500,
+        2500
+      ],
+      "bytes": 96199
+    },
+    "01.fbx.rsInfo": {
+      "sha256": "028e3f022cffa7c9ef8b51e64ef22d417cc716b55aab49ff23ba8724436489cb",
+      "bytes": 2246
+    }
+  },
+  "historicalChecks": {
+    "08D_bottomMicroscopeZero": "not_applicable_to_current_user_goal",
+    "08E_contactRelations": "retain_and_re_run",
+    "08E_54_relation_matrix": "prior_execution_evidence_only_not_new_goal_completion"
+  },
+  "amplitudeStatus": "authored_design_controls_not_direct_scan_measurements",
+  "sourceHtmlSha256": "5927097eae484d83af9f5c64766a21e963ddb1da63bf6b9ed9996368e6bc1141",
+  "outputHtmlSha256": "4a6e3f9453ba2b74e7aad94ec549efe1ef34f7ee30fbe5896d1a5aa6efbcc82b",
+  "contactPassed": true,
+  "expandedMatrixPassed": true,
+  "shellFieldPresent": true,
+  "visualApproved": false,
+  "productionApproved": false,
+  "actualContactQa": {
+    "version": "08F",
+    "method": "CPU double precision mirror of the actual 08F full-shell field; contacts use projected triangle intersections. Shape-presence metrics distinguish Microscope displacement from combined handmade+Microscope displacement.",
+    "contacts": [
+      {
+        "name": "pan-cover default first pair",
+        "trianglePairs": 26257,
+        "minGapMm": 0.015813229703738607,
+        "where": [
+          -0.04511695040516271,
+          -0.1156133088762451
+        ],
+        "pass": true,
+        "strength": 0
+      },
+      {
+        "name": "left rafter-pan",
+        "trianglePairs": 12862,
+        "minGapMm": 0.0124730233112616,
+        "where": [
+          -0.10665973398282425,
+          -0.47312404859593565
+        ],
+        "pass": true,
+        "strength": 0
+      },
+      {
+        "name": "pan-cover default first pair",
+        "trianglePairs": 26253,
+        "minGapMm": 0.030203486301096094,
+        "where": [
+          -0.04515286065410301,
+          -0.11563232042244763
+        ],
+        "pass": true,
+        "strength": 1.6
+      },
+      {
+        "name": "left rafter-pan",
+        "trianglePairs": 12866,
+        "minGapMm": 0.008373803367829613,
+        "where": [
+          -0.10665973398282425,
+          -0.47311552120778116
+        ],
+        "pass": true,
+        "strength": 1.6
+      },
+      {
+        "name": "pan-cover default first pair",
+        "trianglePairs": 26255,
+        "minGapMm": 0.04284916408137801,
+        "where": [
+          -0.04518443162983011,
+          -0.11564911446685786
+        ],
+        "pass": true,
+        "strength": 3
+      },
+      {
+        "name": "left rafter-pan",
+        "trianglePairs": 12870,
+        "minGapMm": 0.004785435796874488,
+        "where": [
+          -0.10665973398282425,
+          -0.4731080547444555
+        ],
+        "pass": true,
+        "strength": 3
+      }
+    ],
+    "shapeEvidence": [
+      {
+        "strength": 0,
+        "pan": {
+          "topMicroMaxMm": 0,
+          "sideMicroMaxMm": 0,
+          "bottomMicroMaxMm": 0,
+          "topTotalMaxMm": 0.7593764511503174,
+          "sideTotalMaxMm": 0.19920747870997585,
+          "bottomTotalMaxMm": 0.7608778282635733
+        },
+        "cover": {
+          "topMicroMaxMm": 0,
+          "sideMicroMaxMm": 0,
+          "bottomMicroMaxMm": 0,
+          "topTotalMaxMm": 0.29962416264586816,
+          "sideTotalMaxMm": 0.06015158289770825,
+          "bottomTotalMaxMm": 0.2992507541148675
+        }
+      },
+      {
+        "strength": 1.6,
+        "pan": {
+          "topMicroMaxMm": 4.5,
+          "sideMicroMaxMm": 4.515886220134159,
+          "bottomMicroMaxMm": 2.4628544320955528,
+          "topTotalMaxMm": 4.4183289242568575,
+          "sideTotalMaxMm": 4.477304936088145,
+          "bottomTotalMaxMm": 2.430504967819464
+        },
+        "cover": {
+          "topMicroMaxMm": 3.0327797990173804,
+          "sideMicroMaxMm": 2.9010733196536185,
+          "bottomMicroMaxMm": 2.139165956695347,
+          "topTotalMaxMm": 3.0391172587116224,
+          "sideTotalMaxMm": 2.9004828332289017,
+          "bottomTotalMaxMm": 2.0392587532168753
+        }
+      },
+      {
+        "strength": 3,
+        "pan": {
+          "topMicroMaxMm": 7.443194389856277,
+          "sideMicroMaxMm": 7.563555478009841,
+          "bottomMicroMaxMm": 4.5,
+          "topTotalMaxMm": 7.38268067287782,
+          "sideTotalMaxMm": 7.499494085351614,
+          "bottomTotalMaxMm": 4.333082868906254
+        },
+        "cover": {
+          "topMicroMaxMm": 3.7330874986480302,
+          "sideMicroMaxMm": 3.580521980267891,
+          "bottomMicroMaxMm": 4.010936168803776,
+          "topTotalMaxMm": 3.653758922682125,
+          "sideTotalMaxMm": 3.574352693446129,
+          "bottomTotalMaxMm": 3.9110289651124557
+        }
+      }
+    ],
+    "visualApproved": false,
+    "productionApproved": false,
+    "contactPassed": true,
+    "maxOffsetMm": 7.563555478009841,
+    "bottomOffsetMm": 4.5,
+    "bottomMicroZeroLegacyStatus": "not_applicable_after_user_full_shell_goal_2026-09-14",
+    "shellFieldPresent": true
+  },
+  "contactMatrixSummary": {
+    "checks": 54,
+    "passed": 54,
+    "failed": 0,
+    "minGapMm": -0.04800050742427564,
+    "maxSupportGapMm": 0.20028490716417213
+  },
+  "seatCalibration": {
+    "step": 0.198,
+    "spacing": 0.242,
+    "rafterRadius": 0.023,
+    "panY": 0.004694728685378168,
+    "panAngle": 0.11500000000000007,
+    "panRoll": -0.004573766488931281,
+    "coverY": 0.03776623439385547,
+    "coverAngle": 0.05000000000000002,
+    "coverRoll": 0.051534657534794005,
+    "coverPhase": -0.044
+  },
+  "panRigidAdjust": {
+    "minInputMm": 0.001907649041312659,
+    "maxInputMm": 0.03051963233800803,
+    "qaWindowMm": [
+      -0.05,
+      0.5
+    ],
+    "solverMarginMm": 0.002,
+    "solverWindowMm": [
+      -0.048,
+      0.498
+    ],
+    "feasibleIntervalMm": [
+      -0.04990764904131266,
+      0.46748036766199197
+    ],
+    "desiredMm": 0.002877997169284968,
+    "chosenMm": 0.002877997169284968
+  },
+  "coverRelativeRigidAdjust": {
+    "minInputMm": -0.06158477849761701,
+    "maxInputMm": 0.18670063609083076,
+    "qaWindowMm": [
+      -0.05,
+      0.5
+    ],
+    "solverMarginMm": 0.002,
+    "solverWindowMm": [
+      -0.048,
+      0.498
+    ],
+    "feasibleIntervalMm": [
+      0.013584778497617009,
+      0.31129936390916924
+    ],
+    "desiredMm": -0.01457168637371348,
+    "chosenMm": 0.013584778497617009
+  },
+  "solverMarginMm": 0.002,
+  "cpuGpuSupportFieldParity": "workflow_synchronized_and_asserted"
+}

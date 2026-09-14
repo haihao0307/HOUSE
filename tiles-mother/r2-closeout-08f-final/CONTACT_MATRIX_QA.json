@@ -1,0 +1,945 @@
+{
+  "version": "08F",
+  "method": "Expanded CPU double precision projected-triangle matrix on the actual 08F self-contained page. Three deterministic roof identity neighborhoods x three Microscope strengths. Adjacent pans use the real +1777 identity stride from roof generation. This is representative, not an exhaustive proof over every seed or arbitrary damage state.",
+  "seeds": [
+    314159,
+    271828,
+    161803
+  ],
+  "strengths": [
+    0,
+    1.6,
+    3
+  ],
+  "toleranceMm": 0.05,
+  "supportMaxGapMm": 0.5,
+  "checks": [
+    {
+      "group": "pan-cover",
+      "name": "cover on left pan",
+      "trianglePairs": 26257,
+      "minGapMm": 0.015813229703738607,
+      "where": [
+        -0.04511695040516271,
+        -0.1156133088762451
+      ],
+      "pass": true,
+      "support": true,
+      "seed": 314159,
+      "strength": 0,
+      "intersects": true,
+      "noPenetration": true,
+      "supportClose": true
+    },
+    {
+      "group": "pan-cover",
+      "name": "cover on right adjacent pan",
+      "trianglePairs": 25358,
+      "minGapMm": -0.04755538223763511,
+      "where": [
+        0.0013506580201215618,
+        -0.11147731845146858
+      ],
+      "pass": true,
+      "support": true,
+      "seed": 314159,
+      "strength": 0,
+      "intersects": true,
+      "noPenetration": true,
+      "supportClose": true
+    },
+    {
+      "group": "rafter-pan",
+      "name": "left rafter on pan",
+      "trianglePairs": 12862,
+      "minGapMm": 0.0124730233112616,
+      "where": [
+        -0.10665973398282425,
+        -0.47312404859593565
+      ],
+      "pass": true,
+      "support": true,
+      "seed": 314159,
+      "strength": 0,
+      "intersects": true,
+      "noPenetration": true,
+      "supportClose": true
+    },
+    {
+      "group": "rafter-pan",
+      "name": "right rafter on pan",
+      "trianglePairs": 13047,
+      "minGapMm": 0.017329269396328117,
+      "where": [
+        0.10665973398282425,
+        -0.4735777713556946
+      ],
+      "pass": true,
+      "support": true,
+      "seed": 314159,
+      "strength": 0,
+      "intersects": true,
+      "noPenetration": true,
+      "supportClose": true
+    },
+    {
+      "group": "longitudinal",
+      "name": "pan longitudinal overlap",
+      "trianglePairs": 15123,
+      "minGapMm": 0.8633609335720188,
+      "where": [
+        0.11113330376839452,
+        0.09971344021045787
+      ],
+      "pass": true,
+      "support": false,
+      "seed": 314159,
+      "strength": 0,
+      "intersects": true,
+      "noPenetration": true,
+      "supportClose": true
+    },
+    {
+      "group": "longitudinal",
+      "name": "cover longitudinal overlap",
+      "trianglePairs": 11530,
+      "minGapMm": 1.6094743269263467,
+      "where": [
+        -0.01530365068164791,
+        0.06786345808249102
+      ],
+      "pass": true,
+      "support": false,
+      "seed": 314159,
+      "strength": 0,
+      "intersects": true,
+      "noPenetration": true,
+      "supportClose": true
+    },
+    {
+      "group": "pan-cover",
+      "name": "cover on left pan",
+      "trianglePairs": 26209,
+      "minGapMm": 0.05988422289299883,
+      "where": [
+        -0.045126552747109375,
+        -0.1156204197562123
+      ],
+      "pass": true,
+      "support": true,
+      "seed": 271828,
+      "strength": 0,
+      "intersects": true,
+      "noPenetration": true,
+      "supportClose": true
+    },
+    {
+      "group": "pan-cover",
+      "name": "cover on right adjacent pan",
+      "trianglePairs": 25372,
+      "minGapMm": 0.1963059207565898,
+      "where": [
+        0.0012640843765187038,
+        -0.11133856500626704
+      ],
+      "pass": true,
+      "support": true,
+      "seed": 271828,
+      "strength": 0,
+      "intersects": true,
+      "noPenetration": true,
+      "supportClose": true
+    },
+    {
+      "group": "rafter-pan",
+      "name": "left rafter on pan",
+      "trianglePairs": 12840,
+      "minGapMm": 0.03339741909356986,
+      "where": [
+        -0.10665973398282425,
+        -0.4731213290813125
+      ],
+      "pass": true,
+      "support": true,
+      "seed": 271828,
+      "strength": 0,
+      "intersects": true,
+      "noPenetration": true,
+      "supportClose": true
+    },
+    {
+      "group": "rafter-pan",
+      "name": "right rafter on pan",
+      "trianglePairs": 12999,
+      "minGapMm": 0.02001557011653901,
+      "where": [
+        0.10665973398282425,
+        -0.4734225136034717
+      ],
+      "pass": true,
+      "support": true,
+      "seed": 271828,
+      "strength": 0,
+      "intersects": true,
+      "noPenetration": true,
+      "supportClose": true
+    },
+    {
+      "group": "longitudinal",
+      "name": "pan longitudinal overlap",
+      "trianglePairs": 15132,
+      "minGapMm": 0.8595727396754558,
+      "where": [
+        0.11108916394723588,
+        0.09975076092811842
+      ],
+      "pass": true,
+      "support": false,
+      "seed": 271828,
+      "strength": 0,
+      "intersects": true,
+      "noPenetration": true,
+      "supportClose": true
+    },
+    {
+      "group": "longitudinal",
+      "name": "cover longitudinal overlap",
+      "trianglePairs": 11506,
+      "minGapMm": 1.6369025603634735,
+      "where": [
+        -0.015410790802234982,
+        0.061846957782900815
+      ],
+      "pass": true,
+      "support": false,
+      "seed": 271828,
+      "strength": 0,
+      "intersects": true,
+      "noPenetration": true,
+      "supportClose": true
+    },
+    {
+      "group": "pan-cover",
+      "name": "cover on left pan",
+      "trianglePairs": 26199,
+      "minGapMm": 0.02505269593042897,
+      "where": [
+        -0.04511839812626777,
+        -0.11569026005601164
+      ],
+      "pass": true,
+      "support": true,
+      "seed": 161803,
+      "strength": 0,
+      "intersects": true,
+      "noPenetration": true,
+      "supportClose": true
+    },
+    {
+      "group": "pan-cover",
+      "name": "cover on right adjacent pan",
+      "trianglePairs": 25300,
+      "minGapMm": -0.04800050742427564,
+      "where": [
+        0.0014159442707417508,
+        -0.11135975512274499
+      ],
+      "pass": true,
+      "support": true,
+      "seed": 161803,
+      "strength": 0,
+      "intersects": true,
+      "noPenetration": true,
+      "supportClose": true
+    },
+    {
+      "group": "rafter-pan",
+      "name": "left rafter on pan",
+      "trianglePairs": 12848,
+      "minGapMm": 0.022763018875160412,
+      "where": [
+        -0.10665973398282425,
+        -0.47309477609135875
+      ],
+      "pass": true,
+      "support": true,
+      "seed": 161803,
+      "strength": 0,
+      "intersects": true,
+      "noPenetration": true,
+      "supportClose": true
+    },
+    {
+      "group": "rafter-pan",
+      "name": "right rafter on pan",
+      "trianglePairs": 13019,
+      "minGapMm": 0.03128882377426839,
+      "where": [
+        0.10665973398282425,
+        -0.4735815226603207
+      ],
+      "pass": true,
+      "support": true,
+      "seed": 161803,
+      "strength": 0,
+      "intersects": true,
+      "noPenetration": true,
+      "supportClose": true
+    },
+    {
+      "group": "longitudinal",
+      "name": "pan longitudinal overlap",
+      "trianglePairs": 15128,
+      "minGapMm": 0.8609336643140078,
+      "where": [
+        0.11136780548778488,
+        0.0938446251850906
+      ],
+      "pass": true,
+      "support": false,
+      "seed": 161803,
+      "strength": 0,
+      "intersects": true,
+      "noPenetration": true,
+      "supportClose": true
+    },
+    {
+      "group": "longitudinal",
+      "name": "cover longitudinal overlap",
+      "trianglePairs": 11512,
+      "minGapMm": 1.5865482284366932,
+      "where": [
+        -0.015303918307114871,
+        0.06775829471227017
+      ],
+      "pass": true,
+      "support": false,
+      "seed": 161803,
+      "strength": 0,
+      "intersects": true,
+      "noPenetration": true,
+      "supportClose": true
+    },
+    {
+      "group": "pan-cover",
+      "name": "cover on left pan",
+      "trianglePairs": 26253,
+      "minGapMm": 0.030203486301096094,
+      "where": [
+        -0.04515286065410301,
+        -0.11563232042244763
+      ],
+      "pass": true,
+      "support": true,
+      "seed": 314159,
+      "strength": 1.6,
+      "intersects": true,
+      "noPenetration": true,
+      "supportClose": true
+    },
+    {
+      "group": "pan-cover",
+      "name": "cover on right adjacent pan",
+      "trianglePairs": 25362,
+      "minGapMm": -0.04517673997984917,
+      "where": [
+        0.001323066313222987,
+        -0.11147259637870821
+      ],
+      "pass": true,
+      "support": true,
+      "seed": 314159,
+      "strength": 1.6,
+      "intersects": true,
+      "noPenetration": true,
+      "supportClose": true
+    },
+    {
+      "group": "rafter-pan",
+      "name": "left rafter on pan",
+      "trianglePairs": 12866,
+      "minGapMm": 0.008373803367829613,
+      "where": [
+        -0.10665973398282425,
+        -0.47311552120778116
+      ],
+      "pass": true,
+      "support": true,
+      "seed": 314159,
+      "strength": 1.6,
+      "intersects": true,
+      "noPenetration": true,
+      "supportClose": true
+    },
+    {
+      "group": "rafter-pan",
+      "name": "right rafter on pan",
+      "trianglePairs": 13051,
+      "minGapMm": 0.015217187724334003,
+      "where": [
+        0.10665973398282425,
+        -0.47357222868387416
+      ],
+      "pass": true,
+      "support": true,
+      "seed": 314159,
+      "strength": 1.6,
+      "intersects": true,
+      "noPenetration": true,
+      "supportClose": true
+    },
+    {
+      "group": "longitudinal",
+      "name": "pan longitudinal overlap",
+      "trianglePairs": 15170,
+      "minGapMm": 0.8090674397448969,
+      "where": [
+        0.11134885025111849,
+        0.09364249542742442
+      ],
+      "pass": true,
+      "support": false,
+      "seed": 314159,
+      "strength": 1.6,
+      "intersects": true,
+      "noPenetration": true,
+      "supportClose": true
+    },
+    {
+      "group": "longitudinal",
+      "name": "cover longitudinal overlap",
+      "trianglePairs": 11521,
+      "minGapMm": 0.9544358541608428,
+      "where": [
+        0.002660953384253966,
+        0.04530300192797809
+      ],
+      "pass": true,
+      "support": false,
+      "seed": 314159,
+      "strength": 1.6,
+      "intersects": true,
+      "noPenetration": true,
+      "supportClose": true
+    },
+    {
+      "group": "pan-cover",
+      "name": "cover on left pan",
+      "trianglePairs": 26207,
+      "minGapMm": 0.09272534229693569,
+      "where": [
+        -0.04519919119069468,
+        -0.11564950744666941
+      ],
+      "pass": true,
+      "support": true,
+      "seed": 271828,
+      "strength": 1.6,
+      "intersects": true,
+      "noPenetration": true,
+      "supportClose": true
+    },
+    {
+      "group": "pan-cover",
+      "name": "cover on right adjacent pan",
+      "trianglePairs": 25356,
+      "minGapMm": 0.19843474706925102,
+      "where": [
+        0.0013048535439261766,
+        -0.1113385946117389
+      ],
+      "pass": true,
+      "support": true,
+      "seed": 271828,
+      "strength": 1.6,
+      "intersects": true,
+      "noPenetration": true,
+      "supportClose": true
+    },
+    {
+      "group": "rafter-pan",
+      "name": "left rafter on pan",
+      "trianglePairs": 12836,
+      "minGapMm": 0.028107023472695447,
+      "where": [
+        -0.10665973398282425,
+        -0.47311266730808804
+      ],
+      "pass": true,
+      "support": true,
+      "seed": 271828,
+      "strength": 1.6,
+      "intersects": true,
+      "noPenetration": true,
+      "supportClose": true
+    },
+    {
+      "group": "rafter-pan",
+      "name": "right rafter on pan",
+      "trianglePairs": 12987,
+      "minGapMm": 0.01923675676125669,
+      "where": [
+        0.10665973398282425,
+        -0.47341861379157524
+      ],
+      "pass": true,
+      "support": true,
+      "seed": 271828,
+      "strength": 1.6,
+      "intersects": true,
+      "noPenetration": true,
+      "supportClose": true
+    },
+    {
+      "group": "longitudinal",
+      "name": "pan longitudinal overlap",
+      "trianglePairs": 15168,
+      "minGapMm": 0.7670424630248571,
+      "where": [
+        0.11097385641999341,
+        0.09953451074047415
+      ],
+      "pass": true,
+      "support": false,
+      "seed": 271828,
+      "strength": 1.6,
+      "intersects": true,
+      "noPenetration": true,
+      "supportClose": true
+    },
+    {
+      "group": "longitudinal",
+      "name": "cover longitudinal overlap",
+      "trianglePairs": 11499,
+      "minGapMm": 0.8608668234853095,
+      "where": [
+        -0.0034851134687444514,
+        0.04495627422794519
+      ],
+      "pass": true,
+      "support": false,
+      "seed": 271828,
+      "strength": 1.6,
+      "intersects": true,
+      "noPenetration": true,
+      "supportClose": true
+    },
+    {
+      "group": "pan-cover",
+      "name": "cover on left pan",
+      "trianglePairs": 26201,
+      "minGapMm": 0.06206278553032296,
+      "where": [
+        -0.04519594754995153,
+        -0.11572789448229437
+      ],
+      "pass": true,
+      "support": true,
+      "seed": 161803,
+      "strength": 1.6,
+      "intersects": true,
+      "noPenetration": true,
+      "supportClose": true
+    },
+    {
+      "group": "pan-cover",
+      "name": "cover on right adjacent pan",
+      "trianglePairs": 25302,
+      "minGapMm": -0.04555712668843914,
+      "where": [
+        0.001437445783181418,
+        -0.11137264830573645
+      ],
+      "pass": true,
+      "support": true,
+      "seed": 161803,
+      "strength": 1.6,
+      "intersects": true,
+      "noPenetration": true,
+      "supportClose": true
+    },
+    {
+      "group": "rafter-pan",
+      "name": "left rafter on pan",
+      "trianglePairs": 12860,
+      "minGapMm": 0.018369087557118524,
+      "where": [
+        -0.10665973398282425,
+        -0.4730853191823062
+      ],
+      "pass": true,
+      "support": true,
+      "seed": 161803,
+      "strength": 1.6,
+      "intersects": true,
+      "noPenetration": true,
+      "supportClose": true
+    },
+    {
+      "group": "rafter-pan",
+      "name": "right rafter on pan",
+      "trianglePairs": 13011,
+      "minGapMm": 0.029945422266832583,
+      "where": [
+        0.10665973398282425,
+        -0.47357775399308005
+      ],
+      "pass": true,
+      "support": true,
+      "seed": 161803,
+      "strength": 1.6,
+      "intersects": true,
+      "noPenetration": true,
+      "supportClose": true
+    },
+    {
+      "group": "longitudinal",
+      "name": "pan longitudinal overlap",
+      "trianglePairs": 15167,
+      "minGapMm": 0.8310465681916555,
+      "where": [
+        0.11160573247696483,
+        0.08775551895125666
+      ],
+      "pass": true,
+      "support": false,
+      "seed": 161803,
+      "strength": 1.6,
+      "intersects": true,
+      "noPenetration": true,
+      "supportClose": true
+    },
+    {
+      "group": "longitudinal",
+      "name": "cover longitudinal overlap",
+      "trianglePairs": 11391,
+      "minGapMm": 1.0780197613339815,
+      "where": [
+        -0.008876894665524738,
+        0.04559066564229831
+      ],
+      "pass": true,
+      "support": false,
+      "seed": 161803,
+      "strength": 1.6,
+      "intersects": true,
+      "noPenetration": true,
+      "supportClose": true
+    },
+    {
+      "group": "pan-cover",
+      "name": "cover on left pan",
+      "trianglePairs": 26255,
+      "minGapMm": 0.04284916408137801,
+      "where": [
+        -0.04518443162983011,
+        -0.11564911446685786
+      ],
+      "pass": true,
+      "support": true,
+      "seed": 314159,
+      "strength": 3,
+      "intersects": true,
+      "noPenetration": true,
+      "supportClose": true
+    },
+    {
+      "group": "pan-cover",
+      "name": "cover on right adjacent pan",
+      "trianglePairs": 25374,
+      "minGapMm": -0.043099179362710016,
+      "where": [
+        0.0012989244980669001,
+        -0.11146845901401692
+      ],
+      "pass": true,
+      "support": true,
+      "seed": 314159,
+      "strength": 3,
+      "intersects": true,
+      "noPenetration": true,
+      "supportClose": true
+    },
+    {
+      "group": "rafter-pan",
+      "name": "left rafter on pan",
+      "trianglePairs": 12870,
+      "minGapMm": 0.004785435796874488,
+      "where": [
+        -0.10665973398282425,
+        -0.4731080547444555
+      ],
+      "pass": true,
+      "support": true,
+      "seed": 314159,
+      "strength": 3,
+      "intersects": true,
+      "noPenetration": true,
+      "supportClose": true
+    },
+    {
+      "group": "rafter-pan",
+      "name": "right rafter on pan",
+      "trianglePairs": 13043,
+      "minGapMm": 0.013368548712797135,
+      "where": [
+        0.10665973398282425,
+        -0.4735673798321419
+      ],
+      "pass": true,
+      "support": true,
+      "seed": 314159,
+      "strength": 3,
+      "intersects": true,
+      "noPenetration": true,
+      "supportClose": true
+    },
+    {
+      "group": "longitudinal",
+      "name": "pan longitudinal overlap",
+      "trianglePairs": 15192,
+      "minGapMm": 0.7594792070754891,
+      "where": [
+        0.11127940908532544,
+        0.0936418683366651
+      ],
+      "pass": true,
+      "support": false,
+      "seed": 314159,
+      "strength": 3,
+      "intersects": true,
+      "noPenetration": true,
+      "supportClose": true
+    },
+    {
+      "group": "longitudinal",
+      "name": "cover longitudinal overlap",
+      "trianglePairs": 11447,
+      "minGapMm": 0.20618716712932084,
+      "where": [
+        0.002621992402874585,
+        0.04540299536395636
+      ],
+      "pass": true,
+      "support": false,
+      "seed": 314159,
+      "strength": 3,
+      "intersects": true,
+      "noPenetration": true,
+      "supportClose": true
+    },
+    {
+      "group": "pan-cover",
+      "name": "cover on left pan",
+      "trianglePairs": 26197,
+      "minGapMm": 0.12149504371994357,
+      "where": [
+        -0.04526273491809269,
+        -0.11567454593308378
+      ],
+      "pass": true,
+      "support": true,
+      "seed": 271828,
+      "strength": 3,
+      "intersects": true,
+      "noPenetration": true,
+      "supportClose": true
+    },
+    {
+      "group": "pan-cover",
+      "name": "cover on right adjacent pan",
+      "trianglePairs": 25354,
+      "minGapMm": 0.20028490716417213,
+      "where": [
+        0.001340526567362832,
+        -0.11133862421721075
+      ],
+      "pass": true,
+      "support": true,
+      "seed": 271828,
+      "strength": 3,
+      "intersects": true,
+      "noPenetration": true,
+      "supportClose": true
+    },
+    {
+      "group": "rafter-pan",
+      "name": "left rafter on pan",
+      "trianglePairs": 12840,
+      "minGapMm": 0.02347822794944096,
+      "where": [
+        -0.10665973398282425,
+        -0.47310508454736966
+      ],
+      "pass": true,
+      "support": true,
+      "seed": 271828,
+      "strength": 3,
+      "intersects": true,
+      "noPenetration": true,
+      "supportClose": true
+    },
+    {
+      "group": "rafter-pan",
+      "name": "right rafter on pan",
+      "trianglePairs": 12987,
+      "minGapMm": 0.01855442259403317,
+      "where": [
+        0.10665973398282425,
+        -0.47341519790526176
+      ],
+      "pass": true,
+      "support": true,
+      "seed": 271828,
+      "strength": 3,
+      "intersects": true,
+      "noPenetration": true,
+      "supportClose": true
+    },
+    {
+      "group": "longitudinal",
+      "name": "pan longitudinal overlap",
+      "trianglePairs": 15155,
+      "minGapMm": 0.6852534589346162,
+      "where": [
+        0.1108638531010538,
+        0.09953327284223512
+      ],
+      "pass": true,
+      "support": false,
+      "seed": 271828,
+      "strength": 3,
+      "intersects": true,
+      "noPenetration": true,
+      "supportClose": true
+    },
+    {
+      "group": "longitudinal",
+      "name": "cover longitudinal overlap",
+      "trianglePairs": 11493,
+      "minGapMm": 0.12682745826346487,
+      "where": [
+        -0.003549750735423897,
+        0.045056262056460024
+      ],
+      "pass": true,
+      "support": false,
+      "seed": 271828,
+      "strength": 3,
+      "intersects": true,
+      "noPenetration": true,
+      "supportClose": true
+    },
+    {
+      "group": "pan-cover",
+      "name": "cover on left pan",
+      "trianglePairs": 26197,
+      "minGapMm": 0.09449190656821149,
+      "where": [
+        -0.04526389808616951,
+        -0.11576106936890473
+      ],
+      "pass": true,
+      "support": true,
+      "seed": 161803,
+      "strength": 3,
+      "intersects": true,
+      "noPenetration": true,
+      "supportClose": true
+    },
+    {
+      "group": "pan-cover",
+      "name": "cover on right adjacent pan",
+      "trianglePairs": 25298,
+      "minGapMm": -0.04340728227517077,
+      "where": [
+        0.001456264266063087,
+        -0.11138393539187996
+      ],
+      "pass": true,
+      "support": true,
+      "seed": 161803,
+      "strength": 3,
+      "intersects": true,
+      "noPenetration": true,
+      "supportClose": true
+    },
+    {
+      "group": "rafter-pan",
+      "name": "left rafter on pan",
+      "trianglePairs": 12860,
+      "minGapMm": 0.01452398839654409,
+      "where": [
+        -0.10665973398282425,
+        -0.4730770437850778
+      ],
+      "pass": true,
+      "support": true,
+      "seed": 161803,
+      "strength": 3,
+      "intersects": true,
+      "noPenetration": true,
+      "supportClose": true
+    },
+    {
+      "group": "rafter-pan",
+      "name": "right rafter on pan",
+      "trianglePairs": 13015,
+      "minGapMm": 0.02876918338609938,
+      "where": [
+        0.10665973398282425,
+        -0.4735744517818722
+      ],
+      "pass": true,
+      "support": true,
+      "seed": 161803,
+      "strength": 3,
+      "intersects": true,
+      "noPenetration": true,
+      "supportClose": true
+    },
+    {
+      "group": "longitudinal",
+      "name": "pan longitudinal overlap",
+      "trianglePairs": 15151,
+      "minGapMm": 0.7932613830791274,
+      "where": [
+        0.11174691511347584,
+        0.08343127288319477
+      ],
+      "pass": true,
+      "support": false,
+      "seed": 161803,
+      "strength": 3,
+      "intersects": true,
+      "noPenetration": true,
+      "supportClose": true
+    },
+    {
+      "group": "longitudinal",
+      "name": "cover longitudinal overlap",
+      "trianglePairs": 11305,
+      "minGapMm": 0.44921626959240624,
+      "where": [
+        -0.006611154718148632,
+        0.045797642914694695
+      ],
+      "pass": true,
+      "support": false,
+      "seed": 161803,
+      "strength": 3,
+      "intersects": true,
+      "noPenetration": true,
+      "supportClose": true
+    }
+  ],
+  "pass": true,
+  "failures": [],
+  "summary": {
+    "checks": 54,
+    "passed": 54,
+    "failed": 0,
+    "minGapMm": -0.04800050742427564,
+    "maxSupportGapMm": 0.20028490716417213
+  }
+}

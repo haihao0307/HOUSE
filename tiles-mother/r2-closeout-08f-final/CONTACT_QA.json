@@ -1,0 +1,138 @@
+{
+  "version": "08F",
+  "method": "CPU double precision mirror of the actual 08F full-shell field; contacts use projected triangle intersections. Shape-presence metrics distinguish Microscope displacement from combined handmade+Microscope displacement.",
+  "contacts": [
+    {
+      "name": "pan-cover default first pair",
+      "trianglePairs": 26257,
+      "minGapMm": 0.015813229703738607,
+      "where": [
+        -0.04511695040516271,
+        -0.1156133088762451
+      ],
+      "pass": true,
+      "strength": 0
+    },
+    {
+      "name": "left rafter-pan",
+      "trianglePairs": 12862,
+      "minGapMm": 0.0124730233112616,
+      "where": [
+        -0.10665973398282425,
+        -0.47312404859593565
+      ],
+      "pass": true,
+      "strength": 0
+    },
+    {
+      "name": "pan-cover default first pair",
+      "trianglePairs": 26253,
+      "minGapMm": 0.030203486301096094,
+      "where": [
+        -0.04515286065410301,
+        -0.11563232042244763
+      ],
+      "pass": true,
+      "strength": 1.6
+    },
+    {
+      "name": "left rafter-pan",
+      "trianglePairs": 12866,
+      "minGapMm": 0.008373803367829613,
+      "where": [
+        -0.10665973398282425,
+        -0.47311552120778116
+      ],
+      "pass": true,
+      "strength": 1.6
+    },
+    {
+      "name": "pan-cover default first pair",
+      "trianglePairs": 26255,
+      "minGapMm": 0.04284916408137801,
+      "where": [
+        -0.04518443162983011,
+        -0.11564911446685786
+      ],
+      "pass": true,
+      "strength": 3
+    },
+    {
+      "name": "left rafter-pan",
+      "trianglePairs": 12870,
+      "minGapMm": 0.004785435796874488,
+      "where": [
+        -0.10665973398282425,
+        -0.4731080547444555
+      ],
+      "pass": true,
+      "strength": 3
+    }
+  ],
+  "shapeEvidence": [
+    {
+      "strength": 0,
+      "pan": {
+        "topMicroMaxMm": 0,
+        "sideMicroMaxMm": 0,
+        "bottomMicroMaxMm": 0,
+        "topTotalMaxMm": 0.7593764511503174,
+        "sideTotalMaxMm": 0.19920747870997585,
+        "bottomTotalMaxMm": 0.7608778282635733
+      },
+      "cover": {
+        "topMicroMaxMm": 0,
+        "sideMicroMaxMm": 0,
+        "bottomMicroMaxMm": 0,
+        "topTotalMaxMm": 0.29962416264586816,
+        "sideTotalMaxMm": 0.06015158289770825,
+        "bottomTotalMaxMm": 0.2992507541148675
+      }
+    },
+    {
+      "strength": 1.6,
+      "pan": {
+        "topMicroMaxMm": 4.5,
+        "sideMicroMaxMm": 4.515886220134159,
+        "bottomMicroMaxMm": 2.4628544320955528,
+        "topTotalMaxMm": 4.4183289242568575,
+        "sideTotalMaxMm": 4.477304936088145,
+        "bottomTotalMaxMm": 2.430504967819464
+      },
+      "cover": {
+        "topMicroMaxMm": 3.0327797990173804,
+        "sideMicroMaxMm": 2.9010733196536185,
+        "bottomMicroMaxMm": 2.139165956695347,
+        "topTotalMaxMm": 3.0391172587116224,
+        "sideTotalMaxMm": 2.9004828332289017,
+        "bottomTotalMaxMm": 2.0392587532168753
+      }
+    },
+    {
+      "strength": 3,
+      "pan": {
+        "topMicroMaxMm": 7.443194389856277,
+        "sideMicroMaxMm": 7.563555478009841,
+        "bottomMicroMaxMm": 4.5,
+        "topTotalMaxMm": 7.38268067287782,
+        "sideTotalMaxMm": 7.499494085351614,
+        "bottomTotalMaxMm": 4.333082868906254
+      },
+      "cover": {
+        "topMicroMaxMm": 3.7330874986480302,
+        "sideMicroMaxMm": 3.580521980267891,
+        "bottomMicroMaxMm": 4.010936168803776,
+        "topTotalMaxMm": 3.653758922682125,
+        "sideTotalMaxMm": 3.574352693446129,
+        "bottomTotalMaxMm": 3.9110289651124557
+      }
+    }
+  ],
+  "visualApproved": false,
+  "productionApproved": false,
+  "contactPassed": true,
+  "maxOffsetMm": 7.563555478009841,
+  "bottomOffsetMm": 4.5,
+  "bottomMicroZeroLegacyStatus": "not_applicable_after_user_full_shell_goal_2026-09-14",
+  "shellFieldPresent": true
+}

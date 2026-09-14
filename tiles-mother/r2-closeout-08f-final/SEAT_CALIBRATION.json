@@ -1,0 +1,206 @@
+{
+  "version": "08F",
+  "method": "Deterministic bilateral rigid-seat solve. Pan y/roll are solved against both rafters; cover y/roll are solved against the two actual adjacent pan identities. Geometry is not deformed by this solver.",
+  "sampleSeeds": [
+    314159,
+    271828,
+    161803
+  ],
+  "targetMm": 0.02,
+  "sourceSeats": {
+    "step": 0.198,
+    "spacing": 0.242,
+    "rafterRadius": 0.023,
+    "panY": 0.0046918507554017915,
+    "panAngle": 0.11500000000000007,
+    "panRoll": -0.004573766664293201,
+    "coverY": 0.03783135735304707,
+    "coverAngle": 0.05000000000000002,
+    "coverRoll": 0.05153465959524505,
+    "coverPhase": -0.044
+  },
+  "solvedSeats": {
+    "step": 0.198,
+    "spacing": 0.242,
+    "rafterRadius": 0.023,
+    "panY": 0.004694728685378168,
+    "panAngle": 0.11500000000000007,
+    "panRoll": -0.004573766488931281,
+    "coverY": 0.03776623439385547,
+    "coverAngle": 0.05000000000000002,
+    "coverRoll": 0.051534657534794005,
+    "coverPhase": -0.044
+  },
+  "panSolve": {
+    "params": {
+      "step": 0.198,
+      "spacing": 0.242,
+      "rafterRadius": 0.023,
+      "panY": 0.004691850688208883,
+      "panAngle": 0.11500000000000007,
+      "panRoll": -0.004573766488931281,
+      "coverY": 0.03783135735304707,
+      "coverAngle": 0.05000000000000002,
+      "coverRoll": 0.05153465959524505,
+      "coverPhase": -0.044
+    },
+    "history": [
+      {
+        "iteration": 0,
+        "before": {
+          "left": 0.02000008777078635,
+          "right": 0.02000004662791599,
+          "leftSamples": [
+            0.009595290647625154,
+            0.03051968644544184,
+            0.01988528621929206
+          ],
+          "rightSamples": [
+            0.014451428267371613,
+            0.017137728980487488,
+            0.02841098263588887
+          ]
+        },
+        "dLeftMmPerRad": -117.34519029897235,
+        "dRightMmPerRad": 117.2717105426893,
+        "deltaRoll": 1.753619207014308e-10,
+        "deltaYmm": -6.719290839481886e-08
+      }
+    ],
+    "final": {
+      "left": 0.02000003367110213,
+      "right": 0.02000010100681668,
+      "leftSamples": [
+        0.009595236555699771,
+        0.03051963233800803,
+        0.019885232119598584
+      ],
+      "rightSamples": [
+        0.014451482640766289,
+        0.017137783360977182,
+        0.028411037018706564
+      ]
+    }
+  },
+  "coverSolve": {
+    "params": {
+      "step": 0.198,
+      "spacing": 0.242,
+      "rafterRadius": 0.023,
+      "panY": 0.004691850688208883,
+      "panAngle": 0.11500000000000007,
+      "panRoll": -0.004573766488931281,
+      "coverY": 0.03774977161818857,
+      "coverAngle": 0.05000000000000002,
+      "coverRoll": 0.051534657534794005,
+      "coverPhase": -0.044
+    },
+    "history": [
+      {
+        "iteration": 0,
+        "before": {
+          "left": 0.10158669459566182,
+          "right": 0.10158665545149936,
+          "leftSamples": [
+            0.08381654145701162,
+            0.12788753464627184,
+            0.09305600768370198
+          ],
+          "rightSamples": [
+            0.020447929515637897,
+            0.2643092325098628,
+            0.02000280432899737
+          ]
+        },
+        "dLeftMmPerRad": -46.31240225734291,
+        "dRightMmPerRad": 0.6196520331708255,
+        "deltaRoll": 8.340602823560955e-10,
+        "deltaYmm": -0.08158665596832651
+      },
+      {
+        "iteration": 1,
+        "before": {
+          "left": 0.01999894483839526,
+          "right": 0.019999080683757997,
+          "leftSamples": [
+            0.0022287916738722435,
+            0.04629978490877651,
+            0.01146825793253703
+          ],
+          "rightSamples": [
+            -0.06113964503716429,
+            0.1827216577219848,
+            -0.061584770633546504
+          ]
+        },
+        "dLeftMmPerRad": -46.31240225734292,
+        "dRightMmPerRad": 0.6196520331708255,
+        "deltaRoll": -2.8945113268552017e-09,
+        "deltaYmm": 9.211098318320592e-07
+      }
+    ],
+    "final": {
+      "left": 0.019999111769047433,
+      "right": 0.019999072624884984,
+      "leftSamples": [
+        0.0022289586303972375,
+        0.04629995181965746,
+        0.0114684248570876
+      ],
+      "rightSamples": [
+        -0.06113965331097648,
+        0.18272164968324844,
+        -0.06158477849761701
+      ]
+    }
+  },
+  "visualApproved": false,
+  "productionApproved": false,
+  "supportWindowMm": [
+    -0.05,
+    0.5
+  ],
+  "solverMarginMm": 0.002,
+  "solverWindowMm": [
+    -0.048,
+    0.498
+  ],
+  "panRigidAdjust": {
+    "minInputMm": 0.001907649041312659,
+    "maxInputMm": 0.03051963233800803,
+    "qaWindowMm": [
+      -0.05,
+      0.5
+    ],
+    "solverMarginMm": 0.002,
+    "solverWindowMm": [
+      -0.048,
+      0.498
+    ],
+    "feasibleIntervalMm": [
+      -0.04990764904131266,
+      0.46748036766199197
+    ],
+    "desiredMm": 0.002877997169284968,
+    "chosenMm": 0.002877997169284968
+  },
+  "coverRelativeRigidAdjust": {
+    "minInputMm": -0.06158477849761701,
+    "maxInputMm": 0.18670063609083076,
+    "qaWindowMm": [
+      -0.05,
+      0.5
+    ],
+    "solverMarginMm": 0.002,
+    "solverWindowMm": [
+      -0.048,
+      0.498
+    ],
+    "feasibleIntervalMm": [
+      0.013584778497617009,
+      0.31129936390916924
+    ],
+    "desiredMm": -0.01457168637371348,
+    "chosenMm": 0.013584778497617009
+  }
+}
