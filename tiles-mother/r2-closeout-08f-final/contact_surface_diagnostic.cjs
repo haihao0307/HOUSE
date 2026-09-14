@@ -1,4 +1,5 @@
 'use strict';
+// Re-run after diagnostic-confirmed pan-top mating strip guard.
 const fs=require('fs'),path=require('path');
 const H=__dirname;
 const base=fs.readFileSync(path.join(H,'qa_geometry.cjs'),'utf8');
