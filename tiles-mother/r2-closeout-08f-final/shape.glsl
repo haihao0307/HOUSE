@@ -1,6 +1,6 @@
 // 08F.1: unified full-shell Microscope geometry. Coordinates are metres; amplitudes are production controls,
 // not direct measurements from the scan. One stable field drives top, side wall, front/rear edge and underside.
-// Only real longitudinal overlap, rafter seating and cover-flank bearing bands are protected structurally.
+// Only real longitudinal overlap, rafter seating, pan-cover bearing and cover-flank bearing bands are protected structurally.
 uniform vec4 uMicroscope;
 float shapeBand(vec3 p,float seed,float density,float footprint){
  vec3 q=vec3(p.x+(fract(sin(seed*12.9898+78.233)*43758.5453)-.5)*.11,p.z+.40,p.y+.27);
@@ -34,26 +34,29 @@ vec3 microshape(vec3 p,vec4 meta,float seed){
  float overlapGuard=max(frontOverlap,rearOverlap);
  dy*=1.-.9995*overlapGuard;
 
- // Narrow structural bands. Most of every underside and side wall still uses the full common field.
+ // Narrow underside rafter seating rail. Most of the underside stays on the full common field.
  float bottomW=smoothstep(.78,.98,q);
  float seatRail=bottomW*smoothstep(.52,.70,abs(u));
  dy*=1.-.9998*seatRail;
- // The actual cover-to-pan bearing wing spans the lower sidewall into the underside, not q==1 alone.
- // Protect only vertical motion there; lateral silhouette remains driven by the common field.
- float coverBearingDepth=smoothstep(.08,.28,q);
- float coverFlank=step(1.5,meta.y)*coverBearingDepth*smoothstep(.60,.74,abs(u));
- dy*=1.-.9995*coverFlank;
+
+ // Exact contact diagnostic shows cover underside bears on pan TOP at pan |u| ~= .65-.70 while cover q ~= 1.
+ // Stabilize only those hidden mating strips vertically. They still share the same field identity; this is a
+ // boundary-condition mask, not a separate top/side/bottom generator.
+ float panTop=1.-smoothstep(.06,.18,q);
+ float panCoverRail=(1.-step(1.5,meta.y))*panTop*smoothstep(.56,.62,abs(u))*(1.-smoothstep(.76,.84,abs(u)));
+ dy*=1.-.9997*panCoverRail;
+ float coverFlank=step(1.5,meta.y)*bottomW*smoothstep(.60,.74,abs(u));
+ dy*=1.-.9997*coverFlank;
 
  // The same broad/middle/pore field moves the side silhouette continuously through shell thickness.
- // The rafter rail also stabilizes horizontal seat drift, but does not flatten the visible side wall.
+ // The rafter rail stabilizes only hidden horizontal seat drift; visible side wall remains field-driven.
  float wall=16.*q*q*(1.-q)*(1.-q);
  float through=.42+.58*wall;
  float sideCarrier=smoothstep(.68,.985,abs(u));
  float dx=sign(u)*strength*(.00040*broad+.00018*middle-.00027*pores)*through*sideCarrier;
  dx*=1.-.985*seatRail;
 
- // Front/rear lips use the same field. They keep lateral/longitudinal irregularity even when vertical overlap
- // motion is protected, so visible corners remain hand-formed instead of becoming square CNC cuts.
+ // Front/rear lips inherit the same field. Non-zero corner carry removes machine-cut right angles.
  float front=1.-smoothstep(.025,.16,t),rearLip=smoothstep(.84,.98,t);
  float cornerCarry=.38+.62*(1.-smoothstep(.70,.96,abs(u)));
  float edgeField=.00031*broad+.00015*middle-.00021*pores;
