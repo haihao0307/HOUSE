@@ -27,7 +27,23 @@ jobs:
           from PIL import Image
           import numpy as np
 
-          URL='https://rawcdn.githack.com/haihao0307/HOUSE/fd0aba99d4c715923cf836df77be38fb9d19b62e/yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/experiments/shape-edge-lab-r2-14/Brick_Shape_Edge_Lab_R2_14_3.html'
+          URL='https://rawcdn.githack.com/haihao0307/HOUSE/34b7b3395bd9ab52065643a7ece2605e5b0034d1/yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/experiments/shape-edge-lab-r2-14/Brick_Shape_Edge_Lab_R2_14_3.html'
+
+          def top_roughness(a):
+              H,W,_=a.shape
+              xs=[]; ys=[]
+              rows=np.arange(H)
+              for x in range(W):
+                  col=a[:,x,:].astype(np.int16)
+                  mask=((col[:,0]-col[:,1]>18)&(col[:,0]>75)&(rows>120)&(rows<560))
+                  hit=np.where(mask)[0]
+                  if len(hit):
+                      xs.append(x); ys.append(int(hit.min()))
+              x=np.asarray(xs,dtype=float); y=np.asarray(ys,dtype=float)
+              p=np.polyfit(x,y,2)
+              res=y-np.polyval(p,x)
+              return float(res.std()),float(np.percentile(np.abs(res),95))
+
           errors=[]
           with sync_playwright() as p:
               browser=p.chromium.launch(headless=True,args=['--use-angle=swiftshader','--enable-webgl','--ignore-gpu-blocklist'])
@@ -60,6 +76,11 @@ jobs:
               print('MEAN_ABS_PIXEL_DELTA',float(d.mean()))
               print('CHANGED_PIXEL_FRACTION_GT4',float((d>4).mean()))
               print('STRONG_PIXEL_FRACTION_GT10',float((d>10).mean()))
+              ls,lp=top_roughness(left); rs,rp=top_roughness(right)
+              print('LEFT_TOP_RESIDUAL_STD',ls)
+              print('LEFT_TOP_RESIDUAL_P95ABS',lp)
+              print('RIGHT_TOP_RESIDUAL_STD',rs)
+              print('RIGHT_TOP_RESIDUAL_P95ABS',rp)
               browser.close()
           PY
           python /tmp/qa.py
