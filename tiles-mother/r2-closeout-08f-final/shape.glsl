@@ -32,19 +32,25 @@ vec3 microshape(vec3 p,vec4 meta,float seed){
  float bottomBack=1.-.70*rear;
  float bodyBack=mix(back,bottomBack,bottomW);
  float supportTop=1.-.55*smoothstep(.80,.96,abs(u))*smoothstep(.20,.35,t)*(1.-smoothstep(.65,.80,t));
- float seat=smoothstep(.72,.92,abs(u))*smoothstep(.18,.30,t)*(1.-smoothstep(.70,.84,t));
- float supportBottom=1.-.78*seat;
+
+ // The underside is allowed to vary, but the narrow lateral seating rails are a structural boundary condition.
+ // This is not a return to the obsolete flat-bottom target: the centre and most of the underside remain displaced.
+ // It only damps vertical displacement where pan/rafter and cover/pan contact must remain mechanically plausible.
+ float seatRail=smoothstep(.55,.75,abs(u));
+ float supportBottom=1.-.995*seatRail;
  float bodySupport=mix(supportTop,supportBottom,bottomW);
 
  float bodyDy=strength*(.00140*broad+.00055*middle)*bodyBack*bodySupport;
  float topDy=strength*(.00100*broad+.00045*middle-.00220*pores)*topW*back*supportTop;
  float underDy=strength*(.00022*broad+.00028*under-.00055*underPores)*bottomW*bottomBack*supportBottom;
  float dy=clamp(bodyDy+topDy+underDy,-.0045,.0035);
- // Retain the established seating-edge guard; contact is re-solved after this field is applied.
+ // Retain the established lateral seating-edge guard; contact is re-solved after this field is applied.
  if(meta.y<1.5)dy-=max(dy,0.)*smoothstep(.35,.50,abs(u));
  else dy+=max(-dy,0.)*smoothstep(.50,.70,abs(u));
 
- // Side-wall silhouette now inherits the same fields all the way through thickness instead of vanishing at q=0/1.
+ // Side-wall silhouette inherits the same fields all the way through thickness instead of vanishing at q=0/1.
+ // Lateral motion is retained at the seating rail because the contact constraint is vertical-gap based;
+ // the rail guard above neutralizes only the vertical support error.
  float wall=16.*q*q*(1.-q)*(1.-q);
  float through=.28+.72*wall;
  float sideCarrier=smoothstep(.90,.985,abs(u));
