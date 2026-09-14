@@ -43,7 +43,7 @@ jobs:
           driver=webdriver.Chrome(options=opt)
           try:
               driver.get('https://raw.githack.com/')
-              driver.add_cookie({'name':'__Http-phish','value':'1','domain':'raw.githack.com','path':'/'})
+              driver.add_cookie({'name':'__Http-phish','value':'1','path':'/'})
               driver.get(url)
               wait=WebDriverWait(driver,25)
               wait.until(lambda d: '08E' in d.title)
