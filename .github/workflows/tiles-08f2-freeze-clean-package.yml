@@ -1,0 +1,170 @@
+name: Tiles Mother 08F.2 frozen clean package
+
+on:
+  push:
+    branches:
+      - codex/tiles-08f2-freeze-package-20260915
+    paths:
+      - .github/workflows/tiles-08f2-freeze-clean-package.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  freeze-package:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      SOURCE_COMMIT: 397e94b85fa9c16a01afed319595e0022d12a74b
+      SOURCE_PATH: tiles-mother/r2-closeout-08f-final/START_HERE.html
+      SOURCE_GIT_BLOB: 14db580af7b094a38917492c9859ad40d6641d08
+      PACKAGE_NAME: Tiles_Mother_R2_08F2_Frozen_Clean_2026-09-15
+      RELEASE_BRANCH: release/tiles-mother-r2-08f2-frozen-clean-20260915
+    steps:
+      - name: Checkout repository history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Build byte-identical minimal package
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT="$RUNNER_TEMP/tiles-08f2-freeze"
+          PAYLOAD="$ROOT/$PACKAGE_NAME"
+          mkdir -p "$PAYLOAD"
+
+          git show "$SOURCE_COMMIT:$SOURCE_PATH" > "$PAYLOAD/START_HERE.html"
+          ACTUAL_BLOB="$(git hash-object "$PAYLOAD/START_HERE.html")"
+          test "$ACTUAL_BLOB" = "$SOURCE_GIT_BLOB"
+
+          cat > "$PAYLOAD/README.md" <<'EOF'
+          # Tiles Mother R2 08F.2 · 冻结精简包
+
+          这是用户于 2026-09-15 决定暂时固化的 Test Module。运行入口只有 `START_HERE.html`，双击或通过公网 HTTPS 打开即可。
+
+          本包刻意删除历史版本、参考资料、扫描资料、截图、临时诊断、构建脚本、工作流及重复 QA 文件。`START_HERE.html` 与冻结源提交中的文件逐字节一致，不进行压缩改写、混淆或视觉调整。
+
+          冻结源：`397e94b85fa9c16a01afed319595e0022d12a74b`
+
+          状态：当前测试模块已固化；不是对后续版本的永久限制，也不自动等同于最终生产批准。
+          EOF
+          sed -i 's/^          //' "$PAYLOAD/README.md"
+
+          python - <<'PY'
+          import json, os, pathlib
+          payload = pathlib.Path(os.environ['RUNNER_TEMP']) / 'tiles-08f2-freeze' / os.environ['PACKAGE_NAME']
+          manifest = {
+              'package': os.environ['PACKAGE_NAME'],
+              'version': 'R2-08F.2',
+              'frozenDate': '2026-09-15',
+              'sourceCommit': os.environ['SOURCE_COMMIT'],
+              'sourcePath': os.environ['SOURCE_PATH'],
+              'sourceGitBlobSha1': os.environ['SOURCE_GIT_BLOB'],
+              'canonicalRuntime': 'START_HERE.html',
+              'selfContainedRuntime': True,
+              'byteIdenticalToApprovedRuntime': True,
+              'historicalVersionsIncluded': False,
+              'referenceAssetsIncluded': False,
+              'screenshotsIncluded': False,
+              'buildScriptsIncluded': False,
+              'temporaryDiagnosticsIncluded': False,
+              'userFrozenTestModule': True,
+              'productionReady': False,
+              'note': 'Frozen as the current test module. Future edits must start as a new version and must not overwrite this package.'
+          }
+          (payload / 'FREEZE_MANIFEST.json').write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+          PY
+
+          (
+            cd "$PAYLOAD"
+            sha256sum START_HERE.html README.md FREEZE_MANIFEST.json > SHA256SUMS.txt
+          )
+
+          find "$PAYLOAD" -type f -exec touch -t 202609150000 {} +
+          (
+            cd "$ROOT"
+            zip -9 -X -r "$PACKAGE_NAME.zip" "$PACKAGE_NAME" >/dev/null
+          )
+
+          python - <<'PY'
+          import hashlib, json, os, pathlib
+          root = pathlib.Path(os.environ['RUNNER_TEMP']) / 'tiles-08f2-freeze'
+          payload = root / os.environ['PACKAGE_NAME']
+          archive = root / f"{os.environ['PACKAGE_NAME']}.zip"
+          def sha256(path):
+              h = hashlib.sha256()
+              with path.open('rb') as f:
+                  for chunk in iter(lambda: f.read(1 << 20), b''):
+                      h.update(chunk)
+              return h.hexdigest()
+          files = sorted(p for p in payload.iterdir() if p.is_file())
+          receipt = {
+              'package': archive.name,
+              'releaseBranch': os.environ['RELEASE_BRANCH'],
+              'sourceCommit': os.environ['SOURCE_COMMIT'],
+              'sourceGitBlobSha1': os.environ['SOURCE_GIT_BLOB'],
+              'payloadFileCount': len(files),
+              'payloadFiles': [p.name for p in files],
+              'runtimeHtmlBytes': (payload / 'START_HERE.html').stat().st_size,
+              'runtimeHtmlSha256': sha256(payload / 'START_HERE.html'),
+              'uncompressedPayloadBytes': sum(p.stat().st_size for p in files),
+              'zipBytes': archive.stat().st_size,
+              'zipSha256': sha256(archive),
+              'referencesRemoved': True,
+              'historicalVersionsRemoved': True,
+              'temporaryFilesRemoved': True
+          }
+          (root / 'PACKAGE_RECEIPT.json').write_text(json.dumps(receipt, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+          print(json.dumps(receipt, ensure_ascii=False, indent=2))
+          PY
+
+      - name: Publish clean orphan branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT="$RUNNER_TEMP/tiles-08f2-freeze"
+          PAYLOAD="$ROOT/$PACKAGE_NAME"
+          LOCAL_BRANCH="package-build-$GITHUB_RUN_ID"
+
+          git config user.name "Tiles Mother Freeze Bot"
+          git config user.email "actions@github.com"
+          git switch --orphan "$LOCAL_BRANCH"
+          git rm -rf . >/dev/null 2>&1 || true
+          git clean -fdx >/dev/null 2>&1 || true
+
+          cp "$PAYLOAD/START_HERE.html" ./START_HERE.html
+          cp "$PAYLOAD/README.md" ./README.md
+          cp "$PAYLOAD/FREEZE_MANIFEST.json" ./FREEZE_MANIFEST.json
+          cp "$PAYLOAD/SHA256SUMS.txt" ./SHA256SUMS.txt
+          cp "$ROOT/$PACKAGE_NAME.zip" "./$PACKAGE_NAME.zip"
+          cp "$ROOT/PACKAGE_RECEIPT.json" ./PACKAGE_RECEIPT.json
+
+          git add START_HERE.html README.md FREEZE_MANIFEST.json SHA256SUMS.txt "$PACKAGE_NAME.zip" PACKAGE_RECEIPT.json
+          git commit -m "release(tiles): freeze R2 08F.2 as clean minimal package"
+          git push --force origin "HEAD:refs/heads/$RELEASE_BRANCH"
+
+      - name: Upload package artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tiles-mother-r2-08f2-frozen-clean
+          path: |
+            ${{ runner.temp }}/tiles-08f2-freeze/${{ env.PACKAGE_NAME }}.zip
+            ${{ runner.temp }}/tiles-08f2-freeze/PACKAGE_RECEIPT.json
+          retention-days: 90
+
+      - name: Write package summary
+        shell: bash
+        run: |
+          python - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import json, os, pathlib
+          p = pathlib.Path(os.environ['RUNNER_TEMP']) / 'tiles-08f2-freeze' / 'PACKAGE_RECEIPT.json'
+          r = json.loads(p.read_text(encoding='utf-8'))
+          print('# Tiles Mother R2 08F.2 frozen clean package')
+          print(f"- Runtime HTML: {r['runtimeHtmlBytes']} bytes")
+          print(f"- Uncompressed payload: {r['uncompressedPayloadBytes']} bytes")
+          print(f"- ZIP: {r['zipBytes']} bytes")
+          print(f"- ZIP SHA-256: `{r['zipSha256']}`")
+          print(f"- Release branch: `{r['releaseBranch']}`")
+          PY
