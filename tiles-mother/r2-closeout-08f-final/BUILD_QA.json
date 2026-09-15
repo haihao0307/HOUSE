@@ -47,7 +47,7 @@
   },
   "amplitudeStatus": "authored_design_controls_not_direct_scan_measurements",
   "sourceHtmlSha256": "5927097eae484d83af9f5c64766a21e963ddb1da63bf6b9ed9996368e6bc1141",
-  "outputHtmlSha256": "3c7fa55c7d2024925e9c545712f5323d33b57488c6b4447c26170e216fb7b47d",
+  "outputHtmlSha256": "3f71c96b4b501a768b07c76e6e6bdbb9bb5d57af2395971bb33cf734ecccadeb",
   "contactPassed": true,
   "expandedMatrixPassed": true,
   "shellFieldPresent": true,
