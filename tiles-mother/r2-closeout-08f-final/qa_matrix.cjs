@@ -3,18 +3,18 @@ const fs0=require('fs');
 const path0=require('path');
 const H0=__dirname;
 const base=fs0.readFileSync(path0.join(H0,'qa_geometry.cjs'),'utf8');
-const marker='for(const strength of [0,1.6,3])';
+const marker='for(const strength of [0,3,3.6])';
 const cut=base.indexOf(marker);
 if(cut<0) throw new Error('qa_geometry matrix insertion marker not found');
 const prefix=base.slice(0,cut);
 const program=prefix+String.raw`
 const seeds=[314159,271828,161803];
-const strengths=[0,1.6,3];
+const strengths=[0,3,3.6];
 const toleranceMm=.05;
 const supportMaxGapMm=.5;
 const matrix={
-  version:'08F',
-  method:'Expanded CPU double precision projected-triangle matrix on the actual 08F self-contained page. Three deterministic roof identity neighborhoods x three Microscope strengths. Adjacent pans use the real +1777 identity stride from roof generation. This is representative, not an exhaustive proof over every seed or arbitrary damage state.',
+  version:'08F.2',
+  method:'Expanded CPU double precision projected-triangle matrix on the actual 08F.2 self-contained page. Three deterministic roof identity neighborhoods x user-middle envelope: off, middle 3.0 and stronger 3.6 at scale 0.5. Adjacent pans use the real +1777 identity stride from roof generation. This is representative, not an exhaustive proof over every seed or arbitrary damage state.',
   seeds,
   strengths,
   toleranceMm,
@@ -33,11 +33,11 @@ function record(group,name,lower,lm,upper,um,support,seed,strength){
 const wood=A.timber();
 for(const strength of strengths){
   for(const seed of seeds){
-    const pan=mesh('pan',sid(seed),strength,1);
-    const panRight=mesh('pan',sid(seed+1777),strength,1);
-    const cover=mesh('cover',sid(seed+389),strength,1);
-    const panNext=mesh('pan',sid(seed+97),strength,1);
-    const coverNext=mesh('cover',sid(seed+486),strength,1);
+    const pan=mesh('pan',sid(seed),strength,.5);
+    const panRight=mesh('pan',sid(seed+1777),strength,.5);
+    const cover=mesh('cover',sid(seed+389),strength,.5);
+    const panNext=mesh('pan',sid(seed+97),strength,.5);
+    const coverNext=mesh('cover',sid(seed+486),strength,.5);
     record('pan-cover','cover on left pan',pan,A.tileModel('pan',-S.spacing*.5,S.panY,0),cover,A.tileModel('cover',0,S.coverY,S.coverPhase),true,seed,strength);
     record('pan-cover','cover on right adjacent pan',panRight,A.tileModel('pan', S.spacing*.5,S.panY,0),cover,A.tileModel('cover',0,S.coverY,S.coverPhase),true,seed,strength);
     record('rafter-pan','left rafter on pan',wood,A.model(-S.spacing*.5,0,0,0,0,[S.rafterRadius,S.rafterRadius,7*S.step+.06]),pan,A.tileModel('pan',0,S.panY,-3*S.step),true,seed,strength);

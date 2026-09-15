@@ -1,11 +1,11 @@
 {
-  "version": "08F",
-  "method": "CPU double precision mirror of the actual 08F full-shell field; contacts use projected triangle intersections. Shape-presence metrics distinguish Microscope displacement from combined handmade+Microscope displacement.",
+  "version": "08F.2",
+  "method": "CPU double precision mirror of the unified 08F.1 full-shell field; one stable field drives top, side and underside. Contacts use projected triangle intersections.",
   "contacts": [
     {
       "name": "pan-cover default first pair",
-      "trianglePairs": 26257,
-      "minGapMm": 0.015813229703738607,
+      "trianglePairs": 38937,
+      "minGapMm": 0.05060790675266019,
       "where": [
         -0.04511695040516271,
         -0.1156133088762451
@@ -15,8 +15,8 @@
     },
     {
       "name": "left rafter-pan",
-      "trianglePairs": 12862,
-      "minGapMm": 0.0124730233112616,
+      "trianglePairs": 17194,
+      "minGapMm": 0.009600358829887912,
       "where": [
         -0.10665973398282425,
         -0.47312404859593565
@@ -26,58 +26,59 @@
     },
     {
       "name": "pan-cover default first pair",
-      "trianglePairs": 26253,
-      "minGapMm": 0.030203486301096094,
+      "trianglePairs": 39209,
+      "minGapMm": -0.03732246512649223,
       "where": [
-        -0.04515286065410301,
-        -0.11563232042244763
+        -0.045114868253231286,
+        -0.11557275886775963
       ],
       "pass": true,
-      "strength": 1.6
+      "strength": 3
     },
     {
       "name": "left rafter-pan",
-      "trianglePairs": 12866,
-      "minGapMm": 0.008373803367829613,
+      "trianglePairs": 17212,
+      "minGapMm": 0.009477424057831307,
       "where": [
         -0.10665973398282425,
-        -0.47311552120778116
+        -0.47312406750100133
       ],
       "pass": true,
-      "strength": 1.6
+      "strength": 3
     },
     {
       "name": "pan-cover default first pair",
-      "trianglePairs": 26255,
-      "minGapMm": 0.04284916408137801,
+      "trianglePairs": 39201,
+      "minGapMm": -0.04799820610659755,
       "where": [
-        -0.04518443162983011,
-        -0.11564911446685786
+        -0.045114622575524774,
+        -0.11556783170450093
       ],
       "pass": true,
-      "strength": 3
+      "strength": 3.6
     },
     {
       "name": "left rafter-pan",
-      "trianglePairs": 12870,
-      "minGapMm": 0.004785435796874488,
+      "trianglePairs": 17252,
+      "minGapMm": 0.009453692035799738,
       "where": [
         -0.10665973398282425,
-        -0.4731080547444555
+        -0.4731240698968683
       ],
       "pass": true,
-      "strength": 3
+      "strength": 3.6
     }
   ],
   "shapeEvidence": [
     {
       "strength": 0,
+      "scale": 0.5,
       "pan": {
         "topMicroMaxMm": 0,
         "sideMicroMaxMm": 0,
         "bottomMicroMaxMm": 0,
         "topTotalMaxMm": 0.7593764511503174,
-        "sideTotalMaxMm": 0.19920747870997585,
+        "sideTotalMaxMm": 0.19920107503900378,
         "bottomTotalMaxMm": 0.7608778282635733
       },
       "cover": {
@@ -85,54 +86,56 @@
         "sideMicroMaxMm": 0,
         "bottomMicroMaxMm": 0,
         "topTotalMaxMm": 0.29962416264586816,
-        "sideTotalMaxMm": 0.06015158289770825,
+        "sideTotalMaxMm": 0.06015188277336991,
         "bottomTotalMaxMm": 0.2992507541148675
       }
     },
     {
-      "strength": 1.6,
+      "strength": 3,
+      "scale": 0.5,
       "pan": {
-        "topMicroMaxMm": 4.5,
-        "sideMicroMaxMm": 4.515886220134159,
-        "bottomMicroMaxMm": 2.4628544320955528,
-        "topTotalMaxMm": 4.4183289242568575,
-        "sideTotalMaxMm": 4.477304936088145,
-        "bottomTotalMaxMm": 2.430504967819464
+        "topMicroMaxMm": 3.99183886482088,
+        "sideMicroMaxMm": 5.225711192913611,
+        "bottomMicroMaxMm": 4.29818446063166,
+        "topTotalMaxMm": 3.9768888997026974,
+        "sideTotalMaxMm": 5.205420081592917,
+        "bottomTotalMaxMm": 4.233696987458051
       },
       "cover": {
-        "topMicroMaxMm": 3.0327797990173804,
-        "sideMicroMaxMm": 2.9010733196536185,
-        "bottomMicroMaxMm": 2.139165956695347,
-        "topTotalMaxMm": 3.0391172587116224,
-        "sideTotalMaxMm": 2.9004828332289017,
-        "bottomTotalMaxMm": 2.0392587532168753
+        "topMicroMaxMm": 3.644909644708596,
+        "sideMicroMaxMm": 4.147329023354229,
+        "bottomMicroMaxMm": 3.5461856515972423,
+        "topTotalMaxMm": 3.6523938323938485,
+        "sideTotalMaxMm": 4.16143425057511,
+        "bottomTotalMaxMm": 3.553684968714192
       }
     },
     {
-      "strength": 3,
+      "strength": 3.6,
+      "scale": 0.5,
       "pan": {
-        "topMicroMaxMm": 7.443194389856277,
-        "sideMicroMaxMm": 7.563555478009841,
-        "bottomMicroMaxMm": 4.5,
-        "topTotalMaxMm": 7.38268067287782,
-        "sideTotalMaxMm": 7.499494085351614,
-        "bottomTotalMaxMm": 4.333082868906254
+        "topMicroMaxMm": 4.445780964089315,
+        "sideMicroMaxMm": 5.606343624497914,
+        "bottomMicroMaxMm": 4.80000029741871,
+        "topTotalMaxMm": 4.466698036355066,
+        "sideTotalMaxMm": 5.587295954672204,
+        "bottomTotalMaxMm": 4.735512821756293
       },
       "cover": {
-        "topMicroMaxMm": 3.7330874986480302,
-        "sideMicroMaxMm": 3.580521980267891,
-        "bottomMicroMaxMm": 4.010936168803776,
-        "topTotalMaxMm": 3.653758922682125,
-        "sideTotalMaxMm": 3.574352693446129,
-        "bottomTotalMaxMm": 3.9110289651124557
+        "topMicroMaxMm": 4.373891573650314,
+        "sideMicroMaxMm": 4.956514627201237,
+        "bottomMicroMaxMm": 4.25542278191669,
+        "topTotalMaxMm": 4.3812943648475065,
+        "sideTotalMaxMm": 4.970554669228425,
+        "bottomTotalMaxMm": 4.262892972889611
       }
     }
   ],
   "visualApproved": false,
   "productionApproved": false,
   "contactPassed": true,
-  "maxOffsetMm": 7.563555478009841,
-  "bottomOffsetMm": 4.5,
+  "maxOffsetMm": 5.606343624497914,
+  "bottomOffsetMm": 4.80000029741871,
   "bottomMicroZeroLegacyStatus": "not_applicable_after_user_full_shell_goal_2026-09-14",
   "shellFieldPresent": true
 }

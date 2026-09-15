@@ -7,21 +7,18 @@ function band(p,seed,density,footprint){let q=[p[0]+(fract(Math.sin(seed*12.9898
 function micro(p,m,seed,strength,scale){
  if(!strength||m[1]<.5)return[0,0,0];
  let len=m[1]>1.5?.222:.238,u=m[3],t=A.clamp(p[2]/len+.5),q=A.clamp(m[2],0,1);
+ strength=Math.min(strength,3.6);
  let b=A.clamp(band(p,seed,6*scale,.0012),-1,1),mid=A.clamp(band(p,seed,26*scale,.0012),-1,1),pores=smooth(.56,.67,band(p,seed,80*scale,.0012));
- let under=A.clamp(band(p,seed,18*scale,.0015),-1,1),underPores=smooth(.60,.73,band(p,seed,58*scale,.0011)),sideField=A.clamp(band(p,seed,11*scale,.012),-1,1);
- let topW=1-smooth(.34,.84,q),bottomW=smooth(.60,.90,q),rear=smooth(.86,1,t),back=1-rear,bottomBack=1-.70*rear,bodyBack=back*(1-bottomW)+bottomBack*bottomW;
- let supportTop=1-.55*smooth(.80,.96,Math.abs(u))*smooth(.20,.35,t)*(1-smooth(.65,.80,t));
- let seatRail=smooth(.55,.75,Math.abs(u)),supportBottom=1-.995*seatRail,bodySupport=supportTop*(1-bottomW)+supportBottom*bottomW;
- let bodyDy=strength*(.00140*b+.00055*mid)*bodyBack*bodySupport,topDy=strength*(.00100*b+.00045*mid-.00220*pores)*topW*back*supportTop,underDy=strength*(.00022*b+.00028*under-.00055*underPores)*bottomW*bottomBack*supportBottom;
- let dy=A.clamp(bodyDy+topDy+underDy,-.0045,.0035);let panBearing=(m[1]<1.5?1:0)*(1-bottomW)*smooth(.68,.86,Math.abs(u)),coverBearing=(m[1]>=1.5?1:0)*bottomW*(1-smooth(.24,.46,Math.abs(u))),bearingGuard=Math.max(panBearing,coverBearing);dy*=1-.997*bearingGuard;
- if(m[1]<1.5)dy-=Math.max(dy,0)*smooth(.35,.50,Math.abs(u));else dy+=Math.max(-dy,0)*smooth(.50,.70,Math.abs(u));
- let wall=16*q*q*(1-q)*(1-q),through=.28+.72*wall,sideCarrier=smooth(.90,.985,Math.abs(u));
- let dx=Math.sign(u)*strength*(.00026*sideField-.00042*pores+.00014*under)*through*sideCarrier;
- let notch=smooth(-.35,.55,band(p,seed,8*scale,.018)),front=1-smooth(.025,.16,t),rearLip=smooth(.88,.98,t),lip=1-smooth(.35,.50,Math.abs(u));
- let dz=strength*(.00025+.0020*notch)*topW*front*lip;
- dz+=strength*(.00010+.00075*notch)*bottomW*front*lip;
- dz+=strength*.00022*sideField*through*(front+.20*rearLip);
- dz+=strength*.00055*pores*through*front;
+ let common=.00150*b+.00062*mid-.00138*pores,rawShell=A.clamp(strength*common,-.0048,.0042);
+ let isCover=m[1]>=1.5?1:0,isPan=1-isCover,topW=1-smooth(.12,.36,q),bottomW=smooth(.64,.88,q);
+ let panTopBearing=isPan*topW*smooth(.46,.62,Math.abs(u)),panBottomBearing=isPan*bottomW*smooth(.58,.76,Math.abs(u));
+ let coverLeftBearing=isCover*bottomW*smooth(.82,.96,-u),coverRightBearing=isCover*bottomW*(1-smooth(.045,.12,Math.abs(u-.075))),coverBottomBearing=Math.max(coverLeftBearing,coverRightBearing);
+ let contactPatch=Math.max(panTopBearing,panBottomBearing,coverBottomBearing),contactFree=1-.9998*A.clamp(contactPatch,0,1),dy=rawShell*contactFree;
+ let coverRearOverlap=isCover*smooth(.72,.82,t);dy*=1-.998*coverRearOverlap;
+ let wall=16*q*q*(1-q)*(1-q),sideCarrier=smooth(.58,.96,Math.abs(u));
+ let dx=Math.sign(u)*rawShell*(.36+.24*wall)*sideCarrier*contactFree;
+ let front=1-smooth(.025,.18,t),rearLip=smooth(.82,.98,t),cornerCarry=.42+.58*(1-smooth(.58,.94,Math.abs(u)));
+ let dz=rawShell*(front+.28*rearLip)*cornerCarry*(.34+.30*wall)*contactFree;
  return[dx,dy,dz]
 }
 const source=fs.readFileSync(path.join(H,'contact-lib.cjs'),'utf8');vm.runInNewContext(source.slice(source.indexOf('function triangles('),source.indexOf('if(process.env.CONTACT_LIB)'))+';this.gap=gap',{A,...C});const G={A};vm.createContext(G);vm.runInContext(source.slice(source.indexOf('function triangles('),source.indexOf('if(process.env.CONTACT_LIB)'))+';this.gap=gap',G);
@@ -38,10 +35,10 @@ function mesh(kind,sid,strength,scale){
  g._offsetStats=stats;return g;
 }
 
-const report={version:'08F',method:'CPU double precision mirror of the actual 08F full-shell field; contacts use projected triangle intersections. Shape-presence metrics distinguish Microscope displacement from combined handmade+Microscope displacement.',contacts:[],shapeEvidence:[],visualApproved:false,productionApproved:false};
+const report={version:'08F.2',method:'CPU double precision mirror of the unified 08F.1 full-shell field; one stable field drives top, side and underside. Contacts use projected triangle intersections.',contacts:[],shapeEvidence:[],visualApproved:false,productionApproved:false};
 function hash(n){n=Math.imul(n^(n>>>16),0x7feb352d);n=Math.imul(n^(n>>>15),0x846ca68b);return((n^(n>>>16))>>>0)/4294967295}
 const sid=n=>3+hash(n)*97;
-for(const strength of [0,1.6,3]){const pan=mesh('pan',sid(314159),strength,1),cover=mesh('cover',sid(314548),strength,1);report.shapeEvidence.push({strength,pan:pan._offsetStats,cover:cover._offsetStats});
+for(const strength of [0,3,3.6]){const pan=mesh('pan',sid(314159),strength,.5),cover=mesh('cover',sid(314548),strength,.5);report.shapeEvidence.push({strength,scale:.5,pan:pan._offsetStats,cover:cover._offsetStats});
 report.contacts.push({...G.gap('pan-cover default first pair',pan,A.tileModel('pan',-S.spacing*.5,S.panY,0),cover,A.tileModel('cover',0,S.coverY,S.coverPhase)),strength});
 report.contacts.push({...G.gap('left rafter-pan',A.timber(),A.model(-S.spacing*.5,0,0,0,0,[S.rafterRadius,S.rafterRadius,7*S.step+.06]),pan,A.tileModel('pan',0,S.panY,-3*S.step)),strength});}
 report.contactPassed=report.contacts.every(x=>x.pass);report.maxOffsetMm=maxOffset*1000;report.bottomOffsetMm=Math.max(...report.shapeEvidence.map(x=>Math.max(x.pan.bottomMicroMaxMm,x.cover.bottomMicroMaxMm)));report.bottomMicroZeroLegacyStatus='not_applicable_after_user_full_shell_goal_2026-09-14';report.shellFieldPresent=report.shapeEvidence.filter(x=>x.strength>0).every(x=>x.pan.bottomMicroMaxMm>1e-6&&x.pan.sideMicroMaxMm>1e-6&&x.cover.bottomMicroMaxMm>1e-6&&x.cover.sideMicroMaxMm>1e-6);fs.writeFileSync(H+'/CONTACT_QA.json',JSON.stringify(report,null,2));console.log(JSON.stringify(report,null,2));

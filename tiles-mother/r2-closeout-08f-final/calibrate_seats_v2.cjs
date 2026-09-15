@@ -3,7 +3,7 @@ const fs0=require('fs');
 const path0=require('path');
 const H0=__dirname;
 const base=fs0.readFileSync(path0.join(H0,'qa_geometry.cjs'),'utf8');
-const marker='for(const strength of [0,1.6,3])';
+const marker='for(const strength of [0,3,3.6])';
 const cut=base.indexOf(marker);
 if(cut<0) throw new Error('qa_geometry calibration marker not found');
 const prefix=base.slice(0,cut);
@@ -64,7 +64,7 @@ function solvePair(kind,measure,p){
 }
 const panSolve=solvePair('pan',rafterMeans,P);P=panSolve.params;
 const coverSolve=solvePair('cover',coverMeans,P);P=coverSolve.params;
-const calibrationResult={version:'08F',method:'Deterministic bilateral rigid-seat solve. Pan y/roll are solved against both rafters; cover y/roll are solved against the two actual adjacent pan identities. Geometry is not deformed by this solver.',sampleSeeds,targetMm,sourceSeats:S,solvedSeats:P,panSolve,coverSolve,visualApproved:false,productionApproved:false};
+const calibrationResult={version:'08F.2',method:'Deterministic bilateral rigid-seat solve. Pan y/roll are solved against both rafters; cover y/roll are solved against the two actual adjacent pan identities. Geometry is not deformed by this solver.',sampleSeeds,targetMm,sourceSeats:S,solvedSeats:P,panSolve,coverSolve,visualApproved:false,productionApproved:false};
 let html=fs.readFileSync(H+'/START_HERE.html','utf8');
 const re=/const SEATS=Object\.freeze\((\{[^\n]+\})\);/;
 if(!re.test(html))throw new Error('SEATS literal not found for calibration');

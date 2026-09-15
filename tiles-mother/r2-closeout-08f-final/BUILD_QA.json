@@ -1,7 +1,7 @@
 {
-  "version": "08F",
+  "version": "08F.2",
   "sourceVersion": "08E",
-  "scope": "final closeout candidate: preserve accepted top-face character, extend actual geometry continuously to side/edge/underside, widen procedural colour families from the supplied scan, then re-run retained contact constraints",
+  "scope": "final continuity closeout: preserve accepted roof appearance, use the user's roof48/860 settings as the middle reference, unify top/side/underside under one geometry field, soften side-wall/corner construction, and retain contact constraints",
   "referencePackage": "讲武堂瓦片精细(4).zip",
   "referenceFiles": {
     "01.fbx": {
@@ -29,27 +29,44 @@
       "bytes": 2246
     }
   },
+  "userMiddleDefaults": {
+    "micStrength": 3.0,
+    "micScale": 0.5,
+    "micColor": 1.0,
+    "brightness": 0.78,
+    "variation": 1.5,
+    "warmth": 1.5,
+    "patina": 1.0,
+    "wet": 0.3,
+    "moss": 1.5
+  },
   "historicalChecks": {
     "08D_bottomMicroscopeZero": "not_applicable_to_current_user_goal",
     "08E_contactRelations": "retain_and_re_run",
-    "08E_54_relation_matrix": "prior_execution_evidence_only_not_new_goal_completion"
+    "08F_54_relation_matrix": "prior_execution_evidence_only_not_new_goal_completion"
   },
   "amplitudeStatus": "authored_design_controls_not_direct_scan_measurements",
   "sourceHtmlSha256": "5927097eae484d83af9f5c64766a21e963ddb1da63bf6b9ed9996368e6bc1141",
-  "outputHtmlSha256": "4a6e3f9453ba2b74e7aad94ec549efe1ef34f7ee30fbe5896d1a5aa6efbcc82b",
+  "outputHtmlSha256": "3c7fa55c7d2024925e9c545712f5323d33b57488c6b4447c26170e216fb7b47d",
   "contactPassed": true,
   "expandedMatrixPassed": true,
   "shellFieldPresent": true,
+  "singleFieldContinuity": true,
   "visualApproved": false,
   "productionApproved": false,
+  "testedStrengthEnvelope": [
+    0.0,
+    3.0,
+    3.6
+  ],
   "actualContactQa": {
-    "version": "08F",
-    "method": "CPU double precision mirror of the actual 08F full-shell field; contacts use projected triangle intersections. Shape-presence metrics distinguish Microscope displacement from combined handmade+Microscope displacement.",
+    "version": "08F.2",
+    "method": "CPU double precision mirror of the unified 08F.1 full-shell field; one stable field drives top, side and underside. Contacts use projected triangle intersections.",
     "contacts": [
       {
         "name": "pan-cover default first pair",
-        "trianglePairs": 26257,
-        "minGapMm": 0.015813229703738607,
+        "trianglePairs": 38937,
+        "minGapMm": 0.05060790675266019,
         "where": [
           -0.04511695040516271,
           -0.1156133088762451
@@ -59,8 +76,8 @@
       },
       {
         "name": "left rafter-pan",
-        "trianglePairs": 12862,
-        "minGapMm": 0.0124730233112616,
+        "trianglePairs": 17194,
+        "minGapMm": 0.009600358829887912,
         "where": [
           -0.10665973398282425,
           -0.47312404859593565
@@ -70,58 +87,59 @@
       },
       {
         "name": "pan-cover default first pair",
-        "trianglePairs": 26253,
-        "minGapMm": 0.030203486301096094,
+        "trianglePairs": 39209,
+        "minGapMm": -0.03732246512649223,
         "where": [
-          -0.04515286065410301,
-          -0.11563232042244763
+          -0.045114868253231286,
+          -0.11557275886775963
         ],
         "pass": true,
-        "strength": 1.6
+        "strength": 3
       },
       {
         "name": "left rafter-pan",
-        "trianglePairs": 12866,
-        "minGapMm": 0.008373803367829613,
+        "trianglePairs": 17212,
+        "minGapMm": 0.009477424057831307,
         "where": [
           -0.10665973398282425,
-          -0.47311552120778116
+          -0.47312406750100133
         ],
         "pass": true,
-        "strength": 1.6
+        "strength": 3
       },
       {
         "name": "pan-cover default first pair",
-        "trianglePairs": 26255,
-        "minGapMm": 0.04284916408137801,
+        "trianglePairs": 39201,
+        "minGapMm": -0.04799820610659755,
         "where": [
-          -0.04518443162983011,
-          -0.11564911446685786
+          -0.045114622575524774,
+          -0.11556783170450093
         ],
         "pass": true,
-        "strength": 3
+        "strength": 3.6
       },
       {
         "name": "left rafter-pan",
-        "trianglePairs": 12870,
-        "minGapMm": 0.004785435796874488,
+        "trianglePairs": 17252,
+        "minGapMm": 0.009453692035799738,
         "where": [
           -0.10665973398282425,
-          -0.4731080547444555
+          -0.4731240698968683
         ],
         "pass": true,
-        "strength": 3
+        "strength": 3.6
       }
     ],
     "shapeEvidence": [
       {
         "strength": 0,
+        "scale": 0.5,
         "pan": {
           "topMicroMaxMm": 0,
           "sideMicroMaxMm": 0,
           "bottomMicroMaxMm": 0,
           "topTotalMaxMm": 0.7593764511503174,
-          "sideTotalMaxMm": 0.19920747870997585,
+          "sideTotalMaxMm": 0.19920107503900378,
           "bottomTotalMaxMm": 0.7608778282635733
         },
         "cover": {
@@ -129,54 +147,56 @@
           "sideMicroMaxMm": 0,
           "bottomMicroMaxMm": 0,
           "topTotalMaxMm": 0.29962416264586816,
-          "sideTotalMaxMm": 0.06015158289770825,
+          "sideTotalMaxMm": 0.06015188277336991,
           "bottomTotalMaxMm": 0.2992507541148675
         }
       },
       {
-        "strength": 1.6,
+        "strength": 3,
+        "scale": 0.5,
         "pan": {
-          "topMicroMaxMm": 4.5,
-          "sideMicroMaxMm": 4.515886220134159,
-          "bottomMicroMaxMm": 2.4628544320955528,
-          "topTotalMaxMm": 4.4183289242568575,
-          "sideTotalMaxMm": 4.477304936088145,
-          "bottomTotalMaxMm": 2.430504967819464
+          "topMicroMaxMm": 3.99183886482088,
+          "sideMicroMaxMm": 5.225711192913611,
+          "bottomMicroMaxMm": 4.29818446063166,
+          "topTotalMaxMm": 3.9768888997026974,
+          "sideTotalMaxMm": 5.205420081592917,
+          "bottomTotalMaxMm": 4.233696987458051
         },
         "cover": {
-          "topMicroMaxMm": 3.0327797990173804,
-          "sideMicroMaxMm": 2.9010733196536185,
-          "bottomMicroMaxMm": 2.139165956695347,
-          "topTotalMaxMm": 3.0391172587116224,
-          "sideTotalMaxMm": 2.9004828332289017,
-          "bottomTotalMaxMm": 2.0392587532168753
+          "topMicroMaxMm": 3.644909644708596,
+          "sideMicroMaxMm": 4.147329023354229,
+          "bottomMicroMaxMm": 3.5461856515972423,
+          "topTotalMaxMm": 3.6523938323938485,
+          "sideTotalMaxMm": 4.16143425057511,
+          "bottomTotalMaxMm": 3.553684968714192
         }
       },
       {
-        "strength": 3,
+        "strength": 3.6,
+        "scale": 0.5,
         "pan": {
-          "topMicroMaxMm": 7.443194389856277,
-          "sideMicroMaxMm": 7.563555478009841,
-          "bottomMicroMaxMm": 4.5,
-          "topTotalMaxMm": 7.38268067287782,
-          "sideTotalMaxMm": 7.499494085351614,
-          "bottomTotalMaxMm": 4.333082868906254
+          "topMicroMaxMm": 4.445780964089315,
+          "sideMicroMaxMm": 5.606343624497914,
+          "bottomMicroMaxMm": 4.80000029741871,
+          "topTotalMaxMm": 4.466698036355066,
+          "sideTotalMaxMm": 5.587295954672204,
+          "bottomTotalMaxMm": 4.735512821756293
         },
         "cover": {
-          "topMicroMaxMm": 3.7330874986480302,
-          "sideMicroMaxMm": 3.580521980267891,
-          "bottomMicroMaxMm": 4.010936168803776,
-          "topTotalMaxMm": 3.653758922682125,
-          "sideTotalMaxMm": 3.574352693446129,
-          "bottomTotalMaxMm": 3.9110289651124557
+          "topMicroMaxMm": 4.373891573650314,
+          "sideMicroMaxMm": 4.956514627201237,
+          "bottomMicroMaxMm": 4.25542278191669,
+          "topTotalMaxMm": 4.3812943648475065,
+          "sideTotalMaxMm": 4.970554669228425,
+          "bottomTotalMaxMm": 4.262892972889611
         }
       }
     ],
     "visualApproved": false,
     "productionApproved": false,
     "contactPassed": true,
-    "maxOffsetMm": 7.563555478009841,
-    "bottomOffsetMm": 4.5,
+    "maxOffsetMm": 5.606343624497914,
+    "bottomOffsetMm": 4.80000029741871,
     "bottomMicroZeroLegacyStatus": "not_applicable_after_user_full_shell_goal_2026-09-14",
     "shellFieldPresent": true
   },
@@ -184,24 +204,24 @@
     "checks": 54,
     "passed": 54,
     "failed": 0,
-    "minGapMm": -0.04800050742427564,
-    "maxSupportGapMm": 0.20028490716417213
+    "minGapMm": -0.04799820610659755,
+    "maxSupportGapMm": 0.23152795743310028
   },
   "seatCalibration": {
     "step": 0.198,
     "spacing": 0.242,
     "rafterRadius": 0.023,
-    "panY": 0.004694728685378168,
+    "panY": 0.004691855754629778,
     "panAngle": 0.11500000000000007,
-    "panRoll": -0.004573766488931281,
-    "coverY": 0.03776623439385547,
+    "panRoll": -0.004573766488931315,
+    "coverY": 0.03779815383883834,
     "coverAngle": 0.05000000000000002,
-    "coverRoll": 0.051534657534794005,
+    "coverRoll": 0.05153465753479411,
     "coverPhase": -0.044
   },
   "panRigidAdjust": {
-    "minInputMm": 0.001907649041312659,
-    "maxInputMm": 0.03051963233800803,
+    "minInputMm": 0.009448569761639353,
+    "maxInputMm": 0.030519632338021907,
     "qaWindowMm": [
       -0.05,
       0.5
@@ -212,15 +232,15 @@
       0.498
     ],
     "feasibleIntervalMm": [
-      -0.04990764904131266,
-      0.46748036766199197
+      -0.057448569761639354,
+      0.4674803676619781
     ],
-    "desiredMm": 0.002877997169284968,
-    "chosenMm": 0.002877997169284968
+    "desiredMm": 5.066420908236835e-06,
+    "chosenMm": 5.066420908236835e-06
   },
   "coverRelativeRigidAdjust": {
-    "minInputMm": -0.06158477849761701,
-    "maxInputMm": 0.18670063609083076,
+    "minInputMm": -0.0963771542288605,
+    "maxInputMm": 0.18314900931083733,
     "qaWindowMm": [
       -0.05,
       0.5
@@ -231,11 +251,11 @@
       0.498
     ],
     "feasibleIntervalMm": [
-      0.013584778497617009,
-      0.31129936390916924
+      0.048377154228860506,
+      0.31485099068916267
     ],
-    "desiredMm": -0.01457168637371348,
-    "chosenMm": 0.013584778497617009
+    "desiredMm": 0.028514725022996863,
+    "chosenMm": 0.048377154228860506
   },
   "solverMarginMm": 0.002,
   "cpuGpuSupportFieldParity": "workflow_synchronized_and_asserted"
