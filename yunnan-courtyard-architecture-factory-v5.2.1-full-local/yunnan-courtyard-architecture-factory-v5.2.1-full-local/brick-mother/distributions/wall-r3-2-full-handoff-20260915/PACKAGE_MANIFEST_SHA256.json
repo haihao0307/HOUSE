@@ -1,0 +1,273 @@
+{
+  "schemaVersion": "brick-mother.package-manifest.r3.2.1",
+  "handoffId": "BRICK_MOTHER_WALL_R3_2_FULL_HANDOFF_2026-09-15",
+  "manifestEntries": 53,
+  "payloadBytes": 13148196,
+  "files": [
+    {
+      "path": "00_START_HERE.md",
+      "bytes": 2195,
+      "sha256": "ad47b84a51d0e9e161dc9134819b5c31f846673246e104a697ed57add242e1bf"
+    },
+    {
+      "path": "BUILD_RECEIPT.md",
+      "bytes": 930,
+      "sha256": "1e52dc41dd8559423836e749985f47a1537448c9a376286017bfcf0324c1049b"
+    },
+    {
+      "path": "CURRENT_STATE.json",
+      "bytes": 2097,
+      "sha256": "3f45c3a216b1cf531d4be244022771db39f1896d17afc1cecfbaebf79962f634"
+    },
+    {
+      "path": "EXCLUSIONS.json",
+      "bytes": 910,
+      "sha256": "a8c76e4f14ac1d08b4bb54cf17ca57060c3fecc86676d8350166969144186b4d"
+    },
+    {
+      "path": "KNOWN_ISSUES_AND_NEXT_TASKS.md",
+      "bytes": 1778,
+      "sha256": "8a9357a6c64557b4b4a2a7bce8155af7ec49334ff8a5ebca5e374170b2527256"
+    },
+    {
+      "path": "NEXT_WINDOW_PROMPT.md",
+      "bytes": 1900,
+      "sha256": "794f75ea3dd9f6339953291b0117c344e70aba8a128c2826431f42377d558c9d"
+    },
+    {
+      "path": "PACKAGE_CONTENTS.md",
+      "bytes": 2249,
+      "sha256": "d6329a7d5d87a10e0ef974982d75a766439e96d974034438fb6c5dbc98bd1849"
+    },
+    {
+      "path": "QA_EVIDENCE.md",
+      "bytes": 1967,
+      "sha256": "bb3b2e9ce92476a0167c19d280cfe9691864bab612952238221add1ec81f0335"
+    },
+    {
+      "path": "REFERENCE_SOURCE_LOCK.json",
+      "bytes": 2410,
+      "sha256": "6f0882868a1a2511245a3009b59455fdb3f17d63f6076febca182a874ed2179d"
+    },
+    {
+      "path": "SOURCE_LOCK.json",
+      "bytes": 2363,
+      "sha256": "845d8b7b0abd8198d0201cd54afcad6843c1081375e1d1593f53a489ea00e2fe"
+    },
+    {
+      "path": "USER_DECISIONS_AND_REJECTIONS.md",
+      "bytes": 1814,
+      "sha256": "0c23133061023b3958d40ffbc2fe92885b283a410b88a152fce2ec580a59feae"
+    },
+    {
+      "path": "WALL_CONSTRUCTION_CONTRACT.json",
+      "bytes": 1967,
+      "sha256": "5dd4255820477769beb5ad1993e2c6437e6f36609f2a11f1d921b3375bd70bc2"
+    },
+    {
+      "path": "reference/brick_stack_user_reference.glb",
+      "bytes": 11670700,
+      "sha256": "391cd8ea93cd2f1b6ba0518af4308af14f6710f548987efe70ec6a1fc0ff1485"
+    },
+    {
+      "path": "reference/frozen_r2_14_8_1_edge_board_lossless.webp",
+      "bytes": 258460,
+      "sha256": "ac14df597a8d37d227d25834981429912d35f3a1f917fd1a81e99211fd897057"
+    },
+    {
+      "path": "reference/rejected_unrequested_brick_lossless.webp",
+      "bytes": 281532,
+      "sha256": "954e79c8b16801aaa1f5416d8e81fcf8d1b86fc7c774aaf654ff1c6b0df10acd"
+    },
+    {
+      "path": "repository-rules/AGENTS_PROJECT.md",
+      "bytes": 1699,
+      "sha256": "f0e6315819145d1f958919102694b0e2b70c6dc12a1ff20c27c8dcd4ec1522cd"
+    },
+    {
+      "path": "repository-rules/AGENTS_ROOT.md",
+      "bytes": 1447,
+      "sha256": "95e3f6e2690d445b9f6afd3c2479dab8f073848057b7caaa109ccedfe1787792"
+    },
+    {
+      "path": "repository-rules/PROJECT_STATE.md",
+      "bytes": 9250,
+      "sha256": "07a35208ba6ea57efbf1a39bb3036626e4974472e48048bbaff5cbb547be94ce"
+    },
+    {
+      "path": "repository-rules/README_PROJECT.md",
+      "bytes": 6721,
+      "sha256": "c878d1fd122042e4832ccf3752ce25f205530f518265fde72b9d935d602c163c"
+    },
+    {
+      "path": "repository-rules/SYSTEM_ARCHITECTURE.md",
+      "bytes": 2129,
+      "sha256": "edee6d2968467e7aeed4252fe36b22c72f1b3ada73261cbfba6338a7b9c95dd4"
+    },
+    {
+      "path": "repository-rules/legacy_rejection_ledger_v5_2_1.json",
+      "bytes": 2241,
+      "sha256": "d76a6c10b6330056151ddf3de1305760f76770aa3c94e4ace6c8043209fd1fa4"
+    },
+    {
+      "path": "repository-rules/system_v5_2_1.json",
+      "bytes": 35181,
+      "sha256": "6cd0884453bdd42043929abff25c07a1f031d84556bb3f31fb5f12e6559efe2d"
+    },
+    {
+      "path": "repository/brick-mother/BRICK_MOTHER_FREEZE_R2_14_8_1_2026-09-14.md",
+      "bytes": 1970,
+      "sha256": "8b17ee1bc08f15a21d34fc59dd30cf2acddb2e0fe8ada68652af341e1f731838"
+    },
+    {
+      "path": "repository/brick-mother/Brick_Mother_Bond_Study_R3_1.html",
+      "bytes": 30531,
+      "sha256": "4832e77faca8ba43bd93eb2f7ef5ceea0de7ce59a2b75f7ad8132a3d5a5ff5b9"
+    },
+    {
+      "path": "repository/brick-mother/Brick_Mother_Wall_4x3_R3_2.html",
+      "bytes": 39877,
+      "sha256": "c33775fea10852714942d625728d68ee394f6eeeddd981d3191dabbbcb843690"
+    },
+    {
+      "path": "repository/brick-mother/RAW_GITHACK_DELIVERY_CONTRACT.md",
+      "bytes": 1645,
+      "sha256": "038ed0c8d1237222d592d6093710c4c480447e0af60f57f549edf1c7c99c043b"
+    },
+    {
+      "path": "repository/brick-mother/experiments/bond-study-r3-1/GPU_QA.json",
+      "bytes": 1347,
+      "sha256": "03715dfeefa635863ad540e5b89fa0f3ed6193a817d32c05907032a45b7d12d2"
+    },
+    {
+      "path": "repository/brick-mother/experiments/bond-study-r3-1/LOCAL_QA.json",
+      "bytes": 14612,
+      "sha256": "ad5ad84bdf82af71c1aad066504c3a95cf086b6bc48377a7282eddc9d12dea47"
+    },
+    {
+      "path": "repository/brick-mother/experiments/bond-study-r3-1/README.md",
+      "bytes": 1767,
+      "sha256": "48f9e54ae5f6ee45130a2680ea9a0bec618bf1049534805984c17bc25b67576c"
+    },
+    {
+      "path": "repository/brick-mother/experiments/bond-study-r3-1/RUNTIME_QA.json",
+      "bytes": 12926,
+      "sha256": "ce2f54af78a3e465bb41ae14affc4833629f720452d54a377146530d00f38fab"
+    },
+    {
+      "path": "repository/brick-mother/experiments/bond-study-r3-1/qa_bond_r3_1.py",
+      "bytes": 37243,
+      "sha256": "83459f79ec2ba3ecce70f0860d0136c9dee0cd1b600c3e20e8412e618fa67b55"
+    },
+    {
+      "path": "repository/brick-mother/experiments/bond-study-r3-1/qa_glsl_r3_1.py",
+      "bytes": 27971,
+      "sha256": "a1aca5cb7652ea9e033de0ba941b149c9b466f32352efbdac746c7f4e5836029"
+    },
+    {
+      "path": "repository/brick-mother/experiments/bond-study-r3-1/qa_runtime_r3_1.cjs",
+      "bytes": 19066,
+      "sha256": "bde5d6562e259ea4937b21ffc9a08595ba42ec01bd81e877d5fc10abe66f9430"
+    },
+    {
+      "path": "repository/brick-mother/experiments/material-microscope-lab-r2-1/Brick_Material_Microscope_Lab_R2_1.html",
+      "bytes": 16526,
+      "sha256": "f6756ca476632b0520a967ab9e5295209ca5706a065289cbf03ab63bdd890a65"
+    },
+    {
+      "path": "repository/brick-mother/experiments/material-microscope-lab-r2-1/LOCAL_QA.json",
+      "bytes": 1695,
+      "sha256": "88a260912a473c51d53e0d92d6d0ccdc4ff4bc2c0df5c63d8a9e7eeb6e37661a"
+    },
+    {
+      "path": "repository/brick-mother/experiments/material-microscope-lab-r2-1/MOTHER_OBJECT_DEFINITION_RULE_2026-09-09.md",
+      "bytes": 2405,
+      "sha256": "497f64e0ebae7e98b2a40638cff808ee646ec60759b2c2fd0d2d733bc436ace8"
+    },
+    {
+      "path": "repository/brick-mother/experiments/material-microscope-lab-r2-1/MOTHER_PUBLIC_PREVIEW_DELIVERY_RULE_2026-09-08.md",
+      "bytes": 1504,
+      "sha256": "8520fa458c2b2f6cd4ed65deb0bf2dab93e1447a56488af89b8ee99bd77285b1"
+    },
+    {
+      "path": "repository/brick-mother/experiments/material-microscope-lab-r2-1/POLE_CONTINUITY.json",
+      "bytes": 1641,
+      "sha256": "e96111ae7906f4b3bf28b65eb8ef0240bb251fa75fcf15814c76032e2ac9df8a"
+    },
+    {
+      "path": "repository/brick-mother/experiments/material-microscope-lab-r2-1/README.md",
+      "bytes": 1865,
+      "sha256": "3571ec3befa3614d63003014627a9c6137e97f3c55d6bc25d4b7f39b855cf84e"
+    },
+    {
+      "path": "repository/brick-mother/experiments/shape-edge-lab-r2-14/Brick_Shape_Edge_Lab_R2_14_8.html",
+      "bytes": 8572,
+      "sha256": "a21aabe9f63e395301392f3f9ce5912182c38ff54e84086a0199761fe568e896"
+    },
+    {
+      "path": "repository/brick-mother/experiments/shape-edge-lab-r2-14/Brick_Shape_Edge_Lab_R2_14_8_1.html",
+      "bytes": 1665,
+      "sha256": "20572065672cff7be7b1480d4a49940f2d766ee18f37c1b743ecc1eab64ac812"
+    },
+    {
+      "path": "repository/brick-mother/experiments/wall-4x3-r3-2/GPU_END.png",
+      "bytes": 25756,
+      "sha256": "5c75673e76bc1e46fb153fc4ae69d00055bf375c784139fc1e677407dbf86ee3"
+    },
+    {
+      "path": "repository/brick-mother/experiments/wall-4x3-r3-2/GPU_FRONT.png",
+      "bytes": 165392,
+      "sha256": "0e243013d20b5399f76355c8fc1b608f50b09d401deb2d85619868ba8fded2c3"
+    },
+    {
+      "path": "repository/brick-mother/experiments/wall-4x3-r3-2/GPU_PREVIEW.png",
+      "bytes": 157812,
+      "sha256": "0a7c749140c575a641dd662bbec30dcdeb2c8fe05938e3e59e1ca845ef7355e9"
+    },
+    {
+      "path": "repository/brick-mother/experiments/wall-4x3-r3-2/GPU_QA.json",
+      "bytes": 14157,
+      "sha256": "1da8971898ef4de108686ed3209a87b67d781cd05aef736bc0c567b8058ce6fc"
+    },
+    {
+      "path": "repository/brick-mother/experiments/wall-4x3-r3-2/GPU_TOP.png",
+      "bytes": 39984,
+      "sha256": "ec7a82a8370e70c02153a6816b1adc03001f6f4fe0b24c3d3a49d353b8b94c2b"
+    },
+    {
+      "path": "repository/brick-mother/experiments/wall-4x3-r3-2/LOCAL_QA.json",
+      "bytes": 13711,
+      "sha256": "30f67bd821286693205937536be2a39a03c26ac6e34512c48da5125e5b400135"
+    },
+    {
+      "path": "repository/brick-mother/experiments/wall-4x3-r3-2/README.md",
+      "bytes": 2871,
+      "sha256": "46855a491e5da3ae4829537209b01c9b4c3b7ece20d835367c0e4271427f4eef"
+    },
+    {
+      "path": "repository/brick-mother/experiments/wall-4x3-r3-2/RUNTIME_QA.json",
+      "bytes": 64027,
+      "sha256": "c3785da7d2ac8250ffe9e16e71b246cc67db5f2d1715ea4a080f5c9a46db9e92"
+    },
+    {
+      "path": "repository/brick-mother/experiments/wall-4x3-r3-2/qa_glsl_wall_r3_2.py",
+      "bytes": 32574,
+      "sha256": "b15879f59fbb0f78bb0ad085fb8de03cfa74f3d4fc413e7cee30c7d1015ab346"
+    },
+    {
+      "path": "repository/brick-mother/experiments/wall-4x3-r3-2/qa_runtime_wall_r3_2.cjs",
+      "bytes": 48653,
+      "sha256": "f2b6d2244b1c59258405474ac5f2ba436f2d44d87a2097508aea01e927296a81"
+    },
+    {
+      "path": "repository/brick-mother/experiments/wall-4x3-r3-2/qa_wall_r3_2.py",
+      "bytes": 64679,
+      "sha256": "d7c516a3351b51bcbd5e5586f867987cc6bdb60afc08e9049e6453a9c829026c"
+    },
+    {
+      "path": "verify_package.py",
+      "bytes": 1812,
+      "sha256": "d045dddae2d0d738dabfec044c259e1b7d9a1bd05532214f3ddbf8fc7e4e8fad"
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "schemaVersion": "brick-mother.source-lock.r3.2.1",
+  "repository": "haihao0307/HOUSE",
+  "branch": "codex/brick-wall-4x3-r3-2-20260915",
+  "sourceEquivalence": {
+    "localCommit": "3d100e635dcc3d221175aebb0dbcc826a0ecb4d7",
+    "remoteCommit": "b30c1725da4e05c388896f7e7635d82786b9ab5a",
+    "commonTree": "976868e1dba9bcf23f9ff0330ba2d57aa74b1df1",
+    "reasonForDifferentCommitIds": "The authenticated GitHub connector recreated the exact local tree with a different commit envelope after direct CLI authentication was unavailable."
+  },
+  "wallR3_2": {
+    "path": "brick-mother/Brick_Mother_Wall_4x3_R3_2.html",
+    "gitBlob": "c5a9ecb29efabea8947688683c3012ca31a86cdb",
+    "sha256": "c33775fea10852714942d625728d68ee394f6eeeddd981d3191dabbbcb843690",
+    "bytes": 39877
+  },
+  "bondStudyR3_1": {
+    "sourceCommit": "ca069f6371886d63fffdb2727ea706b13ca3bce6",
+    "path": "brick-mother/Brick_Mother_Bond_Study_R3_1.html",
+    "gitBlob": "e2b4721c77424c60fe98cfe502f5202250450e68",
+    "sha256": "4832e77faca8ba43bd93eb2f7ef5ceea0de7ce59a2b75f7ad8132a3d5a5ff5b9",
+    "bytes": 30531
+  },
+  "frozenMotherBrick": {
+    "version": "R2.14.8.1-right",
+    "sourceCommit": "7362f830bcac83a0883e7855fa5d41ee30e52718",
+    "path": "brick-mother/experiments/shape-edge-lab-r2-14/Brick_Shape_Edge_Lab_R2_14_8_1.html",
+    "gitBlob": "19315c0094234f68aad6a1fadc32aeea1725aab6",
+    "sha256": "20572065672cff7be7b1480d4a49940f2d766ee18f37c1b743ecc1eab64ac812",
+    "bytes": 1665,
+    "residualCount": 336,
+    "residualNormalizedSha256": "ff364ea7025e7a4ae234ffc1bff97b4a6ed181ed350924c5724b0a42635a827d",
+    "modelScale": 0.1153846154,
+    "dimensionsM": [0.24, 0.06115, 0.11077],
+    "mutable": false
+  },
+  "frozenMaterial": {
+    "version": "R2.1-B",
+    "sourceCommit": "030d84b979a8158d03398aa60da69e8e3315cd40",
+    "path": "brick-mother/experiments/material-microscope-lab-r2-1/Brick_Material_Microscope_Lab_R2_1.html",
+    "gitBlob": "c16075e44a2e327ee245b5510ccf409db14485a0",
+    "sha256": "f6756ca476632b0520a967ab9e5295209ca5706a065289cbf03ab63bdd890a65",
+    "bytes": 16526,
+    "publicVector": [1, 1, 1, 0],
+    "mutable": false
+  },
+  "withdrawn": [
+    "The unrequested R3 substitute brick shown in the first supplied screenshot",
+    "R2.14.9",
+    "Any wall built from a replacement rounded box instead of the frozen R2.14.8.1-right SDF"
+  ]
+}
