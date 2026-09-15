@@ -1,0 +1,55 @@
+{
+  "schemaVersion": "brick-mother-unified-qa-r3.1",
+  "generatedAt": null,
+  "artifact": {
+    "path": "brick-mother/Brick_Mother_Unified_Workbench_R3.html",
+    "bytes": null,
+    "sha256": null
+  },
+  "checks": {
+    "html_exists": null,
+    "one_canvas_in_artifact": null,
+    "four_exact_modes": null,
+    "no_runtime_composition": null,
+    "no_external_assets": null,
+    "no_glb_runtime_dependency": null,
+    "frozen_b_defaults_embedded": null,
+    "qa_api_declared": null,
+    "ready_contract_declared": null,
+    "browser_qa_api_ready": null,
+    "browser_one_visible_canvas": null,
+    "browser_webgl_no_error": null,
+    "browser_no_iframe": null,
+    "mobile_canvas_height": null,
+    "mobile_backing_pixel_budget": null,
+    "mobile_no_horizontal_overflow": null,
+    "mobile_mode_targets_44px": null,
+    "browser_four_modes_switch": null,
+    "browser_shared_brick_kernel": null,
+    "browser_alternating_course_ends": null,
+    "browser_true_half_brick": null,
+    "browser_stone_not_recolored_brick": null,
+    "browser_earth_is_monolithic": null,
+    "browser_microscope_scale_count_17": null,
+    "browser_resource_budgets": null,
+    "browser_frozen_b_defaults": null,
+    "browser_no_errors": null,
+    "browser_no_external_requests": null
+  },
+  "browser": {
+    "status": "not-run",
+    "viewport": {
+      "width": 390,
+      "height": 844,
+      "deviceScaleFactor": 1
+    },
+    "qaShape": null,
+    "geometryAudit": null,
+    "resourceAudit": null,
+    "errors": [],
+    "externalRequests": []
+  },
+  "passed": false,
+  "humanVisualApproval": false,
+  "note": "Automated technical QA only; visual acceptance remains with the user."
+}

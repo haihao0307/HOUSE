@@ -1,0 +1,88 @@
+{
+  "schemaVersion": "brick-mother-unified-qa-r3.1",
+  "generatedAt": "2026-09-15T03:19:06Z",
+  "artifact": {
+    "path": "brick-mother/Brick_Mother_Unified_Workbench_R3.html",
+    "bytes": 39518,
+    "sha256": "96176e8166bd6cbd10d71512127d46fc8234b9910ca3c162bf9f0178741a3f8c"
+  },
+  "static": {
+    "passed": true,
+    "checks": {
+      "htmlExists": true,
+      "oneCanvas": true,
+      "fourExactModes": true,
+      "noRuntimeComposition": true,
+      "noExternalAssets": true,
+      "noGlbRuntimeDependency": true,
+      "frozenBDefaultsEmbedded": true,
+      "qaApiDeclared": true,
+      "readyContractDeclared": true
+    }
+  },
+  "geometryVm": {
+    "passed": true,
+    "executionMs": 334.673,
+    "checks": {
+      "qaReadyAfterRealBuildDraw": true,
+      "fourModesExecute": true,
+      "resourceBudgets": true,
+      "sharedBrickKernel": true,
+      "wallCourseEndsAlternate": true,
+      "wallHasTrueHalfBrick": true,
+      "stoneNotRecoloredBrick": true,
+      "earthWallMonolithic": true,
+      "microscope17Scales": true,
+      "wallHeightChangesGeometry": true,
+      "roughnessDoesNotChangeGeometry": true,
+      "wallGeometryIsDeterministic": true,
+      "earthHeightChangesGeometry": true,
+      "frozenSingleSurvivesModeRoundtrip": true
+    },
+    "modes": {
+      "single-brick": {
+        "triangles": 4800,
+        "vertexBytes": 748800,
+        "geometryHash": "8e8ca6bb"
+      },
+      "brick-wall-plaster": {
+        "triangles": 80873,
+        "vertexBytes": 12616188,
+        "geometryHash": "433710b1",
+        "heightZeroGeometryHash": "bd933b0a"
+      },
+      "stone": {
+        "triangles": 11088,
+        "vertexBytes": 1729728,
+        "geometryHash": "0532ed10"
+      },
+      "earth-wall-plaster": {
+        "triangles": 5972,
+        "vertexBytes": 931632,
+        "geometryHash": "d1ccda46",
+        "heightZeroGeometryHash": "d27e26a7"
+      }
+    },
+    "roughnessGeometryHashes": {
+      "before": "433710b1",
+      "roughnessZero": "433710b1",
+      "roughnessTwo": "433710b1"
+    },
+    "determinism": {
+      "wallFirst": "433710b1",
+      "wallRepeated": "433710b1",
+      "singleBeforeModeRoundtrip": "8e8ca6bb",
+      "singleAfterModeRoundtrip": "8e8ca6bb"
+    }
+  },
+  "browser390x844": {
+    "status": "unavailable",
+    "reason": "Node Playwright is installed, but no Chromium or headless-shell binary is present in this environment.",
+    "harnessPrepared": true,
+    "falsePassPrevented": true
+  },
+  "passed": true,
+  "humanVisualApproval": false,
+  "productionApproved": false,
+  "note": "Static and real JavaScript/geometry QA passed. Browser raster QA was not run; automated QA is not user visual approval."
+}

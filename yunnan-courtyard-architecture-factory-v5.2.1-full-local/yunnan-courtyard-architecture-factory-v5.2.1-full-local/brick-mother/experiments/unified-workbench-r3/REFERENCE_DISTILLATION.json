@@ -1,0 +1,63 @@
+{
+  "schemaVersion": "1.0",
+  "artifact": "Brick_Mother_Unified_Workbench_R3",
+  "workbenchScope": {
+    "singleWorkbench": true,
+    "modes": [
+      "single-brick",
+      "brick-wall-plaster",
+      "stone",
+      "earth-wall-plaster"
+    ]
+  },
+  "frozenSingleBrick": {
+    "baseline": "R2.14.8.1-B",
+    "unchanged": true,
+    "microscope": {
+      "strength": 1,
+      "scale": 1,
+      "heightContribution": 1,
+      "roughnessContribution": 0
+    }
+  },
+  "reference": {
+    "file": "转堆brick_stack.glb",
+    "sha256": "391cd8ea93cd2f1b6ba0518af4308af14f6710f548987efe70ec6a1fc0ff1485",
+    "title": "Brick Stack",
+    "author": "therendercode",
+    "license": "CC-BY-4.0",
+    "sourceUrl": "https://sketchfab.com/3d-models/brick-stack-675dc1105ab3451eb9c6137c05cff9d4",
+    "usage": "offline-visual-reference-only",
+    "runtimeDependency": false,
+    "metricReference": false,
+    "masonrySpecification": false,
+    "distilledCues": [
+      "course layering",
+      "corner and termination reading",
+      "irregular edge character",
+      "multi-scale surface variation"
+    ]
+  },
+  "userSpecifiedPreset": {
+    "bond": "alternate-stretcher-header-by-course-at-termination",
+    "trueHalfBrick": true,
+    "halfBrickRequirements": [
+      "half geometric length",
+      "closed cut face",
+      "not simulated by texture"
+    ]
+  },
+  "microscopeGeometry": {
+    "wallCore": "actual-vertex-displacement",
+    "plaster": "actual-vertex-displacement",
+    "earthWall": "actual-vertex-displacement",
+    "legacyBrickIsolation": true,
+    "coreExactIsolation": true,
+    "mustNotMutateFrozenSingleBrick": true
+  },
+  "approval": {
+    "visualApproved": false,
+    "productionApproved": false,
+    "automationIsNotVisualApproval": true
+  }
+}
