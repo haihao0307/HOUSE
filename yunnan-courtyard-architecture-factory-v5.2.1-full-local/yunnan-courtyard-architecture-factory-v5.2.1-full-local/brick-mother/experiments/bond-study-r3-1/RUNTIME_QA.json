@@ -1,0 +1,570 @@
+{
+  "schemaVersion": "brick-mother-bond-runtime-vm-qa-r3.1",
+  "artifact": {
+    "path": "/workspace/scratch/ec570d03ddf1/HOUSE-unified/yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/Brick_Mother_Bond_Study_R3_1.html",
+    "bytes": 30531,
+    "sha256": "4832e77faca8ba43bd93eb2f7ef5ceea0de7ce59a2b75f7ad8132a3d5a5ff5b9"
+  },
+  "runtime": "node-vm-dom-webgl2-api-capture",
+  "checks": {
+    "html_exists": {
+      "passed": true,
+      "evidence": "/workspace/scratch/ec570d03ddf1/HOUSE-unified/yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/Brick_Mother_Bond_Study_R3_1.html"
+    },
+    "one_executable_inline_script": {
+      "passed": true,
+      "evidence": [
+        {
+          "id": "brick-bond-manifest",
+          "type": "application/json",
+          "bytes": 5355
+        },
+        {
+          "id": "edge-band-data",
+          "type": "application/json",
+          "bytes": 3962
+        },
+        {
+          "id": null,
+          "type": null,
+          "bytes": 15493
+        }
+      ]
+    },
+    "real_page_javascript_executes_without_exception": {
+      "passed": true,
+      "evidence": {
+        "consoleErrors": [],
+        "errorVisible": false,
+        "errorText": ""
+      }
+    },
+    "page_supplies_one_vertex_and_one_fragment_shader": {
+      "passed": true,
+      "evidence": [
+        {
+          "type": 35633,
+          "bytes": 166
+        },
+        {
+          "type": 35632,
+          "bytes": 18870
+        }
+      ]
+    },
+    "final_shader_strings_have_no_unresolved_generation_markers": {
+      "passed": true,
+      "evidence": []
+    },
+    "fragment_shader_contains_336_generated_residual_coefficients": {
+      "passed": true,
+      "evidence": {
+        "functionCount": 24,
+        "coefficientTerms": 336,
+        "functions": [
+          {
+            "name": "mid_x_m_m",
+            "coefficientTerms": 4
+          },
+          {
+            "name": "high_x_m_m",
+            "coefficientTerms": 24
+          },
+          {
+            "name": "mid_x_m_p",
+            "coefficientTerms": 4
+          },
+          {
+            "name": "high_x_m_p",
+            "coefficientTerms": 24
+          },
+          {
+            "name": "mid_x_p_m",
+            "coefficientTerms": 4
+          },
+          {
+            "name": "high_x_p_m",
+            "coefficientTerms": 24
+          },
+          {
+            "name": "mid_x_p_p",
+            "coefficientTerms": 4
+          },
+          {
+            "name": "high_x_p_p",
+            "coefficientTerms": 24
+          },
+          {
+            "name": "mid_y_m_m",
+            "coefficientTerms": 4
+          },
+          {
+            "name": "high_y_m_m",
+            "coefficientTerms": 24
+          },
+          {
+            "name": "mid_y_m_p",
+            "coefficientTerms": 4
+          },
+          {
+            "name": "high_y_m_p",
+            "coefficientTerms": 24
+          },
+          {
+            "name": "mid_y_p_m",
+            "coefficientTerms": 4
+          },
+          {
+            "name": "high_y_p_m",
+            "coefficientTerms": 24
+          },
+          {
+            "name": "mid_y_p_p",
+            "coefficientTerms": 4
+          },
+          {
+            "name": "high_y_p_p",
+            "coefficientTerms": 24
+          },
+          {
+            "name": "mid_z_m_m",
+            "coefficientTerms": 4
+          },
+          {
+            "name": "high_z_m_m",
+            "coefficientTerms": 24
+          },
+          {
+            "name": "mid_z_m_p",
+            "coefficientTerms": 4
+          },
+          {
+            "name": "high_z_m_p",
+            "coefficientTerms": 24
+          },
+          {
+            "name": "mid_z_p_m",
+            "coefficientTerms": 4
+          },
+          {
+            "name": "high_z_p_m",
+            "coefficientTerms": 24
+          },
+          {
+            "name": "mid_z_p_p",
+            "coefficientTerms": 4
+          },
+          {
+            "name": "high_z_p_p",
+            "coefficientTerms": 24
+          }
+        ]
+      }
+    },
+    "fragment_shader_uses_exact_sdf_and_frozen_material_path": {
+      "passed": true,
+      "evidence": [
+        "sdRoundBox",
+        "surfaceDelta",
+        "contourShapeLong",
+        "processMaterial",
+        "brickExactWorld"
+      ]
+    },
+    "default_wall_uploads_16_poses_and_4_real_cuts": {
+      "passed": true,
+      "evidence": {
+        "brickCount": 16,
+        "cutCount": 4,
+        "posePrefix": [
+          0.11999999731779099,
+          0.030574999749660492,
+          0.05538500100374222,
+          0,
+          0.3692300021648407,
+          0.030574999749660492,
+          0.05538500100374222,
+          0,
+          0.05538500100374222,
+          0.030574999749660492,
+          0.23999999463558197,
+          -1,
+          0.05538500100374222,
+          0.030574999749660492,
+          0.3692300021648407,
+          -1,
+          0.05538500100374222,
+          0.10095500200986862,
+          0.11999999731779099,
+          -1,
+          0.05538500100374222,
+          0.10095500200986862,
+          0.3692300021648407,
+          -1,
+          0.23999999463558197,
+          0.10095500200986862,
+          0.05538500100374222,
+          0,
+          0.3692300021648407,
+          0.10095500200986862,
+          0.05538500100374222,
+          0,
+          0.11999999731779099,
+          0.17133499681949615,
+          0.05538500100374222,
+          0,
+          0.3692300021648407,
+          0.17133499681949615,
+          0.05538500100374222,
+          0,
+          0.05538500100374222,
+          0.17133499681949615,
+          0.23999999463558197,
+          -1,
+          0.05538500100374222,
+          0.17133499681949615,
+          0.3692300021648407,
+          -1,
+          0.05538500100374222,
+          0.24171499907970428,
+          0.11999999731779099,
+          -1,
+          0.05538500100374222,
+          0.24171499907970428,
+          0.3692300021648407,
+          -1,
+          0.23999999463558197,
+          0.24171499907970428,
+          0.05538500100374222,
+          0,
+          0.3692300021648407,
+          0.24171499907970428,
+          0.05538500100374222,
+          0
+        ]
+      }
+    },
+    "uploaded_poses_and_cuts_match_manifest_kernel_transforms": {
+      "passed": true,
+      "evidence": {
+        "maxPoseDelta": 5.364418020903372e-9,
+        "expectedCuts": [
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          1
+        ],
+        "uploadedCuts": [
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          1
+        ]
+      }
+    },
+    "course_slider_uploads_4_8_12_16_bottom_up": {
+      "passed": true,
+      "evidence": {
+        "1": {
+          "brickCount": 4,
+          "cutCount": 1,
+          "output": "1 / 4"
+        },
+        "2": {
+          "brickCount": 8,
+          "cutCount": 2,
+          "output": "2 / 4"
+        },
+        "3": {
+          "brickCount": 12,
+          "cutCount": 3,
+          "output": "3 / 4"
+        },
+        "4": {
+          "brickCount": 16,
+          "cutCount": 4,
+          "output": "4 / 4"
+        }
+      }
+    },
+    "runtime_controls_contain_only_wall_mother_and_four_views": {
+      "passed": true,
+      "evidence": {
+        "modes": [
+          "wall",
+          "mother"
+        ],
+        "views": [
+          "iso",
+          "front",
+          "end",
+          "top"
+        ]
+      }
+    },
+    "mother_mode_uploads_one_uncut_canonical_pose": {
+      "passed": true,
+      "evidence": {
+        "brickCount": 1,
+        "cutCount": 0,
+        "posePrefix": [
+          0,
+          0.030574999749660492,
+          0,
+          0
+        ]
+      }
+    },
+    "view_buttons_change_camera_without_changing_placement_uploads": {
+      "passed": true,
+      "evidence": {
+        "iso": {
+          "brickCount": 16,
+          "poseUnchanged": true,
+          "target": [
+            0.244615,
+            0.135,
+            0.244615
+          ],
+          "angles": [
+            -2.36,
+            0.4
+          ],
+          "distance": 1.02
+        },
+        "front": {
+          "brickCount": 16,
+          "poseUnchanged": true,
+          "target": [
+            0.244615,
+            0.135,
+            0.244615
+          ],
+          "angles": [
+            3.141592653589793,
+            0.08
+          ],
+          "distance": 0.96
+        },
+        "end": {
+          "brickCount": 16,
+          "poseUnchanged": true,
+          "target": [
+            0.244615,
+            0.135,
+            0.244615
+          ],
+          "angles": [
+            -1.5707963267948966,
+            0.08
+          ],
+          "distance": 0.96
+        },
+        "top": {
+          "brickCount": 16,
+          "poseUnchanged": true,
+          "target": [
+            0.244615,
+            0.06,
+            0.244615
+          ],
+          "angles": [
+            -2.36,
+            1.48
+          ],
+          "distance": 0.92
+        }
+      }
+    }
+  },
+  "snapshots": {
+    "initial": {
+      "brickCount": 16,
+      "cutCount": 4,
+      "posePrefix": [
+        0.11999999731779099,
+        0.030574999749660492,
+        0.05538500100374222,
+        0,
+        0.3692300021648407,
+        0.030574999749660492,
+        0.05538500100374222,
+        0,
+        0.05538500100374222,
+        0.030574999749660492,
+        0.23999999463558197,
+        -1,
+        0.05538500100374222,
+        0.030574999749660492,
+        0.3692300021648407,
+        -1,
+        0.05538500100374222,
+        0.10095500200986862,
+        0.11999999731779099,
+        -1,
+        0.05538500100374222,
+        0.10095500200986862,
+        0.3692300021648407,
+        -1,
+        0.23999999463558197,
+        0.10095500200986862,
+        0.05538500100374222,
+        0,
+        0.3692300021648407,
+        0.10095500200986862,
+        0.05538500100374222,
+        0,
+        0.11999999731779099,
+        0.17133499681949615,
+        0.05538500100374222,
+        0,
+        0.3692300021648407,
+        0.17133499681949615,
+        0.05538500100374222,
+        0,
+        0.05538500100374222,
+        0.17133499681949615,
+        0.23999999463558197,
+        -1,
+        0.05538500100374222,
+        0.17133499681949615,
+        0.3692300021648407,
+        -1,
+        0.05538500100374222,
+        0.24171499907970428,
+        0.11999999731779099,
+        -1,
+        0.05538500100374222,
+        0.24171499907970428,
+        0.3692300021648407,
+        -1,
+        0.23999999463558197,
+        0.24171499907970428,
+        0.05538500100374222,
+        0,
+        0.3692300021648407,
+        0.24171499907970428,
+        0.05538500100374222,
+        0
+      ]
+    },
+    "buildSteps": {
+      "1": {
+        "brickCount": 4,
+        "cutCount": 1,
+        "output": "1 / 4"
+      },
+      "2": {
+        "brickCount": 8,
+        "cutCount": 2,
+        "output": "2 / 4"
+      },
+      "3": {
+        "brickCount": 12,
+        "cutCount": 3,
+        "output": "3 / 4"
+      },
+      "4": {
+        "brickCount": 16,
+        "cutCount": 4,
+        "output": "4 / 4"
+      }
+    },
+    "mother": {
+      "brickCount": 1,
+      "cutCount": 0,
+      "posePrefix": [
+        0,
+        0.030574999749660492,
+        0,
+        0
+      ]
+    },
+    "views": {
+      "iso": {
+        "brickCount": 16,
+        "poseUnchanged": true,
+        "target": [
+          0.244615,
+          0.135,
+          0.244615
+        ],
+        "angles": [
+          -2.36,
+          0.4
+        ],
+        "distance": 1.02
+      },
+      "front": {
+        "brickCount": 16,
+        "poseUnchanged": true,
+        "target": [
+          0.244615,
+          0.135,
+          0.244615
+        ],
+        "angles": [
+          3.141592653589793,
+          0.08
+        ],
+        "distance": 0.96
+      },
+      "end": {
+        "brickCount": 16,
+        "poseUnchanged": true,
+        "target": [
+          0.244615,
+          0.135,
+          0.244615
+        ],
+        "angles": [
+          -1.5707963267948966,
+          0.08
+        ],
+        "distance": 0.96
+      },
+      "top": {
+        "brickCount": 16,
+        "poseUnchanged": true,
+        "target": [
+          0.244615,
+          0.06,
+          0.244615
+        ],
+        "angles": [
+          -2.36,
+          1.48
+        ],
+        "distance": 0.92
+      }
+    }
+  },
+  "passed": true,
+  "realGpuCompilation": false,
+  "humanVisualApproval": false,
+  "note": "The actual page JavaScript ran and supplied shader/uniform data to an API stub; no real GPU compilation or visual approval is claimed."
+}
