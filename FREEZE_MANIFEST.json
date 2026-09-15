@@ -1,0 +1,19 @@
+{
+  "package": "Tiles_Mother_R2_08F2_Frozen_Clean_2026-09-15",
+  "version": "R2-08F.2",
+  "frozenDate": "2026-09-15",
+  "sourceCommit": "397e94b85fa9c16a01afed319595e0022d12a74b",
+  "sourcePath": "tiles-mother/r2-closeout-08f-final/START_HERE.html",
+  "sourceGitBlobSha1": "14db580af7b094a38917492c9859ad40d6641d08",
+  "canonicalRuntime": "START_HERE.html",
+  "selfContainedRuntime": true,
+  "byteIdenticalToApprovedRuntime": true,
+  "historicalVersionsIncluded": false,
+  "referenceAssetsIncluded": false,
+  "screenshotsIncluded": false,
+  "buildScriptsIncluded": false,
+  "temporaryDiagnosticsIncluded": false,
+  "userFrozenTestModule": true,
+  "productionReady": false,
+  "note": "Frozen as the current test module. Future edits must start as a new version and must not overwrite this package."
+}

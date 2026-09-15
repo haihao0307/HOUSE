@@ -1,0 +1,21 @@
+{
+  "package": "Tiles_Mother_R2_08F2_Frozen_Clean_2026-09-15.zip",
+  "releaseBranch": "release/tiles-mother-r2-08f2-frozen-clean-20260915",
+  "sourceCommit": "397e94b85fa9c16a01afed319595e0022d12a74b",
+  "sourceGitBlobSha1": "14db580af7b094a38917492c9859ad40d6641d08",
+  "payloadFileCount": 4,
+  "payloadFiles": [
+    "FREEZE_MANIFEST.json",
+    "README.md",
+    "SHA256SUMS.txt",
+    "START_HERE.html"
+  ],
+  "runtimeHtmlBytes": 78827,
+  "runtimeHtmlSha256": "1a15f7464ce914d901926e262551e943b1735b31cc4c9a0a2247be8ca00f80f3",
+  "uncompressedPayloadBytes": 80489,
+  "zipBytes": 29995,
+  "zipSha256": "14598660968a1f0cd193038ea7399ac5c09ad1d507753b0517f63de58c5670ff",
+  "referencesRemoved": true,
+  "historicalVersionsRemoved": true,
+  "temporaryFilesRemoved": true
+}
