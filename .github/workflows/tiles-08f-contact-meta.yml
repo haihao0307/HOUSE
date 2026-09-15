@@ -1,0 +1,32 @@
+name: Tiles Mother 08F contact metadata diagnostic
+
+on:
+  push:
+    branches: [codex/tiles-08f-final-20260914]
+    paths:
+      - .github/workflows/tiles-08f-contact-meta.yml
+      - tiles-mother/r2-closeout-08f-final/diagnose_contact_meta.cjs
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          sparse-checkout: |
+            tiles-mother/r2-closeout-08e-contact
+            tiles-mother/r2-closeout-08f-final
+      - name: Build current unified shell
+        run: |
+          python tiles-mother/r2-closeout-08f-final/build.py
+          python tiles-mother/r2-closeout-08f-final/qa_parity_patch.py
+      - name: Locate actual pan-cover contact triangles
+        run: node tiles-mother/r2-closeout-08f-final/diagnose_contact_meta.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: tiles-08f-contact-meta-${{ github.run_id }}
+          path: tiles-mother/r2-closeout-08f-final/CONTACT_META_DIAGNOSTIC.json
+          retention-days: 7
