@@ -1,0 +1,59 @@
+name: Tiles Mother 08F.2 frozen public smoke
+
+on:
+  push:
+    branches:
+      - codex/tiles-08f2-freeze-package-20260915
+    paths:
+      - .github/workflows/tiles-08f2-frozen-public-smoke.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  public-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    env:
+      RELEASE_COMMIT: ddbdff0aac1a41d77514a9494fa4098780bb17e9
+      EXPECTED_HTML_SHA256: 1a15f7464ce914d901926e262551e943b1735b31cc4c9a0a2247be8ca00f80f3
+    steps:
+      - name: Fetch fixed public HTTPS preview
+        shell: bash
+        run: |
+          set -euo pipefail
+          URL="https://raw.githack.com/haihao0307/HOUSE/$RELEASE_COMMIT/START_HERE.html"
+          for attempt in $(seq 1 18); do
+            if curl -L --connect-timeout 20 --max-time 60 -fS "$URL" -o START_HERE.public.html -D headers.txt; then
+              break
+            fi
+            if [ "$attempt" -eq 18 ]; then
+              exit 1
+            fi
+            sleep 5
+          done
+          test "$(sha256sum START_HERE.public.html | awk '{print $1}')" = "$EXPECTED_HTML_SHA256"
+          grep -q "08F.2" START_HERE.public.html
+          grep -q "Microscope" START_HERE.public.html
+          python - <<'PY'
+          import json, os, pathlib
+          p = pathlib.Path('START_HERE.public.html')
+          report = {
+              'url': f"https://raw.githack.com/haihao0307/HOUSE/{os.environ['RELEASE_COMMIT']}/START_HERE.html",
+              'httpFetched': True,
+              'bytes': p.stat().st_size,
+              'sha256': os.environ['EXPECTED_HTML_SHA256'],
+              'containsVersion': True,
+              'containsMicroscope': True
+          }
+          pathlib.Path('PUBLIC_SMOKE.json').write_text(json.dumps(report, indent=2) + '\n', encoding='utf-8')
+          print(json.dumps(report, indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tiles-08f2-frozen-public-smoke
+          path: |
+            PUBLIC_SMOKE.json
+            headers.txt
+          retention-days: 30
