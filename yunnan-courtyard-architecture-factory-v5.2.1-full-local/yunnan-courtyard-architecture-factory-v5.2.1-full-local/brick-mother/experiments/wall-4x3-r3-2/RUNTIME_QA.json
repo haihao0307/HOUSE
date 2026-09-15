@@ -1,0 +1,2496 @@
+{
+  "schemaVersion": "brick-mother-wall-runtime-vm-qa-r3.2",
+  "artifact": {
+    "path": "/workspace/scratch/ec570d03ddf1/HOUSE-wall-r3-2/yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/Brick_Mother_Wall_4x3_R3_2.html",
+    "bytes": 39877,
+    "sha256": "c33775fea10852714942d625728d68ee394f6eeeddd981d3191dabbbcb843690"
+  },
+  "runtime": "node-vm-dom-webgl2-api-capture",
+  "checks": {
+    "html_exists": {
+      "passed": true,
+      "evidence": "/workspace/scratch/ec570d03ddf1/HOUSE-wall-r3-2/yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/Brick_Mother_Wall_4x3_R3_2.html"
+    },
+    "one_executable_inline_script": {
+      "passed": true,
+      "evidence": [
+        {
+          "id": "brick-wall-manifest",
+          "type": "application/json",
+          "bytes": 3293
+        },
+        {
+          "id": "edge-band-data",
+          "type": "application/json",
+          "bytes": 3962
+        },
+        {
+          "id": null,
+          "type": null,
+          "bytes": 26015
+        }
+      ]
+    },
+    "wall_manifest_is_parseable": {
+      "passed": true,
+      "evidence": [
+        "brick-wall-manifest",
+        "edge-band-data"
+      ]
+    },
+    "real_page_javascript_executes_without_exception": {
+      "passed": true,
+      "evidence": {
+        "consoleErrors": [],
+        "errorVisible": false,
+        "errorText": ""
+      }
+    },
+    "page_supplies_three_complete_brick_soil_floor_programs": {
+      "passed": true,
+      "evidence": {
+        "shaders": [
+          {
+            "type": "vertex",
+            "bytes": 1642,
+            "sha256": "9dc2a53ca3c879d3fdd00443c815bbc5c462f9d44d7a07421a4a2df5f1e8edc3"
+          },
+          {
+            "type": "fragment",
+            "bytes": 18061,
+            "sha256": "6f351b164e295eec5136161c0e41635acab91198d1882a91785a3be09985ccb6"
+          },
+          {
+            "type": "vertex",
+            "bytes": 604,
+            "sha256": "bc68135e2d7a367b3138824d2b9260633f1b43146a520e7ec8e8a323e7a0c8e2"
+          },
+          {
+            "type": "fragment",
+            "bytes": 3118,
+            "sha256": "dbb2d5460400b752919f4a32fd1f7cee4efd672842c67c05de89cd2f51b4f378"
+          },
+          {
+            "type": "vertex",
+            "bytes": 265,
+            "sha256": "597b925df43a63ecea488cfe2f3e820fd59f755c28a702dff7e99a34b84f7940"
+          },
+          {
+            "type": "fragment",
+            "bytes": 192,
+            "sha256": "945bde41f815c631df2ee8a9390dbb8cc039958141189d9c9675bc68d03c7da9"
+          }
+        ],
+        "brickVertexSha256": "9dc2a53ca3c879d3fdd00443c815bbc5c462f9d44d7a07421a4a2df5f1e8edc3",
+        "brickFragmentSha256": "6f351b164e295eec5136161c0e41635acab91198d1882a91785a3be09985ccb6",
+        "soilVertexSha256": "bc68135e2d7a367b3138824d2b9260633f1b43146a520e7ec8e8a323e7a0c8e2",
+        "soilFragmentSha256": "dbb2d5460400b752919f4a32fd1f7cee4efd672842c67c05de89cd2f51b4f378",
+        "programCount": 3,
+        "programIds": {
+          "brick": 1,
+          "soil": 4,
+          "floor": 7
+        }
+      }
+    },
+    "final_shader_strings_have_no_unresolved_generation_markers": {
+      "passed": true,
+      "evidence": []
+    },
+    "fragment_shader_contains_336_generated_residual_coefficients": {
+      "passed": true,
+      "evidence": {
+        "functionCount": 24,
+        "coefficientTerms": 336,
+        "functions": [
+          {
+            "name": "mid_x_m_m",
+            "coefficientTerms": 4
+          },
+          {
+            "name": "high_x_m_m",
+            "coefficientTerms": 24
+          },
+          {
+            "name": "mid_x_m_p",
+            "coefficientTerms": 4
+          },
+          {
+            "name": "high_x_m_p",
+            "coefficientTerms": 24
+          },
+          {
+            "name": "mid_x_p_m",
+            "coefficientTerms": 4
+          },
+          {
+            "name": "high_x_p_m",
+            "coefficientTerms": 24
+          },
+          {
+            "name": "mid_x_p_p",
+            "coefficientTerms": 4
+          },
+          {
+            "name": "high_x_p_p",
+            "coefficientTerms": 24
+          },
+          {
+            "name": "mid_y_m_m",
+            "coefficientTerms": 4
+          },
+          {
+            "name": "high_y_m_m",
+            "coefficientTerms": 24
+          },
+          {
+            "name": "mid_y_m_p",
+            "coefficientTerms": 4
+          },
+          {
+            "name": "high_y_m_p",
+            "coefficientTerms": 24
+          },
+          {
+            "name": "mid_y_p_m",
+            "coefficientTerms": 4
+          },
+          {
+            "name": "high_y_p_m",
+            "coefficientTerms": 24
+          },
+          {
+            "name": "mid_y_p_p",
+            "coefficientTerms": 4
+          },
+          {
+            "name": "high_y_p_p",
+            "coefficientTerms": 24
+          },
+          {
+            "name": "mid_z_m_m",
+            "coefficientTerms": 4
+          },
+          {
+            "name": "high_z_m_m",
+            "coefficientTerms": 24
+          },
+          {
+            "name": "mid_z_m_p",
+            "coefficientTerms": 4
+          },
+          {
+            "name": "high_z_m_p",
+            "coefficientTerms": 24
+          },
+          {
+            "name": "mid_z_p_m",
+            "coefficientTerms": 4
+          },
+          {
+            "name": "high_z_p_m",
+            "coefficientTerms": 24
+          },
+          {
+            "name": "mid_z_p_p",
+            "coefficientTerms": 4
+          },
+          {
+            "name": "high_z_p_p",
+            "coefficientTerms": 24
+          }
+        ]
+      }
+    },
+    "fragment_shader_uses_frozen_r2_14_8_1_kernel_and_b_material_path": {
+      "passed": true,
+      "evidence": {
+        "required": [
+          "sdRoundBox",
+          "surfaceDelta",
+          "contourShapeLong",
+          "processMaterial"
+        ],
+        "found": [
+          "sdRoundBox",
+          "surfaceDelta",
+          "contourShapeLong",
+          "processMaterial"
+        ]
+      }
+    },
+    "wall_uses_gpu_instance_decoder_and_does_not_upload_1420_pose_uniforms": {
+      "passed": true,
+      "evidence": {
+        "hasPoseArray": false,
+        "hasInstanceId": true,
+        "hasDecoder": true,
+        "hasCourseLogic": true
+      }
+    },
+    "soil_microscope_changes_distance_field_without_fragment_derivatives": {
+      "passed": true,
+      "evidence": {
+        "geometryFunctionFound": true,
+        "geometryFeedsSdf": true,
+        "derivativeTokensInGeometry": []
+      }
+    },
+    "brick_and_soil_shaders_switch_between_parallel_ortho_and_point_perspective_rays": {
+      "passed": true,
+      "evidence": {
+        "brick": {
+          "hasViewDirUniform": true,
+          "hasOrthoUniform": true,
+          "originSwitch": true,
+          "raySwitch": true
+        },
+        "soil": {
+          "hasViewDirUniform": true,
+          "hasOrthoUniform": true,
+          "originSwitch": true,
+          "raySwitch": true
+        }
+      }
+    },
+    "default_full_wall_draws_1420_bricks_one_soil_and_marks_ready": {
+      "passed": true,
+      "evidence": {
+        "uniforms": {
+          "uViewProj": [
+            -1.5907845497131348,
+            0.4930693209171295,
+            0.5941210985183716,
+            0.5937251448631287,
+            0,
+            3.016880989074707,
+            -0.2572519779205322,
+            -0.2570805549621582,
+            1.238680362701416,
+            0.6332280039787292,
+            0.7630044221878052,
+            0.7624959349632263,
+            0,
+            -4.5253214836120605,
+            6.759829044342041,
+            6.795310974121094
+          ],
+          "uCamera": [
+            -3.805593988933826,
+            3.1478066378239014,
+            -4.887362615030662
+          ],
+          "uViewDir": [
+            0.5937251255672695,
+            -0.2570805518921551,
+            0.762495944322955
+          ],
+          "uOrtho": 0,
+          "uSoilTop": 2.9899999999999984,
+          "uSoilShape": 0.0025,
+          "uSoilScale": 1,
+          "uSoilLayers": 17,
+          "uSoilColor": 0.65,
+          "uMotherMode": 0,
+          "uBuiltCourses": 43
+        },
+        "calls": [
+          {
+            "call": "drawArrays",
+            "count": 6,
+            "instanceCount": 1,
+            "programId": 7
+          },
+          {
+            "call": "drawArrays",
+            "count": 36,
+            "instanceCount": 1,
+            "programId": 4
+          },
+          {
+            "call": "drawArraysInstanced",
+            "count": 36,
+            "instanceCount": 1420,
+            "programId": 1
+          }
+        ],
+        "brickInstances": 1420,
+        "soilVisible": true,
+        "soilTopUniform": 2.9899999999999984,
+        "canvasReady": "true",
+        "canvasMode": "wall",
+        "canvasBrickCount": "1420",
+        "canvasSoilTop": "2.990000000",
+        "status": "WebGL2 · 1420 × R2.14.8.1 · 连续土芯 1"
+      }
+    },
+    "manifest_freezes_4m_by_3m_wall_with_43_courses": {
+      "passed": true,
+      "evidence": {
+        "width": 4,
+        "height": 3,
+        "courses": 43
+      }
+    },
+    "manifest_counts_1420_bricks_one_soil_and_no_plaster_or_mortar": {
+      "passed": true,
+      "evidence": {
+        "brickCount": 1420,
+        "soilCount": 1,
+        "plasterCount": 0,
+        "mortarCount": 0
+      }
+    },
+    "runtime_exposes_full_bricks_mother_and_five_views": {
+      "passed": true,
+      "evidence": {
+        "modes": [
+          "wall",
+          "bricks",
+          "mother"
+        ],
+        "roles": {
+          "full": "wall",
+          "brickOnly": "bricks",
+          "mother": "mother"
+        },
+        "views": [
+          "iso",
+          "front",
+          "back",
+          "end",
+          "top"
+        ]
+      }
+    },
+    "three_modes_switch_visibility_keep_kernel_and_adapt_mother_camera": {
+      "passed": true,
+      "evidence": {
+        "full": {
+          "value": "wall",
+          "calls": [
+            {
+              "call": "drawArrays",
+              "count": 6,
+              "instanceCount": 1,
+              "programId": 7
+            },
+            {
+              "call": "drawArrays",
+              "count": 36,
+              "instanceCount": 1,
+              "programId": 4
+            },
+            {
+              "call": "drawArraysInstanced",
+              "count": 36,
+              "instanceCount": 1420,
+              "programId": 1
+            }
+          ],
+          "brickInstances": 1420,
+          "soilVisible": true,
+          "motherMode": 0,
+          "camera": {
+            "uViewProj": [
+              -1.5907845497131348,
+              0.4930693209171295,
+              0.5941210985183716,
+              0.5937251448631287,
+              0,
+              3.016880989074707,
+              -0.2572519779205322,
+              -0.2570805549621582,
+              1.238680362701416,
+              0.6332280039787292,
+              0.7630044221878052,
+              0.7624959349632263,
+              0,
+              -4.5253214836120605,
+              6.759829044342041,
+              6.795310974121094
+            ],
+            "uCamera": [
+              -3.805593988933826,
+              3.1478066378239014,
+              -4.887362615030662
+            ],
+            "uViewDir": [
+              0.5937251255672695,
+              -0.2570805518921551,
+              0.762495944322955
+            ],
+            "uOrtho": 0
+          },
+          "shaderCountUnchanged": true,
+          "canvasMode": "wall",
+          "canvasBrickCount": 1420,
+          "courseDisabled": false,
+          "soilControlsDisabled": [
+            false,
+            false,
+            false,
+            false
+          ],
+          "title": "砖＋连续土芯 · 第 1—43 皮",
+          "meta": "1420 块整砖 · 土芯顶 2.990 m · 名义内退 10 mm"
+        },
+        "brickOnly": {
+          "value": "bricks",
+          "calls": [
+            {
+              "call": "drawArrays",
+              "count": 6,
+              "instanceCount": 1,
+              "programId": 7
+            },
+            {
+              "call": "drawArraysInstanced",
+              "count": 36,
+              "instanceCount": 1420,
+              "programId": 1
+            }
+          ],
+          "brickInstances": 1420,
+          "soilVisible": false,
+          "motherMode": 0,
+          "camera": {
+            "uViewProj": [
+              -1.5907845497131348,
+              0.4930693209171295,
+              0.5941210985183716,
+              0.5937251448631287,
+              0,
+              3.016880989074707,
+              -0.2572519779205322,
+              -0.2570805549621582,
+              1.238680362701416,
+              0.6332280039787292,
+              0.7630044221878052,
+              0.7624959349632263,
+              0,
+              -4.5253214836120605,
+              6.759829044342041,
+              6.795310974121094
+            ],
+            "uCamera": [
+              -3.805593988933826,
+              3.1478066378239014,
+              -4.887362615030662
+            ],
+            "uViewDir": [
+              0.5937251255672695,
+              -0.2570805518921551,
+              0.762495944322955
+            ],
+            "uOrtho": 0
+          },
+          "shaderCountUnchanged": true,
+          "canvasMode": "bricks",
+          "canvasBrickCount": 1420,
+          "courseDisabled": false,
+          "soilControlsDisabled": [
+            true,
+            true,
+            true,
+            true
+          ],
+          "title": "仅砖排法 · 第 1—43 皮",
+          "meta": "1420 块整砖 · 无土、无抹灰、无灰浆"
+        },
+        "mother": {
+          "value": "mother",
+          "calls": [
+            {
+              "call": "drawArrays",
+              "count": 6,
+              "instanceCount": 1,
+              "programId": 7
+            },
+            {
+              "call": "drawArraysInstanced",
+              "count": 36,
+              "instanceCount": 1,
+              "programId": 1
+            }
+          ],
+          "brickInstances": 1,
+          "soilVisible": false,
+          "motherMode": 1,
+          "camera": {
+            "uViewProj": [
+              1.6409138441085815,
+              0.5533392429351807,
+              0.5537083148956299,
+              0.5533393025398254,
+              0,
+              2.9729995727539062,
+              -0.3052620589733124,
+              -0.30505862832069397,
+              1.171463131904602,
+              -0.7750837802886963,
+              -0.7756006717681885,
+              -0.7750837802886963,
+              -5.595984046528619e-17,
+              -0.08027099072933197,
+              0.42853549122810364,
+              0.4682365953922272
+            ],
+            "uCamera": [
+              -0.25453607278526075,
+              0.167326972763984,
+              0.35653853699979265
+            ],
+            "uViewDir": [
+              0.5533392886636104,
+              -0.3050586364434435,
+              -0.7750837760865058
+            ],
+            "uOrtho": 0
+          },
+          "shaderCountUnchanged": true,
+          "canvasMode": "mother",
+          "canvasBrickCount": 1,
+          "courseDisabled": true,
+          "soilControlsDisabled": [
+            true,
+            true,
+            true,
+            true
+          ],
+          "title": "R2.14.8.1 右侧固定母砖",
+          "meta": "连续 SDF · 无替代网格"
+        }
+      }
+    },
+    "view_buttons_change_camera_without_changing_objects": {
+      "passed": true,
+      "evidence": {
+        "iso": {
+          "cameraUniforms": {
+            "uViewProj": [
+              -1.5907845497131348,
+              0.4930693209171295,
+              0.5941210985183716,
+              0.5937251448631287,
+              0,
+              3.016880989074707,
+              -0.2572519779205322,
+              -0.2570805549621582,
+              1.238680362701416,
+              0.6332280039787292,
+              0.7630044221878052,
+              0.7624959349632263,
+              0,
+              -4.5253214836120605,
+              6.759829044342041,
+              6.795310974121094
+            ],
+            "uCamera": [
+              -3.805593988933826,
+              3.1478066378239014,
+              -4.887362615030662
+            ],
+            "uViewDir": [
+              0.5937251255672695,
+              -0.2570805518921551,
+              0.762495944322955
+            ],
+            "uOrtho": 0
+          },
+          "camera": [
+            -3.805593988933826,
+            3.1478066378239014,
+            -4.887362615030662
+          ],
+          "viewProj": [
+            -1.5907845497131348,
+            0.4930693209171295,
+            0.5941210985183716,
+            0.5937251448631287,
+            0,
+            3.016880989074707,
+            -0.2572519779205322,
+            -0.2570805549621582,
+            1.238680362701416,
+            0.6332280039787292,
+            0.7630044221878052,
+            0.7624959349632263,
+            0,
+            -4.5253214836120605,
+            6.759829044342041,
+            6.795310974121094
+          ],
+          "projection": {
+            "kind": "perspective",
+            "homogeneousRow": [
+              0.5937251448631287,
+              -0.2570805549621582,
+              0.7624959349632263,
+              6.795310974121094
+            ],
+            "viewBasis": {
+              "right": [
+                -0.7890147483825336,
+                0,
+                0.6143742563249598
+              ],
+              "up": [
+                0.15794366831129103,
+                0.966389978161185,
+                0.2028403503990198
+              ],
+              "projectedDepth": [
+                0.5937251540795776,
+                -0.25708053561646255,
+                0.7624959276090166
+              ]
+            }
+          },
+          "orthoMode": 0,
+          "viewDir": [
+            0.5937251255672695,
+            -0.2570805518921551,
+            0.762495944322955
+          ],
+          "soilOrthoMode": 0,
+          "soilViewDir": [
+            0.5937251255672695,
+            -0.2570805518921551,
+            0.762495944322955
+          ],
+          "objectsUnchanged": true,
+          "brickInstances": 1420,
+          "soilVisible": true,
+          "canvasMode": "wall"
+        },
+        "front": {
+          "cameraUniforms": {
+            "uViewProj": [
+              -0.3986625373363495,
+              0,
+              -4.083517300981849e-18,
+              0,
+              0,
+              0.6172839403152466,
+              0,
+              0,
+              -4.8822082415953864e-17,
+              0,
+              0.03334444761276245,
+              0,
+              0,
+              -0.9259259104728699,
+              -0.8104855418205261,
+              1
+            ],
+            "uCamera": [
+              6.984819182161482e-16,
+              1.5,
+              -5.703537695133474
+            ],
+            "uViewDir": [
+              -1.2246467991473532e-16,
+              0,
+              1
+            ],
+            "uOrtho": 1
+          },
+          "camera": [
+            6.984819182161482e-16,
+            1.5,
+            -5.703537695133474
+          ],
+          "viewProj": [
+            -0.3986625373363495,
+            0,
+            -4.083517300981849e-18,
+            0,
+            0,
+            0.6172839403152466,
+            0,
+            0,
+            -4.8822082415953864e-17,
+            0,
+            0.03334444761276245,
+            0,
+            0,
+            -0.9259259104728699,
+            -0.8104855418205261,
+            1
+          ],
+          "projection": {
+            "kind": "orthographic",
+            "homogeneousRow": [
+              0,
+              0,
+              0,
+              1
+            ],
+            "viewBasis": {
+              "right": [
+                -1,
+                0,
+                -1.2246468590241005e-16
+              ],
+              "up": [
+                0,
+                1,
+                0
+              ],
+              "projectedDepth": [
+                -1.2246468582730095e-16,
+                0,
+                1
+              ]
+            }
+          },
+          "orthoMode": 1,
+          "viewDir": [
+            -1.2246467991473532e-16,
+            0,
+            1
+          ],
+          "soilOrthoMode": 1,
+          "soilViewDir": [
+            -1.2246467991473532e-16,
+            0,
+            1
+          ],
+          "objectsUnchanged": true,
+          "brickInstances": 1420,
+          "soilVisible": true,
+          "canvasMode": "wall"
+        },
+        "back": {
+          "cameraUniforms": {
+            "uViewProj": [
+              0.3986625373363495,
+              0,
+              0,
+              0,
+              0,
+              0.6172839403152466,
+              0,
+              0,
+              0,
+              0,
+              -0.03334444761276245,
+              0,
+              0,
+              -0.9259259104728699,
+              -0.8104855418205261,
+              1
+            ],
+            "uCamera": [
+              0,
+              1.5,
+              5.703537695133474
+            ],
+            "uViewDir": [
+              0,
+              0,
+              -1
+            ],
+            "uOrtho": 1
+          },
+          "camera": [
+            0,
+            1.5,
+            5.703537695133474
+          ],
+          "viewProj": [
+            0.3986625373363495,
+            0,
+            0,
+            0,
+            0,
+            0.6172839403152466,
+            0,
+            0,
+            0,
+            0,
+            -0.03334444761276245,
+            0,
+            0,
+            -0.9259259104728699,
+            -0.8104855418205261,
+            1
+          ],
+          "projection": {
+            "kind": "orthographic",
+            "homogeneousRow": [
+              0,
+              0,
+              0,
+              1
+            ],
+            "viewBasis": {
+              "right": [
+                1,
+                0,
+                0
+              ],
+              "up": [
+                0,
+                1,
+                0
+              ],
+              "projectedDepth": [
+                0,
+                0,
+                -1
+              ]
+            }
+          },
+          "orthoMode": 1,
+          "viewDir": [
+            0,
+            0,
+            -1
+          ],
+          "soilOrthoMode": 1,
+          "soilViewDir": [
+            0,
+            0,
+            -1
+          ],
+          "objectsUnchanged": true,
+          "brickInstances": 1420,
+          "soilVisible": true,
+          "canvasMode": "wall"
+        },
+        "end": {
+          "cameraUniforms": {
+            "uViewProj": [
+              2.4411041207976932e-17,
+              0,
+              0.03334444761276245,
+              0,
+              0,
+              0.6172839403152466,
+              0,
+              0,
+              0.3986625373363495,
+              0,
+              -2.0417586504909244e-18,
+              0,
+              0,
+              -0.9259259104728699,
+              -0.8104855418205261,
+              1
+            ],
+            "uCamera": [
+              -5.703537695133474,
+              1.5,
+              3.492409591080741e-16
+            ],
+            "uViewDir": [
+              1,
+              0,
+              -6.123233995736766e-17
+            ],
+            "uOrtho": 1
+          },
+          "camera": [
+            -5.703537695133474,
+            1.5,
+            3.492409591080741e-16
+          ],
+          "viewProj": [
+            2.4411041207976932e-17,
+            0,
+            0.03334444761276245,
+            0,
+            0,
+            0.6172839403152466,
+            0,
+            0,
+            0.3986625373363495,
+            0,
+            -2.0417586504909244e-18,
+            0,
+            0,
+            -0.9259259104728699,
+            -0.8104855418205261,
+            1
+          ],
+          "projection": {
+            "kind": "orthographic",
+            "homogeneousRow": [
+              0,
+              0,
+              0,
+              1
+            ],
+            "viewBasis": {
+              "right": [
+                6.123234295120503e-17,
+                0,
+                1
+              ],
+              "up": [
+                0,
+                1,
+                0
+              ],
+              "projectedDepth": [
+                1,
+                0,
+                -6.123234291365048e-17
+              ]
+            }
+          },
+          "orthoMode": 1,
+          "viewDir": [
+            1,
+            0,
+            -6.123233995736766e-17
+          ],
+          "soilOrthoMode": 1,
+          "soilViewDir": [
+            1,
+            0,
+            -6.123233995736766e-17
+          ],
+          "objectsUnchanged": true,
+          "brickInstances": 1420,
+          "soilVisible": true,
+          "canvasMode": "wall"
+        },
+        "top": {
+          "cameraUniforms": {
+            "uViewProj": [
+              0.4651162922382355,
+              0,
+              -2.500433063719955e-34,
+              0,
+              -3.48781332908664e-33,
+              -4.409831201801464e-17,
+              -0.03334444761276245,
+              0,
+              0,
+              -0.7201800346374512,
+              2.0417586504909244e-18,
+              0,
+              5.2317201773009526e-33,
+              6.614746306393828e-17,
+              -0.7604689002037048,
+              1
+            ],
+            "uCamera": [
+              4.276968227028546e-32,
+              7.203537695133474,
+              -3.492409591080741e-16
+            ],
+            "uViewDir": [
+              -7.498798913309288e-33,
+              -1,
+              6.123233995736766e-17
+            ],
+            "uOrtho": 1
+          },
+          "camera": [
+            4.276968227028546e-32,
+            7.203537695133474,
+            -3.492409591080741e-16
+          ],
+          "viewProj": [
+            0.4651162922382355,
+            0,
+            -2.500433063719955e-34,
+            0,
+            -3.48781332908664e-33,
+            -4.409831201801464e-17,
+            -0.03334444761276245,
+            0,
+            0,
+            -0.7201800346374512,
+            2.0417586504909244e-18,
+            0,
+            5.2317201773009526e-33,
+            6.614746306393828e-17,
+            -0.7604689002037048,
+            1
+          ],
+          "projection": {
+            "kind": "orthographic",
+            "homogeneousRow": [
+              0,
+              0,
+              0,
+              1
+            ],
+            "viewBasis": {
+              "right": [
+                1,
+                -7.498798445228748e-33,
+                0
+              ],
+              "up": [
+                0,
+                -6.123234454869935e-17,
+                -1
+              ],
+              "projectedDepth": [
+                -7.498798878776221e-33,
+                -1,
+                6.123234291365048e-17
+              ]
+            }
+          },
+          "orthoMode": 1,
+          "viewDir": [
+            -7.498798913309288e-33,
+            -1,
+            6.123233995736766e-17
+          ],
+          "soilOrthoMode": 1,
+          "soilViewDir": [
+            -7.498798913309288e-33,
+            -1,
+            6.123233995736766e-17
+          ],
+          "objectsUnchanged": true,
+          "brickInstances": 1420,
+          "soilVisible": true,
+          "canvasMode": "wall"
+        }
+      }
+    },
+    "uploaded_matrices_prove_iso_perspective_and_fixed_views_orthographic": {
+      "passed": true,
+      "evidence": {
+        "iso": {
+          "kind": "perspective",
+          "homogeneousRow": [
+            0.5937251448631287,
+            -0.2570805549621582,
+            0.7624959349632263,
+            6.795310974121094
+          ],
+          "brickOrthoMode": 0,
+          "soilOrthoMode": 0
+        },
+        "front": {
+          "kind": "orthographic",
+          "homogeneousRow": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "brickOrthoMode": 1,
+          "soilOrthoMode": 1
+        },
+        "back": {
+          "kind": "orthographic",
+          "homogeneousRow": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "brickOrthoMode": 1,
+          "soilOrthoMode": 1
+        },
+        "end": {
+          "kind": "orthographic",
+          "homogeneousRow": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "brickOrthoMode": 1,
+          "soilOrthoMode": 1
+        },
+        "top": {
+          "kind": "orthographic",
+          "homogeneousRow": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "brickOrthoMode": 1,
+          "soilOrthoMode": 1
+        }
+      }
+    },
+    "runtime_uses_point_rays_for_iso_and_parallel_axis_rays_for_orthographic_views": {
+      "passed": true,
+      "evidence": {
+        "iso": {
+          "projection": "perspective",
+          "orthoMode": 0,
+          "brickViewDir": [
+            0.5937251255672695,
+            -0.2570805518921551,
+            0.762495944322955
+          ],
+          "soilViewDir": [
+            0.5937251255672695,
+            -0.2570805518921551,
+            0.762495944322955
+          ],
+          "expectedViewDir": "perspective branch uses uCamera per fragment"
+        },
+        "front": {
+          "projection": "orthographic",
+          "orthoMode": 1,
+          "brickViewDir": [
+            -1.2246467991473532e-16,
+            0,
+            1
+          ],
+          "soilViewDir": [
+            -1.2246467991473532e-16,
+            0,
+            1
+          ],
+          "expectedViewDir": [
+            0,
+            0,
+            1
+          ]
+        },
+        "back": {
+          "projection": "orthographic",
+          "orthoMode": 1,
+          "brickViewDir": [
+            0,
+            0,
+            -1
+          ],
+          "soilViewDir": [
+            0,
+            0,
+            -1
+          ],
+          "expectedViewDir": [
+            0,
+            0,
+            -1
+          ]
+        },
+        "end": {
+          "projection": "orthographic",
+          "orthoMode": 1,
+          "brickViewDir": [
+            1,
+            0,
+            -6.123233995736766e-17
+          ],
+          "soilViewDir": [
+            1,
+            0,
+            -6.123233995736766e-17
+          ],
+          "expectedViewDir": [
+            1,
+            0,
+            0
+          ]
+        },
+        "top": {
+          "projection": "orthographic",
+          "orthoMode": 1,
+          "brickViewDir": [
+            -7.498798913309288e-33,
+            -1,
+            6.123233995736766e-17
+          ],
+          "soilViewDir": [
+            -7.498798913309288e-33,
+            -1,
+            6.123233995736766e-17
+          ],
+          "expectedViewDir": [
+            0,
+            -1,
+            0
+          ]
+        }
+      }
+    },
+    "fixed_view_axes_have_zero_pitch_and_top_uses_negative_z_up": {
+      "passed": true,
+      "evidence": {
+        "cameras": {
+          "front": [
+            6.984819182161482e-16,
+            1.5,
+            -5.703537695133474
+          ],
+          "back": [
+            0,
+            1.5,
+            5.703537695133474
+          ],
+          "end": [
+            -5.703537695133474,
+            1.5,
+            3.492409591080741e-16
+          ],
+          "top": [
+            4.276968227028546e-32,
+            7.203537695133474,
+            -3.492409591080741e-16
+          ]
+        },
+        "normalizedUpBasis": {
+          "front": [
+            0,
+            1,
+            0
+          ],
+          "back": [
+            0,
+            1,
+            0
+          ],
+          "end": [
+            0,
+            1,
+            0
+          ],
+          "top": [
+            0,
+            -6.123234454869935e-17,
+            -1
+          ]
+        },
+        "topUpDeclaredInExecutedSource": true
+      }
+    },
+    "course_1_22_43_executes_bottom_up_brick_counts": {
+      "passed": true,
+      "evidence": {
+        "1": {
+          "activeCourseDataset": 1,
+          "brickCountDataset": 34,
+          "soilTopDataset": 0.05115,
+          "courseOutput": "1 / 43",
+          "brickInstances": 34,
+          "soilVisible": true,
+          "builtCoursesUniform": {
+            "name": "uBuiltCourses",
+            "value": 1
+          },
+          "soilTopUniform": {
+            "name": "uSoilTop",
+            "value": 0.05115
+          },
+          "brickTop": 0.06115,
+          "expectedSoilTop": 0.05115,
+          "uploadedSoilTop": 0.05115,
+          "expectedBrickCount": 34,
+          "soilTopDelta": 0
+        },
+        "22": {
+          "activeCourseDataset": 22,
+          "brickCountDataset": 726,
+          "soilTopDataset": 1.520575,
+          "courseOutput": "22 / 43",
+          "brickInstances": 726,
+          "soilVisible": true,
+          "builtCoursesUniform": {
+            "name": "uBuiltCourses",
+            "value": 22
+          },
+          "soilTopUniform": {
+            "name": "uSoilTop",
+            "value": 1.5205749999999991
+          },
+          "brickTop": 1.5305749999999991,
+          "expectedSoilTop": 1.5205749999999991,
+          "uploadedSoilTop": 1.5205749999999991,
+          "expectedBrickCount": 726,
+          "soilTopDelta": 0
+        },
+        "43": {
+          "activeCourseDataset": 43,
+          "brickCountDataset": 1420,
+          "soilTopDataset": 2.99,
+          "courseOutput": "43 / 43",
+          "brickInstances": 1420,
+          "soilVisible": true,
+          "builtCoursesUniform": {
+            "name": "uBuiltCourses",
+            "value": 43
+          },
+          "soilTopUniform": {
+            "name": "uSoilTop",
+            "value": 2.9899999999999984
+          },
+          "brickTop": 2.9999999999999982,
+          "expectedSoilTop": 2.9899999999999984,
+          "uploadedSoilTop": 2.9899999999999984,
+          "expectedBrickCount": 1420,
+          "soilTopDelta": 0
+        }
+      }
+    },
+    "soil_top_follows_built_courses_with_10mm_top_setback": {
+      "passed": true,
+      "evidence": {
+        "1": {
+          "activeCourseDataset": 1,
+          "brickCountDataset": 34,
+          "soilTopDataset": 0.05115,
+          "courseOutput": "1 / 43",
+          "brickInstances": 34,
+          "soilVisible": true,
+          "builtCoursesUniform": {
+            "name": "uBuiltCourses",
+            "value": 1
+          },
+          "soilTopUniform": {
+            "name": "uSoilTop",
+            "value": 0.05115
+          },
+          "brickTop": 0.06115,
+          "expectedSoilTop": 0.05115,
+          "uploadedSoilTop": 0.05115,
+          "expectedBrickCount": 34,
+          "soilTopDelta": 0
+        },
+        "22": {
+          "activeCourseDataset": 22,
+          "brickCountDataset": 726,
+          "soilTopDataset": 1.520575,
+          "courseOutput": "22 / 43",
+          "brickInstances": 726,
+          "soilVisible": true,
+          "builtCoursesUniform": {
+            "name": "uBuiltCourses",
+            "value": 22
+          },
+          "soilTopUniform": {
+            "name": "uSoilTop",
+            "value": 1.5205749999999991
+          },
+          "brickTop": 1.5305749999999991,
+          "expectedSoilTop": 1.5205749999999991,
+          "uploadedSoilTop": 1.5205749999999991,
+          "expectedBrickCount": 726,
+          "soilTopDelta": 0
+        },
+        "43": {
+          "activeCourseDataset": 43,
+          "brickCountDataset": 1420,
+          "soilTopDataset": 2.99,
+          "courseOutput": "43 / 43",
+          "brickInstances": 1420,
+          "soilVisible": true,
+          "builtCoursesUniform": {
+            "name": "uBuiltCourses",
+            "value": 43
+          },
+          "soilTopUniform": {
+            "name": "uSoilTop",
+            "value": 2.9899999999999984
+          },
+          "brickTop": 2.9999999999999982,
+          "expectedSoilTop": 2.9899999999999984,
+          "uploadedSoilTop": 2.9899999999999984,
+          "expectedBrickCount": 1420,
+          "soilTopDelta": 0
+        }
+      }
+    },
+    "soil_color_controls_do_not_change_soil_geometry_brick_kernel_or_camera": {
+      "passed": true,
+      "evidence": {
+        "controls": [
+          {
+            "id": "soilColor",
+            "value": "0.66"
+          }
+        ],
+        "output": "66%",
+        "beforeColorUniforms": {
+          "uSoilColor": 0.65
+        },
+        "afterColorUniforms": {
+          "uSoilColor": 0.66
+        },
+        "soilGeometryUniformsUnchanged": true,
+        "brickDrawUnchanged": true,
+        "cameraUnchanged": true,
+        "shaderHashUnchanged": true
+      }
+    }
+  },
+  "snapshots": {
+    "manifest": {
+      "schemaVersion": "3.2",
+      "status": "wall-bond-and-soil-review-awaiting-visual-approval",
+      "interpretation": "依据用户口述建立的第一版四米砖土墙候选；砌筑关系等待人工视觉验收，不冒充参考扫描逐砖反演",
+      "objectCounts": {
+        "brick": 1420,
+        "fullBrick": 1420,
+        "cutBrick": 0,
+        "soilCore": 1,
+        "plaster": 0,
+        "mortar": 0,
+        "straw": 0
+      },
+      "freeze": {
+        "kernelId": "brick-mother-r2.14.8.1-right",
+        "source": "brick-mother/experiments/shape-edge-lab-r2-14/Brick_Shape_Edge_Lab_R2_14_8_1.html",
+        "sourceCommit": "7362f830bcac83a0883e7855fa5d41ee30e52718",
+        "sourceBlob": "19315c0094234f68aad6a1fadc32aeea1725aab6",
+        "modelScale": 0.1153846154,
+        "dimensionsM": [
+          0.24,
+          0.06115,
+          0.11077
+        ],
+        "residualCoefficientCount": 336,
+        "material": {
+          "id": "R2.1-B",
+          "publicVector": [
+            1,
+            1,
+            1,
+            0
+          ],
+          "sourceCommit": "030d84b979a8158d03398aa60da69e8e3315cd40"
+        }
+      },
+      "wall": {
+        "dimensionsM": {
+          "width": 4,
+          "height": 3,
+          "thickness": 0.48923
+        },
+        "courseCount": 43,
+        "courseTypes": {
+          "A": 22,
+          "B": 21
+        },
+        "bedJointM": 0.008822619047619,
+        "coursePitchM": 0.069972619047619,
+        "centerTieGapM": 0.00923,
+        "generatedBrickCount": 1420,
+        "fullBrickCount": 1420,
+        "allowedYawDeg": [
+          0,
+          -90
+        ],
+        "allowedScale": [
+          1,
+          1,
+          1
+        ],
+        "bondRecipe": {
+          "generation": "pair blocks: A(34) then B(32); 21 complete pairs plus final A",
+          "A": {
+            "humanCourses": "odd 1,3,…,43",
+            "faceCount": 2,
+            "piecesPerFace": 17,
+            "pattern": [
+              "header",
+              "15 full stretchers",
+              "header"
+            ],
+            "courseBrickCount": 34,
+            "headJointM": 0.01115375,
+            "endMarginsM": [
+              0,
+              0
+            ],
+            "widthEquation": "2 × 0.11077 + 15 × 0.24 + 16 × 0.01115375 = 4.00000 m",
+            "headerDepthRelation": "front/back full headers span 0.24m inward and leave 0.00923m centerTieGap"
+          },
+          "B": {
+            "humanCourses": "even 2,4,…,42",
+            "faceCount": 2,
+            "piecesPerFace": 16,
+            "pattern": [
+              "16 full stretchers"
+            ],
+            "courseBrickCount": 32,
+            "headJointM": 0.010666666666667,
+            "endMarginsM": [
+              0,
+              0
+            ],
+            "widthEquation": "16 × 0.24 + 15 × 0.010666666666667 = 4.00000 m"
+          }
+        },
+        "placement": "GPU gl_InstanceID decodes course, face and member from the recipe; no expanded pose list and no per-frame 1420-brick CPU loop",
+        "verticalEquation": "43 × 0.06115 + 42 × 0.008822619047619 = 3.000000000 m"
+      },
+      "soil": {
+        "count": 1,
+        "continuous": true,
+        "noTexture": true,
+        "nominalFrontBackSetbackM": 0.01,
+        "nominalTopSetbackM": 0.01,
+        "nominalEndSetbackM": 0.01,
+        "outerBrickSurfaceZAbsM": 0.244615,
+        "nominalSoilSurfaceZAbsM": 0.234615,
+        "defaultAmplitudeM": 0.0025,
+        "maxAmplitudeM": 0.005,
+        "minimumGuaranteedSetbackM": 0.005,
+        "geometryLayers": {
+          "min": 1,
+          "max": 5,
+          "active": "min(microscopeLayers,5)",
+          "affects": "front/back and top SDF shape"
+        },
+        "materialLayers": {
+          "min": 1,
+          "max": 17,
+          "affects": [
+            "baseColor",
+            "roughness"
+          ]
+        },
+        "heightContract": {
+          "tracksActiveCourse": true,
+          "topSetbackM": 0.01,
+          "formula": "brickTop = n × 0.06115 + (n - 1) × 0.008822619047619; nominalSoilTop = brickTop - 0.010",
+          "samples": [
+            {
+              "activeCourse": 1,
+              "brickTopM": 0.06115,
+              "soilTopM": 0.05115
+            },
+            {
+              "activeCourse": 22,
+              "brickTopM": 1.530575,
+              "soilTopM": 1.520575
+            },
+            {
+              "activeCourse": 43,
+              "brickTopM": 3,
+              "soilTopM": 2.99
+            }
+          ]
+        },
+        "invariants": [
+          "土芯高度随已显示皮数从下向上增长",
+          "土只在砖后与缝内出现",
+          "土芯不越过砖外表面",
+          "无抹灰、灰浆或稻草"
+        ]
+      },
+      "modes": {
+        "default": "wall",
+        "values": [
+          "wall",
+          "bricks",
+          "mother"
+        ]
+      },
+      "views": [
+        "iso",
+        "front",
+        "back",
+        "end",
+        "top"
+      ],
+      "viewProjection": {
+        "iso": "perspective",
+        "front": "orthographic",
+        "back": "orthographic",
+        "end": "orthographic",
+        "top": "orthographic",
+        "fixedViewRayModel": "parallel"
+      }
+    },
+    "shaders": {
+      "shaders": [
+        {
+          "type": "vertex",
+          "bytes": 1642,
+          "sha256": "9dc2a53ca3c879d3fdd00443c815bbc5c462f9d44d7a07421a4a2df5f1e8edc3"
+        },
+        {
+          "type": "fragment",
+          "bytes": 18061,
+          "sha256": "6f351b164e295eec5136161c0e41635acab91198d1882a91785a3be09985ccb6"
+        },
+        {
+          "type": "vertex",
+          "bytes": 604,
+          "sha256": "bc68135e2d7a367b3138824d2b9260633f1b43146a520e7ec8e8a323e7a0c8e2"
+        },
+        {
+          "type": "fragment",
+          "bytes": 3118,
+          "sha256": "dbb2d5460400b752919f4a32fd1f7cee4efd672842c67c05de89cd2f51b4f378"
+        },
+        {
+          "type": "vertex",
+          "bytes": 265,
+          "sha256": "597b925df43a63ecea488cfe2f3e820fd59f755c28a702dff7e99a34b84f7940"
+        },
+        {
+          "type": "fragment",
+          "bytes": 192,
+          "sha256": "945bde41f815c631df2ee8a9390dbb8cc039958141189d9c9675bc68d03c7da9"
+        }
+      ],
+      "brickVertexSha256": "9dc2a53ca3c879d3fdd00443c815bbc5c462f9d44d7a07421a4a2df5f1e8edc3",
+      "brickFragmentSha256": "6f351b164e295eec5136161c0e41635acab91198d1882a91785a3be09985ccb6",
+      "soilVertexSha256": "bc68135e2d7a367b3138824d2b9260633f1b43146a520e7ec8e8a323e7a0c8e2",
+      "soilFragmentSha256": "dbb2d5460400b752919f4a32fd1f7cee4efd672842c67c05de89cd2f51b4f378",
+      "programCount": 3,
+      "programIds": {
+        "brick": 1,
+        "soil": 4,
+        "floor": 7
+      }
+    },
+    "initial": {
+      "uniforms": {
+        "uViewProj": [
+          -1.5907845497131348,
+          0.4930693209171295,
+          0.5941210985183716,
+          0.5937251448631287,
+          0,
+          3.016880989074707,
+          -0.2572519779205322,
+          -0.2570805549621582,
+          1.238680362701416,
+          0.6332280039787292,
+          0.7630044221878052,
+          0.7624959349632263,
+          0,
+          -4.5253214836120605,
+          6.759829044342041,
+          6.795310974121094
+        ],
+        "uCamera": [
+          -3.805593988933826,
+          3.1478066378239014,
+          -4.887362615030662
+        ],
+        "uViewDir": [
+          0.5937251255672695,
+          -0.2570805518921551,
+          0.762495944322955
+        ],
+        "uOrtho": 0,
+        "uSoilTop": 2.9899999999999984,
+        "uSoilShape": 0.0025,
+        "uSoilScale": 1,
+        "uSoilLayers": 17,
+        "uSoilColor": 0.65,
+        "uMotherMode": 0,
+        "uBuiltCourses": 43
+      },
+      "calls": [
+        {
+          "call": "drawArrays",
+          "count": 6,
+          "instanceCount": 1,
+          "programId": 7
+        },
+        {
+          "call": "drawArrays",
+          "count": 36,
+          "instanceCount": 1,
+          "programId": 4
+        },
+        {
+          "call": "drawArraysInstanced",
+          "count": 36,
+          "instanceCount": 1420,
+          "programId": 1
+        }
+      ],
+      "brickInstances": 1420,
+      "soilVisible": true,
+      "soilTopUniform": 2.9899999999999984,
+      "canvasReady": "true",
+      "canvasMode": "wall",
+      "canvasBrickCount": "1420",
+      "canvasSoilTop": "2.990000000",
+      "status": "WebGL2 · 1420 × R2.14.8.1 · 连续土芯 1"
+    },
+    "modes": {
+      "full": {
+        "value": "wall",
+        "calls": [
+          {
+            "call": "drawArrays",
+            "count": 6,
+            "instanceCount": 1,
+            "programId": 7
+          },
+          {
+            "call": "drawArrays",
+            "count": 36,
+            "instanceCount": 1,
+            "programId": 4
+          },
+          {
+            "call": "drawArraysInstanced",
+            "count": 36,
+            "instanceCount": 1420,
+            "programId": 1
+          }
+        ],
+        "brickInstances": 1420,
+        "soilVisible": true,
+        "motherMode": 0,
+        "camera": {
+          "uViewProj": [
+            -1.5907845497131348,
+            0.4930693209171295,
+            0.5941210985183716,
+            0.5937251448631287,
+            0,
+            3.016880989074707,
+            -0.2572519779205322,
+            -0.2570805549621582,
+            1.238680362701416,
+            0.6332280039787292,
+            0.7630044221878052,
+            0.7624959349632263,
+            0,
+            -4.5253214836120605,
+            6.759829044342041,
+            6.795310974121094
+          ],
+          "uCamera": [
+            -3.805593988933826,
+            3.1478066378239014,
+            -4.887362615030662
+          ],
+          "uViewDir": [
+            0.5937251255672695,
+            -0.2570805518921551,
+            0.762495944322955
+          ],
+          "uOrtho": 0
+        },
+        "shaderCountUnchanged": true,
+        "canvasMode": "wall",
+        "canvasBrickCount": 1420,
+        "courseDisabled": false,
+        "soilControlsDisabled": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "title": "砖＋连续土芯 · 第 1—43 皮",
+        "meta": "1420 块整砖 · 土芯顶 2.990 m · 名义内退 10 mm"
+      },
+      "brickOnly": {
+        "value": "bricks",
+        "calls": [
+          {
+            "call": "drawArrays",
+            "count": 6,
+            "instanceCount": 1,
+            "programId": 7
+          },
+          {
+            "call": "drawArraysInstanced",
+            "count": 36,
+            "instanceCount": 1420,
+            "programId": 1
+          }
+        ],
+        "brickInstances": 1420,
+        "soilVisible": false,
+        "motherMode": 0,
+        "camera": {
+          "uViewProj": [
+            -1.5907845497131348,
+            0.4930693209171295,
+            0.5941210985183716,
+            0.5937251448631287,
+            0,
+            3.016880989074707,
+            -0.2572519779205322,
+            -0.2570805549621582,
+            1.238680362701416,
+            0.6332280039787292,
+            0.7630044221878052,
+            0.7624959349632263,
+            0,
+            -4.5253214836120605,
+            6.759829044342041,
+            6.795310974121094
+          ],
+          "uCamera": [
+            -3.805593988933826,
+            3.1478066378239014,
+            -4.887362615030662
+          ],
+          "uViewDir": [
+            0.5937251255672695,
+            -0.2570805518921551,
+            0.762495944322955
+          ],
+          "uOrtho": 0
+        },
+        "shaderCountUnchanged": true,
+        "canvasMode": "bricks",
+        "canvasBrickCount": 1420,
+        "courseDisabled": false,
+        "soilControlsDisabled": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "title": "仅砖排法 · 第 1—43 皮",
+        "meta": "1420 块整砖 · 无土、无抹灰、无灰浆"
+      },
+      "mother": {
+        "value": "mother",
+        "calls": [
+          {
+            "call": "drawArrays",
+            "count": 6,
+            "instanceCount": 1,
+            "programId": 7
+          },
+          {
+            "call": "drawArraysInstanced",
+            "count": 36,
+            "instanceCount": 1,
+            "programId": 1
+          }
+        ],
+        "brickInstances": 1,
+        "soilVisible": false,
+        "motherMode": 1,
+        "camera": {
+          "uViewProj": [
+            1.6409138441085815,
+            0.5533392429351807,
+            0.5537083148956299,
+            0.5533393025398254,
+            0,
+            2.9729995727539062,
+            -0.3052620589733124,
+            -0.30505862832069397,
+            1.171463131904602,
+            -0.7750837802886963,
+            -0.7756006717681885,
+            -0.7750837802886963,
+            -5.595984046528619e-17,
+            -0.08027099072933197,
+            0.42853549122810364,
+            0.4682365953922272
+          ],
+          "uCamera": [
+            -0.25453607278526075,
+            0.167326972763984,
+            0.35653853699979265
+          ],
+          "uViewDir": [
+            0.5533392886636104,
+            -0.3050586364434435,
+            -0.7750837760865058
+          ],
+          "uOrtho": 0
+        },
+        "shaderCountUnchanged": true,
+        "canvasMode": "mother",
+        "canvasBrickCount": 1,
+        "courseDisabled": true,
+        "soilControlsDisabled": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "title": "R2.14.8.1 右侧固定母砖",
+        "meta": "连续 SDF · 无替代网格"
+      }
+    },
+    "views": {
+      "iso": {
+        "cameraUniforms": {
+          "uViewProj": [
+            -1.5907845497131348,
+            0.4930693209171295,
+            0.5941210985183716,
+            0.5937251448631287,
+            0,
+            3.016880989074707,
+            -0.2572519779205322,
+            -0.2570805549621582,
+            1.238680362701416,
+            0.6332280039787292,
+            0.7630044221878052,
+            0.7624959349632263,
+            0,
+            -4.5253214836120605,
+            6.759829044342041,
+            6.795310974121094
+          ],
+          "uCamera": [
+            -3.805593988933826,
+            3.1478066378239014,
+            -4.887362615030662
+          ],
+          "uViewDir": [
+            0.5937251255672695,
+            -0.2570805518921551,
+            0.762495944322955
+          ],
+          "uOrtho": 0
+        },
+        "camera": [
+          -3.805593988933826,
+          3.1478066378239014,
+          -4.887362615030662
+        ],
+        "viewProj": [
+          -1.5907845497131348,
+          0.4930693209171295,
+          0.5941210985183716,
+          0.5937251448631287,
+          0,
+          3.016880989074707,
+          -0.2572519779205322,
+          -0.2570805549621582,
+          1.238680362701416,
+          0.6332280039787292,
+          0.7630044221878052,
+          0.7624959349632263,
+          0,
+          -4.5253214836120605,
+          6.759829044342041,
+          6.795310974121094
+        ],
+        "projection": {
+          "kind": "perspective",
+          "homogeneousRow": [
+            0.5937251448631287,
+            -0.2570805549621582,
+            0.7624959349632263,
+            6.795310974121094
+          ],
+          "viewBasis": {
+            "right": [
+              -0.7890147483825336,
+              0,
+              0.6143742563249598
+            ],
+            "up": [
+              0.15794366831129103,
+              0.966389978161185,
+              0.2028403503990198
+            ],
+            "projectedDepth": [
+              0.5937251540795776,
+              -0.25708053561646255,
+              0.7624959276090166
+            ]
+          }
+        },
+        "orthoMode": 0,
+        "viewDir": [
+          0.5937251255672695,
+          -0.2570805518921551,
+          0.762495944322955
+        ],
+        "soilOrthoMode": 0,
+        "soilViewDir": [
+          0.5937251255672695,
+          -0.2570805518921551,
+          0.762495944322955
+        ],
+        "objectsUnchanged": true,
+        "brickInstances": 1420,
+        "soilVisible": true,
+        "canvasMode": "wall"
+      },
+      "front": {
+        "cameraUniforms": {
+          "uViewProj": [
+            -0.3986625373363495,
+            0,
+            -4.083517300981849e-18,
+            0,
+            0,
+            0.6172839403152466,
+            0,
+            0,
+            -4.8822082415953864e-17,
+            0,
+            0.03334444761276245,
+            0,
+            0,
+            -0.9259259104728699,
+            -0.8104855418205261,
+            1
+          ],
+          "uCamera": [
+            6.984819182161482e-16,
+            1.5,
+            -5.703537695133474
+          ],
+          "uViewDir": [
+            -1.2246467991473532e-16,
+            0,
+            1
+          ],
+          "uOrtho": 1
+        },
+        "camera": [
+          6.984819182161482e-16,
+          1.5,
+          -5.703537695133474
+        ],
+        "viewProj": [
+          -0.3986625373363495,
+          0,
+          -4.083517300981849e-18,
+          0,
+          0,
+          0.6172839403152466,
+          0,
+          0,
+          -4.8822082415953864e-17,
+          0,
+          0.03334444761276245,
+          0,
+          0,
+          -0.9259259104728699,
+          -0.8104855418205261,
+          1
+        ],
+        "projection": {
+          "kind": "orthographic",
+          "homogeneousRow": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "viewBasis": {
+            "right": [
+              -1,
+              0,
+              -1.2246468590241005e-16
+            ],
+            "up": [
+              0,
+              1,
+              0
+            ],
+            "projectedDepth": [
+              -1.2246468582730095e-16,
+              0,
+              1
+            ]
+          }
+        },
+        "orthoMode": 1,
+        "viewDir": [
+          -1.2246467991473532e-16,
+          0,
+          1
+        ],
+        "soilOrthoMode": 1,
+        "soilViewDir": [
+          -1.2246467991473532e-16,
+          0,
+          1
+        ],
+        "objectsUnchanged": true,
+        "brickInstances": 1420,
+        "soilVisible": true,
+        "canvasMode": "wall"
+      },
+      "back": {
+        "cameraUniforms": {
+          "uViewProj": [
+            0.3986625373363495,
+            0,
+            0,
+            0,
+            0,
+            0.6172839403152466,
+            0,
+            0,
+            0,
+            0,
+            -0.03334444761276245,
+            0,
+            0,
+            -0.9259259104728699,
+            -0.8104855418205261,
+            1
+          ],
+          "uCamera": [
+            0,
+            1.5,
+            5.703537695133474
+          ],
+          "uViewDir": [
+            0,
+            0,
+            -1
+          ],
+          "uOrtho": 1
+        },
+        "camera": [
+          0,
+          1.5,
+          5.703537695133474
+        ],
+        "viewProj": [
+          0.3986625373363495,
+          0,
+          0,
+          0,
+          0,
+          0.6172839403152466,
+          0,
+          0,
+          0,
+          0,
+          -0.03334444761276245,
+          0,
+          0,
+          -0.9259259104728699,
+          -0.8104855418205261,
+          1
+        ],
+        "projection": {
+          "kind": "orthographic",
+          "homogeneousRow": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "viewBasis": {
+            "right": [
+              1,
+              0,
+              0
+            ],
+            "up": [
+              0,
+              1,
+              0
+            ],
+            "projectedDepth": [
+              0,
+              0,
+              -1
+            ]
+          }
+        },
+        "orthoMode": 1,
+        "viewDir": [
+          0,
+          0,
+          -1
+        ],
+        "soilOrthoMode": 1,
+        "soilViewDir": [
+          0,
+          0,
+          -1
+        ],
+        "objectsUnchanged": true,
+        "brickInstances": 1420,
+        "soilVisible": true,
+        "canvasMode": "wall"
+      },
+      "end": {
+        "cameraUniforms": {
+          "uViewProj": [
+            2.4411041207976932e-17,
+            0,
+            0.03334444761276245,
+            0,
+            0,
+            0.6172839403152466,
+            0,
+            0,
+            0.3986625373363495,
+            0,
+            -2.0417586504909244e-18,
+            0,
+            0,
+            -0.9259259104728699,
+            -0.8104855418205261,
+            1
+          ],
+          "uCamera": [
+            -5.703537695133474,
+            1.5,
+            3.492409591080741e-16
+          ],
+          "uViewDir": [
+            1,
+            0,
+            -6.123233995736766e-17
+          ],
+          "uOrtho": 1
+        },
+        "camera": [
+          -5.703537695133474,
+          1.5,
+          3.492409591080741e-16
+        ],
+        "viewProj": [
+          2.4411041207976932e-17,
+          0,
+          0.03334444761276245,
+          0,
+          0,
+          0.6172839403152466,
+          0,
+          0,
+          0.3986625373363495,
+          0,
+          -2.0417586504909244e-18,
+          0,
+          0,
+          -0.9259259104728699,
+          -0.8104855418205261,
+          1
+        ],
+        "projection": {
+          "kind": "orthographic",
+          "homogeneousRow": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "viewBasis": {
+            "right": [
+              6.123234295120503e-17,
+              0,
+              1
+            ],
+            "up": [
+              0,
+              1,
+              0
+            ],
+            "projectedDepth": [
+              1,
+              0,
+              -6.123234291365048e-17
+            ]
+          }
+        },
+        "orthoMode": 1,
+        "viewDir": [
+          1,
+          0,
+          -6.123233995736766e-17
+        ],
+        "soilOrthoMode": 1,
+        "soilViewDir": [
+          1,
+          0,
+          -6.123233995736766e-17
+        ],
+        "objectsUnchanged": true,
+        "brickInstances": 1420,
+        "soilVisible": true,
+        "canvasMode": "wall"
+      },
+      "top": {
+        "cameraUniforms": {
+          "uViewProj": [
+            0.4651162922382355,
+            0,
+            -2.500433063719955e-34,
+            0,
+            -3.48781332908664e-33,
+            -4.409831201801464e-17,
+            -0.03334444761276245,
+            0,
+            0,
+            -0.7201800346374512,
+            2.0417586504909244e-18,
+            0,
+            5.2317201773009526e-33,
+            6.614746306393828e-17,
+            -0.7604689002037048,
+            1
+          ],
+          "uCamera": [
+            4.276968227028546e-32,
+            7.203537695133474,
+            -3.492409591080741e-16
+          ],
+          "uViewDir": [
+            -7.498798913309288e-33,
+            -1,
+            6.123233995736766e-17
+          ],
+          "uOrtho": 1
+        },
+        "camera": [
+          4.276968227028546e-32,
+          7.203537695133474,
+          -3.492409591080741e-16
+        ],
+        "viewProj": [
+          0.4651162922382355,
+          0,
+          -2.500433063719955e-34,
+          0,
+          -3.48781332908664e-33,
+          -4.409831201801464e-17,
+          -0.03334444761276245,
+          0,
+          0,
+          -0.7201800346374512,
+          2.0417586504909244e-18,
+          0,
+          5.2317201773009526e-33,
+          6.614746306393828e-17,
+          -0.7604689002037048,
+          1
+        ],
+        "projection": {
+          "kind": "orthographic",
+          "homogeneousRow": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "viewBasis": {
+            "right": [
+              1,
+              -7.498798445228748e-33,
+              0
+            ],
+            "up": [
+              0,
+              -6.123234454869935e-17,
+              -1
+            ],
+            "projectedDepth": [
+              -7.498798878776221e-33,
+              -1,
+              6.123234291365048e-17
+            ]
+          }
+        },
+        "orthoMode": 1,
+        "viewDir": [
+          -7.498798913309288e-33,
+          -1,
+          6.123233995736766e-17
+        ],
+        "soilOrthoMode": 1,
+        "soilViewDir": [
+          -7.498798913309288e-33,
+          -1,
+          6.123233995736766e-17
+        ],
+        "objectsUnchanged": true,
+        "brickInstances": 1420,
+        "soilVisible": true,
+        "canvasMode": "wall"
+      }
+    },
+    "courseBuild": {
+      "1": {
+        "activeCourseDataset": 1,
+        "brickCountDataset": 34,
+        "soilTopDataset": 0.05115,
+        "courseOutput": "1 / 43",
+        "brickInstances": 34,
+        "soilVisible": true,
+        "builtCoursesUniform": {
+          "name": "uBuiltCourses",
+          "value": 1
+        },
+        "soilTopUniform": {
+          "name": "uSoilTop",
+          "value": 0.05115
+        },
+        "brickTop": 0.06115,
+        "expectedSoilTop": 0.05115,
+        "uploadedSoilTop": 0.05115,
+        "expectedBrickCount": 34,
+        "soilTopDelta": 0
+      },
+      "22": {
+        "activeCourseDataset": 22,
+        "brickCountDataset": 726,
+        "soilTopDataset": 1.520575,
+        "courseOutput": "22 / 43",
+        "brickInstances": 726,
+        "soilVisible": true,
+        "builtCoursesUniform": {
+          "name": "uBuiltCourses",
+          "value": 22
+        },
+        "soilTopUniform": {
+          "name": "uSoilTop",
+          "value": 1.5205749999999991
+        },
+        "brickTop": 1.5305749999999991,
+        "expectedSoilTop": 1.5205749999999991,
+        "uploadedSoilTop": 1.5205749999999991,
+        "expectedBrickCount": 726,
+        "soilTopDelta": 0
+      },
+      "43": {
+        "activeCourseDataset": 43,
+        "brickCountDataset": 1420,
+        "soilTopDataset": 2.99,
+        "courseOutput": "43 / 43",
+        "brickInstances": 1420,
+        "soilVisible": true,
+        "builtCoursesUniform": {
+          "name": "uBuiltCourses",
+          "value": 43
+        },
+        "soilTopUniform": {
+          "name": "uSoilTop",
+          "value": 2.9899999999999984
+        },
+        "brickTop": 2.9999999999999982,
+        "expectedSoilTop": 2.9899999999999984,
+        "uploadedSoilTop": 2.9899999999999984,
+        "expectedBrickCount": 1420,
+        "soilTopDelta": 0
+      }
+    },
+    "soilColor": {
+      "controls": [
+        {
+          "id": "soilColor",
+          "value": "0.66"
+        }
+      ],
+      "output": "66%",
+      "beforeColorUniforms": {
+        "uSoilColor": 0.65
+      },
+      "afterColorUniforms": {
+        "uSoilColor": 0.66
+      },
+      "soilGeometryUniformsUnchanged": true,
+      "brickDrawUnchanged": true,
+      "cameraUnchanged": true,
+      "shaderHashUnchanged": true
+    }
+  },
+  "passed": true,
+  "realGpuCompilation": false,
+  "humanVisualApproval": false,
+  "note": "The actual page JavaScript ran and supplied shader/uniform data to an API capture. Real GPU compilation and human visual approval are separate gates."
+}
