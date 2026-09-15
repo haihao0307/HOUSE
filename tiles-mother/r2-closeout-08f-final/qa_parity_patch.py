@@ -14,7 +14,7 @@ new = r'''function micro(p,m,seed,strength,scale){
  let len=m[1]>1.5?.222:.238,u=m[3],t=A.clamp(p[2]/len+.5),q=A.clamp(m[2],0,1);
  strength=Math.min(strength,3.6);
  let b=A.clamp(band(p,seed,6*scale,.0012),-1,1),mid=A.clamp(band(p,seed,26*scale,.0012),-1,1),pores=smooth(.56,.67,band(p,seed,80*scale,.0012));
- let common=.00150*b+.00062*mid-.00138*pores,rawShell=A.clamp(strength*common,-.0048,.0042);
+ let shellValue=.00150*b+.00062*mid-.00138*pores,rawShell=A.clamp(strength*shellValue,-.0048,.0042);
  let isCover=m[1]>=1.5?1:0,isPan=1-isCover,topW=1-smooth(.12,.36,q),bottomW=smooth(.64,.88,q);
  let panTopBearing=isPan*topW*smooth(.46,.62,Math.abs(u)),panBottomBearing=isPan*bottomW*smooth(.58,.76,Math.abs(u));
  let coverLeftBearing=isCover*bottomW*smooth(.82,.96,-u),coverRightBearing=isCover*bottomW*(1-smooth(.045,.12,Math.abs(u-.075))),coverBottomBearing=Math.max(coverLeftBearing,coverRightBearing);
@@ -32,7 +32,7 @@ if count != 1:
 text = text.replace("for(const strength of [0,3,4.2])", "for(const strength of [0,3,3.6])")
 text = text.replace("version:'08F.1'", "version:'08F.2'")
 required = [
-    "rawShell=A.clamp(strength*common,-.0048,.0042)",
+    "rawShell=A.clamp(strength*shellValue,-.0048,.0042)",
     "panTopBearing=isPan*topW*smooth(.46,.62,Math.abs(u))",
     "panBottomBearing=isPan*bottomW*smooth(.58,.76,Math.abs(u))",
     "coverLeftBearing=isCover*bottomW*smooth(.82,.96,-u)",

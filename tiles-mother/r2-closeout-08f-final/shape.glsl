@@ -24,8 +24,8 @@ vec3 microshape(vec3 p,vec4 meta,float seed){
  float broad=clamp(shapeBand(p,seed,6.*scale,.0012),-1.,1.);
  float middle=clamp(shapeBand(p,seed,26.*scale,.0012),-1.,1.);
  float pores=smoothstep(.56,.67,shapeBand(p,seed,80.*scale,.0012));
- float common=.00150*broad+.00062*middle-.00138*pores;
- float rawShell=clamp(strength*common,-.0048,.0042);
+ float shellValue=.00150*broad+.00062*middle-.00138*pores;
+ float rawShell=clamp(strength*shellValue,-.0048,.0042);
 
  // Contact patches are thin in shell depth. Their rigid seating is preserved in all three axes while the
  // q-middle side wall still inherits the full rawShell field, removing the machine-extruded edge reading.
