@@ -16,7 +16,8 @@ new = r'''function micro(p,m,seed,strength,scale){
  let b=A.clamp(band(p,seed,6*scale,.0012),-1,1),mid=A.clamp(band(p,seed,26*scale,.0012),-1,1),pores=smooth(.56,.67,band(p,seed,80*scale,.0012));
  let common=.00150*b+.00062*mid-.00138*pores,rawShell=A.clamp(strength*common,-.0048,.0042);
  let isCover=m[1]>=1.5?1:0,isPan=1-isCover,topW=1-smooth(.12,.36,q),bottomW=smooth(.64,.88,q);
- let panTopBearing=isPan*topW*smooth(.46,.62,Math.abs(u)),panBottomBearing=isPan*bottomW*smooth(.58,.76,Math.abs(u)),coverBottomBearing=isCover*bottomW*smooth(.32,.54,Math.abs(u));
+ let panTopBearing=isPan*topW*smooth(.46,.62,Math.abs(u)),panBottomBearing=isPan*bottomW*smooth(.58,.76,Math.abs(u));
+ let coverLeftBearing=isCover*bottomW*smooth(.82,.96,-u),coverRightBearing=isCover*bottomW*(1-smooth(.045,.12,Math.abs(u-.075))),coverBottomBearing=Math.max(coverLeftBearing,coverRightBearing);
  let contactPatch=Math.max(panTopBearing,panBottomBearing,coverBottomBearing),contactFree=1-.9998*A.clamp(contactPatch,0,1),dy=rawShell*contactFree;
  let coverRearOverlap=isCover*smooth(.72,.82,t);dy*=1-.998*coverRearOverlap;
  let wall=16*q*q*(1-q)*(1-q),sideCarrier=smooth(.58,.96,Math.abs(u));
@@ -34,18 +35,19 @@ required = [
     "rawShell=A.clamp(strength*common,-.0048,.0042)",
     "panTopBearing=isPan*topW*smooth(.46,.62,Math.abs(u))",
     "panBottomBearing=isPan*bottomW*smooth(.58,.76,Math.abs(u))",
-    "coverBottomBearing=isCover*bottomW*smooth(.32,.54,Math.abs(u))",
+    "coverLeftBearing=isCover*bottomW*smooth(.82,.96,-u)",
+    "coverRightBearing=isCover*bottomW*(1-smooth(.045,.12,Math.abs(u-.075)))",
     "contactFree=1-.9998*A.clamp(contactPatch,0,1)",
     "Math.min(strength,3.6)",
 ]
 for marker in required:
     if text.count(marker) != 1:
         raise SystemExit(f"08F.2 CPU/GPU parity marker missing or duplicated: {marker}")
-for obsolete in ["underPores", "sideField=A.clamp", "bodyDy=strength", "topDy=strength", "underDy=strength", "coverBearing=(m[1]>=1.5?1:0)*bottomW*(1-smooth"]:
+for obsolete in ["underPores", "sideField=A.clamp", "bodyDy=strength", "topDy=strength", "underDy=strength", "coverBottomBearing=isCover*bottomW*smooth(.32,.54"]:
     if obsolete in text:
-        raise SystemExit(f"08F.2 still contains obsolete split or centre-bearing geometry state: {obsolete}")
+        raise SystemExit(f"08F.2 still contains obsolete split or broad cover-bearing geometry state: {obsolete}")
 p.write_text(text, encoding="utf-8", newline="")
-print("08F.2 CPU mirror synchronized: one rawShell drives the whole shell; thin real contact patches remain rigid")
+print("08F.2 CPU mirror synchronized: one rawShell drives the whole shell; two measured cover underside seats remain rigid")
 
 # Bring the full retained matrix and seat calibration onto the same user-middle envelope.
 for name in ["qa_matrix.cjs", "calibrate_seats_v2.cjs"]:

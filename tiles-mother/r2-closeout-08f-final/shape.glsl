@@ -27,14 +27,17 @@ vec3 microshape(vec3 p,vec4 meta,float seed){
  float common=.00150*broad+.00062*middle-.00138*pores;
  float rawShell=clamp(strength*common,-.0048,.0042);
 
- // Contact patches are thin in shell depth: pan top lands, pan underside rafter rails and cover underside flanks.
- // Their rigid seating is preserved in all three axes. The q-middle side wall is not protected and therefore
- // continues to inherit the full rawShell field, removing the machine-extruded edge reading.
+ // Contact patches are thin in shell depth. Their rigid seating is preserved in all three axes while the
+ // q-middle side wall still inherits the full rawShell field, removing the machine-extruded edge reading.
  float isCover=step(1.5,meta.y),isPan=1.-isCover;
  float topW=1.-smoothstep(.12,.36,q),bottomW=smoothstep(.64,.88,q);
  float panTopBearing=isPan*topW*smoothstep(.46,.62,abs(u));
  float panBottomBearing=isPan*bottomW*smoothstep(.58,.76,abs(u));
- float coverBottomBearing=isCover*bottomW*smoothstep(.32,.54,abs(u));
+ // Actual retained-contact triangles show two cover underside bearing zones: the left lip at u=-1 and
+ // a narrow right seat centred near u=.075. Keep only those zones rigid; the rest of the underside varies.
+ float coverLeftBearing=isCover*bottomW*smoothstep(.82,.96,-u);
+ float coverRightBearing=isCover*bottomW*(1.-smoothstep(.045,.12,abs(u-.075)));
+ float coverBottomBearing=max(coverLeftBearing,coverRightBearing);
  float contactPatch=max(max(panTopBearing,panBottomBearing),coverBottomBearing);
  float contactFree=1.-.9998*clamp(contactPatch,0.,1.);
  float dy=rawShell*contactFree;
