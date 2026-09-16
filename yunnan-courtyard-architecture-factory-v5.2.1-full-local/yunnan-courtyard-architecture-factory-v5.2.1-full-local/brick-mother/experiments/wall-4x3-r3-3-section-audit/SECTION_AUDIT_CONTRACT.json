@@ -1,0 +1,82 @@
+{
+  "schemaVersion": "brick-mother.wall-section-audit.r3.3",
+  "date": "2026-09-16",
+  "status": "implemented-awaiting-user-review",
+  "repository": "haihao0307/HOUSE",
+  "branch": "codex/brick-wall-r3-3-section-audit-20260916",
+  "baseline": {
+    "branch": "codex/brick-wall-4x3-r3-2-20260915",
+    "handoffCommit": "f716df8e48a8ea3c963aeb33bb4c4ff517d96602",
+    "sourceCommit": "b30c1725da4e05c388896f7e7635d82786b9ab5a",
+    "page": "Brick_Mother_Wall_4x3_R3_2.html",
+    "frozenBrick": "R2.14.8.1",
+    "material": "R2.1-B",
+    "materialVector": [1, 1, 1, 0]
+  },
+  "scope": {
+    "changesFrozenBrick": false,
+    "changesR32Page": false,
+    "addsSectionWorkbench": true,
+    "addsSemanticVolumeAudit": true,
+    "claimsHistoricalVerification": false
+  },
+  "dimensionsM": {
+    "width": 4.0,
+    "height": 3.0,
+    "thickness": 0.48923
+  },
+  "brickM": {
+    "length": 0.24,
+    "height": 0.06115,
+    "width": 0.11077
+  },
+  "courses": {
+    "count": 43,
+    "bedJoint": 0.008822619047619,
+    "typeA": 22,
+    "typeB": 21,
+    "fullBrickCount": 1420,
+    "cutBrickCount": 0,
+    "historicallyVerified": false
+  },
+  "soilAudit": {
+    "nominalExteriorSetbackM": 0.01,
+    "defaultAmplitudeM": 0.0025,
+    "maxAmplitudeM": 0.005,
+    "r32ContinuousSdfEnvelopeThicknessM": 0.46923,
+    "middlePhysicalCoreCandidateThicknessM": 0.26769,
+    "nominalSdfOverlapWithStretcherPerFaceM": 0.10077,
+    "nominalSdfOverlapWithHeaderPerFaceM": 0.23,
+    "finding": "R3.2 continuous soil SDF overlaps brick occupancy. It is a watertight render field, not a separable physical material volume.",
+    "nextKernelRequirement": "Keep the existing visual union, but derive a non-overlapping semantic soil volume by subtracting brick occupancy for collision, mass, breakage and construction sequencing."
+  },
+  "evidenceBoundary": {
+    "userSpecified": [
+      "wall width 4 m",
+      "wall height 3 m",
+      "fixed mother brick",
+      "central earth fill",
+      "earth face approximately 10 mm behind brick exterior"
+    ],
+    "programDerived": [
+      "43 courses",
+      "odd/even A-B bond recipe",
+      "1420 full bricks",
+      "0.48923 m thickness",
+      "continuous soil SDF"
+    ],
+    "unverified": [
+      "historical bond authenticity",
+      "structural capacity",
+      "compaction sequence",
+      "mortar or no-mortar construction",
+      "density and mass",
+      "moisture and failure behavior"
+    ]
+  },
+  "approvals": {
+    "humanVisualApproved": false,
+    "productionApproved": false,
+    "historicalConstructionVerified": false
+  }
+}
