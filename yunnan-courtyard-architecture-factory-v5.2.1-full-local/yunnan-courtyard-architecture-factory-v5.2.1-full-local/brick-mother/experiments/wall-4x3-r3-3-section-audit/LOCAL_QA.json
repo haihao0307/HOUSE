@@ -1,0 +1,46 @@
+{
+  "schemaVersion": "brick-mother.wall-section-audit.local-qa.r3.3",
+  "date": "2026-09-16",
+  "page": "Brick_Mother_Wall_4x3_R3_3_Section_Audit.html",
+  "htmlSha256": "b3d77a988987cb1f7fef18b52c42f4faa44ad83a00f6c88be9f2348892dbcf21",
+  "checks": {
+    "htmlParsed": "passed",
+    "embeddedContractJsonParsed": "passed",
+    "externalContractJsonParsed": "passed",
+    "javascriptSyntaxNode22": "passed",
+    "chromiumDesktopRuntime": "passed",
+    "chromiumMobileRuntime": "passed",
+    "consoleErrors": 0,
+    "pageErrors": 0
+  },
+  "desktopProbe": {
+    "viewport": [1600, 1000],
+    "view": "middle",
+    "course": 22,
+    "courseType": "B",
+    "brickCount": 726,
+    "brickTopMm": 1530.575,
+    "soilNominalTopMm": 1520.575,
+    "screenshotSha256": "58e624743dcff7293a171d07115c2fa9fde291a7a25a5ea5bb7b2bc81fe33fcc"
+  },
+  "mobileProbe": {
+    "viewport": [390, 844],
+    "view": "end",
+    "course": 7,
+    "courseType": "A",
+    "brickCount": 232,
+    "brickTopMm": 480.985714285714,
+    "soilNominalTopMm": 470.985714285714,
+    "screenshotSha256": "0fb93c35380e15dafc696930416a186b8437e37f68252a069940df5d857982e8"
+  },
+  "limitations": {
+    "embeddedR32IframeDuringLocalQa": "intentionally blocked; section audit runtime is independent",
+    "publicHttpsVerification": "pending after immutable GitHub commit",
+    "webglR32Revalidation": "not repeated; R3.2 source remains unchanged"
+  },
+  "approvals": {
+    "humanVisualApproved": false,
+    "productionApproved": false,
+    "historicalConstructionVerified": false
+  }
+}
