@@ -1,0 +1,68 @@
+{
+  "schemaVersion": "brick-mother.wall-correction-contract.r3.4",
+  "date": "2026-09-16",
+  "baseline": {
+    "branch": "codex/brick-wall-r3-3-section-audit-20260916",
+    "commit": "0a2d062d167aac03e88e77c89ef90d96daf3561b",
+    "wallSourceCommit": "b30c1725da4e05c388896f7e7635d82786b9ab5a",
+    "frozenMother": "R2.14.8.1",
+    "material": "R2.1-B"
+  },
+  "corrections": {
+    "endClosure": {
+      "description": "B courses now receive one centered transverse full brick at each wall end; A courses retain the existing paired headers.",
+      "newBrickCount": 42,
+      "purpose": "remove the repeated exposed-earth center slot and create a continuous vertical brick closure line"
+    },
+    "topCap": {
+      "description": "Course 43 receives 32 interior centered transverse bricks; existing A-course end headers cover the two end slots.",
+      "newBrickCount": 32,
+      "purpose": "close the central top strip without increasing the 3 m wall height"
+    },
+    "brickVariation": {
+      "deterministic": true,
+      "randomPerFrame": false,
+      "operations": [
+        "x/z sign variants",
+        "bounded edge-amplitude variation",
+        "material-coordinate phase variation",
+        "bounded firing and roughness variation"
+      ],
+      "motherChanged": false
+    },
+    "soilCore": {
+      "actualSdfDisplacement": true,
+      "defaultAmplitudeM": 0.0065,
+      "maxAmplitudeM": 0.008,
+      "surfaces": [
+        "front",
+        "back",
+        "top",
+        "left end",
+        "right end"
+      ],
+      "inspectionMode": "墙心显微 + 墙心近看"
+    },
+    "plasterPatch": {
+      "actualSdfDisplacement": true,
+      "defaultAmplitudeM": 0.0045,
+      "maxAmplitudeM": 0.008,
+      "nominalThicknessM": 0.014,
+      "irregularBoundary": true,
+      "toggle": "抹灰试片：开/关"
+    }
+  },
+  "countsAt43Courses": {
+    "baseWallBrick": 1420,
+    "endClosureBrick": 42,
+    "topCapBrick": 32,
+    "totalBrick": 1494,
+    "soilCore": 1,
+    "plasterPatch": 1
+  },
+  "approvals": {
+    "humanVisualApproved": false,
+    "productionApproved": false,
+    "historicalConstructionVerified": false
+  }
+}

@@ -1,0 +1,71 @@
+{
+  "schemaVersion": "brick-mother.wall-r3.4.local-qa.v1",
+  "date": "2026-09-16",
+  "page": "Brick_Mother_Wall_4x3_R3_4.html",
+  "htmlBytes": 46397,
+  "htmlSha256": "40b0c21d81e490bf478c6260530dc4a070a5a303b469a1543003122e6756faae",
+  "checks": {
+    "htmlParsed": "passed",
+    "embeddedManifestJsonParsed": "passed",
+    "javascriptSyntaxNode22": "passed",
+    "chromiumWebGL2Desktop": "passed",
+    "chromiumWebGL2Mobile": "passed",
+    "consoleErrors": 0,
+    "pageErrors": 0
+  },
+  "desktopProbe": {
+    "viewport": [
+      1000,
+      700
+    ],
+    "mode": "wall",
+    "activeCourse": 43,
+    "brickCount": 1494,
+    "baseBrickCount": 1420,
+    "endClosureBrickCount": 42,
+    "topCapBrickCount": 32,
+    "soilShapeAmplitudeMm": 6.5,
+    "plasterVisible": true,
+    "plasterShapeAmplitudeMm": 4.5
+  },
+  "mobileProbe": {
+    "viewport": [
+      390,
+      844
+    ],
+    "ready": true,
+    "brickCount": 1494,
+    "endClosureBrickCount": 42,
+    "topCapBrickCount": 32,
+    "plasterVisible": true
+  },
+  "visualEvidence": {
+    "main": "R3_4_MAIN_V2.png",
+    "end": "R3_4_END.png",
+    "top": "R3_4_TOP_SMALL.png",
+    "plaster": "R3_4_PLASTER_V2.png",
+    "soilCore": "R3_4_SOIL_CORE_V2.png",
+    "mobile": "R3_4_MOBILE_FINAL.png"
+  },
+  "evidenceBoundary": {
+    "implementedFromUserCorrection": [
+      "centered transverse closure brick on both ends for every B course",
+      "central top cap row at the completed top course",
+      "deterministic per-brick child variation to break repeated long bands",
+      "non-planar microscope-driven soil-core SDF on front, back, top and ends",
+      "small microscope-driven plaster patch with irregular edges"
+    ],
+    "notClaimed": [
+      "historical bond authenticity",
+      "structural capacity",
+      "mortar recipe",
+      "soil compaction sequence",
+      "moisture and failure behavior"
+    ]
+  },
+  "approvals": {
+    "humanVisualApproved": false,
+    "productionApproved": false,
+    "historicalConstructionVerified": false
+  }
+}

@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Brick Mother · R3.4 端部闭合、随机母砖、显微土芯与抹灰试片</title>
+<link rel="icon" href="data:,">
+<style>
+:root{color-scheme:dark;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;background:#0d120e;color:#ece8dc;--line:#ffffff18;--soft:#98a293;--gold:#e3b879}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden}button,input{font:inherit}button{cursor:pointer;color:#ddd9cd;background:#202720;border:1px solid #485046;border-radius:8px;padding:8px 10px;font-size:11px;min-height:40px}button:hover{background:#30382e}button:focus-visible,input:focus-visible{outline:2px solid #f1c384;outline-offset:2px}button.active{color:#ffe5bb;background:#3b3021;border-color:#b18752}main{display:flex;flex-direction:column;width:100%;height:100svh}header{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding:10px 16px;border-bottom:1px solid var(--line);background:#121812}h1{font-size:14px;letter-spacing:.07em;margin:0 0 4px}.sub{font-size:9px;color:#a5aea0;line-height:1.45}.identity{font-size:9px;color:#efc68c;border:1px solid #5e4e38;background:#2b251b;border-radius:8px;padding:6px 8px}.toolbar{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;padding:7px 16px;border-bottom:1px solid var(--line);background:#151b15}.group{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.group-label{font-size:9px;color:#899387;margin-right:2px}.stage{position:relative;flex:1;min-height:300px;background:#111712;overflow:hidden}canvas{display:block;width:100%;height:100%;touch-action:none}.overlay{position:absolute;left:13px;top:11px;pointer-events:none;max-width:min(540px,calc(100% - 26px));padding:7px 9px;border-radius:8px;background:#0d120ebf;border:1px solid #ffffff12}.mode-title{font-size:11px;color:#eadfc9}.mode-meta{font-size:9px;color:#98a293;margin-top:3px;line-height:1.4}.hint{position:absolute;right:12px;bottom:10px;color:#8e988d;font-size:8px;pointer-events:none;text-align:right}.error{position:absolute;inset:0;display:grid;place-content:center;text-align:center;padding:28px;background:#151b16;color:#efc1a4;z-index:4}.error[hidden]{display:none}.panel{display:grid;grid-template-columns:1.2fr repeat(6,minmax(94px,.8fr));gap:12px;padding:9px 16px 11px;border-top:1px solid var(--line);background:#151b15}.control label{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:9px}.control output{font-variant-numeric:tabular-nums;color:#efc78e}.control input{display:block;width:100%;height:25px;margin:5px 0 2px;accent-color:#d9ae73}.control small{display:block;font-size:7px;line-height:1.35;color:#8f998d}.statusline{position:absolute;left:13px;bottom:10px;font-size:8px;color:#aeb6aa;pointer-events:none}.locked{color:#e9bd81}
+@media(max-width:980px){.panel{grid-template-columns:repeat(4,1fr)}.panel .control:first-child{grid-column:span 2}}
+@media(max-width:720px){header{padding:8px 10px}h1{font-size:11px}.identity{font-size:8px}.toolbar{padding:6px 9px}.group-label{display:none}button{font-size:9px;padding:6px 7px;min-height:36px}.panel{grid-template-columns:1fr 1fr;gap:8px 11px;padding:8px 10px}.panel .control:first-child{grid-column:1/-1}.overlay{left:8px;top:8px}.hint{display:none}.statusline{left:8px}.stage{min-height:300px}}
+</style>
+</head>
+<body>
+<main>
+<header>
+  <div><h1>BRICK MOTHER · R3.4 砖土墙修正版</h1><div class="sub">端部中列逐皮闭合 · 顶部中央封砖 · 每砖确定性差异 · 土芯真实显微起伏 · 小块抹灰试片</div></div>
+  <div class="identity">R2.14.8.1 MOTHER · R2.1-B · CHILD VARIANTS</div>
+</header>
+<div class="toolbar">
+  <div class="group" aria-label="对象模式"><span class="group-label">对象</span><button type="button" data-mode="wall" class="active" aria-pressed="true">整墙</button><button type="button" data-mode="bricks" aria-pressed="false">仅砖</button><button type="button" data-mode="soil" aria-pressed="false">墙心显微</button><button type="button" data-mode="mother" aria-pressed="false">固定母砖</button><button type="button" id="plasterToggle" class="active" aria-pressed="true">抹灰试片：开</button></div>
+  <div class="group" aria-label="固定视图"><span class="group-label">视图</span><button type="button" data-view="iso" class="active" aria-pressed="true">透视</button><button type="button" data-view="front" aria-pressed="false">正面</button><button type="button" data-view="back" aria-pressed="false">背面</button><button type="button" data-view="end" aria-pressed="false">端面</button><button type="button" data-view="top" aria-pressed="false">顶面</button><button type="button" data-view="core" aria-pressed="false">墙心近看</button><button type="button" data-view="plaster" aria-pressed="false">抹灰近看</button></div>
+</div>
+<section class="stage" aria-label="R3.4 砖土墙三维检查">
+  <canvas id="c" aria-label="可拖动旋转、滚轮缩放的砖土墙"></canvas>
+  <div class="overlay"><div id="modeTitle" class="mode-title">整墙 · 第 1—43 皮</div><div id="modeMeta" class="mode-meta">1494 块砖 · 两端中列闭合 · 顶部 32 块中央封砖 · 显微土芯与抹灰试片</div></div>
+  <div id="status" class="statusline">正在初始化 WebGL2…</div>
+  <div class="hint">拖动旋转 · 滚轮缩放<br>端面检查中列砖；顶面检查封砖只在完工皮出现。</div>
+  <div id="error" class="error" role="alert" hidden></div>
+</section>
+<section class="panel" aria-label="砖土墙参数">
+  <div class="control"><label for="courseBuild">逐皮显示 <output id="courseValue">43 / 43</output></label><input id="courseBuild" type="range" min="1" max="43" step="1" value="43"><small>端部闭合砖随偶数皮同步出现；顶部封砖只在完工皮出现。</small></div>
+  <div class="control"><label for="soilShape">土芯形体 <output id="soilShapeValue">±6.5 mm</output></label><input id="soilShape" type="range" min="0" max="8" step="0.1" value="6.5"><small>低中频真实改 SDF，微观层再改法线。</small></div>
+  <div class="control"><label for="soilScale">土芯尺度 <output id="soilScaleValue">0.85×</output></label><input id="soilScale" type="range" min="0.45" max="2.5" step="0.05" value="0.85"><small>小于 1 时起伏更宽，不是平面贴图。</small></div>
+  <div class="control"><label for="soilLayers">显微层数 <output id="soilLayersValue">17</output></label><input id="soilLayers" type="range" min="1" max="17" step="1" value="17"><small>前 5 层影响形体，全部层影响质感。</small></div>
+  <div class="control"><label for="soilColor">土色色差 <output id="soilColorValue">74%</output></label><input id="soilColor" type="range" min="0" max="1" step="0.01" value="0.74"><small>仅调土色变化，不改变砖。</small></div>
