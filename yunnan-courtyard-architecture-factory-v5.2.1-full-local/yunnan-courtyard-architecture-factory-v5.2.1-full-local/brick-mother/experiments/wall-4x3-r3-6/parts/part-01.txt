@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Brick Mother · R3.6 墙心出面、Microscope 多尺度与柔边抹灰</title>
+<link rel="icon" href="data:,">
+<style>
+:root{color-scheme:dark;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;background:#0d120e;color:#ece8dc;--line:#ffffff18;--soft:#98a293;--gold:#e3b879}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden}button,input{font:inherit}button{cursor:pointer;color:#ddd9cd;background:#202720;border:1px solid #485046;border-radius:8px;padding:8px 10px;font-size:11px;min-height:40px}button:hover{background:#30382e}button:focus-visible,input:focus-visible{outline:2px solid #f1c384;outline-offset:2px}button.active{color:#ffe5bb;background:#3b3021;border-color:#b18752}main{display:flex;flex-direction:column;width:100%;height:100svh}header{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding:10px 16px;border-bottom:1px solid var(--line);background:#121812}h1{font-size:14px;letter-spacing:.07em;margin:0 0 4px}.sub{font-size:9px;color:#a5aea0;line-height:1.45}.identity{font-size:9px;color:#efc68c;border:1px solid #5e4e38;background:#2b251b;border-radius:8px;padding:6px 8px}.toolbar{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;padding:7px 16px;border-bottom:1px solid var(--line);background:#151b15}.group{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.group-label{font-size:9px;color:#899387;margin-right:2px}.stage{position:relative;flex:1;min-height:300px;background:#111712;overflow:hidden}canvas{display:block;width:100%;height:100%;touch-action:none}.overlay{position:absolute;left:13px;top:11px;pointer-events:none;max-width:min(540px,calc(100% - 26px));padding:7px 9px;border-radius:8px;background:#0d120ebf;border:1px solid #ffffff12}.mode-title{font-size:11px;color:#eadfc9}.mode-meta{font-size:9px;color:#98a293;margin-top:3px;line-height:1.4}.hint{position:absolute;right:12px;bottom:10px;color:#8e988d;font-size:8px;pointer-events:none;text-align:right}.error{position:absolute;inset:0;display:grid;place-content:center;text-align:center;padding:28px;background:#151b16;color:#efc1a4;z-index:4}.error[hidden]{display:none}.panel{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:10px 14px;padding:9px 16px 11px;border-top:1px solid var(--line);background:#151b15}.control label{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:9px}.control output{font-variant-numeric:tabular-nums;color:#efc78e}.control input[type="range"]{display:block;width:100%;height:25px;margin:5px 0 2px;accent-color:#d9ae73}.control input[type="color"]{display:block;width:100%;height:29px;margin:5px 0 2px;padding:2px;border:1px solid #485046;border-radius:6px;background:#202720;cursor:pointer}.control small{display:block;font-size:7px;line-height:1.35;color:#8f998d}.statusline{position:absolute;left:13px;bottom:10px;font-size:8px;color:#aeb6aa;pointer-events:none}.locked{color:#e9bd81}
+@media(max-width:980px){.panel{grid-template-columns:1fr 1fr}.panel .control:first-child{grid-column:1/-1}}
+@media(max-width:720px){header{padding:8px 10px}h1{font-size:11px}.identity{font-size:8px}.toolbar{padding:6px 9px}.group-label{display:none}button{font-size:9px;padding:6px 7px;min-height:36px}.panel{grid-template-columns:1fr 1fr;gap:8px 11px;padding:8px 10px}.panel .control:first-child{grid-column:1/-1}.overlay{left:8px;top:8px}.hint{display:none}.statusline{left:8px}.stage{min-height:300px}}
+</style>
+</head>
+<body>
+<main>
+<header>
+  <div><h1>BRICK MOTHER · R3.6 墙心与抹灰收敛版</h1><div class="sub">墙心可从砖后推到砖外并覆盖砖面 · Microscope 多尺度真实改变形体 · 墙心颜色可直接选择 · 抹灰柔边贴附</div></div>
+  <div class="identity">R2.14.8.1 MOTHER · DOMAIN → KERNEL → SCALE → OBSERVATION</div>
+</header>
+<div class="toolbar">
+  <div class="group" aria-label="对象模式"><span class="group-label">对象</span><button type="button" data-mode="wall" class="active" aria-pressed="true">整墙</button><button type="button" data-mode="bricks" aria-pressed="false">仅砖</button><button type="button" data-mode="soil" aria-pressed="false">墙心显微</button><button type="button" data-mode="mother" aria-pressed="false">固定母砖</button><button type="button" id="plasterToggle" class="active" aria-pressed="true">抹灰试片：开</button></div>
+  <div class="group" aria-label="固定视图"><span class="group-label">视图</span><button type="button" data-view="iso" class="active" aria-pressed="true">透视</button><button type="button" data-view="front" aria-pressed="false">正面</button><button type="button" data-view="back" aria-pressed="false">背面</button><button type="button" data-view="end" aria-pressed="false">端面</button><button type="button" data-view="top" aria-pressed="false">顶面</button><button type="button" data-view="core" aria-pressed="false">墙心近看</button><button type="button" data-view="plaster" aria-pressed="false">抹灰近看</button></div>
+</div>
+<section class="stage" aria-label="R3.6 砖土墙三维检查">
+  <canvas id="c" aria-label="可拖动旋转、滚轮缩放的砖土墙"></canvas>
+  <div class="overlay"><div id="modeTitle" class="mode-title">整墙 · 第 1—43 皮</div><div id="modeMeta" class="mode-meta">1494 块砖 · 墙心出面位置和 Microscope 形变分开控制 · 抹灰跟随砖与土的外层并柔和收边</div></div>
+  <div id="status" class="statusline">正在初始化 WebGL2…</div>
+  <div class="hint">拖动旋转 · 滚轮缩放<br>拖动旋转 · 滚轮缩放 · 墙心近看检查出面与多尺度形变 · 抹灰近看检查贴附、柔边与表面</div>
+  <div id="error" class="error" role="alert" hidden></div>
+</section>
+<section class="panel" aria-label="砖土墙参数">
+  <div class="control"><label for="courseBuild">逐皮显示 <output id="courseValue">43 / 43</output></label><input id="courseBuild" type="range" min="1" max="43" step="1" value="43"><small>端部闭合砖随偶数皮同步出现；顶部封砖只在完工皮出现。</small></div>
+  <div class="control"><label for="coreOffset">墙心出面 / 覆盖 <output id="coreOffsetValue">-6.0 mm</output></label><input id="coreOffset" type="range" min="-18" max="28" step="0.5" value="-6"><small>相对砖外表面：负值退入砖后，0 为齐平，正值把墙心推到砖外并可覆盖砖面。</small></div>
+  <div class="control"><label for="coreRelief">墙心 Microscope 形变 <output id="coreReliefValue">12.0 mm</output></label><input id="coreRelief" type="range" min="0" max="30" step="0.5" value="12"><small>低尺度改变鼓、凹和压实起伏；中尺度形成土团；高尺度由观察门控进入细表皮。</small></div>
+  <div class="control"><label for="soilBaseColor">墙心基色 <output id="soilBaseColorValue">#9A642E</output></label><input id="soilBaseColor" type="color" value="#9a642e"><small>直接选择墙心基础土色；不会改变砖的冻结材质。</small></div>
+  <div class="control"><label for="soilC
