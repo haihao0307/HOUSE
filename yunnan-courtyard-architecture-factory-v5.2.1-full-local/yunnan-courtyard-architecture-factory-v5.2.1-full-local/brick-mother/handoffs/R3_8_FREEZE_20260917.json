@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "brick-mother.r3.8.freeze.v1",
+  "acceptedByUser": true,
+  "acceptedDate": "2026-09-17",
+  "sourceFile": "Brick_Mother_Wall_4x3_R3_8.html",
+  "publicFrozenEntry": "Brick_Mother_Wall_4x3_R3_8_FROZEN.html",
+  "sourceSha256": "1a9dd5e313c73ba736af18b1e92986a66a1f4b015637048956b3937d2ea73eff",
+  "invariants": {
+    "courseCount": 43,
+    "brickCount": 1494,
+    "wallCoreLayers": 5,
+    "motherBrick": "R2.14.8.1",
+    "material": "R2.1-B"
+  },
+  "rule": "R3.9 portal and old-wall reference presets may reuse this accepted baseline but must not overwrite its source, controls, geometry, or default appearance."
+}
