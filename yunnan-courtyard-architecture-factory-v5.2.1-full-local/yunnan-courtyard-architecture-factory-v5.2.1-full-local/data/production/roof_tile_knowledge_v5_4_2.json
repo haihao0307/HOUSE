@@ -1,0 +1,56 @@
+{
+  "schemaVersion": "5.5.0",
+  "recordId": "YN-ROOF-TILE-KNOWLEDGE-5-4-2-MIGRATION",
+  "title": "云南板瓦筒瓦知识与 V5.5.0 迁移边界",
+  "status": "evidence-gated-production-contract",
+  "sourceVersion": "5.4.2",
+  "tileProfile": {
+    "id": "YUNNAN-PAN-COVER-V550",
+    "panTile": {
+      "geometry": "concave-closed-ceramic-shell",
+      "nominalWidthM": 0.242,
+      "nominalLengthM": 0.223,
+      "nominalThicknessM": 0.022,
+      "evidenceStatus": "visual-calibration-only"
+    },
+    "coverTile": {
+      "geometry": "convex-closed-ceramic-shell",
+      "nominalWidthM": 0.116,
+      "nominalLengthM": 0.219,
+      "nominalThicknessM": 0.022,
+      "evidenceStatus": "visual-calibration-only"
+    },
+    "topologyInvariants": [
+      "coverColumnsEqualPanColumnsMinusOne",
+      "coverTilesBridgeAdjacentPanSeams",
+      "panAndCoverShareCourseCenterWithoutSlopeOffset",
+      "eachPanChannelTerminatesAtAVisibleDrip",
+      "eachCoverColumnTerminatesAtAVisibleHookHead",
+      "drainageIsMonotonicFromRidgeToEave"
+    ]
+  },
+  "v544Baseline": {
+    "tileWidthM": 0.28,
+    "tileLengthM": 0.64,
+    "tileCourseM": 0.46,
+    "tileThicknessM": 0.055,
+    "knownLimitations": [
+      "panAndCoverColumnCountsWereEqual",
+      "coverCoursesWereOffsetBy0.23Course",
+      "tilesWereIndividualMeshes",
+      "eaveAndRidgeSemanticPiecesWereAbsent"
+    ]
+  },
+  "unresolved": [
+    "panTileLongitudinalOverlap",
+    "tileCourseCenterSpacing",
+    "coverTileSeamOverlap",
+    "underlayMaterialAndFixing",
+    "residentialRidgeClosure"
+  ],
+  "evidencePolicy": {
+    "measuredGeometryWins": true,
+    "unresolvedValuesMustRemainLabelled": true,
+    "visualReferencesCannotLockHiddenConstruction": true
+  }
+}
