@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "brick-mother.r3.9.portal-qa.v1",
+  "date": "2026-09-17",
+  "checks": {
+    "r38SourceAcceptedByUser": true,
+    "r38CompressedPayloadLength": 30096,
+    "r38SourceSha256": "1a9dd5e313c73ba736af18b1e92986a66a1f4b015637048956b3937d2ea73eff",
+    "loaderJavascriptSyntax": "passed",
+    "portalJavascriptSyntax": "passed",
+    "portalPresetMockInteraction": "passed",
+    "portalPresetValues": {
+      "coreOffsetMm": 6,
+      "coreReliefMm": 14,
+      "coreMicroMm": 1.8,
+      "soilColorVariation": 1.3,
+      "layer0Color": "#523a26",
+      "layer4Color": "#c4a693",
+      "layer4OutMm": 16,
+      "layer4RevealMm": 110,
+      "plasterWidthM": 2.7,
+      "plasterHeightM": 2.08
+    },
+    "restoredEntrypoints": [
+      "ADOBE",
+      "FIRED_CLAY",
+      "STONE",
+      "stone-study-four-families",
+      "unified-single-brick-brick-wall-stone-earth-wall"
+    ],
+    "fullNestedWebGLRetest": "not claimed in the managed browser environment",
+    "publicRawcdnOpen": "pending external verification"
+  },
+  "approvals": {
+    "r38HumanVisualApproved": true,
+    "r39PortalHumanVisualApproved": false,
+    "historicalConstructionVerified": false
+  }
+}
