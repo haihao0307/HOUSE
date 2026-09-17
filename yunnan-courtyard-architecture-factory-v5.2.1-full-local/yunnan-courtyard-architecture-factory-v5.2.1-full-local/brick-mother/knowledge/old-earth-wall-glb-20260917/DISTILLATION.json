@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "brick-mother.old-earth-wall-glb-distillation.v1",
+  "sourceFile": "老土墙pared_interior_adobe(1).glb",
+  "sourceRole": "reference-only",
+  "runtimeImported": false,
+  "sizeBytes": 72449972,
+  "meshPartitions": 14,
+  "vertices": 890645,
+  "triangles": 1490043,
+  "embeddedTexture": {
+    "type": "JPEG",
+    "width": 8192,
+    "height": 8192
+  },
+  "boundsApprox": [11.55177879, 8.28025913, 0.7512137],
+  "palette": ["#523A26", "#6B523B", "#7A6351", "#9A8170", "#C4A693"],
+  "observations": [
+    "large irregular pale plaster islands",
+    "darker exposed earth zones",
+    "straw and fiber bundles in exposed earth",
+    "small aggregates and pebbles",
+    "hairline cracks concentrated in pale plaster",
+    "low-amplitude relief visible at grazing angle"
+  ],
+  "integration": {
+    "target": "R3.8 five wall-core layers and editable plaster",
+    "method": "preset mapping, not direct GLB runtime dependency",
+    "historicalTruthClaim": false,
+    "oneToOneReconstructionClaim": false
+  }
+}
