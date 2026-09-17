@@ -1,4 +1,57 @@
 <!doctype html>
-<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Brick Mother · 统一工作台 R3.9</title><style>html,body{margin:0;width:100%;height:100%;background:#0d120e;color:#e9e5d8;font:14px system-ui,-apple-system,"Segoe UI",sans-serif}#boot{height:100%;display:grid;place-content:center;text-align:center;gap:10px;padding:24px}small{color:#9ca69b;line-height:1.5}</style></head><body><div id="boot"><b>正在打开 Brick Mother 统一工作台 R3.9…</b><small>R3.8 固定砖土墙 · 老土墙融合参考 · 土砖 / 烧结砖 / 毛石 / 石材入口</small></div><script>
-(async()=>{try{const root='portal/r3-9/';const files=['R3_9_PAYLOAD_01.txt','R3_9_PAYLOAD_02.txt'];const parts=[];for(const file of files){const response=await fetch(root+file,{cache:'no-store'});if(!response.ok)throw new Error(`${file} · HTTP ${response.status}`);parts.push((await response.text()).trim());}const b64=parts.join('');if(b64.length!==7368)throw new Error(`R3.9 载荷长度异常：${b64.length}`);const bytes=Uint8Array.from(atob(b64),c=>c.charCodeAt(0));if(!('DecompressionStream' in self))throw new Error('当前浏览器不支持内置 gzip 解压，请使用最新版 Chrome / Edge / Safari。');const stream=new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'));const html=await new Response(stream).text();if(!html.startsWith('<!doctype html>')||!html.includes('统一工作台 R3.9'))throw new Error('R3.9 工作台载荷校验失败');document.open();document.write(html);document.close();}catch(e){document.getElementById('boot').innerHTML='<b>R3.9 打开失败</b><small>'+String(e.message||e)+'</small>';console.error(e);}})();
-</script></body></html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Brick Mother · 稳定工作台</title>
+<style>
+:root{color-scheme:dark;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;background:#0d120e;color:#ece8dc}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#0d120e}
+main{height:100svh;display:grid;grid-template-rows:auto auto minmax(0,1fr)}
+header{padding:10px 14px;border-bottom:1px solid #ffffff16;background:#121812}
+h1{margin:0 0 3px;font-size:14px}.sub{font-size:9px;color:#9da79a;line-height:1.45}
+nav{display:flex;gap:7px;flex-wrap:wrap;padding:8px 12px;border-bottom:1px solid #ffffff16;background:#151b15}
+button{min-height:40px;padding:7px 11px;border:1px solid #4c554a;border-radius:8px;background:#222a22;color:#e5e2d8;font:inherit;font-size:11px;cursor:pointer}
+button.active{background:#463620;border-color:#d0a365;color:#ffe5bb}button:hover{background:#313a30}
+.stage{position:relative;min-height:0;background:#090d0a}
+iframe{display:block;width:100%;height:100%;border:0;background:#0d120e}
+.loading{position:absolute;inset:0;display:grid;place-content:center;text-align:center;gap:6px;background:#0d120e;color:#e8e2d4;z-index:2}.loading[hidden]{display:none}.loading small{color:#98a294}
+.note{position:absolute;left:10px;bottom:9px;max-width:min(650px,calc(100% - 20px));padding:6px 8px;border-radius:7px;background:#0c110cc9;border:1px solid #ffffff14;color:#a7b0a3;font-size:8px;pointer-events:none}
+@media(max-width:680px){header{padding:8px 10px}nav{padding:7px 8px;display:grid;grid-template-columns:1fr 1fr}button{font-size:10px;padding:6px}.sub{font-size:8px}.note{font-size:7px}}
+</style>
+</head>
+<body>
+<main>
+<header><h1>BRICK MOTHER · 稳定工作台</h1><div class="sub">默认进入已经通过并固定的 R3.8 砖土墙。旧砖、毛石和石材工作台按需单独加载；切换时先卸载上一页，避免多个 WebGL 场景同时占用显存。</div></header>
+<nav aria-label="工作台入口">
+<button class="active" data-page="wall">固定砖土墙 R3.8</button>
+<button data-page="bricks">旧砖母体</button>
+<button data-page="stone">毛石 / 石材</button>
+<button data-page="single">单砖 / 砖墙 / 土墙</button>
+</nav>
+<section class="stage">
+<div id="loading" class="loading"><b>正在打开固定砖土墙…</b><small>只加载当前一个工作台</small></div>
+<iframe id="viewer" title="Brick Mother 工作台" referrerpolicy="no-referrer" allow="fullscreen"></iframe>
+<div class="note" id="note">R3.8 已固定，不再叠加老土墙预设。旧材料工作台仅作为原成果入口，不同时运行。</div>
+</section>
+</main>
+<script>
+'use strict';
+const ROOT='https://rawcdn.githack.com/haihao0307/HOUSE/';
+const PAGES={
+ wall:{title:'正在打开固定砖土墙…',note:'R3.8 已固定：43 皮、1494 块砖、五层墙心和可编辑抹灰。',url:ROOT+'c339d9a3e3f0a0befbfd9ead78a2b89b7b3a4182/yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/Brick_Mother_Wall_4x3_R3_8_FROZEN.html'},
+ bricks:{title:'正在打开旧砖母体…',note:'恢复过去的土坯砖、烧结砖及各砖族入口；这一页来自旧生产工作台。',url:ROOT+'a354d0d4a9c6a3ac2429e65620428539799b6e90/yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/workbench-v2.7.6.html'},
+ stone:{title:'正在打开毛石与石材…',note:'恢复毛石和四类石材观察入口；按需加载，离开后立即卸载。',url:ROOT+'a354d0d4a9c6a3ac2429e65620428539799b6e90/yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/stone-study.html'},
+ single:{title:'正在打开统一旧工作台…',note:'恢复单砖、砖墙加抹灰、石材、土墙加抹灰四个旧入口。',url:ROOT+'c428d1a9e5b36397bf9f24fe03bc891b1bed07fe/yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/Brick_Mother_Unified_Workbench_R3.html'}
+};
+const frame=document.getElementById('viewer'),loading=document.getElementById('loading'),note=document.getElementById('note');
+let current='';
+function unload(){frame.src='about:blank';try{frame.contentWindow?.location.replace('about:blank');}catch{} }
+function openPage(key){if(!PAGES[key]||key===current)return;current=key;document.querySelectorAll('button[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===key));loading.hidden=false;loading.querySelector('b').textContent=PAGES[key].title;note.textContent=PAGES[key].note;unload();setTimeout(()=>{frame.src=PAGES[key].url;},80);}
+frame.addEventListener('load',()=>{if(frame.src!=='about:blank')loading.hidden=true;});
+document.querySelectorAll('button[data-page]').forEach(b=>b.addEventListener('click',()=>openPage(b.dataset.page)));
+window.addEventListener('beforeunload',unload);
+openPage('wall');
+</script>
+</body>
+</html>
