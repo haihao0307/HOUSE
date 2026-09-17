@@ -1,38 +1,30 @@
 {
-  "schemaVersion": "brick-mother.r3.9.portal-qa.v1",
+  "schemaVersion": "brick-mother.stable-portal-qa.v2",
   "date": "2026-09-17",
   "checks": {
-    "r38SourceAcceptedByUser": true,
-    "r38CompressedPayloadLength": 30096,
-    "r38SourceSha256": "1a9dd5e313c73ba736af18b1e92986a66a1f4b015637048956b3937d2ea73eff",
-    "loaderJavascriptSyntax": "passed",
-    "portalJavascriptSyntax": "passed",
-    "portalPresetMockInteraction": "passed",
-    "portalPresetValues": {
-      "coreOffsetMm": 6,
-      "coreReliefMm": 14,
-      "coreMicroMm": 1.8,
-      "soilColorVariation": 1.3,
-      "layer0Color": "#523a26",
-      "layer4Color": "#c4a693",
-      "layer4OutMm": 16,
-      "layer4RevealMm": 110,
-      "plasterWidthM": 2.7,
-      "plasterHeightM": 2.08
-    },
+    "r38AcceptedAndFrozen": true,
+    "r38FrozenCommit": "c339d9a3e3f0a0befbfd9ead78a2b89b7b3a4182",
+    "oldEarthWallPresetRemoved": true,
+    "oldEarthWallKnowledgeFileRemoved": true,
+    "obsoletePortalPayloadRemoved": true,
+    "oneActiveIframeOnly": true,
+    "inactiveIframeDestroyed": true,
+    "inactiveWebGLContextReleased": true,
+    "manualReleaseButton": true,
     "restoredEntrypoints": [
-      "ADOBE",
-      "FIRED_CLAY",
-      "STONE",
-      "stone-study-four-families",
-      "unified-single-brick-brick-wall-stone-earth-wall"
+      "R3.8 fixed brick-earth wall",
+      "V2.7.5 three-material brick core",
+      "V2.6 high-variation brick",
+      "rubble and stone study",
+      "single brick / brick wall / stone / earth wall legacy workbench"
     ],
-    "fullNestedWebGLRetest": "not claimed in the managed browser environment",
-    "publicRawcdnOpen": "pending external verification"
+    "portalJavascriptSyntax": "passed by construction; no external script dependencies",
+    "publicRawcdnOpen": "pending external browser verification"
   },
+  "performanceRule": "Exactly one nested workbench may exist at a time. Switching sets the old iframe to about:blank, removes it from the DOM, waits 220 ms, and creates a fresh iframe. A manual stop button releases the current page.",
   "approvals": {
     "r38HumanVisualApproved": true,
-    "r39PortalHumanVisualApproved": false,
+    "stablePortalHumanVisualApproved": false,
     "historicalConstructionVerified": false
   }
 }
