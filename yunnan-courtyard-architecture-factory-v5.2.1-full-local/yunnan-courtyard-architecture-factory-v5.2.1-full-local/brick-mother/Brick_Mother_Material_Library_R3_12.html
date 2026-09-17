@@ -26,7 +26,7 @@ button:hover{background:#313a30}button.active{background:#463620;border-color:#d
 <button class="active" data-page="r6">R6 · 真稻壳 / 七岩性</button>
 <button data-page="r72">R7.2 · 七类选定版</button>
 <button data-page="r5">R5 · 形体基线</button>
-<button data-page="compare">V2.7.5 / V2.6 · 同台对照</button>
+<button data-page="compare">V2.7.5 / V2.6 高变化版</button>
 <button type="button" id="release" class="release">停止显示 / 释放显存</button>
 </nav>
 <section class="stage">
@@ -41,7 +41,7 @@ const PAGES={
  r6:{title:'正在打开 R6 真稻壳与岩性全谱…',url:'./experiments/atelier-r6/web/index.html',note:'R6 原版：真稻壳具备内外面、连接边缘和嵌入；七种岩性配方可切换，且保留土坯、砌筑石与卵石。'},
  r72:{title:'正在打开 R7.2 七类选定版…',url:'./experiments/atelier-r7/Brick_Mother_R7_2_StoneCloseout.html',note:'R7.2 原版：烧结旧砖、窑变旧砖、纤维土坯、粗凿砌筑石、不规则毛石、层状毛石、建筑卵石七类同屏入口。'},
  r5:{title:'正在打开 R5 形体基线…',url:'./experiments/atelier-r5/web/index.html',note:'R5 原版：保留已接近成功的砖、土坯、毛石与卵石形体基线；完整谷壳尚未在该版本启用。'},
- compare:{title:'正在打开 V2.7.5 / V2.6 同台对照…',url:'./workbench-v2.7.6.html',note:'同一个工作台内切换 V2.7.5 快速版、V2.7.5 完整版和 V2.6 高变化版，不再拆成两个页面。'}
+ compare:{title:'正在打开 V2.7.5 / V2.6 高变化版…',url:'./Brick_Mother_V275_V26_Workbench_R3_13.html',note:'V2.7.5 与 V2.6 高变化版放在同一个工作台，内部只运行当前选择的一个 WebGL 页面。'}
 };
 const viewer=document.getElementById('viewer'),loading=document.getElementById('loading'),note=document.getElementById('note');
 let current='',frame=null,serial=0,watchdog=0;
