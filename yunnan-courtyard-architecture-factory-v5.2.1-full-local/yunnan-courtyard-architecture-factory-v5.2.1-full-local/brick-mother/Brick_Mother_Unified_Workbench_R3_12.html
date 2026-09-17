@@ -3,50 +3,70 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Brick Mother · 统一工作台 R3.12</title>
+<title>Brick Mother</title>
 <style>
 :root{color-scheme:dark;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;background:#0d120e;color:#ece8dc}
 *{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#0d120e}
 main{height:100svh;display:grid;grid-template-rows:auto auto minmax(0,1fr)}
-header{padding:10px 14px;border-bottom:1px solid #ffffff16;background:#121812}h1{margin:0 0 4px;font-size:14px}.sub{font-size:9px;color:#9ca69a;line-height:1.5}
+header{padding:11px 14px;border-bottom:1px solid #ffffff16;background:#121812}
+h1{margin:0;font-size:16px;letter-spacing:.02em}
 nav{display:flex;gap:7px;flex-wrap:wrap;align-items:center;padding:8px 12px;border-bottom:1px solid #ffffff16;background:#151b15}
-button{min-height:40px;padding:7px 12px;border:1px solid #4d564a;border-radius:8px;background:#222a22;color:#e4e1d6;font:inherit;font-size:11px;cursor:pointer}button:hover{background:#313a30}button.active{background:#463620;border-color:#d0a365;color:#ffe5bb}.release{margin-left:auto}
+button{min-height:40px;padding:7px 12px;border:1px solid #4d564a;border-radius:8px;background:#222a22;color:#e4e1d6;font:inherit;font-size:11px;cursor:pointer}
+button:hover{background:#313a30}button.active{background:#463620;border-color:#d0a365;color:#ffe5bb}.release{margin-left:auto}
 .stage{position:relative;min-height:0;background:#090d0a}.viewer{position:absolute;inset:0}iframe{display:block;width:100%;height:100%;border:0;background:#0d120e}
 .loading{position:absolute;inset:0;display:grid;place-content:center;text-align:center;gap:7px;padding:24px;background:#0d120e;color:#e8e2d4;z-index:3}.loading[hidden]{display:none}.loading small{color:#98a294;line-height:1.55}
 .note{position:absolute;left:10px;bottom:9px;max-width:min(980px,calc(100% - 20px));padding:7px 9px;border:1px solid #ffffff14;border-radius:7px;background:#0c110cd9;color:#aab2a6;font-size:8px;line-height:1.5;pointer-events:none;z-index:2}
-@media(max-width:860px){header{padding:8px 10px}nav{display:grid;grid-template-columns:1fr 1fr;padding:7px 8px}.release{margin-left:0}button{font-size:9px;padding:6px}.sub{font-size:8px}.note{font-size:7px}}
+@media(max-width:860px){header{padding:9px 10px}nav{display:grid;grid-template-columns:1fr 1fr;padding:7px 8px}.release{margin-left:0;grid-column:1/-1}button{font-size:9px;padding:6px}.note{font-size:7px}}
 </style>
 </head>
 <body>
 <main>
-<header>
-<h1>BRICK MOTHER · 统一工作台 R3.12</h1>
-<div class="sub">只保留两个生产入口：墙体应用与材料总库。性能与视觉质量由内部自适应调度平衡，始终只有一套模型和一个显示入口。</div>
-</header>
+<header><h1>Brick Mother</h1></header>
 <nav aria-label="工作台入口">
-<button class="active" data-page="wall">墙体应用</button>
-<button data-page="materials">材料总库</button>
+<button class="active" data-page="materials">材料总库</button>
+<button data-page="wall">墙体应用</button>
 <button type="button" id="release" class="release">停止显示 / 释放显存</button>
 </nav>
 <section class="stage">
 <div id="viewer" class="viewer"></div>
-<div id="loading" class="loading"><b>正在打开墙体应用…</b><small>当前只运行一个 WebGL 工作台</small></div>
-<div id="note" class="note">墙体保持 R3.8 已通过的砌法、五层墙心与抹灰；可切换烧结砖、窑变砖、纤维土砖和八类规则砌筑石材。</div>
+<div id="loading" class="loading"><b>正在打开材料总库…</b><small>当前只运行一个 WebGL 工作台</small></div>
+<div id="note" class="note">材料总库保留真稻壳土坯、砖、毛石、层状石、建筑卵石和多种岩性；历史原版按需单独运行。</div>
 </section>
 </main>
 <script>
 'use strict';
 const PAGES={
- wall:{title:'正在打开墙体应用…',url:'./Brick_Mother_Wall_R3_12.html',note:'墙体保持 R3.8 已通过的砌法、五层墙心与抹灰；可切换烧结砖、窑变砖、纤维土砖和八类规则砌筑石材。'},
- materials:{title:'正在打开材料总库…',url:'./Brick_Mother_Material_Library_R3_12.html',note:'材料总库恢复真稻壳土坯、粗凿石、不规则毛石、层状毛石、建筑卵石和完整岩性色谱；历史原版按需单独运行。'}
+ materials:{title:'正在打开材料总库…',url:'./Brick_Mother_Material_Library_R3_12.html',note:'材料总库保留真稻壳土坯、砖、毛石、层状石、建筑卵石和多种岩性；历史原版按需单独运行。'},
+ wall:{title:'正在打开墙体应用…',url:'./Brick_Mother_Wall_R3_12.html',note:'墙体保持 R3.8 已通过的砌法、五层墙心与抹灰；可切换烧结砖、窑变砖、纤维土砖和规则砌筑石材。'}
 };
-const viewer=document.getElementById('viewer'),loading=document.getElementById('loading'),note=document.getElementById('note');let current='',frame=null,serial=0,watchdog=0;
+const viewer=document.getElementById('viewer'),loading=document.getElementById('loading'),note=document.getElementById('note');
+let current='',frame=null,serial=0,watchdog=0;
 function destroy(){serial++;clearTimeout(watchdog);if(frame){try{frame.src='about:blank'}catch{}frame.remove();frame=null}viewer.replaceChildren()}
 function buttons(key){document.querySelectorAll('button[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===key))}
-function openPage(key){if(!PAGES[key]||key===current)return;current=key;buttons(key);loading.hidden=false;loading.querySelector('b').textContent=PAGES[key].title;loading.querySelector('small').textContent='先释放上一工作台，再打开当前页面';note.textContent=PAGES[key].note;destroy();const token=serial;setTimeout(()=>{if(token!==serial)return;const f=document.createElement('iframe');f.title=PAGES[key].title;f.allow='fullscreen; autoplay; xr-spatial-tracking';f.referrerPolicy='no-referrer';f.src=PAGES[key].url;f.addEventListener('load',()=>{if(f===frame){loading.hidden=true;clearTimeout(watchdog)}});frame=f;viewer.appendChild(f);watchdog=setTimeout(()=>{if(f===frame&&!loading.hidden)loading.querySelector('small').textContent='模型仍在生成；可按“停止显示”立即释放显存。'},18000)},160)}
+function openPage(key){
+  if(!PAGES[key]||key===current)return;
+  current=key;buttons(key);loading.hidden=false;
+  loading.querySelector('b').textContent=PAGES[key].title;
+  loading.querySelector('small').textContent='先释放上一工作台，再打开当前页面';
+  note.textContent=PAGES[key].note;destroy();
+  const token=serial;
+  setTimeout(()=>{
+    if(token!==serial)return;
+    const f=document.createElement('iframe');
+    f.title=PAGES[key].title;f.allow='fullscreen; autoplay; xr-spatial-tracking';f.referrerPolicy='no-referrer';f.src=PAGES[key].url;
+    f.addEventListener('load',()=>{if(f===frame){loading.hidden=true;clearTimeout(watchdog)}});
+    frame=f;viewer.appendChild(f);
+    watchdog=setTimeout(()=>{if(f===frame&&!loading.hidden)loading.querySelector('small').textContent='模型仍在生成；可按“停止显示”立即释放显存。'},18000);
+  },160)
+}
 document.querySelectorAll('button[data-page]').forEach(b=>b.addEventListener('click',()=>openPage(b.dataset.page)));
-document.getElementById('release').addEventListener('click',()=>{current='';buttons('');destroy();loading.hidden=false;loading.querySelector('b').textContent='当前显示已经停止';loading.querySelector('small').textContent='WebGL 页面已销毁，显存已释放；请选择一个入口。';note.textContent='稳定规则：任意时刻只运行一个三维工作台。'});
-window.addEventListener('pagehide',destroy);window.addEventListener('beforeunload',destroy);openPage('wall');
+document.getElementById('release').addEventListener('click',()=>{
+  current='';buttons('');destroy();loading.hidden=false;
+  loading.querySelector('b').textContent='当前显示已经停止';
+  loading.querySelector('small').textContent='WebGL 页面已销毁，显存已释放；请选择一个入口。';
+  note.textContent='稳定规则：任意时刻只运行一个三维工作台。';
+});
+window.addEventListener('pagehide',destroy);window.addEventListener('beforeunload',destroy);openPage('materials');
 </script>
 </body>
 </html>
