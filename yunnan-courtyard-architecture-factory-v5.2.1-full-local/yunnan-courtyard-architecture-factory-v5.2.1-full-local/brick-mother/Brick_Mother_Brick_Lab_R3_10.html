@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Brick Mother · 砖材质工作台 R3.10</title>
+<style>
+html,body{margin:0;width:100%;height:100%;background:#080a09;color:#eee;font:14px system-ui,-apple-system,"Segoe UI",sans-serif}
+#boot{height:100%;display:grid;place-content:center;text-align:center;gap:8px;padding:24px}
+small{color:#aaa;line-height:1.6}
+</style>
+</head>
+<body>
+<div id="boot"><b>正在打开统一砖材质工作台…</b><small>一个算法 · 烧结砖 / 高变化 / 土砖 / 石块 · 按需生成并缓存</small></div>
+<script>
+(async()=>{
+  try{
+    const url=new URL(location.href);
+    if(!url.searchParams.has('eco'))url.searchParams.set('eco','1');
+    if(!url.searchParams.has('profile'))url.searchParams.set('profile','old-pbr-fired');
+    if(!url.searchParams.has('mode'))url.searchParams.set('mode','siblings');
+    if(!url.searchParams.has('solo'))url.searchParams.set('solo','1');
+    if(!url.searchParams.has('focus'))url.searchParams.set('focus','1');
+    history.replaceState(null,'',url.pathname+url.search+url.hash);
+    const response=await fetch('./brick-mother-observation-studio.html',{cache:'no-store'});
+    if(!response.ok)throw new Error('观察台读取失败 HTTP '+response.status);
+    let html=await response.text();
+    const app=/<script src="\.\/brick-mother-app-v2\.js([^"]*)" defer><\/script>/;
+    if(!app.test(html))throw new Error('未找到 Brick Mother 应用入口');
+    html=html.replace(app,(match)=>'<script src="./brick-lab-cache-r3-10.js" defer><\/script>'+match+'<script src="./brick-lab-ui-r3-10.js" defer><\/script>');
+    html=html.replace(/Brick Mother V2\.7\.5 三维材质观察台/g,'Brick Mother 砖材质工作台 R3.10');
+    document.open();document.write(html);document.close();
+  }catch(error){
+    document.getElementById('boot').innerHTML='<b>砖材质工作台打开失败</b><small>'+String(error.message||error)+'</small>';
+    console.error(error);
+  }
+})();
+</script>
+</body>
+</html>
