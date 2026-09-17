@@ -7,6 +7,7 @@
     "sourceSha256": "1532ea02c31f014c23390fa028385338c3d2caa572f3a36511db81d6609e1581",
     "sourceBytes": 80024,
     "gzipBase64Length": 32484,
+    "payloadPartLengths": [6497, 6497, 6497, 6497, 6496],
     "acceptedGeometryPreserved": {
       "source": "R3.8",
       "courses": 43,
@@ -24,6 +25,8 @@
       "shaderCompileAndLink": "passed",
       "materialSwitches": "passed",
       "rockTypeSwitch": "passed",
+      "compressedLoaderRoundTrip": "passed",
+      "compressedLoaderWebGL2": "passed",
       "pageErrors": 0,
       "consoleErrors": 0,
       "fastStateTestActiveCourses": 6,
@@ -57,6 +60,11 @@
     "reason": "irregular rubble and pebbles require a different unit-placement and packing solver; applying only their color to the accepted brick bond would be a false structural representation",
     "exactIrregularAndPebbleSpecimensRestoredInLibrary": true,
     "r6ExplicitHullGeometryRestoredInLibrary": true
+  },
+  "networkVerification": {
+    "githubFixedCommitAndFiles": "passed",
+    "rawcdnLiveOpenFromCurrentToolEnvironment": "blocked_by_administrator",
+    "userBrowserVerificationRequired": true
   },
   "approvals": {
     "r38WallGeometryPreviouslyAccepted": true,
