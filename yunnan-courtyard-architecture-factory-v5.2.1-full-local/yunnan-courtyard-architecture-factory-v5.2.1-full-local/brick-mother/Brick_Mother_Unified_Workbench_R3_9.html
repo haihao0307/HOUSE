@@ -12,45 +12,50 @@ header{padding:10px 14px;border-bottom:1px solid #ffffff16;background:#121812}
 h1{margin:0 0 3px;font-size:14px}.sub{font-size:9px;color:#9da79a;line-height:1.45}
 nav{display:flex;gap:7px;flex-wrap:wrap;padding:8px 12px;border-bottom:1px solid #ffffff16;background:#151b15}
 button{min-height:40px;padding:7px 11px;border:1px solid #4c554a;border-radius:8px;background:#222a22;color:#e5e2d8;font:inherit;font-size:11px;cursor:pointer}
-button.active{background:#463620;border-color:#d0a365;color:#ffe5bb}button:hover{background:#313a30}
-.stage{position:relative;min-height:0;background:#090d0a}
+button.active{background:#463620;border-color:#d0a365;color:#ffe5bb}button:hover{background:#313a30}.release{margin-left:auto}
+.stage{position:relative;min-height:0;background:#090d0a}.viewer{position:absolute;inset:0}
 iframe{display:block;width:100%;height:100%;border:0;background:#0d120e}
 .loading{position:absolute;inset:0;display:grid;place-content:center;text-align:center;gap:6px;background:#0d120e;color:#e8e2d4;z-index:2}.loading[hidden]{display:none}.loading small{color:#98a294}
-.note{position:absolute;left:10px;bottom:9px;max-width:min(650px,calc(100% - 20px));padding:6px 8px;border-radius:7px;background:#0c110cc9;border:1px solid #ffffff14;color:#a7b0a3;font-size:8px;pointer-events:none}
-@media(max-width:680px){header{padding:8px 10px}nav{padding:7px 8px;display:grid;grid-template-columns:1fr 1fr}button{font-size:10px;padding:6px}.sub{font-size:8px}.note{font-size:7px}}
+.note{position:absolute;left:10px;bottom:9px;max-width:min(700px,calc(100% - 20px));padding:6px 8px;border-radius:7px;background:#0c110cc9;border:1px solid #ffffff14;color:#a7b0a3;font-size:8px;pointer-events:none;z-index:3}
+@media(max-width:800px){header{padding:8px 10px}nav{padding:7px 8px;display:grid;grid-template-columns:1fr 1fr}button{font-size:9px;padding:6px}.release{margin-left:0}.sub{font-size:8px}.note{font-size:7px}}
 </style>
 </head>
 <body>
 <main>
-<header><h1>BRICK MOTHER · 稳定工作台</h1><div class="sub">默认进入已经通过并固定的 R3.8 砖土墙。旧砖、毛石和石材工作台按需单独加载；切换时先卸载上一页，避免多个 WebGL 场景同时占用显存。</div></header>
+<header><h1>BRICK MOTHER · 稳定工作台</h1><div class="sub">默认进入已经通过并固定的 R3.8 砖土墙。老土墙试验已删除。旧砖、毛石和石材按需单独加载；切换时直接销毁上一页及其 WebGL 上下文，避免多个场景同时占用显存。</div></header>
 <nav aria-label="工作台入口">
 <button class="active" data-page="wall">固定砖土墙 R3.8</button>
-<button data-page="bricks">旧砖母体</button>
+<button data-page="brickCore">旧砖三材质</button>
+<button data-page="brickVariation">旧砖高变化</button>
 <button data-page="stone">毛石 / 石材</button>
 <button data-page="single">单砖 / 砖墙 / 土墙</button>
+<button type="button" id="release" class="release">停止显示 / 释放显存</button>
 </nav>
 <section class="stage">
-<div id="loading" class="loading"><b>正在打开固定砖土墙…</b><small>只加载当前一个工作台</small></div>
-<iframe id="viewer" title="Brick Mother 工作台" referrerpolicy="no-referrer" allow="fullscreen"></iframe>
-<div class="note" id="note">R3.8 已固定，不再叠加老土墙预设。旧材料工作台仅作为原成果入口，不同时运行。</div>
+<div id="viewer" class="viewer"></div>
+<div id="loading" class="loading"><b>正在打开固定砖土墙…</b><small>当前只运行一个工作台</small></div>
+<div class="note" id="note">R3.8 已固定，不再叠加老土墙预设。</div>
 </section>
 </main>
 <script>
 'use strict';
 const ROOT='https://rawcdn.githack.com/haihao0307/HOUSE/';
+const OLD='a354d0d4a9c6a3ac2429e65620428539799b6e90/yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/';
 const PAGES={
  wall:{title:'正在打开固定砖土墙…',note:'R3.8 已固定：43 皮、1494 块砖、五层墙心和可编辑抹灰。',url:ROOT+'c339d9a3e3f0a0befbfd9ead78a2b89b7b3a4182/yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/Brick_Mother_Wall_4x3_R3_8_FROZEN.html'},
- bricks:{title:'正在打开旧砖母体…',note:'恢复过去的土坯砖、烧结砖及各砖族入口；这一页来自旧生产工作台。',url:ROOT+'a354d0d4a9c6a3ac2429e65620428539799b6e90/yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/workbench-v2.7.6.html'},
- stone:{title:'正在打开毛石与石材…',note:'恢复毛石和四类石材观察入口；按需加载，离开后立即卸载。',url:ROOT+'a354d0d4a9c6a3ac2429e65620428539799b6e90/yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/stone-study.html'},
- single:{title:'正在打开统一旧工作台…',note:'恢复单砖、砖墙加抹灰、石材、土墙加抹灰四个旧入口。',url:ROOT+'c428d1a9e5b36397bf9f24fe03bc891b1bed07fe/yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/Brick_Mother_Unified_Workbench_R3.html'}
+ brickCore:{title:'正在打开旧砖三材质…',note:'恢复 V2.7.5 冻结核心中的三种砖材质；这一页只加载一个实际 WebGL 工作台。',url:ROOT+OLD+'brick-mother-observation-studio.html?launch=full'},
+ brickVariation:{title:'正在打开旧砖高变化版…',note:'恢复 V2.6 的强色彩、孔洞、破损和形体变化。',url:ROOT+OLD+'brick-mother-standalone-v2.6.html'},
+ stone:{title:'正在打开毛石与石材…',note:'恢复毛石及石材观察入口；离开本页后立即销毁其图形上下文。',url:ROOT+OLD+'stone-study.html'},
+ single:{title:'正在打开旧统一工作台…',note:'恢复单砖、砖墙加抹灰、石材和土墙加抹灰四个入口。',url:ROOT+'c428d1a9e5b36397bf9f24fe03bc891b1bed07fe/yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/Brick_Mother_Unified_Workbench_R3.html'}
 };
-const frame=document.getElementById('viewer'),loading=document.getElementById('loading'),note=document.getElementById('note');
-let current='';
-function unload(){frame.src='about:blank';try{frame.contentWindow?.location.replace('about:blank');}catch{} }
-function openPage(key){if(!PAGES[key]||key===current)return;current=key;document.querySelectorAll('button[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===key));loading.hidden=false;loading.querySelector('b').textContent=PAGES[key].title;note.textContent=PAGES[key].note;unload();setTimeout(()=>{frame.src=PAGES[key].url;},80);}
-frame.addEventListener('load',()=>{if(frame.src!=='about:blank')loading.hidden=true;});
+const viewer=document.getElementById('viewer'),loading=document.getElementById('loading'),note=document.getElementById('note');
+let current='',frame=null,serial=0,watchdog=0;
+function destroyFrame(){serial++;clearTimeout(watchdog);if(frame){try{frame.src='about:blank';}catch{}frame.remove();frame=null;}viewer.replaceChildren();}
+function setButtons(key){document.querySelectorAll('button[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===key));}
+function openPage(key){if(!PAGES[key]||key===current)return;current=key;setButtons(key);loading.hidden=false;loading.querySelector('b').textContent=PAGES[key].title;loading.querySelector('small').textContent='先释放上一工作台，再打开当前页面';note.textContent=PAGES[key].note;destroyFrame();const token=serial;setTimeout(()=>{if(token!==serial)return;const next=document.createElement('iframe');next.title=PAGES[key].title;next.allow='fullscreen; autoplay; xr-spatial-tracking';next.referrerPolicy='no-referrer';next.src=PAGES[key].url;next.addEventListener('load',()=>{if(next===frame){loading.hidden=true;clearTimeout(watchdog);}});frame=next;viewer.appendChild(next);watchdog=setTimeout(()=>{if(next===frame&&!loading.hidden){loading.querySelector('small').textContent='模型仍在生成，请稍等；可按“停止显示”立即释放显存。';}},18000);},220);}
 document.querySelectorAll('button[data-page]').forEach(b=>b.addEventListener('click',()=>openPage(b.dataset.page)));
-window.addEventListener('beforeunload',unload);
+document.getElementById('release').addEventListener('click',()=>{current='';setButtons('');destroyFrame();loading.hidden=false;loading.querySelector('b').textContent='当前显示已经停止';loading.querySelector('small').textContent='WebGL 页面已销毁，显存已释放；请重新选择一个入口。';note.textContent='稳定规则：一次只运行一个三维工作台。';});
+window.addEventListener('pagehide',destroyFrame);window.addEventListener('beforeunload',destroyFrame);
 openPage('wall');
 </script>
 </body>
