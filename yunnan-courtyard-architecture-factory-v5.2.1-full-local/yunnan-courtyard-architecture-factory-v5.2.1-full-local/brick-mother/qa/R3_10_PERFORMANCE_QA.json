@@ -1,0 +1,68 @@
+{
+  "schemaVersion": "brick-mother.r3.10.performance-qa.v1",
+  "date": "2026-09-17",
+  "branch": "codex/brick-mother-r3-10-unified-brick-performance-20260917",
+  "design": {
+    "oneBrickAlgorithm": true,
+    "highVariationIsPresetNotSeparateEngine": true,
+    "samePageButtons": [
+      "historical fired clay",
+      "complete old fired brick",
+      "old brick high variation preset",
+      "adobe / earth brick",
+      "stone / rubble mother"
+    ],
+    "adobeProfileId": "raw-clay",
+    "stoneProfileId": "stone-block"
+  },
+  "recalculation": {
+    "historicalCause": [
+      "V2.6 and V2.7.5 were separate pages and implementations",
+      "V2.7.5 rebuilt a mesh whenever the selected profile or a rebuild control changed",
+      "the old renderer requested animation frames continuously even while idle"
+    ],
+    "r310Fix": [
+      "high variation moved to one parameter preset on old-pbr-fired",
+      "mesh build results cached by profile, seed, controls, level and quality",
+      "LRU memory cache keeps six generated meshes",
+      "renderer redraws only after input, camera motion, resize or active auto rotation"
+    ],
+    "scopeLimit": "The mesh cache is in-memory for the current brick-lab page. Closing or destroying that page intentionally releases its WebGL context and cache to prevent GPU-memory accumulation, so the first visit after a complete page reload still calculates once."
+  },
+  "performance": {
+    "legacyRuntimePackageBytes": 220341,
+    "legacyRuntimePackageKiB": 215.18,
+    "r38FullHtmlBytes": 73845,
+    "r38FullHtmlKiB": 72.11,
+    "r38EcoHtmlBytes": 73751,
+    "r38EcoHtmlSha256": "e7108e181f48311fb056684da39a5d0defe26a0b5207b8482cb5f9cab9e5b938",
+    "r38BrickInstances": 1494,
+    "r38WallCoreLayers": 5,
+    "r38PixelCapFull": 340000,
+    "r38PixelCapEco": 210000,
+    "pixelCapReductionPercent": 38.24,
+    "ecoDprCap": 1.0,
+    "fullDprCap": 1.15,
+    "brickMarch": {"full": [40, 36, 8], "eco": [28, 24, 5]},
+    "soilMarch": {"full": [44, 26, 7], "eco": [30, 18, 5]},
+    "plasterMarch": {"full": [34, 24, 7], "eco": [24, 16, 5]},
+    "portalRule": "Only one nested WebGL workbench exists at a time. Switching destroys the old iframe and context before creating the next one."
+  },
+  "localChecks": {
+    "javascriptSyntax": "passed",
+    "ecoPayloadLength": 30092,
+    "ecoPayloadRoundTrip": "passed",
+    "mockBrowserProfileLabels": "passed",
+    "mockBrowserHighVariationButton": "passed",
+    "mockBrowserMeshCache": {"misses": 4, "hits": 2, "entries": 4},
+    "mockBrowserIdleDrawDeltaOver500ms": 0,
+    "mockBrowserConsoleErrors": 0,
+    "mockBrowserPageErrors": 0
+  },
+  "approvals": {
+    "r38FullHumanVisualApproved": true,
+    "r38EcoHumanVisualApproved": false,
+    "r310BrickLabHumanVisualApproved": false,
+    "historicalConstructionVerified": false
+  }
+}
