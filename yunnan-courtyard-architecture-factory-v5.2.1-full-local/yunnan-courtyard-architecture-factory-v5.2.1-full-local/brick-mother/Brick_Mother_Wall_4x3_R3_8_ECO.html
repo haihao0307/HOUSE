@@ -1,4 +1,60 @@
 <!doctype html>
-<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Brick Mother R3.8 ECO</title><style>html,body{margin:0;width:100%;height:100%;background:#0d120e;color:#e9e5d8;font:14px system-ui,-apple-system,"Segoe UI",sans-serif}#boot{height:100%;display:grid;place-content:center;text-align:center;gap:10px;padding:24px}small{color:#9ca69b;line-height:1.5}</style></head><body><div id="boot"><b>正在打开 R3.8 固定墙体省电显示…</b><small>相同参数与默认外观 · 更低像素上限 · 按需渲染</small></div><script>
-(async()=>{try{const root='eco/r3-8/';const files=['R3_8_ECO_PAYLOAD_01.txt', 'R3_8_ECO_PAYLOAD_02.txt', 'R3_8_ECO_PAYLOAD_03.txt', 'R3_8_ECO_PAYLOAD_04.txt', 'R3_8_ECO_PAYLOAD_05.txt'];const parts=[];for(const file of files){const response=await fetch(root+file,{cache:'no-store'});if(!response.ok)throw new Error(`${file} · HTTP ${response.status}`);parts.push((await response.text()).trim());}const b64=parts.join('');if(b64.length!==30092)throw new Error(`省电载荷长度异常：${b64.length}`);const bytes=Uint8Array.from(atob(b64),c=>c.charCodeAt(0));if(!('DecompressionStream' in self))throw new Error('当前浏览器不支持内置 gzip 解压，请使用最新版 Chrome / Edge / Safari。');const stream=new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'));const html=await new Response(stream).text();if(!html.startsWith('<!doctype html>')||!html.includes('__BRICK_WALL_R3_8__'))throw new Error('R3.8 ECO 载荷校验失败');document.open();document.write(html);document.close();}catch(e){document.getElementById('boot').innerHTML='<b>R3.8 ECO 打开失败</b><small>'+String(e.message||e)+'</small>';console.error(e);}})();
-</script></body></html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Brick Mother R3.8 · 省电显示</title>
+<style>
+html,body{margin:0;width:100%;height:100%;background:#0d120e;color:#e9e5d8;font:14px system-ui,-apple-system,"Segoe UI",sans-serif}
+#boot{height:100%;display:grid;place-content:center;text-align:center;gap:10px;padding:24px}
+small{color:#9ca69b;line-height:1.5}button{margin:auto;padding:8px 12px;border:1px solid #5b6658;border-radius:8px;background:#222a22;color:#eee;cursor:pointer}
+</style>
+</head>
+<body>
+<div id="boot"><b>正在打开 R3.8 固定墙体省电显示…</b><small>直接复用已经冻结的 R3.8 真值载荷，不再维护第二份容易损坏的模型副本。</small></div>
+<script>
+(async()=>{
+  const boot=document.getElementById('boot');
+  try{
+    const root='frozen/r3-8/';
+    const files=['R3_8_PAYLOAD_01.txt','R3_8_PAYLOAD_02.txt','R3_8_PAYLOAD_03.txt','R3_8_PAYLOAD_04.txt','R3_8_PAYLOAD_05.txt'];
+    const parts=[];
+    for(const file of files){
+      const response=await fetch(root+file,{cache:'force-cache'});
+      if(!response.ok)throw new Error(`${file} · HTTP ${response.status}`);
+      parts.push((await response.text()).replace(/\s+/g,''));
+    }
+    const b64=parts.join('');
+    if(b64.length!==30096)throw new Error(`冻结载荷长度异常：${b64.length}`);
+    const bytes=Uint8Array.from(atob(b64),c=>c.charCodeAt(0));
+    if(!('DecompressionStream' in self))throw new Error('当前浏览器不支持内置 gzip 解压，请使用最新版 Chrome、Edge 或 Safari。');
+    const stream=new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'));
+    let html=await new Response(stream).text();
+    if(!html.startsWith('<!doctype html>')||!html.includes('__BRICK_WALL_R3_8__'))throw new Error('R3.8 冻结载荷校验失败');
+
+    // 省电版只在显示层降负载：真值参数、砌法、1494 块砖和五层墙心不改。
+    html=html.replaceAll('340000','210000');
+    const ecoBootstrap=`<script>
+      (()=>{
+        const nativeDpr=Number(window.devicePixelRatio||1);
+        try{Object.defineProperty(window,'devicePixelRatio',{configurable:true,get:()=>Math.min(nativeDpr,1)});}catch(_){}
+        const nativeGetContext=HTMLCanvasElement.prototype.getContext;
+        HTMLCanvasElement.prototype.getContext=function(type,attrs){
+          if(type==='webgl'||type==='webgl2')attrs={...(attrs||{}),powerPreference:'low-power',antialias:false};
+          return nativeGetContext.call(this,type,attrs);
+        };
+        document.documentElement.dataset.brickWallDisplay='eco';
+        document.documentElement.dataset.brickWallTruth='R3.8-frozen';
+      })();
+    <\/script>`;
+    html=html.replace('<head>','<head>'+ecoBootstrap);
+    document.open();document.write(html);document.close();
+  }catch(error){
+    console.error(error);
+    boot.innerHTML='<b>省电显示打开失败</b><small>'+String(error.message||error)+'</small><button id="fallback">打开原始精细固定版</button>';
+    document.getElementById('fallback').addEventListener('click',()=>location.replace('./Brick_Mother_Wall_4x3_R3_8_FROZEN.html'));
+  }
+})();
+</script>
+</body>
+</html>
