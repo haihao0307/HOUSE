@@ -1,0 +1,67 @@
+{
+  "schemaVersion": "brick-mother.r3.12.qa.v1",
+  "date": "2026-09-17",
+  "intent": "remove user-facing eco/full editions, restore historical material breadth, and bridge block-compatible materials into the accepted wall",
+  "wall": {
+    "file": "Brick_Mother_Wall_R3_12.html",
+    "sourceSha256": "1532ea02c31f014c23390fa028385338c3d2caa572f3a36511db81d6609e1581",
+    "sourceBytes": 80024,
+    "gzipBase64Length": 32484,
+    "acceptedGeometryPreserved": {
+      "source": "R3.8",
+      "courses": 43,
+      "instances": 1494,
+      "wallCoreLayers": 5,
+      "editablePlaster": true
+    },
+    "materialFamilies": ["fired clay", "kiln-aged fired clay", "fiber adobe block", "dressed masonry stone"],
+    "masonryLithologies": ["granite", "sandstone", "basalt", "quartzite", "limestone", "slate", "gneiss", "marble"],
+    "performancePolicy": "single adaptive balanced renderer; lower pixel budget only during pointer interaction and recover detail after release",
+    "userFacingEcoMode": false,
+    "runtimeChecks": {
+      "javascriptSyntax": "passed",
+      "webgl2XvfbChromium": "passed",
+      "shaderCompileAndLink": "passed",
+      "materialSwitches": "passed",
+      "rockTypeSwitch": "passed",
+      "pageErrors": 0,
+      "consoleErrors": 0,
+      "fastStateTestActiveCourses": 6,
+      "fastStateTestBrickCount": 204
+    }
+  },
+  "materialLibrary": {
+    "file": "Brick_Mother_Material_Library_R3_12.html",
+    "entries": [
+      "R6 true rice hull and seven lithologies",
+      "R7.2 selected seven object families",
+      "R5 shape baseline",
+      "V2.7.5 three-material DNA laboratory"
+    ],
+    "singleActiveWebGLPage": true,
+    "historicalSourcesModified": false,
+    "shellInteractionMock": "passed",
+    "pageErrors": 0
+  },
+  "topWorkbench": {
+    "file": "Brick_Mother_Unified_Workbench_R3_12.html",
+    "routes": ["wall application", "material library"],
+    "singleActiveWebGLPage": true,
+    "shellInteractionMock": "passed",
+    "pageErrors": 0
+  },
+  "truthBoundary": {
+    "blockCompatibleWallMaterialsImplemented": true,
+    "irregularRubblePackingWallImplemented": false,
+    "pebblePackingWallImplemented": false,
+    "reason": "irregular rubble and pebbles require a different unit-placement and packing solver; applying only their color to the accepted brick bond would be a false structural representation",
+    "exactIrregularAndPebbleSpecimensRestoredInLibrary": true,
+    "r6ExplicitHullGeometryRestoredInLibrary": true
+  },
+  "approvals": {
+    "r38WallGeometryPreviouslyAccepted": true,
+    "r312MaterialBridgeHumanVisualApproved": false,
+    "r312LibraryHumanVisualApproved": false,
+    "historicalConstructionVerified": false
+  }
+}
