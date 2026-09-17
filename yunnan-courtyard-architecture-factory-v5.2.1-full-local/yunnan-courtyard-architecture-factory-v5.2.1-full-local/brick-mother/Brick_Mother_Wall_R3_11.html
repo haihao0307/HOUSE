@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Brick Mother · 固定墙体</title>
+<style>
+:root{color-scheme:dark;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;background:#0d120e;color:#ece8dc}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#0d120e}
+main{height:100svh;display:grid;grid-template-rows:auto minmax(0,1fr)}
+header{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:8px 10px;border-bottom:1px solid #ffffff16;background:#121812}
+.title{margin-right:auto}.title b{display:block;font-size:12px}.title small{display:block;margin-top:2px;color:#9da79a;font-size:8px;line-height:1.4}
+button{min-height:34px;padding:6px 10px;border:1px solid #4c554a;border-radius:8px;background:#222a22;color:#e5e2d8;font:inherit;font-size:9px;cursor:pointer}
+button.active{background:#463620;border-color:#d0a365;color:#ffe5bb}.stage{position:relative;min-height:0;background:#090d0a}iframe{display:block;width:100%;height:100%;border:0;background:#0d120e}
+.loading{position:absolute;inset:0;display:grid;place-content:center;text-align:center;gap:6px;background:#0d120e;color:#e8e2d4;z-index:2}.loading[hidden]{display:none}.loading small{color:#98a294}
+@media(max-width:720px){header{display:grid;grid-template-columns:1fr 1fr}.title{grid-column:1/-1}button{font-size:8px}}
+</style>
+</head>
+<body>
+<main>
+<header>
+<div class="title"><b>固定墙体 · R3.8 真值母体</b><small>省电与精细共用同一份冻结结构；切换时先销毁上一 WebGL 页面。</small></div>
+<button class="active" data-mode="eco">省电显示</button>
+<button data-mode="full">精细显示</button>
+<button id="release">停止并释放显存</button>
+</header>
+<section class="stage" id="stage"><div class="loading" id="loading"><b>正在打开固定墙体…</b><small>只保留一个活动三维页面</small></div></section>
+</main>
+<script>
+'use strict';
+const MODES={
+  eco:{title:'正在打开省电显示…',url:'./Brick_Mother_Wall_4x3_R3_8_ECO.html'},
+  full:{title:'正在打开原始精细固定版…',url:'./Brick_Mother_Wall_4x3_R3_8_FROZEN.html'}
+};
+const stage=document.getElementById('stage'),loading=document.getElementById('loading');
+let frame=null,current='',serial=0,watchdog=0;
+function destroy(){serial++;clearTimeout(watchdog);if(frame){try{frame.src='about:blank';}catch{}frame.remove();frame=null;}stage.querySelectorAll('iframe').forEach(node=>node.remove());}
+function setButtons(mode){document.querySelectorAll('[data-mode]').forEach(button=>button.classList.toggle('active',button.dataset.mode===mode));}
+function openMode(mode){if(!MODES[mode]||mode===current)return;current=mode;setButtons(mode);destroy();loading.hidden=false;loading.querySelector('b').textContent=MODES[mode].title;loading.querySelector('small').textContent='先释放上一显示，再打开当前显示';const token=serial;setTimeout(()=>{if(token!==serial)return;const next=document.createElement('iframe');next.title=MODES[mode].title;next.src=MODES[mode].url;next.addEventListener('load',()=>{if(frame===next){loading.hidden=true;clearTimeout(watchdog);}});frame=next;stage.appendChild(next);watchdog=setTimeout(()=>{if(frame===next&&!loading.hidden)loading.querySelector('small').textContent='墙体仍在初始化；可按“停止并释放显存”。';},18000);},120);}
+document.querySelectorAll('[data-mode]').forEach(button=>button.addEventListener('click',()=>openMode(button.dataset.mode)));
+document.getElementById('release').addEventListener('click',()=>{current='';setButtons('');destroy();loading.hidden=false;loading.querySelector('b').textContent='墙体显示已经停止';loading.querySelector('small').textContent='WebGL 页面与显存已释放。';});
+window.addEventListener('pagehide',destroy);window.addEventListener('beforeunload',destroy);openMode('eco');
+</script>
+</body>
+</html>
