@@ -1,0 +1,131 @@
+{
+  "schema": "brick-mother.v26.deep-pore-broken-child-reference/1",
+  "source": {
+    "repository": "haihao0307/HOUSE",
+    "commit": "cfdda86c60076a0418fe1922075ddaa34cb8019c3",
+    "file": "brick-mother/brick-mother-standalone-v2.6.html",
+    "blobSha1": "f64c65d87dc418bf1a923a4cf332b449efbe0eb9"
+  },
+  "referenceImage": {
+    "externalZipFile": "reference/V26_DEEP_PORE_BROKEN_CHILD_REFERENCE.png",
+    "width": 1162,
+    "height": 699,
+    "bytes": 618762,
+    "sha256": "5666c722378289ce76d25943a14e91dcb870ae19da76ac202015a46eea9c62c6",
+    "source": "user-provided screenshot"
+  },
+  "profileId": "old-pbr-fired",
+  "profileLabel": "完整 PBR 老砖",
+  "childIndex": 2,
+  "childLabel": "深孔破碎子代",
+  "damageLevel": 0.58,
+  "childSeedOffset": 2647,
+  "seedPrimes": {
+    "master": 1,
+    "shape": 3,
+    "damage": 5,
+    "pore": 7,
+    "color": 11,
+    "water": 13,
+    "weather": 17,
+    "inclusion": 19,
+    "detail": 23
+  },
+  "runtimeDNA": {
+    "shapeRatio": [3.083, 1.0, 2.013],
+    "edgeRadius": 0.085,
+    "macroWarp": 0.024,
+    "surfaceRelief": 0.026,
+    "grainScale": 8.0,
+    "fineScale": 42.0,
+    "roughnessRange": [0.78, 0.96],
+    "mineralFleck": 0.68,
+    "pitDensity": 0.56,
+    "edgeFragility": 0.47,
+    "crackAffinity": 0.34,
+    "seedBase": 5045
+  },
+  "noiseDNA": {
+    "warpStrength": 0.16,
+    "macroScale": 1.45,
+    "ridgedScale": 5.8,
+    "cellScale": 14.0,
+    "poreThreshold": 0.12,
+    "poreSharpness": 0.05,
+    "microScale": 42.0,
+    "colorContrast": 1.52,
+    "cavityStrength": 0.86,
+    "bumpStrength": 0.13,
+    "roughnessCorrelation": 0.48,
+    "mineralScale": 22.0,
+    "geometryPoreCount": 12,
+    "edgeRoundnessScale": 0.54,
+    "geometryWarp": 0.72,
+    "geometryRelief": 0.62,
+    "domainWarpScale": 0.78,
+    "geometryDeepPoreCount": 5,
+    "colorClusterScale": 3.1,
+    "waterRunoffScale": 5.4,
+    "weatherExposureScale": 1.82
+  },
+  "baseCompositeDefaults": {
+    "colorRichness": 1.6,
+    "damage": 0.72,
+    "poreDepth": 1.34,
+    "waterStain": 0.82,
+    "weathering": 0.84,
+    "inclusion": 0.2,
+    "shapeVariation": 0.9,
+    "rockDetail": 0.5,
+    "strata": 0.08,
+    "microErosion": 0.6,
+    "colorClarity": 1.08,
+    "colorGamut": 1.3,
+    "maskSharpness": 0.82,
+    "poreDensity": 1.52,
+    "poreVariety": 1.42
+  },
+  "childShift": {
+    "damage": 0.16,
+    "poreDepth": 0.25,
+    "poreDensity": 0.18,
+    "poreVariety": 0.22,
+    "waterStain": 0.02,
+    "weathering": 0.08,
+    "colorRichness": 0.1
+  },
+  "resolvedControls": {
+    "damage": 0.88,
+    "poreDepth": 1.59,
+    "poreDensity": 1.7,
+    "poreVariety": 1.64,
+    "waterStain": 0.84,
+    "weathering": 0.92,
+    "colorRichness": 1.7
+  },
+  "gaeaDNA": {
+    "ruggedScale": 6.2,
+    "strataFrequency": 5.2,
+    "surfaceScale": 36.0,
+    "ruggedDepth": 0.0095,
+    "strataDepth": 0.0032,
+    "microErosionDepth": 0.0042,
+    "warpStrength": 0.22,
+    "strataTilt": 0.17,
+    "geometryStrength": 1.0
+  },
+  "paletteDNA": {
+    "darkSRGB": [0.013, 0.01, 0.008],
+    "warmSRGB": [0.52, 0.18, 0.048],
+    "oxideSRGB": [0.76, 0.07, 0.013],
+    "mineralSRGB": [0.78, 0.66, 0.47],
+    "bioSRGB": [0.085, 0.16, 0.052],
+    "wetSRGB": [0.012, 0.027, 0.039]
+  },
+  "approval": {
+    "referenceSelectedByUser": true,
+    "exactPixelReproductionClaim": false,
+    "portableMethodApproved": false,
+    "productionReady": false
+  }
+}
