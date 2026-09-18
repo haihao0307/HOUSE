@@ -7,12 +7,12 @@
     "blobSha1": "f64c65d87dc418bf1a923a4cf332b449efbe0eb9"
   },
   "referenceImage": {
-    "externalZipFile": "reference/V26_DEEP_PORE_BROKEN_CHILD_REFERENCE.png",
+    "externalZipFile": "reference/V26_DEEP_PORE_BROKEN_CHILD_REFERENCE.jpg",
     "width": 1162,
     "height": 699,
-    "bytes": 618762,
-    "sha256": "5666c722378289ce76d25943a14e91dcb870ae19da76ac202015a46eea9c62c6",
-    "source": "user-provided screenshot"
+    "bytes": 113986,
+    "sha256": "ec32d2ac75b818999ea32202331f17fcfc7e49a919d473bd42bc0eb54d813ac5",
+    "source": "user-provided screenshot; JPEG packaging copy"
   },
   "profileId": "old-pbr-fired",
   "profileLabel": "完整 PBR 老砖",
