@@ -1,0 +1,65 @@
+name: Brick Mother V2.6 Transfer Pack R1
+
+on:
+  push:
+    branches:
+      - codex/brick-mother-v26-transfer-skill-pack-20260918
+    paths:
+      - 'yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/skills/v26-composite-material-dna-transfer-r1/**'
+      - '.github/workflows/brick-mother-v26-transfer-r1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  verify-and-package:
+    runs-on: ubuntu-latest
+    env:
+      SKILL: yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/skills/v26-composite-material-dna-transfer-r1
+      TAG: brick-mother-v26-transfer-r1-20260918
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify transfer kernel and seed isolation
+        run: node "$SKILL/src/v26_transfer_kernel.test.mjs"
+      - name: Build deterministic package
+        run: python "$SKILL/tools/build_package.py" --skill-root "$SKILL" --out-dir dist
+      - name: Verify archive
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          import hashlib, json
+          z=next(Path('dist').glob('*.zip'))
+          with ZipFile(z) as f:
+              assert f.testzip() is None
+              names=f.namelist()
+              assert any(n.endswith('/00_START_HERE.md') for n in names)
+              assert any(n.endswith('/src/v26_event_geometry_kernel.mjs') for n in names)
+              assert any(n.endswith('/reference/V26_DEEP_PORE_BROKEN_CHILD_REFERENCE_THUMB.jpg') for n in names)
+              assert any(n.endswith('/source/brick-mother-standalone-v2.6.html') for n in names)
+          print(json.dumps({'file':z.name,'bytes':z.stat().st_size,'sha256':hashlib.sha256(z.read_bytes()).hexdigest(),'entries':len(names)},indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: BRICK_MOTHER_V26_COMPOSITE_MATERIAL_DNA_TRANSFER_R1_2026-09-18
+          path: dist/*
+          if-no-files-found: error
+      - name: Publish fixed release asset
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          ZIP=$(find dist -maxdepth 1 -name '*.zip' -print -quit)
+          RECEIPT=$(find dist -maxdepth 1 -name '*.receipt.json' -print -quit)
+          NOTES='Brick Mother-only V2.6 method transfer package. Includes source lock, deep-pore reference preset, continuous field kernel, negative-geometry event library, material-channel correlation, tests and strict cross-Mother boundary. It contains no Landscape implementation and grants no receiving-Mother acceptance.'
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" "$ZIP" "$RECEIPT" --clobber
+          else
+            gh release create "$TAG" "$ZIP" "$RECEIPT" --target "$GITHUB_SHA" --title 'Brick Mother V2.6 Composite Material DNA Transfer R1' --notes "$NOTES"
+          fi
