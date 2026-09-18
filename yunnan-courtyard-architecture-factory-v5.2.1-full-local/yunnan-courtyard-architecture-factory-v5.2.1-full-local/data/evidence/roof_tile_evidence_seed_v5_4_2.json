@@ -1,0 +1,258 @@
+{
+  "schemaVersion": "5.4.2-draft",
+  "datasetId": "YUNNAN-ROOF-TILE-EVIDENCE-SEED-V5.4.2",
+  "status": "codex-implementation-seed",
+  "purpose": "Separate measured case profiles, visual calibration values and unresolved roof-tile construction fields before generator migration.",
+  "globalRules": {
+    "constructionDependency": [
+      "measuredPlan",
+      "foundationAndGrid",
+      "storeysAndWalls",
+      "controlSection",
+      "framePurlinsRafters",
+      "roofUnderlay",
+      "boardTileCourses",
+      "coverTileCourses",
+      "eaveTerminals",
+      "ridgeAssemblies",
+      "drainageAndCollisionQA"
+    ],
+    "boardTile": {
+      "orientation": "concave-up",
+      "direction": "maximum-slope-fall",
+      "primaryRole": "continuous-water-channel"
+    },
+    "coverTile": {
+      "orientation": "convex-up",
+      "position": "centered-over-seam-between-adjacent-board-tile-courses",
+      "primaryRole": "longitudinal-seam-cover"
+    },
+    "installationDirection": "eave-to-ridge",
+    "longitudinalRule": "upper-piece-overlaps-upper-end-of-lower-piece",
+    "eaveTerminalRule": {
+      "boardTileCourse": "dripTile",
+      "coverTileCourse": "eaveCapTile",
+      "visualRhythm": "alternating"
+    },
+    "ridgeRule": "main-ridge, vertical-ridge, closures and allowed ornaments are separate post-slope assemblies",
+    "evidenceWeightRule": "duplicate files with identical sha256 must not increase confidence"
+  },
+  "profiles": [
+    {
+      "profileId": "liu-zhiping-atlas-kunming-sample",
+      "caseId": "CASE-LZP-KUNMING-NORTHEAST-ATLAS-TILE-SAMPLE",
+      "region": "central-yunnan-kunming-northeast-countryside",
+      "era": "1940s-survey-record",
+      "sourceScope": "individual measured atlas sample",
+      "evidenceStatus": "measured-drawing-reading-requires-final-human-cross-check",
+      "dimensionsMeters": {
+        "boardTile": {
+          "length": 0.21,
+          "overallSpan": 0.21,
+          "innerChord": 0.19,
+          "arcRise": 0.04,
+          "thickness": 0.014
+        },
+        "coverTile": {
+          "length": 0.24,
+          "innerSpan": 0.125
+        },
+        "eaveCapTile": {
+          "faceDiameter": 0.13
+        },
+        "dripTile": {
+          "overallWidth": 0.21
+        }
+      },
+      "sources": [
+        {
+          "manifestPath": "references-private/measured-drawings/liu_zhiping_atlas_09.jpg",
+          "sha256": "fa9c890e77299c0c2c80c00a149b96c1cd97e0cfcfe5e882c9ebfa568e2ba1eb",
+          "role": "brick-and-tile-measured-samples"
+        },
+        {
+          "manifestPath": "references-private/measured-drawings/liu_zhiping_atlas_06.jpg",
+          "sha256": "a350b557b82fe0d8e62ae5c77a4928d1e7a2056387bbde9ba8dc85f0c2b0d82e",
+          "role": "ridge-eave-and-tile-vocabulary"
+        }
+      ],
+      "allowedUses": [
+        "tile-profile-study",
+        "eave-terminal-proportion-study",
+        "case-comparison",
+        "procedural-sample-preview"
+      ],
+      "prohibitedUses": [
+        "declare-as-universal-yunnan-size",
+        "infer-unmeasured-longitudinal-lap",
+        "infer-underlay-thickness",
+        "apply-temple-ornaments-to-common-house"
+      ],
+      "unresolvedFields": [
+        "longitudinalLap",
+        "courseCenterSpacing",
+        "coverSeamOverlap",
+        "underlayComposition",
+        "underlayThickness",
+        "eaveFixing",
+        "ordinary-house-ridge-closure"
+      ]
+    },
+    {
+      "profileId": "three-bay-front-gallery-survey-sample",
+      "caseId": "CASE-YUNNAN-THREE-BAY-FRONT-GALLERY-TILE-SAMPLE",
+      "region": "yunnan-specific-site-unresolved",
+      "era": "source-date-unresolved",
+      "sourceScope": "user-supplied individual measured sketch",
+      "evidenceStatus": "locked-case-measurements-with-visual-exposure-calibration",
+      "dimensionsMeters": {
+        "boardTile": {
+          "length": 0.223,
+          "largeMouthSpan": 0.242,
+          "smallMouthSpan": 0.221
+        },
+        "coverTile": {
+          "length": 0.222,
+          "largeMouthSpan": 0.115,
+          "smallMouthSpan": 0.09
+        }
+      },
+      "visualCalibrationOnly": {
+        "longitudinalExposure": true,
+        "longitudinalLap": true,
+        "notes": "Current exposure follows supplied roof photographs and must remain replaceable by later measured data."
+      },
+      "sources": [
+        {
+          "registry": "data/evidence/yikeyin_additional_sources_2026_08_21.json",
+          "sourceIds": [21, 22, 23, 24]
+        }
+      ],
+      "allowedUses": [
+        "three-bay-case-generation",
+        "tapered-single-tile-geometry",
+        "case-comparison",
+        "visual-course-calibration"
+      ],
+      "prohibitedUses": [
+        "overwrite-liu-zhiping-profile",
+        "declare-visual-exposure-as-measured-lap",
+        "apply-to-all-yunnan-roofs"
+      ],
+      "unresolvedFields": [
+        "measuredLongitudinalLap",
+        "underlayComposition",
+        "eaveFixing",
+        "ridgeEndDetail"
+      ]
+    },
+    {
+      "profileId": "tuanjie-township-visual-reference",
+      "caseId": "YN_TUANJIE_001",
+      "region": "kunming-tuanjie-township",
+      "era": "historic-building-current-scan-with-chronology-unresolved",
+      "sourceScope": "scan-and-user-confirmed-visible-relations",
+      "evidenceStatus": "visual-reference-only-for-tile-geometry",
+      "dimensionsMeters": {},
+      "confirmedVisibleRelations": [
+        "aged-grey-clay-tile-appearance",
+        "board-tile-and-cover-tile-alternation",
+        "multiple-independent-roof-units",
+        "repair-and-weathering-variation"
+      ],
+      "allowedUses": [
+        "appearance-calibration",
+        "weathering-calibration",
+        "multi-roof-visual-comparison"
+      ],
+      "prohibitedUses": [
+        "derive-exact-tile-dimensions",
+        "derive-exact-lap",
+        "derive-hidden-underlay",
+        "derive-original-construction-chronology"
+      ],
+      "unresolvedFields": [
+        "tileDimensions",
+        "longitudinalLap",
+        "courseSpacing",
+        "underlay",
+        "fixingMethod",
+        "repairChronology"
+      ]
+    },
+    {
+      "profileId": "legacy-visual-compatibility",
+      "caseId": "LEGACY-VISUAL-PROFILE-V5.4.1",
+      "region": "none",
+      "era": "software-legacy",
+      "sourceScope": "compatibility-only",
+      "evidenceStatus": "deprecated-legacy-visual-profile",
+      "dimensionsMeters": {
+        "tileWidth": 0.28,
+        "tileLength": 0.64,
+        "tileCourse": 0.46,
+        "tileThickness": 0.055,
+        "coverLongitudinalOffsetFactor": 0.23
+      },
+      "allowedUses": [
+        "visual-regression-comparison",
+        "temporary-backward-compatibility"
+      ],
+      "prohibitedUses": [
+        "default-new-generation",
+        "claim-as-measured-data",
+        "merge-with-survey-profiles"
+      ],
+      "migrationRequired": true
+    }
+  ],
+  "generatorMigration": {
+    "requiredProfileKey": "tileProfileId",
+    "requiredSlopeFields": [
+      "roofUnitId",
+      "slopeId",
+      "hostBuildingId",
+      "eaveLine",
+      "ridgeLine",
+      "maximumFallDirection",
+      "drainageTarget",
+      "qualityProfile",
+      "evidenceStatus"
+    ],
+    "requiredTileTraceFields": [
+      "branchId",
+      "typologyId",
+      "caseId",
+      "buildingUnitId",
+      "slopeId",
+      "tileType",
+      "courseIndex",
+      "columnIndex",
+      "eaveOrRidgeRole",
+      "evidenceStatus"
+    ],
+    "qualityProfiles": [
+      "research-high",
+      "web-standard",
+      "distant-simplified"
+    ],
+    "qualityInvariant": "All quality profiles preserve slope IDs, course topology, drainage paths and semantic component IDs."
+  },
+  "qaRules": [
+    "one-tile-instance-belongs-to-one-slope",
+    "board-tile-course-follows-maximum-fall",
+    "cover-tile-course-centers-over-board-course-seam",
+    "drip-tile-terminates-board-water-channel",
+    "eave-cap-terminates-cover-course",
+    "upper-piece-overlaps-lower-piece",
+    "every-board-water-channel-reaches-eave",
+    "no-reverse-slope-course",
+    "no-broken-water-channel",
+    "no-duplicate-instance-id",
+    "ornament-level-matches-building-class",
+    "duplicate-source-hash-does-not-increase-confidence",
+    "quality-switch-preserves-semantic-topology",
+    "large-angle-rotation-has-no-depth-order-regression",
+    "door-window-and-visitor-route-regression-pass"
+  ]
+}
