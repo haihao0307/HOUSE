@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<title>Brick Mother</title>
+<style>
+:root{color-scheme:dark;font-family:Inter,system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;background:#0d120e;color:#ece8dc}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#0d120e}
+main{height:100svh;display:grid;grid-template-rows:auto auto minmax(0,1fr)}
+header{padding:11px 14px;border-bottom:1px solid #ffffff16;background:#121812}
+h1{margin:0;font-size:16px}
+nav{display:flex;gap:7px;flex-wrap:wrap;align-items:center;padding:8px 12px;border-bottom:1px solid #ffffff16;background:#151b15}
+button{min-height:40px;padding:7px 11px;border:1px solid #4d564a;border-radius:8px;background:#222a22;color:#e4e1d6;font:inherit;font-size:10px;cursor:pointer}
+button:hover{background:#313a30}button.active{background:#463620;border-color:#d0a365;color:#ffe5bb}.release{margin-left:auto}
+.stage{position:relative;min-height:0;background:#090d0a}.viewer{position:absolute;inset:0}iframe{display:block;width:100%;height:100%;border:0;background:#0d120e}
+.loading{position:absolute;inset:0;display:grid;place-content:center;text-align:center;gap:7px;padding:24px;background:#0d120e;color:#e8e2d4;z-index:3}.loading[hidden]{display:none}.loading small{color:#98a294;line-height:1.55}
+.note{position:absolute;left:10px;bottom:9px;max-width:min(1050px,calc(100% - 20px));padding:7px 9px;border:1px solid #ffffff14;border-radius:7px;background:#0c110cd9;color:#aab2a6;font-size:8px;line-height:1.5;pointer-events:none;z-index:2}
+@media(max-width:900px){header{padding:9px 10px}nav{display:grid;grid-template-columns:1fr 1fr;padding:7px 8px}button{font-size:9px;padding:6px}.release{margin-left:0;grid-column:1/-1}.note{font-size:7px}}
+</style>
+</head>
+<body>
+<main>
+<header><h1>Brick Mother</h1></header>
+<nav aria-label="工作台入口">
+<button class="active" data-page="r6">R6 真稻壳 / 七岩性</button>
+<button data-page="r72">R7.2 七类选定</button>
+<button data-page="r5">R5 形体基线</button>
+<button data-page="v275">V2.7.5</button>
+<button data-page="v26">V2.6 高变化</button>
+<button data-page="wall">墙体应用</button>
+<button type="button" id="release" class="release">停止 / 释放显存</button>
+</nav>
+<section class="stage">
+<div id="viewer" class="viewer"></div>
+<div id="loading" class="loading"><b>正在打开 R6…</b><small>任意时刻只运行一个 WebGL 工作台</small></div>
+<div id="note" class="note">R6：真稻壳土坯、砖、毛石、层状石、建筑卵石与七岩性。</div>
+</section>
+</main>
+<script>
+'use strict';
+const PAGES={
+ r6:{title:'正在打开 R6…',url:'./r6.html',note:'R6：真稻壳土坯、砖、毛石、层状石、建筑卵石与七岩性。'},
+ r72:{title:'正在打开 R7.2…',url:'./r72.html',note:'R7.2：烧结旧砖、窑变旧砖、纤维土坯、粗凿石、不规则毛石、层状毛石和建筑卵石。'},
+ r5:{title:'正在打开 R5…',url:'./r5.html',note:'R5：砖、土坯、毛石与卵石形体基线。'},
+ v275:{title:'正在打开 V2.7.5…',url:'./v275.html',note:'V2.7.5 首次打开会在本机重新生成程序化三维网格；文件下载本身很小。'},
+ v26:{title:'正在打开 V2.6…',url:'./v26.html',note:'V2.6 首次打开会在主线程生成三组 SDF 网格，因此等待主要来自计算而不是网络。'},
+ wall:{title:'正在打开墙体应用…',url:'./wall.html',note:'墙体保留已通过的 43 皮、1494 块砖、五层墙心、抹灰和材料切换。'}
+};
+const viewer=document.getElementById('viewer'),loading=document.getElementById('loading'),note=document.getElementById('note');
+let current='',frame=null,serial=0,watchdog=0;
+function destroy(){serial++;clearTimeout(watchdog);if(frame){try{frame.src='about:blank'}catch{}frame.remove();frame=null}viewer.replaceChildren()}
+function setButtons(key){document.querySelectorAll('[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===key))}
+function openPage(key){
+ if(!PAGES[key]||key===current)return;
+ current=key;setButtons(key);loading.hidden=false;loading.querySelector('b').textContent=PAGES[key].title;
+ loading.querySelector('small').textContent='先销毁上一 WebGL 上下文，再打开当前页面';note.textContent=PAGES[key].note;destroy();
+ const token=serial;
+ setTimeout(()=>{
+  if(token!==serial)return;
+  const f=document.createElement('iframe');
+  f.title=PAGES[key].title;f.allow='fullscreen; autoplay; xr-spatial-tracking';f.referrerPolicy='no-referrer';f.src=PAGES[key].url;
+  f.addEventListener('load',()=>{if(f===frame){loading.hidden=true;clearTimeout(watchdog)}});
+  frame=f;viewer.appendChild(f);
+  watchdog=setTimeout(()=>{if(f===frame&&!loading.hidden)loading.querySelector('small').textContent='模型仍在生成；可按“停止 / 释放显存”立即中止。'},18000);
+ },120);
+}
+document.querySelectorAll('[data-page]').forEach(b=>b.addEventListener('click',()=>openPage(b.dataset.page)));
+document.getElementById('release').addEventListener('click',()=>{current='';setButtons('');destroy();loading.hidden=false;loading.querySelector('b').textContent='显示已停止';loading.querySelector('small').textContent='WebGL 页面已销毁，显存已释放；请选择一个入口。';note.textContent='最小运行包只保留六个实际工作台和一份墙体载荷。'});
+window.addEventListener('pagehide',destroy);window.addEventListener('beforeunload',destroy);openPage('r6');
+</script>
+</body>
+</html>
