@@ -1,0 +1,22 @@
+{
+  "pass": true,
+  "continuousKernel": "pass",
+  "eventLibrary": "1.0.0-reference",
+  "deterministic": "pass",
+  "colorSeedGeometryIsolation": "pass",
+  "poreSeedMutation": "pass",
+  "counts": {
+    "chips": 8,
+    "pits": 14,
+    "poreClusters": 32,
+    "deepPores": 14,
+    "poreRimChips": 61,
+    "collapsedPores": 0,
+    "cracks": 2,
+    "erosionBites": 2,
+    "inclusionVoids": 1
+  },
+  "maxGeometryDifference": 0.05619209545003803,
+  "scope": "Brick Mother transfer-kernel internal consistency only",
+  "receivingMotherApproved": false
+}

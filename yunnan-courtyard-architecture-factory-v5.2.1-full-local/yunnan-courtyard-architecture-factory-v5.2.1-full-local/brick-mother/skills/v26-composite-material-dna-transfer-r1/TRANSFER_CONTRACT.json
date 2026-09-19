@@ -1,0 +1,70 @@
+{
+  "schema": "brick-mother.v26.cross-mother-transfer/1",
+  "producer": "Brick Mother",
+  "boundary": {
+    "producerOwns": [
+      "algorithm descriptions",
+      "normalized parameter ranges",
+      "event identities",
+      "seed separation",
+      "reference preset",
+      "channel-correlation rules",
+      "failure gates"
+    ],
+    "consumerOwns": [
+      "domain truth",
+      "unit mapping",
+      "event placement constraints",
+      "physics and geology",
+      "runtime implementation",
+      "performance budget",
+      "visual acceptance",
+      "production approval"
+    ]
+  },
+  "input": {
+    "position": {"type": "vec3", "unit": "consumer-defined after normalization"},
+    "normal": {"type": "vec3", "unit": "unit vector"},
+    "objectDimensions": {"type": "vec3", "unit": "consumer-defined"},
+    "masterSeed": {"type": "uint32"},
+    "eventControls": {"type": "object", "typicalRange": [0, 2]},
+    "domainMasks": {
+      "type": "object",
+      "examples": ["slope", "curvature", "drainage", "lithology", "exposure", "protected"]
+    }
+  },
+  "output": {
+    "domainWarp": "vec3 normalized coordinate displacement",
+    "continuousGeometryOffset": "scalar normalized SDF or height offset",
+    "discreteEvents": "array of stable event descriptors",
+    "eventMasks": ["rugged", "strata", "microErosion", "rockMap", "flow", "protrusion", "cavity", "separation"],
+    "materialChannels": ["baseColorWeights", "roughness", "height", "normal", "ao", "wetness", "weathering", "mineral"]
+  },
+  "events": [
+    {"id":"chips","geometry":"subtract irregular ellipsoid near edges or corners","materialLinks":["fresh-break-color","roughness","ao"]},
+    {"id":"pits","geometry":"subtract shallow ellipsoid","materialLinks":["cavity","roughness","normal"]},
+    {"id":"poreClusters","geometry":"clustered small cavities with shared parent mask","materialLinks":["cavity","ao","dark-color"]},
+    {"id":"deepPores","geometry":"subtract capsule bore plus mouth ellipsoid","materialLinks":["deep-ao","wetness","dark-color","rim-normal"]},
+    {"id":"poreRimChips","geometry":"subtract multiple irregular ellipsoids around pore mouth","materialLinks":["fresh-break-color","roughness","normal"]},
+    {"id":"collapsedPores","geometry":"subtract asymmetric broad mouth and collapsed roof","materialLinks":["cavity","ao","weathering","debris-color"]},
+    {"id":"cracks","geometry":"subtract warped narrow slits or capsule chains","materialLinks":["wetness","ao","dark-color","roughness"]},
+    {"id":"erosionBites","geometry":"subtract broad irregular edge or body cutters","materialLinks":["weathering","fresh-break-color","roughness"]},
+    {"id":"inclusionVoids","geometry":"subtract cavity left by lost fibre or grain","materialLinks":["organic-edge-color","ao","roughness"]}
+  ],
+  "booleanConvention": "signed-distance subtraction: d=max(d,-eventSdf)",
+  "seedLayers": ["master", "shape", "damage", "pore", "color", "water", "weather", "inclusion", "detail"],
+  "unitRule": "Brick values are normalized ratios. Consumer must declare unitScale, maximumPhysicalAmplitude and minimumResolvedFeatureSize.",
+  "truthProtection": "protected domain masks override geometry changes; diagnostic event masks may remain visible",
+  "prohibited": [
+    "copying brick palette as receiving-domain truth",
+    "copying brick event density without scale mapping",
+    "using dark color alone to fake a hole",
+    "claiming a height depression is a volumetric cave",
+    "allowing a color seed to change geometry",
+    "claiming a receiving-Mother implementation exists when only this package exists"
+  ],
+  "approvals": {
+    "visualAcceptance": false,
+    "productionReady": false
+  }
+}
