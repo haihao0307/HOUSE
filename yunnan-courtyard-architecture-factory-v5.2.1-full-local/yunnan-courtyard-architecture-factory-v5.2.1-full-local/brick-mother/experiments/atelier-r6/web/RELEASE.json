@@ -1,0 +1,16 @@
+{
+  "version": "R6.0.0",
+  "sourceHead": "b4b5f4f3dad128ccdceaf63f8fc6ffbfac45ea78",
+  "htmlSHA256": "32c09833cedb01c1cbae6fb04faea6e9322112e92f07252baedd3b27bf7cc76d",
+  "bytes": 78835,
+  "sourceSHA256": {
+    "index.template.html": "7d3a0a35957e28723daf09e49d8c0d51b4d9cc5e06796d1298ee1772910d47f2",
+    "kernel.js": "a282bdf38897ce19d88383c5dc653df07fe613432f41248ffc98187f530f81c5",
+    "renderer.js": "589699549f589847b3946bfda1672b97b29279235cd1dee8cb851f2bd6a739a0",
+    "app.js": "8a8d5775fb6b3804fa77cf23c18fca58ac30d85a58d714e645ece87033f75879",
+    "style.css": "abce4f15ef82d9afaf3c550cbee30ff5bf67ebfb3d5127b1dde13df72c6ae2cb"
+  },
+  "previous": "R5 retained",
+  "humanVisualApproved": false,
+  "productionApproved": false
+}

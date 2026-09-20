@@ -1,0 +1,129 @@
+name: Brick Mother R7 True Direct Standalone
+on:
+  push:
+    branches: [feature/brick-mother-v2.0-composite-material-dna]
+    paths: [.github/workflows/brick-mother-r7-direct-standalone.yml]
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: brick-mother-r7-true-direct
+  cancel-in-progress: false
+jobs:
+  direct:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      BRANCH: feature/brick-mother-v2.0-composite-material-dna
+      DIR: yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/experiments/atelier-r7
+      DIRECT: Brick_Mother_R7_Direct.html
+      HTML_SHA: b69b4b344fea713ec3d19044bdf60ceec8199a071402c84e6da2370a144a9a84
+    steps:
+      - uses: actions/checkout@v4
+      - name: Assemble checked self-contained HTML
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import base64,gzip,hashlib,os
+          root=Path('.github/brick-r7-direct-payload')
+          hashes=['61a9138aa8bde448290e6563f2be1f0af2a225c25c95900fba1e658731b25aef','f1e8caa26406f07d5db8f1c4b07d3fc3eabf80cec3907826f9d70394c7ec50c3','2bd3fbe9441a10edfaed320aa98c6c7261f401d0b7f79d619150cf667a9e9554','299ad25bfee971bc5be14d8636cb8f8b247eae3ed9f088b4fb00313fa1134e9b','c02f8bdba079482a7a85f9536d0afe6baf5fd192fa64efe0fa79ae17cb5bbf64','2c92eb1f9322c714798f13d7d8887e858ef59a006eb27d522f3ed029227c45b8','f341951dec3b71f62e6f5f65fc910feadd3d27f149b07808541aa67e74d08393','c002aa0ccbbb311b4311671866b3949cf15d0fee42b8fdf70916c25e580d43ca']
+          parts=[]
+          for i,expected in enumerate(hashes):
+              data=(root/f'part-{i:02}.txt').read_bytes()
+              assert hashlib.sha256(data).hexdigest()==expected,(i,hashlib.sha256(data).hexdigest())
+              parts.append(data)
+          payload=b''.join(parts)
+          assert len(payload)==43740
+          packed=base64.b64decode(payload,validate=True)
+          assert hashlib.sha256(packed).hexdigest()=='e14276c3aea9619d44ec1af5bd343abf833fb4d649b8eaedca9b79eea0328491'
+          html=gzip.decompress(packed)
+          assert len(html)==88172
+          assert hashlib.sha256(html).hexdigest()==os.environ['HTML_SHA']
+          text=html.decode('utf-8')
+          for token in ['<!doctype html>','window.BrickR7','<canvas id="view"','Brick Mother R7']: assert token in text
+          assert 'fetch(' not in text and 'atob(' not in text
+          target=Path(os.environ['DIR'])/os.environ['DIRECT'];target.write_bytes(html)
+          print(target,len(html),os.environ['HTML_SHA'])
+          PY
+      - name: Check JavaScript
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import os,re,subprocess
+          html=(Path(os.environ['DIR'])/os.environ['DIRECT']).read_text()
+          scripts=re.findall(r'<script[^>]*>(.*?)</script>',html,re.S)
+          assert len(scripts)==3
+          for i,s in enumerate(scripts):
+              p=Path(os.environ['RUNNER_TEMP'])/f'script-{i}.js';p.write_text(s);subprocess.run(['node','--check',str(p)],check=True)
+          PY
+      - name: Install Chromium
+        run: |
+          python -m pip install playwright==1.55.0
+          python -m playwright install --with-deps chromium
+      - name: Verify local direct page
+        run: |
+          python -m http.server 8765 --bind 127.0.0.1 --directory "$DIR" > "$RUNNER_TEMP/http.log" 2>&1 &
+          xvfb-run -a python - <<'PY'
+          from playwright.sync_api import sync_playwright
+          import os,json
+          url='http://127.0.0.1:8765/'+os.environ['DIRECT'];report={'url':url,'errors':[]}
+          with sync_playwright() as p:
+              b=p.chromium.launch(headless=False,args=['--use-angle=swiftshader','--enable-unsafe-swiftshader','--no-sandbox'])
+              page=b.new_page(viewport={'width':1280,'height':800});page.on('pageerror',lambda e:report['errors'].append(str(e)))
+              r=page.goto(url,wait_until='load',timeout=60000);assert r and r.status==200
+              page.wait_for_function('window.BrickR7 && BrickR7.audit.ready',timeout=120000)
+              assert page.locator('#error').is_hidden() and not report['errors']
+              report.update({'ready':True,'title':page.title(),'geometry':page.evaluate('BrickR7.stats().geometry')})
+              assert report['geometry']['triangles']>0
+              page.screenshot(path=os.path.join(os.environ['RUNNER_TEMP'],'local.png'));b.close()
+          open(os.path.join(os.environ['RUNNER_TEMP'],'local.json'),'w').write(json.dumps(report,ensure_ascii=False,indent=2))
+          print(json.dumps(report,ensure_ascii=False))
+          PY
+      - name: Commit direct page
+        run: |
+          set -euo pipefail
+          test "$(git ls-remote origin "refs/heads/$BRANCH" | cut -f1)" = "$GITHUB_SHA"
+          git config user.name 'Brick Mother R7 direct release'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- "$DIR/$DIRECT"
+          git commit -m 'fix(brick): add verified self-contained R7 direct page [skip ci]'
+          git push origin "HEAD:refs/heads/$BRANCH"
+          git rev-parse HEAD > "$RUNNER_TEMP/direct-commit.txt"
+      - name: Verify immutable raw.githack page
+        run: |
+          SHA=$(cat "$RUNNER_TEMP/direct-commit.txt")
+          export URL="https://raw.githack.com/haihao0307/HOUSE/$SHA/$DIR/$DIRECT"
+          xvfb-run -a python - <<'PY'
+          from playwright.sync_api import sync_playwright
+          import os,time,json,hashlib
+          last=None
+          for n in range(36):
+              try:
+                  with sync_playwright() as p:
+                      b=p.chromium.launch(headless=False,args=['--use-angle=swiftshader','--enable-unsafe-swiftshader','--no-sandbox'])
+                      page=b.new_page(viewport={'width':1280,'height':800});errors=[];page.on('pageerror',lambda e:errors.append(str(e)))
+                      r=page.goto(os.environ['URL'],wait_until='load',timeout=60000);assert r and r.status==200
+                      assert hashlib.sha256(r.body()).hexdigest()==os.environ['HTML_SHA']
+                      page.wait_for_function('window.BrickR7 && BrickR7.audit.ready',timeout=120000)
+                      assert page.locator('#error').is_hidden() and not errors
+                      report={'url':os.environ['URL'],'ready':True,'httpStatus':r.status,'contentType':r.headers.get('content-type'),'sha256':os.environ['HTML_SHA'],'title':page.title(),'geometry':page.evaluate('BrickR7.stats().geometry'),'errors':errors}
+                      page.screenshot(path=os.path.join(os.environ['RUNNER_TEMP'],'public.png'));b.close();break
+              except Exception as e:
+                  last=e;print('wait',n,str(e),flush=True);time.sleep(5)
+          else: raise last
+          open(os.path.join(os.environ['RUNNER_TEMP'],'public.json'),'w').write(json.dumps(report,ensure_ascii=False,indent=2))
+          print(json.dumps(report,ensure_ascii=False))
+          PY
+      - name: Keep evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: brick-mother-r7-direct-${{ github.run_id }}
+          path: |
+            ${{ runner.temp }}/local.json
+            ${{ runner.temp }}/local.png
+            ${{ runner.temp }}/public.json
+            ${{ runner.temp }}/public.png
+            ${{ runner.temp }}/direct-commit.txt
+            ${{ runner.temp }}/http.log
+          retention-days: 30

@@ -1,0 +1,206 @@
+name: Brick Mother R8 Final Sprint
+
+on:
+  push:
+    branches:
+      - feature/brick-mother-v2.0-composite-material-dna
+    paths:
+      - .github/BRICK_R80_KICK.txt
+
+permissions:
+  contents: write
+
+concurrency:
+  group: brick-r80-final-sprint
+  cancel-in-progress: false
+
+jobs:
+  build-verify-publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      BRANCH: feature/brick-mother-v2.0-composite-material-dna
+      SOURCE_COMMIT: 29c84e1108697c0d1d0698835fa922512a4295f5
+      R7_DIR: yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/experiments/atelier-r7
+      SOURCE_FILE: Brick_Mother_R7_2_StoneCloseout.html
+      CANDIDATE_FILE: Brick_Mother_R8_FinalSprint.html
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Build guarded R8 candidate from selected R7.2
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/brick-r80"
+          git show "$SOURCE_COMMIT:$R7_DIR/$SOURCE_FILE" > "$RUNNER_TEMP/brick-r80/source.html"
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib,json,os,re,subprocess
+          root=Path(os.environ['RUNNER_TEMP'])/'brick-r80'
+          src=(root/'source.html').read_text(encoding='utf-8');out=src;changes=[]
+          def once(old,new,label):
+              global out
+              n=out.count(old)
+              if n!=1: raise SystemExit(f'{label}: expected 1 match, got {n}')
+              out=out.replace(old,new,1);changes.append(label)
+
+          vc=out.count('R7.2.0')
+          if vc<2: raise SystemExit(f'unexpected R7.2.0 count {vc}')
+          out=out.replace('R7.2.0','R8.0.0');changes.append(f'version-r72-to-r80-x{vc}')
+
+          # 1) Dressed stone: stop defaulting to ochre sandstone; use granite identity.
+          # 2) Layered stone: use sandstone as the default layered lithology rather than cement-like limestone.
+          once(
+            "rock:f==='dressed'?2:f==='rubble'?1:f==='stone'?5:f==='pebble'?2:0,soot:f==='kiln'?.17:.065,kiln:.82,",
+            "rock:f==='dressed'?1:f==='rubble'?1:f==='stone'?2:f==='pebble'?2:0,soot:f==='kiln'?.17:.065,kiln:.82,",
+            'correct-default-lithology-identity')
+
+          # Dressed stone needs harder, less earthen geometry. Rubble/adobe remain byte-identical.
+          once(
+            "const soft=isBrick||family==='adobe',wear=c.edgeWear??(family==='adobe'?.78:.62);\n const phase=R()*20,radius=soft?(family==='adobe'?.038+wear*.052:.028+wear*.058):.036;",
+            "const soft=isBrick||family==='adobe',wear=c.edgeWear??(family==='adobe'?.78:.62);\n const phase=R()*20,radius=soft?(family==='adobe'?.038+wear*.052:.028+wear*.058):(family==='dressed'?.018:.036);",
+            'dressed-stone-harder-edge-radius')
+
+          once(
+            "const broadAmp=family==='rubble'?.16:family==='dressed'?.034:.060,fineAmp=family==='dressed'?.038:isStone?.065:.052;sd+=a*broadAmp*c.relief+(b*fineAmp+Math.pow(clamp((b+.5-.38)/.34),.36)*(family==='dressed'?.012:.030))*c.relief*(hard?.38:1);",
+            "const broadAmp=family==='rubble'?.16:family==='dressed'?.018:.060,fineAmp=family==='dressed'?.026:isStone?.065:.052;sd+=a*broadAmp*c.relief+(b*fineAmp+Math.pow(clamp((b+.5-.38)/.34),.36)*(family==='dressed'?.007:.030))*c.relief*(hard?.38:1);",
+            'dressed-stone-reduce-soil-like-soft-volume')
+
+          # Pebble: correct dry gloss and use a stable phase-derived orientation field.
+          once(
+            "pebble:{shape:'sample',damage:.05,relief:.065,grain:.38,color:1.08,wet:0,rough:.67}",
+            "pebble:{shape:'sample',damage:.05,relief:.050,grain:.34,color:1.04,wet:0,rough:.82}",
+            'pebble-dry-roughness-and-relief')
+
+          once(
+            "float river=noise(q*2.45+vec3(19.2,-4.7,8.1));\n   float band=noise(vec3(q.x*3.2+river*.35,q.y*4.8,q.z*2.7)+vec3(-6.7,12.1,4.2));\n   vec3 cool=vec3(.84,.91,1.04),warm=vec3(1.13,.97,.80),olive=vec3(.91,.97,.78);\n   vec3 tint=mix(cool,warm,clamp(.40+(river-.5)*uColor*1.45,0.,1.));\n   tint=mix(tint,olive,smoothstep(.68,.86,band)*.24*uColor);\n   base*=tint;\n   rough=clamp(mix(rough,uRough,.80),.28,.96);detail*=.24;",
+            "float pebbleAngle=uPhase*.173;vec2 pebbleDir=vec2(cos(pebbleAngle),sin(pebbleAngle));\n   float along=dot(q.xz,pebbleDir),across=dot(q.xz,vec2(-pebbleDir.y,pebbleDir.x));\n   float river=noise(vec3(along*2.15,q.y*3.25,across*5.65)+vec3(19.2,-4.7,8.1));\n   float band=noise(vec3(along*1.45+river*.24,q.y*3.9,across*7.35)+vec3(-6.7,12.1,4.2));\n   float vein=noise(vec3(along*7.8,q.y*2.2,across*1.35)+vec3(4.3,-7.1,15.6));\n   vec3 cool=vec3(.90,.94,1.00),warm=vec3(1.08,.98,.87),olive=vec3(.94,.98,.86);\n   vec3 tint=mix(cool,warm,clamp(.44+(river-.5)*uColor*.92,0.,1.));\n   tint=mix(tint,olive,smoothstep(.72,.88,band)*.14*uColor);\n   tint*=.97+.07*(vein-.5);base*=tint;\n   rough=clamp(mix(rough,uRough,.88)+.035*(band-.5),.58,.98);detail*=.18;",
+            'pebble-stable-rotated-material-domain')
+
+          # Fired brick: darker clay body, less orange, lower micro-speckle dominance.
+          once(
+            "vec3 redDark=vec3(.315,.072,.032),redMid=vec3(.565,.170,.067),redWarm=vec3(.735,.295,.110);\n  base=mix(redDark,redMid,smoothstep(.08,.72,bodyZone));\n  base=mix(base,redWarm,smoothstep(.54,.95,bodyZone)*.42);",
+            "vec3 redDark=vec3(.255,.058,.030),redMid=vec3(.455,.125,.052),redWarm=vec3(.615,.218,.078);\n  base=mix(redDark,redMid,smoothstep(.08,.72,bodyZone));\n  base=mix(base,redWarm,smoothstep(.58,.95,bodyZone)*.30);",
+            'fired-brick-red-body-correction')
+
+          once(
+            "base*=.96+(.075+.075*weight)*(redFleck-.5)+(.035+.060*weight)*(c-.5);",
+            "base*=.985+(.035+.038*weight)*(redFleck-.5)+(.022+.030*weight)*(c-.5);",
+            'fired-brick-reduce-uniform-speckle')
+
+          once(
+            "base=mix(base,vec3(.245,.205,.188),smoke*(uFamily==0?.55:.72));",
+            "base=mix(base,vec3(.205,.175,.158),smoke*(uFamily==0?.38:.62));",
+            'fired-brick-muted-cool-smoke')
+
+          # Kiln brick: keep variation coherent and ceramic, not bright orange paint.
+          once(
+            "base=mix(base,vec3(.255,.060,.050),reduction*.72);\n   base=mix(base,vec3(.80,.300,.095),oxidised*.46);\n   float mutedAsh=smoothstep(.91,.985,noise(q*31.7+vec3(5.2,17.1,-8.4))+.08*mesoRed)*uKiln;\n   base=mix(base,vec3(.44,.385,.325),mutedAsh*.055);",
+            "base=mix(base,vec3(.205,.050,.040),reduction*.66);\n   base=mix(base,vec3(.625,.205,.070),oxidised*.34);\n   float mutedAsh=smoothstep(.925,.99,noise(q*31.7+vec3(5.2,17.1,-8.4))+.06*mesoRed)*uKiln;\n   base=mix(base,vec3(.365,.335,.300),mutedAsh*.035);",
+            'kiln-brick-coherent-reduction-oxidation')
+
+          # Assert frozen families were not intentionally touched by the patch vocabulary.
+          required=['R8.0.0',"rock:f==='dressed'?1", "f==='stone'?2", "family==='dressed'?.018", "rough:.82", 'pebbleAngle=uPhase*.173', 'vec3 redDark=vec3(.255,.058,.030)', "vec3(.625,.205,.070)"]
+          for token in required:
+              if token not in out: raise SystemExit('missing required token: '+token)
+          for forbidden in ['leaveLegacy(','-bedOffset*c.relief','for(const b of beds)']:
+              if forbidden in out: raise SystemExit('forbidden stale token: '+forbidden)
+          if out.count('data-family=')<7: raise SystemExit('seven families lost')
+          if '<script src=' in out.lower(): raise SystemExit('external script introduced')
+
+          candidate=root/os.environ['CANDIDATE_FILE'];candidate.write_text(out,encoding='utf-8')
+          checked=0
+          for i,m in enumerate(re.finditer(r'<script([^>]*)>(.*?)</script>',out,re.S|re.I)):
+              attrs=m.group(1).lower()
+              if 'application/json' in attrs or 'application/octet-stream' in attrs: continue
+              p=root/f'inline-{i}.js';p.write_text(m.group(2),encoding='utf-8');subprocess.run(['node','--check',str(p)],check=True);p.unlink();checked+=1
+          info={'version':'R8.0.0-final-sprint-candidate','sourceCommit':os.environ['SOURCE_COMMIT'],'sourceSha256':hashlib.sha256(src.encode()).hexdigest(),'candidateSha256':hashlib.sha256(out.encode()).hexdigest(),'bytes':len(out.encode()),'guardedReplacements':changes,'inlineScriptsChecked':checked,'retainedFamilies':7,'frozenFamilies':['rubble','adobe'],'activeFixes':['dressed','stone','pebble','fired','kiln'],'humanVisualApproved':False,'productionApproved':False}
+          (root/'BUILD.json').write_text(json.dumps(info,ensure_ascii=False,indent=2)+'\n',encoding='utf-8');print(json.dumps(info,ensure_ascii=False,indent=2))
+          PY
+
+      - name: Install Chromium
+        run: |
+          python -m pip install playwright==1.55.0
+          python -m playwright install --with-deps chromium
+
+      - name: Local desktop and mobile QA with frozen-family identity checks
+        run: |
+          set -euo pipefail
+          python -m http.server 8765 --bind 127.0.0.1 --directory "$RUNNER_TEMP/brick-r80" > "$RUNNER_TEMP/brick-r80/http.log" 2>&1 &
+          PID=$!;trap 'kill "$PID" || true' EXIT
+          xvfb-run -a python - <<'PY'
+          from playwright.sync_api import sync_playwright
+          from pathlib import Path
+          import json,os
+          root=Path(os.environ['RUNNER_TEMP'])/'brick-r80';url='http://127.0.0.1:8765/'+os.environ['CANDIDATE_FILE'];report={'url':url,'families':[],'errors':[],'consoleErrors':[],'mobile':{},'frozenIdentity':{},'passed':False}
+          def ready(page):page.wait_for_function("""() => {const e=document.querySelector('#error'),b=document.querySelector('#busy'),c=document.querySelector('canvas');return c&&(!e||e.hidden)&&(!b||b.hidden)&&!c.classList.contains('loading');}""",timeout=120000)
+          with sync_playwright() as p:
+              browser=p.chromium.launch(headless=False,args=['--use-angle=swiftshader','--enable-unsafe-swiftshader','--no-sandbox']);page=browser.new_page(viewport={'width':1280,'height':820});page.on('pageerror',lambda e:report['errors'].append(str(e)));page.on('console',lambda m:report['consoleErrors'].append(m.text) if m.type=='error' else None)
+              r=page.goto(url,wait_until='load',timeout=60000);assert r and r.status==200;page.wait_for_function("document.querySelectorAll('[data-family]').length===7",timeout=30000);ready(page)
+              for family in ['fired','kiln','adobe','dressed','rubble','stone','pebble']:
+                  q=page.locator(f'[data-family="{family}"]');assert q.is_visible();q.click();ready(page);page.wait_for_timeout(700);e=page.locator('#error');assert not e.count() or e.is_hidden(),e.inner_text() if e.count() else ''
+                  stats=page.evaluate('window.BrickR7.stats()');shot=root/f'desktop-{family}.png';page.screenshot(path=str(shot),full_page=True);report['families'].append({'family':family,'status':page.locator('#status').inner_text(),'triangles':stats['geometry']['triangles'],'screenshot':shot.name})
+                  if family in ['rubble','adobe']: report['frozenIdentity'][family]={'seed':stats['parameters']['seed'],'triangles':stats['geometry']['triangles'],'rock':stats['parameters']['rock'],'shape':stats['parameters']['shape']}
+              assert report['frozenIdentity']['rubble']['seed']==9298 and report['frozenIdentity']['rubble']['triangles']==35140
+              assert report['frozenIdentity']['adobe']['seed']==4517 and report['frozenIdentity']['adobe']['triangles']==65642
+              page.set_viewport_size({'width':390,'height':844});page.wait_for_timeout(650)
+              for family in ['dressed','stone','pebble','fired','kiln']:
+                  q=page.locator(f'[data-family="{family}"]');assert q.is_visible();q.click();ready(page);page.wait_for_timeout(300)
+              page.screenshot(path=str(root/'mobile-390x844.png'),full_page=True);report['mobile']={'viewport':[390,844],'canvasVisible':page.locator('canvas').first.is_visible(),'sevenButtonsVisible':all(page.locator(f'[data-family="{f}"]').is_visible() for f in ['fired','kiln','adobe','dressed','rubble','stone','pebble'])};assert report['mobile']['canvasVisible'] and report['mobile']['sevenButtonsVisible'];assert not report['errors'];report['passed']=True;browser.close()
+          (root/'LOCAL_BROWSER_QA.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n',encoding='utf-8');assert report['passed']
+          PY
+
+      - name: Commit candidate without overwriting approved/frozen predecessors
+        run: |
+          set -euo pipefail
+          git config user.name 'Brick Mother R8 final sprint';git config user.email '41898282+github-actions[bot]@users.noreply.github.com';git fetch origin "$BRANCH";git reset --hard "origin/$BRANCH"
+          cp "$RUNNER_TEMP/brick-r80/$CANDIDATE_FILE" "$R7_DIR/$CANDIDATE_FILE";cp "$RUNNER_TEMP/brick-r80/BUILD.json" "$R7_DIR/R8_FINAL_SPRINT_BUILD.json";cp "$RUNNER_TEMP/brick-r80/LOCAL_BROWSER_QA.json" "$R7_DIR/R8_LOCAL_BROWSER_QA.json"
+          git add -- "$R7_DIR/$CANDIDATE_FILE" "$R7_DIR/R8_FINAL_SPRINT_BUILD.json" "$R7_DIR/R8_LOCAL_BROWSER_QA.json";if ! git diff --cached --quiet;then git commit -m 'feat(brick): add R8 final sprint candidate [skip ci]';git push origin "HEAD:refs/heads/$BRANCH";fi
+          git fetch origin "$BRANCH";git reset --hard "origin/$BRANCH";CANDIDATE_COMMIT=$(git log -1 --format=%H -- "$R7_DIR/$CANDIDATE_FILE");echo "CANDIDATE_COMMIT=$CANDIDATE_COMMIT" >> "$GITHUB_ENV";printf '%s\n' "$CANDIDATE_COMMIT" > "$RUNNER_TEMP/brick-r80/CANDIDATE_COMMIT.txt"
+
+      - name: Verify immutable RawCDN bytes and real browser gate
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib,json,os,time,urllib.request
+          root=Path(os.environ['RUNNER_TEMP'])/'brick-r80';info=json.loads((root/'BUILD.json').read_text());commit=(root/'CANDIDATE_COMMIT.txt').read_text().strip();url=f"https://rawcdn.githack.com/haihao0307/HOUSE/{commit}/{os.environ['R7_DIR']}/{os.environ['CANDIDATE_FILE']}";last=''
+          for attempt in range(60):
+              try:
+                  req=urllib.request.Request(url,headers={'Cache-Control':'no-cache','User-Agent':'Mozilla/5.0 BrickMotherR8QA'})
+                  with urllib.request.urlopen(req,timeout=20) as r:data=r.read();status=r.status;ct=r.headers.get('Content-Type','');cd=r.headers.get('Content-Disposition','')
+                  sha=hashlib.sha256(data).hexdigest()
+                  if status==200 and 'text/html' in ct and 'attachment' not in cd.lower() and sha==info['candidateSha256']:
+                      (root/'PUBLIC_HTTP_QA.json').write_text(json.dumps({'url':url,'status':status,'contentType':ct,'bytes':len(data),'sha256':sha,'passed':True},indent=2)+'\n');break
+                  last=f'{status} {ct} {sha}'
+              except Exception as e:last=repr(e)
+              print('retry',attempt,last,flush=True);time.sleep(3)
+          else:raise SystemExit('public HTTP verification failed: '+last)
+          PY
+          xvfb-run -a python - <<'PY'
+          from playwright.sync_api import sync_playwright
+          from pathlib import Path
+          import hashlib,json,os
+          root=Path(os.environ['RUNNER_TEMP'])/'brick-r80';http=json.loads((root/'PUBLIC_HTTP_QA.json').read_text());info=json.loads((root/'BUILD.json').read_text());url=http['url'];report={'url':url,'gateSeen':False,'families':[],'mobile':{},'errors':[],'consoleErrors':[],'passed':False}
+          with sync_playwright() as p:
+              b=p.chromium.launch(headless=False,args=['--use-angle=swiftshader','--enable-unsafe-swiftshader','--no-sandbox']);page=b.new_page(viewport={'width':1280,'height':820});page.on('pageerror',lambda e:report['errors'].append(str(e)));page.on('console',lambda m:report['consoleErrors'].append(m.text) if m.type=='error' else None);r=page.goto(url,wait_until='load',timeout=60000);assert r and r.status==200
+              if 'External Content Notice' in page.title():
+                  report['gateSeen']=True;opener=page.get_by_text('Open the page',exact=True);assert opener.is_visible()
+                  with page.expect_navigation(wait_until='load',timeout=60000) as nav:opener.click()
+                  opened=nav.value;assert opened and opened.status==200 and hashlib.sha256(opened.body()).hexdigest()==info['candidateSha256']
+              else:assert hashlib.sha256(r.body()).hexdigest()==info['candidateSha256']
+              page.wait_for_function("document.querySelectorAll('[data-family]').length===7",timeout=30000);page.wait_for_function("document.querySelector('#busy').hidden",timeout=120000)
+              for family in ['fired','kiln','adobe','dressed','rubble','stone','pebble']:
+                  q=page.locator(f'[data-family="{family}"]');q.click();page.wait_for_function("document.querySelector('#busy').hidden",timeout=120000);e=page.locator('#error');assert not e.count() or e.is_hidden(),e.inner_text() if e.count() else '';report['families'].append(family)
+              page.screenshot(path=str(root/'public-desktop.png'),full_page=True);page.set_viewport_size({'width':390,'height':844});page.wait_for_timeout(500);assert page.locator('canvas').first.is_visible();page.screenshot(path=str(root/'public-mobile.png'),full_page=True);report['mobile']={'viewport':[390,844],'canvasVisible':True};assert not report['errors'];report['passed']=True;b.close()
+          (root/'PUBLIC_BROWSER_QA.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n');assert report['passed']
+          PY
+
+      - name: Upload complete R8 evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: brick-r80-final-sprint-${{ github.run_id }}
+          path: ${{ runner.temp }}/brick-r80
+          retention-days: 30

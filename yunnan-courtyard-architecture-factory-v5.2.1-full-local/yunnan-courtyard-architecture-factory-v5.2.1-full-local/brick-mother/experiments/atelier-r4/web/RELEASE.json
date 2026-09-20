@@ -1,0 +1,35 @@
+{
+  "version": "R4-public-1",
+  "head": "a43a46d12e0db8920ac0c146bab563d17659ccbf",
+  "reviewedStandaloneSHA256": "c7908e6c19ccbb3bf664b99c287ab775e7306f38547e000fe2a79ce278241695",
+  "reviewedCoreHashes": {
+    "app.js": "83af2ce5ef3580b62161723b1c332318dca9a213182cafcd254da56507293d15",
+    "index.template.html": "a6bffb76121777606b58c5a1db88d4d84378dabda0a582a6b025bdf5f475d738",
+    "kernel.js": "3a2bf66433e561e2e2f8633a842653739a750214882e4e690f9d68e40db86b35",
+    "renderer.js": "cc539dc52c88da9aa248db5acf910bfe4f560ae12963aa074461f3e43d57fadd"
+  },
+  "materialGeometryApplicationUnchangedFromReviewedR4": true,
+  "publicLayout": "small explicit public layout; original offline layout retained in backup",
+  "publicLegacy": "not mounted; original files preserved in previously delivered full source",
+  "htmlSHA256": "d7ed5db0c389029b359fcb51894f8e3600de4d25670964f284f35f480172cf00",
+  "bytes": 69628,
+  "defaultMaterial": "fired",
+  "materials": [
+    "fired",
+    "kiln",
+    "adobe",
+    "dressed",
+    "rubble",
+    "stone",
+    "pebble"
+  ],
+  "humanVisualApproved": false,
+  "productionApproved": false,
+  "knownMaterialIssues": [
+    "kiln/fired distinction",
+    "straw blade rim definition",
+    "dressed stone cement-like appearance",
+    "pebble material"
+  ],
+  "publicURLVerified": false
+}

@@ -1,0 +1,74 @@
+{
+  "errors": [],
+  "consoleErrors": [],
+  "checks": [
+    {
+      "test": "A=0 versus R2 visible difference",
+      "passed": true,
+      "meanByteDifference": 0.6291869918699187,
+      "changedPixels": 149729,
+      "changedFraction": 0.20749584257206208,
+      "maxByteDifference": 131
+    },
+    {
+      "test": "A=0 ignores brick identity field visually",
+      "passed": true,
+      "meanByteDifference": 0.002342479674796748,
+      "changedPixels": 27,
+      "changedFraction": 3.7416851441241685e-05,
+      "maxByteDifference": 147
+    },
+    {
+      "test": "new brickId changes finished surface",
+      "passed": true,
+      "meanByteDifference": 0.7124741315594975,
+      "changedPixels": 130944,
+      "changedFraction": 0.18146341463414634,
+      "maxByteDifference": 147
+    },
+    {
+      "test": "5-layer and 17-layer prefixes differ",
+      "passed": true,
+      "meanByteDifference": 0.18672256097560977,
+      "changedPixels": 26989,
+      "changedFraction": 0.03740160753880266,
+      "maxByteDifference": 163
+    },
+    {
+      "test": "twelve-brick family view",
+      "passed": true,
+      "state": {
+        "strength": 0.58,
+        "layers": 17,
+        "group": 2,
+        "yaw": 0.72,
+        "pitch": 0.34,
+        "dist": 11.6,
+        "viewMode": "grid",
+        "instanceCount": 12
+      }
+    },
+    {"test": "real pointer orbit", "passed": true},
+    {"test": "390x844 controls visible", "passed": true}
+  ],
+  "softwareRenderMs": {
+    "singleAverage": 3.0304257499835785,
+    "gridAverage": 42.32558699999345,
+    "environment": "Chromium Xvfb ANGLE SwiftShader, 1100x720"
+  },
+  "webglError": 0,
+  "finalState": {
+    "strength": 0.58,
+    "layers": 17,
+    "group": 2,
+    "yaw": 1.6439999999999997,
+    "pitch": 0.5236800537109374,
+    "dist": 11.6,
+    "viewMode": "grid",
+    "instanceCount": 12
+  },
+  "htmlBytes": 17044,
+  "htmlSHA256": "0d0775cb6466ea4f6d6830095291913d47cd2f47c28570944922391886660f79",
+  "passed": true,
+  "note": "Technical probe only. Human visual approval remains false."
+}

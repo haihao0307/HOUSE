@@ -1,5 +1,12 @@
 # 项目状态
 
+## Brick Mother PR #15 当前状态
+
+- 分支：`feature/brick-mother-v2.0-composite-material-dna`
+- 当前版本：Brick Mother `2.7.5-alpha.1`
+- Mixed/solo 控制隔离、master seed 派生、形成事件四路命中统计和 24 张固定证据捕获已接入；建筑主体生产逻辑未扩展。
+- JRB 参考色彩、石材细节、土坯夹杂和 production approval 继续为 `false`，等待人工并排视觉批准。
+
 ## 当前稳定版本
 
 版本：5.4.2

@@ -1,0 +1,141 @@
+name: Brick Mother R7.8 Final Three Material Closeout
+
+on:
+  push:
+    branches:
+      - feature/brick-mother-v2.0-composite-material-dna
+    paths:
+      - .github/BRICK_R78_KICK.txt
+
+permissions:
+  contents: write
+
+concurrency:
+  group: brick-r78-final-three
+  cancel-in-progress: false
+
+jobs:
+  build-verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      BRANCH: feature/brick-mother-v2.0-composite-material-dna
+      SOURCE_COMMIT: e8effd7eb007887a73f8fc56e3847b05b5282e68
+      R7_DIR: yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/experiments/atelier-r7
+      SOURCE_FILE: Brick_Mother_R7_7_InheritRealStone.html
+      CANDIDATE_FILE: Brick_Mother_R7_8_FinalThree.html
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Build guarded R7.8 candidate
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/brick-r78"
+          git show "$SOURCE_COMMIT:$R7_DIR/$SOURCE_FILE" > "$RUNNER_TEMP/brick-r78/source.html"
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib,json,os,re,subprocess
+          root=Path(os.environ['RUNNER_TEMP'])/'brick-r78';src=(root/'source.html').read_text(encoding='utf-8');out=src;changes=[]
+          def once(old,new,label):
+              global out
+              n=out.count(old)
+              if n!=1: raise SystemExit(f'{label}: expected 1 match, got {n}')
+              out=out.replace(old,new,1);changes.append(label)
+          vc=out.count('R7.7.0')
+          if vc<2: raise SystemExit(f'unexpected R7.7.0 count {vc}')
+          out=out.replace('R7.7.0','R7.8.0');changes.append(f'version-r77-to-r78-x{vc}')
+
+          # Only layered stone material response changes. Geometry from R7.7 is frozen.
+          once(
+            "   float layerWave=.5+.5*sin(layerPhase);\n   float layerGate=noise(vec3(rq.x*1.15,rq.y*3.4,rq.z*1.08)+vec3(7.3,-2.9,11.4));\n   float seam=smoothstep(.965,.995,layerWave)*smoothstep(.52,.74,layerGate);\n   float slab=noise(vec3(rq.x*.72,rq.y*5.2,rq.z*.78)+vec3(-9.1,4.6,2.8));\n   vec3 slabTone=mix(vec3(.305,.286,.252),vec3(.505,.438,.340),clamp(.28+.82*slab,0.,1.));\n   base=mix(base,slabTone,.54);base=mix(base,vec3(.205,.186,.158),seam*.14);\n   rough=clamp(mix(rough,.95,.42)+seam*.018,.76,.998);detail-=seam*.0009;",
+            "   float layerWave=.5+.5*sin(layerPhase);\n   float layerGate=noise(vec3(rq.x*1.15,rq.y*3.4,rq.z*1.08)+vec3(7.3,-2.9,11.4));\n   float seam=smoothstep(.972,.997,layerWave)*smoothstep(.50,.72,layerGate);\n   float slab=noise(vec3(rq.x*.72,rq.y*5.2,rq.z*.78)+vec3(-9.1,4.6,2.8));\n   float sandGrain=noise(rq*78.0+vec3(2.4,13.1,-7.8)),sandCoarse=noise(rq*29.0+vec3(-8.3,4.2,16.7));\n   vec3 slabTone=mix(vec3(.270,.264,.242),vec3(.555,.480,.365),clamp(.20+.90*slab,0.,1.));\n   base=mix(base,slabTone,.57);base*=.955+.13*(sandGrain-.5)+.07*(sandCoarse-.5);\n   float pale=smoothstep(.82,.94,sandGrain)*smoothstep(.48,.78,sandCoarse);\n   float dark=smoothstep(.80,.94,1.-sandGrain)*smoothstep(.42,.78,sandCoarse);\n   base=mix(base,vec3(.67,.625,.525),pale*.10);base=mix(base,vec3(.205,.198,.180),dark*.12);\n   base=mix(base,vec3(.175,.158,.132),seam*.22);\n   rough=clamp(mix(rough,.96,.46)+.045*(sandGrain-.5)+seam*.022,.78,.998);\n   detail+=(sandGrain-.5)*.0025+(sandCoarse-.5)*.0015-seam*.0012;",
+            'layered-stone-sand-grain-and-thin-weak-seams')
+
+          # Object position, not shifted material coordinate, owns the kiln placement.
+          once(
+            "  float fireCoord=dot(q,fireDir)*.58+(noise(q*1.12+vec3(5.8,-7.1,12.3))-.5)*.42;\n  float flashWarm=smoothstep(-.10,.48,fireCoord),flashDark=smoothstep(.02,.54,-fireCoord);",
+            "  float fireCoord=dot(vP,fireDir)*.92+(noise(q*.92+vec3(5.8,-7.1,12.3))-.5)*.48;\n  float flashWarm=smoothstep(-.30,.38,fireCoord),flashDark=smoothstep(-.22,.42,-fireCoord);",
+            'brick-object-space-kiln-placement')
+          once(
+            "  base=mix(base,redWarm,broadWarm*.13+flashWarm*.07);base=mix(base,redDark,broadDark*.12+flashDark*.08);",
+            "  base=mix(base,redWarm,broadWarm*.11+flashWarm*.14);base=mix(base,redDark,broadDark*.10+flashDark*.13);",
+            'fired-brick-readable-macro-gradient')
+          once(
+            "   float reduction=max(smoothstep(.47,.66,.48*kilnFlow+.27*fireLens+.16*noise(q*1.65+vec3(6.4,-8.1,2.7))+.09*mesoRed),flashDark*.78)*uKiln;\n   float oxidised=max(smoothstep(.50,.68,.46*oxideLens+.34*mesoRed+.20*noise(q*2.85+vec3(-9.2,3.7,5.8))),flashWarm*.60)*uKiln*(1.-reduction);\n   base=mix(base,vec3(.125,.025,.024),reduction*.72);\n   base=mix(base,vec3(.630,.190,.068),oxidised*.46);",
+            "   float reduction=max(smoothstep(.47,.66,.48*kilnFlow+.27*fireLens+.16*noise(q*1.65+vec3(6.4,-8.1,2.7))+.09*mesoRed),flashDark*.94)*uKiln;\n   float oxidised=max(smoothstep(.50,.68,.46*oxideLens+.34*mesoRed+.20*noise(q*2.85+vec3(-9.2,3.7,5.8))),flashWarm*.76)*uKiln*(1.-reduction);\n   base=mix(base,vec3(.095,.026,.025),reduction*.79);\n   base=mix(base,vec3(.650,.205,.074),oxidised*.53);",
+            'kiln-strong-visible-reduction-and-oxidation')
+
+          checks=['sandGrain=noise(rq*78.0','dot(vP,fireDir)*.92','flashDark*.94','reduction*.79','oxidised*.53']
+          for token in checks:
+              if token not in out: raise SystemExit('missing '+token)
+          if out.count('data-family=')<7 or 'leaveLegacy(' in out or '<script src=' in out.lower(): raise SystemExit('runtime/family regression')
+          candidate=root/os.environ['CANDIDATE_FILE'];candidate.write_text(out,encoding='utf-8')
+          checked=0
+          for i,m in enumerate(re.finditer(r'<script([^>]*)>(.*?)</script>',out,re.S|re.I)):
+              attrs=m.group(1).lower()
+              if 'application/json' in attrs or 'application/octet-stream' in attrs: continue
+              p=root/f'inline-{i}.js';p.write_text(m.group(2),encoding='utf-8');subprocess.run(['node','--check',str(p)],check=True);p.unlink();checked+=1
+          info={'version':'R7.8.0-final-three','sourceCommit':os.environ['SOURCE_COMMIT'],'sourceSha256':hashlib.sha256(src.encode()).hexdigest(),'candidateSha256':hashlib.sha256(out.encode()).hexdigest(),'bytes':len(out.encode()),'changes':changes,'inlineScriptsChecked':checked,'frozenFamilies':['rubble','adobe','pebble','dressed'],'targetFamilies':['stone','fired','kiln'],'humanVisualApproved':False,'productionApproved':False}
+          (root/'BUILD.json').write_text(json.dumps(info,ensure_ascii=False,indent=2)+'\n',encoding='utf-8');print(json.dumps(info,ensure_ascii=False,indent=2))
+          PY
+
+      - name: Install Chromium and comparator
+        run: |
+          python -m pip install playwright==1.55.0 pillow==11.3.0
+          python -m playwright install --with-deps chromium
+
+      - name: Four-family freeze regression and visual QA
+        run: |
+          set -euo pipefail
+          python -m http.server 8765 --bind 127.0.0.1 --directory "$RUNNER_TEMP/brick-r78" > "$RUNNER_TEMP/brick-r78/http.log" 2>&1 &
+          PID=$!;trap 'kill "$PID" || true' EXIT
+          xvfb-run -a python - <<'PY'
+          from playwright.sync_api import sync_playwright
+          from pathlib import Path
+          from PIL import Image,ImageChops,ImageStat
+          import json,os
+          root=Path(os.environ['RUNNER_TEMP'])/'brick-r78';report={'frozen':{},'candidate':{'families':[],'errors':[],'consoleErrors':[],'mobile':{}},'passed':False}
+          def ready(page): page.wait_for_function("""() => {const e=document.querySelector('#error'),b=document.querySelector('#busy'),c=document.querySelector('canvas');return c&&(!e||e.hidden)&&(!b||b.hidden)&&!c.classList.contains('loading');}""",timeout=120000)
+          def cap(browser,file,fam,path):
+              page=browser.new_page(viewport={'width':1280,'height':820});errs=[];page.on('pageerror',lambda e:errs.append(str(e)));r=page.goto('http://127.0.0.1:8765/'+file,wait_until='load',timeout=60000);assert r and r.status==200;page.wait_for_function("document.querySelectorAll('[data-family]').length===7",timeout=30000);ready(page);page.locator(f'[data-family="{fam}"]').click();ready(page);page.wait_for_timeout(650);page.evaluate("BrickR7.face('front')");page.wait_for_timeout(220);page.locator('#view').screenshot(path=str(path));stats=page.evaluate('BrickR7.stats()');assert not errs;page.close();return stats
+          def mae(a,b):
+              ia,ib=Image.open(a).convert('RGB'),Image.open(b).convert('RGB');assert ia.size==ib.size;return sum(ImageStat.Stat(ImageChops.difference(ia,ib)).mean)/3
+          with sync_playwright() as p:
+              browser=p.chromium.launch(headless=False,args=['--use-angle=swiftshader','--enable-unsafe-swiftshader','--no-sandbox'])
+              for fam in ['rubble','adobe','pebble','dressed']:
+                  a=root/f'source-{fam}.png';b=root/f'candidate-{fam}.png';sa=cap(browser,'source.html',fam,a);sb=cap(browser,os.environ['CANDIDATE_FILE'],fam,b);ga=sa.get('geometry') or {};gb=sb.get('geometry') or {};same={}
+                  for k in ['triangles','bodyVertices','fibers','riceHusks']:
+                      if ga.get(k) is not None or gb.get(k) is not None:same[k]=[ga.get(k),gb.get(k)];assert ga.get(k)==gb.get(k),(fam,k)
+                  d=mae(a,b);assert d<=.55,(fam,d);report['frozen'][fam]={'geometry':same,'pixelMAE':d,'passed':True}
+              page=browser.new_page(viewport={'width':1280,'height':820});page.on('pageerror',lambda e:report['candidate']['errors'].append(str(e)));page.on('console',lambda m:report['candidate']['consoleErrors'].append(m.text) if m.type=='error' else None);r=page.goto('http://127.0.0.1:8765/'+os.environ['CANDIDATE_FILE'],wait_until='load',timeout=60000);assert r and r.status==200;page.wait_for_function("document.querySelectorAll('[data-family]').length===7",timeout=30000);ready(page)
+              for fam in ['fired','kiln','adobe','dressed','rubble','stone','pebble']:
+                  q=page.locator(f'[data-family="{fam}"]');assert q.is_visible();q.click();ready(page);page.wait_for_timeout(650);e=page.locator('#error');assert not e.count() or e.is_hidden(),e.inner_text() if e.count() else '';page.screenshot(path=str(root/f'desktop-{fam}.png'),full_page=True)
+                  if fam in ['fired','kiln','stone']:
+                      for face in ['front','left','top']:
+                          page.evaluate(f"BrickR7.face('{face}')");page.wait_for_timeout(220);page.locator('#view').screenshot(path=str(root/f'{fam}-{face}.png'))
+                      page.evaluate('BrickR7.fit()');page.wait_for_timeout(180)
+                  report['candidate']['families'].append({'family':fam,'status':page.locator('#status').inner_text(),'stats':page.evaluate('BrickR7.stats().geometry')})
+              page.set_viewport_size({'width':390,'height':844});page.wait_for_timeout(600)
+              for fam in ['fired','kiln','stone','dressed','pebble','adobe','rubble']:
+                  q=page.locator(f'[data-family="{fam}"]');assert q.is_visible();q.click();ready(page);page.wait_for_timeout(260)
+              page.screenshot(path=str(root/'mobile-390x844.png'),full_page=True);report['candidate']['mobile']={'viewport':[390,844],'canvasVisible':page.locator('canvas').first.is_visible(),'sevenButtonsVisible':all(page.locator(f'[data-family="{f}"]').is_visible() for f in ['fired','kiln','adobe','dressed','rubble','stone','pebble'])};assert report['candidate']['mobile']['canvasVisible'] and report['candidate']['mobile']['sevenButtonsVisible'];assert not report['candidate']['errors'];report['passed']=True;browser.close()
+          (root/'LOCAL_BROWSER_QA.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n',encoding='utf-8');assert report['passed']
+          PY
+
+      - name: Commit immutable candidate
+        run: |
+          set -euo pipefail
+          git config user.name 'Brick Mother R7.8 closeout';git config user.email '41898282+github-actions[bot]@users.noreply.github.com';git fetch origin "$BRANCH";git reset --hard "origin/$BRANCH"
+          cp "$RUNNER_TEMP/brick-r78/$CANDIDATE_FILE" "$R7_DIR/$CANDIDATE_FILE";cp "$RUNNER_TEMP/brick-r78/BUILD.json" "$R7_DIR/R7_8_FINAL_THREE_BUILD.json";cp "$RUNNER_TEMP/brick-r78/LOCAL_BROWSER_QA.json" "$R7_DIR/R7_8_LOCAL_BROWSER_QA.json"
+          git add -- "$R7_DIR/$CANDIDATE_FILE" "$R7_DIR/R7_8_FINAL_THREE_BUILD.json" "$R7_DIR/R7_8_LOCAL_BROWSER_QA.json";if ! git diff --cached --quiet;then git commit -m 'feat(brick): add R7.8 final three-material candidate [skip ci]';git push origin "HEAD:refs/heads/$BRANCH";fi
+          git fetch origin "$BRANCH";git reset --hard "origin/$BRANCH";git log -1 --format=%H -- "$R7_DIR/$CANDIDATE_FILE" > "$RUNNER_TEMP/brick-r78/CANDIDATE_COMMIT.txt"
+
+      - name: Upload R7.8 evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: brick-r78-final-three-${{ github.run_id }}
+          path: ${{ runner.temp }}/brick-r78
+          retention-days: 30

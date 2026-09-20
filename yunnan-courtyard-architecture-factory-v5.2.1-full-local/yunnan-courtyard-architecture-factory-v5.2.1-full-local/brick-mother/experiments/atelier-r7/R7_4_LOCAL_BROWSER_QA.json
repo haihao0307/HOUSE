@@ -1,0 +1,53 @@
+{
+  "url": "http://127.0.0.1:8765/Brick_Mother_R7_4_StoneFacets.html",
+  "families": [
+    {
+      "family": "fired",
+      "status": "烧结旧砖 · 缓存 · 19.5k 面",
+      "screenshot": "desktop-fired.png"
+    },
+    {
+      "family": "kiln",
+      "status": "窑变旧砖 · 281 ms · 19.4k 面",
+      "screenshot": "desktop-kiln.png"
+    },
+    {
+      "family": "adobe",
+      "status": "纤维土坯 · 430 ms · 65.6k 面 · 稻草 265 · 稻壳 48",
+      "screenshot": "desktop-adobe.png"
+    },
+    {
+      "family": "dressed",
+      "status": "粗凿砌筑石 · 318 ms · 22.0k 面",
+      "screenshot": "desktop-dressed.png"
+    },
+    {
+      "family": "rubble",
+      "status": "不规则毛石 · 483 ms · 35.1k 面",
+      "screenshot": "desktop-rubble.png"
+    },
+    {
+      "family": "stone",
+      "status": "层状毛石 · 544 ms · 29.4k 面",
+      "screenshot": "desktop-stone.png"
+    },
+    {
+      "family": "pebble",
+      "status": "建筑卵石 · 406 ms · 28.0k 面",
+      "screenshot": "desktop-pebble.png"
+    }
+  ],
+  "errors": [],
+  "consoleErrors": [
+    "Failed to load resource: the server responded with a status of 404 (File not found)"
+  ],
+  "mobile": {
+    "viewport": [
+      390,
+      844
+    ],
+    "canvasVisible": true,
+    "sevenButtonsVisible": true
+  },
+  "passed": true
+}

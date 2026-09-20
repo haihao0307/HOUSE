@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<meta name="description" content="Brick Mother 实时风化与 PBR 三维工作台 V1.1。六个材料家族共享形体信号、环境状态、材质响应与物理可信 PBR 输出。">
+<title>Brick Mother 实时风化 PBR 工作台 V1.1</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="./brick-mother-realtime-weathering-pbr-v1.1.css?v=20260902-v11a3">
+</head>
+<body>
+<canvas id="gl" aria-label="Brick Mother 实时风化与 PBR 三维工作台"></canvas>
+<div class="vignette"></div><div class="grain"></div>
+<header class="topbar">
+  <div class="brand"><div class="mark">BM</div><div class="brand-copy"><strong>BRICK MOTHER</strong><span>REALTIME WEATHERING × PBR LAB · V1.1</span></div></div>
+  <div class="graph" aria-label="知识内核"><span>形体信号</span><i></i><span>风化状态</span><i></i><span>材质响应</span><i></i><span>PBR 输出</span></div>
+  <div class="runtime-state"><i></i><span id="runtimeLabel">初始化</span><b>F0 0.04</b><b>METAL 0</b><b>GGX</b></div>
+</header>
+
+<nav class="family-rail" aria-label="材质家族">
+  <div class="rail-title">MATERIAL FAMILY</div>
+  <button class="family-btn active" data-family="0"><span class="index">01</span><span><b>烧结砖</b><small>烧制色阶 · 孔洞 · 剥片 · 水痕</small></span></button>
+  <button class="family-btn" data-family="1"><span class="index">02</span><span><b>土坯</b><small>压实层 · 纤维 · 拉脱 · 吸湿</small></span></button>
+  <button class="family-btn" data-family="2"><span class="index">03</span><span><b>规则石材</b><small>承重面 · 錾修面 · 局部崩角</small></span></button>
+  <button class="family-btn" data-family="3"><span class="index">04</span><span><b>半规则毛石</b><small>偏心体量 · 多组断面 · 稳定落座</small></span></button>
+  <button class="family-btn" data-family="4"><span class="index">05</span><span><b>片石</b><small>单一层理 · 厚度场 · 局部剥离</small></span></button>
+  <button class="family-btn" data-family="5"><span class="index">06</span><span><b>卵石</b><small>差异磨圆 · 水磨 · 局部撞击</small></span></button>
+</nav>
+
+<button class="panel-toggle" id="panelToggle" aria-label="打开参数">☰</button>
+<aside class="control-panel" id="controls">
+  <div class="panel-head"><strong>环境与演化</strong><span>LIVE STATE</span></div>
+  <div class="sim-row">
+    <button class="action primary" id="playPause">暂停</button>
+    <button class="action" id="rainPulse">降雨脉冲</button>
+    <button class="action" id="resetWeather">清零</button>
+  </div>
+  <div class="preset-row" aria-label="情境预设">
+    <button class="preset active" data-preset="balanced">平衡</button><button class="preset" data-preset="monsoon">雨季</button><button class="preset" data-preset="dry">干季</button><button class="preset" data-preset="century">百年</button>
+  </div>
+  <div class="seed-row"><div class="seed-box"><span>母种子</span><b id="seedValue">5045</b></div><button class="action" id="newSeed">换种子</button></div>
+  <div class="control"><label><span>年代</span><output id="ageOut">18 年</output></label><input id="age" type="range" min="0" max="120" step="1" value="18"></div>
+  <div class="control"><label><span>降雨</span><output id="rainOut">0.38</output></label><input id="rain" type="range" min="0" max="1" step="0.01" value="0.38"></div>
+  <div class="control"><label><span>干燥</span><output id="dryingOut">0.42</output></label><input id="drying" type="range" min="0" max="1" step="0.01" value="0.42"></div>
+  <div class="control"><label><span>积尘</span><output id="dustOut">0.28</output></label><input id="dust" type="range" min="0" max="1" step="0.01" value="0.28"></div>
+  <div class="control"><label><span>盐析</span><output id="saltOut">0.12</output></label><input id="salt" type="range" min="0" max="1" step="0.01" value="0.12"></div>
+  <div class="control"><label><span>生物附着</span><output id="bioOut">0.10</output></label><input id="bio" type="range" min="0" max="1" step="0.01" value="0.10"></div>
+  <div class="control"><label><span>磨蚀</span><output id="abrasionOut">0.16</output></label><input id="abrasion" type="range" min="0" max="1" step="0.01" value="0.16"></div>
+  <details>
+    <summary>材质响应</summary>
+    <div class="control"><label><span>孔隙率</span><output id="porosityOut">0.58</output></label><input id="porosity" type="range" min="0.05" max="1" step="0.01" value="0.58"></div>
+    <div class="control"><label><span>硬度</span><output id="hardnessOut">0.62</output></label><input id="hardness" type="range" min="0.05" max="1" step="0.01" value="0.62"></div>
+    <div class="control"><label><span>基础粗糙度</span><output id="roughOut">0.78</output></label><input id="rough" type="range" min="0.18" max="1" step="0.01" value="0.78"></div>
+    <div class="control"><label><span>中尺度起伏</span><output id="reliefOut">0.48</output></label><input id="relief" type="range" min="0" max="1" step="0.01" value="0.48"></div>
+  </details>
+  <details>
+    <summary>形体控制</summary>
+    <div class="control"><label><span>体量变化</span><output id="formOut">0.52</output></label><input id="form" type="range" min="0" max="1" step="0.01" value="0.52"></div>
+    <div class="control"><label><span>断裂强度</span><output id="fractureOut">0.42</output></label><input id="fracture" type="range" min="0" max="1" step="0.01" value="0.42"></div>
+    <div class="control"><label><span>边缘演化</span><output id="edgeOut">0.34</output></label><input id="edge" type="range" min="0" max="1" step="0.01" value="0.34"></div>
+  </details>
+</aside>
+
+<section class="state-card" aria-label="风化状态">
+  <div class="state-head"><strong id="familyName">烧结砖</strong><span id="triangleCount">0 TRI</span></div>
+  <div class="state-rule" id="familyRule">烧制色阶 · 剥片孔洞 · 吸水与排水差异</div>
+  <div class="meters">
+    <div><span>湿润</span><i><b id="wetMeter"></b></i><em id="wetValue">0.00</em></div>
+    <div><span>残留</span><i><b id="retainMeter"></b></i><em id="retainValue">0.00</em></div>
+    <div><span>沉积</span><i><b id="depositMeter"></b></i><em id="depositValue">0.00</em></div>
+    <div><span>溶蚀</span><i><b id="leachMeter"></b></i><em id="leachValue">0.00</em></div>
+  </div>
+  <div class="state-foot"><span id="cycleLabel">0 次湿干循环</span><span id="fpsLabel">0 FPS</span></div>
+</section>
+
+<div class="diagnostic-bar" aria-label="诊断通道">
+  <button class="diag active" data-view="0">最终</button><button class="diag" data-view="1">Base Color</button><button class="diag" data-view="2">Roughness</button><button class="diag" data-view="3">Normal</button><button class="diag" data-view="4">Height</button><button class="diag" data-view="5">AO</button><button class="diag" data-view="6">Wetness</button><button class="diag" data-view="7">Runoff</button><button class="diag" data-view="8">Cavity</button><button class="diag" data-view="9">Fracture</button><button class="diag" data-view="10">PBR Safe</button><button class="diag" data-view="11">Slope</button><button class="diag" data-view="12">Contact</button><button class="diag" data-view="13">Deposit</button><button class="diag" data-view="14">Salt</button><button class="diag" data-view="15">Bio</button>
+</div>
+
+<div class="viewbar"><button class="view-btn active" data-piece="all">全景</button><button class="view-btn" data-piece="hero">主样本</button><button class="view-btn" data-piece="mini">小样组</button><span></span><button class="view-btn" id="autoRotate">转台</button><button class="view-btn" id="resetView">复位</button></div>
+<div class="lightbar"><button class="light-btn active" data-light="studio">棚拍</button><button class="light-btn" data-light="neutral">中性</button><button class="light-btn" data-light="raking">掠射</button><button class="light-btn" data-light="overcast">阴天</button><button class="light-btn" data-light="outdoor">户外</button></div>
+<div class="hint" id="hint">拖动旋转 · 滚轮缩放 · 右键平移 · R 复位 · L 切换灯光</div>
+
+<div class="loading" id="loading"><div class="loader"><div class="loader-ring"></div><span id="loadingText">BUILDING MATERIAL DNA</span><div class="loading-progress"><i id="loadingBar"></i></div></div></div>
+<div class="error" id="error"><div><b>Brick Mother 实时风化工作台启动失败</b><span id="errorText">请使用最新版 Chrome、Edge、Safari 或 Firefox。</span></div></div>
+
+<script src="./brick-mother-stone-form-geometry-v3.5.js?v=20260902-v11a3"></script>
+<script src="./brick-mother-weathering-geometry-v1.1.js?v=20260902-v11a3"></script>
+<script src="./brick-mother-realtime-weathering-pbr-v1.1.js?v=20260902-v11a3"></script>
+</body>
+</html>

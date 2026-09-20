@@ -1,0 +1,138 @@
+{
+  "schemaVersion": "1.0.0",
+  "subject": "Brick Mother V2.6 neutral studio rich spectrum and deep pore graph",
+  "status": "automatic-qa-ready-manual-visual-pending",
+  "requiredFiles": [
+    "brick-mother-gaea-kernel-v1.js",
+    "data/gaea-distilled-node-recipes-v1.json",
+    "docs/BRICK_MOTHER_GAEA_DISTILLATION_V1.md",
+    "gaea-distilled.css"
+  ],
+  "sourceGates": {
+    "kernelSyntax": true,
+    "geometrySyntax": true,
+    "rendererSyntax": true,
+    "appSyntax": true,
+    "profileJsonValid": true,
+    "recipeJsonValid": true,
+    "versionJsonValid": true
+  },
+  "runtimeGates": {
+    "webgl2Required": true,
+    "shaderCompileRequired": true,
+    "shaderLinkRequired": true,
+    "threeChildrenRequired": true,
+    "deepPoreEventsRequired": true,
+    "gaeaKernelDatasetRequired": true,
+    "debugChannel8Required": true,
+    "screenshotMinimumBytes": 120000
+  },
+  "operatorGates": {
+    "autolevel": true,
+    "clarity": true,
+    "softClip": true,
+    "combine": true,
+    "separationMask": true,
+    "ruggedBreakage": true,
+    "stratify": true,
+    "microErosion": true,
+    "rockMap": true,
+    "flow": true,
+    "clut5": true,
+    "splatWeights": true
+  },
+  "correlationGates": {
+    "geometryToColor": true,
+    "cavityToAO": true,
+    "waterToRoughness": true,
+    "strataToColorAndNormal": true,
+    "inclusionsToColorRoughnessNormalAndCavity": true
+  },
+  "visualApproval": {
+    "automatic": false,
+    "jrbColorReferenceApproved": false,
+    "stoneDetailApproved": false,
+    "adobeInclusionApproved": false,
+    "productionApproved": false
+  },
+  "implementationTarget": "2.6.0-alpha.1",
+  "gaeaKernel": "1.2.0",
+  "expectedControls": [
+    "rockDetail",
+    "strata",
+    "microErosion",
+    "colorClarity",
+    "colorGamut",
+    "maskSharpness"
+  ],
+  "expectedDebugChannels": 9,
+  "version": "2.6.0-alpha.1",
+  "visualCalibrationGates": {
+    "eventColorMasking": true,
+    "regularOxideContourSuppression": true,
+    "physicalAdobeInclusionVoids": true,
+    "requiredEvidenceProfiles": [
+      "old-pbr-fired",
+      "stone-block",
+      "raw-clay"
+    ],
+    "requiredEvidenceChannels": [
+      "final",
+      "stone-gaea-field",
+      "adobe-inclusion"
+    ],
+    "manualApprovalsRemainFalse": [
+      "jrbReferenceColor",
+      "stoneDetail",
+      "adobeInclusion",
+      "production"
+    ],
+    "connectedColorNetworksSuppressed": true,
+    "naturalStonePalette": true,
+    "familySpecificSaturation": true,
+    "broadMaterialEventPatches": true,
+    "sparseOxideEvents": true,
+    "firedClayChromaticZones": true,
+    "stoneReadableMidtones": true,
+    "reducedMicroNoise": true,
+    "adobeInclusionClustering": true,
+    "familyLightingExposure": true,
+    "neutralStudioLighting": true,
+    "highRoughnessMasonry": true,
+    "firedClayRedBlackMineralBalance": true,
+    "stoneBlueOliveRustCalciteSpectrum": true,
+    "adobeClayDustDampSpectrum": true,
+    "visibleAdobeFiberBands": true,
+    "strongerClusteredPoreSpectrum": true
+  },
+  "deepPoreSpectrum": {
+    "poreDensityControl": true,
+    "poreVarietyControl": true,
+    "clusteredAnchors": true,
+    "multiScaleShaderFields": true,
+    "deepNegativeGeometry": true,
+    "brokenRimGeometry": true,
+    "collapsedMouthGeometry": true
+  },
+  "standaloneDelivery": {
+    "singleFileHtml": true,
+    "inlineCss": true,
+    "inlineJavaScript": true,
+    "inlineProfileData": true,
+    "externalRuntimeDependency": false
+  },
+  "approval": {
+    "jrbColorApproved": false,
+    "stoneDetailApproved": false,
+    "adobeInclusionApproved": false,
+    "productionApproved": false
+  },
+  "neutralStudioRichSpectrum": {
+    "neutralKeyLight": true,
+    "coolFillLight": true,
+    "subtleWarmRimLight": true,
+    "familyExposureReduced": true,
+    "surfaceCrustCorrelatedToNormalAndRoughness": true,
+    "manualApprovalsRemainFalse": true
+  }
+}

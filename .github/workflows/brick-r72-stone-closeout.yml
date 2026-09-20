@@ -1,0 +1,213 @@
+name: Brick Mother R7.2 Layered Stone Closeout
+
+on:
+  push:
+    branches:
+      - feature/brick-mother-v2.0-composite-material-dna
+    paths:
+      - .github/BRICK_R72_KICK.txt
+
+permissions:
+  contents: write
+
+concurrency:
+  group: brick-r72-layered-stone
+  cancel-in-progress: false
+
+jobs:
+  build-and-local-verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      BRANCH: feature/brick-mother-v2.0-composite-material-dna
+      SOURCE_COMMIT: a534aa0503bbc80a2ff8b94193cfcada8a1efd3c
+      R7_DIR: yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/experiments/atelier-r7
+      SOURCE_FILE: Brick_Mother_R7_1_Closeout.html
+      CANDIDATE_FILE: Brick_Mother_R7_2_StoneCloseout.html
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Build guarded R7.2 only from immutable R7.1
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/brick-r72"
+          git show "$SOURCE_COMMIT:$R7_DIR/$SOURCE_FILE" > "$RUNNER_TEMP/brick-r72/source.html"
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib, json, os, re, subprocess
+
+          root=Path(os.environ['RUNNER_TEMP'])/'brick-r72'
+          src=(root/'source.html').read_text(encoding='utf-8')
+          out=src
+          changes=[]
+
+          def once(old,new,label):
+              global out
+              n=out.count(old)
+              if n!=1:
+                  raise SystemExit(f'{label}: expected exactly 1 match, got {n}')
+              out=out.replace(old,new,1)
+              changes.append(label)
+
+          version_count=out.count('R7.1.0')
+          if version_count<2:
+              raise SystemExit(f'unexpected R7.1.0 count: {version_count}')
+          out=out.replace('R7.1.0','R7.2.0')
+          changes.append(f'version-r71-to-r72-x{version_count}')
+
+          once(
+              " const planes=[];if(family==='rubble')for(let j=0;j<9;j++){let n=norm([R()*2-1,R()*2-1,R()*2-1]);planes.push([...n,(Math.abs(n[0])*h[0]+Math.abs(n[1])*h[1]+Math.abs(n[2])*h[2])*(.61+R()*.27)]);}",
+              " const planes=[];if(family==='rubble')for(let j=0;j<9;j++){let n=norm([R()*2-1,R()*2-1,R()*2-1]);planes.push([...n,(Math.abs(n[0])*h[0]+Math.abs(n[1])*h[1]+Math.abs(n[2])*h[2])*(.61+R()*.27)]);}\n if(family==='stone')for(let j=0;j<5;j++){let n=norm([R()*2-1,R()*1.25-.625,(R()*2-1)*.24]);planes.push([...n,(Math.abs(n[0])*h[0]+Math.abs(n[1])*h[1]+Math.abs(n[2])*h[2])*(.80+R()*.10)]);}",
+              'stone-mild-fracture-edge-planes'
+          )
+
+          once(
+              " const beds=[];let level=-h[1]*1.1;while(level<h[1]*1.2){level+=.09+R()*.22;beds.push([level,(R()-.5)*.16]);}\n const stoneSlopeX=.10+.11*Math.sin(phase*.73),stoneSlopeZ=.07+.10*Math.cos(phase*.61);",
+              " const legacyBeds=[];let level=-h[1]*1.1;while(level<h[1]*1.2){level+=.09+R()*.22;legacyBeds.push([level,(R()-.5)*.16]);}\n // Preserve the old RNG consumption above so every non-stone family keeps the same seed identity.\n // Layered stone now uses one stable seed-derived plane direction plus bounded continuous skin variation.\n const stoneSlopeX=.10+.11*Math.sin(phase*.73),stoneSlopeZ=.07+.10*Math.cos(phase*.61),stoneBeddingAngle=Math.atan2(-stoneSlopeX,1);",
+              'replace-step-beds-with-stable-plane-semantics'
+          )
+
+          once(
+              "  let bedOffset=0;if(family==='stone'){const w=py+px*stoneSlopeX+pz*stoneSlopeZ;for(const b of beds){if(w>b[0])bedOffset=b[1];else break;}}\n  const localRadius=family==='adobe'?radius*(.84+.22*(a+.5)+.12*(b+.5)):radius;",
+              "  const stoneW=family==='stone'?py+px*stoneSlopeX+pz*stoneSlopeZ:0;\n  const stoneBand=family==='stone'?(Math.sin(stoneW*9.4+phase*.37)*.58+Math.sin(stoneW*18.7+phase*.83)*.27+Math.sin(stoneW*37.1+phase*1.19)*.15):0;\n  const stoneSkin=family==='stone'?stoneBand*(.008+.012*c.relief):0;\n  const localRadius=family==='adobe'?radius*(.84+.22*(a+.5)+.12*(b+.5)):radius;",
+              'continuous-bounded-layered-stone-skin'
+          )
+
+          once(
+              "  const qx=Math.abs(px+.018*a)-h[0]+localRadius+adobeRecess,qy=Math.abs(py+.02*a+adobeTilt)-h[1]+localRadius+adobeRecess,qz=Math.abs(pz)-h[2]-bedOffset*c.relief+localRadius+adobeRecess;",
+              "  const qx=Math.abs(px+.018*a)-h[0]+localRadius+adobeRecess,qy=Math.abs(py+.02*a+adobeTilt)-h[1]+localRadius+adobeRecess,qz=Math.abs(pz)-h[2]+stoneSkin+localRadius+adobeRecess;",
+              'remove-discontinuous-full-face-thickness-steps'
+          )
+
+          once(
+              " // A handful of local delaminations and fractures. No through-cuts.\n if(c.damage>(soft?.50:0)&&!isPebble&&!hard)for(let k=0;k<(isStone?7:3);k++){\n  const yy=(k/(isStone?9:5)-.46)*h[1]*1.8+(D()-.5)*.24,xx=(D()-.5)*1.25*h[0];\n  faceEvent(2,(isStone&&k%3===0)?-1:1,xx,yy,.24+D()*.38,(isStone?.025:.035)+D()*.035,(.08+D()*.11)*c.damage,-.13+(D()-.5)*.2,'chip');\n }\n if(isStone&&chisel>0){",
+              " // Sparse cleavage is local geometry, not a repeated full-face shelf.\n if(family==='stone')for(let k=0;k<4;k++){\n  const yy=(k/3-.5)*h[1]*1.42+(D()-.5)*.18,xx=(D()-.5)*.82*h[0];\n  faceEvent(2,k===0?-1:1,xx,yy,.28+D()*.34,.016+D()*.020,(.040+D()*.060)*(.45+.55*c.damage),stoneBeddingAngle+(D()-.5)*.12,'chip');\n }\n // Keep the legacy local-fracture behavior byte-for-byte for the other families.\n if(family!=='stone'&&c.damage>(soft?.50:0)&&!isPebble&&!hard)for(let k=0;k<(isStone?7:3);k++){\n  const yy=(k/(isStone?9:5)-.46)*h[1]*1.8+(D()-.5)*.24,xx=(D()-.5)*1.25*h[0];\n  faceEvent(2,(isStone&&k%3===0)?-1:1,xx,yy,.24+D()*.38,(isStone?.025:.035)+D()*.035,(.08+D()*.11)*c.damage,-.13+(D()-.5)*.2,'chip');\n }\n if(isStone&&chisel>0){",
+              'sparse-seed-aligned-cleavage-cuts'
+          )
+
+          required=[
+              'R7.2.0',
+              "legacyBeds.push",
+              "stoneBeddingAngle=Math.atan2(-stoneSlopeX,1)",
+              "stoneBand=family==='stone'",
+              "qz=Math.abs(pz)-h[2]+stoneSkin",
+              "if(family==='stone')for(let k=0;k<4;k++",
+              "if(family!=='stone'&&c.damage"
+          ]
+          for token in required:
+              if token not in out:
+                  raise SystemExit('missing required token: '+token)
+          for forbidden in ['-bedOffset*c.relief','for(const b of beds)','leaveLegacy(']:
+              if forbidden in out:
+                  raise SystemExit('forbidden legacy token remains: '+forbidden)
+          if out.count('data-family=')<7:
+              raise SystemExit('seven families not retained')
+          if '<script src=' in out.lower():
+              raise SystemExit('external script dependency introduced')
+
+          candidate=root/os.environ['CANDIDATE_FILE']
+          candidate.write_text(out,encoding='utf-8')
+
+          checked=0
+          for i,m in enumerate(re.finditer(r'<script([^>]*)>(.*?)</script>',out,re.S|re.I)):
+              attrs=m.group(1).lower()
+              if 'application/json' in attrs or 'application/octet-stream' in attrs:
+                  continue
+              p=root/f'inline-{i}.js';p.write_text(m.group(2),encoding='utf-8')
+              subprocess.run(['node','--check',str(p)],check=True);p.unlink();checked+=1
+          if checked<2:
+              raise SystemExit(f'only {checked} executable scripts checked')
+
+          info={
+              'version':'R7.2.0-layered-stone-closeout-candidate',
+              'sourceCommit':os.environ['SOURCE_COMMIT'],
+              'sourceFile':os.environ['SOURCE_FILE'],
+              'sourceSha256':hashlib.sha256(src.encode()).hexdigest(),
+              'candidateSha256':hashlib.sha256(out.encode()).hexdigest(),
+              'bytes':len(out.encode()),
+              'guardedReplacements':changes,
+              'inlineScriptsChecked':checked,
+              'retainedFamilies':7,
+              'scope':'layered-stone morphology only; six other families frozen by family-gated edits and preserved RNG consumption',
+              'humanVisualApproved':False,
+              'productionApproved':False
+          }
+          (root/'BUILD.json').write_text(json.dumps(info,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+          print(json.dumps(info,ensure_ascii=False,indent=2))
+          PY
+
+      - name: Install Chromium
+        run: |
+          python -m pip install playwright==1.55.0
+          python -m playwright install --with-deps chromium
+
+      - name: Local desktop and mobile Chromium QA
+        run: |
+          set -euo pipefail
+          python -m http.server 8765 --bind 127.0.0.1 --directory "$RUNNER_TEMP/brick-r72" > "$RUNNER_TEMP/brick-r72/http.log" 2>&1 &
+          PID=$!
+          trap 'kill "$PID" || true' EXIT
+          xvfb-run -a python - <<'PY'
+          from playwright.sync_api import sync_playwright
+          from pathlib import Path
+          import json, os
+
+          root=Path(os.environ['RUNNER_TEMP'])/'brick-r72'
+          url='http://127.0.0.1:8765/'+os.environ['CANDIDATE_FILE']
+          report={'url':url,'families':[],'errors':[],'consoleErrors':[],'mobile':{},'passed':False}
+          def ready(page):
+              page.wait_for_function("""() => {const e=document.querySelector('#error');const b=document.querySelector('#busy');const c=document.querySelector('canvas');return c&&(!e||e.hidden)&&(!b||b.hidden)&&!c.classList.contains('loading');}""",timeout=120000)
+          with sync_playwright() as p:
+              browser=p.chromium.launch(headless=False,args=['--use-angle=swiftshader','--enable-unsafe-swiftshader','--no-sandbox'])
+              page=browser.new_page(viewport={'width':1280,'height':820})
+              page.on('pageerror',lambda e:report['errors'].append(str(e)))
+              page.on('console',lambda m:report['consoleErrors'].append(m.text) if m.type=='error' else None)
+              response=page.goto(url,wait_until='load',timeout=60000);assert response and response.status==200
+              page.wait_for_function("document.querySelectorAll('[data-family]').length===7",timeout=30000);ready(page)
+              for family in ['fired','kiln','adobe','dressed','rubble','stone','pebble']:
+                  q=page.locator(f'[data-family="{family}"]');assert q.count()==1 and q.is_visible();q.click();ready(page);page.wait_for_timeout(700)
+                  e=page.locator('#error')
+                  if e.count() and not e.is_hidden():raise AssertionError(e.inner_text())
+                  shot=root/f'desktop-{family}.png';page.screenshot(path=str(shot),full_page=True)
+                  report['families'].append({'family':family,'status':page.locator('#status').inner_text(),'screenshot':shot.name})
+              page.set_viewport_size({'width':390,'height':844});page.wait_for_timeout(650)
+              for family in ['stone','adobe','fired']:
+                  q=page.locator(f'[data-family="{family}"]');assert q.is_visible();q.click();ready(page);page.wait_for_timeout(350)
+              page.screenshot(path=str(root/'mobile-390x844.png'),full_page=True)
+              report['mobile']={'viewport':[390,844],'canvasVisible':page.locator('canvas').first.is_visible(),'sevenButtonsVisible':all(page.locator(f'[data-family="{f}"]').is_visible() for f in ['fired','kiln','adobe','dressed','rubble','stone','pebble'])}
+              assert report['mobile']['canvasVisible'] and report['mobile']['sevenButtonsVisible']
+              assert not report['errors'],report['errors']
+              report['passed']=True;browser.close()
+          (root/'LOCAL_BROWSER_QA.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+          assert report['passed']
+          PY
+
+      - name: Commit R7.2 candidate without touching R7.1
+        run: |
+          set -euo pipefail
+          git config user.name 'Brick Mother R7.2 closeout'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git fetch origin "$BRANCH"
+          git reset --hard "origin/$BRANCH"
+          cp "$RUNNER_TEMP/brick-r72/$CANDIDATE_FILE" "$R7_DIR/$CANDIDATE_FILE"
+          cp "$RUNNER_TEMP/brick-r72/BUILD.json" "$R7_DIR/R7_2_STONE_CLOSEOUT_BUILD.json"
+          cp "$RUNNER_TEMP/brick-r72/LOCAL_BROWSER_QA.json" "$R7_DIR/R7_2_LOCAL_BROWSER_QA.json"
+          git add -- "$R7_DIR/$CANDIDATE_FILE" "$R7_DIR/R7_2_STONE_CLOSEOUT_BUILD.json" "$R7_DIR/R7_2_LOCAL_BROWSER_QA.json"
+          if ! git diff --cached --quiet; then
+            git commit -m 'feat(brick): add isolated R7.2 layered-stone closeout [skip ci]'
+            git push origin "HEAD:refs/heads/$BRANCH"
+          fi
+          git fetch origin "$BRANCH";git reset --hard "origin/$BRANCH"
+          CANDIDATE_COMMIT=$(git log -1 --format=%H -- "$R7_DIR/$CANDIDATE_FILE")
+          echo "CANDIDATE_COMMIT=$CANDIDATE_COMMIT" >> "$GITHUB_ENV"
+          printf '%s\n' "$CANDIDATE_COMMIT" > "$RUNNER_TEMP/brick-r72/CANDIDATE_COMMIT.txt"
+
+      - name: Upload local visual evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: brick-r72-layered-stone-${{ github.run_id }}
+          path: ${{ runner.temp }}/brick-r72
+          retention-days: 30

@@ -1,0 +1,194 @@
+{
+  "version": "R5.0.0",
+  "url": "http://127.0.0.1:8765/",
+  "loadMethod": "HTTP navigation",
+  "checks": [
+    {
+      "test": "HTML initializes real WebGL geometry",
+      "passed": true
+    },
+    {
+      "test": "seven-family switch fired",
+      "passed": true,
+      "name": "砖 / 烧结旧砖",
+      "ms": 311.8999999999942
+    },
+    {
+      "test": "seven-family switch kiln",
+      "passed": true,
+      "name": "砖 / 窑变旧砖",
+      "ms": 234.1999999999971
+    },
+    {
+      "test": "seven-family switch adobe",
+      "passed": true,
+      "name": "土坯 / 纤维土坯",
+      "ms": 408.09999999999127
+    },
+    {
+      "test": "seven-family switch dressed",
+      "passed": true,
+      "name": "石 / 粗凿砌筑石",
+      "ms": 258.90000000000873
+    },
+    {
+      "test": "seven-family switch rubble",
+      "passed": true,
+      "name": "石 / 不规则毛石",
+      "ms": 411.6999999999971
+    },
+    {
+      "test": "seven-family switch stone",
+      "passed": true,
+      "name": "石 / 层状毛石",
+      "ms": 405.29999999998836
+    },
+    {
+      "test": "seven-family switch pebble",
+      "passed": true,
+      "name": "石 / 建筑卵石",
+      "ms": 543.6999999999971
+    },
+    {
+      "test": "dressed four lithologies visibly differ without geometry rebuild",
+      "passed": true,
+      "images": 4
+    },
+    {
+      "test": "rubble four lithologies visibly differ without geometry rebuild",
+      "passed": true,
+      "images": 4
+    },
+    {
+      "test": "pebble four lithologies visibly differ without geometry rebuild",
+      "passed": true,
+      "images": 4
+    },
+    {
+      "test": "normal/heavy presets are separate and reversible",
+      "passed": true
+    },
+    {
+      "test": "shading-only rough retains exact mesh",
+      "passed": true
+    },
+    {
+      "test": "shading-only wet retains exact mesh",
+      "passed": true
+    },
+    {
+      "test": "shading-only color retains exact mesh",
+      "passed": true
+    },
+    {
+      "test": "shading-only grain retains exact mesh",
+      "passed": true
+    },
+    {
+      "test": "shading-only frequency retains exact mesh",
+      "passed": true
+    },
+    {
+      "test": "R5 preset round-trip",
+      "passed": true
+    },
+    {
+      "test": "adobe six viewpoints keep geometry and complete face coverage",
+      "passed": true
+    },
+    {
+      "test": "pebble six viewpoints keep geometry and complete face coverage",
+      "passed": true
+    },
+    {
+      "test": "actual pointer rotation without rebuild",
+      "passed": true
+    },
+    {
+      "test": "actual wheel zoom",
+      "passed": true
+    },
+    {
+      "test": "fired idle ceases drawing",
+      "passed": true
+    },
+    {
+      "test": "dressed idle ceases drawing",
+      "passed": true
+    },
+    {
+      "test": "pebble idle ceases drawing",
+      "passed": true
+    },
+    {
+      "test": "pause cancels worker and redraws",
+      "passed": true
+    },
+    {
+      "test": "visible material/lithology controls (390, 844)",
+      "passed": true
+    },
+    {
+      "test": "visible material/lithology controls (844, 390)",
+      "passed": true
+    },
+    {
+      "test": "no script errors or WebGL errors",
+      "passed": true
+    }
+  ],
+  "errors": [],
+  "performance": [
+    {
+      "family": "fired",
+      "viewport": [
+        1280,
+        860
+      ],
+      "seconds": 6.001334741999983,
+      "frames": 42,
+      "uniquePositions": 42,
+      "fps": 6.998443147332793,
+      "pixels": 853760,
+      "renderer": "ANGLE SwiftShader"
+    },
+    {
+      "family": "dressed",
+      "viewport": [
+        1280,
+        860
+      ],
+      "seconds": 6.001572202999995,
+      "frames": 41,
+      "uniquePositions": 41,
+      "fps": 6.831543237871137,
+      "pixels": 853760,
+      "renderer": "ANGLE SwiftShader"
+    },
+    {
+      "family": "pebble",
+      "viewport": [
+        1280,
+        860
+      ],
+      "seconds": 6.001679323000019,
+      "frames": 50,
+      "uniquePositions": 50,
+      "fps": 8.331001592901973,
+      "pixels": 853760,
+      "renderer": "ANGLE SwiftShader"
+    }
+  ],
+  "humanVisualApproved": false,
+  "productionApproved": false,
+  "http": {
+    "status": 200,
+    "contentType": "text/html",
+    "sha256": "83b36384cc6eed0416a3c57d1340926bf84651b0656c777f2f68b6983ef63428",
+    "bytes": 80401
+  },
+  "sourceHead": "7390c27e83995e4f68f703d6476f40a35ef1e38a",
+  "passed": true,
+  "softwarePerformanceFloor5fps": true,
+  "performanceGateScope": "single 6-second windows recorded, not full multi-window production gate or user-device approval"
+}

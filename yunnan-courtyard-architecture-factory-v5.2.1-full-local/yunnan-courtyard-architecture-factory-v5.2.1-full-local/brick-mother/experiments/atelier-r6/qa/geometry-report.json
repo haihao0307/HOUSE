@@ -1,0 +1,675 @@
+{
+  "version": "R6",
+  "matrix": [
+    {
+      "family": "fired",
+      "shape": "long",
+      "seed": 5045,
+      "triangles": 14452,
+      "vertices": 7228,
+      "nonTwoUse": 0,
+      "degenerate": 0,
+      "ms": 285.20491000000004
+    },
+    {
+      "family": "fired",
+      "shape": "long",
+      "seed": 6112,
+      "triangles": 14452,
+      "vertices": 7228,
+      "nonTwoUse": 0,
+      "degenerate": 0,
+      "ms": 244.02707399999997
+    },
+    {
+      "family": "fired",
+      "shape": "sample",
+      "seed": 5045,
+      "triangles": 20684,
+      "vertices": 10344,
+      "nonTwoUse": 0,
+      "degenerate": 0,
+      "ms": 357.664805
+    },
+    {
+      "family": "fired",
+      "shape": "sample",
+      "seed": 6112,
+      "triangles": 20196,
+      "vertices": 10100,
+      "nonTwoUse": 0,
+      "degenerate": 0,
+      "ms": 347.7005680000001
+    },
+    {
+      "family": "fired",
+      "shape": "half",
+      "seed": 5045,
+      "triangles": 30212,
+      "vertices": 15108,
+      "nonTwoUse": 0,
+      "degenerate": 0,
+      "ms": 443.4711790000001
+    },
+    {
+      "family": "fired",
+      "shape": "half",
+      "seed": 6112,
+      "triangles": 30444,
+      "vertices": 15224,
+      "nonTwoUse": 0,
+      "degenerate": 0,
+      "ms": 188.48771499999998
+    },
+    {
+      "family": "fired",
+      "shape": "thin",
+      "seed": 5045,
+      "triangles": 15316,
+      "vertices": 7660,
+      "nonTwoUse": 0,
+      "degenerate": 0,
+      "ms": 146.33783799999992
+    },
+    {
+      "family": "fired",
+      "shape": "thin",
+      "seed": 6112,
+      "triangles": 14960,
+      "vertices": 7482,
+      "nonTwoUse": 0,
+      "degenerate": 0,
+      "ms": 62.77897500000017
+    },
+    {
+      "family": "kiln",
+      "shape": "long",
+      "seed": 6112,
+      "triangles": 14500,
+      "vertices": 7252,
+      "nonTwoUse": 0,
+      "degenerate": 0,
+      "ms": 74.9394400000001
+    },
+    {
+      "family": "kiln",
+      "shape": "long",
+      "seed": 7179,
+      "triangles": 14468,
+      "vertices": 7236,
+      "nonTwoUse": 0,
+      "degenerate": 0,
+      "ms": 89.88859699999966
+    },
+    {
+      "family": "kiln",
+      "shape": "sample",
+      "seed": 6112,
+      "triangles": 20252,
+      "vertices": 10128,
+      "nonTwoUse": 0,
+      "degenerate": 0,
+      "ms": 147.92791100000022
+    },
+    {
+      "family": "kiln",
+      "shape": "sample",
+      "seed": 7179,
+      "triangles": 20528,
+      "vertices": 10266,
+      "nonTwoUse": 0,
+      "degenerate": 0,
+      "ms": 208.6246610000003
+    },
+    {
+      "family": "kiln",
+      "shape": "half",
+      "seed": 6112,
+      "triangles": 30476,
+      "vertices": 15240,
+      "nonTwoUse": 0,
+      "degenerate": 0,
+      "ms": 185.71522200000027
+    },
+    {
+      "family": "kiln",
+      "shape": "half",
+      "seed": 7179,
+      "triangles": 30608,
+      "vertices": 15306,
+      "nonTwoUse": 0,
+      "degenerate": 0,
+      "ms": 476.3123539999997
+    },
+    {
+      "family": "kiln",
+      "shape": "thin",
+      "seed": 6112,
+      "triangles": 15096,
+      "vertices": 7550,
+      "nonTwoUse": 0,
+      "degenerate": 0,
+      "ms": 196.94279499999993
+    },
+    {
+      "family": "kiln",
+      "shape": "thin",
+      "seed": 7179,
+      "triangles": 15364,
+      "vertices": 7684,
+      "nonTwoUse": 0,
+      "degenerate": 0,
+      "ms": 63.58370599999989
+    },
+    {
+      "family": "adobe",
+      "shape": "long",
+      "seed": 4517,
+      "triangles": 72574,
+      "vertices": 36867,
+      "nonTwoUse": 0,
+      "degenerate": 0,
+      "ms": 287.96246500000007
+    },
+    {
+      "family": "adobe",
+      "shape": "long",
+      "seed": 5584,
+      "triangles": 73432,
+      "vertices": 37306,
+      "nonTwoUse": 0,
+      "degenerate": 0,
+      "ms": 199.87798199999997
+    },
+    {
+      "family": "adobe",
+      "shape": "sample",
+      "seed": 4517,
+      "triangles": 80304,
+      "vertices": 40744,
+      "nonTwoUse": 0,
+      "degenerate": 0,
+      "ms": 437.4631789999994
+    },
+    {
+      "family": "adobe",
+      "shape": "sample",
+      "seed": 5584,
+      "triangles": 79416,
+      "vertices": 40300,
+      "nonTwoUse": 0,
+      "degenerate": 0,
+      "ms": 498.8273959999997
+    },
+    {
+      "family": "adobe",
+      "shape": "half",
+      "seed": 4517,
+      "triangles": 88256,
+      "vertices": 44712,
+      "nonTwoUse": 0,
+      "degenerate": 0,
+      "ms": 402.25687500000004
+    },
+    {
+      "family": "adobe",
+      "shape": "half",
+      "seed": 5584,
+      "triangles": 88208,
+      "vertices": 44688,
+      "nonTwoUse": 0,
+      "degenerate": 0,
+      "ms": 550.9458489999997
+    },
+    {
+      "family": "adobe",
+      "shape": "thin",
+      "seed": 4517,
+      "triangles": 69802,
+      "vertices": 35455,
+      "nonTwoUse": 0,
+      "degenerate": 0,
+      "ms": 348.3587150000003
+    },
+    {
+      "family": "adobe",
+      "shape": "thin",
+      "seed": 5584,
+      "triangles": 71084,
+      "vertices": 36110,
+      "nonTwoUse": 0,
+      "degenerate": 0,
+      "ms": 355.9770949999993
+    },
+    {
+      "family": "dressed",
+      "shape": "long",
+      "seed": 8231,
+      "triangles": 21418,
+      "vertices": 10711,
+      "nonTwoUse": 0,
+      "degenerate": 0,
+      "ms": 363.2493910000003
+    },
+    {
+      "family": "dressed",
+      "shape": "long",
+      "seed": 9298,
+      "triangles": 20914,
+      "vertices": 10459,
+      "nonTwoUse": 0,
+      "degenerate": 0,
+      "ms": 294.58390099999997
+    },
+    {
+      "family": "dressed",
+      "shape": "sample",
+      "seed": 8231,
+      "triangles": 30592,
+      "vertices": 15296,
+      "nonTwoUse": 0,
+      "degenerate": 0,
+      "ms": 265.09792300000026
+    },
+    {
+      "family": "dressed",
+      "shape": "sample",
+      "seed": 9298,
+      "triangles": 31204,
+      "vertices": 15600,
+      "nonTwoUse": 0,
+      "degenerate": 0,
+      "ms": 136.14529200000015
+    },
+    {
+      "family": "dressed",
+      "shape": "half",
+      "seed": 8231,
+      "triangles": 42326,
+      "vertices": 21161,
+      "nonTwoUse": 0,
+      "degenerate": 0,
+      "ms": 229.16061900000022
+    },
+    {
+      "family": "dressed",
+      "shape": "half",
+      "seed": 9298,
+      "triangles": 43764,
+      "vertices": 21876,
+      "nonTwoUse": 0,
+      "degenerate": 0,
+      "ms": 254.69059500000003
+    },
+    {
+      "family": "dressed",
+      "shape": "thin",
+      "seed": 8231,
+      "triangles": 19856,
+      "vertices": 9928,
+      "nonTwoUse": 0,
+      "degenerate": 0,
+      "ms": 82.52244400000018
+    },
+    {
+      "family": "dressed",
+      "shape": "thin",
+      "seed": 9298,
+      "triangles": 19908,
+      "vertices": 9954,
+      "nonTwoUse": 0,
+      "degenerate": 0,
+      "ms": 82.42753699999957
+    },
+    {
+      "family": "rubble",
+      "shape": "long",
+      "seed": 9298,
+      "triangles": 23622,
+      "vertices": 11813,
+      "nonTwoUse": 0,
+      "degenerate": 0,
+      "ms": 345.5324040000014
+    },
+    {
+      "family": "rubble",
+      "shape": "long",
+      "seed": 10365,
+      "triangles": 27392,
+      "vertices": 13694,
+      "nonTwoUse": 0,
+      "degenerate": 0,
+      "ms": 737.0166069999996
+    },
+    {
+      "family": "rubble",
+      "shape": "sample",
+      "seed": 9298,
+      "triangles": 33538,
+      "vertices": 16769,
+      "nonTwoUse": 0,
+      "degenerate": 0,
+      "ms": 201.23567299999922
+    },
+    {
+      "family": "rubble",
+      "shape": "sample",
+      "seed": 10365,
+      "triangles": 40002,
+      "vertices": 20003,
+      "nonTwoUse": 0,
+      "degenerate": 0,
+      "ms": 539.0124199999991
+    },
+    {
+      "family": "rubble",
+      "shape": "half",
+      "seed": 9298,
+      "triangles": 47194,
+      "vertices": 23591,
+      "nonTwoUse": 0,
+      "degenerate": 0,
+      "ms": 441.7357899999988
+    },
+    {
+      "family": "rubble",
+      "shape": "half",
+      "seed": 10365,
+      "triangles": 43702,
+      "vertices": 21849,
+      "nonTwoUse": 0,
+      "degenerate": 0,
+      "ms": 266.6705410000013
+    },
+    {
+      "family": "rubble",
+      "shape": "thin",
+      "seed": 9298,
+      "triangles": 20348,
+      "vertices": 10174,
+      "nonTwoUse": 0,
+      "degenerate": 0,
+      "ms": 121.32276199999978
+    },
+    {
+      "family": "rubble",
+      "shape": "thin",
+      "seed": 10365,
+      "triangles": 24204,
+      "vertices": 12094,
+      "nonTwoUse": 0,
+      "degenerate": 0,
+      "ms": 125.34175700000014
+    },
+    {
+      "family": "stone",
+      "shape": "long",
+      "seed": 10365,
+      "triangles": 27928,
+      "vertices": 13946,
+      "nonTwoUse": 0,
+      "degenerate": 0,
+      "ms": 491.0226050000001
+    },
+    {
+      "family": "stone",
+      "shape": "long",
+      "seed": 11432,
+      "triangles": 28214,
+      "vertices": 14085,
+      "nonTwoUse": 0,
+      "degenerate": 0,
+      "ms": 146.17251099999885
+    },
+    {
+      "family": "stone",
+      "shape": "sample",
+      "seed": 10365,
+      "triangles": 39420,
+      "vertices": 19706,
+      "nonTwoUse": 0,
+      "degenerate": 0,
+      "ms": 382.210153
+    },
+    {
+      "family": "stone",
+      "shape": "sample",
+      "seed": 11432,
+      "triangles": 40368,
+      "vertices": 20162,
+      "nonTwoUse": 0,
+      "degenerate": 0,
+      "ms": 165.00378099999944
+    },
+    {
+      "family": "stone",
+      "shape": "half",
+      "seed": 10365,
+      "triangles": 56684,
+      "vertices": 28326,
+      "nonTwoUse": 0,
+      "degenerate": 0,
+      "ms": 301.147230999999
+    },
+    {
+      "family": "stone",
+      "shape": "half",
+      "seed": 11432,
+      "triangles": 59428,
+      "vertices": 29678,
+      "nonTwoUse": 0,
+      "degenerate": 0,
+      "ms": 320.94090399999914
+    },
+    {
+      "family": "stone",
+      "shape": "thin",
+      "seed": 10365,
+      "triangles": 26488,
+      "vertices": 13238,
+      "nonTwoUse": 0,
+      "degenerate": 0,
+      "ms": 134.40829200000007
+    },
+    {
+      "family": "stone",
+      "shape": "thin",
+      "seed": 11432,
+      "triangles": 27934,
+      "vertices": 13959,
+      "nonTwoUse": 0,
+      "degenerate": 0,
+      "ms": 104.11574199999995
+    },
+    {
+      "family": "pebble",
+      "shape": "long",
+      "seed": 7213,
+      "triangles": 14016,
+      "vertices": 7010,
+      "nonTwoUse": 0,
+      "degenerate": 0,
+      "ms": 284.9662440000011
+    },
+    {
+      "family": "pebble",
+      "shape": "long",
+      "seed": 8280,
+      "triangles": 14008,
+      "vertices": 7006,
+      "nonTwoUse": 0,
+      "degenerate": 0,
+      "ms": 116.07395700000052
+    },
+    {
+      "family": "pebble",
+      "shape": "sample",
+      "seed": 7213,
+      "triangles": 25068,
+      "vertices": 12536,
+      "nonTwoUse": 0,
+      "degenerate": 0,
+      "ms": 192.95326100000057
+    },
+    {
+      "family": "pebble",
+      "shape": "sample",
+      "seed": 8280,
+      "triangles": 24736,
+      "vertices": 12370,
+      "nonTwoUse": 0,
+      "degenerate": 0,
+      "ms": 172.6933509999999
+    },
+    {
+      "family": "pebble",
+      "shape": "half",
+      "seed": 7213,
+      "triangles": 25140,
+      "vertices": 12572,
+      "nonTwoUse": 0,
+      "degenerate": 0,
+      "ms": 206.23172599999998
+    },
+    {
+      "family": "pebble",
+      "shape": "half",
+      "seed": 8280,
+      "triangles": 24948,
+      "vertices": 12476,
+      "nonTwoUse": 0,
+      "degenerate": 0,
+      "ms": 172.91455099999985
+    },
+    {
+      "family": "pebble",
+      "shape": "thin",
+      "seed": 7213,
+      "triangles": 16772,
+      "vertices": 8388,
+      "nonTwoUse": 0,
+      "degenerate": 0,
+      "ms": 105.74365699999908
+    },
+    {
+      "family": "pebble",
+      "shape": "thin",
+      "seed": 8280,
+      "triangles": 16916,
+      "vertices": 8460,
+      "nonTwoUse": 0,
+      "degenerate": 0,
+      "ms": 118.12115999999878
+    }
+  ],
+  "checks": [
+    {
+      "test": "repeated fired",
+      "passed": true
+    },
+    {
+      "test": "repeated adobe",
+      "passed": true
+    },
+    {
+      "test": "repeated pebble",
+      "passed": true
+    },
+    {
+      "test": "surface geometry isolation fired",
+      "passed": true
+    },
+    {
+      "test": "surface geometry isolation kiln",
+      "passed": true
+    },
+    {
+      "test": "surface geometry isolation adobe",
+      "passed": true
+    },
+    {
+      "test": "surface geometry isolation dressed",
+      "passed": true
+    },
+    {
+      "test": "surface geometry isolation rubble",
+      "passed": true
+    },
+    {
+      "test": "surface geometry isolation stone",
+      "passed": true
+    },
+    {
+      "test": "surface geometry isolation pebble",
+      "passed": true
+    },
+    {
+      "test": "small closed-wall open-cup geometry, six faces",
+      "passed": true,
+      "huskCount": 68,
+      "maxLength": 0.07153322360292078
+    }
+  ],
+  "husks": [
+    {
+      "density": 0,
+      "count": 0
+    },
+    {
+      "density": 0.38,
+      "count": 68
+    },
+    {
+      "density": 1,
+      "count": 180
+    }
+  ],
+  "hardStoneComparison": [
+    {
+      "rock": 1,
+      "profile": "hard-fracture",
+      "events": 28,
+      "maxCutDepth": 0.0438
+    },
+    {
+      "rock": 2,
+      "profile": "bedded-or-clastic",
+      "events": 53,
+      "maxCutDepth": 0.11144435730613768
+    },
+    {
+      "rock": 3,
+      "profile": "hard-fracture",
+      "events": 28,
+      "maxCutDepth": 0.0438
+    },
+    {
+      "rock": 4,
+      "profile": "hard-fracture",
+      "events": 28,
+      "maxCutDepth": 0.0438
+    },
+    {
+      "rock": 5,
+      "profile": "bedded-or-clastic",
+      "events": 75,
+      "maxCutDepth": 0.11144435730613768
+    },
+    {
+      "rock": 6,
+      "profile": "bedded-or-clastic",
+      "events": 75,
+      "maxCutDepth": 0.11144435730613768
+    },
+    {
+      "rock": 7,
+      "profile": "bedded-or-clastic",
+      "events": 53,
+      "maxCutDepth": 0.11144435730613768
+    }
+  ],
+  "failures": [],
+  "scope": "finite mesh checks; not a proof of complete self-intersection or all seed behavior",
+  "humanVisualApproved": false,
+  "passed": true
+}

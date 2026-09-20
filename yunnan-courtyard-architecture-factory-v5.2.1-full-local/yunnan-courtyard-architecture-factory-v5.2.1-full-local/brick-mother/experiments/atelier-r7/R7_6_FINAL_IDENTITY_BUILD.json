@@ -1,0 +1,41 @@
+{
+  "version": "R7.6.0-final-material-identity",
+  "sourceCommit": "5484a20609ea9fe499c9bc2517df2d41e10d6d2e",
+  "sourceSha256": "9fc49d4cdc4b1f5293f4a21dbd5edf552137a6bbe1587150d70ac0ab146ee05a",
+  "candidateSha256": "fb011905cd454d60ac4cd97163f0452e85b1ecc5e61a67bd097b6dcc197ebb63",
+  "bytes": 91751,
+  "changes": [
+    "version-r75-to-r76-x3",
+    "split-fired-from-adobe-soft-damage",
+    "harder-fired-dressed-layered-edges",
+    "moulded-body-separate-from-damage-mode",
+    "prevent-large-brick-scoops",
+    "preserve-normal-fired-fracture-threshold",
+    "layered-stone-final-default",
+    "remove-cement-softness-from-target-stones",
+    "reduce-generic-layered-stone-scoops",
+    "make-target-stone-damage-shallow-angular",
+    "cross-face-layered-cleavage",
+    "dressed-chisel-over-terrazzo",
+    "layered-sandstone-visible-lamina",
+    "brick-broad-firing-fields-and-ramp",
+    "brick-macro-colour-lenses",
+    "kiln-larger-coherent-zones",
+    "kiln-reduction-broad-maroon",
+    "kiln-oxidation-visible-red"
+  ],
+  "inlineScriptsChecked": 3,
+  "frozenFamilies": [
+    "rubble",
+    "adobe",
+    "pebble"
+  ],
+  "targetFamilies": [
+    "dressed",
+    "stone",
+    "fired",
+    "kiln"
+  ],
+  "humanVisualApproved": false,
+  "productionApproved": false
+}

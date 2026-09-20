@@ -1,0 +1,112 @@
+/* R4 public specimen viewer. No external resources or tracking. */
+:root {
+  color-scheme: dark;
+  --bg: #101311;
+  --text: #dedfd8;
+  --muted: #9ca89d;
+  --line: #ffffff17;
+  --accent: #dfc591;
+  --library: 176px;
+  font: 13px/1.45 system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; background: var(--bg); color: var(--text); }
+body { height: 100dvh; }
+button, input, select { font: inherit; color: inherit; }
+button { border: 1px solid #ffffff13; background: #222820; padding: 7px 11px; border-radius: 6px; cursor: pointer; white-space: nowrap; }
+button:hover { background: #363e31; }
+button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.active { background: #dfc59120 !important; border-color: #dfc59199 !important; color: #ffe7b8 !important; }
+header { height: 42px; display: flex; align-items: center; justify-content: space-between; padding: 0 14px; border-bottom: 1px solid var(--line); background: #151914; gap: 10px; }
+.brand { font-size: 12px; letter-spacing: 1px; font-weight: 650; white-space: nowrap; }
+.brand small { font-size: 12px; color: var(--accent); margin-left: 5px; }
+nav { display: flex; gap: 3px; }
+nav button { padding: 5px 10px; font-size: 12px; background: transparent; }
+#library { position: absolute; top: 42px; bottom: 0; left: 0; width: var(--library); padding: 16px 10px; background: #141913; border-right: 1px solid var(--line); z-index: 5; overflow: auto; }
+.libraryHead { font-size: 12px; margin: 0 5px 12px; color: #b5c0b2; display: flex; justify-content: space-between; }
+.libraryHead span { font-size: 11px; color: #879680; }
+#families { display: flex; flex-direction: column; gap: 7px; }
+#families button { text-align: left; background: #1e241c; width: 100%; padding: 10px 9px; min-height: 48px; display: flex; align-items: center; gap: 8px; }
+#families i { width: 8px; height: 28px; border-radius: 3px; flex: none; }
+#families b { font-size: 13px; font-weight: 550; display: block; }
+#families em { font-style: normal; font-size: 10px; color: #97a191; display: block; margin-top: 2px; }
+.libraryHint { font-size: 10px; line-height: 1.75; color: #7f8d79; padding: 15px 5px; }
+#stage { position: absolute; top: 42px; left: var(--library); right: 0; bottom: 42px; }
+#objectBar { height: 43px; display: flex; align-items: center; justify-content: space-between; padding: 0 15px; gap: 8px; border-bottom: 1px solid var(--line); background: #151914; }
+#objectBar strong { font-size: 13px; color: #eddfbe; font-weight: 550; }
+#shapeName { font-size: 11px; color: #92a08a; margin-left: 10px; }
+#objectBar label { display: flex; align-items: center; gap: 7px; font-size: 11px; color: #a0ad98; }
+#objectBar select { width: 121px; }
+#viewport { position: absolute; top: 43px; bottom: 0; left: 0; right: 0; background: radial-gradient(ellipse at 48% 40%, #272c28 0, #161b17 55%, #0e120e 100%); }
+canvas { display: block; width: 100%; height: 100%; touch-action: none; outline: none; }
+footer { position: absolute; left: var(--library); bottom: 0; right: 0; height: 42px; display: flex; align-items: center; justify-content: center; gap: 7px; padding: 4px 11px; border-top: 1px solid var(--line); background: #151914; }
+footer button { font-size: 12px; padding: 5px 14px; }
+#versionNote { font-size: 10px; color: #87957f; margin-left: auto; }
+.floating { position: absolute; z-index: 2; display: flex; gap: 3px; }
+.floating button { font-size: 11px; padding: 5px 8px; background: #151b14df; }
+.modes { left: 13px; top: 10px; }
+.views { right: 13px; top: 10px; }
+.hint { position: absolute; bottom: 11px; left: 14px; font-size: 10px; color: #97a48e; pointer-events: none; }
+.gesture { right: 14px; left: auto; color: #778972; }
+aside { position: absolute; right: 9px; top: 49px; bottom: 50px; width: 280px; padding: 14px 16px; overflow: auto; background: #171d16f7; border: 1px solid #697d5366; border-radius: 10px; box-shadow: 0 15px 60px #0008; z-index: 9; font-size: 12px; }
+.panelHead { display: flex; align-items: center; justify-content: space-between; margin-bottom: 13px; }
+.panelHead span { font-size: 13px; }
+.panelHead button { font-size: 11px; }
+aside label { display: block; margin: 11px 0 8px; color: #b8c3ad; }
+aside output { float: right; color: var(--accent); font: 11px ui-monospace, monospace; }
+input[type=range] { display: block; width: 100%; margin: 8px 0 0; accent-color: var(--accent); height: 18px; }
+input[type=number], select { max-width: 150px; min-width: 0; background: #252d22; border: 1px solid #5d72444f; border-radius: 5px; padding: 5px 7px; font-size: 12px; width: 144px; }
+input[type=checkbox] { accent-color: var(--accent); }
+.row { display: flex !important; align-items: center; justify-content: space-between; gap: 10px; }
+.sectionLabel { margin-top: 15px; padding-top: 12px; border-top: 1px solid var(--line); color: var(--accent); font-size: 11px; }
+.segments { display: flex; gap: 4px; margin: 7px 0 10px; }
+.segments button { flex: 1; padding: 5px; font-size: 11px; }
+details { font-size: 11px; color: #9eae91; margin: 12px 0; }
+summary { cursor: pointer; padding: 4px 0; }
+.layerRow { display: flex; gap: 6px; align-items: center; }
+.layerRow > label { min-width: 27px; margin: 5px 0; }
+.layerRow input[type=number] { width: 126px; font-size: 10px; }
+.layerRow label:last-child { white-space: nowrap; }
+#busy { position: absolute; bottom: 42px; left: 50%; transform: translateX(-50%); padding: 9px 12px; border: 1px solid #dfc59155; background: #1d281ded; border-radius: 8px; z-index: 6; font-size: 12px; white-space: nowrap; }
+#busy button { margin-left: 12px; font-size: 11px; }
+#error { position: absolute; top: 57px; left: 50%; transform: translateX(-50%); width: min(480px,92%); padding: 15px; background: #562827; color: #fff; z-index: 8; border-radius: 9px; }
+#oldStage { position: absolute; inset: 0; z-index: 4; background: #151915; }
+#oldStage iframe { border: 0; width: 100%; height: 100%; }
+dialog { background: #20281e; color: var(--text); border: 1px solid #536c46; border-radius: 10px; width: 660px; max-width: 92vw; max-height: 87dvh; padding: 18px; font-size: 12px; }
+dialog::backdrop { background: #000b; }
+dialog p { color: #b0c2a4; line-height: 1.7; }
+#refImage { max-width: 100%; max-height: 62dvh; object-fit: contain; margin-top: 14px; }
+.versionGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+[hidden] { display: none !important; }
+@media (max-width:700px) {
+  header { height: 40px; padding: 0 9px; gap: 5px; }
+  .brand { font-size: 10px; letter-spacing: .3px; }
+  .brand small { font-size: 11px; margin-left: 3px; }
+  nav { gap: 0; }
+  nav button { font-size: 11px; padding: 5px 7px; }
+  #library { top: 40px; width: 100%; bottom: auto; height: 96px; padding: 6px 8px; border-right: 0; border-bottom: 1px solid var(--line); overflow: visible; }
+  .libraryHead, .libraryHint { display: none; }
+  #families { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 4px; }
+  #families button { min-height: 39px; height: 39px; padding: 5px 5px; gap: 5px; }
+  #families b { font-size: 11px; white-space: normal; line-height: 1.15; font-weight: 600; }
+  #families em { display: none; }
+  #families i { width: 4px; height: 22px; }
+  #stage { left: 0; top: 136px; bottom: calc(43px + env(safe-area-inset-bottom)); }
+  #objectBar { height: 42px; padding: 0 10px; }
+  #objectBar strong { font-size: 12px; }
+  #shapeName { display: none; }
+  #objectBar label { font-size: 10px; gap: 4px; }
+  #objectBar select { width: 106px; font-size: 11px; }
+  #viewport { top: 42px; }
+  .modes { left: 8px; top: 8px; }
+  .views { right: 8px; top: 43px; }
+  .floating button { font-size: 10px; padding: 5px 7px; }
+  footer { left: 0; height: calc(43px + env(safe-area-inset-bottom)); padding: 4px 8px calc(4px + env(safe-area-inset-bottom)); gap: 6px; }
+  footer button { padding: 5px 12px; font-size: 11px; }
+  #versionNote { display: none; }
+  .hint { bottom: 9px; left: 10px; font-size: 10px; }
+  .gesture { display: none; }
+  aside { top: 46px; bottom: calc(50px + env(safe-area-inset-bottom)); width: 280px; max-width: 93vw; }
+  #busy { font-size: 11px; }
+  #error { top: 85px; }
+}

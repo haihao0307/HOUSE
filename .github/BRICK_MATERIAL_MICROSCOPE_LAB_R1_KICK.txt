@@ -1,0 +1,3 @@
+run=2026-09-12T00:55:00Z
+purpose=validate isolated fired-brick process-mask + fragment-level macroscopic-microscope lab after shader portability fix
+fixed_html_commit=201fb2c22eaa31d3783bbf35d4294c33eb1bcc81

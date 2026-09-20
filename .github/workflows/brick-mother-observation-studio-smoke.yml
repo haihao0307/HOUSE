@@ -1,0 +1,148 @@
+name: Brick Mother Observation Studio Smoke
+
+on:
+  push:
+    branches:
+      - feature/brick-mother-v2.0-composite-material-dna
+    paths:
+      - .github/workflows/brick-mother-observation-studio-smoke.yml
+      - yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/brick-mother-observation-studio.html
+      - yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/brick-mother-app-v2.js
+      - yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/brick-mother-geometry-v2.js
+      - yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/brick-mother-renderer-v2.js
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  observation-studio:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - name: Checkout exact pushed head
+        uses: actions/checkout@v4
+
+      - name: Validate focused layout contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          brick="yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother"
+          page="$brick/brick-mother-observation-studio.html"
+          test -s "$page"
+          node --check "$brick/brick-mother-gaea-kernel-v1.js"
+          node --check "$brick/brick-mother-geometry-v2.js"
+          node --check "$brick/brick-mother-renderer-v2.js"
+          node --check "$brick/brick-mother-app-v2.js"
+          python3 -m json.tool "$brick/data/brick-material-profiles-v2.json" >/dev/null
+          python3 - "$page" <<'PY'
+          from html.parser import HTMLParser
+          from pathlib import Path
+          import sys
+
+          class Audit(HTMLParser):
+              def __init__(self):
+                  super().__init__()
+                  self.ids=[]
+                  self.controls=[]
+                  self.seeds=[]
+                  self.channels=[]
+                  self.profiles=[]
+                  self.scripts=[]
+                  self.styles=[]
+              def handle_starttag(self, tag, attrs):
+                  a=dict(attrs)
+                  if 'id' in a: self.ids.append(a['id'])
+                  if 'data-control' in a: self.controls.append(a['data-control'])
+                  if 'data-seed' in a: self.seeds.append(a['data-seed'])
+                  if 'data-channel' in a: self.channels.append(a['data-channel'])
+                  if 'data-profile' in a: self.profiles.append(a['data-profile'])
+                  if tag == 'script' and a.get('src'): self.scripts.append(a['src'])
+                  if tag == 'link' and a.get('rel') == 'stylesheet': self.styles.append(a.get('href'))
+
+          path=Path(sys.argv[1])
+          text=path.read_text(encoding='utf-8')
+          audit=Audit(); audit.feed(text)
+          required={
+              'brickCanvas','batchStats','buildStatus','loadingMask','progressBar','loadingError','childCards',
+              'profileName','profileFamily','profileSource','profileTriangles','profileDimensions','profileColor',
+              'profileRoughness','profileNormal','profileLink','referenceFrame','sourceLicense','referenceSourceLink',
+              'referencePanel','referenceBackdrop','closeReference','fatal','resetDNA','randomizeSeeds','resetView',
+              'specimenMode','soloView','autoRotate','regenerate','exportDNA','showReference','channelName'
+          }
+          assert '让宏观缺失' not in text
+          assert 'data-layout-version="brick-observation-v1"' in text
+          assert len(audit.controls) == 15 and len(set(audit.controls)) == 15, audit.controls
+          assert len(audit.seeds) == 9 and len(set(audit.seeds)) == 9, audit.seeds
+          assert len(audit.channels) == 11 and len(set(audit.channels)) == 11, audit.channels
+          assert len(audit.profiles) == 4 and len(set(audit.profiles)) == 4, audit.profiles
+          assert not required.difference(audit.ids), sorted(required.difference(audit.ids))
+          assert len(audit.ids) == len(set(audit.ids)), 'duplicate ids'
+          assert len(audit.scripts) == 4, audit.scripts
+          assert len(audit.styles) == 3, audit.styles
+          print({'controls':len(audit.controls),'seeds':len(audit.seeds),'channels':len(audit.channels),'profiles':len(audit.profiles)})
+          PY
+
+      - name: Capture mobile-fast WebGL2 observation page
+        shell: bash
+        run: |
+          set -euo pipefail
+          brick="yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother"
+          page="$brick/brick-mother-observation-studio.html"
+          chrome="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)"
+          uri="$(python3 - "$page" <<'PY'
+          from pathlib import Path
+          import sys
+          print(Path(sys.argv[1]).resolve().as_uri())
+          PY
+          )"
+          timeout 720s "$chrome" \
+            --headless=new \
+            --no-sandbox \
+            --disable-dev-shm-usage \
+            --disable-background-networking \
+            --allow-file-access-from-files \
+            --enable-webgl \
+            --ignore-gpu-blocklist \
+            --enable-unsafe-swiftshader \
+            --use-gl=angle \
+            --use-angle=swiftshader \
+            --hide-scrollbars \
+            --window-size=1920,1080 \
+            --virtual-time-budget=90000 \
+            --screenshot=/tmp/brick-mother-observation-studio.png \
+            --dump-dom \
+            "${uri}?mobile=1&full=0&profile=old-pbr-fired&mode=siblings&solo=1&focus=1&specimen=benchmark&qa=observation-studio" \
+            > /tmp/brick-mother-observation-studio.dom.html \
+            2> /tmp/brick-mother-observation-studio.chrome.log
+          grep -q 'data-layout-version="brick-observation-v1"' /tmp/brick-mother-observation-studio.dom.html
+          grep -q 'data-brick-mother-ready="true"' /tmp/brick-mother-observation-studio.dom.html
+          grep -q 'data-brick-mother-version="2.7.5-alpha.1"' /tmp/brick-mother-observation-studio.dom.html
+          grep -q 'data-mobile-runtime="true"' /tmp/brick-mother-observation-studio.dom.html
+          grep -q 'class="card control-rail left-rail"' /tmp/brick-mother-observation-studio.dom.html
+          grep -q 'class="card control-rail right-rail"' /tmp/brick-mother-observation-studio.dom.html
+          test -s /tmp/brick-mother-observation-studio.png
+          test "$(wc -c < /tmp/brick-mother-observation-studio.png)" -gt 100000
+          python3 - <<'PY'
+          from pathlib import Path
+          import struct
+          path=Path('/tmp/brick-mother-observation-studio.png')
+          data=path.read_bytes()
+          assert data[:8] == b'\x89PNG\r\n\x1a\n'
+          width,height=struct.unpack('>II',data[16:24])
+          assert (width,height)==(1920,1080),(width,height)
+          print({'screenshotBytes':len(data),'size':[width,height]})
+          PY
+
+      - name: Upload observation evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: brick-mother-observation-studio-${{ github.sha }}
+          path: |
+            /tmp/brick-mother-observation-studio.png
+            /tmp/brick-mother-observation-studio.dom.html
+            /tmp/brick-mother-observation-studio.chrome.log
+            yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/brick-mother-observation-studio.html
+          compression-level: 1
+          if-no-files-found: ignore

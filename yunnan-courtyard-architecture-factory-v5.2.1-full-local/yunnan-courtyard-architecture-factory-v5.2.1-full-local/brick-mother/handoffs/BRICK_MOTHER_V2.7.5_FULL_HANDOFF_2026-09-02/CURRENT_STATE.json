@@ -1,0 +1,94 @@
+{
+  "packageId": "BRICK_MOTHER_V2.7.5_FULL_HANDOFF_2026-09-02",
+  "packageVersion": "1.0.0",
+  "product": "Brick Mother",
+  "repository": "haihao0307/HOUSE",
+  "branch": "feature/brick-mother-v2.0-composite-material-dna",
+  "runtimeHeadBeforeHandoffCommit": "b25508b8b57d45f9333286ab7b883644181039e7",
+  "handoffBuildCommit": "written_by_github_action_as_GITHUB_SHA",
+  "pr": {
+    "number": 15,
+    "state": "open",
+    "draft": true,
+    "merged": false
+  },
+  "base": {
+    "branch": "release/brick-mother-v1.0",
+    "sha": "77ce0a1bc63d301829942c14e5708fc16a06cdcd",
+    "immutable": true
+  },
+  "versions": {
+    "mainRuntime": "2.7.5-alpha.1",
+    "stoneStudy": "stone-response-s1.1",
+    "unifiedMethodology": "1.0.0"
+  },
+  "workbenches": [
+    {
+      "id": "three-material",
+      "file": "brick-mother-standalone-v2.7.5.html",
+      "selfContained": true
+    },
+    {
+      "id": "observation-studio",
+      "file": "brick-mother-observation-studio.html",
+      "selfContained": false,
+      "serveByHttp": true
+    },
+    {
+      "id": "stone-study",
+      "file": "BRICK_MOTHER_STONE_STUDY_S1.html",
+      "selfContained": true
+    },
+    {
+      "id": "high-variation-reference",
+      "file": "brick-mother-standalone-v2.6.html",
+      "selfContained": true
+    }
+  ],
+  "evidence": {
+    "mainWorkflowRun": 33458112053,
+    "mainArtifactId": 9782256363,
+    "mainArtifactDigest": "sha256:1f18bfd93d1099d651b20590b6dadb1a401bae5a07d142efd34c0eb5a96f54d9",
+    "mainStatus": "success",
+    "stoneWorkflowRun": 33458112049,
+    "stoneArtifactId": 9782267239,
+    "stoneArtifactDigest": "sha256:68b246de153a64d91058d0677127b7fcbf3175648f18bbc870a6fe515c72e0d9",
+    "stoneLocalPassed": true,
+    "stoneStandalonePassed": true,
+    "stonePublicPassed": false
+  },
+  "unifiedMethod": {
+    "methodologyReceived": true,
+    "sourceAttachment": "MOTHER_UNIFIED_EVOLUTION_METHOD_V1.0.0.md",
+    "sourceFileId": "file_00000000244081f7aaec3a92572eb9d5",
+    "rawSourceBytesAvailableToPackageBuilder": false,
+    "policyJsonIncluded": true,
+    "policyJsonSha256": "fe69ea88c05d9b8c74e79e21c2c2c719dc096b677848eb40305575f08b5b8fdf",
+    "runtimeIntegrationVerified": false
+  },
+  "approvals": {
+    "visualApproved": false,
+    "productionApproved": false,
+    "jrbReferenceColorApproved": false,
+    "stoneDetailApproved": false,
+    "adobeInclusionApproved": false
+  },
+  "knownUnfinished": [
+    "fix default seed batch path where null becomes master seed 1",
+    "separate detail seed from major formation events",
+    "reject unknown and out-of-range parameters before normalization",
+    "add initial state, environment history, interaction history and three clocks",
+    "version neutral, studio and diagnostic presets and prove display changes do not mutate source state",
+    "complete stable public viewer validation",
+    "continue stone visual realism and adobe fiber distribution after user reference"
+  ],
+  "protection": {
+    "forcePushForbidden": true,
+    "historyRewriteForbidden": true,
+    "mergeForbidden": true,
+    "mainModificationForbidden": true,
+    "ghPagesModificationForbidden": true,
+    "otherMotherModificationForbidden": true,
+    "frozenV1ModificationForbidden": true
+  }
+}

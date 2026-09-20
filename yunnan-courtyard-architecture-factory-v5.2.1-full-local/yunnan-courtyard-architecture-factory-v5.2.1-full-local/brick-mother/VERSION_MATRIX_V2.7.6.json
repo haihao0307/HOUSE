@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "2.7.6",
+  "workbench": "workbench-v2.7.6.html",
+  "defaultView": "v275-fast",
+  "frozenCore": {
+    "observationStudio": {"path": "brick-mother-observation-studio.html", "blob": "7b2a18c6a886d0751ca2fc92530b7986d9e1a727", "mutable": false},
+    "standalone": {"path": "brick-mother-standalone-v2.7.5.html", "blob": "7b10389cb9367f7423619262820883cc94b07a61", "mutable": false}
+  },
+  "preservedVersions": [
+    {"id": "v275-fast", "role": "quick launch using the authentic runtime in one specimen mode"},
+    {"id": "v275-full", "role": "exact authentic complete V2.7.5 observation studio"},
+    {"id": "v26-high-variation", "path": "brick-mother-standalone-v2.6.html", "blob": "f64c65d87dc418bf1a923a4cf332b449efbe0eb9"},
+    {"id": "pbr-weathering-v1.1", "path": "experiments/pbr-weathering-v1.1/index.html", "approved": false},
+    {"id": "pbr-daylight-v1.4", "path": "experiments/pbr-daylight-v1.4/index.html", "approved": false}
+  ],
+  "performanceStrategy": {
+    "shellFirst": true,
+    "lazyIframePerVersion": true,
+    "quickLaunchBuildsOneAuthenticSpecimen": true,
+    "fullFamilyLoadsOnDemand": true,
+    "coreSourceChanged": false
+  },
+  "humanVisualApproved": false,
+  "productionApproved": false
+}

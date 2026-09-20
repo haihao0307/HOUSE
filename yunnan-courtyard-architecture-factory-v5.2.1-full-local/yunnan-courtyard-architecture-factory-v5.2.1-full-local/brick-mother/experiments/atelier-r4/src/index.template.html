@@ -1,0 +1,30 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="color-scheme" content="dark"><title>Brick Mother R4 · 完整砖石材料台</title><style>/*STYLE*/</style></head><body data-workbench="brick-mother-r4.0.0">
+<header><span class="brand">BRICK MOTHER <small id="versionLabel">R4</small></span><nav><button id="versions">版本</button><button id="reference">参考</button><button id="pause">暂停</button><button id="togglePanel" aria-expanded="false">参数</button></nav></header>
+<section id="library" aria-label="全部材料"><div class="libraryHead">全部材料 <span>7 项</span></div><div id="families"></div><div class="libraryHint">版本号是工作台版本。<br>砖、石、土坯在此分别选择。</div></section>
+<main id="stage"><div id="objectBar"><div><strong id="specimenName">砖 · 烧结旧砖</strong><span id="shapeName">长条</span></div><label>形态 <select id="shape" aria-label="切换形态"></select></label></div>
+<div id="viewport"><canvas id="view" aria-label="烧结旧砖的可旋转三维实物"></canvas><div id="oldStage" hidden></div>
+<div id="modes" class="floating modes"><button data-mode="0" class="active">成品</button><button data-mode="1">灰模</button><button data-mode="2">颜色</button><button data-mode="3">法线</button></div>
+<div class="floating views" id="views"><button data-face="front">正</button><button data-face="back">背</button><button data-face="left">左</button><button data-face="right">右</button><button data-face="top">顶</button><button data-face="bottom">底</button></div>
+<div class="hint" id="status" role="status" aria-live="polite">准备烧结旧砖</div><div class="hint gesture">拖动旋转 · 滚轮缩放 · Shift 平移</div>
+<div id="busy" hidden><span id="busyText">生成中</span><button id="cancel">取消</button></div><div id="error" hidden role="alert"></div>
+</div></main>
+<footer><button id="resetView">归位</button><button id="nextSeed">换一块</button><button id="spin">转台</button><button id="trio">三种子</button><span id="versionNote">R4 · 当前候选</span></footer>
+<aside id="panel" hidden><div class="panelHead"><span>参数</span><button id="closePanel" aria-label="关闭参数">收起</button></div>
+
+<label class="row">主种子<input id="seed" type="number" min="0" max="4294967295"></label>
+<details><summary>分层种子与锁定</summary><div id="layerSeeds"></div></details>
+<div class="sectionLabel">真实形体</div><label>孔洞 / 剥落 <output id="damageOut"></output><input id="damage" type="range" min="0" max="100"></label><label>形面起伏 <output id="reliefOut"></output><input id="relief" type="range" min="0" max="100"></label>
+<div class="sectionLabel">表面取样</div><div id="twists" class="segments"><button data-twists="0">原坐标</button><button data-twists="1">一级</button><button data-twists="2" class="active">两级</button></div>
+<label>局部变化 <output id="strengthOut"></output><input id="strength" type="range" min="0" max="150" value="100"></label>
+<label>细节尺度 <output id="frequencyOut"></output><input id="frequency" type="range" min="6" max="26" value="14"></label>
+<label>粗细层数 <output id="levelsOut"></output><input id="levels" type="range" min="2" max="5" step="1" value="4"></label>
+<div class="sectionLabel">材料响应</div><label>微细起伏 <output id="grainOut"></output><input id="grain" type="range" min="0" max="100"></label><label>色区层次 <output id="colorOut"></output><input id="color" type="range" min="0" max="150"></label><label>粗糙度 <output id="roughOut"></output><input id="rough" type="range" min="30" max="100"></label><label>湿润 <output id="wetOut"></output><input id="wet" type="range" min="0" max="100"></label>
+<label class="row">检查通道<select id="channel"><option value="0">成品</option><option value="1">灰模</option><option value="2">基础色</option><option value="3">法线</option><option value="4">取样场</option><option value="5">粗糙度</option><option value="6">介电反射 F0</option><option value="7">金属度</option></select></label>
+<label class="row">灯光<select id="light"><option value="studio">中性棚光</option><option value="rake">侧向检查光</option></select></label><label class="row">显示倍率<select id="pixelRatio"><option value="1">1× 原生</option><option value=".75">0.75×</option><option value="1.5">1.5× 高清</option></select></label>
+<div class="segments"><button id="exportPreset">存参数</button><button id="importPreset">载入</button><button id="resetAll">重置</button></div><input id="presetFile" type="file" accept="application/json,.json" hidden>
+<details><summary>计算 / 方法</summary><p id="metrics"></p><p>基础场缓存一次；几何与材料分别更新。GGX / 相关 Smith 可见性 / Schlick Fresnel；sRGB 输入在线性空间参与光照。静止停绘。</p><p>两级旋转和材料配方属于本项目的实验扩展。微凹凸影响着色法线；大缺口由实体几何承载。</p><p>名义建模单位，未做实物尺寸与反射率标定。土坯含六面稻草，当前无稻壳。</p></details>
+</aside>
+
+<dialog id="referenceDialog"><div class="panelHead"><span>原始参考</span><button id="closeRef">关闭</button></div><p>可选择本机参考图，对照形体和综合色彩。图片不进入三维材料贴图。</p><input id="refFile" type="file" accept="image/*"><img id="refImage" alt="用户选择的参考图片" hidden><p>本版采用小妈的局部材料坐标和分通道方法。粗糙度、基础色、法线、F0、金属度分别检查。F0=0.04 是介电材料的明确建模假设，未做实物反射率标定。</p></dialog>
+<dialog id="versionDialog"><div class="panelHead"><span>版本与对照</span><button id="closeVersions">关闭</button></div><p>R2、R3、R4 是版本号。材料类别由实物名称单独标明。一次只运行一个版本。</p><div class="versionGrid"><button data-version="r4">R4 · 七类材料</button><button data-version="r3">R3 · 四类原件</button><button data-version="r2">R2 · 四类原件</button><button data-version="r1">R1 · 七类保留版</button><button data-version="v26">V2.6 · 深孔保留版</button><button data-version="v275">V2.7.5 · 三材质保留版</button></div><p>R1、V2.6、V2.7.5 使用之前的线程封装版，保持材料生成规则，原件另行归档。旧版计算仍较重，打开时会暂停新版本。R2/R3 可对照同一材料；旧版没有的材料会返回 R4 展示。</p></dialog>
+<script>/*CATALOG*/</script><script>/*KERNEL*/</script><script>/*RENDERER*/</script><script>/*APP*/</script></body></html>

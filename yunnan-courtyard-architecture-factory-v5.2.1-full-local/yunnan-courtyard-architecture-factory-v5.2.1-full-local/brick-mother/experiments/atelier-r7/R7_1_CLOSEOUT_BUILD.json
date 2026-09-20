@@ -1,0 +1,19 @@
+{
+  "version": "R7.1.0-closeout-candidate",
+  "sourceCommit": "a12ec716f57b8a503099e627159428e5f08d3041",
+  "sourceSha256": "b69b4b344fea713ec3d19044bdf60ceec8199a071402c84e6da2370a144a9a84",
+  "candidateSha256": "6c2718ae3a8b437f96f9a8b1bf0cf77c2a282ae229e55fd588128b262cd8b9b8",
+  "bytes": 88342,
+  "guardedReplacements": [
+    "stone-seed-dominant-bedding-direction",
+    "stone-bedding-direction-application",
+    "adobe-bounded-secondary-waviness-parameters",
+    "adobe-bounded-secondary-waviness-application",
+    "remove-stale-leaveLegacy-family-call",
+    "remove-stale-leaveLegacy-pause-call"
+  ],
+  "inlineScriptsChecked": 3,
+  "retainedFamilies": 7,
+  "humanVisualApproved": false,
+  "productionApproved": false
+}

@@ -1,0 +1,336 @@
+name: Brick Mother V2.7.6 Full Package Verified
+
+on:
+  push:
+    branches:
+      - feature/brick-mother-v2.0-composite-material-dna
+    paths:
+      - .github/workflows/brick-mother-v276-full-package-verified.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+  pull-requests: read
+
+concurrency:
+  group: brick-mother-v276-full-package-verified
+  cancel-in-progress: false
+
+env:
+  BRICK_ROOT: yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother
+  PROJECT_ROOT: yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local
+  HANDOFF_DIR: yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/handoffs/BRICK_MOTHER_V2.7.6_FULL_HANDOFF_2026-09-04
+  PACKAGE_BASENAME: BRICK_MOTHER_V2.7.6_FULL_HANDOFF_2026-09-04
+  OBSERVATION_BLOB: 7b2a18c6a886d0751ca2fc92530b7986d9e1a727
+  STANDALONE_BLOB: 7b10389cb9367f7423619262820883cc94b07a61
+  HIGH_VARIATION_BLOB: f64c65d87dc418bf1a923a4cf332b449efbe0eb9
+  GH_TOKEN: ${{ github.token }}
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout exact package head
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.sha }}
+
+      - name: Verify branch, PR, frozen files, source and knowledge
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          test "$GITHUB_REF_NAME" = "feature/brick-mother-v2.0-composite-material-dna"
+          test "$(git hash-object "$BRICK_ROOT/brick-mother-observation-studio.html")" = "$OBSERVATION_BLOB"
+          test "$(git hash-object "$BRICK_ROOT/brick-mother-standalone-v2.7.5.html")" = "$STANDALONE_BLOB"
+          test "$(git hash-object "$BRICK_ROOT/brick-mother-standalone-v2.6.html")" = "$HIGH_VARIATION_BLOB"
+          test -s "$BRICK_ROOT/workbench-v2.7.6.html"
+          test -s "$BRICK_ROOT/VERSION_MATRIX_V2.7.6.json"
+          test -s "$BRICK_ROOT/experiments/pbr-weathering-v1.1/index.html"
+          test -s "$BRICK_ROOT/experiments/pbr-daylight-v1.4/index.html"
+          test -s "$BRICK_ROOT/knowledge/PBR_GUIDE_PRODUCTION_RULES_V1.json"
+          test -s "$BRICK_ROOT/knowledge/pbr-guide-production-rules-v1.html"
+          test -s "$HANDOFF_DIR/00_START_HERE.md"
+          test -s "$HANDOFF_DIR/CURRENT_STATE.json"
+          test -s "$HANDOFF_DIR/NEXT_WINDOW_PROMPT.md"
+          test ! -e "$BRICK_ROOT/studio-sw.js"
+          ! grep -q 'navigator.serviceWorker.register' "$BRICK_ROOT/experiments/pbr-daylight-v1.4/index.html"
+
+          gh api "repos/$GITHUB_REPOSITORY/pulls/15" > /tmp/pr15.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          pr=json.loads(Path('/tmp/pr15.json').read_text())
+          assert pr['state']=='open'
+          assert pr['draft'] is True
+          assert pr['merged'] is False
+          assert pr['base']['ref']=='release/brick-mother-v1.0'
+          assert pr['head']['ref']=='feature/brick-mother-v2.0-composite-material-dna'
+          PY
+
+          for json_file in \
+            "$BRICK_ROOT/VERSION.json" \
+            "$BRICK_ROOT/VERSION_MATRIX_V2.7.6.json" \
+            "$BRICK_ROOT/experiments/ARCHIVE_IDENTITY.json" \
+            "$BRICK_ROOT/knowledge/PBR_GUIDE_PRODUCTION_RULES_V1.json" \
+            "$HANDOFF_DIR/CURRENT_STATE.json"; do
+            python3 -m json.tool "$json_file" >/dev/null
+          done
+
+          for js_file in \
+            "$BRICK_ROOT/brick-mother-app-v2.js" \
+            "$BRICK_ROOT/brick-mother-geometry-v2.js" \
+            "$BRICK_ROOT/brick-mother-renderer-v2.js" \
+            "$BRICK_ROOT/brick-mother-gaea-kernel-v1.js" \
+            "$BRICK_ROOT/stone-response-study.js" \
+            "$BRICK_ROOT/experiments/pbr-weathering-v1.1/brick-mother-realtime-weathering-pbr-v1.1.js" \
+            "$BRICK_ROOT/experiments/pbr-weathering-v1.1/brick-mother-stone-form-geometry-v3.5.js" \
+            "$BRICK_ROOT/experiments/pbr-weathering-v1.1/brick-mother-weathering-geometry-v1.1.js"; do
+            node --check "$js_file"
+          done
+
+      - name: Assemble complete clean package
+        shell: bash
+        run: |
+          set -euo pipefail
+          export PACKAGE_DIR="/tmp/${PACKAGE_BASENAME}-${GITHUB_SHA}"
+          export PACKAGE_ZIP="${PACKAGE_DIR}.zip"
+          rm -rf "$PACKAGE_DIR" "$PACKAGE_ZIP" "$PACKAGE_ZIP.sha256"
+          mkdir -p "$PACKAGE_DIR/brick-mother" "$PACKAGE_DIR/handoff" "$PACKAGE_DIR/workflows" "$PACKAGE_DIR/repository-rules" "$PACKAGE_DIR/online-proof"
+
+          rsync -a \
+            --exclude 'releases/v1.0/' \
+            --exclude 'handoffs/' \
+            --exclude 'node_modules/' \
+            --exclude '__pycache__/' \
+            --exclude '*.pyc' \
+            --exclude '.DS_Store' \
+            "$BRICK_ROOT/" "$PACKAGE_DIR/brick-mother/"
+          cp -a "$HANDOFF_DIR/." "$PACKAGE_DIR/handoff/"
+
+          for workflow in \
+            brick-mother-observation-studio-smoke.yml \
+            brick-mother-smoke.yml \
+            brick-mother-v2-smoke.yml \
+            brick-mother-v27-source-retry.yml \
+            brick-mother-stone-study.yml \
+            brick-mother-v275-full-handoff.yml \
+            brick-mother-v276-deploy.yml \
+            brick-mother-v276-full-package-verified.yml; do
+            test -s ".github/workflows/$workflow"
+            cp ".github/workflows/$workflow" "$PACKAGE_DIR/workflows/$workflow"
+          done
+
+          for entry in \
+            "$PROJECT_ROOT/AGENTS.md" \
+            "$PROJECT_ROOT/README.md" \
+            "$PROJECT_ROOT/PROJECT_STATE.md" \
+            "$PROJECT_ROOT/docs/SYSTEM_ARCHITECTURE.md"; do
+            if [ -s "$entry" ]; then cp "$entry" "$PACKAGE_DIR/repository-rules/$(basename "$entry")"; fi
+          done
+
+          cp /tmp/pr15.json "$PACKAGE_DIR/online-proof/PR_15_AT_BUILD.json"
+          cat > "$PACKAGE_DIR/online-proof/DEPLOYMENT_AND_BROWSER_PROOF.json" <<'JSON'
+          {
+            "deploymentRunId": 33851920355,
+            "deploymentConclusion": "success",
+            "browserProofRunId": 33852321101,
+            "browserProofConclusion": "success",
+            "headlessSoftwareRenderer": true,
+            "shellReadyMs": 720,
+            "quickSpecimenReadyMs": 13557,
+            "runtime": "2.7.5-alpha.1",
+            "canvasCount": 1,
+            "runtimeFailed": false,
+            "errors": [],
+            "hardwareGpuBenchmark": false,
+            "humanVisualApproved": false,
+            "productionApproved": false
+          }
+          JSON
+
+          cat > "$PACKAGE_DIR/README_FIRST.md" <<'MD'
+          # Brick Mother V2.7.6 全量交接包
+
+          Windows 双击 `START_WINDOWS.bat`。macOS 或 Linux 执行 `sh START_MAC_LINUX.sh`。随后打开 `http://127.0.0.1:8765/START_HERE.html`。
+
+          新窗口先读 `handoff/00_START_HERE.md`、`handoff/CURRENT_STATE.json` 和 `handoff/NEXT_WINDOW_PROMPT.md`。
+
+          包内保留真正的 V2.7.5、V2.6 高变化版、两套 PBR 实验、PBR 蒸馏规则、综合工作台、源码和续接资料。V2.7.5 与 V2.6 冻结文件禁止修改。
+
+          完整 PBR 手册 PDF 未在公开包中重新分发。人工视觉批准和生产批准继续为 false。
+          MD
+
+          cat > "$PACKAGE_DIR/START_WINDOWS.bat" <<'BAT'
+          @echo off
+          cd /d "%~dp0"
+          start "" "http://127.0.0.1:8765/START_HERE.html"
+          py -3 -m http.server 8765 --bind 127.0.0.1
+          BAT
+
+          cat > "$PACKAGE_DIR/START_MAC_LINUX.sh" <<'SH'
+          #!/usr/bin/env sh
+          cd "$(dirname "$0")"
+          printf '%s\n' 'Open http://127.0.0.1:8765/START_HERE.html'
+          python3 -m http.server 8765 --bind 127.0.0.1
+          SH
+          chmod +x "$PACKAGE_DIR/START_MAC_LINUX.sh"
+
+          cat > "$PACKAGE_DIR/START_HERE.html" <<'HTML'
+          <!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Brick Mother V2.7.6 全量交接</title><style>
+          :root{font-family:Inter,"Segoe UI","PingFang SC","Microsoft YaHei",system-ui,sans-serif;color:#29251f;background:#ddd4c7;--line:rgba(63,50,37,.17);--muted:#766d62}*{box-sizing:border-box}html,body{width:100%;height:100%;margin:0;overflow:hidden}body{background:radial-gradient(circle at 15% -8%,#fffaf0 0,transparent 40rem),linear-gradient(135deg,#e7e0d6,#d2c6b7)}.app{height:100%;display:grid;grid-template-columns:238px minmax(0,1fr);grid-template-rows:60px minmax(0,1fr);gap:9px;padding:9px}.top{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;padding:0 15px;border:1px solid var(--line);border-radius:15px;background:rgba(250,247,241,.91);box-shadow:0 16px 48px rgba(53,41,28,.13)}.top b{font-size:14px}.top span{color:var(--muted);font-size:9px}.rail{overflow:auto;padding:9px;border:1px solid var(--line);border-radius:15px;background:rgba(248,244,237,.92);box-shadow:0 16px 48px rgba(53,41,28,.13)}.nav{width:100%;margin:0 0 7px;padding:11px;border:1px solid transparent;border-radius:11px;background:transparent;color:var(--muted);text-align:left;cursor:pointer}.nav:hover,.nav.on{background:#fffaf2;color:#29251f;border-color:rgba(139,94,53,.22)}.nav b{display:block;font-size:11px}.nav small{display:block;margin-top:4px;font-size:8px;line-height:1.45}.stage{position:relative;min-width:0;min-height:0;overflow:hidden;border:1px solid var(--line);border-radius:15px;background:#171816;box-shadow:0 16px 48px rgba(53,41,28,.13)}iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:none;background:#111}iframe.on{display:block}.open{position:absolute;right:12px;top:12px;z-index:8;padding:8px 10px;border:1px solid rgba(255,255,255,.14);border-radius:8px;background:rgba(20,20,18,.76);color:#eee6da;font-size:9px;cursor:pointer}.menu{display:none}@media(max-width:760px){.app{grid-template-columns:1fr;grid-template-rows:52px minmax(0,1fr);padding:7px}.top{grid-column:auto}.top span{display:none}.rail{position:fixed;left:7px;right:7px;top:66px;z-index:20;max-height:calc(100vh - 74px);transform:translateY(-120%);transition:.22s}.rail.opened{transform:none}.menu{display:block}.stage{grid-column:1}}
+          </style></head><body><main class="app"><header class="top"><b>Brick Mother V2.7.6 全量交接</b><span>V2.7.5 · V2.6 高变化 · PBR 实验 · 续接资料</span><button class="menu" id="menu">版本</button></header><aside class="rail" id="rail">
+          <button class="nav on" data-id="v275" data-src="brick-mother/brick-mother-observation-studio.html"><b>真正的 V2.7.5</b><small>原三栏观察台，默认打开。</small></button>
+          <button class="nav" data-id="all" data-src="brick-mother/workbench-v2.7.6.html?tab=v275-fast"><b>V2.7.6 综合工作台</b><small>统一查看全部版本与知识。</small></button>
+          <button class="nav" data-id="v26" data-src="brick-mother/brick-mother-standalone-v2.6.html"><b>V2.6 高变化版</b><small>保留强色彩、孔洞和破损。</small></button>
+          <button class="nav" data-id="pbr11" data-src="brick-mother/experiments/pbr-weathering-v1.1/index.html"><b>PBR 风化 V1.1</b><small>隔离保存的实时风化实验。</small></button>
+          <button class="nav" data-id="pbr14" data-src="brick-mother/experiments/pbr-daylight-v1.4/index.html"><b>PBR 日光 V1.4</b><small>隔离保存的日光实验。</small></button>
+          <button class="nav" data-id="guide" data-src="brick-mother/knowledge/pbr-guide-production-rules-v1.html"><b>PBR 手册规则</b><small>通道职责、材料事件与检查门。</small></button>
+          </aside><section class="stage" id="stage"><button class="open" id="open">独立打开</button></section></main><script>
+          (()=>{const stage=document.querySelector('#stage'),rail=document.querySelector('#rail'),frames=new Map();let active='';function show(btn){document.querySelectorAll('.nav').forEach(x=>x.classList.toggle('on',x===btn));active=btn.dataset.id;frames.forEach(x=>x.classList.remove('on'));let f=frames.get(active);if(!f){f=document.createElement('iframe');f.src=btn.dataset.src;f.title=btn.querySelector('b').textContent;stage.prepend(f);frames.set(active,f)}f.classList.add('on');rail.classList.remove('opened')}document.querySelectorAll('.nav').forEach(b=>b.onclick=()=>show(b));document.querySelector('#open').onclick=()=>{const f=frames.get(active);if(f)window.open(f.src,'_blank','noopener')};document.querySelector('#menu').onclick=()=>rail.classList.toggle('opened');show(document.querySelector('.nav.on'))})();
+          </script></body></html>
+          HTML
+
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          root=Path(os.environ['PACKAGE_DIR'])
+          pr=json.loads(Path('/tmp/pr15.json').read_text())
+          identity={
+            'packageId':root.name,
+            'repository':os.environ['GITHUB_REPOSITORY'],
+            'sourceBranch':os.environ['GITHUB_REF_NAME'],
+            'sourceCommit':os.environ['GITHUB_SHA'],
+            'workflowRunId':int(os.environ['GITHUB_RUN_ID']),
+            'pullRequest':{'number':15,'state':pr['state'],'draft':pr['draft'],'merged':pr['merged'],'base':pr['base']['ref'],'head':pr['head']['ref']},
+            'frozenIdentity':{'observationStudioBlob':os.environ['OBSERVATION_BLOB'],'standaloneV275Blob':os.environ['STANDALONE_BLOB'],'highVariationV26Blob':os.environ['HIGH_VARIATION_BLOB']},
+            'entries':{'start':'START_HERE.html','authenticV275':'brick-mother/brick-mother-observation-studio.html','integratedWorkbench':'brick-mother/workbench-v2.7.6.html','highVariationV26':'brick-mother/brick-mother-standalone-v2.6.html','pbrWeatheringV11':'brick-mother/experiments/pbr-weathering-v1.1/index.html','pbrDaylightV14':'brick-mother/experiments/pbr-daylight-v1.4/index.html','pbrKnowledge':'brick-mother/knowledge/pbr-guide-production-rules-v1.html'},
+            'pbrManual':{'title':'The PBR Guide','author':'Wes McDermott','edition':'Third edition, February 2018','originalPdfRedistributed':False,'distilledRulesIncluded':True},
+            'approvals':{'humanVisualApproved':False,'productionApproved':False,'pbrCandidateApproved':False,'performanceCandidateApproved':False}
+          }
+          (root/'GITHUB_BUILD_IDENTITY.json').write_text(json.dumps(identity,ensure_ascii=False,indent=2)+'\n')
+          PY
+
+      - name: Smoke every package entry
+        shell: bash
+        run: |
+          set -euo pipefail
+          export PACKAGE_DIR="/tmp/${PACKAGE_BASENAME}-${GITHUB_SHA}"
+          test -z "$(find "$PACKAGE_DIR" -type d \( -name .git -o -name node_modules -o -name __pycache__ \) -print -quit)"
+          test -z "$(find "$PACKAGE_DIR" -type f \( -iname '*.pdf' -o -iname '*.pyc' -o -name '.DS_Store' \) -print -quit)"
+          test ! -e "$PACKAGE_DIR/brick-mother/studio-sw.js"
+
+          python3 -m http.server 8765 --bind 127.0.0.1 --directory "$PACKAGE_DIR" >/tmp/brick-v276-package-server.log 2>&1 &
+          pid=$!
+          trap 'kill "$pid" 2>/dev/null || true' EXIT
+          ready=0
+          for attempt in $(seq 1 45); do
+            if curl -fsS http://127.0.0.1:8765/START_HERE.html >/dev/null; then ready=1;break;fi
+            sleep 1
+          done
+          test "$ready" = 1
+          for route in \
+            START_HERE.html \
+            GITHUB_BUILD_IDENTITY.json \
+            handoff/00_START_HERE.md \
+            handoff/CURRENT_STATE.json \
+            handoff/NEXT_WINDOW_PROMPT.md \
+            brick-mother/brick-mother-observation-studio.html \
+            brick-mother/brick-mother-standalone-v2.7.5.html \
+            brick-mother/brick-mother-standalone-v2.6.html \
+            brick-mother/workbench-v2.7.6.html \
+            brick-mother/experiments/pbr-weathering-v1.1/index.html \
+            brick-mother/experiments/pbr-daylight-v1.4/index.html \
+            brick-mother/knowledge/pbr-guide-production-rules-v1.html; do
+            curl -fsS "http://127.0.0.1:8765/$route" >/dev/null
+          done
+
+      - name: Finalize internal report and immutable file manifest
+        shell: bash
+        run: |
+          set -euo pipefail
+          export PACKAGE_DIR="/tmp/${PACKAGE_BASENAME}-${GITHUB_SHA}"
+          python3 - <<'PY'
+          import hashlib, json, os
+          from pathlib import Path
+          root=Path(os.environ['PACKAGE_DIR'])
+          report={
+            'package':root.name,
+            'sourceCommit':os.environ['GITHUB_SHA'],
+            'workflowRunId':int(os.environ['GITHUB_RUN_ID']),
+            'contentValidation':'passed',
+            'frozenIdentity':'passed',
+            'localRouteSmoke':'passed',
+            'archiveSha256':'stored beside the ZIP and in the external artifact report',
+            'fullPbrManualRedistributed':False,
+            'humanVisualApproved':False,
+            'productionApproved':False
+          }
+          (root/'PACKAGE_BUILD_REPORT.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n')
+
+          files=[]
+          for path in sorted(root.rglob('*')):
+              if not path.is_file() or path.name=='PACKAGE_MANIFEST_SHA256.json':
+                  continue
+              data=path.read_bytes()
+              files.append({'path':path.relative_to(root).as_posix(),'bytes':len(data),'sha256':hashlib.sha256(data).hexdigest()})
+          manifest={'package':root.name,'sourceCommit':os.environ['GITHUB_SHA'],'fileCount':len(files),'totalBytes':sum(x['bytes'] for x in files),'files':files}
+          (root/'PACKAGE_MANIFEST_SHA256.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2)+'\n')
+          for item in files:
+              target=root/item['path']
+              assert hashlib.sha256(target.read_bytes()).hexdigest()==item['sha256']
+          print(json.dumps({'fileCount':manifest['fileCount'],'totalBytes':manifest['totalBytes']},indent=2))
+          PY
+
+      - name: Create verified ZIP and external receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          export PACKAGE_DIR="/tmp/${PACKAGE_BASENAME}-${GITHUB_SHA}"
+          export PACKAGE_ZIP="${PACKAGE_DIR}.zip"
+          cd /tmp
+          zip -q -r -9 "$PACKAGE_ZIP" "$(basename "$PACKAGE_DIR")"
+          unzip -t "$PACKAGE_ZIP" >/dev/null
+          sha256sum "$PACKAGE_ZIP" > "$PACKAGE_ZIP.sha256"
+
+          python3 - <<'PY'
+          import hashlib, json, os, zipfile
+          from pathlib import Path
+          root=Path(os.environ['PACKAGE_DIR'])
+          z=Path(os.environ['PACKAGE_ZIP'])
+          with zipfile.ZipFile(z) as archive:
+              assert archive.testzip() is None
+          report={
+            'package':root.name,
+            'zip':z.name,
+            'sourceCommit':os.environ['GITHUB_SHA'],
+            'workflowRunId':int(os.environ['GITHUB_RUN_ID']),
+            'bytes':z.stat().st_size,
+            'sha256':hashlib.sha256(z.read_bytes()).hexdigest(),
+            'integrity':'passed',
+            'manifestVerification':'passed',
+            'frozenIdentity':'passed',
+            'localRouteSmoke':'passed',
+            'prState':'open_draft_unmerged',
+            'fullPbrManualRedistributed':False,
+            'humanVisualApproved':False,
+            'productionApproved':False
+          }
+          Path('/tmp/PACKAGE_BUILD_REPORT.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n')
+          print(json.dumps(report,ensure_ascii=False,indent=2))
+          PY
+
+      - name: Upload verified full handoff artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: brick-mother-v276-full-handoff-verified-${{ github.sha }}
+          path: |
+            /tmp/BRICK_MOTHER_V2.7.6_FULL_HANDOFF_2026-09-04-${{ github.sha }}.zip
+            /tmp/BRICK_MOTHER_V2.7.6_FULL_HANDOFF_2026-09-04-${{ github.sha }}.zip.sha256
+            /tmp/PACKAGE_BUILD_REPORT.json
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 90

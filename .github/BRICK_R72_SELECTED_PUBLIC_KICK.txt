@@ -1,0 +1,5 @@
+Brick Mother R7.2 selected public verification
+2026-09-09
+candidate=29c84e1108697c0d1d0698835fa922512a4295f5
+sha256=12b1f6ab83e039c7d0aa5d06c06d439af3d1ee126443c4c3c683654a8e70c71d
+selection=best-balanced-layered-stone-after-R7.1-R7.4-comparison

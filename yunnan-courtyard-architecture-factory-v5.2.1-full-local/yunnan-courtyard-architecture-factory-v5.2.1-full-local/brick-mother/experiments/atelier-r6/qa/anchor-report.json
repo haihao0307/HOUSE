@@ -1,0 +1,23 @@
+{
+  "version": "R6",
+  "sampleSeed": 4517,
+  "resolution": 72,
+  "method": "positive-x final triangle parity",
+  "testedAnchorPoints": 1637,
+  "anchorFailures": [],
+  "negativeControls": 24,
+  "falsePositiveControls": 0,
+  "fibers": 227,
+  "riceHusks": 68,
+  "huskAnchorPoints": 68,
+  "sixFaces": [
+    "x+",
+    "x-",
+    "y+",
+    "y-",
+    "z+",
+    "z-"
+  ],
+  "wholeStrandContactProof": false,
+  "passed": true
+}

@@ -1,0 +1,21 @@
+{
+  "version": "R7.2.0-layered-stone-closeout-candidate",
+  "sourceCommit": "a534aa0503bbc80a2ff8b94193cfcada8a1efd3c",
+  "sourceFile": "Brick_Mother_R7_1_Closeout.html",
+  "sourceSha256": "6c2718ae3a8b437f96f9a8b1bf0cf77c2a282ae229e55fd588128b262cd8b9b8",
+  "candidateSha256": "12b1f6ab83e039c7d0aa5d06c06d439af3d1ee126443c4c3c683654a8e70c71d",
+  "bytes": 89276,
+  "guardedReplacements": [
+    "version-r71-to-r72-x3",
+    "stone-mild-fracture-edge-planes",
+    "replace-step-beds-with-stable-plane-semantics",
+    "continuous-bounded-layered-stone-skin",
+    "remove-discontinuous-full-face-thickness-steps",
+    "sparse-seed-aligned-cleavage-cuts"
+  ],
+  "inlineScriptsChecked": 3,
+  "retainedFamilies": 7,
+  "scope": "layered-stone morphology only; six other families frozen by family-gated edits and preserved RNG consumption",
+  "humanVisualApproved": false,
+  "productionApproved": false
+}

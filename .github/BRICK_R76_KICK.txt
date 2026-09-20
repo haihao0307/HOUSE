@@ -1,0 +1,5 @@
+Brick Mother R7.6 final material identity
+2026-09-09
+source=5484a20609ea9fe499c9bc2517df2d41e10d6d2e
+frozen=rubble,adobe,pebble
+target=dressed,stone,fired,kiln

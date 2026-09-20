@@ -1,0 +1,70 @@
+name: Brick Mother R6 Public HTTPS Check
+on:
+  push:
+    branches: [feature/brick-mother-v2.0-composite-material-dna]
+    paths:
+      - yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/experiments/atelier-r6/PUBLISH.json
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: brick-mother-r6-public-check
+  cancel-in-progress: true
+jobs:
+  check-public:
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    env:
+      BRICK: yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother
+      PUBLIC_URL: https://haihao0307.github.io/HOUSE/brick-mother/experiments/atelier-r6/web/
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify anonymous HTML and exact retained R5
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import os,json,urllib.request,hashlib,time
+          r=json.loads((Path(os.environ['BRICK'])/'experiments/atelier-r6/web/RELEASE.json').read_text())
+          out=Path(os.environ['RUNNER_TEMP'])/'r6-live';out.mkdir()
+          url=os.environ['PUBLIC_URL'];good=False
+          for i in range(90):
+              try:
+                  q=urllib.request.Request(url+'?release='+r['htmlSHA256'],headers={'Cache-Control':'no-cache'})
+                  with urllib.request.urlopen(q,timeout=20) as res:
+                      data=res.read();status=res.status;ct=res.headers.get('Content-Type','');cd=res.headers.get('Content-Disposition','')
+                  sha=hashlib.sha256(data).hexdigest()
+                  if status==200 and 'text/html' in ct and 'attachment' not in cd and sha==r['htmlSHA256']:good=True;break
+              except Exception as e:print(i,str(e),flush=True)
+              time.sleep(5)
+          assert good,'Expected R6 public bytes unavailable'
+          old='https://haihao0307.github.io/HOUSE/brick-mother/experiments/atelier-r5/web/'
+          with urllib.request.urlopen(old,timeout=30) as res:oldsha=hashlib.sha256(res.read()).hexdigest()
+          assert oldsha=='83b36384cc6eed0416a3c57d1340926bf84651b0656c777f2f68b6983ef63428'
+          (out/'http-verification.json').write_text(json.dumps({'passed':True,'url':url,'httpStatus':status,'contentType':ct,'contentDisposition':cd,'htmlSHA256':sha,'bytes':len(data),'sourceHead':r['sourceHead'],'R5SHA256':oldsha,'anonymousAccess':True},indent=2))
+          (out/'public-index.html').write_bytes(data)
+          PY
+      - name: Install browser
+        run: |
+          python -m pip install playwright==1.55.0 numpy==2.2.6 pillow==11.3.0
+          python -m playwright install --with-deps chromium
+      - name: Test actual public page
+        run: |
+          export BRICK_QA_OUT="$RUNNER_TEMP/r6-live"
+          xvfb-run -a python "$BRICK/experiments/atelier-r6/tests/public.py" "$PUBLIC_URL"
+      - name: Confirm browser source identity
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import os,json
+          d=Path(os.environ['RUNNER_TEMP'])/'r6-live';b=json.loads((d/'public-browser-report.json').read_text());h=json.loads((d/'http-verification.json').read_text())
+          assert b['passed'] and not b['errors']
+          assert b['htmlSHA256']==h['htmlSHA256'] and b['sourceHead']==h['sourceHead']
+          print('Exact public release and live controls verified')
+          PY
+      - name: Keep public verification evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: brick-mother-r6-live-${{ github.run_id }}
+          path: ${{ runner.temp }}/r6-live
+          retention-days: 30

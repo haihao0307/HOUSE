@@ -1,0 +1,5 @@
+Brick Mother R7.5 final sprint
+2026-09-09
+source=29c84e1108697c0d1d0698835fa922512a4295f5
+frozen=rubble,adobe
+target=dressed,stone,pebble,fired,kiln

@@ -1,0 +1,36 @@
+:root { color-scheme: dark; font: 13px system-ui; color: #e0e0d6; background: #111512; }
+* { box-sizing: border-box; }
+body { margin: 0; height: 100dvh; display: grid; grid-template-rows: 36px auto 29px minmax(0,1fr) 43px; overflow: hidden; }
+button, input, select { font: inherit; color: inherit; background: #222b23; border: 1px solid #647656; border-radius: 6px; padding: 5px 8px; }
+button { cursor: pointer; }
+button.active { border-color: #d5c394; color: #fff1c7; }
+button:disabled { opacity: .4; cursor: default; }
+header, #identity, footer { display: flex; align-items: center; gap: 12px; padding: 4px 12px; }
+.brand { font-size: 11px; }
+nav, #itemIndex { margin-left: auto; }
+small, #shapeName, #status { color: #a8b69f; }
+#catalog { padding: 6px; }
+#families { display: grid; grid-template-columns: repeat(7,minmax(0,1fr)); gap: 5px; }
+#families button { min-width: 0; font-size: 12px; padding: 9px 2px; }
+#families small { margin-left: 5px; }
+main { position: relative; min-height: 0; overflow: hidden; background: #151b16; }
+canvas { display: block; width: 100%; height: 100%; touch-action: none; }
+canvas.loading { opacity: .15; }
+.viewbar { position: absolute; top: 8px; left: 8px; right: 8px; display: flex; justify-content: space-between; gap: 6px; }
+.viewbar button { font-size: 11px; padding: 4px 6px; }
+.hint { position: absolute; bottom: 9px; left: 10px; font-size: 10px; }
+.gesture { position: absolute; bottom: 9px; right: 10px; font-size: 10px; }
+footer { justify-content: center; }
+aside { position: absolute; right: 8px; top: 118px; bottom: 54px; width: 280px; max-width: 94vw; overflow: auto; padding: 14px; background: #182119; border: 1px solid #647656; border-radius: 8px; z-index: 8; }
+.panelHead, .row, .layerRow { display: flex; justify-content: space-between; align-items: center; gap: 5px; }
+aside label { display: block; margin: 10px 0; }
+input[type=range] { display: block; width: 100%; padding: 0; }
+input[type=number], select { max-width: 145px; }
+output { float: right; }
+#busy, #error { position: absolute; left: 20%; right: 20%; bottom: 40px; padding: 12px; background: #283325; z-index: 9; }
+#oldStage, #oldStage iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+dialog { color: inherit; background: #202a20; border: 1px solid #75836a; border-radius: 10px; max-width: 92vw; max-height: 85dvh; }
+dialog::backdrop { background: #000b; }
+#refImage { max-width: 100%; max-height: 58vh; object-fit: contain; }
+[hidden] { display: none !important; }
+@media(max-width:760px) { #families { grid-template-columns: repeat(4,minmax(0,1fr)); } #families small { display: none; } #families button { font-size: 11px; padding: 6px 2px; } .viewbar { display: block; } #views { margin-top: 5px; } .gesture { display: none; } aside { top: 146px; } footer { gap: 6px; padding: 4px; } footer button { font-size: 11px; padding: 5px 6px; } }

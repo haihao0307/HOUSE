@@ -1,0 +1,5 @@
+Brick Mother R7.8 final three-material closeout
+2026-09-09
+source=e8effd7eb007887a73f8fc56e3847b05b5282e68
+frozen=rubble,adobe,pebble,dressed
+target=stone,fired,kiln

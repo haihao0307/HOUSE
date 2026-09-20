@@ -1,0 +1,16 @@
+{
+  "version": "R7.4.0-planar-facet-stone-candidate",
+  "sourceCommit": "23174124f630bc683e11f8e34a98f965497ee9fe",
+  "sourceSha256": "ac1b62392280228dde7b8c3188e05808e940da9249b97d83718a18eea302cd9d",
+  "candidateSha256": "bef82622c1673d78b8044a125af7d7259f9e26d164708c80b8a61aae54c2db13",
+  "bytes": 89853,
+  "guardedReplacements": [
+    "version-r73-to-r74-x3",
+    "layered-stone-broad-planar-fracture-faces"
+  ],
+  "inlineScriptsChecked": 3,
+  "retainedFamilies": 7,
+  "scope": "layered-stone macro fracture facets only; six other families frozen",
+  "humanVisualApproved": false,
+  "productionApproved": false
+}
