@@ -32,3 +32,29 @@ Brick Mother、Tiles Mother、云南传统建筑及本仓库后续全部 Mother�
 遇到 404、403、空白页、错误重定向、资源缺失或页面启动失败，立即修复并重新执行完整发布闭环。不得把首次公开访问检查交给用户。
 
 每次成功发布保存 `PUBLICATION_PROOF.json`。只有 `shareAllowed=true` 才允许分享链接。新版公开验证完成以前保留旧版可用入口。
+
+
+## KAOPU Mother Production OS R2 — 跨仓库强制规则
+
+本仓库全部 Mother / Codex / 子执行端同时遵守 KAOPU 中央生产制度：
+`haihao0307/guilin-dem-pipeline/knowledge/MOTHER_PRODUCTION_OPERATING_SYSTEM_R2_ZH.md`
+
+相关中央硬门禁：
+- `REFERENCE_REPLICATION_NO_CREATIVE_SUBSTITUTE_GATE.md`
+- `TASK_FRESHNESS_AND_NO_STALE_DELIVERY_GATE.md`
+
+默认流程固定为：`LOCK → EXECUTE → VERIFY → PROMOTE`。
+
+任何“按参考做 / 复刻 / 学习 / 照着做 / 不要想象补画”任务默认：
+- `TASK_MODE=REPLICATION_LOCKED`
+- `CREATIVE_AUTHORIZATION=false`
+
+未经用户当前任务明确授权，不得自行简化、补画、重新设计、做 generic/toy/placeholder，也不得为了“先给用户看”制造一个差不多的可见替身。未知区域保持 UNKNOWN / SOURCE_ENTRY_REQUIRED / MEASUREMENT_REQUIRED。被拒绝的创作替代不得成为下一版父节点。
+
+任何“这是最新结果 / 昨晚做的 / 本轮修改后的效果”必须证明发生在当前任务 dispatch 之后，并绑定当前 head。旧模型、旧页面、旧截图、旧 release 只能作为 BASELINE/BEFORE；没有新成果时必须报告 `NO_NEW_ARTIFACT`，不得拿旧产物填空。最新构建失败时不得 silent fallback 后把旧版冒充当前版。
+
+每个明确任务只处理一个 primary defect，并记录最小 Task Anchor：target、baseSha、accepted baseline、reference set、protected invariants、forbidden routes、acceptance gates。Producer 不能批准自己；候选在进入用户视野前至少通过 Contract / Freshness / Reference Fidelity / Machine gates。两次内部失败仍未解决同一 bounded task 时进入 ROOT_CAUSE_REVIEW，不继续凭感觉微调。
+
+用户的重要纠正必须进入 regression case，避免同类错误再次由用户发现。评估进展只看目标相关 fresh delta、实际测试和门禁，不看 branch/Issue/README/截图数量。
+
+以上为生产制度，不覆盖本仓库更严格的领域专用规则；如有冲突，用户当前明确指令与更严格冻结/安全/真值规则优先。
