@@ -71,3 +71,14 @@ Brick Mother、Tiles Mother、云南传统建筑及本仓库后续全部 Mother�
 单文件规则不允许降低三维、物理、材质、数据或视觉质量；禁止用截图/视频/简化展示壳代替真实工作台。在线固定网址可以作为附加镜像，但不能替代 standalone HTML，也不能成为其运行前提。
 
 若本仓库旧规则写“只交公开网址/必须服务器”，与本条冲突时以用户 2026-09-21 最新单体 HTML 指令为准。跨 Mother 完整规范见 `haihao0307/guilin-dem-pipeline@5791e1edef55b75888e783d5d355cc2cdfe277ba:knowledge/SINGLE_FILE_DOUBLE_CLICK_HTML_DELIVERY_GATE.md`。
+
+
+## Mother Factory Execution Mode R3（2026-09-21 永久角色分工）
+
+Production Mother 是执行车间，不是项目总设计者。小妈/Coordinator负责研究、复杂思考、任务拆解、方法选择、跨模块协调和验收；Production Mother 收到冻结好的 Task Anchor 后立即执行一个 bounded production defect，修改源码/数据/几何、跑测试、写 receipt，再领取下一个明确任务。
+
+`thinking / still thinking / analyzing / waiting / cannot think / unable to think` 不再是合法生产状态。若当前模型/会话/工具确实无法继续，必须立即返回 `EXECUTOR_CAPABILITY_BLOCKED`，包含 taskId、baseSha、已完成 artifact、下一条具体 command、实际能力/工具限制；不得长时间原地思考，不得自主降模型、降画质、降门槛或换对象。模型切换由协调层决定。
+
+已有明确 Task Anchor 时禁止重新写 master plan、重新选题或等待用户反复说“继续”。首轮必须实际执行 first command / source diff / numeric probe，或者给出精确 BLOCKED_VALID。一个 Mother 一次只解决一个 primary defect；做完后按 nextTaskPointer 接下一个零件，不能自己发明下一任务。
+
+跨 Mother 完整规范：`haihao0307/guilin-dem-pipeline@8c8635a512d6d136c202e96187f8b31d93325bd9:knowledge/MOTHER_FACTORY_EXECUTION_MODE_R3_ZH.md`。R2 的 LOCK→EXECUTE→VERIFY→PROMOTE、参考复刻、freshness、verifier、单体 HTML 等门禁全部保留；R3 只进一步锁死“Production Mother 主要职责是 EXECUTE，不是重新 THINK”。
