@@ -90,4 +90,8 @@ Production Mother 是执行车间，不是项目总设计者。小妈/Coordinato
 
 进入 MICRO_DETAIL 前必须达到 breadth floor：主要系统不能长期 UNSTARTED。物理尺寸必须量最终生成/变形后的可见世界空间几何，配置目标值不等于通过。Assembly 每 2–4 个 bounded increments 生成一次整体 heartbeat，并最终输出一个 standalone HTML。
 
-Canonical policy: `haihao0307/guilin-dem-pipeline@885ce18fbd7ee58b4458ee49eae3f77610f92a0b:knowledge/MOTHER_PARALLEL_COVERAGE_EXECUTION_R4_ZH.md`。
+Canonical policy: `haihao0307/guilin-dem-pipeline@48254a81b95d1f28b0d85740668f3f94cebda1b8:knowledge/MOTHER_PARALLEL_COVERAGE_EXECUTION_R4_ZH.md`。
+
+
+### Reference-First / First-Look Gate
+所有可见对象的第一轮工作台必须 reference 与 candidate 同屏；identity / 大轮廓 / 比例没有通过以前，不得进入微观细节。Production Mother 不负责重新规划，只执行 Coordinator 冻结的 reference + task。用户默认只看当前 standalone HTML 和 reference-vs-candidate 结果。Canonical R4.2: `haihao0307/guilin-dem-pipeline@48254a81b95d1f28b0d85740668f3f94cebda1b8:knowledge/MOTHER_PARALLEL_COVERAGE_EXECUTION_R4_ZH.md`。
