@@ -1,6 +1,6 @@
 {
-  "schemaVersion": "5.4.2",
-  "title": "云南院落历史建筑生产线 V5.4.2",
+  "schemaVersion": "5.5.0",
+  "title": "云南院落历史建筑生产线 V5.5.0",
   "periodFocus": "1940—1945；早期测绘个案仅用于类型与构造校准",
   "systemHierarchy": {
     "root": {
@@ -1207,19 +1207,43 @@
     },
     {
       "step": 6,
-      "name": "登单跑木梯",
-      "fromElevationM": 0.06,
-      "toElevationM": 2.73
+      "name": "登 8+8 双跑木梯下跑",
+      "fromRelativeElevationM": 0,
+      "toRelativeElevationM": 1.365,
+      "treads": 8
     },
     {
       "step": 7,
+      "name": "通过双跑楼梯中间平台",
+      "relativeElevationM": 1.365,
+      "landingRequired": true
+    },
+    {
+      "step": 8,
+      "name": "登 8+8 双跑木梯上跑",
+      "fromRelativeElevationM": 1.365,
+      "toRelativeElevationM": 2.73,
+      "treads": 8
+    },
+    {
+      "step": 9,
       "name": "沿二层大厦通行",
       "trigger": "upper doors open"
     },
     {
-      "step": 8,
+      "step": 10,
       "name": "进入正房二层",
       "destination": "upper main-house room"
     }
-  ]
+  ],
+  "surfaceProduction": {
+    "entry": "surface-production-lab.html",
+    "baseline": "5.4.4",
+    "profiles": [
+      "museum1940sBalanced",
+      "wulongWeathered",
+      "daliMaintained"
+    ],
+    "roofUnits": 7
+  }
 }

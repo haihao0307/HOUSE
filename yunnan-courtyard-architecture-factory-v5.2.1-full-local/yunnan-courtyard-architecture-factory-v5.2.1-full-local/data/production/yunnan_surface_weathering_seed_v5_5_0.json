@@ -1,0 +1,426 @@
+{
+  "schemaVersion": "5.5.0",
+  "recordId": "YN-SURFACE-PRODUCTION-SEED-001",
+  "title": "云南民间建筑墙面与瓦顶生产化种子",
+  "status": "implementation-seed",
+  "inherits": [
+    "data/production/yunnan_wall_roof_entry_tool_contract_v5_4_4.json",
+    "data/evidence/yunnan_three_reference_visual_knowledge_v5_4_3.json",
+    "data/production/roof_tile_knowledge_v5_4_2.json"
+  ],
+  "evidencePolicy": {
+    "measuredGeometryWins": true,
+    "scanAppearanceCannotOverrideMeasuredGeometry": true,
+    "stableRandomSeedRequired": true,
+    "reversibleVisualLayer": true,
+    "classes": [
+      "measured-required",
+      "semantic-component-evidence",
+      "grouped-scanned-surface-evidence",
+      "scanned-surface-evidence",
+      "texture-only-evidence",
+      "visual-calibration-only",
+      "unresolved"
+    ]
+  },
+  "referenceAssets": {
+    "dali": {
+      "asset": "assets/models/YN_DALI_001_REFERENCE_WEB.glb",
+      "evidenceClass": "scanned-surface-evidence",
+      "admittedFor": [
+        "roofMassHierarchy",
+        "ridgeAndEaveStaggering",
+        "visibleRoofThickness",
+        "stoneAndBrickEdgeProtection",
+        "largeScaleWallColorZones"
+      ],
+      "prohibitedFor": [
+        "exactTileLap",
+        "hiddenRoofUnderlay",
+        "exactWallCore",
+        "ordinaryHouseRidgeDetail"
+      ]
+    },
+    "wulong": {
+      "asset": "assets/models/YN_HAOSI1_WULONG_WL_001_REFERENCE_WEB.glb",
+      "evidenceClass": "scanned-surface-plus-normal-evidence",
+      "admittedFor": [
+        "tileRelief",
+        "tileColorVariation",
+        "mossAndDust",
+        "rainWash",
+        "wallPeeling",
+        "dampBand",
+        "repairPatches",
+        "surfaceRoughness"
+      ],
+      "prohibitedFor": [
+        "exactTileDimensions",
+        "exactWallThickness",
+        "repairDate",
+        "hiddenConstruction"
+      ]
+    },
+    "tuanjie": {
+      "asset": "assets/models/YN_TUANJIE_001_EDITABLE.glb",
+      "evidenceClass": "grouped-scanned-surface-evidence",
+      "admittedFor": [
+        "roofWallAdjacency",
+        "roofStoreyGrouping",
+        "courtyardScaleAppearance",
+        "earthWallWeathering",
+        "agedTimberColor",
+        "repairLayerContrast"
+      ],
+      "prohibitedFor": [
+        "trueBuildingDimensions",
+        "wallMaterialRecipe",
+        "tileLap",
+        "constructionDate"
+      ]
+    }
+  },
+  "roofUnitSchema": {
+    "requiredUnits": [
+      "mainHouseDoublePitch",
+      "leftEarAsymmetricDoublePitch",
+      "rightEarAsymmetricDoublePitch",
+      "entranceBlockDoublePitch",
+      "mainGalleryLeanTo",
+      "sideGalleryLeanTo",
+      "gatehouseSmallRoof"
+    ],
+    "requiredFields": [
+      "buildingUnitId",
+      "roofUnitId",
+      "roofType",
+      "ridgeElevationM",
+      "eaveElevationM",
+      "slopeDirection",
+      "pitchDeg",
+      "eaveProjectionM",
+      "drainageTargetId",
+      "tileProfileId",
+      "surfaceProfileId",
+      "evidenceStatus",
+      "seed"
+    ],
+    "visibleBuildUp": [
+      "purlins",
+      "rafters",
+      "roofUnderlay",
+      "panTileCourses",
+      "coverTileCourses",
+      "eaveCapsAndDrips",
+      "ridgeAndClosures"
+    ],
+    "invariants": [
+      "主体房屋保持双坡",
+      "附属厦保持披檐",
+      "每个主体单体拥有独立屋脊与檐口",
+      "没有图证时不生成斜沟",
+      "每条板瓦水槽连续到檐口",
+      "筒瓦位于相邻板瓦列的纵缝上",
+      "板瓦檐端对应滴水",
+      "筒瓦檐端对应勾头"
+    ]
+  },
+  "roofSurfaceSchema": {
+    "channels": {
+      "baseFiringTone": {
+        "range": [0, 1],
+        "spatialScaleM": 3.2,
+        "correlation": "roof-unit-low-frequency",
+        "description": "烧成综合色，控制冷灰、暖灰、褐灰、青灰家族"
+      },
+      "orientationExposure": {
+        "range": [0, 1],
+        "inputs": ["roofNormal", "sunDirection", "roofUnitId"],
+        "description": "坡面朝向和长期日晒造成的褪色与干燥差异"
+      },
+      "dust": {
+        "range": [0, 1],
+        "inputs": ["slope", "ridgeDistance", "eaveDistance", "shelter"],
+        "description": "低坡、脊后、檐口遮蔽和凹部积尘"
+      },
+      "moss": {
+        "range": [0, 1],
+        "inputs": ["orientationExposure", "moisture", "drainageShadow", "repairAge"],
+        "description": "长期湿润且日照弱的连续苔痕区域"
+      },
+      "rainWash": {
+        "range": [0, 1],
+        "inputs": ["slopeDirection", "flowAccumulation", "eaveDistance"],
+        "description": "沿坡向形成的冲刷和综合色减淡"
+      },
+      "damage": {
+        "range": [0, 0.35],
+        "correlation": "clustered-not-independent",
+        "description": "少量缺瓦、崩边和局部塌损，按片区聚集"
+      },
+      "repair": {
+        "range": [0, 0.35],
+        "correlation": "bounded-patches",
+        "description": "不同年代修补瓦形成边界清楚的连续片区"
+      },
+      "repairAgeTone": {
+        "range": [-0.25, 0.25],
+        "description": "修补瓦与旧瓦之间的综合色偏差"
+      },
+      "edgeWear": {
+        "range": [0, 1],
+        "inputs": ["eaveDistance", "ridgeDistance", "exposure"],
+        "description": "檐口和脊部的崩边、磨损与积尘差异"
+      }
+    },
+    "prohibited": [
+      "整座建筑统一纯灰",
+      "每片瓦完全独立随机色",
+      "高对比白噪声覆盖整个屋面",
+      "苔痕与湿度、朝向和排水无关",
+      "缺瓦均匀散布",
+      "修补瓦无边界随机出现"
+    ],
+    "presets": {
+      "museum1940sBalanced": {
+        "label": "1940年代均衡旧化",
+        "baseFiringTone": 0.46,
+        "orientationExposure": 0.42,
+        "dust": 0.34,
+        "moss": 0.12,
+        "rainWash": 0.28,
+        "damage": 0.07,
+        "repair": 0.08,
+        "repairAgeTone": 0.08,
+        "edgeWear": 0.32,
+        "source": ["liuZhiping", "dali", "wulong", "tuanjie"]
+      },
+      "wulongWeathered": {
+        "label": "乌龙村长期风化",
+        "baseFiringTone": 0.39,
+        "orientationExposure": 0.36,
+        "dust": 0.46,
+        "moss": 0.24,
+        "rainWash": 0.43,
+        "damage": 0.17,
+        "repair": 0.15,
+        "repairAgeTone": 0.14,
+        "edgeWear": 0.52,
+        "source": ["wulong"]
+      },
+      "daliMaintained": {
+        "label": "大理院落较完整维护",
+        "baseFiringTone": 0.50,
+        "orientationExposure": 0.48,
+        "dust": 0.28,
+        "moss": 0.10,
+        "rainWash": 0.25,
+        "damage": 0.06,
+        "repair": 0.12,
+        "repairAgeTone": 0.07,
+        "edgeWear": 0.24,
+        "source": ["dali"]
+      }
+    }
+  },
+  "wallSurfaceSchema": {
+    "layers": {
+      "structure": [
+        "wallCoreCandidate",
+        "wallTaper",
+        "wallThickness",
+        "openingGeometry"
+      ],
+      "material": [
+        "plasterCoverage",
+        "earthExposure",
+        "stoneOrBrickPlinth",
+        "cornerProtection",
+        "roughness",
+        "normalStrength"
+      ],
+      "historicState": [
+        "dampBand",
+        "verticalRainWash",
+        "surfaceLoss",
+        "crackNetwork",
+        "repairPatches",
+        "sootAndDirt",
+        "colorTemperatureShift"
+      ]
+    },
+    "channels": {
+      "plasterCoverage": {
+        "range": [0, 1],
+        "correlation": "large-zones",
+        "description": "连续抹灰区，不能用点状噪声代替"
+      },
+      "earthExposure": {
+        "range": [0, 1],
+        "correlation": "bounded-loss-zones",
+        "description": "抹灰脱落后连续裸土区域"
+      },
+      "plinth": {
+        "types": ["stone", "mixed-stone", "stone-brick", "brick"],
+        "description": "墙脚保护层，独立几何或独立材质层"
+      },
+      "cornerProtection": {
+        "range": [0, 0.35],
+        "description": "砖包角、石包角或较硬抹灰保护带"
+      },
+      "dampBand": {
+        "range": [0, 1],
+        "inputs": ["groundDistance", "drainage", "sunExposure", "plinthType"],
+        "description": "由墙脚向上衰减的返潮带"
+      },
+      "verticalRainWash": {
+        "range": [0, 1],
+        "inputs": ["roofDripLines", "eaveShelter", "gravity", "openingEdges"],
+        "description": "从檐口、窗台、裂缝和墙顶向下形成的垂直雨痕"
+      },
+      "surfaceLoss": {
+        "range": [0, 1],
+        "correlation": "bounded-patches",
+        "description": "抹灰和表层的片状剥落"
+      },
+      "crackNetwork": {
+        "range": [0, 1],
+        "inputs": ["openingCorners", "materialBoundary", "settlementZones"],
+        "description": "从洞口角、材料边界和沉降部位起裂"
+      },
+      "repairPatches": {
+        "range": [0, 1],
+        "correlation": "bounded-polygons",
+        "description": "具有边界和年代综合色差的修补区"
+      },
+      "sootAndDirt": {
+        "range": [0, 1],
+        "inputs": ["kitchenZone", "doorRecess", "shelteredZone"],
+        "description": "门洞、厨房与避雨区的烟熏和污渍"
+      }
+    },
+    "prohibited": [
+      "整面均匀单色",
+      "满墙高频随机噪声",
+      "返潮出现在墙顶",
+      "雨痕横向漂浮",
+      "修补斑块没有明确边界",
+      "石勒脚只用颜色带且没有厚度关系"
+    ],
+    "presets": {
+      "yikeyin1940sBalanced": {
+        "label": "滇中一颗印1940年代旧墙",
+        "wallTaper": 0.08,
+        "plasterCoverage": 0.64,
+        "earthExposure": 0.30,
+        "plinthType": "stone",
+        "cornerProtection": 0.12,
+        "roughness": 0.88,
+        "normalStrength": 0.32,
+        "dampBand": 0.44,
+        "verticalRainWash": 0.34,
+        "surfaceLoss": 0.22,
+        "crackNetwork": 0.18,
+        "repairPatches": 0.14,
+        "sootAndDirt": 0.12,
+        "colorTemperatureShift": 0.55,
+        "source": ["liuZhiping", "tuanjie", "wulong"]
+      },
+      "wulongLongWeathering": {
+        "label": "乌龙村长期风化旧墙",
+        "wallTaper": 0.06,
+        "plasterCoverage": 0.52,
+        "earthExposure": 0.38,
+        "plinthType": "mixed-stone",
+        "cornerProtection": 0.10,
+        "roughness": 0.94,
+        "normalStrength": 0.62,
+        "dampBand": 0.58,
+        "verticalRainWash": 0.54,
+        "surfaceLoss": 0.42,
+        "crackNetwork": 0.30,
+        "repairPatches": 0.26,
+        "sootAndDirt": 0.20,
+        "colorTemperatureShift": 0.43,
+        "source": ["wulong"]
+      },
+      "daliMaintainedWall": {
+        "label": "大理院落较完整墙面",
+        "wallTaper": 0.04,
+        "plasterCoverage": 0.78,
+        "earthExposure": 0.16,
+        "plinthType": "stone-brick",
+        "cornerProtection": 0.18,
+        "roughness": 0.76,
+        "normalStrength": 0.24,
+        "dampBand": 0.28,
+        "verticalRainWash": 0.25,
+        "surfaceLoss": 0.16,
+        "crackNetwork": 0.12,
+        "repairPatches": 0.20,
+        "sootAndDirt": 0.08,
+        "colorTemperatureShift": 0.34,
+        "source": ["dali"]
+      }
+    }
+  },
+  "implementationRequirements": {
+    "materialSystem": [
+      "所有参数来自本 JSON 或继承合同",
+      "每个屋面单元可拥有独立风化 profile",
+      "每面墙可拥有独立墙脚、日晒、檐口遮蔽和修补 profile",
+      "使用稳定种子生成低频连续场与边界清楚的片区",
+      "结构、材料、历史状态可以分别关闭",
+      "支持回退到 V5.4.4 基线"
+    ],
+    "geometrySystem": [
+      "板瓦与筒瓦使用共享 Geometry 和 InstancedMesh 或等效批处理",
+      "筒瓦列数按板瓦相邻接缝数推导",
+      "缺瓦通过实例状态或显式缺口表达",
+      "修补瓦保持独立材质参数和构件 ID",
+      "滴水、勾头、正脊、垂脊和封头进入语义树",
+      "屋面厚度层可单独显隐",
+      "石勒脚与砖包角优先独立几何表达"
+    ],
+    "uiSystem": [
+      "在正式民间建筑生产线中提供基线与 V5.5.0 对比",
+      "提供墙面、瓦顶和完整历史状态三种独立开关",
+      "提供一颗印、乌龙村、大理三种墙面预设",
+      "提供1940年代均衡、乌龙村长期风化、大理较完整三种瓦顶预设",
+      "提供近景檐口、墙脚、修补、屋面俯视和院内人眼镜头",
+      "提供一键自动演示"
+    ]
+  },
+  "qaRules": [
+    "完整一颗印加载成功",
+    "七个屋面单元均有独立 roofUnitId",
+    "板瓦列数大于筒瓦列数且差值符合接缝关系",
+    "滴水与板瓦列对应",
+    "勾头与筒瓦列对应",
+    "排水路径连续到檐口",
+    "屋面三个风化预设可切换",
+    "墙面三个预设可切换",
+    "墙面结构材料历史状态可独立关闭",
+    "瓦顶色彩具有低频连续变化且不存在逐片白噪声",
+    "缺瓦与修补以片区出现",
+    "返潮集中在墙脚并向上衰减",
+    "雨痕沿重力方向并受檐口遮蔽",
+    "石勒脚和砖包角具有可见厚度",
+    "人物入户与8加8楼梯无回归",
+    "门窗自动开合无回归",
+    "三模型成果页无回归",
+    "大角度旋转无深度穿面",
+    "网页标准质量保持交互帧率",
+    "V5.4.4基线可一键恢复"
+  ],
+  "unresolvedParameters": [
+    "panTileLongitudinalOverlap",
+    "tileCourseCenterSpacing",
+    "coverTileSeamOverlap",
+    "underlayMaterialAndFixing",
+    "residentialRidgeClosure",
+    "exactWallCoreMaterialBySample",
+    "repairChronologyByBuilding",
+    "historicMossDistributionByYear"
+  ]
+}

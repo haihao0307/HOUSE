@@ -15,7 +15,7 @@ RELEASE.mkdir(exist_ok=True)
 OUT = RELEASE / f"yunnan-courtyard-architecture-factory-v{VERSION}-github-ready.zip"
 
 EXCLUDE_DIRS = {".git", "release", "references-private", "_site", "__pycache__"}
-EXCLUDE_SUFFIXES = {".pyc", ".zip", ".tar.gz"}
+EXCLUDE_SUFFIXES = (".pyc", ".zip", ".tar.gz")
 
 files = []
 for p in sorted(ROOT.rglob("*")):
@@ -24,7 +24,7 @@ for p in sorted(ROOT.rglob("*")):
     rel = p.relative_to(ROOT)
     if any(part in EXCLUDE_DIRS for part in rel.parts):
         continue
-    if p.suffix in EXCLUDE_SUFFIXES:
+    if p.name.endswith(EXCLUDE_SUFFIXES):
         continue
     files.append(p)
 

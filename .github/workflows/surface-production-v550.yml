@@ -1,0 +1,441 @@
+name: V5.5.0 Surface Production QA
+
+on:
+  push:
+    branches:
+      - codex/yunnan-surface-production-v5.5.0
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: surface-production-v550-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PROJECT_DIR: yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local
+  QA_OUTPUT_DIR: ${{ github.workspace }}/.qa-output/surface-${{ github.sha }}-attempt-${{ github.run_attempt }}
+
+jobs:
+  browser-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Initialize clean evidence directory for this commit
+        id: initialize
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected="$GITHUB_WORKSPACE/.qa-output/surface-$GITHUB_SHA-attempt-$GITHUB_RUN_ATTEMPT"
+          test "$QA_OUTPUT_DIR" = "$expected"
+          rm -rf -- "$QA_OUTPUT_DIR"
+          mkdir -p "$QA_OUTPUT_DIR/screenshots/surface" "$QA_OUTPUT_DIR/screenshots/regression"
+          printf '{"schemaVersion":"5.5.0","sha":"%s","ref":"%s","runId":"%s","runAttempt":"%s"}\n' \
+            "$GITHUB_SHA" "$GITHUB_REF" "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" > "$QA_OUTPUT_DIR/run-metadata.json"
+
+      - name: Set up Python
+        id: python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Static validation
+        id: static_validation
+        working-directory: ${{ env.PROJECT_DIR }}
+        shell: bash
+        run: |
+          set -uo pipefail
+          status=0
+          run_check() {
+            echo "+ $*"
+            "$@" || status=1
+          }
+          run_check python -m py_compile tools/validate.py tools/surface_production_smoke.py tools/browser_smoke_test.py
+          run_check node --check assets/js/github-sync.js
+          run_check node --check assets/js/surface-production-lab.js
+          run_check node --check assets/js/tuanjie-glb-viewer.js
+          run_check node --check threejs/YunnanBaselineV544.js
+          run_check node --check threejs/v544/YunnanCourtyardProduction.js
+          run_check node --check threejs/v544/YunnanMaterialFactory.js
+          run_check node --check threejs/YunnanSurfaceProfiles.js
+          run_check node --check threejs/YunnanWallSurfaceSystem.js
+          run_check node --check threejs/YunnanRoofSurfaceSystem.js
+          run_check node --check threejs/YunnanCourtyardProduction.js
+          run_check node --check threejs/YunnanMaterialFactory.js
+          run_check node --check vendor/three/three.module.js
+          run_check node --check vendor/three/controls/OrbitControls.js
+          run_check python tools/validate.py
+          exit "$status"
+
+      - name: Check complete changed-file whitespace
+        id: whitespace
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --check origin/main...HEAD
+
+      - name: Build and validate release package
+        id: release
+        if: always()
+        working-directory: ${{ env.PROJECT_DIR }}
+        run: python tools/make_release.py
+
+      - name: Install Playwright Chromium
+        id: playwright
+        if: always()
+        working-directory: ${{ env.PROJECT_DIR }}
+        run: |
+          python -m pip install -r requirements-dev.txt
+          python -m playwright install --with-deps chromium
+
+      - name: Run V5.5.0 surface browser QA
+        id: surface_qa
+        if: always()
+        working-directory: ${{ env.PROJECT_DIR }}
+        run: |
+          python tools/surface_production_smoke.py \
+            --run-sha "$GITHUB_SHA" \
+            --run-ref "$GITHUB_REF_NAME" \
+            --report "$QA_OUTPUT_DIR/surface-production-smoke.json" \
+            --screenshots "$QA_OUTPUT_DIR/screenshots/surface"
+
+      - name: Run complete production-line regression
+        id: regression
+        if: always()
+        working-directory: ${{ env.PROJECT_DIR }}
+        run: |
+          python tools/browser_smoke_test.py \
+            --run-sha "$GITHUB_SHA" \
+            --run-ref "$GITHUB_REF_NAME" \
+            --report "$QA_OUTPUT_DIR/production-line-regression.json" \
+            --screenshots "$QA_OUTPUT_DIR/screenshots/regression"
+
+      - name: Record workflow step outcomes
+        id: record_outcomes
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$QA_OUTPUT_DIR"
+          printf '{"schemaVersion":"5.5.0","sha":"%s","staticValidation":"%s","whitespace":"%s","release":"%s","playwright":"%s","surfaceQa":"%s","regression":"%s"}\n' \
+            "$GITHUB_SHA" \
+            "${{ steps.static_validation.outcome }}" \
+            "${{ steps.whitespace.outcome }}" \
+            "${{ steps.release.outcome }}" \
+            "${{ steps.playwright.outcome }}" \
+            "${{ steps.surface_qa.outcome }}" \
+            "${{ steps.regression.outcome }}" \
+            > "$QA_OUTPUT_DIR/workflow-step-outcomes.json"
+
+      - name: Upload browser QA evidence
+        id: artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: surface-production-v550-${{ github.sha }}-attempt-${{ github.run_attempt }}
+          path: ${{ env.QA_OUTPUT_DIR }}/**
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Require every validation and QA step to succeed
+        if: always()
+        shell: bash
+        env:
+          CHECKOUT_OUTCOME: ${{ steps.checkout.outcome }}
+          INITIALIZE_OUTCOME: ${{ steps.initialize.outcome }}
+          PYTHON_OUTCOME: ${{ steps.python.outcome }}
+          STATIC_OUTCOME: ${{ steps.static_validation.outcome }}
+          WHITESPACE_OUTCOME: ${{ steps.whitespace.outcome }}
+          RELEASE_OUTCOME: ${{ steps.release.outcome }}
+          PLAYWRIGHT_OUTCOME: ${{ steps.playwright.outcome }}
+          SURFACE_QA_OUTCOME: ${{ steps.surface_qa.outcome }}
+          REGRESSION_OUTCOME: ${{ steps.regression.outcome }}
+          RECORD_OUTCOMES_OUTCOME: ${{ steps.record_outcomes.outcome }}
+          ARTIFACT_OUTCOME: ${{ steps.artifact.outcome }}
+        run: |
+          set -euo pipefail
+          failed=0
+          for variable in \
+            CHECKOUT_OUTCOME INITIALIZE_OUTCOME PYTHON_OUTCOME STATIC_OUTCOME \
+            WHITESPACE_OUTCOME RELEASE_OUTCOME PLAYWRIGHT_OUTCOME \
+            SURFACE_QA_OUTCOME REGRESSION_OUTCOME RECORD_OUTCOMES_OUTCOME \
+            ARTIFACT_OUTCOME
+          do
+            outcome="${!variable}"
+            if [[ "$outcome" != "success" ]]; then
+              echo "::error::$variable was $outcome (expected success)"
+              failed=1
+            fi
+          done
+          test "$failed" -eq 0
+          test -s "$QA_OUTPUT_DIR/surface-production-smoke.json"
+          test -s "$QA_OUTPUT_DIR/production-line-regression.json"
+          python3 - \
+            "$QA_OUTPUT_DIR/surface-production-smoke.json" \
+            "$QA_OUTPUT_DIR/production-line-regression.json" \
+            "$GITHUB_SHA" "$GITHUB_REF_NAME" <<'PY'
+          import hashlib
+          import json
+          import sys
+          from pathlib import Path
+
+          surface_path, regression_path, expected_sha, expected_ref = sys.argv[1:]
+
+          def require_coherent_report(path, label):
+              with open(path, encoding="utf-8") as handle:
+                  report = json.load(handle)
+              if report.get("runSha") != expected_sha:
+                  raise SystemExit(f"{label}: runSha does not equal the checked-out commit")
+              source_ref = report.get("sourceRef") or report.get("runRef")
+              if source_ref != expected_ref:
+                  raise SystemExit(f"{label}: sourceRef/runRef does not equal the workflow branch")
+              results = report.get("results")
+              summary = report.get("summary")
+              if not isinstance(results, list) or not isinstance(summary, dict):
+                  raise SystemExit(f"{label}: results or summary is missing")
+              process_failures = report.get("processFailures", [])
+              if not isinstance(process_failures, list):
+                  raise SystemExit(f"{label}: processFailures must be a list")
+              passed = sum(item.get("ok") is True for item in results)
+              assertion_failed = len(results) - passed
+              failed = assertion_failed + len(process_failures)
+              total = len(results) + len(process_failures)
+              if (
+                  total <= 0
+                  or summary.get("passed") != passed
+                  or summary.get("failed") != failed
+                  or summary.get("total") != total
+                  or ("assertionFailed" in summary and summary.get("assertionFailed") != assertion_failed)
+                  or ("processFailures" in summary and summary.get("processFailures") != len(process_failures))
+                  or failed != 0
+                  or passed != total
+              ):
+                  raise SystemExit(f"{label}: incoherent or failing summary: {summary}")
+              return report
+
+          surface = require_coherent_report(surface_path, "Surface QA")
+          regression = require_coherent_report(regression_path, "production regression")
+
+          visitor = surface.get("visitorPlayback") or {}
+          frame_count = visitor.get("renderedFrameCount", visitor.get("frameCount", 0))
+          destination = visitor.get("destination") or {}
+          if (
+              int(frame_count or 0) < 30
+              or int(visitor.get("uniquePositionCount", 0) or 0) < 25
+              or visitor.get("completed") is not True
+              or visitor.get("frameFailures")
+              or visitor.get("wallIntersectionCount") != 0
+              or visitor.get("openingCollisionCount") != 0
+              or visitor.get("railCollisionCount") != 0
+              or visitor.get("suspendedFrameCount") != 0
+              or visitor.get("stuckFrameCount") != 0
+              or destination.get("reachedUpperFloor") is not True
+              or int(destination.get("routeSampleCount", 0) or 0) < 193
+              or int(destination.get("collisionSampleCount", 0) or 0)
+                 < int(destination.get("routeSampleCount", 0) or 0)
+              or float(destination.get("maximumCollisionSampleSpacingM", 1) or 1) > 0.08
+              or destination.get("wallIntersectionCount") != 0
+              or destination.get("openingCollisionCount") != 0
+              or destination.get("railCollisionCount") != 0
+              or destination.get("suspendedFrameCount") != 0
+              or destination.get("stuckFrameCount") != 0
+              or destination.get("unsupportedSampleCount") != 0
+          ):
+              raise SystemExit("Surface QA: real rendered visitor playback gate is incomplete")
+
+          ab = surface.get("abComparison") or {}
+          baseline_manifest = ab.get("baselineActualStructureManifestEvidence") or {}
+          production_manifest = ab.get("productionActualStructureManifestEvidence") or {}
+          if (
+              not ab.get("baselineStructuralFingerprint")
+              or ab.get("baselineStructuralFingerprint") != ab.get("productionStructuralFingerprint")
+              or not ab.get("baselineActualStructureManifestFingerprint")
+              or ab.get("baselineActualStructureManifestFingerprint")
+                 != ab.get("productionActualStructureManifestFingerprint")
+              or ab.get("actualStructureManifestContract")
+                 != "canonical-live-structural-renderables-plus-explicit-building-roof-wall-opening-stair-manifest-v3-root-display-name-normalized"
+              or baseline_manifest.get("normalizedRootIdentity", {}).get(
+                  "descendantNamesAndStructuralIdentityRetained"
+              ) is not True
+              or int(ab.get("actualStructureRenderableRecordCount", 0) or 0) <= 0
+              or baseline_manifest != production_manifest
+              or baseline_manifest.get("manifestFingerprint")
+                 != ab.get("baselineActualStructureManifestFingerprint")
+              or not baseline_manifest.get("recordFingerprint")
+              or not baseline_manifest.get("manifest")
+              or ab.get("baselineCameraFingerprint") != ab.get("productionCameraFingerprint")
+              or ab.get("cameraFingerprint") != ab.get("productionCameraFingerprint")
+              or not ab.get("camera")
+              or not ab.get("cameraFingerprintContract")
+              or ab.get("baselineLightFingerprint") != ab.get("productionLightFingerprint")
+              or ab.get("lightFingerprint") != ab.get("productionLightFingerprint")
+              or not ab.get("lightEvidence")
+              or not ab.get("lightFingerprintContract")
+              or ab.get("baselineCanvasFingerprint") != ab.get("productionCanvasFingerprint")
+              or ab.get("canvasFingerprint") != ab.get("productionCanvasFingerprint")
+              or ab.get("seed") is None
+              or not ab.get("viewport")
+              or not ab.get("composition")
+              or not str(ab.get("baselineSurfaceFingerprint", "")).startswith("fnv1a32:")
+              or not str(ab.get("productionSurfaceFingerprint", "")).startswith("fnv1a32:")
+              or ab.get("baselineSurfaceFingerprint") == ab.get("productionSurfaceFingerprint")
+          ):
+              raise SystemExit("Surface QA: A/B is not the same canonical structure/camera/light/seed/composition")
+          if (
+              (ab.get("baselineMaterialRuntimeContract") or {}).get("factoryModule")
+              != "threejs/v544/YunnanMaterialFactory.js"
+              or (ab.get("productionMaterialRuntimeContract") or {}).get("factoryModule")
+              != "threejs/YunnanMaterialFactory.js"
+          ):
+              raise SystemExit("Surface QA: A/B did not execute the version-specific material factories")
+
+          roof_topology = surface.get("roofTopologyAudit") or {}
+          expected_slopes = {
+              "mainHouseDoublePitch": 2,
+              "leftEarAsymmetricDoublePitch": 2,
+              "rightEarAsymmetricDoublePitch": 2,
+              "entranceBlockDoublePitch": 2,
+              "mainGalleryLeanTo": 1,
+              "sideGalleryLeanTo": 3,
+              "gatehouseSmallRoof": 2,
+          }
+          if (
+              roof_topology.get("expectedSlopeCounts") != expected_slopes
+              or roof_topology.get("actualSlopeCounts") != expected_slopes
+              or roof_topology.get("diagnosticSlopeCounts") != expected_slopes
+              or int(roof_topology.get("actualTotalSlopes", 0) or 0) != 14
+              or int(roof_topology.get("failedSlopeChecks", 1) or 0) != 0
+          ):
+              raise SystemExit("Surface QA: exact seven-roof/fourteen-slope topology is incomplete")
+
+          required_surface_screenshots = {
+              "v550_complete_building.png",
+              "v550_ab_same_camera.png",
+              "v550_pan_cover_eave_closeup.png",
+              "v550_roof_weathering_closeup.png",
+              "v550_ridge_closures.png",
+              "v550_wall_abutment_closeup.png",
+              "v550_roof_exploded_layers.png",
+              "v550_wall_weathering_closeup.png",
+              "v550_door_closed_closeup.png",
+              "v550_door_open_closeup.png",
+              "v550_window_closed_closeup.png",
+              "v550_window_open_closeup.png",
+              "v550_visitor_entry_to_upper_route.png",
+              "v550_stair_8_plus_8.png",
+              "v550_mobile_regression.png",
+              "v550_mobile_production_performance.png",
+          }
+          surface_screenshots = {
+              item.get("name"): item for item in surface.get("screenshots") or []
+          }
+          if not required_surface_screenshots <= set(surface_screenshots):
+              raise SystemExit("Surface QA: run-scoped screenshots are incomplete")
+          surface_screenshot_dir = Path(surface_path).parent / "screenshots" / "surface"
+          if any(
+              surface_screenshots[name].get("filename") != name
+              or int(surface_screenshots[name].get("bytes", 0) or 0) <= 1000
+              or not surface_screenshots[name].get("sha256")
+              or (surface_screenshots[name].get("pngPixelEvidence") or {}).get("validPng") is not True
+              or (surface_screenshots[name].get("pngPixelEvidence") or {}).get("nonEmpty") is not True
+              or not (surface_screenshots[name].get("camera") or {}).get("presetId")
+              or not (surface_screenshots[name].get("camera") or {}).get("fingerprint")
+              or surface_screenshots[name].get("seed") is None
+              or not surface_screenshots[name].get("structuralFingerprint")
+              or not surface_screenshots[name].get("actualStructureManifestFingerprint")
+              or (surface_screenshots[name].get("actualStructureManifestEvidence") or {}).get("contract")
+                 != "canonical-live-structural-renderables-plus-explicit-building-roof-wall-opening-stair-manifest-v3-root-display-name-normalized"
+              or (surface_screenshots[name].get("actualStructureManifestEvidence") or {}).get(
+                  "normalizedRootIdentity", {}
+              ).get("descendantNamesAndStructuralIdentityRetained") is not True
+              or int((surface_screenshots[name].get("actualStructureManifestEvidence") or {}).get(
+                  "renderableInstanceCount", 0
+              ) or 0) <= 0
+              or (surface_screenshots[name].get("actualStructureManifestEvidence") or {}).get(
+                  "manifestFingerprint"
+              ) != surface_screenshots[name].get("actualStructureManifestFingerprint")
+              or not (surface_screenshots[name].get("actualStructureManifestEvidence") or {}).get(
+                  "recordFingerprint"
+              )
+              or not (surface_screenshots[name].get("actualStructureManifestEvidence") or {}).get("manifest")
+              or not surface_screenshots[name].get("surfaceFingerprint")
+              or not surface_screenshots[name].get("viewport")
+              or not surface_screenshots[name].get("checks")
+              or (surface_screenshots[name].get("renderEvidence") or {}).get(
+                  "capturedAfterProductionRender"
+              ) is not True
+              or int((surface_screenshots[name].get("renderEvidence") or {}).get(
+                  "renderFrameId", 0
+              ) or 0) <= int((surface_screenshots[name].get("renderEvidence") or {}).get(
+                  "previousRenderFrameId", 0
+              ) or 0)
+              or not (surface_screenshot_dir / name).is_file()
+              or (surface_screenshot_dir / name).stat().st_size
+                 != int(surface_screenshots[name].get("bytes", 0) or 0)
+              or hashlib.sha256((surface_screenshot_dir / name).read_bytes()).hexdigest()
+                 != surface_screenshots[name].get("sha256")
+              for name in required_surface_screenshots
+          ):
+              raise SystemExit("Surface QA: screenshot file or QA metadata is incomplete")
+
+          deployment = (regression.get("githubSync") or {}).get("deployment") or {}
+          if (
+              deployment.get("headSha") != expected_sha
+              or deployment.get("revision") != expected_sha
+              or deployment.get("ref") != expected_sha
+              or deployment.get("branch") != expected_ref
+              or deployment.get("ready") is not True
+          ):
+              raise SystemExit("production regression: GitHub Sync deployment identity mismatch")
+
+          models = regression.get("modelRuntime") or {}
+          required_models = ("Tuanjie", "Dali", "Wulong")
+          if any(
+              (models.get(name) or {}).get("loaded") is not True
+              or not (models.get(name) or {}).get("camera")
+              or not (models.get(name) or {}).get("structuralFingerprint")
+              or not (models.get(name) or {}).get("surfaceFingerprint")
+              or (models.get(name) or {}).get("runtimeStructureManifestMatchesAsset") is not True
+              or ((models.get(name) or {}).get("runtimeStructureManifest") or {}).get("contract")
+                 != "active-gltf-scene-draw-instances-world-matrix-v1"
+              or int(((models.get(name) or {}).get("runtimeStructureManifest") or {}).get(
+                  "primitiveInstanceCount", 0
+              ) or 0) <= 0
+              or int(((models.get(name) or {}).get("screenshot") or {}).get("bytes", 0) or 0) <= 1000
+              for name in required_models
+          ):
+              raise SystemExit("production regression: three-model runtime evidence is incomplete")
+          if any(
+              int((models.get(name) or {}).get("runtimeNonIdentityWorldMatrixCount", 0) or 0) < 1
+              for name in ("Dali", "Wulong")
+          ):
+              raise SystemExit("production regression: Dali/Wulong node world transforms were not applied")
+          model_hashes = [models[name]["screenshot"].get("sha256") for name in required_models]
+          canvas_checksums = [(models[name].get("canvas") or {}).get("checksum") for name in required_models]
+          if len(set(model_hashes)) != 3 or len(set(canvas_checksums)) != 3:
+              raise SystemExit("production regression: three model screenshots/rendered frames are not distinct")
+          regression_screenshot_dir = Path(regression_path).parent / "screenshots" / "regression"
+          model_files = {
+              "Tuanjie": "v550_regression_tuanjie_reference.png",
+              "Dali": "v550_regression_dali_reference.png",
+              "Wulong": "v550_regression_wulong_reference.png",
+          }
+          if any(
+              Path(str((models[name].get("screenshot") or {}).get("path", ""))).name != filename
+              or not (regression_screenshot_dir / filename).is_file()
+              or (regression_screenshot_dir / filename).stat().st_size
+                 != int((models[name].get("screenshot") or {}).get("bytes", 0) or 0)
+              or hashlib.sha256((regression_screenshot_dir / filename).read_bytes()).hexdigest()
+                 != (models[name].get("screenshot") or {}).get("sha256")
+              for name, filename in model_files.items()
+          ):
+              raise SystemExit("production regression: three-model screenshot artifacts are incomplete")
+          PY
