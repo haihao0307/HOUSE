@@ -1,0 +1,20 @@
+{
+  "version": "09E",
+  "pass": true,
+  "views": [
+    "joinery",
+    "mainHouse",
+    "dripFloral front",
+    "dripBeast angled"
+  ],
+  "visualChecks": [
+    "continuous longitudinal grain visible close and at whole-building scale",
+    "motifs extend across fitted drip faces"
+  ],
+  "glErrorsObserved": [
+    0,
+    0,
+    0
+  ],
+  "fullCatalogSweep": false
+}
