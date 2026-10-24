@@ -1,0 +1,358 @@
+{
+  "done": true,
+  "entries": [
+    {
+      "build_ms": 5911.800000011921,
+      "glError": 0,
+      "heading": "二柱二架二桁 · 一溜水",
+      "id": "frame2",
+      "objects": 173
+    },
+    {
+      "build_ms": 7031.100000023842,
+      "glError": 0,
+      "heading": "二柱三架四桁 · 一溜水",
+      "id": "frame4",
+      "objects": 202
+    },
+    {
+      "build_ms": 9660.599999964235,
+      "glError": 0,
+      "heading": "二柱四架六桁 · 二溜水",
+      "id": "frame6",
+      "objects": 268
+    },
+    {
+      "build_ms": 14343.5,
+      "glError": 0,
+      "heading": "三柱六架七桁 · 前廊",
+      "id": "frame7",
+      "objects": 417
+    },
+    {
+      "build_ms": 21048.400000035763,
+      "glError": 0,
+      "heading": "响应寺 · 四柱十三桁",
+      "id": "frame13",
+      "objects": 579
+    },
+    {
+      "build_ms": 8756.800000011921,
+      "glError": 0,
+      "heading": "二柱三架三桁",
+      "id": "frame3",
+      "objects": 259
+    },
+    {
+      "build_ms": 2593.699999988079,
+      "glError": 0,
+      "heading": "响应寺 · 游椿与彩画来源",
+      "id": "youChun",
+      "objects": 38
+    },
+    {
+      "build_ms": 71.60000002384186,
+      "glError": 0,
+      "heading": "筒瓦与板瓦 · 同屏",
+      "id": "tileBoard",
+      "objects": 3
+    },
+    {
+      "build_ms": 7861.5,
+      "glError": 0,
+      "heading": "瓦当与滴水 · 全组同屏",
+      "id": "patternBoard",
+      "objects": 10
+    },
+    {
+      "build_ms": 3781.699999988079,
+      "glError": 0,
+      "heading": "脊饰 · 全组同屏",
+      "id": "ornamentBoard",
+      "objects": 8
+    },
+    {
+      "build_ms": 66.5,
+      "glError": 0,
+      "heading": "筒瓦 · 独立小头",
+      "id": "cover",
+      "objects": 2
+    },
+    {
+      "build_ms": 45.19999998807907,
+      "glError": 0,
+      "heading": "板瓦 · 两端截面",
+      "id": "pan",
+      "objects": 2
+    },
+    {
+      "build_ms": 3111.900000035763,
+      "glError": 0,
+      "heading": "圆瓦当与瓦身",
+      "id": "roundEnd",
+      "objects": 2
+    },
+    {
+      "build_ms": 4780.800000011921,
+      "glError": 0,
+      "heading": "两组规格同尺度对照",
+      "id": "comparison",
+      "objects": 5
+    },
+    {
+      "build_ms": 34.19999998807907,
+      "glError": 0,
+      "heading": "勾头一 · 四分区线纹",
+      "id": "seal",
+      "objects": 2
+    },
+    {
+      "build_ms": 35.19999998807907,
+      "glError": 0,
+      "heading": "勾头二 · 放射籽纹",
+      "id": "seeds",
+      "objects": 2
+    },
+    {
+      "build_ms": 32.80000001192093,
+      "glError": 0,
+      "heading": "勾头三 · 花形纹",
+      "id": "flower",
+      "objects": 2
+    },
+    {
+      "build_ms": 43.69999998807907,
+      "glError": 0,
+      "heading": "圆钱 · 椽头护面与钉孔",
+      "id": "rosette",
+      "objects": 5
+    },
+    {
+      "build_ms": 34.60000002384186,
+      "glError": 0,
+      "heading": "滴水一 · 花叶纹",
+      "id": "dripFloral",
+      "objects": 2
+    },
+    {
+      "build_ms": 36.69999998807907,
+      "glError": 0,
+      "heading": "滴水二 · 兽形纹",
+      "id": "dripBeast",
+      "objects": 2
+    },
+    {
+      "build_ms": 45.5,
+      "glError": 0,
+      "heading": "鳞尾 · 侧面轮廓",
+      "id": "dragonTail",
+      "objects": 2
+    },
+    {
+      "build_ms": 31.399999976158146,
+      "glError": 0,
+      "heading": "仙鱼 · 侧面轮廓",
+      "id": "fish",
+      "objects": 2
+    },
+    {
+      "build_ms": 27.900000035762787,
+      "glError": 0,
+      "heading": "兽头 · 图上轮廓",
+      "id": "beastHead",
+      "objects": 2
+    },
+    {
+      "build_ms": 29,
+      "glError": 0,
+      "heading": "垂脊兽头 · 侧形",
+      "id": "beastSide",
+      "objects": 2
+    },
+    {
+      "build_ms": 20.899999976158146,
+      "glError": 0,
+      "heading": "走仙 · 图上轮廓",
+      "id": "immortal",
+      "objects": 2
+    },
+    {
+      "build_ms": 22.30000001192093,
+      "glError": 0,
+      "heading": "走马 · 图上轮廓",
+      "id": "horse",
+      "objects": 2
+    },
+    {
+      "build_ms": 47.19999998807907,
+      "glError": 0,
+      "heading": "向脊兽形件 · 侧形",
+      "id": "guardian",
+      "objects": 2
+    },
+    {
+      "build_ms": 1171.699999988079,
+      "glError": 0,
+      "heading": "檐口 · 板瓦 / 筒瓦 / 滴水",
+      "id": "eaves",
+      "objects": 39
+    },
+    {
+      "build_ms": 1827.800000011921,
+      "glError": 0,
+      "heading": "坡面 · 顺坡搭接与横向盖缝",
+      "id": "roofPatch",
+      "objects": 67
+    },
+    {
+      "build_ms": 2405.699999988079,
+      "glError": 0,
+      "heading": "正脊 · 抱筒与分层",
+      "id": "ridge",
+      "objects": 113
+    },
+    {
+      "build_ms": 2196.400000035763,
+      "glError": 0,
+      "heading": "垂脊 · 瓦层收口",
+      "id": "slopeRidge",
+      "objects": 111
+    },
+    {
+      "build_ms": 2228.7999999523163,
+      "glError": 0,
+      "heading": "岔脊候选 · 波形收口",
+      "id": "forkRidge",
+      "objects": 102
+    },
+    {
+      "build_ms": 2241.2000000476837,
+      "glError": 0,
+      "heading": "四平脊 · 顶部组合",
+      "id": "flatRidge",
+      "objects": 108
+    },
+    {
+      "build_ms": 2216.199999988079,
+      "glError": 0,
+      "heading": "搭尾 · 挑出端",
+      "id": "tail",
+      "objects": 103
+    },
+    {
+      "build_ms": 2171,
+      "glError": 0,
+      "heading": "螺蛳脊 · 连续拱形",
+      "id": "snail",
+      "objects": 128
+    },
+    {
+      "build_ms": 2155.699999988079,
+      "glError": 0,
+      "heading": "土封火 · 凹凸锁口",
+      "id": "firewall",
+      "objects": 109
+    },
+    {
+      "build_ms": 3694.800000011921,
+      "glError": 0,
+      "heading": "D5 · 山墙层叠瓦口",
+      "id": "ridgeD5",
+      "objects": 84
+    },
+    {
+      "build_ms": 850.5,
+      "glError": 0,
+      "heading": "榫卯验证台 · 真孔与缩肩榫",
+      "id": "joinery",
+      "objects": 9
+    },
+    {
+      "build_ms": 3498.099999964237,
+      "glError": 0,
+      "heading": "D2 · 挑檐梁檩椽关系",
+      "id": "jointD2",
+      "objects": 54
+    },
+    {
+      "build_ms": 2705.100000023842,
+      "glError": 0,
+      "heading": "D3 · 柱梁与挑檐",
+      "id": "jointD3",
+      "objects": 38
+    },
+    {
+      "build_ms": 2541.400000035763,
+      "glError": 0,
+      "heading": "D4 · 垂柱与层叠挑木",
+      "id": "jointD4",
+      "objects": 43
+    },
+    {
+      "build_ms": 5686.699999988079,
+      "glError": 0,
+      "heading": "D6 · 檐口正侧关系",
+      "id": "jointD6",
+      "objects": 90
+    },
+    {
+      "build_ms": 29,
+      "glError": 0,
+      "heading": "四类砖 · 同尺度尺寸",
+      "id": "bricks",
+      "objects": 5
+    },
+    {
+      "build_ms": 20.099999964237213,
+      "glError": 0,
+      "heading": "小丁走 · 不用泥巴",
+      "id": "smallDing",
+      "objects": 28
+    },
+    {
+      "build_ms": 20.30000001192093,
+      "glError": 0,
+      "heading": "工字砌法 · 有灰缝研究",
+      "id": "bond",
+      "objects": 31
+    },
+    {
+      "build_ms": 19.19999998807907,
+      "glError": 0,
+      "heading": "墙码头 · 砖框与填土",
+      "id": "wallCap",
+      "objects": 24
+    },
+    {
+      "build_ms": 21.80000001192093,
+      "glError": 0,
+      "heading": "水波浪 · 铺砌",
+      "id": "herringbone",
+      "objects": 46
+    },
+    {
+      "build_ms": 14414.19999998808,
+      "glError": 0,
+      "heading": "正房带厦 · 横断面空间化",
+      "id": "mainHouse",
+      "objects": 344
+    },
+    {
+      "build_ms": 9367.899999976158,
+      "glError": 0,
+      "heading": "倒八尺 · 断面空间化",
+      "id": "gateHouse",
+      "objects": 217
+    },
+    {
+      "build_ms": 11264.700000047684,
+      "glError": 0,
+      "heading": "耳房 · 断面空间化",
+      "id": "sideHouse",
+      "objects": 266
+    }
+  ],
+  "errors": [],
+  "version": "09C",
+  "pass": true
+}
