@@ -1,0 +1,57 @@
+{
+  "meshes": [
+    {
+      "kind": "round",
+      "triangles": 4704,
+      "volume_m3": 0.003170650677079203,
+      "windingRepairs": 4608,
+      "finite": true
+    },
+    {
+      "kind": "box",
+      "triangles": 2660,
+      "volume_m3": 0.024135643775394913,
+      "windingRepairs": 0,
+      "finite": true
+    },
+    {
+      "kind": "post",
+      "triangles": 4720,
+      "volume_m3": 0.023295993925093933,
+      "windingRepairs": 0,
+      "finite": true
+    },
+    {
+      "kind": "beam",
+      "triangles": 4616,
+      "volume_m3": 0.015668708669140424,
+      "windingRepairs": 0,
+      "finite": true
+    }
+  ],
+  "mortise": {
+    "throughVoidRayHits": 0,
+    "adjacentSolidRayHits": 2
+  },
+  "nominalJoint": {
+    "tenon": [
+      0.17,
+      0.08,
+      0.06
+    ],
+    "mortise": [
+      0.17,
+      0.081,
+      0.061
+    ],
+    "shoulderX": [
+      -0.39,
+      0.39
+    ],
+    "columnInnerFaceX": [
+      -0.39,
+      0.39
+    ]
+  },
+  "pass": true
+}

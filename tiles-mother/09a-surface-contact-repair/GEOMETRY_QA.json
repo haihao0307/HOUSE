@@ -1,0 +1,118 @@
+{
+  "version": "09A",
+  "seats": {
+    "spacing": 0.2595475742816925,
+    "step": 0.219,
+    "rise": 0.007134473794123382,
+    "phase": -0.042,
+    "panAngle": 0.07,
+    "coverY": 0.032651142415465254,
+    "roll": 0.007334692679707488,
+    "angle": 0.04834803777386501,
+    "checks": [
+      {
+        "kind": "cover-pan",
+        "row": -1,
+        "side": -1,
+        "minGapM": 0.02138822352719672,
+        "trianglePairs": 39115,
+        "where": [
+          -0.0475161195763699,
+          -0.1679321198972764
+        ],
+        "pass": true
+      },
+      {
+        "kind": "cover-pan",
+        "row": -1,
+        "side": 1,
+        "minGapM": 0.02318199447088397,
+        "trianglePairs": 42654,
+        "where": [
+          0.04869868654856659,
+          -0.16885301695902283
+        ],
+        "pass": true
+      },
+      {
+        "kind": "cover-pan",
+        "row": 0,
+        "side": -1,
+        "minGapM": 0.00005,
+        "trianglePairs": 106161,
+        "where": [
+          -0.03762029153748674,
+          0.08434767425713321
+        ],
+        "pass": true
+      },
+      {
+        "kind": "cover-pan",
+        "row": 0,
+        "side": 1,
+        "minGapM": 0.000050280223809105004,
+        "trianglePairs": 108061,
+        "where": [
+          0.037142381672958955,
+          0.08219512254455301
+        ],
+        "pass": true
+      },
+      {
+        "kind": "cover-pan",
+        "row": 1,
+        "side": -1,
+        "minGapM": null,
+        "trianglePairs": 0,
+        "where": null,
+        "pass": true
+      },
+      {
+        "kind": "cover-pan",
+        "row": 1,
+        "side": 1,
+        "minGapM": null,
+        "trianglePairs": 0,
+        "where": null,
+        "pass": true
+      }
+    ],
+    "coverLap": {
+      "minGapM": 0.0000998341919156466,
+      "trianglePairs": 69163,
+      "where": [
+        -0.04798676973258535,
+        0.09263183807290065
+      ],
+      "pass": true
+    },
+    "panLap": {
+      "minGapM": 0.0000499999999999997,
+      "trianglePairs": 50745,
+      "where": [
+        0.10985277593135834,
+        0.120674942436509
+      ],
+      "pass": true
+    },
+    "supportStatus": "solved from actual displaced triangles; unmeasured bedding is explicit"
+  },
+  "meshes": [
+    {
+      "kind": "pan",
+      "vertices": 17982,
+      "triangles": 34560,
+      "signedVolume": 0.0007535387586639025,
+      "edgeDefects": 0
+    },
+    {
+      "kind": "cover",
+      "vertices": 17982,
+      "triangles": 34560,
+      "signedVolume": 0.000328759951010305,
+      "edgeDefects": 0
+    }
+  ],
+  "bilateralContact": true,
+  "pass": true
+}
