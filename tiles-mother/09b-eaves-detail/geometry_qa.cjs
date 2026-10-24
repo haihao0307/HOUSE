@@ -1,0 +1,9 @@
+const fs=require('fs'),vm=require('vm');
+const h=fs.readFileSync(__dirname+'/START_HERE.html','utf8'),code=h.match(/<script>([\s\S]*?)<\/script>/)[1];
+const C={console,performance};vm.createContext(C);vm.runInContext("const settings={micStrength:1.0,micScale:1};\n"+code.slice(0,code.indexOf('const $=s=>'))+'\nthis.Q={shellMesh,roofSeats,contact,M,STUDY,settings,TimberOriginal};',C);
+const Q=C.Q;Q.STUDY.family='roof';const report={version:'09B',seats:Q.roofSeats(),meshes:[]};
+for(let kind of ['pan','cover']){let g=Q.shellMesh(kind),volume=0,edges=new Map();const key=i=>Array.from(g.p.slice(i*3,i*3+3)).map(x=>Math.round(x*1e7)).join(',');for(let i=0;i<g.idx.length;i+=3){let ids=Array.from(g.idx.slice(i,i+3)),v=ids.map(i=>Array.from(g.p.slice(i*3,i*3+3)));volume+=(v[0][0]*(v[1][1]*v[2][2]-v[1][2]*v[2][1])+v[0][1]*(v[1][2]*v[2][0]-v[1][0]*v[2][2])+v[0][2]*(v[1][0]*v[2][1]-v[1][1]*v[2][0]))/6;for(let j=0;j<3;j++){let a=key(ids[j]),b=key(ids[(j+1)%3]),k=[a,b].sort().join('|');let e=edges.get(k)||{count:0,orient:0};e.count++;e.orient+=a<b?1:-1;edges.set(k,e)}}report.meshes.push({kind,vertices:g.p.length/3,triangles:g.idx.length/3,signedVolume:volume,edgeDefects:[...edges.values()].filter(e=>e.count!==2||e.orient!==0).length});}
+report.bilateralContact=report.seats.checks.filter(c=>c.row===0).every(c=>c.pass&&c.minGapM<=.0005);
+report.pass=report.bilateralContact&&report.seats.coverLap.pass&&report.seats.panLap.pass&&report.meshes.every(m=>m.signedVolume>0&&m.edgeDefects===0);
+fs.writeFileSync(__dirname+'/GEOMETRY_QA.json',JSON.stringify(report,null,2));console.log(JSON.stringify(report,null,2));
+

@@ -1,0 +1,1020 @@
+{
+  "url": "file:///G:/HOUSE/tiles-mother-09b-detail-20261024/START_HERE.html",
+  "errors": [],
+  "entries": [
+    {
+      "id": "tileBoard",
+      "glError": 0,
+      "objects": 3,
+      "definition": {
+        "id": "tileBoard",
+        "version": "09B",
+        "region": "云南",
+        "case": "disorder-unidentified",
+        "sources": [
+          "D7",
+          "L9"
+        ],
+        "parts": [
+          "T01",
+          "T02"
+        ],
+        "frame": "metres, right-handed x right/y up/z toward viewer",
+        "error_m": null,
+        "depth_m": 0.012,
+        "relief_m": 0.0012,
+        "assumptions": "09B：筒瓦和板瓦可同屏；上面、底面、侧边、大小端与小头共同接受较弱连续起伏。图示数值转录；误差未知。D7：H1放大后暂读3.5 cm，H2为3.2 cm；恢复08D圆弧薄壳、手工边口与Microscope真实位移；弧线为模型假设。L9小头长度、截面高度和厚度未注，均为显示假设。",
+        "relations": [],
+        "generated_bounds_m": {
+          "min": [
+            -0.24856898933649063,
+            0.0033210739493370056,
+            -0.12734133005142212
+          ],
+          "max": [
+            0.2181347869336605,
+            0.06578447110950947,
+            0.1276453286409378
+          ]
+        }
+      },
+      "wood": []
+    },
+    {
+      "id": "patternBoard",
+      "glError": 0,
+      "objects": 10,
+      "definition": {
+        "id": "patternBoard",
+        "version": "09B",
+        "region": "云南",
+        "case": "catalog-tile-brick",
+        "sources": [
+          "L9"
+        ],
+        "parts": [
+          "T04",
+          "T05",
+          "T06",
+          "T07",
+          "T08",
+          "T09"
+        ],
+        "frame": "metres, right-handed x right/y up/z toward viewer",
+        "error_m": null,
+        "depth_m": 0.012,
+        "relief_m": 0.0012,
+        "assumptions": "原图纹线用于连续压印浮雕，纹样与基面为同一闭合表面，无悬浮细管。瓦当、滴水与脊饰分别整组同屏。原件背面与浮雕深度未测；脊饰仍为侧形研究，不冒充完整圆雕。",
+        "relations": [
+          {
+            "a": "rafter-end-coin",
+            "b": "coin-carrier-rafter",
+            "kind": "nailed end protection",
+            "back_contact_z": -0.006,
+            "source": "L9 upper-right diagram, central nail-hole label and user identification",
+            "fastener_dimensions_status": "display assumptions",
+            "weatherproof_guarantee": false
+          }
+        ],
+        "gallery": [
+          "seal",
+          "seeds",
+          "flower",
+          "dripFloral",
+          "dripBeast",
+          "rosette"
+        ],
+        "generated_bounds_m": {
+          "min": [
+            -0.41535889357328415,
+            0.03095400333404541,
+            -0.38599999248981476
+          ],
+          "max": [
+            0.36500000953674316,
+            0.48500000685453415,
+            0.133200004696846
+          ]
+        }
+      },
+      "wood": [
+        {
+          "id": "coin-carrier-rafter#1",
+          "max": 0.0004018921172246337
+        }
+      ]
+    },
+    {
+      "id": "seal",
+      "glError": 0,
+      "objects": 2,
+      "definition": {
+        "id": "seal",
+        "version": "09B",
+        "region": "云南",
+        "case": "catalog-tile-brick",
+        "sources": [
+          "L9"
+        ],
+        "parts": [
+          "T04"
+        ],
+        "frame": "metres, right-handed x right/y up/z toward viewer",
+        "error_m": null,
+        "depth_m": 0.012,
+        "relief_m": 0.0012,
+        "assumptions": "原图纹线用于连续压印浮雕，纹样与基面为同一闭合表面，无悬浮细管。瓦当、滴水与脊饰分别整组同屏。原件背面与浮雕深度未测；脊饰仍为侧形研究，不冒充完整圆雕。",
+        "relations": [],
+        "generated_bounds_m": {
+          "min": [
+            -0.06499999761581422,
+            0.07360216230154037,
+            -0.12070110440254211
+          ],
+          "max": [
+            0.0649999976158142,
+            0.20500000193715096,
+            0.133200004696846
+          ]
+        }
+      },
+      "wood": []
+    },
+    {
+      "id": "dripFloral",
+      "glError": 0,
+      "objects": 2,
+      "definition": {
+        "id": "dripFloral",
+        "version": "09B",
+        "region": "云南",
+        "case": "catalog-tile-brick",
+        "sources": [
+          "L9"
+        ],
+        "parts": [
+          "T08"
+        ],
+        "frame": "metres, right-handed x right/y up/z toward viewer",
+        "error_m": null,
+        "depth_m": 0.012,
+        "relief_m": 0.0012,
+        "assumptions": "原图纹线用于连续压印浮雕，纹样与基面为同一闭合表面，无悬浮细管。瓦当、滴水与脊饰分别整组同屏。原件背面与浮雕深度未测；脊饰仍为侧形研究，不冒充完整圆雕。",
+        "relations": [],
+        "generated_bounds_m": {
+          "min": [
+            -0.11535888165235521,
+            0.05123400688171387,
+            -0.12068794667720793
+          ],
+          "max": [
+            0.1141948029398918,
+            0.19479825347661972,
+            0.133200004696846
+          ]
+        }
+      },
+      "wood": []
+    },
+    {
+      "id": "rosette",
+      "glError": 0,
+      "objects": 5,
+      "definition": {
+        "id": "rosette",
+        "version": "09B",
+        "region": "云南",
+        "case": "catalog-tile-brick",
+        "sources": [
+          "L9"
+        ],
+        "parts": [
+          "T07"
+        ],
+        "frame": "metres, right-handed x right/y up/z toward viewer",
+        "error_m": null,
+        "depth_m": 0.012,
+        "relief_m": 0.0012,
+        "assumptions": "原图纹线用于连续压印浮雕，纹样与基面为同一闭合表面，无悬浮细管。瓦当、滴水与脊饰分别整组同屏。原件背面与浮雕深度未测；脊饰仍为侧形研究，不冒充完整圆雕。",
+        "relations": [
+          {
+            "a": "rafter-end-coin",
+            "b": "coin-carrier-rafter",
+            "kind": "nailed end protection",
+            "back_contact_z": -0.006,
+            "source": "L9 upper-right diagram, central nail-hole label and user identification",
+            "fastener_dimensions_status": "display assumptions",
+            "weatherproof_guarantee": false
+          }
+        ],
+        "generated_bounds_m": {
+          "min": [
+            -0.06499999761581421,
+            0.08742021769285202,
+            -0.38599999248981476
+          ],
+          "max": [
+            0.06499999761581421,
+            0.21257979422807693,
+            0.008000001311302185
+          ]
+        }
+      },
+      "wood": [
+        {
+          "id": "coin-carrier-rafter#1",
+          "max": 0.0004018921172246337
+        }
+      ]
+    },
+    {
+      "id": "ornamentBoard",
+      "glError": 0,
+      "objects": 8,
+      "definition": {
+        "id": "ornamentBoard",
+        "version": "09B",
+        "region": "云南",
+        "case": "maidicun",
+        "sources": [
+          "L7"
+        ],
+        "parts": [
+          "R19",
+          "R20",
+          "R21",
+          "R23",
+          "R24",
+          "R25"
+        ],
+        "frame": "metres, right-handed x right/y up/z toward viewer",
+        "error_m": null,
+        "depth_m": 0.012,
+        "relief_m": 0.0012,
+        "assumptions": "原图纹线用于连续压印浮雕，纹样与基面为同一闭合表面，无悬浮细管。瓦当、滴水与脊饰分别整组同屏。原件背面与浮雕深度未测；脊饰仍为侧形研究，不冒充完整圆雕。",
+        "relations": [],
+        "gallery": [
+          "dragonTail",
+          "fish",
+          "beastHead",
+          "beastSide",
+          "immortal",
+          "horse",
+          "guardian"
+        ],
+        "generated_bounds_m": {
+          "min": [
+            -0.8650820255279541,
+            -0.0890909880399704,
+            -0.006000000052154064
+          ],
+          "max": [
+            0.870000034570694,
+            0.6783610135316849,
+            0.007199999876320362
+          ]
+        }
+      },
+      "wood": []
+    },
+    {
+      "id": "eaves",
+      "glError": 0,
+      "objects": 39,
+      "definition": {
+        "id": "eaves",
+        "version": "09B",
+        "region": "云南",
+        "case": "catalog-tile-brick",
+        "sources": [
+          "L9",
+          "L7"
+        ],
+        "parts": [
+          "T01",
+          "T02",
+          "T08",
+          "R17"
+        ],
+        "frame": "metres, right-handed x right/y up/z toward viewer",
+        "error_m": null,
+        "depth_m": 0.012,
+        "relief_m": 0.0012,
+        "assumptions": "使用08D瓦体与位移规则，重新求顺坡搭接和左右支承；改变起伏后重新求解。默认无望板：原板瓦下保留离散挂瓦条与局部灰座；可切换有望板。支承尺寸是显示构造假设。数字接触通过不代表排水、受力或历史尺寸验证。",
+        "relations": [
+          {
+            "a": "round-coin",
+            "b": "rafter-end",
+            "kind": "nailed protective facing",
+            "source": "L9 plus user clarification",
+            "diameter_status": "scaled to displayed 48 mm rafter, source diameter unknown",
+            "fixing_dimensions_status": "assumed"
+          },
+          {
+            "a": "cover",
+            "b": "two adjacent pans",
+            "kind": "projected_triangle_contact",
+            "algorithm": "actual 08D-displaced triangles",
+            "seat": {
+              "spacing": 0.230553684592247,
+              "step": 0.207,
+              "rise": 0.010000489254660712,
+              "phase": -0.04,
+              "panAngle": 0.07,
+              "coverY": 0.02666485220847161,
+              "roll": 0.0008978967261172166,
+              "angle": 0.07272406235086144,
+              "checks": [
+                {
+                  "kind": "cover-pan",
+                  "row": -1,
+                  "side": -1,
+                  "minGapM": 0.02952806686891378,
+                  "trianglePairs": 43570,
+                  "where": [
+                    -0.05132466546308473,
+                    -0.0874697073522716
+                  ],
+                  "pass": true
+                },
+                {
+                  "kind": "cover-pan",
+                  "row": -1,
+                  "side": 1,
+                  "minGapM": 0.03073835174015112,
+                  "trianglePairs": 48263,
+                  "where": [
+                    0.05238710187884506,
+                    -0.08748505519330921
+                  ],
+                  "pass": true
+                },
+                {
+                  "kind": "cover-pan",
+                  "row": 0,
+                  "side": -1,
+                  "minGapM": 0.00005007473016523448,
+                  "trianglePairs": 111896,
+                  "where": [
+                    -0.04344203257603408,
+                    0.0521605800706402
+                  ],
+                  "pass": true
+                },
+                {
+                  "kind": "cover-pan",
+                  "row": 0,
+                  "side": 1,
+                  "minGapM": 0.00005000088753669488,
+                  "trianglePairs": 115497,
+                  "where": [
+                    0.04313398253415239,
+                    0.07613958665603784
+                  ],
+                  "pass": true
+                },
+                {
+                  "kind": "cover-pan",
+                  "row": 1,
+                  "side": -1,
+                  "minGapM": null,
+                  "trianglePairs": 0,
+                  "where": null,
+                  "pass": true
+                },
+                {
+                  "kind": "cover-pan",
+                  "row": 1,
+                  "side": 1,
+                  "minGapM": null,
+                  "trianglePairs": 0,
+                  "where": null,
+                  "pass": true
+                }
+              ],
+              "coverLap": {
+                "minGapM": 0.00010009313456236027,
+                "trianglePairs": 67532,
+                "where": [
+                  -0.052133164288872894,
+                  0.08831632485743793
+                ],
+                "pass": true
+              },
+              "panLap": {
+                "minGapM": 0.0000499999999999997,
+                "trianglePairs": 67955,
+                "where": [
+                  0.0949246823103762,
+                  0.11572449583450341
+                ],
+                "pass": true
+              },
+              "supportStatus": "solved from actual displaced triangles; unmeasured bedding is explicit"
+            },
+            "validated": false
+          },
+          {
+            "a": "pan",
+            "b": "local mortar seat/batten/rafter/purlin",
+            "kind": "support_chain",
+            "bedding_status": "mortar fitted to the original pan underside; explicit support scheme, not a substitute tile"
+          }
+        ],
+        "roofSubstrate": {
+          "deck": false,
+          "battens": true,
+          "mortar": "local seats over battens",
+          "status": "explicit construction option; unmeasured dimensions"
+        },
+        "roofSeating": {
+          "spacing": 0.230553684592247,
+          "step": 0.207,
+          "rise": 0.010000489254660712,
+          "phase": -0.04,
+          "panAngle": 0.07,
+          "coverY": 0.02666485220847161,
+          "roll": 0.0008978967261172166,
+          "angle": 0.07272406235086144,
+          "checks": [
+            {
+              "kind": "cover-pan",
+              "row": -1,
+              "side": -1,
+              "minGapM": 0.02952806686891378,
+              "trianglePairs": 43570,
+              "where": [
+                -0.05132466546308473,
+                -0.0874697073522716
+              ],
+              "pass": true
+            },
+            {
+              "kind": "cover-pan",
+              "row": -1,
+              "side": 1,
+              "minGapM": 0.03073835174015112,
+              "trianglePairs": 48263,
+              "where": [
+                0.05238710187884506,
+                -0.08748505519330921
+              ],
+              "pass": true
+            },
+            {
+              "kind": "cover-pan",
+              "row": 0,
+              "side": -1,
+              "minGapM": 0.00005007473016523448,
+              "trianglePairs": 111896,
+              "where": [
+                -0.04344203257603408,
+                0.0521605800706402
+              ],
+              "pass": true
+            },
+            {
+              "kind": "cover-pan",
+              "row": 0,
+              "side": 1,
+              "minGapM": 0.00005000088753669488,
+              "trianglePairs": 115497,
+              "where": [
+                0.04313398253415239,
+                0.07613958665603784
+              ],
+              "pass": true
+            },
+            {
+              "kind": "cover-pan",
+              "row": 1,
+              "side": -1,
+              "minGapM": null,
+              "trianglePairs": 0,
+              "where": null,
+              "pass": true
+            },
+            {
+              "kind": "cover-pan",
+              "row": 1,
+              "side": 1,
+              "minGapM": null,
+              "trianglePairs": 0,
+              "where": null,
+              "pass": true
+            }
+          ],
+          "coverLap": {
+            "minGapM": 0.00010009313456236027,
+            "trianglePairs": 67532,
+            "where": [
+              -0.052133164288872894,
+              0.08831632485743793
+            ],
+            "pass": true
+          },
+          "panLap": {
+            "minGapM": 0.0000499999999999997,
+            "trianglePairs": 67955,
+            "where": [
+              0.0949246823103762,
+              0.11572449583450341
+            ],
+            "pass": true
+          },
+          "supportStatus": "solved from actual displaced triangles; unmeasured bedding is explicit"
+        },
+        "generated_bounds_m": {
+          "min": [
+            -0.5111073851585388,
+            -0.11439683193125866,
+            -0.3179769671263802
+          ],
+          "max": [
+            0.5111073851585388,
+            0.21471202283898652,
+            0.20240027604410626
+          ]
+        }
+      },
+      "wood": [
+        {
+          "id": "roof-rafter-0#1",
+          "max": 0.0004043335502501577
+        },
+        {
+          "id": "roof-rafter-0#2",
+          "max": 0.0004043335502501577
+        },
+        {
+          "id": "roof-rafter-0#3",
+          "max": 0.0004043335502501577
+        },
+        {
+          "id": "roof-rafter-0#4",
+          "max": 0.0004043335502501577
+        },
+        {
+          "id": "roof-purlin-0#1",
+          "max": 0.0004053101292811334
+        },
+        {
+          "id": "roof-purlin-0#2",
+          "max": 0.0004053101292811334
+        },
+        {
+          "id": "batten-0-0#1",
+          "max": 0.0002618143043946475
+        },
+        {
+          "id": "batten-0-1#1",
+          "max": 0.0002618143043946475
+        }
+      ]
+    },
+    {
+      "id": "roofPatch",
+      "glError": 0,
+      "objects": 67,
+      "definition": {
+        "id": "roofPatch",
+        "version": "09B",
+        "region": "云南",
+        "case": "disorder-unidentified",
+        "sources": [
+          "D2",
+          "D4",
+          "L9"
+        ],
+        "parts": [
+          "T01",
+          "T02"
+        ],
+        "frame": "metres, right-handed x right/y up/z toward viewer",
+        "error_m": null,
+        "depth_m": 0.012,
+        "relief_m": 0.0012,
+        "assumptions": "使用08D瓦体与位移规则，重新求顺坡搭接和左右支承；改变起伏后重新求解。默认无望板：原板瓦下保留离散挂瓦条与局部灰座；可切换有望板。支承尺寸是显示构造假设。数字接触通过不代表排水、受力或历史尺寸验证。",
+        "relations": [
+          {
+            "a": "cover",
+            "b": "two adjacent pans",
+            "kind": "projected_triangle_contact",
+            "algorithm": "actual 08D-displaced triangles",
+            "seat": {
+              "spacing": 0.230553684592247,
+              "step": 0.207,
+              "rise": 0.010000489254660712,
+              "phase": -0.04,
+              "panAngle": 0.07,
+              "coverY": 0.02666485220847161,
+              "roll": 0.0008978967261172166,
+              "angle": 0.07272406235086144,
+              "checks": [
+                {
+                  "kind": "cover-pan",
+                  "row": -1,
+                  "side": -1,
+                  "minGapM": 0.02952806686891378,
+                  "trianglePairs": 43570,
+                  "where": [
+                    -0.05132466546308473,
+                    -0.0874697073522716
+                  ],
+                  "pass": true
+                },
+                {
+                  "kind": "cover-pan",
+                  "row": -1,
+                  "side": 1,
+                  "minGapM": 0.03073835174015112,
+                  "trianglePairs": 48263,
+                  "where": [
+                    0.05238710187884506,
+                    -0.08748505519330921
+                  ],
+                  "pass": true
+                },
+                {
+                  "kind": "cover-pan",
+                  "row": 0,
+                  "side": -1,
+                  "minGapM": 0.00005007473016523448,
+                  "trianglePairs": 111896,
+                  "where": [
+                    -0.04344203257603408,
+                    0.0521605800706402
+                  ],
+                  "pass": true
+                },
+                {
+                  "kind": "cover-pan",
+                  "row": 0,
+                  "side": 1,
+                  "minGapM": 0.00005000088753669488,
+                  "trianglePairs": 115497,
+                  "where": [
+                    0.04313398253415239,
+                    0.07613958665603784
+                  ],
+                  "pass": true
+                },
+                {
+                  "kind": "cover-pan",
+                  "row": 1,
+                  "side": -1,
+                  "minGapM": null,
+                  "trianglePairs": 0,
+                  "where": null,
+                  "pass": true
+                },
+                {
+                  "kind": "cover-pan",
+                  "row": 1,
+                  "side": 1,
+                  "minGapM": null,
+                  "trianglePairs": 0,
+                  "where": null,
+                  "pass": true
+                }
+              ],
+              "coverLap": {
+                "minGapM": 0.00010009313456236027,
+                "trianglePairs": 67532,
+                "where": [
+                  -0.052133164288872894,
+                  0.08831632485743793
+                ],
+                "pass": true
+              },
+              "panLap": {
+                "minGapM": 0.0000499999999999997,
+                "trianglePairs": 67955,
+                "where": [
+                  0.0949246823103762,
+                  0.11572449583450341
+                ],
+                "pass": true
+              },
+              "supportStatus": "solved from actual displaced triangles; unmeasured bedding is explicit"
+            },
+            "validated": false
+          },
+          {
+            "a": "pan",
+            "b": "local mortar seat/batten/rafter/purlin",
+            "kind": "support_chain",
+            "bedding_status": "mortar fitted to the original pan underside; explicit support scheme, not a substitute tile"
+          }
+        ],
+        "roofSubstrate": {
+          "deck": false,
+          "battens": true,
+          "mortar": "local seats over battens",
+          "status": "explicit construction option; unmeasured dimensions"
+        },
+        "roofSeating": {
+          "spacing": 0.230553684592247,
+          "step": 0.207,
+          "rise": 0.010000489254660712,
+          "phase": -0.04,
+          "panAngle": 0.07,
+          "coverY": 0.02666485220847161,
+          "roll": 0.0008978967261172166,
+          "angle": 0.07272406235086144,
+          "checks": [
+            {
+              "kind": "cover-pan",
+              "row": -1,
+              "side": -1,
+              "minGapM": 0.02952806686891378,
+              "trianglePairs": 43570,
+              "where": [
+                -0.05132466546308473,
+                -0.0874697073522716
+              ],
+              "pass": true
+            },
+            {
+              "kind": "cover-pan",
+              "row": -1,
+              "side": 1,
+              "minGapM": 0.03073835174015112,
+              "trianglePairs": 48263,
+              "where": [
+                0.05238710187884506,
+                -0.08748505519330921
+              ],
+              "pass": true
+            },
+            {
+              "kind": "cover-pan",
+              "row": 0,
+              "side": -1,
+              "minGapM": 0.00005007473016523448,
+              "trianglePairs": 111896,
+              "where": [
+                -0.04344203257603408,
+                0.0521605800706402
+              ],
+              "pass": true
+            },
+            {
+              "kind": "cover-pan",
+              "row": 0,
+              "side": 1,
+              "minGapM": 0.00005000088753669488,
+              "trianglePairs": 115497,
+              "where": [
+                0.04313398253415239,
+                0.07613958665603784
+              ],
+              "pass": true
+            },
+            {
+              "kind": "cover-pan",
+              "row": 1,
+              "side": -1,
+              "minGapM": null,
+              "trianglePairs": 0,
+              "where": null,
+              "pass": true
+            },
+            {
+              "kind": "cover-pan",
+              "row": 1,
+              "side": 1,
+              "minGapM": null,
+              "trianglePairs": 0,
+              "where": null,
+              "pass": true
+            }
+          ],
+          "coverLap": {
+            "minGapM": 0.00010009313456236027,
+            "trianglePairs": 67532,
+            "where": [
+              -0.052133164288872894,
+              0.08831632485743793
+            ],
+            "pass": true
+          },
+          "panLap": {
+            "minGapM": 0.0000499999999999997,
+            "trianglePairs": 67955,
+            "where": [
+              0.0949246823103762,
+              0.11572449583450341
+            ],
+            "pass": true
+          },
+          "supportStatus": "solved from actual displaced triangles; unmeasured bedding is explicit"
+        },
+        "generated_bounds_m": {
+          "min": [
+            -0.5111073851585388,
+            -0.18743301779839117,
+            -0.5952412084387767
+          ],
+          "max": [
+            0.5111073851585388,
+            0.3521714499572879,
+            0.4820951031395092
+          ]
+        }
+      },
+      "wood": [
+        {
+          "id": "roof-rafter-0#1",
+          "max": 0.00040427251951768994
+        },
+        {
+          "id": "roof-rafter-0#2",
+          "max": 0.00040427251951768994
+        },
+        {
+          "id": "roof-rafter-0#3",
+          "max": 0.00040427251951768994
+        },
+        {
+          "id": "roof-rafter-0#4",
+          "max": 0.00040427251951768994
+        },
+        {
+          "id": "roof-purlin-0#1",
+          "max": 0.0004053101292811334
+        },
+        {
+          "id": "roof-purlin-0#2",
+          "max": 0.0004053101292811334
+        },
+        {
+          "id": "batten-0-0#1",
+          "max": 0.0002618143043946475
+        },
+        {
+          "id": "batten-0-1#1",
+          "max": 0.0002618143043946475
+        },
+        {
+          "id": "batten-0-2#1",
+          "max": 0.0002618143043946475
+        },
+        {
+          "id": "batten-0-3#1",
+          "max": 0.0002618143043946475
+        },
+        {
+          "id": "batten-0-4#1",
+          "max": 0.0002618143043946475
+        }
+      ]
+    },
+    {
+      "id": "joinery",
+      "glError": 0,
+      "objects": 9,
+      "definition": {
+        "id": "joinery",
+        "version": "09B",
+        "region": "云南",
+        "case": "disorder-unidentified",
+        "sources": [
+          "D2",
+          "D3",
+          "D4",
+          "D6"
+        ],
+        "parts": [
+          "A02"
+        ],
+        "frame": "metres, right-handed x right/y up/z toward viewer",
+        "error_m": null,
+        "depth_m": 0.012,
+        "relief_m": 0.0012,
+        "assumptions": "真实榫眼与缩肩榫头，可用拆解滑杆查看孔壁和端纹。榫眼/榫头截面相差1 mm，肩部贴柱；这是榫卯验证节点，不代表图纸中未画出的具体做法。",
+        "relations": [
+          {
+            "a": "tenoned-beam",
+            "b": "mortised-columns",
+            "kind": "true_void_and_tenon",
+            "validated": true,
+            "validation": "parametric containment: tenon height/depth less than mortise by 1 mm; shoulder at column side; through length 170 mm"
+          }
+        ],
+        "joinery": {
+          "type": "through rectangular mortise with reduced beam tenons",
+          "source": "existing timber-original geometry",
+          "historical_status": "illustrative joinery; drawing does not provide this joint detail",
+          "mortise_m": [
+            0.17,
+            0.081,
+            0.061
+          ],
+          "tenon_m": [
+            0.17,
+            0.08,
+            0.06
+          ],
+          "clearance_each_side_m": [
+            0.0005,
+            0.0005
+          ],
+          "shoulder_contact": true,
+          "explosion": 0
+        },
+        "generated_bounds_m": {
+          "min": [
+            -0.5601979866623878,
+            1.0728836485895954e-8,
+            -0.25
+          ],
+          "max": [
+            0.5602067038416862,
+            0.9260774552172708,
+            0.25
+          ]
+        }
+      },
+      "wood": [
+        {
+          "id": "mortised-column#1",
+          "max": 0.000374425871996209
+        },
+        {
+          "id": "mortised-column#2",
+          "max": 0.000374425871996209
+        },
+        {
+          "id": "tenoned-beam#1",
+          "max": 0.0003445792244747281
+        },
+        {
+          "id": "bearing-block-1#1",
+          "max": 0.0002577248669695109
+        },
+        {
+          "id": "purlin-1#1",
+          "max": 0.000402197299990803
+        },
+        {
+          "id": "bearing-block1#1",
+          "max": 0.0002768291742540896
+        },
+        {
+          "id": "purlin1#1",
+          "max": 0.000402197299990803
+        },
+        {
+          "id": "rafter#1",
+          "max": 0.0002668192610144615
+        }
+      ]
+    },
+    {
+      "id": "bond",
+      "glError": 0,
+      "objects": 40,
+      "definition": {
+        "id": "bond",
+        "version": "09B",
+        "region": "云南",
+        "case": "catalog-tile-brick",
+        "sources": [
+          "L9"
+        ],
+        "parts": [
+          "B05",
+          "B08"
+        ],
+        "frame": "metres, right-handed x right/y up/z toward viewer",
+        "error_m": null,
+        "depth_m": 0.012,
+        "relief_m": 0.0012,
+        "assumptions": "由图示层次建立构件与坐标关系；无标尺寸采用显示参数。搭接、垫层、灰泥及固定尚未获得完整证据，未验证几何接触和排水性能。",
+        "relations": [],
+        "mortar": {
+          "jointWidth_m": 0.005,
+          "recess_m": 0.001,
+          "status": "display assumption; user-requested mortar variant; L9 small-ding diagram says no mud and is not represented by this mortar wall"
+        },
+        "generated_bounds_m": {
+          "min": [
+            -0.5975000262260437,
+            0,
+            -0.08250000327825546
+          ],
+          "max": [
+            0.7475000321865082,
+            0.4699999988079071,
+            0.08250000327825546
+          ]
+        }
+      },
+      "wood": []
+    }
+  ],
+  "deckSwitch": true,
+  "noDeck": true,
+  "pass": true
+}
