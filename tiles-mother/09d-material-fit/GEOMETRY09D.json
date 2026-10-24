@@ -1,0 +1,408 @@
+{
+  "version": "09D",
+  "wood": [
+    {
+      "name": "horizontal",
+      "axis": 0,
+      "grainCoordinateDeviation_m": 0,
+      "pass": true,
+      "definition": {
+        "kind": "subdivided-box-member",
+        "dimensions": {
+          "length": 0.8,
+          "height": 0.12,
+          "depth": 0.16
+        },
+        "geometry": {
+          "type": "subdivided-box-member",
+          "grainAxis": [
+            1,
+            0,
+            0
+          ],
+          "grainOffset": [
+            0,
+            0,
+            0
+          ],
+          "tessellation": {
+            "lengthSegments": 72,
+            "crossSegments": 32,
+            "endSegments": 5
+          },
+          "supportsMacroDisplacement": true
+        },
+        "grainAxis": "x",
+        "material": "restored 09/08D axial recipe; R03 snapshot retained separately",
+        "macroRelief": "09 colour macro simplex field along original face normals, maximum 0.275 mm; 12 mm end/joint fade",
+        "grainDisplacementMaxM": 0.0002665099164005369,
+        "windingRepairs": 0,
+        "unit": "m"
+      }
+    },
+    {
+      "name": "vertical",
+      "axis": 1,
+      "grainCoordinateDeviation_m": 5.21540641784668e-8,
+      "pass": true,
+      "definition": {
+        "kind": "subdivided-box-member",
+        "dimensions": {
+          "length": 0.8,
+          "height": 0.12,
+          "depth": 0.16
+        },
+        "geometry": {
+          "type": "subdivided-box-member",
+          "grainAxis": [
+            1,
+            0,
+            0
+          ],
+          "grainOffset": [
+            0,
+            0,
+            0
+          ],
+          "tessellation": {
+            "lengthSegments": 72,
+            "crossSegments": 32,
+            "endSegments": 5
+          },
+          "supportsMacroDisplacement": true
+        },
+        "grainAxis": "y",
+        "material": "restored 09/08D axial recipe; R03 snapshot retained separately",
+        "macroRelief": "09 colour macro simplex field along original face normals, maximum 0.275 mm; 12 mm end/joint fade",
+        "grainDisplacementMaxM": 0.0002665099164005369,
+        "windingRepairs": 0,
+        "unit": "m"
+      }
+    },
+    {
+      "name": "depth",
+      "axis": 2,
+      "grainCoordinateDeviation_m": 0,
+      "pass": true,
+      "definition": {
+        "kind": "subdivided-box-member",
+        "dimensions": {
+          "length": 0.8,
+          "height": 0.16,
+          "depth": 0.12
+        },
+        "geometry": {
+          "type": "subdivided-box-member",
+          "grainAxis": [
+            1,
+            0,
+            0
+          ],
+          "grainOffset": [
+            0,
+            0,
+            0
+          ],
+          "tessellation": {
+            "lengthSegments": 72,
+            "crossSegments": 32,
+            "endSegments": 5
+          },
+          "supportsMacroDisplacement": true
+        },
+        "grainAxis": "z",
+        "material": "restored 09/08D axial recipe; R03 snapshot retained separately",
+        "macroRelief": "09 colour macro simplex field along original face normals, maximum 0.275 mm; 12 mm end/joint fade",
+        "grainDisplacementMaxM": 0.0002668105880729854,
+        "windingRepairs": 0,
+        "unit": "m"
+      }
+    },
+    {
+      "name": "round",
+      "axis": 2,
+      "grainCoordinateDeviation_m": 0,
+      "pass": true,
+      "definition": {
+        "kind": "cylinder-member",
+        "dimensions": {
+          "length": 0.8,
+          "radius": 0.075,
+          "segments": 96,
+          "axialSegments": 96
+        },
+        "geometry": {
+          "type": "cylinder-member",
+          "grainAxis": [
+            1,
+            0,
+            0
+          ],
+          "grainOffset": [
+            0,
+            0,
+            0
+          ],
+          "supportsMacroDisplacement": true,
+          "macroGeometry": {
+            "amplitude": 0,
+            "frequency": 1.6
+          }
+        },
+        "grainAxis": "z",
+        "material": "restored 09/08D axial recipe; R03 snapshot retained separately",
+        "macroRelief": "09 colour macro simplex field along original face normals, maximum 0.275 mm; 12 mm end/joint fade",
+        "grainDisplacementMaxM": 0.0002659867168404162,
+        "windingRepairs": 18432,
+        "unit": "m"
+      }
+    },
+    {
+      "name": "verticalProfile",
+      "axis": 1,
+      "grainCoordinateDeviation_m": 4.470348358154297e-8,
+      "pass": true,
+      "definition": {
+        "kind": "source-plane timber profile",
+        "dimensions": {
+          "length": 0.8
+        },
+        "geometry": {
+          "type": "source-plane timber profile",
+          "profile_m": [
+            [
+              -0.05,
+              0
+            ],
+            [
+              0.05,
+              0
+            ],
+            [
+              0.05,
+              0.8
+            ],
+            [
+              -0.05,
+              0.8
+            ]
+          ],
+          "depth_m": 0.12,
+          "depth_status": "assumed",
+          "fibre_axis": "y"
+        },
+        "grainAxis": "y",
+        "material": "restored 09/08D axial recipe; R03 snapshot retained separately",
+        "macroRelief": "09 colour macro simplex field along original face normals, maximum 0.275 mm; 12 mm end/joint fade",
+        "grainDisplacementMaxM": 0.0002635181008372456,
+        "windingRepairs": 0,
+        "unit": "m"
+      }
+    },
+    {
+      "name": "horizontalProfile",
+      "axis": 0,
+      "grainCoordinateDeviation_m": 4.470348358154297e-8,
+      "pass": true,
+      "definition": {
+        "kind": "source-plane timber profile",
+        "dimensions": {
+          "length": 0.8
+        },
+        "geometry": {
+          "type": "source-plane timber profile",
+          "profile_m": [
+            [
+              0,
+              -0.05
+            ],
+            [
+              0.8,
+              -0.05
+            ],
+            [
+              0.8,
+              0.05
+            ],
+            [
+              0,
+              0.05
+            ]
+          ],
+          "depth_m": 0.12,
+          "depth_status": "assumed",
+          "fibre_axis": "x"
+        },
+        "grainAxis": "x",
+        "material": "restored 09/08D axial recipe; R03 snapshot retained separately",
+        "macroRelief": "09 colour macro simplex field along original face normals, maximum 0.275 mm; 12 mm end/joint fade",
+        "grainDisplacementMaxM": 0.0002635181008372456,
+        "windingRepairs": 0,
+        "unit": "m"
+      }
+    }
+  ],
+  "bricks": [
+    {
+      "dimensions": [
+        0.3,
+        0.09,
+        0.165
+      ],
+      "vertices": 2166,
+      "triangles": 3888,
+      "volume": 0.004429949310923013,
+      "defects": 0,
+      "degenerate": 0,
+      "pass": true
+    },
+    {
+      "dimensions": [
+        0.22,
+        0.07,
+        0.1
+      ],
+      "vertices": 2166,
+      "triangles": 3888,
+      "volume": 0.0015281453790536347,
+      "defects": 0,
+      "degenerate": 0,
+      "pass": true
+    },
+    {
+      "dimensions": [
+        0.28,
+        0.045,
+        0.165
+      ],
+      "vertices": 2166,
+      "triangles": 3888,
+      "volume": 0.0020672188103619854,
+      "defects": 0,
+      "degenerate": 0,
+      "pass": true
+    },
+    {
+      "dimensions": [
+        0.34,
+        0.045,
+        0.34
+      ],
+      "vertices": 2166,
+      "triangles": 3888,
+      "volume": 0.005175822851942449,
+      "defects": 0,
+      "degenerate": 0,
+      "pass": true
+    }
+  ],
+  "entries": [
+    {
+      "id": "youChun",
+      "objects": 38,
+      "bad": false,
+      "brickTypes": null,
+      "pass": true
+    },
+    {
+      "id": "frame2",
+      "objects": 173,
+      "bad": false,
+      "brickTypes": null,
+      "pass": true
+    },
+    {
+      "id": "frame4",
+      "objects": 202,
+      "bad": false,
+      "brickTypes": null,
+      "pass": true
+    },
+    {
+      "id": "frame6",
+      "objects": 268,
+      "bad": false,
+      "brickTypes": null,
+      "pass": true
+    },
+    {
+      "id": "frame7",
+      "objects": 417,
+      "bad": false,
+      "brickTypes": null,
+      "pass": true
+    },
+    {
+      "id": "frame13",
+      "objects": 579,
+      "bad": false,
+      "brickTypes": null,
+      "pass": true
+    },
+    {
+      "id": "frame3",
+      "objects": 259,
+      "bad": false,
+      "brickTypes": null,
+      "pass": true
+    },
+    {
+      "id": "bricks",
+      "objects": 5,
+      "bad": false,
+      "brickTypes": 4,
+      "pass": true
+    },
+    {
+      "id": "bond",
+      "objects": 31,
+      "bad": false,
+      "brickTypes": 26,
+      "pass": true
+    },
+    {
+      "id": "wallCap",
+      "objects": 24,
+      "bad": false,
+      "brickTypes": 22,
+      "pass": true
+    },
+    {
+      "id": "herringbone",
+      "objects": 46,
+      "bad": false,
+      "brickTypes": 45,
+      "pass": true
+    },
+    {
+      "id": "smallDing",
+      "objects": 28,
+      "bad": false,
+      "brickTypes": 27,
+      "pass": true
+    },
+    {
+      "id": "joinery",
+      "objects": 9,
+      "bad": false,
+      "brickTypes": null,
+      "pass": true
+    },
+    {
+      "id": "eaves",
+      "objects": 39,
+      "bad": false,
+      "brickTypes": null,
+      "pass": true
+    }
+  ],
+  "pass": true,
+  "curve": {
+    "vertices": 1757,
+    "triangles": 3200,
+    "volume": 0.0033514980501693787,
+    "defects": 0,
+    "degenerate": 0,
+    "pass": true
+  }
+}
