@@ -1,0 +1,116 @@
+{
+  "version": "09C",
+  "source": "User-supplied Liu Zhiping Kunming northeast village architectural atlas reposts; publication edition unknown",
+  "original_root": "G:/kunming/浜戝崡寤虹瓚璧勬枡",
+  "verified_copy_hashes": {
+    "L4": "16C1ED17A4706368AE48D5DDB3A47C7D19FEAB8DA684685130E57B3F72C66B07",
+    "L5": "FAB86C53F8EEA8CF710CB4F68E6AEE2EA10E04CD748927E0A42D5545075ACCB4",
+    "L8": "6FDD386C88E5F9C7B50280889028EF81F04E36C036A04A06BB4E7BA7CD77A5C5"
+  },
+  "observations": [
+    {
+      "source": "L8-left",
+      "image_size_px": [
+        1170,
+        1620
+      ],
+      "case": "three posts seven purlins",
+      "point_px": [
+        498,
+        744
+      ],
+      "meaning": "partly occluded outer eave purlin center",
+      "precision": "approximate visual observation; no survey error available"
+    },
+    {
+      "source": "L4",
+      "case": "gate section",
+      "finding": "central ridge is above a curved transverse beam; no ground-to-ridge central column is drawn",
+      "implementation": "curved beam and short ridge bearing; removed ground center column"
+    },
+    {
+      "source": "L5",
+      "case": "main house",
+      "labels_cm": {
+        "horizontal_steps": [
+          135,
+          135
+        ],
+        "porch_width": 130,
+        "column_heights": [
+          323,
+          511,
+          618
+        ],
+        "roof_rises": [
+          44,
+          63
+        ]
+      },
+      "implementation": "independent large tie, upper small tie, short bearing, porch support and floor system"
+    },
+    {
+      "source": "L4",
+      "case": "side house",
+      "labels_cm": {
+        "horizontal_steps": [
+          130,
+          130
+        ],
+        "roof_rises": [
+          50,
+          55
+        ],
+        "lower_clear": 248,
+        "upper_panel": 185
+      },
+      "implementation": "rear earth-wall support rather than invented full-height rear timber column"
+    },
+    {
+      "source": "L8-right",
+      "case": "you-chun detail",
+      "height_labels_m": [
+        0,
+        2.82,
+        3.78,
+        4.13
+      ],
+      "warning": "4.13 leader endpoint remains ambiguous; upper interpolation is a display assumption. Single affine image scale failed to reproduce the other labels."
+    }
+  ],
+  "implementation_limits": [
+    "Individual source silhouettes are hand observed control polygons, not exact traced relief or full carving.",
+    "Rafter segments touch adjacent circular purlin sections by tangent offset; this is a section study, not structural validation.",
+    "Unlabelled openings, section widths and transverse depth remain display approximations.",
+    "No exact mortise geometry or historical paint colors inferred.",
+    "You-chun source ink remains original diagram ink; it is not a recovered historical pigment palette.",
+    "A browser visual inspection is still required after integration."
+  ],
+  "roof_api": {
+    "call": "api.roofAlong(run)",
+    "datum": "rafter_top",
+    "unit": "m",
+    "from_to": "low-to-high endpoints of upper tangent plane, including source eave extensions",
+    "purlins": "explicit circle centers and radius; each run is between adjacent supports",
+    "width_m": 0.8,
+    "width_status": "unmeasured display extrusion"
+  },
+  "contour_coverage": [
+    "six individually defined beam-case silhouettes",
+    "you-chun left and right upper cloud supports",
+    "you-chun left and right lower cloud supports",
+    "central cloud head",
+    "paired upper bearing pieces",
+    "paired diagonal support members",
+    "central rise",
+    "right post-head outer cloud",
+    "three separate beam-end silhouettes",
+    "three original ink bands",
+    "two stacked apex circular sections"
+  ],
+  "height_derivation": {
+    "mainHouse": "L5: lower datum 2.73 m + upper interval 2.38 m = front member-top datum 5.11 m; purlin centers add radius .085 m; next centers rise .44 and .63 m at horizontal 1.35 and 1.35 m",
+    "sideHouse": "L4: floor datum 2.48 m + labelled upper interval 1.85 m = front member-top datum 4.33 m; purlin centers add radius .085 m; following centers rise .50 and .55 m at horizontal 1.30 and 1.30 m",
+    "caveat": "The labels do not establish every soffit/upper-face datum or section thickness; no added universal floor/beam thickness is claimed."
+  }
+}
