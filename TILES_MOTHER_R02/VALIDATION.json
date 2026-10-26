@@ -1,0 +1,124 @@
+{
+  "version": "kaopu.sheet/2",
+  "baseline": "bbf1f063c1a256cc1d41f107dcd054e944dcc48d",
+  "geometry": [
+    {
+      "kind": "pan",
+      "set": "D7",
+      "strength": 0,
+      "samples": 300,
+      "maxError_m": 1.442486700418135e-14,
+      "maxErrorAfterRestoringMissingNormalZ_m": 1.442486700418135e-14
+    },
+    {
+      "kind": "pan",
+      "set": "D7",
+      "strength": 1,
+      "samples": 300,
+      "maxError_m": 0.00002245780715419421,
+      "maxErrorAfterRestoringMissingNormalZ_m": 1.4474807525672105e-14
+    },
+    {
+      "kind": "pan",
+      "set": "D7",
+      "strength": 2,
+      "samples": 300,
+      "maxError_m": 0.000044915614310608865,
+      "maxErrorAfterRestoringMissingNormalZ_m": 1.4526285713219932e-14
+    },
+    {
+      "kind": "cover",
+      "set": "D7",
+      "strength": 0,
+      "samples": 300,
+      "maxError_m": 1.1405396185999974e-14,
+      "maxErrorAfterRestoringMissingNormalZ_m": 1.1405396185999974e-14
+    },
+    {
+      "kind": "cover",
+      "set": "D7",
+      "strength": 1,
+      "samples": 300,
+      "maxError_m": 1.1484760322000209e-14,
+      "maxErrorAfterRestoringMissingNormalZ_m": 1.1484760322000209e-14
+    },
+    {
+      "kind": "cover",
+      "set": "D7",
+      "strength": 2,
+      "samples": 300,
+      "maxError_m": 1.156468936740053e-14,
+      "maxErrorAfterRestoringMissingNormalZ_m": 1.156468936740053e-14
+    },
+    {
+      "kind": "pan",
+      "set": "L9",
+      "strength": 0,
+      "samples": 300,
+      "maxError_m": 1.582219676700878e-14,
+      "maxErrorAfterRestoringMissingNormalZ_m": 1.582219676700878e-14
+    },
+    {
+      "kind": "pan",
+      "set": "L9",
+      "strength": 1,
+      "samples": 300,
+      "maxError_m": 0.000010733879917151912,
+      "maxErrorAfterRestoringMissingNormalZ_m": 1.5830188165590898e-14
+    },
+    {
+      "kind": "pan",
+      "set": "L9",
+      "strength": 2,
+      "samples": 300,
+      "maxError_m": 0.000021467759833804223,
+      "maxErrorAfterRestoringMissingNormalZ_m": 1.5843332358358653e-14
+    },
+    {
+      "kind": "cover",
+      "set": "L9",
+      "strength": 0,
+      "samples": 300,
+      "maxError_m": 5.682516142587593e-15,
+      "maxErrorAfterRestoringMissingNormalZ_m": 5.682516142587593e-15
+    },
+    {
+      "kind": "cover",
+      "set": "L9",
+      "strength": 1,
+      "samples": 300,
+      "maxError_m": 5.683236403235236e-15,
+      "maxErrorAfterRestoringMissingNormalZ_m": 5.683236403235236e-15
+    },
+    {
+      "kind": "cover",
+      "set": "L9",
+      "strength": 2,
+      "samples": 300,
+      "maxError_m": 5.684660712417736e-15,
+      "maxErrorAfterRestoringMissingNormalZ_m": 5.684660712417736e-15
+    }
+  ],
+  "pressSamples": 2100,
+  "materialAddressAndPropertiesStable": 2100,
+  "flatSamples": 1681,
+  "flatMaxError_m": 1.3877787807814457e-17,
+  "allRecipesReturnToSameSheet": 250,
+  "layerSamples": 750,
+  "minimumTopBottomDistance_m": 0.007792421081785814,
+  "trimAndReliefChecks": true,
+  "controls": {
+    "shape": true,
+    "color": true,
+    "roughness": true,
+    "wave": true,
+    "seed": true
+  },
+  "noDisplayDependencies": true,
+  "noNamedShapeBranches": true,
+  "sharedBytes": 10984,
+  "libraryBytes": 2091,
+  "sharedSha256": "a8e35319c33a3d645e32fa97f5352f6242779ff9563e0d0563e2f47e3a9a9b93",
+  "librarySha256": "19ec2cb9481d93357ed43aefb48cfbb47117fdb6051937428f9282e649df4b42",
+  "pass": true
+}

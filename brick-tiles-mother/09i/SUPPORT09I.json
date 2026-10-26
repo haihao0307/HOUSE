@@ -1,0 +1,234 @@
+{
+  "version": "09I",
+  "scope": "tile vertex distance to nominal round support cylinders, finite axis extent; real wood relief and triangle-interior extrema excluded; explicit fold bridge tiles are separately checked by FOLD_CONTACT09I.json, not counted as direct double-rafter bearings",
+  "entries": [
+    {
+      "id": "eaves",
+      "tiles": 8,
+      "foldBridgeTiles": 0,
+      "directTiles": 8,
+      "cutLaps": [],
+      "supports": 5,
+      "minGap_m": 0.00006855566778757663,
+      "maxClosestGap_m": 0.00033332931612449837,
+      "within1mm": 8
+    },
+    {
+      "id": "roofPatch",
+      "tiles": 20,
+      "foldBridgeTiles": 0,
+      "directTiles": 20,
+      "cutLaps": [],
+      "supports": 5,
+      "minGap_m": 0.00006855444164038937,
+      "maxClosestGap_m": 0.0003333298224458825,
+      "within1mm": 20
+    },
+    {
+      "id": "frame2",
+      "tiles": 54,
+      "foldBridgeTiles": 0,
+      "directTiles": 54,
+      "cutLaps": [],
+      "supports": 4,
+      "minGap_m": 0.00006836995778690749,
+      "maxClosestGap_m": 0.00033506749288534504,
+      "within1mm": 54
+    },
+    {
+      "id": "frame4",
+      "tiles": 63,
+      "foldBridgeTiles": 6,
+      "directTiles": 57,
+      "cutLaps": [],
+      "supports": 12,
+      "minGap_m": 0.00006836722893810085,
+      "maxClosestGap_m": 0.00042374746850980596,
+      "within1mm": 57
+    },
+    {
+      "id": "frame6",
+      "tiles": 84,
+      "foldBridgeTiles": 9,
+      "directTiles": 75,
+      "cutLaps": [],
+      "supports": 20,
+      "minGap_m": 0.00006834862499474625,
+      "maxClosestGap_m": 0.0004386029542026784,
+      "within1mm": 75
+    },
+    {
+      "id": "frame7",
+      "tiles": 132,
+      "foldBridgeTiles": 12,
+      "directTiles": 120,
+      "cutLaps": [],
+      "supports": 24,
+      "minGap_m": 0.00006833772180183176,
+      "maxClosestGap_m": 0.00035882041074817433,
+      "within1mm": 120
+    },
+    {
+      "id": "frame13",
+      "tiles": 192,
+      "foldBridgeTiles": 30,
+      "directTiles": 162,
+      "cutLaps": [],
+      "supports": 48,
+      "minGap_m": 0.00006833579570706891,
+      "maxClosestGap_m": 0.0007942823111814594,
+      "within1mm": 162
+    },
+    {
+      "id": "frame3",
+      "tiles": 84,
+      "foldBridgeTiles": 0,
+      "directTiles": 84,
+      "cutLaps": [],
+      "supports": 8,
+      "minGap_m": 0.00006836470321330834,
+      "maxClosestGap_m": 0.00034941260741993066,
+      "within1mm": 84
+    },
+    {
+      "id": "mainHouse",
+      "tiles": 96,
+      "foldBridgeTiles": 6,
+      "directTiles": 87,
+      "cutLaps": [
+        {
+          "name": "panL9-run-3-column-cut-6",
+          "minGapM": 0.000051750660501337364,
+          "trianglePairs": 79880,
+          "where": [
+            -0.20866437030709806,
+            0.1355519781970147
+          ],
+          "pass": true
+        },
+        {
+          "name": "panL9-run-3-column-cut-13",
+          "minGapM": 0.000051750660501337364,
+          "trianglePairs": 79880,
+          "where": [
+            -0.20866437030709806,
+            -0.0950017084217902
+          ],
+          "pass": true
+        },
+        {
+          "name": "panL9-run-3-column-cut-20",
+          "minGapM": 0.000051750660501337364,
+          "trianglePairs": 79880,
+          "where": [
+            -0.20866437030709806,
+            -0.32555539504059516
+          ],
+          "pass": true
+        }
+      ],
+      "supports": 16,
+      "minGap_m": 0.000068376788568459,
+      "maxClosestGap_m": 0.00035375278966209844,
+      "within1mm": 87
+    },
+    {
+      "id": "sideHouse",
+      "tiles": 81,
+      "foldBridgeTiles": 6,
+      "directTiles": 72,
+      "cutLaps": [
+        {
+          "name": "panL9-run-3-column-cut-5",
+          "minGapM": 0.00005177210573048541,
+          "trianglePairs": 113603,
+          "where": [
+            -0.23415979767542594,
+            0.1333849642508802
+          ],
+          "pass": true
+        },
+        {
+          "name": "panL9-run-3-column-cut-11",
+          "minGapM": 0.00005177210573048541,
+          "trianglePairs": 113603,
+          "where": [
+            -0.23415979767542594,
+            -0.09716872236792472
+          ],
+          "pass": true
+        },
+        {
+          "name": "panL9-run-3-column-cut-17",
+          "minGapM": 0.00005177210573048541,
+          "trianglePairs": 113603,
+          "where": [
+            -0.23415979767542594,
+            -0.32772240898672966
+          ],
+          "pass": true
+        }
+      ],
+      "supports": 16,
+      "minGap_m": 0.00006832992895241738,
+      "maxClosestGap_m": 0.00037341044853114735,
+      "within1mm": 72
+    },
+    {
+      "id": "gateHouse",
+      "tiles": 66,
+      "foldBridgeTiles": 3,
+      "directTiles": 63,
+      "cutLaps": [],
+      "supports": 12,
+      "minGap_m": 0.00006829345181564098,
+      "maxClosestGap_m": 0.0003706389433951844,
+      "within1mm": 63
+    },
+    {
+      "id": "jointD2",
+      "tiles": 14,
+      "foldBridgeTiles": 0,
+      "directTiles": 14,
+      "cutLaps": [],
+      "supports": 3,
+      "minGap_m": 0.00007299041398821718,
+      "maxClosestGap_m": 0.0002646623987917346,
+      "within1mm": 14
+    },
+    {
+      "id": "jointD3",
+      "tiles": 10,
+      "foldBridgeTiles": 0,
+      "directTiles": 10,
+      "cutLaps": [],
+      "supports": 3,
+      "minGap_m": 0.00007287193800351727,
+      "maxClosestGap_m": 0.0002672419964371564,
+      "within1mm": 10
+    },
+    {
+      "id": "jointD4",
+      "tiles": 9,
+      "foldBridgeTiles": 0,
+      "directTiles": 9,
+      "cutLaps": [],
+      "supports": 4,
+      "minGap_m": 0.00007292184475832589,
+      "maxClosestGap_m": 0.00026785132830176375,
+      "within1mm": 9
+    },
+    {
+      "id": "jointD6",
+      "tiles": 18,
+      "foldBridgeTiles": 0,
+      "directTiles": 18,
+      "cutLaps": [],
+      "supports": 8,
+      "minGap_m": 0.00007274464139447531,
+      "maxClosestGap_m": 0.0004948934915107797,
+      "within1mm": 18
+    }
+  ],
+  "pass": true
+}

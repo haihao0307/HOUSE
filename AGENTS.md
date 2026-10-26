@@ -27,7 +27,7 @@
 
 形体以形状函数、控制变量及表面造波表达；厚度与边界属于函数规则。共享求值器与单对象差异参数分别保存和计量。网格采样、三角面、法线缓冲及显示缓存不得计入单对象本体或成为其唯一真值。SINGLE_TILE_09H_CODE是已撤回的显示实现抽取审计样本，不是新体系入口；先读其LOGIC_AUDIT.md。09H视觉质量锚点不因这次体系纠正而覆盖。
 
-单片板瓦的纠正实现入口：G:/HOUSE/TILE_FUNCTION_R01/README.md。连续函数pan.function.cjs和对象变量pan-L9.json/pan-D7.json独立于display-adapter.cjs；不可把显示层重新并入对象定义。VALIDATION.json记录所测配置，不推广为全参数或整屋移植已验收。
+单片板瓦的历史函数分离入口：G:/HOUSE/TILE_FUNCTION_R01/README.md。连续函数pan.function.cjs和对象变量pan-L9.json/pan-D7.json独立于display-adapter.cjs；不可把显示层重新并入对象定义。VALIDATION.json记录所测配置，不推广为全参数或整屋移植已验收。2026-10-26最新纠正：该核心只是板瓦特例，不能称共同基础片母体；先读SHEET_LEARNING.md。用户要求先向小妈学习，同一基础片通过不同形变形成瓦型，花纹、色彩和粗糙度与形体一体求值，用户随后明确要求按此逻辑重新实现；当前共同基础片候选入口为TILES_MOTHER_R02/README.md，09I通过验收前不替换09H质量锚点。
 
 ## Tiles Mother 正式母体原则（用户确认，2026-10-26）
 

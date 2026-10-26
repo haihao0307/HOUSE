@@ -1,0 +1,55 @@
+{
+  "version": "sheet/2",
+  "checks": [
+    {
+      "seed": 31,
+      "footprint": 0.0002,
+      "samples": 64,
+      "maxFieldError": 0.00036435242168908477,
+      "maxGradientError": 0.5245395652021472,
+      "maxMicroHeightError_m": 6.558343590403526e-8,
+      "maxMicroSlopeError": 0.0000944171217363865,
+      "maxColorError": 0.0000047006205977084825,
+      "maxRoughnessError": 0.000026484535842863366,
+      "pass": true
+    },
+    {
+      "seed": 31,
+      "footprint": 0.002,
+      "samples": 64,
+      "maxFieldError": 0.00022011390329851332,
+      "maxGradientError": 0.05452054859470934,
+      "maxMicroHeightError_m": 3.96205025937324e-8,
+      "maxMicroSlopeError": 0.000009813698747047682,
+      "maxColorError": 0.0000026191424064708757,
+      "maxRoughnessError": 4.878443210509786e-7,
+      "pass": true
+    },
+    {
+      "seed": 47,
+      "footprint": 0.0002,
+      "samples": 64,
+      "maxFieldError": 0.0005350706234809599,
+      "maxGradientError": 0.5355327566789185,
+      "maxMicroHeightError_m": 9.631271222657279e-8,
+      "maxMicroSlopeError": 0.00009639589620220534,
+      "maxColorError": 0.000006943190051483805,
+      "maxRoughnessError": 0.000023317901153840914,
+      "pass": true
+    },
+    {
+      "seed": 47,
+      "footprint": 0.002,
+      "samples": 64,
+      "maxFieldError": 0.0002948774412854238,
+      "maxGradientError": 0.06521074579838171,
+      "maxMicroHeightError_m": 5.307793943137629e-8,
+      "maxMicroSlopeError": 0.000011737934243708709,
+      "maxColorError": 0.000003846241006189022,
+      "maxRoughnessError": 0.0000010640574149567428,
+      "pass": true
+    }
+  ],
+  "pass": true,
+  "glError": 0
+}

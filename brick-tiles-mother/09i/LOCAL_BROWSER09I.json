@@ -1,0 +1,13 @@
+{
+  "version": "09I",
+  "html_sha256": "557fefd854b3eac4894ffadef6ae80e87e7f73ab6a5774fd29a70257d3f77413",
+  "checks": [
+    "09I title and version visible",
+    "pan 50 percent press shape rendered",
+    "cover formed shape and shoulder rendered",
+    "cover flat shape rendered",
+    "GPU_CHECK PASS after rebuild"
+  ],
+  "pass": true,
+  "scope": "Actual in-app browser local render; public browser verification pending"
+}
