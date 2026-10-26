@@ -1,0 +1,1435 @@
+{
+  "root": "G:\\HOUSE\\brick-tiles-mother-09h-20261026",
+  "before_bytes": 19134812,
+  "keep": [
+    "COLUMN_BEARING09H.json",
+    "FOLD_CONTACT09H.json",
+    "FOLD_SOLVE09H.json",
+    "FUNCTION_ENTRY_HANDOFF_09H.md",
+    "GEOMETRY09H.json",
+    "LOCAL_BROWSER09H.json",
+    "MATERIAL_BEARING09H.json",
+    "MOTHER_OBJECT_DEFINITION_RULE_2026-09-09.md",
+    "MOTHER_PUBLIC_PREVIEW_DELIVERY_RULE_2026-09-08.md",
+    "PUBLIC_BROWSER09H.json",
+    "PUBLISH_RECEIPT.json",
+    "QA09H.json",
+    "README.md",
+    "README09H.md",
+    "SOURCE_ROOFS09C_OBSERVATIONS.json",
+    "START_HERE.html",
+    "SUPPORT09H.json",
+    "bake-roof09h.cjs",
+    "bake09h.cjs",
+    "bearing09h.cjs",
+    "build09h.py",
+    "contact-fold09h.cjs",
+    "geometry09h.cjs",
+    "material09h.cjs",
+    "paint-curves.json",
+    "publish09h.py",
+    "qa/local-bearing09h.png",
+    "qa/local-bricks09h.png",
+    "qa/local-eaves09h.png",
+    "qa/local-fold09h.png",
+    "qa/local-frame13-09h.png",
+    "qa/local-frame4-09h.png",
+    "qa/local-frame6-09h.png",
+    "qa/local-frame7-09h.png",
+    "qa/local-gatefold09h.png",
+    "qa/local-sidefold09h.png",
+    "qa/local-under09h.png",
+    "qa/public-bearing09h.png",
+    "qa/public-bricks09h.png",
+    "qa/public-eaves09h.png",
+    "qa/public-fold09h.png",
+    "qa/source-frame6-detail.png",
+    "qa09h.cjs",
+    "references/D2.jpg",
+    "references/D3.jpg",
+    "references/D4.jpg",
+    "references/D5.jpg",
+    "references/D6.jpg",
+    "references/D7.jpg",
+    "references/L4.jpg",
+    "references/L5.jpg",
+    "references/L7.jpg",
+    "references/L8-detail.jpg",
+    "references/L8.jpg",
+    "references/L9.jpg",
+    "ridge_ink09c.json",
+    "roof-cache09h.json",
+    "source-curves.json",
+    "source_observations09c.json",
+    "sources.json",
+    "stitch-cache09h.json",
+    "stitch09h.js",
+    "support09h.cjs",
+    "vendor/BRICK_BASELINE_LOCK.json",
+    "vendor/Brick_Material_Microscope_Lab_R2_1.html",
+    "vendor/LICENSE.polygon-clipping.md",
+    "vendor/LICENSE.three.txt",
+    "vendor/earcut-source.js",
+    "vendor/polygon-clipping.js",
+    "vendor/timber-original.mjs",
+    "vendor/wood-receiver-source.mjs"
+  ],
+  "delete": [
+    {
+      "path": "alternate09h.cjs",
+      "bytes": 1417,
+      "sha256": "6a2dd2bf9376457b26a14a807954b2d7a992f7fd914e948925ec2ef6932d4cca",
+      "reason": "superseded 09H experiment/debug output",
+      "retained_copy": null
+    },
+    {
+      "path": "assemble_repair.py",
+      "bytes": 5826,
+      "sha256": "2e8eeea8bbf29acba661b62c0f1dfa55259ec60ead32b1140d39ec7e2f983dca",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\assemble_repair.py"
+    },
+    {
+      "path": "bake-fold-worker09h.cjs",
+      "bytes": 1317,
+      "sha256": "9f5d0f544f6fddf524ead42a57073a13b06709f11cde3690efed57b5cbf20696",
+      "reason": "superseded 09H experiment/debug output",
+      "retained_copy": null
+    },
+    {
+      "path": "bake-scene09h.cjs",
+      "bytes": 967,
+      "sha256": "fe56009b57d8d841960a0ad96145807fe3bce39dabf5b3127491baeae7c4cee1",
+      "reason": "superseded 09H experiment/debug output",
+      "retained_copy": null
+    },
+    {
+      "path": "BROWSER_PERF09F.json",
+      "bytes": 2127,
+      "sha256": "744ccd9b60c29f03ff763859f07f3067b94dbb7736b3aa32a8509d0ca051a939",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\BROWSER_PERF09F.json"
+    },
+    {
+      "path": "browser_qa.cjs",
+      "bytes": 3780,
+      "sha256": "074b8bef4f85adf2fc8e5fbfbcb0440564e99f4ee1beb8e2eb4e5c05f5b5f264",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\browser_qa.cjs"
+    },
+    {
+      "path": "build09c.py",
+      "bytes": 5416,
+      "sha256": "fda632dcb180eb1366c3d03b0225e45d762651652938f605ed6d6450ed7a32f5",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\build09c.py"
+    },
+    {
+      "path": "build09d.py",
+      "bytes": 6140,
+      "sha256": "2bdae273a59b597819fd9c1d0904875445c6b05ac70ec8cc54727493ea616ae6",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\build09d.py"
+    },
+    {
+      "path": "build09e.py",
+      "bytes": 4109,
+      "sha256": "7510f61c40b1b5b4c93fa7c26f03e6f5fcf96fd492c48f35cc9042030f0dab6a",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\build09e.py"
+    },
+    {
+      "path": "build09f.py",
+      "bytes": 9032,
+      "sha256": "1f27118e4e8cdb3b13658a27c6233701d4659fc6e0476dd32929744c26258e17",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\build09f.py"
+    },
+    {
+      "path": "build09g.py",
+      "bytes": 9907,
+      "sha256": "aac14be6af69bb11d247e5f4593d93c4e2c9bc4899d1ead480044c9f6ca87e0e",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09g-20261025\\build09g.py"
+    },
+    {
+      "path": "build_detail.py",
+      "bytes": 15788,
+      "sha256": "fa123e07cdc59c206081c76c2666a29505b8123cd5e358be6df0ea2ef060588b",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\build_detail.py"
+    },
+    {
+      "path": "build_study.py",
+      "bytes": 8830,
+      "sha256": "44f26d32a8c010dfe1ddc8591f2114665c777d86aeae72af93e3afaa7bbd818f",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\build_study.py"
+    },
+    {
+      "path": "cache-passed09h.cjs",
+      "bytes": 2010,
+      "sha256": "8ef04442ff636bce904a26dd5c8e4e051ab566a0ca424f94afb81e780c011c43",
+      "reason": "superseded 09H experiment/debug output",
+      "retained_copy": null
+    },
+    {
+      "path": "cache-polish09h.cjs",
+      "bytes": 1480,
+      "sha256": "86c2531d47d7481e6c594f03a663dcab6aca951b0c4bd39b293a130ad4b8b973",
+      "reason": "superseded 09H experiment/debug output",
+      "retained_copy": null
+    },
+    {
+      "path": "CHANGE_SCOPE09E.json",
+      "bytes": 487,
+      "sha256": "86a7617ec8f942ab64a6b98c2b9edbcb1beb48d28d9563709ba0446e1ed6764e",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\CHANGE_SCOPE09E.json"
+    },
+    {
+      "path": "closeout_detail.py",
+      "bytes": 2685,
+      "sha256": "7efa98a6a71189be9435b4cb146cb92d3d23bb8d15e8402e248ee09549ae32b1",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\closeout_detail.py"
+    },
+    {
+      "path": "contact-frame4-09h.cjs",
+      "bytes": 2460,
+      "sha256": "840f074b608d578a1f77ff3a3e3cca971f1cd77ab421c0b344d0074211e839b2",
+      "reason": "superseded 09H experiment/debug output",
+      "retained_copy": null
+    },
+    {
+      "path": "contact09f.js",
+      "bytes": 4402,
+      "sha256": "65cd1f5940e7c38acbf7538371418f6d3f3424173da5d231781ae3704332f9d0",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\contact09f.js"
+    },
+    {
+      "path": "contactfast09h.cjs",
+      "bytes": 960,
+      "sha256": "1664d2d1b8b01fa27c60a3c4e092300327364a0df78d7da49ba13267fc5a46e2",
+      "reason": "superseded 09H experiment/debug output",
+      "retained_copy": null
+    },
+    {
+      "path": "contact_sweep.cjs",
+      "bytes": 1273,
+      "sha256": "04b6efb750c7869be6b22849aac64a1e223d839935d40b6d986bd66ceebf8fe4",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\contact_sweep.cjs"
+    },
+    {
+      "path": "CONTACT_SWEEP.json",
+      "bytes": 1849,
+      "sha256": "aaf3348df590aea938ea80b6fde7a7ac37f9cda650d3bdfc95f8c6ba0e9849b8",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\CONTACT_SWEEP.json"
+    },
+    {
+      "path": "curve09d.cjs",
+      "bytes": 765,
+      "sha256": "043aef36b61bda4bda72638738825191e8eeabd1d4fd4c83a75085801ed39b39",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\curve09d.cjs"
+    },
+    {
+      "path": "debug-key09h.cjs",
+      "bytes": 968,
+      "sha256": "609bac7fa15a3d73847aac103d6acc5ea930143ccae51f6831eaebe1963e4d89",
+      "reason": "superseded 09H experiment/debug output",
+      "retained_copy": null
+    },
+    {
+      "path": "debug09d.cjs",
+      "bytes": 889,
+      "sha256": "7b7e64f161c42d2d540866f61106e19813062e3b3810719bf8d39693dd93ec7d",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\debug09d.cjs"
+    },
+    {
+      "path": "detail.js",
+      "bytes": 17735,
+      "sha256": "7fc9068454429553944958a2f40afc1a3e624ce11d4dce9c58a7984d121e94cc",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\detail.js"
+    },
+    {
+      "path": "detail_browser_qa.cjs",
+      "bytes": 2705,
+      "sha256": "97d42dbebed61e1ccb06e551c477bd964f4f7ab8c604874e6b00c59feb5a16a5",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\detail_browser_qa.cjs"
+    },
+    {
+      "path": "DETAIL_BROWSER_QA.json",
+      "bytes": 30107,
+      "sha256": "021c98864629b2d1fbffe5227397d5814c103b2288ce68e8f9e038001dbe9c6e",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\DETAIL_BROWSER_QA.json"
+    },
+    {
+      "path": "detail_geometry09d.cjs",
+      "bytes": 1940,
+      "sha256": "149973632f68a5bdef993428ab9ea5599828bf9b9d4e7ce9235138c5448981e8",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\detail_geometry09d.cjs"
+    },
+    {
+      "path": "detail_geometry09e.cjs",
+      "bytes": 1921,
+      "sha256": "3ce1825431a8af939a072e541796e913de96dbf407ec50b9f70231843adf807a",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\detail_geometry09e.cjs"
+    },
+    {
+      "path": "detail_geometry09f.cjs",
+      "bytes": 1921,
+      "sha256": "059d37ba39cf99c3d4c15a402d9ae3d316079a3bb06c8c87ce60ac6ba3e1ce18",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\detail_geometry09f.cjs"
+    },
+    {
+      "path": "detail_geometry_qa.cjs",
+      "bytes": 1938,
+      "sha256": "59f6ae45b3bf46ab37b8a0d154f1e6a18db9179c3e19be90052dffbbe5a780ea",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\detail_geometry_qa.cjs"
+    },
+    {
+      "path": "DETAIL_GEOMETRY_QA.json",
+      "bytes": 4836,
+      "sha256": "7f7507b6fbe451e47160aa7e4650b37e5456fce06af6d30e5d530e8d5a98f5a4",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\DETAIL_GEOMETRY_QA.json"
+    },
+    {
+      "path": "display09f.js",
+      "bytes": 3642,
+      "sha256": "b5e9a82e4010dfcd1f47c06cabff9b314392917c324801463956e2578a6fd296",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\display09f.js"
+    },
+    {
+      "path": "fit_material09d.js",
+      "bytes": 7560,
+      "sha256": "2c33789663fdbae1889855a2413b58c270b7da853834fd15a53424efec8698c6",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\fit_material09d.js"
+    },
+    {
+      "path": "folds09h.cjs",
+      "bytes": 1216,
+      "sha256": "61059154867f6430132d0aa337c008d53ff4a790117f523c60e07de0d9163e00",
+      "reason": "superseded 09H experiment/debug output",
+      "retained_copy": null
+    },
+    {
+      "path": "FOLDS09H.json",
+      "bytes": 14445,
+      "sha256": "b904d2d6e0060a2c284097028d92ce5dd583faa7cdb0f167581db29337117d3f",
+      "reason": "superseded 09H experiment/debug output",
+      "retained_copy": null
+    },
+    {
+      "path": "FOLD_CONTACT_FRAME4_09H.json",
+      "bytes": 2129,
+      "sha256": "e785f9e676ae0b360073fdc4539208eb42d5e877025b5159fa731379e6ba8259",
+      "reason": "superseded 09H experiment/debug output",
+      "retained_copy": null
+    },
+    {
+      "path": "FOLD_frame13_10_9_09H.json",
+      "bytes": 1180,
+      "sha256": "fa822a7d87591308c24bd9f7700b1b306117e4b80c136f0077f9d315ef2d0777",
+      "reason": "superseded 09H experiment/debug output",
+      "retained_copy": null
+    },
+    {
+      "path": "FOLD_frame13_11_10_09H.json",
+      "bytes": 1173,
+      "sha256": "781f15df31ae5343e4f88eec77b2a220a9939c7f23416d78ecb94bd8127af024",
+      "reason": "superseded 09H experiment/debug output",
+      "retained_copy": null
+    },
+    {
+      "path": "FOLD_frame13_8_7_09H.json",
+      "bytes": 1159,
+      "sha256": "003052b92423180a160b67b63e5a921631b202d20a77c3f8c4f7df841a58f220",
+      "reason": "superseded 09H experiment/debug output",
+      "retained_copy": null
+    },
+    {
+      "path": "FOLD_frame13_9_8_09H.json",
+      "bytes": 1169,
+      "sha256": "2384e53f17c3361a22c9f8bb3052ec58edd096f83df6dd659517f2a5d7f4cc01",
+      "reason": "superseded 09H experiment/debug output",
+      "retained_copy": null
+    },
+    {
+      "path": "FOLD_frame7_5_4_09H.json",
+      "bytes": 1165,
+      "sha256": "09f070d58e3e0b92b6956dc94714c05b6946b8d6574410f7dcf225385aea1746",
+      "reason": "superseded 09H experiment/debug output",
+      "retained_copy": null
+    },
+    {
+      "path": "FOLD_SCENE_frame309H.json",
+      "bytes": 79,
+      "sha256": "43f430f1b61e922e92cd256ef411fe17cafa135b17801e7a888018f8f730e435",
+      "reason": "superseded 09H experiment/debug output",
+      "retained_copy": null
+    },
+    {
+      "path": "frame13-last-polish-cache09h.json",
+      "bytes": 195387,
+      "sha256": "e2f91d5d18ca6a0b3bfe0807774099ced0b8d7d22d27ea19707ab2e305c7a1ef",
+      "reason": "superseded 09H experiment/debug output",
+      "retained_copy": null
+    },
+    {
+      "path": "frame13-last-polish09h.cjs",
+      "bytes": 1643,
+      "sha256": "03ea4b7355ed4f480d385b85ac2937bc7f42bbe38bde90543ac306d32e18125e",
+      "reason": "superseded 09H experiment/debug output",
+      "retained_copy": null
+    },
+    {
+      "path": "frame13-yaw--0.02-cache09h.json",
+      "bytes": 197515,
+      "sha256": "22195b9d9b90d55bc61deb2814d1635dcaeefc19c22622556f522be7a00791b8",
+      "reason": "superseded 09H experiment/debug output",
+      "retained_copy": null
+    },
+    {
+      "path": "frame13-yaw--0.04-cache09h.json",
+      "bytes": 197510,
+      "sha256": "e475382bdbe6a5cecf76b5c1e74371ff6111f9f5e45a285258fb9cdf06865586",
+      "reason": "superseded 09H experiment/debug output",
+      "retained_copy": null
+    },
+    {
+      "path": "frame13-yaw-0.02-cache09h.json",
+      "bytes": 197509,
+      "sha256": "44735f6bbaa83935854ff57c19d5ef6d3e36cbe8120ef834e7e3a1a16a7d087c",
+      "reason": "superseded 09H experiment/debug output",
+      "retained_copy": null
+    },
+    {
+      "path": "frame13-yaw-0.04-cache09h.json",
+      "bytes": 197517,
+      "sha256": "03ba9b95c18019dcdb0aaa57d50bb2870a93d3d274b57ce9016ccb3056b3c6a1",
+      "reason": "superseded 09H experiment/debug output",
+      "retained_copy": null
+    },
+    {
+      "path": "frame13-yaw09h.cjs",
+      "bytes": 1683,
+      "sha256": "6a85ab0be3a7416ba97eddefb2e9d178e3ae18b1d0d7ad1d8ca5bdd0df8855f8",
+      "reason": "superseded 09H experiment/debug output",
+      "retained_copy": null
+    },
+    {
+      "path": "frame4-alternate-cache09h.json",
+      "bytes": 106501,
+      "sha256": "d1ac8e1c780c29104e9c51c9b77c5f12334ce4094b9e274633229c4678089161",
+      "reason": "superseded 09H experiment/debug output",
+      "retained_copy": null
+    },
+    {
+      "path": "frame4-alternate09h.cjs",
+      "bytes": 1519,
+      "sha256": "579ea2bcddb633c6d8481fe56e63c1e895611abc3a5a0e39c830143f75085b48",
+      "reason": "superseded 09H experiment/debug output",
+      "retained_copy": null
+    },
+    {
+      "path": "frame4-good-cache09h.json",
+      "bytes": 106501,
+      "sha256": "d1ac8e1c780c29104e9c51c9b77c5f12334ce4094b9e274633229c4678089161",
+      "reason": "superseded 09H experiment/debug output",
+      "retained_copy": null
+    },
+    {
+      "path": "frame4-seed09h.cjs",
+      "bytes": 1402,
+      "sha256": "35ab91a8ec7c00f7939c440fcee5462abd8820908fb02786f1e3024080bb2a6c",
+      "reason": "superseded 09H experiment/debug output",
+      "retained_copy": null
+    },
+    {
+      "path": "frame4-strict-cache09h.json",
+      "bytes": 3395,
+      "sha256": "19be2bb5f58631d137ea8f4e68841204448544ba6a39b8b8c828fec8e8fb5a36",
+      "reason": "superseded 09H experiment/debug output",
+      "retained_copy": null
+    },
+    {
+      "path": "frame4-strict09h.cjs",
+      "bytes": 1609,
+      "sha256": "67756828d459da9736f5b4f1ca768c55247edbf2b41e4681145210bea77502a3",
+      "reason": "superseded 09H experiment/debug output",
+      "retained_copy": null
+    },
+    {
+      "path": "frame7-polish-cache09h.json",
+      "bytes": 176231,
+      "sha256": "d8ff6ca91e1cc320c519d94d6badbd409afcab51af4031ca86d9aad13121614a",
+      "reason": "superseded 09H experiment/debug output",
+      "retained_copy": null
+    },
+    {
+      "path": "frame7-polish09h.cjs",
+      "bytes": 1501,
+      "sha256": "0f956dfb931d5ef61f53f26bd3f86e7930caf110a6abb038e7bd75fb6d508ad9",
+      "reason": "superseded 09H experiment/debug output",
+      "retained_copy": null
+    },
+    {
+      "path": "frame7-second-polish-cache09h.json",
+      "bytes": 195413,
+      "sha256": "3a88270c7da024840b58f5e4287c1a9d394b97269b344eb7ad372fd670811f1e",
+      "reason": "superseded 09H experiment/debug output",
+      "retained_copy": null
+    },
+    {
+      "path": "frame7-second-polish09h.cjs",
+      "bytes": 1642,
+      "sha256": "8a4634e5f472a052d76fee92dd2f587800d514c7d64c8269b62ee623484ef4ee",
+      "reason": "superseded 09H experiment/debug output",
+      "retained_copy": null
+    },
+    {
+      "path": "frames.js",
+      "bytes": 10078,
+      "sha256": "54833a2269617a6ae4170cc77943c9e86e06a3cb78b6e762a20557f0b4131052",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\frames.js"
+    },
+    {
+      "path": "frames_qa.cjs",
+      "bytes": 1803,
+      "sha256": "c9c150751206bd3446bc23be7e7637ff0f6c5e97fe072c87d46155811062ae32",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\frames_qa.cjs"
+    },
+    {
+      "path": "FUNCTION_ENTRY_HANDOFF_09C.md",
+      "bytes": 1805,
+      "sha256": "75dc6e356925eeb4856f3caffebdab7d13354540c75c7af5f632fc289a0eb2e6",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\FUNCTION_ENTRY_HANDOFF_09C.md"
+    },
+    {
+      "path": "FUNCTION_ENTRY_HANDOFF_09D.md",
+      "bytes": 920,
+      "sha256": "6ebf565f3f77797383280b2b64ac9061724859e2c3b2641f107ec541a8abedf2",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\FUNCTION_ENTRY_HANDOFF_09D.md"
+    },
+    {
+      "path": "FUNCTION_ENTRY_HANDOFF_09E.md",
+      "bytes": 1781,
+      "sha256": "d555e01a6dc06fde6905fa538cef35d8874329eb6d0b60cb7bc000ac12410b54",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\FUNCTION_ENTRY_HANDOFF_09E.md"
+    },
+    {
+      "path": "FUNCTION_ENTRY_HANDOFF_09F.md",
+      "bytes": 2662,
+      "sha256": "007e8927dc2528779cd4f0a748d5683b6f0a5c95c527e8c557a7ed38f57d8c9f",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\FUNCTION_ENTRY_HANDOFF_09F.md"
+    },
+    {
+      "path": "FUNCTION_ENTRY_HANDOFF_09G.md",
+      "bytes": 2663,
+      "sha256": "61226d5c6ffdddd184179fc300b5dc34b91b932aabaf0994760b90da51d7c91e",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09g-20261025\\FUNCTION_ENTRY_HANDOFF_09G.md"
+    },
+    {
+      "path": "GEOMETRY09D.json",
+      "bytes": 9316,
+      "sha256": "9e184ab7b632d18992d2d223de4bfe0e58e5722d0051468bcadb6b5a9afe09f0",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\GEOMETRY09D.json"
+    },
+    {
+      "path": "GEOMETRY09E.json",
+      "bytes": 7593,
+      "sha256": "9dd9d984cf984b3af67e55c9fb5b18100263ec4a5c70a1938211f5f2af50283d",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\GEOMETRY09E.json"
+    },
+    {
+      "path": "GEOMETRY09F.json",
+      "bytes": 10277,
+      "sha256": "95bd4931ee9b52bb31136625a4243f013cd01112e2ba66c829c5f74949b86617",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\GEOMETRY09F.json"
+    },
+    {
+      "path": "geometry09g.cjs",
+      "bytes": 1433,
+      "sha256": "058cad927c0a6bd8207438e97284c4cbc2f3da92bb455bf7b9dae7b4b6f75bd4",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09g-20261025\\geometry09g.cjs"
+    },
+    {
+      "path": "GEOMETRY09G.json",
+      "bytes": 779,
+      "sha256": "9a6b4e318b4265cf1476f2c137082ac345813c64f704131940d8eb5542921abe",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09g-20261025\\GEOMETRY09G.json"
+    },
+    {
+      "path": "geometry_qa.cjs",
+      "bytes": 1618,
+      "sha256": "9963a0292bf6705189513526dcd9304f22f5afd460b3a4a1632e5368d8dff241",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\geometry_qa.cjs"
+    },
+    {
+      "path": "inspect-rafters09h.cjs",
+      "bytes": 546,
+      "sha256": "7ca8254577e3ce576dbe6edc43712c1fab7676ea06c8919241e776e93aa832ba",
+      "reason": "superseded 09H experiment/debug output",
+      "retained_copy": null
+    },
+    {
+      "path": "inspect-scenes09h.cjs",
+      "bytes": 507,
+      "sha256": "3f221a03718328a3e28866f0f743a3a1750e605c7565277b6c43b3be8b66c290",
+      "reason": "superseded 09H experiment/debug output",
+      "retained_copy": null
+    },
+    {
+      "path": "inspect09h.cjs",
+      "bytes": 462,
+      "sha256": "9d3984f1dd1f22a250ae85e6025d964b37b99417f830dbd9bc00755987ba5aea",
+      "reason": "superseded 09H experiment/debug output",
+      "retained_copy": null
+    },
+    {
+      "path": "intrusion-final09f.cjs",
+      "bytes": 2289,
+      "sha256": "d43e60289b4382e843df09f8ba59046dcec65926fa0a9c0a84137008dd5ddfee",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\intrusion-final09f.cjs"
+    },
+    {
+      "path": "intrusion-frame09f.cjs",
+      "bytes": 1914,
+      "sha256": "0d2ffc475cafb43e90df41a5d7aa3c3187cd4e94d16b2bf161196f6c8376b51c",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\intrusion-frame09f.cjs"
+    },
+    {
+      "path": "intrusion-more09f.cjs",
+      "bytes": 1874,
+      "sha256": "4df1a45777e2014ee5f688652e201be4c387340b27d1ac05514336f27648b0b4",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\intrusion-more09f.cjs"
+    },
+    {
+      "path": "intrusion09f.cjs",
+      "bytes": 1915,
+      "sha256": "8200e36498ac8d4554a2f37e9a1cd803d0e3824cacca498c45b8222acb79fc7b",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\intrusion09f.cjs"
+    },
+    {
+      "path": "LEARNING_UPDATE.md",
+      "bytes": 803,
+      "sha256": "03bfb311f1c96faadf7d903f072b647a4db21acd8c6c09ac941f8eeacfd3937f",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\LEARNING_UPDATE.md"
+    },
+    {
+      "path": "lip_debug.cjs",
+      "bytes": 473,
+      "sha256": "365d4b38caf63ca4a1f9dcbf3c4cd874737a82972d9d4c52306fcca65235c407",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\lip_debug.cjs"
+    },
+    {
+      "path": "LOCAL_BROWSER09C.json",
+      "bytes": 8001,
+      "sha256": "caf95e8bebae9348547fdadfa3ed6da355b1af018c34d6cd18fb55321f040ee8",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\LOCAL_BROWSER09C.json"
+    },
+    {
+      "path": "LOCAL_BROWSER09D.json",
+      "bytes": 816,
+      "sha256": "6f44fb6c7e2ffe862bf82816877ac1f9211e0e2bac90323fb720b6b24860a7dc",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\LOCAL_BROWSER09D.json"
+    },
+    {
+      "path": "LOCAL_BROWSER09E.json",
+      "bytes": 381,
+      "sha256": "ac4022642dcd713645aabc0997af47bcd397941016e9279f70da9d2cd389e12e",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\LOCAL_BROWSER09E.json"
+    },
+    {
+      "path": "LOCAL_BROWSER09F.json",
+      "bytes": 1283,
+      "sha256": "8e56b6ef6e9ee3b77fecda5d866184312daea35afd5d5ad4e495bb7f3f08ed37",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\LOCAL_BROWSER09F.json"
+    },
+    {
+      "path": "LOCAL_BROWSER09G.json",
+      "bytes": 589,
+      "sha256": "6ce9a34ede3c27e912e9688c0a1ff04df64d050e71f8c979dba8a2489f532beb",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09g-20261025\\LOCAL_BROWSER09G.json"
+    },
+    {
+      "path": "MATERIAL_PROVENANCE09D.json",
+      "bytes": 758,
+      "sha256": "830b71d68d506e8baf00866a695427607ae0d383c1a9f41d78f027d45c012218",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\MATERIAL_PROVENANCE09D.json"
+    },
+    {
+      "path": "merge-cache09h.cjs",
+      "bytes": 1747,
+      "sha256": "6c7e36c567131f0870f26e9f9cd31b9797200c94b0d489c4fbb32676ca4e93ec",
+      "reason": "superseded 09H experiment/debug output",
+      "retained_copy": null
+    },
+    {
+      "path": "MERGED_CACHE09H.json",
+      "bytes": 198,
+      "sha256": "f00aa866a56976b47a12482aba76cc3fe9c27dfa6ca3b456384aff6c8dfd9477",
+      "reason": "superseded 09H experiment/debug output",
+      "retained_copy": null
+    },
+    {
+      "path": "modify_study.py",
+      "bytes": 12675,
+      "sha256": "a42798045ef9e711c4b734c435480a8e7d598fd6b65718d5c4d80cd996d48848",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\modify_study.py"
+    },
+    {
+      "path": "paint_qa.cjs",
+      "bytes": 1483,
+      "sha256": "3d588799fc62d3d34a1c77317af49d3572c99d6bc29958b2bee99d62d5966ca3",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\paint_qa.cjs"
+    },
+    {
+      "path": "perf09f.cjs",
+      "bytes": 1351,
+      "sha256": "e75218b49e9a996a60a416bf6dded4a90a864574396137e6da8c14e0c2506077",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\perf09f.cjs"
+    },
+    {
+      "path": "PERF09F.json",
+      "bytes": 874,
+      "sha256": "3494e28007c497e3dd3612446d4137885343051642eb3051abf0c7e3023b0b0d",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\PERF09F.json"
+    },
+    {
+      "path": "PERF_BASELINE09E.json",
+      "bytes": 323,
+      "sha256": "30a8c6c6a7044058b7faf58a1b488a21996a4a4981252f6c065273eec60380a1",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\PERF_BASELINE09E.json"
+    },
+    {
+      "path": "phase09h.cjs",
+      "bytes": 1164,
+      "sha256": "a4f0e5fe62c191cad79bbf56c402f8e48dc7682276485d053b8d074d7d03e275",
+      "reason": "superseded 09H experiment/debug output",
+      "retained_copy": null
+    },
+    {
+      "path": "PUBLIC_BROWSER09C.json",
+      "bytes": 632,
+      "sha256": "f9c3ff25443208e444598f89f8e221b6d1d44b9881532b68cb2d5be3ab594a7f",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\PUBLIC_BROWSER09C.json"
+    },
+    {
+      "path": "PUBLIC_BROWSER09D.json",
+      "bytes": 1038,
+      "sha256": "183f11618a96b71d60590ace3b7e8b51c98580456b0a4daafae8833e8469aa98",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\PUBLIC_BROWSER09D.json"
+    },
+    {
+      "path": "PUBLIC_BROWSER09E.json",
+      "bytes": 560,
+      "sha256": "fee12f2b0077bd8e6b1221085f80f56e0dff46735347fa3fabab10174e70fdd0",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\PUBLIC_BROWSER09E.json"
+    },
+    {
+      "path": "PUBLIC_BROWSER09F.json",
+      "bytes": 532,
+      "sha256": "d866e2b8feac7c5e9a854fa5ca279f90b078798082ac60fc9406689645725f14",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\PUBLIC_BROWSER09F.json"
+    },
+    {
+      "path": "PUBLIC_BROWSER09G.json",
+      "bytes": 464,
+      "sha256": "e149f5f45ecb8c9b339c8d86c00ad67e83dc3720c0d150bf7031c61425c5c504",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09g-20261025\\PUBLIC_BROWSER09G.json"
+    },
+    {
+      "path": "publish09d.py",
+      "bytes": 4350,
+      "sha256": "3c704d40fc368ce99c01c3e92a8a80edb14c261f87c2894e12d1f8a3969da25a",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\publish09d.py"
+    },
+    {
+      "path": "publish09e.py",
+      "bytes": 4340,
+      "sha256": "7cd542b1ccc0bf62504e024b6d660efbb6af4b6657c38cfd55578f5fb4085404",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\publish09e.py"
+    },
+    {
+      "path": "publish09f.py",
+      "bytes": 4449,
+      "sha256": "7b9b122add762e7e6d679133c0cd5aa7ea840f3b83f7e025a5fc269ad13582f7",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\publish09f.py"
+    },
+    {
+      "path": "publish09g.py",
+      "bytes": 4176,
+      "sha256": "a9a495f9b31baae64aa2f1925c6d701aee9d2af8ca91e4b9f495d2e96f4065fc",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09g-20261025\\publish09g.py"
+    },
+    {
+      "path": "publish_api.py",
+      "bytes": 4349,
+      "sha256": "01bca7568d85feb3a1b9ab9a1e9c6708f9d38b2db62d33668189969989e5b149",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\publish_api.py"
+    },
+    {
+      "path": "qa09d.cjs",
+      "bytes": 3073,
+      "sha256": "71b39222181e99d126194f698ce9d6d49919185356058d9cb005e6deb103af74",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\qa09d.cjs"
+    },
+    {
+      "path": "qa09e.cjs",
+      "bytes": 2274,
+      "sha256": "7c5be8a5cce8fa6653c85357f74f012295e7febff644e56345ecd29ac602eab6",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\qa09e.cjs"
+    },
+    {
+      "path": "qa09f.cjs",
+      "bytes": 2842,
+      "sha256": "3c170130018cc9834f6391d52eefdb8e31727bf5ecd3d9ff3296bd42996278a5",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\qa09f.cjs"
+    },
+    {
+      "path": "qa09g.cjs",
+      "bytes": 2318,
+      "sha256": "a64590a2260b11ef4420d0721a41f6a34492fc211b930ced707a83d620df8a68",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09g-20261025\\qa09g.cjs"
+    },
+    {
+      "path": "QA09G.json",
+      "bytes": 14776,
+      "sha256": "1e196f0f064ebe3a5423e37fd911d75d00d090713663a242212c17b0458cfa7a",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09g-20261025\\QA09G.json"
+    },
+    {
+      "path": "README09B.md",
+      "bytes": 3360,
+      "sha256": "c1e648bcb097e4c94909d713c76b188a4f3bcbae7a9884b74469f8f814121ecc",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\README09B.md"
+    },
+    {
+      "path": "README09D.md",
+      "bytes": 1946,
+      "sha256": "faf96476fed3c8bfc2ea019d4e4760048a353d3d2fc86e7e5af32dc10fa593f3",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\README09D.md"
+    },
+    {
+      "path": "README09E.md",
+      "bytes": 1781,
+      "sha256": "d555e01a6dc06fde6905fa538cef35d8874329eb6d0b60cb7bc000ac12410b54",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\README09E.md"
+    },
+    {
+      "path": "README09F.md",
+      "bytes": 2662,
+      "sha256": "007e8927dc2528779cd4f0a748d5683b6f0a5c95c527e8c557a7ed38f57d8c9f",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\README09F.md"
+    },
+    {
+      "path": "README09G.md",
+      "bytes": 2663,
+      "sha256": "61226d5c6ffdddd184179fc300b5dc34b91b932aabaf0994760b90da51d7c91e",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09g-20261025\\README09G.md"
+    },
+    {
+      "path": "register_detail.py",
+      "bytes": 4986,
+      "sha256": "85fd00a5f50c19faaa2bad167c7739f0b4daa1720ea777bafee0ded486db21e2",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\register_detail.py"
+    },
+    {
+      "path": "register_repair.py",
+      "bytes": 4481,
+      "sha256": "d3389fc19a2e311e83b680a5872311297a5fbabda6c0f8c8633e979f6c5fcc88",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\register_repair.py"
+    },
+    {
+      "path": "repair.js",
+      "bytes": 15836,
+      "sha256": "c5d883f08952752aaae9d0dd8966a229706ce449aa8308130189e870eea6649f",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\repair.js"
+    },
+    {
+      "path": "repair_browser_qa.cjs",
+      "bytes": 3480,
+      "sha256": "ce23051a1863cf1fa02e4cc73dfcfac15146bbb070006362c5e11f489775353a",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\repair_browser_qa.cjs"
+    },
+    {
+      "path": "roof_fit09c.js",
+      "bytes": 2792,
+      "sha256": "897e987a2d66cf5eda03c2ef2755e63c9fede00dafa209e06745d38a0d200e63",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\roof_fit09c.js"
+    },
+    {
+      "path": "roof_fits09c.json",
+      "bytes": 3491,
+      "sha256": "e95a3839722524037a2ba2e6a2c1950fc93b385fa46494571230f3fc60caf040",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\roof_fits09c.json"
+    },
+    {
+      "path": "roof_seats09c.json",
+      "bytes": 72018,
+      "sha256": "14f4980dc954bd86dca14e1e4b5a6f673ff61f1fa6f1f056eab11d89f625b1c4",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\roof_seats09c.json"
+    },
+    {
+      "path": "round_end09c.js",
+      "bytes": 1895,
+      "sha256": "58bb2a6a86fe0d0113d5898001aaa58d221cc6acf9929d8afdad2c0e813b9af0",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\round_end09c.js"
+    },
+    {
+      "path": "scope09e.cjs",
+      "bytes": 1637,
+      "sha256": "18f2d1937d08c370c5ae4dfbc5b841204a38bbd27ab1e2d6f17113bd7ba62cd9",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\scope09e.cjs"
+    },
+    {
+      "path": "side-alternate-cache09h.json",
+      "bytes": 15937,
+      "sha256": "a77e5b05a406f551df2df7b0f84dea08a0a041ae329420bd1f4b20ce408b311b",
+      "reason": "superseded 09H experiment/debug output",
+      "retained_copy": null
+    },
+    {
+      "path": "sides09h.cjs",
+      "bytes": 715,
+      "sha256": "0376073be51a28b1f6c5ad5baac11d56247099de2f0231da69f4eab7c6780aaf",
+      "reason": "superseded 09H experiment/debug output",
+      "retained_copy": null
+    },
+    {
+      "path": "SOURCE_COVERAGE09C.json",
+      "bytes": 2187,
+      "sha256": "9cb8a45d64710901e24f48c5333f2b45c05baae1cda1de7578ea3aa20d3c142a",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\SOURCE_COVERAGE09C.json"
+    },
+    {
+      "path": "source_frames09c.js",
+      "bytes": 18853,
+      "sha256": "f298776b4419df9a62d41dbe7ae3495f731cd573d8e64a886b866e2d867fa39c",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\source_frames09c.js"
+    },
+    {
+      "path": "source_geometry09c.cjs",
+      "bytes": 1679,
+      "sha256": "ed8c1ff3a561d142b24521f1b97ee4f3630b1e1da0eb5c5f16540b516c772de2",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\source_geometry09c.cjs"
+    },
+    {
+      "path": "SOURCE_GEOMETRY09C.json",
+      "bytes": 659271,
+      "sha256": "4984d124997c09c013b3c6dc45d95283c463880903ae165b6d0d96f96eeb9a95",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\SOURCE_GEOMETRY09C.json"
+    },
+    {
+      "path": "source_roofs09c.js",
+      "bytes": 14988,
+      "sha256": "a0f87bfe6859c56606f19d9439767dae4f29c8586264f083017e0c1ba8849477",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\source_roofs09c.js"
+    },
+    {
+      "path": "stitch-cache09h-before-keyfix.json",
+      "bytes": 148041,
+      "sha256": "8addcf0114d57d9992c2530e58598efcd9dd3943b3b8997e17954222c61fa282",
+      "reason": "superseded 09H experiment/debug output",
+      "retained_copy": null
+    },
+    {
+      "path": "stitch-frame13-10-9-cache09h.json",
+      "bytes": 237187,
+      "sha256": "8004c7b7623731878c847fd284c8693fcd7160d5a07001e855cabece3d70b3ed",
+      "reason": "superseded 09H experiment/debug output",
+      "retained_copy": null
+    },
+    {
+      "path": "stitch-frame13-11-10-cache09h.json",
+      "bytes": 237178,
+      "sha256": "548c530b5da0dc2fe649929fff0afac1c776b2f105f65d54f1b567030ae2da96",
+      "reason": "superseded 09H experiment/debug output",
+      "retained_copy": null
+    },
+    {
+      "path": "stitch-frame13-8-7-cache09h.json",
+      "bytes": 259626,
+      "sha256": "8c54e397a3f7b87e8baa508c6acc8a86eb2b6ba5301bc9025a28fd5d341ed6d0",
+      "reason": "superseded 09H experiment/debug output",
+      "retained_copy": null
+    },
+    {
+      "path": "stitch-frame13-9-8-cache09h.json",
+      "bytes": 237193,
+      "sha256": "849227920cc478863afd8a2356731dd3601e0f460d14c0149a5767c17e714ac8",
+      "reason": "superseded 09H experiment/debug output",
+      "retained_copy": null
+    },
+    {
+      "path": "stitch-frame13-cache09h.json",
+      "bytes": 231696,
+      "sha256": "199f647dc02fd23251dcfdaacbf1736cad396f62f85fb935a9057aa26783e64d",
+      "reason": "superseded 09H experiment/debug output",
+      "retained_copy": null
+    },
+    {
+      "path": "stitch-frame3-cache09h.json",
+      "bytes": 191990,
+      "sha256": "10e8b93543a72337a1e4950b0aa898efa5f98bfa709c30a0b9e1146774665eb1",
+      "reason": "superseded 09H experiment/debug output",
+      "retained_copy": null
+    },
+    {
+      "path": "stitch-frame7-5-4-cache09h.json",
+      "bytes": 229652,
+      "sha256": "cf74fb79b01f8c4ee660bf85f85fee4df431ecda84b1d07a757c28b79c9e8c50",
+      "reason": "superseded 09H experiment/debug output",
+      "retained_copy": null
+    },
+    {
+      "path": "stitch-frame7-cache09h.json",
+      "bytes": 230389,
+      "sha256": "6c14ba36b16a82c737cfd41fba2924cd6fd4bc01b3b85e18553fe9f0ac0ccaca",
+      "reason": "superseded 09H experiment/debug output",
+      "retained_copy": null
+    },
+    {
+      "path": "study-ui.html",
+      "bytes": 2871,
+      "sha256": "8b525a399c224f98f40ec5ee03dd7e581bf160308fcb310cdb61aa26cf9c6973",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\study-ui.html"
+    },
+    {
+      "path": "study.css",
+      "bytes": 2446,
+      "sha256": "6ec3a64d531993eb7d07de21e62b8aba1e4caedfa1326b6ca34b2bad81d5b597",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\study.css"
+    },
+    {
+      "path": "study.js",
+      "bytes": 38753,
+      "sha256": "167408bff00af75eb073b11a76d6fdd303ece231209b08bdf520324f8fd53688",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\study.js"
+    },
+    {
+      "path": "support09g.cjs",
+      "bytes": 2723,
+      "sha256": "1fd094974e81e359b37a5f07fdbb223d058640c6c1b67ff4d9b49fd00870dc22",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09g-20261025\\support09g.cjs"
+    },
+    {
+      "path": "SUPPORT09G.json",
+      "bytes": 5365,
+      "sha256": "3c2403af4fb02027fc737e5d64110a452afe984dc02c76d8c09a84ce2a0da7a2",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09g-20261025\\SUPPORT09G.json"
+    },
+    {
+      "path": "TILE_WOOD09F.json",
+      "bytes": 1224,
+      "sha256": "f0b0b9afa1d23d69e2cfa8f7fae269c8f0ed6cb64c40317cad49ad0493c9ebdf",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\TILE_WOOD09F.json"
+    },
+    {
+      "path": "trace_paint.py",
+      "bytes": 1219,
+      "sha256": "6ab98ef63da2014d077a7dd2af1be4e3c7fa4dfa9f59dba52101ea3cb054d7e5",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\trace_paint.py"
+    },
+    {
+      "path": "trace_ridge09c.py",
+      "bytes": 1221,
+      "sha256": "c8976969b2a40a68dac11e70765e99d8bec49662568d164304a9687dd6a55070",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\trace_ridge09c.py"
+    },
+    {
+      "path": "trybridge09h.cjs",
+      "bytes": 548,
+      "sha256": "9298c9e4d1ca197b616c2e93dade4c9df4207c76018738be353f564093b59955",
+      "reason": "superseded 09H experiment/debug output",
+      "retained_copy": null
+    },
+    {
+      "path": "wood_qa.cjs",
+      "bytes": 2122,
+      "sha256": "1f3470b2bea6e6750ddaa55ef2d9210c855c89ed53b247402d1a8a534d69d78e",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\wood_qa.cjs"
+    },
+    {
+      "path": "wood_restore09c.py",
+      "bytes": 4939,
+      "sha256": "e336ce6cb587452975b8f568f83dc4eb08cb5b3f1613b1263607ddcbfb5082b0",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\wood_restore09c.py"
+    },
+    {
+      "path": "qa/09b-bond.png",
+      "bytes": 348846,
+      "sha256": "433aeb6c4a9b145ad6a9a5f2ae9c669a87aa8393c2abf2355c603c06d1c80f15",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\qa\\09b-bond.png"
+    },
+    {
+      "path": "qa/09b-deck-under.png",
+      "bytes": 510812,
+      "sha256": "8ff8147b9fe6c343d04725534bc75a5079c7a47cc392c6a5c2ee29a188775cbe",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\qa\\09b-deck-under.png"
+    },
+    {
+      "path": "qa/09b-dripFloral.png",
+      "bytes": 320583,
+      "sha256": "9f738b73501f69349b6cac19f192f366f3c61124d466d2ae27b5b001e423ed9b",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\qa\\09b-dripFloral.png"
+    },
+    {
+      "path": "qa/09b-eaves-under.png",
+      "bytes": 348835,
+      "sha256": "355c74a572ea66a6e989b9df69112b113b0d29b02adf1df4ffe19244b65d2d94",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\qa\\09b-eaves-under.png"
+    },
+    {
+      "path": "qa/09b-eaves.png",
+      "bytes": 320639,
+      "sha256": "9758b3d880240c91e69736a7e5c1dd09364ecc44d46b073c2e94a5fab75c1a2e",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\qa\\09b-eaves.png"
+    },
+    {
+      "path": "qa/09b-joinery.png",
+      "bytes": 458852,
+      "sha256": "5c570bfc6620ae385ac61c68c9d7518968cda0695b42ad465c481a5557a2dbbd",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\qa\\09b-joinery.png"
+    },
+    {
+      "path": "qa/09b-ornamentBoard.png",
+      "bytes": 235903,
+      "sha256": "f37eb5f3ced9ff42a4939625df842f5bd837f32c9bb61dc4499b5614eafab6e4",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\qa\\09b-ornamentBoard.png"
+    },
+    {
+      "path": "qa/09b-patternBoard.png",
+      "bytes": 324651,
+      "sha256": "180c4910e2eada7d5a945ebb69d5a89e30ef5e7f1aa59429e534f37eef8691d7",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\qa\\09b-patternBoard.png"
+    },
+    {
+      "path": "qa/09b-roofPatch.png",
+      "bytes": 289775,
+      "sha256": "dc3120e9785c46ff0d7c7f6c0b1d4ba2408fbe573a683b9d7c2e903e826107a5",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\qa\\09b-roofPatch.png"
+    },
+    {
+      "path": "qa/09b-rosette-under.png",
+      "bytes": 357588,
+      "sha256": "f30d47193e290311f29da2c7ba2382aac867db2be866b986c2e11ac80c8965e7",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\qa\\09b-rosette-under.png"
+    },
+    {
+      "path": "qa/09b-rosette.png",
+      "bytes": 313720,
+      "sha256": "e0cc9c4299d6631819fed6ee00e9a47eeaab0746e7414c0befa36116cd0a6dc8",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\qa\\09b-rosette.png"
+    },
+    {
+      "path": "qa/09b-seal.png",
+      "bytes": 359286,
+      "sha256": "cc82067ebb8ae6d51e9632d00dfc22dee5c79f257178f7af3b00f26c84242464",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\qa\\09b-seal.png"
+    },
+    {
+      "path": "qa/09b-tileBoard-under.png",
+      "bytes": 159174,
+      "sha256": "293fca9b25108bc8f6554f96d020a548deb6fcbe34774542f6cfec7b12d4854a",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\qa\\09b-tileBoard-under.png"
+    },
+    {
+      "path": "qa/09b-tileBoard.png",
+      "bytes": 264897,
+      "sha256": "e5e5b210342b23724d4d3a334498836a9c0a1e60a02b2444e73325f2f58f9804",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\qa\\09b-tileBoard.png"
+    },
+    {
+      "path": "qa/09c-public-drip.jpg",
+      "bytes": 58598,
+      "sha256": "7ae7f121ce4b5c84f0985ac32bc2d8ee315547ba5b026dcb5151cd14280bb936",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\qa\\09c-public-drip.jpg"
+    },
+    {
+      "path": "qa/09c-public-wood.jpg",
+      "bytes": 76312,
+      "sha256": "5b68291a81007ad63108e69e00a6f923c47df6cfdf545216fc4c773e1c6731f6",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\qa\\09c-public-wood.jpg"
+    },
+    {
+      "path": "qa/09c-sideHouse-local.jpg",
+      "bytes": 61466,
+      "sha256": "dfa095359bb778b1097c7c2b7f6b8b74e359832d4ac718c8a8d59cbffce62ea3",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\qa\\09c-sideHouse-local.jpg"
+    },
+    {
+      "path": "qa/dripface09d.json",
+      "bytes": 67453,
+      "sha256": "b58d94abb439de945fcfd3003d79fbcd18c98efd116548396392e2e922355693",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\qa\\dripface09d.json"
+    },
+    {
+      "path": "qa/lip-polygons.json",
+      "bytes": 118769,
+      "sha256": "f46d2bdae282a0b794cfcdf1ab353fefd743b1f23e538ba94bbb8e2c337ab647",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\qa\\lip-polygons.json"
+    },
+    {
+      "path": "qa/lip-polygons.png",
+      "bytes": 71330,
+      "sha256": "7fb521a530817ebf5a3ed015922e9b70c01570b912bf643f3848bcbbfba815c2",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\qa\\lip-polygons.png"
+    },
+    {
+      "path": "qa/local-bluebrick09g.png",
+      "bytes": 33054,
+      "sha256": "519acfece4c783f44988eb4bb20f3ad627cb7c3f8fa417ee62bcb2e06c03d6cf",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09g-20261025\\qa\\local-bluebrick09g.png"
+    },
+    {
+      "path": "qa/local-drip09e.png",
+      "bytes": 35500,
+      "sha256": "3aedeb72f18b267ef354c39810081d857550a6dd1889ad3dd7534968d378e58a",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\qa\\local-drip09e.png"
+    },
+    {
+      "path": "qa/local-eaves09g.png",
+      "bytes": 38224,
+      "sha256": "557a7a6679ca84b955505f608288e7823a9d3d7042daa96424dfdc5d056c05d5",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09g-20261025\\qa\\local-eaves09g.png"
+    },
+    {
+      "path": "qa/local-gallery09f.png",
+      "bytes": 67507,
+      "sha256": "9a4d9e39d64d8f62a8729bda0aeef41871c6fa4917a450726885b06555b96493",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\qa\\local-gallery09f.png"
+    },
+    {
+      "path": "qa/local-house09e.png",
+      "bytes": 40234,
+      "sha256": "91f5885497012fd6af6a98ce4312be69f32ab34f93335729d060b27e9a229811",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\qa\\local-house09e.png"
+    },
+    {
+      "path": "qa/local-house09f.png",
+      "bytes": 40014,
+      "sha256": "ccf49ed3d50b08846f937438e1671ad7b481f22bff54d258c2915619c9bf4c10",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\qa\\local-house09f.png"
+    },
+    {
+      "path": "qa/local-under09g.png",
+      "bytes": 40339,
+      "sha256": "f7a9e8fac4a2a85d291aadcf27c94b5d041b721f3c154efaf33186c5e8fd3d89",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09g-20261025\\qa\\local-under09g.png"
+    },
+    {
+      "path": "qa/local-wood-close09e.png",
+      "bytes": 57830,
+      "sha256": "f3889669b40bb1167892e13804e7360711a176db4e0bf850b2db5f857d16fffc",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\qa\\local-wood-close09e.png"
+    },
+    {
+      "path": "qa/local-wood-flat09g.png",
+      "bytes": 29637,
+      "sha256": "f41afd8d824e92394d352b5f940a79e4e5e32b8b45c15656cf874d1ae08c6f84",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09g-20261025\\qa\\local-wood-flat09g.png"
+    },
+    {
+      "path": "qa/local-wood-shape09g.png",
+      "bytes": 32239,
+      "sha256": "3cc9417a453dad5b26726a343cc4f32b639887b0a90fa317c779fd7589eacdaf",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09g-20261025\\qa\\local-wood-shape09g.png"
+    },
+    {
+      "path": "qa/local-wood09f.png",
+      "bytes": 49302,
+      "sha256": "02bb3d7487275b547e2dc18814a40191ba158014524c703913ec235659599df2",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\qa\\local-wood09f.png"
+    },
+    {
+      "path": "qa/original08d-wood.html",
+      "bytes": 76905,
+      "sha256": "958a21117b8d4a5091cdab6e33b798d2fdf1533481ed99f41312268b06d512fe",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\qa\\original08d-wood.html"
+    },
+    {
+      "path": "qa/public-brick09d.png",
+      "bytes": 35672,
+      "sha256": "3dba64f68199384667014752bbe2810c2f3d5813346494c8eeafe37f695095ec",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\qa\\public-brick09d.png"
+    },
+    {
+      "path": "qa/public-eaves09g.png",
+      "bytes": 38224,
+      "sha256": "557a7a6679ca84b955505f608288e7823a9d3d7042daa96424dfdc5d056c05d5",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09g-20261025\\qa\\public-eaves09g.png"
+    },
+    {
+      "path": "qa/public-gallery09f.png",
+      "bytes": 35960,
+      "sha256": "ff3c496011717c2414ff218356049f62e707966cd194ce6e166e19007675bf5e",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\qa\\public-gallery09f.png"
+    },
+    {
+      "path": "qa/public-pattern09d.png",
+      "bytes": 38923,
+      "sha256": "02e0f108e9617e780d2344096851b36ee51c82716561120a06ece51b8ebdf140",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\qa\\public-pattern09d.png"
+    },
+    {
+      "path": "qa/public-pattern09e.png",
+      "bytes": 38779,
+      "sha256": "2ab7593bcc4b0d0f836082ee3854d77bca107e708c54fd77184dcba74830ce9a",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\qa\\public-pattern09e.png"
+    },
+    {
+      "path": "qa/public-under09g.png",
+      "bytes": 39950,
+      "sha256": "76c6274021afde6a815b61afee5f6830b321cf55e45430d5ffdf6cea97ae9fd3",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09g-20261025\\qa\\public-under09g.png"
+    },
+    {
+      "path": "qa/public-wood09d.png",
+      "bytes": 41401,
+      "sha256": "6e15af4b0d75316bb433fc5b55339e6dd5556a4c5fcd52c1659a8f63b2d49742",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\qa\\public-wood09d.png"
+    },
+    {
+      "path": "qa/public-wood09e.png",
+      "bytes": 41671,
+      "sha256": "73f642a28c9d8ea1d3409ed53b4bac2ab97f1f46e316620449073642ae864593",
+      "reason": "identical historical copy",
+      "retained_copy": "G:\\HOUSE\\brick-tiles-mother-09f-20261025\\qa\\public-wood09e.png"
+    }
+  ],
+  "unknown": [],
+  "deleted_count": 193,
+  "deleted_bytes": 10744604,
+  "after_bytes": 8390208,
+  "runtime_sha256_unchanged": true
+}
