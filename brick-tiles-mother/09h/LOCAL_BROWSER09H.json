@@ -1,0 +1,33 @@
+{
+  "version": "09H",
+  "pass": true,
+  "html_sha256": "776af63fd3f91a5e7be234d4eb3c92c35556eeb1dddaea1ee672a51fcfccee10",
+  "checked_at": "2026-10-26T12:04:30.604929",
+  "scope": "Desktop in-app browser, actual rendered page and menu/button interactions. Default settings only; not historical or structural validation.",
+  "observations": [
+    "09H title and subtitle visible",
+    "Final HTML: mainHouse fold close view continuous; bearing button shows column bottom seated on beam",
+    "Final HTML: brickSystem displays nonidentical per-brick surface variations",
+    "frame4/frame7/frame13 fold close views rendered and menu transitions worked; their geometry unchanged by subsequent frame6-only beam outline correction",
+    "Final HTML: frame6 middle beam no longer protrudes through roof after L8 source outline correction",
+    "Earlier same-version local views: sideHouse/gateHouse folds, eaves and underside rendered; these geometries unchanged by final source beam correction and cache identity fix"
+  ],
+  "screenshots": [
+    "qa/local-fold09h.png",
+    "qa/local-bearing09h.png",
+    "qa/local-bricks09h.png",
+    "qa/local-sidefold09h.png",
+    "qa/local-gatefold09h.png",
+    "qa/local-eaves09h.png",
+    "qa/local-under09h.png",
+    "qa/local-frame4-09h.png",
+    "qa/local-frame6-09h.png",
+    "qa/local-frame7-09h.png",
+    "qa/local-frame13-09h.png"
+  ],
+  "limitations": [
+    "No real-phone validation",
+    "No blanket all-member collision or structural proof",
+    "A stale long-running tab previously reported graphics context loss; reload restored rendering. Final reload and scene switches succeeded."
+  ]
+}
