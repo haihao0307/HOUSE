@@ -1,0 +1,15 @@
+{
+  "pass": true,
+  "testedRays": 1600,
+  "routes": 2,
+  "target": "upper surface material points; nearest returned hit must be no farther than the target",
+  "maxResidual_m": 1.9944666130253162e-7,
+  "maxABRayDistanceDifference_m": 2.1891377599558837e-12,
+  "misses": [],
+  "sourceSha256": "9d41794ece7f3b8470dac325cd227b2af371e01672d782093278eee0dd5da7a8",
+  "limits": [
+    "Finite targets and four camera positions; not proof for all rays, side views, materials or all input parameters",
+    "Uses numeric iterative function queries, not saved point data or triangle geometry",
+    "CPU direct-ray preview has limited pixel resolution and is not 09H visual acceptance"
+  ]
+}

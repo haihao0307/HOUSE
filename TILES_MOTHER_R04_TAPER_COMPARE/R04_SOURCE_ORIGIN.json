@@ -1,0 +1,21 @@
+{
+  "project": "Tiles Mother",
+  "version": "R04",
+  "date": "2026-10-27",
+  "status": "local-source-only; no new website or public repository writes",
+  "shapeSource": "/workspace/shared/minimal-tile-four-floats-r01/A-deform.min.glsl",
+  "shapeSha256": "517b08f6f0feb22dc211039b6301379296c438dd4fd0031b9776a4110f57dc1d",
+  "floatAdaptationSource": "/workspace/shared/minimal-tile-four-floats-r02-audit",
+  "previousPublicVersions": {
+    "09J": {
+      "commit": "77a2fee99b4e90c92b82b0667a01d524fd140e9c",
+      "htmlSha256": "26e2d068991a35cad288999385ef833c74e2faaccfe27b46a5e6dc765b4f73e3"
+    },
+    "AB": {
+      "commit": "22bfa7dbfeefe93df5922cd4d1c7a3f91b56fc21",
+      "htmlSha256": "641a26afb265fb05da3d3d4bf12e665f76c48cbfe3bc098168f4c45d6629ac6f"
+    }
+  },
+  "oldFilesUnmodified": true,
+  "thirdPartyAssets": false
+}

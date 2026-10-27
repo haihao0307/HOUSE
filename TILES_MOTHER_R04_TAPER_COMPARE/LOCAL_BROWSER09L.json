@@ -1,0 +1,18 @@
+{
+  "version": "09L-R04-small-end-direct-candidate",
+  "htmlSha256": "8b08bf7c8f0dc729ffe7acf6896dd5a3566f7fa5eabf104f93cf8ee738748e4e",
+  "browser": "Codex in-app browser, local test",
+  "observed": [
+    "两侧默认筒瓦函数求交完成",
+    "切换板瓦收分后两侧函数求交完成",
+    "小头宽度比例改为80%并完成",
+    "3x3排列模式生成九片",
+    "页面直接函数求交，无对象三角面或存储点阵"
+  ],
+  "limits": [
+    "仅本机桌面测试，非手机或各类浏览器测试",
+    "有限分辨率CPU预览，尚无09H同机位视觉验收",
+    "3x3是示意，不是屋面搭接验证"
+  ],
+  "pass": true
+}

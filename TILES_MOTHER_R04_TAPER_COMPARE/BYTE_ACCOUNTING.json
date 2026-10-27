@@ -1,0 +1,193 @@
+{
+  "scope": "Exact current included source/test/docs, excluding this accounting JSON, publication receipt and separately published HTML",
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 3854,
+      "sha256": "ccee606e280aad2460301a3f8ff837486bce4cbd076ca05a19c5e7218de1bfb2"
+    },
+    {
+      "path": "tile.glsl",
+      "bytes": 143,
+      "sha256": "517b08f6f0feb22dc211039b6301379296c438dd4fd0031b9776a4110f57dc1d"
+    },
+    {
+      "path": "tile.cjs",
+      "bytes": 238,
+      "sha256": "da08d0183a956a873a9362c3388cdfcb0937ff034a7e398837ed8056517dcabc"
+    },
+    {
+      "path": "parameters.cjs",
+      "bytes": 1185,
+      "sha256": "5b39eb9c6eec2a75f8784aec87683c1e68d5631e31164d7a71081b3cf9179092"
+    },
+    {
+      "path": "tlo.cjs",
+      "bytes": 1027,
+      "sha256": "eec6c21c218870e7570c48936263e05da3807ccb77f2eed949abdb9c93a7fc35"
+    },
+    {
+      "path": "arrange.cjs",
+      "bytes": 1220,
+      "sha256": "a867ee29efcdaa58f16792d05c4c3d1e8b373ca6a3bec90dd29e021219aa6082"
+    },
+    {
+      "path": "section.cjs",
+      "bytes": 598,
+      "sha256": "b435d4a595d6d8623af1aebc3762ac4a3b7f0760020daeeffb912db09c5ecd21"
+    },
+    {
+      "path": "route-a.cjs",
+      "bytes": 12641,
+      "sha256": "340f3c873afa1854617e5313fe9dba6db0261cf10cf8b6ee92daf5ceca5f7960"
+    },
+    {
+      "path": "route-b.cjs",
+      "bytes": 12515,
+      "sha256": "d163df21b7230d0548b68ad2c1ec171d4dae0a599d88edb0ad226ec687ba31da"
+    },
+    {
+      "path": "objects-route-a.cjs",
+      "bytes": 3930,
+      "sha256": "b127a57d6ee417410a46e321e5baee0c80e8ab7647e7887be59e3ab28b4ed624"
+    },
+    {
+      "path": "objects-route-b.cjs",
+      "bytes": 3930,
+      "sha256": "ddddb40671936f929a5a2d02bdcb6d623b513b4d281b578ed5743dc35903e5d2"
+    },
+    {
+      "path": "library.json",
+      "bytes": 4768,
+      "sha256": "e1d2932f5b97af8e660de20bee86749e0400148b6e56b9e3bf2e49a93830b8eb"
+    },
+    {
+      "path": "direct-ray.cjs",
+      "bytes": 4422,
+      "sha256": "9d41794ece7f3b8470dac325cd227b2af371e01672d782093278eee0dd5da7a8"
+    },
+    {
+      "path": "derive.cjs",
+      "bytes": 2575,
+      "sha256": "ad1387e5549bd3ce77ab4d0b2199645de7d54d6e1aef7c026784a44d30aff861"
+    },
+    {
+      "path": "verify.cjs",
+      "bytes": 6413,
+      "sha256": "54ab5d359b01b17f93d5a08739f19dd8966e5241455fafc0bfc3c7070f48d077"
+    },
+    {
+      "path": "verify-ray.cjs",
+      "bytes": 1998,
+      "sha256": "4d44821658bc0e37f33635a4c075483831073ba638eb73758a3022e3defad569"
+    },
+    {
+      "path": "build.cjs",
+      "bytes": 2583,
+      "sha256": "f7aedc47ad712e2c6e07249d0c11b51a5103a5eee321e4d53a81859ef2d5a413"
+    },
+    {
+      "path": "display.html",
+      "bytes": 6129,
+      "sha256": "1c1bba97ae483c89cda3b9dbc1b2e753631ac67ff1bb6f326f714c33ea8ae69f"
+    },
+    {
+      "path": "display-direct.js",
+      "bytes": 5975,
+      "sha256": "2a6b0451079ab2b37f60c61ce8a1d32a5d27baf5b6af57b118d9077b370c9dab"
+    },
+    {
+      "path": "worker.js",
+      "bytes": 1953,
+      "sha256": "cb899dba5618e18bd2611ce114edc568fd0736cdf681735e0badf52054f612ec"
+    },
+    {
+      "path": "COMPARE_VALIDATION.json",
+      "bytes": 3641,
+      "sha256": "6cd68d02346a9dfe8688955dab11a046a8a51f1cb7ebc3ed8b0f63958c80b7a9"
+    },
+    {
+      "path": "DIRECT_RAY_VALIDATION.json",
+      "bytes": 678,
+      "sha256": "b838d4f402fce016600289e9e92fa4dda09d7899d663cbcf8eba1af6dd4f4935"
+    },
+    {
+      "path": "BUILD.json",
+      "bytes": 545,
+      "sha256": "891877afc4e059a9521da9a1032e3a7972be06e23c75ca53988904379762b523"
+    },
+    {
+      "path": "LOCAL_BROWSER09L.json",
+      "bytes": 678,
+      "sha256": "2e7ccb26ac7288050cc5d49beb22097c104e30a2e926eb6ca9e0ba2c76d19fcc"
+    },
+    {
+      "path": "shape.f32le",
+      "bytes": 16,
+      "sha256": "4dada8a0c5b156162332d4d5c672815398d6c222e3277c1fb1728e9c5fb8167b"
+    },
+    {
+      "path": "flat.f32le",
+      "bytes": 16,
+      "sha256": "8225716c62ad465a9ee3f61f8769650a09bcadb9714111ee2611b293b36fc571"
+    },
+    {
+      "path": "pan.f32le",
+      "bytes": 16,
+      "sha256": "4dada8a0c5b156162332d4d5c672815398d6c222e3277c1fb1728e9c5fb8167b"
+    },
+    {
+      "path": "cover.f32le",
+      "bytes": 16,
+      "sha256": "9f702e1ac5173d9434b3a5018e9d1b14587c47aec9a610e7d2410b932369e269"
+    },
+    {
+      "path": "R04_SOURCE_MANIFEST.json",
+      "bytes": 4924,
+      "sha256": "3f7d184a2b08203b6a021717ba20d7aceedd5b679b1bd7963c1f911a8e732aee"
+    },
+    {
+      "path": "R04_SOURCE_ORIGIN.json",
+      "bytes": 832,
+      "sha256": "1b20da7ccb5c704eb80569a7675fedcee7fe9875574b7d5f24cff487d2235716"
+    },
+    {
+      "path": "MOTHER_OBJECT_DEFINITION_RULE_2026-09-09.md",
+      "bytes": 2405,
+      "sha256": "497f64e0ebae7e98b2a40638cff808ee646ec60759b2c2fd0d2d733bc436ace8"
+    },
+    {
+      "path": "MOTHER_PUBLIC_PREVIEW_DELIVERY_RULE_2026-09-08.md",
+      "bytes": 522,
+      "sha256": "8b96d6bbaac38b79cfd0f6aea8c5f9d7b9267bc2337cd5a3de72bba765fac4be"
+    },
+    {
+      "path": "baseline-r03/library.json",
+      "bytes": 4768,
+      "sha256": "e1d2932f5b97af8e660de20bee86749e0400148b6e56b9e3bf2e49a93830b8eb"
+    },
+    {
+      "path": "baseline-r03/mother.cjs",
+      "bytes": 12419,
+      "sha256": "ded57952b478b399f549dcb2767e13ee31fc3e5538b00d2890260c716f8cc4d5"
+    },
+    {
+      "path": "baseline-r03/object-system.cjs",
+      "bytes": 3928,
+      "sha256": "2782a392ced6741b2091f62f5788b5dd34535c80de667a0d3c83b9b20d0056f1"
+    },
+    {
+      "path": "baseline-r03/OBJECTS.json",
+      "bytes": 3022,
+      "sha256": "01f4d0c48cba5591778cfb99d0682d7cca03e060be48bcc6d3ffe558d90dccd6"
+    }
+  ],
+  "packagedSourceBytes": 116523,
+  "publicHtmlBytes": 61311,
+  "publicHtmlSha256": "8b08bf7c8f0dc729ffe7acf6896dd5a3566f7fa5eabf104f93cf8ee738748e4e",
+  "notes": [
+    "Runtime language/environment excluded, includes documentation and validation materials in source total",
+    "GLSL and JS R04 shape functions are alternative backends; do not sum as one execution closure",
+    "The browser preview contains both candidate evaluators, shared library and direct CPU renderer; no object mesh"
+  ]
+}
