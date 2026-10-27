@@ -1,0 +1,93 @@
+{
+  "count": 10000,
+  "repetitions": 3,
+  "medianHeapDeltaBytes": {
+    "records": 7143976,
+    "A": 17753560,
+    "B": 17667384
+  },
+  "runs": [
+    {
+      "mode": "records",
+      "count": 10000,
+      "heapDeltaBytes": 7143976,
+      "rssDeltaBytes": 14155776,
+      "heapBytesPerEntry": 714.3976,
+      "checksum": 21.359999999999978,
+      "warning": "GC-after live heap increment, not peak allocation, not serialized storage; allocator/JIT dependent. Cached evaluators retain closures and cloned source records."
+    },
+    {
+      "mode": "A",
+      "count": 10000,
+      "heapDeltaBytes": 17753560,
+      "rssDeltaBytes": 48496640,
+      "heapBytesPerEntry": 1775.356,
+      "checksum": 1.9383634586886005,
+      "warning": "GC-after live heap increment, not peak allocation, not serialized storage; allocator/JIT dependent. Cached evaluators retain closures and cloned source records."
+    },
+    {
+      "mode": "B",
+      "count": 10000,
+      "heapDeltaBytes": 17667384,
+      "rssDeltaBytes": 49213440,
+      "heapBytesPerEntry": 1766.7384,
+      "checksum": 1.9383634586886005,
+      "warning": "GC-after live heap increment, not peak allocation, not serialized storage; allocator/JIT dependent. Cached evaluators retain closures and cloned source records."
+    },
+    {
+      "mode": "records",
+      "count": 10000,
+      "heapDeltaBytes": 7143976,
+      "rssDeltaBytes": 14286848,
+      "heapBytesPerEntry": 714.3976,
+      "checksum": 21.359999999999978,
+      "warning": "GC-after live heap increment, not peak allocation, not serialized storage; allocator/JIT dependent. Cached evaluators retain closures and cloned source records."
+    },
+    {
+      "mode": "A",
+      "count": 10000,
+      "heapDeltaBytes": 17745672,
+      "rssDeltaBytes": 47374336,
+      "heapBytesPerEntry": 1774.5672,
+      "checksum": 1.9383634586886005,
+      "warning": "GC-after live heap increment, not peak allocation, not serialized storage; allocator/JIT dependent. Cached evaluators retain closures and cloned source records."
+    },
+    {
+      "mode": "B",
+      "count": 10000,
+      "heapDeltaBytes": 17665584,
+      "rssDeltaBytes": 47300608,
+      "heapBytesPerEntry": 1766.5584,
+      "checksum": 1.9383634586886005,
+      "warning": "GC-after live heap increment, not peak allocation, not serialized storage; allocator/JIT dependent. Cached evaluators retain closures and cloned source records."
+    },
+    {
+      "mode": "records",
+      "count": 10000,
+      "heapDeltaBytes": 7144496,
+      "rssDeltaBytes": 14548992,
+      "heapBytesPerEntry": 714.4496,
+      "checksum": 21.359999999999978,
+      "warning": "GC-after live heap increment, not peak allocation, not serialized storage; allocator/JIT dependent. Cached evaluators retain closures and cloned source records."
+    },
+    {
+      "mode": "A",
+      "count": 10000,
+      "heapDeltaBytes": 17769768,
+      "rssDeltaBytes": 47988736,
+      "heapBytesPerEntry": 1776.9768,
+      "checksum": 1.9383634586886005,
+      "warning": "GC-after live heap increment, not peak allocation, not serialized storage; allocator/JIT dependent. Cached evaluators retain closures and cloned source records."
+    },
+    {
+      "mode": "B",
+      "count": 10000,
+      "heapDeltaBytes": 17673144,
+      "rssDeltaBytes": 48758784,
+      "heapBytesPerEntry": 1767.3144,
+      "checksum": 1.9383634586886005,
+      "warning": "GC-after live heap increment, not peak allocation, not serialized storage; allocator/JIT dependent. Cached evaluators retain closures and cloned source records."
+    }
+  ],
+  "interpretation": "Source rules are shared on disk, but current create() caches closures per active evaluator. Store compact records and instantiate/cache only active items at large N. This comparison does not allocate 100 million records and does not measure rendering or GPU memory."
+}

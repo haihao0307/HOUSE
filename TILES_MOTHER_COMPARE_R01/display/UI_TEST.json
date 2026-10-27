@@ -1,0 +1,22 @@
+{
+  "pass": true,
+  "scope": "Real UI source plus real A/B TLO factories and boundary compiler, DOM and display stubs; not browser acceptance.",
+  "checks": [
+    "Initial TLO identity differs while parameters match",
+    "Each panel receives its own source-compiled descriptor",
+    "Bend triggers both real core chains",
+    "Invalid dimension rolls back and valid replacement recovers",
+    "Wave controls reach both real TLO material chains and workers",
+    "Edge controls reach independent compiled domains",
+    "Perturbing only B evaluator makes compiler reject; no hidden preset bypass",
+    "Reset restores complete default comparison"
+  ],
+  "coreCreateCalls": [
+    8,
+    7
+  ],
+  "renderCounts": [
+    6,
+    6
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "htmlBytes": 36337,
+  "htmlSHA256": "641a26afb265fb05da3d3d4bf12e665f76c48cbfe3bc098168f4c45d6629ac6f",
+  "sourceBytes": {
+    "boundaryCompiler": 1099,
+    "analyticRayAndCPU": 5506,
+    "uiAndTemplate": 13879
+  },
+  "notes": [
+    "Full single HTML embeds both actual cores, shared TLO/material once, evaluator-to-boundary compiler, independent CPU Workers, UI and all measurement data.",
+    "Worker material source is derived from the same self-contained create function; no second persistent material source string.",
+    "CPU-only comparison view; no object mesh, no texture files, no hardware GPU claim."
+  ]
+}

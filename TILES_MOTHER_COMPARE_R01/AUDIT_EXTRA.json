@@ -1,0 +1,65 @@
+{
+  "scope": "Independent double-precision boundary/extreme-domain audit plus one original pan-L9 normal-rule counterexample; no browser, GPU, mobile or general sweep claim.",
+  "samples": 24975,
+  "acceptedConfigurations": 555,
+  "rejectedConfigurations": 120,
+  "maxAB": 1.7763568394002505e-15,
+  "maxOriginal09J": 1.831026719408895e-15,
+  "maxNormalUnitError": 2.220446049250313e-16,
+  "compilerSourceCalls": [
+    33
+  ],
+  "issues": [],
+  "instanceMutationIsolation": true,
+  "naiveVariableSectionCounterexample": {
+    "samples": 10201,
+    "maxPositionErrorM": 0.0003280746956610411,
+    "maxAxialErrorM": 0.00032805217469310255,
+    "at": [
+      -1,
+      1,
+      1
+    ],
+    "scope": "Bottom face: naive cross-section-only radial thickness versus original complete surface-normal thickness."
+  },
+  "files": {
+    "a-constant.cjs": {
+      "bytes": 776,
+      "sha256": "8e1f5f80f35987174eee86a93dbd584cbed10275fadccc663459bb0108d64768"
+    },
+    "b-constant-path-section.cjs": {
+      "bytes": 765,
+      "sha256": "23cf57f9762ea8ea246750e35c7039ea7bfb8ddf54210f9a689287446a494823"
+    },
+    "contract.cjs": {
+      "bytes": 1045,
+      "sha256": "22aa7db15e5f603a3a348b2a8d91dcc71a25df0cdea787be6769c5a53ce7a481"
+    },
+    "material.cjs": {
+      "bytes": 821,
+      "sha256": "5b0ed1c8cf7873f00a9cdbd6a1ef9ca8a68ab711a431fedcddef82e37c369c08"
+    },
+    "tlo-factory.cjs": {
+      "bytes": 1240,
+      "sha256": "ea82c860a2aa9646bbcddf5f39d54ab876e43ae1f5d12687c4f91959da290b40"
+    },
+    "compile-boundary.cjs": {
+      "bytes": 1099,
+      "sha256": "3d1c673955b8b9be80026da1a3265fcbeb055431c440a0498a4fae78e2ace604"
+    },
+    "../TILES_MOTHER_R03/shape.cjs": {
+      "bytes": 1117,
+      "sha256": "f5356e2f76d14b97b6f596433d8fb6ad5f3be7fd5d023f98a340491bb3d0381c"
+    },
+    "../TILES_MOTHER_R02/mother.cjs": {
+      "bytes": 10984,
+      "sha256": "a8e35319c33a3d645e32fa97f5352f6242779ff9563e0d0563e2f47e3a9a9b93"
+    },
+    "../TILES_MOTHER_R02/library.json": {
+      "bytes": 2091,
+      "sha256": "19ec2cb9481d93357ed43aefb48cfbb47117fdb6051937428f9282e649df4b42"
+    }
+  },
+  "compilerWarning": "The 27 fit-grid points are a known-family regression guard, not proof that an arbitrary evaluator belongs to the supported family. sourceCalls counts API entries, not every nested mathematical function.",
+  "pass": true
+}

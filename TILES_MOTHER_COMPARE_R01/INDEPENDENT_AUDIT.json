@@ -1,0 +1,80 @@
+{
+  "scope": "Independent additional double-precision boundary/extreme-domain audit; no browser or GPU claim",
+  "samples": 24975,
+  "acceptedConfigurations": 555,
+  "rejectedConfigurations": 120,
+  "maxAB": 1.7763568394002505e-15,
+  "maxOriginal09J": 1.831026719408895e-15,
+  "maxNormalUnitError": 2.220446049250313e-16,
+  "compilerSourceCalls": [
+    33
+  ],
+  "issues": [],
+  "instanceMutationIsolation": true,
+  "pass": true,
+  "files": {
+    "a-constant.cjs": {
+      "bytes": 776,
+      "sha256": "8e1f5f80f35987174eee86a93dbd584cbed10275fadccc663459bb0108d64768"
+    },
+    "b-constant-path-section.cjs": {
+      "bytes": 765,
+      "sha256": "23cf57f9762ea8ea246750e35c7039ea7bfb8ddf54210f9a689287446a494823"
+    },
+    "contract.cjs": {
+      "bytes": 1045,
+      "sha256": "22aa7db15e5f603a3a348b2a8d91dcc71a25df0cdea787be6769c5a53ce7a481"
+    },
+    "material.cjs": {
+      "bytes": 821,
+      "sha256": "5b0ed1c8cf7873f00a9cdbd6a1ef9ca8a68ab711a431fedcddef82e37c369c08"
+    },
+    "tlo-factory.cjs": {
+      "bytes": 1240,
+      "sha256": "ea82c860a2aa9646bbcddf5f39d54ab876e43ae1f5d12687c4f91959da290b40"
+    },
+    "compile-boundary.cjs": {
+      "bytes": 1099,
+      "sha256": "3d1c673955b8b9be80026da1a3265fcbeb055431c440a0498a4fae78e2ace604"
+    }
+  },
+  "reproduced": {
+    "mainEquivalenceSamples": 19800,
+    "rayChecks": 43200,
+    "uiChecks": 8,
+    "workerChecks": 5,
+    "variableSamples": 5000,
+    "variableABErrorM": 0,
+    "variableR02ErrorM": 1.5515838457795457e-17,
+    "byteCounts": {
+      "shapeA": 1821,
+      "shapeB": 1810,
+      "material": 821,
+      "tlo": 1240,
+      "totalA": 3882,
+      "totalB": 3871,
+      "fullRecordJSONEach": 236,
+      "numericFloat64Payload": 72
+    }
+  },
+  "fairnessNotes": [
+    "B is an actual angle/sine/cosine construction, not a wrapper around A. Material rule, coordinate chart, validation and TLO envelope are shared and fully counted.",
+    "11B textual source difference is not meaningful evidence of representation compression. Instance numerical information and compact TLO bytes are equal.",
+    "Current A position rechecks domain through normal and repeats sqrt/hypot work; B section does not call its public normal validator. Local timings compare current implementations, not intrinsic superiority.",
+    "The current A is a factored comparison implementation, not the original fused 09J evaluator. A secondary original09J baseline was faster in this environment, but its older domain contract has no asymmetric edges, so it is not a feature-equal contest.",
+    "Both displays use a common analytic compiled boundary. Display frame time cannot establish A-vs-B shape-evaluator speed.",
+    "Compiler fit checks 27 grid samples; sourceCalls=33 API entries. This is a known-family regression guard, not proof that arbitrary input functions belong to the family.",
+    "Variable pan-L9 requires full surface-normal thickness; naive cross-section-only normal differs from R02 by up to0.328075mm in a10201-point bottom-face probe.",
+    "No GPU, mobile, arbitrary curved spine, or generalized sweep equivalence claim."
+  ],
+  "naiveVariableSectionCounterexample": {
+    "samples": 10201,
+    "maxPositionErrorM": 0.0003280746956610411,
+    "maxAxialErrorM": 0.00032805217469310255,
+    "at": [
+      -1,
+      1,
+      1
+    ]
+  }
+}

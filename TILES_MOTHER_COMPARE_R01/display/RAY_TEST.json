@@ -1,0 +1,7 @@
+{
+  "pass": true,
+  "checks": 43200,
+  "independentBoundaryHitMaxErrorM": 8.968520370800093e-16,
+  "materialAddressMaxError": 2.2232198742534223e-15,
+  "scope": "Actual edge-trimmed analytic ray and inverse material chart versus independent parametric boundaries. No browser/GPU claim."
+}

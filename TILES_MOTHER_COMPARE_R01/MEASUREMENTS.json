@@ -1,0 +1,277 @@
+{
+  "scope": "Local same-shape, same-wave-material comparison. Not a universal noise system, not an arbitrary-spine sweep engine.",
+  "files": {
+    "a-constant.cjs": {
+      "bytes": 776,
+      "sha256": "8e1f5f80f35987174eee86a93dbd584cbed10275fadccc663459bb0108d64768"
+    },
+    "contract.cjs": {
+      "bytes": 1045,
+      "sha256": "22aa7db15e5f603a3a348b2a8d91dcc71a25df0cdea787be6769c5a53ce7a481"
+    },
+    "b-constant-path-section.cjs": {
+      "bytes": 765,
+      "sha256": "23cf57f9762ea8ea246750e35c7039ea7bfb8ddf54210f9a689287446a494823"
+    },
+    "material.cjs": {
+      "bytes": 821,
+      "sha256": "5b0ed1c8cf7873f00a9cdbd6a1ef9ca8a68ab711a431fedcddef82e37c369c08"
+    },
+    "tlo-factory.cjs": {
+      "bytes": 1240,
+      "sha256": "ea82c860a2aa9646bbcddf5f39d54ab876e43ae1f5d12687c4f91959da290b40"
+    }
+  },
+  "closureBytes": {
+    "A": 1821,
+    "B": 1810,
+    "material": 821,
+    "tlo": 1240
+  },
+  "equivalence": {
+    "samples": 19800,
+    "maxPositionErrorM": 1.3322676295501878e-15,
+    "maxNormalError": 8.617648093045562e-16,
+    "maxMaterialCoordinateErrorM": 0,
+    "maxMaterialColorError": 0,
+    "maxCompiledSizeErrorM": 0,
+    "maxCompiledBendError": 8.881784197001252e-16,
+    "maxCompiledFitErrorM": 3.1086244689504383e-15
+  },
+  "bench": {
+    "environment": {
+      "node": "v24.22.1",
+      "platform": "linux",
+      "arch": "x64",
+      "cpu": "AMD EPYC 9V74 80-Core Processor"
+    },
+    "countPerTrial": 120000,
+    "trialsPerMode": 7,
+    "order": "Alternating A/B order, 3 full warmup rounds",
+    "shape": {
+      "A": {
+        "medianMs": 10.122822,
+        "minMs": 9.363189,
+        "maxMs": 10.599259,
+        "callsPerSecond": 11854401.865408678,
+        "checksum": 938.130501741987
+      },
+      "B": {
+        "medianMs": 9.744733,
+        "minMs": 9.374776,
+        "maxMs": 10.683455,
+        "callsPerSecond": 12314344.579784792,
+        "checksum": 938.130501741987
+      }
+    },
+    "shapeAndMaterial": {
+      "A": {
+        "medianMs": 20.352384,
+        "minMs": 19.666963,
+        "maxMs": 20.993759,
+        "callsPerSecond": 5896115.167638346,
+        "checksum": 139912.86991829198
+      },
+      "B": {
+        "medianMs": 20.189669,
+        "minMs": 19.635875,
+        "maxMs": 21.327772,
+        "callsPerSecond": 5943633.845606879,
+        "checksum": 139912.86991829198
+      }
+    },
+    "trials": {
+      "shape": {
+        "A": [
+          {
+            "ms": 10.499138,
+            "checksum": 938.130501741987
+          },
+          {
+            "ms": 9.791964,
+            "checksum": 938.130501741987
+          },
+          {
+            "ms": 10.122822,
+            "checksum": 938.130501741987
+          },
+          {
+            "ms": 10.173198,
+            "checksum": 938.130501741987
+          },
+          {
+            "ms": 10.028009,
+            "checksum": 938.130501741987
+          },
+          {
+            "ms": 10.599259,
+            "checksum": 938.130501741987
+          },
+          {
+            "ms": 9.363189,
+            "checksum": 938.130501741987
+          }
+        ],
+        "B": [
+          {
+            "ms": 10.602183,
+            "checksum": 938.130501741987
+          },
+          {
+            "ms": 9.866165,
+            "checksum": 938.130501741987
+          },
+          {
+            "ms": 10.683455,
+            "checksum": 938.130501741987
+          },
+          {
+            "ms": 9.374776,
+            "checksum": 938.130501741987
+          },
+          {
+            "ms": 9.744221,
+            "checksum": 938.130501741987
+          },
+          {
+            "ms": 9.706675,
+            "checksum": 938.130501741987
+          },
+          {
+            "ms": 9.744733,
+            "checksum": 938.130501741987
+          }
+        ]
+      },
+      "shapeAndMaterial": {
+        "A": [
+          {
+            "ms": 20.993759,
+            "checksum": 139912.86991829198
+          },
+          {
+            "ms": 20.545865,
+            "checksum": 139912.86991829198
+          },
+          {
+            "ms": 20.637924,
+            "checksum": 139912.86991829198
+          },
+          {
+            "ms": 20.352384,
+            "checksum": 139912.86991829198
+          },
+          {
+            "ms": 20.094395,
+            "checksum": 139912.86991829198
+          },
+          {
+            "ms": 20.05694,
+            "checksum": 139912.86991829198
+          },
+          {
+            "ms": 19.666963,
+            "checksum": 139912.86991829198
+          }
+        ],
+        "B": [
+          {
+            "ms": 21.327772,
+            "checksum": 139912.86991829198
+          },
+          {
+            "ms": 19.724378,
+            "checksum": 139912.86991829198
+          },
+          {
+            "ms": 19.635875,
+            "checksum": 139912.86991829198
+          },
+          {
+            "ms": 21.308253,
+            "checksum": 139912.86991829198
+          },
+          {
+            "ms": 20.189669,
+            "checksum": 139912.86991829198
+          },
+          {
+            "ms": 20.911956,
+            "checksum": 139912.86991829198
+          },
+          {
+            "ms": 19.932743,
+            "checksum": 139912.86991829198
+          }
+        ]
+      }
+    },
+    "warning": "This local JS implementation/CPU only. Arrays, call factoring and math choice affect results; not proof of inherently faster representation. Shared analytic renderer timings are not A/B evaluator timings."
+  },
+  "variableDiagnostic": {
+    "case": "Original R02 pan-L9 zero-detail shape; width .21→.19m, rise .045→.0423m, thickness .014m, longitudinalNormal=1",
+    "samples": 5000,
+    "maxABErrorM": 0,
+    "maxR02ErrorM": 1.5515838457795457e-17,
+    "bytes": {
+      "A": 1908,
+      "B": 2019
+    },
+    "warning": "One diagnostic only; full-surface finite-difference normals retained in both. This variable profile is not compiled by the constant-profile display."
+  },
+  "storage": {
+    "shapeJSONBytes": 58,
+    "materialJSONBytes": 44,
+    "shapePlusMaterialJSONBytes": 124,
+    "numericPayload": {
+      "encoding": "Actual 9 little-endian IEEE754 float64 values, same numeric precision for A/B; excludes names, Time, site, identity and mother reference",
+      "bytes": 72,
+      "sha256": "038686f1d23c9993e989b3d535d5c9c7d80fa62fac720f446be1dc0564e607a0"
+    },
+    "fullTLOJSONBytes": {
+      "A": 236,
+      "B": 236
+    },
+    "fullTLOFileNames": [
+      "instance-A.json",
+      "instance-B.json"
+    ],
+    "sharedShapeAndMaterialBytes": {
+      "A": 2642,
+      "B": 2631
+    },
+    "completeTLOClosureBytes": {
+      "A": 3882,
+      "B": 3871
+    },
+    "scaleModel": [
+      {
+        "instances": 1,
+        "A": 4118,
+        "B": 4107,
+        "note": "Uncompressed source once + fixed-width unique-id compact JSON records with identical shown parameter values. Not RAM/GPU memory, not compressed asset size."
+      },
+      {
+        "instances": 1000,
+        "A": 239882,
+        "B": 239871,
+        "note": "Uncompressed source once + fixed-width unique-id compact JSON records with identical shown parameter values. Not RAM/GPU memory, not compressed asset size."
+      },
+      {
+        "instances": 10000,
+        "A": 2363882,
+        "B": 2363871,
+        "note": "Uncompressed source once + fixed-width unique-id compact JSON records with identical shown parameter values. Not RAM/GPU memory, not compressed asset size."
+      },
+      {
+        "instances": 100000000,
+        "A": 23600003882,
+        "B": 23600003871,
+        "note": "Uncompressed source once + fixed-width unique-id compact JSON records with identical shown parameter values. Not RAM/GPU memory, not compressed asset size."
+      }
+    ],
+    "sharingAssumption": "Scale rows assume each instance independently stores this full value record. Identical geometry/material parameter groups can also be shared by reference, leaving identity, placement/state and necessary differences per instance. That optimization applies equally to A/B; it is not implemented as a new scene engine here."
+  },
+  "TLOChecks": "Both complete typed records validated; Location is metadata only; unknown object payload rejected.",
+  "pass": true
+}
