@@ -1,0 +1,38 @@
+{
+  "raySHA256": "273a9ef47f296ce5f82b1ccb2db48a19b1a32e791a0eb9d3fd15e476773cd3e0",
+  "shaderSHA256": "320348f7ed11eb6e55f3d8e8038b49bf708e0942b17d7de1be63604201ba698a",
+  "tests": 136495,
+  "failures": [],
+  "maxDistanceError": 1.8110513089197866e-15,
+  "maxNormalError": 4.47545209131181e-16,
+  "malformed": [
+    {
+      "size": [
+        1,
+        1e-200,
+        0.01
+      ],
+      "accepted": false,
+      "error": "Size must be 0.1–10000 mm; bend must be in [-1,1]"
+    },
+    {
+      "size": [
+        1e+100,
+        1e+100,
+        1e+99
+      ],
+      "accepted": false,
+      "error": "Size must be 0.1–10000 mm; bend must be in [-1,1]"
+    },
+    {
+      "size": [
+        1e-10,
+        1e-10,
+        1e-12
+      ],
+      "accepted": false,
+      "error": "Size must be 0.1–10000 mm; bend must be in [-1,1]"
+    }
+  ],
+  "note": "Actual shipped ray.cjs CPU intersection function versus independent shape boundary/normal expectations; GPU separate."
+}

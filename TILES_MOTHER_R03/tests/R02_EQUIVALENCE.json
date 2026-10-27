@@ -1,0 +1,927 @@
+{
+  "scope": "R02 zero form/hand/edge/wave configuration versus analytic specialization. R02 uses finite-difference normals; new core uses exact circular-arc normals. This is measured fidelity, not bit-identical thickness positions.",
+  "samples": 27000,
+  "baselineMaxPositionDifferenceM": 1.7765422911027688e-7,
+  "allMaxPositionDifferenceM": 4.229862629448129e-7,
+  "pass": true,
+  "rows": [
+    {
+      "size": [
+        0.24,
+        0.21,
+        0.014
+      ],
+      "bend": -1,
+      "samples": 500,
+      "maxPositionDifferenceM": 5.92180764129524e-8,
+      "maxTopSurfaceDifferenceM": 7.076311083754596e-17,
+      "maxMaterialPointDifferenceM": 8.673617379884035e-19,
+      "worstAt": [
+        -1,
+        0.19595949272000013,
+        0.9948452233599951
+      ]
+    },
+    {
+      "size": [
+        0.24,
+        0.21,
+        0.014
+      ],
+      "bend": -0.9,
+      "samples": 500,
+      "maxPositionDifferenceM": 7.2795551838206865e-9,
+      "maxTopSurfaceDifferenceM": 7.076311083754596e-17,
+      "maxMaterialPointDifferenceM": 8.673617379884035e-19,
+      "worstAt": [
+        -1,
+        0.19595949272000013,
+        0.9948452233599951
+      ]
+    },
+    {
+      "size": [
+        0.24,
+        0.21,
+        0.014
+      ],
+      "bend": -0.45,
+      "samples": 500,
+      "maxPositionDifferenceM": 6.334944969982841e-11,
+      "maxTopSurfaceDifferenceM": 2.501853776554201e-17,
+      "maxMaterialPointDifferenceM": 8.673617379884035e-19,
+      "worstAt": [
+        -1,
+        0.19595949272000013,
+        0.9948452233599951
+      ]
+    },
+    {
+      "size": [
+        0.24,
+        0.21,
+        0.014
+      ],
+      "bend": -1e-8,
+      "samples": 500,
+      "maxPositionDifferenceM": 2.7809732887839817e-17,
+      "maxTopSurfaceDifferenceM": 1.3877787807814457e-17,
+      "maxMaterialPointDifferenceM": 8.673617379884035e-19,
+      "worstAt": [
+        0.8536488624009735,
+        0.03571337315000278,
+        1
+      ]
+    },
+    {
+      "size": [
+        0.24,
+        0.21,
+        0.014
+      ],
+      "bend": 0,
+      "samples": 500,
+      "maxPositionDifferenceM": 1.3877787807814457e-17,
+      "maxTopSurfaceDifferenceM": 1.3877787807814457e-17,
+      "maxMaterialPointDifferenceM": 8.673617379884035e-19,
+      "worstAt": [
+        -1,
+        0,
+        0
+      ]
+    },
+    {
+      "size": [
+        0.24,
+        0.21,
+        0.014
+      ],
+      "bend": 1e-8,
+      "samples": 500,
+      "maxPositionDifferenceM": 2.7769124835677133e-17,
+      "maxTopSurfaceDifferenceM": 1.3877787807814457e-17,
+      "maxMaterialPointDifferenceM": 8.673617379884035e-19,
+      "worstAt": [
+        1,
+        0.30865786486000246,
+        0.09996298967999451
+      ]
+    },
+    {
+      "size": [
+        0.24,
+        0.21,
+        0.014
+      ],
+      "bend": 0.45,
+      "samples": 500,
+      "maxPositionDifferenceM": 6.334941045240369e-11,
+      "maxTopSurfaceDifferenceM": 2.501853776554201e-17,
+      "maxMaterialPointDifferenceM": 8.673617379884035e-19,
+      "worstAt": [
+        -1,
+        0.19595949272000013,
+        0.9948452233599951
+      ]
+    },
+    {
+      "size": [
+        0.24,
+        0.21,
+        0.014
+      ],
+      "bend": 0.9,
+      "samples": 500,
+      "maxPositionDifferenceM": 7.279555072336654e-9,
+      "maxTopSurfaceDifferenceM": 7.076311083754596e-17,
+      "maxMaterialPointDifferenceM": 8.673617379884035e-19,
+      "worstAt": [
+        -1,
+        0.19595949272000013,
+        0.9948452233599951
+      ]
+    },
+    {
+      "size": [
+        0.24,
+        0.21,
+        0.014
+      ],
+      "bend": 1,
+      "samples": 500,
+      "maxPositionDifferenceM": 5.92180762720277e-8,
+      "maxTopSurfaceDifferenceM": 7.076311083754596e-17,
+      "maxMaterialPointDifferenceM": 8.673617379884035e-19,
+      "worstAt": [
+        -1,
+        0.19595949272000013,
+        0.9948452233599951
+      ]
+    },
+    {
+      "size": [
+        0.12,
+        0.16,
+        0.02
+      ],
+      "bend": -1,
+      "samples": 500,
+      "maxPositionDifferenceM": 8.459725221805006e-8,
+      "maxTopSurfaceDifferenceM": 1.5515838457795457e-17,
+      "maxMaterialPointDifferenceM": 1.734723475976807e-18,
+      "worstAt": [
+        -1,
+        0.19595949272000013,
+        0.9948452233599951
+      ]
+    },
+    {
+      "size": [
+        0.12,
+        0.16,
+        0.02
+      ],
+      "bend": -0.9,
+      "samples": 500,
+      "maxPositionDifferenceM": 1.0399364559896861e-8,
+      "maxTopSurfaceDifferenceM": 1.5515838457795457e-17,
+      "maxMaterialPointDifferenceM": 1.734723475976807e-18,
+      "worstAt": [
+        -1,
+        0.19595949272000013,
+        0.9948452233599951
+      ]
+    },
+    {
+      "size": [
+        0.12,
+        0.16,
+        0.02
+      ],
+      "bend": -0.45,
+      "samples": 500,
+      "maxPositionDifferenceM": 9.049567013586805e-11,
+      "maxTopSurfaceDifferenceM": 9.813077866773595e-18,
+      "maxMaterialPointDifferenceM": 1.734723475976807e-18,
+      "worstAt": [
+        -1,
+        0.19595949272000013,
+        0.9948452233599951
+      ]
+    },
+    {
+      "size": [
+        0.12,
+        0.16,
+        0.02
+      ],
+      "bend": -1e-8,
+      "samples": 500,
+      "maxPositionDifferenceM": 1.4304896245381992e-17,
+      "maxTopSurfaceDifferenceM": 6.938893903907228e-18,
+      "maxMaterialPointDifferenceM": 1.734723475976807e-18,
+      "worstAt": [
+        1,
+        0.4091629282699998,
+        0.9756073367599996
+      ]
+    },
+    {
+      "size": [
+        0.12,
+        0.16,
+        0.02
+      ],
+      "bend": 0,
+      "samples": 500,
+      "maxPositionDifferenceM": 7.757919228897728e-18,
+      "maxTopSurfaceDifferenceM": 6.938893903907228e-18,
+      "maxMaterialPointDifferenceM": 1.734723475976807e-18,
+      "worstAt": [
+        0.7120426899527956,
+        0.7544007193200031,
+        1
+      ]
+    },
+    {
+      "size": [
+        0.12,
+        0.16,
+        0.02
+      ],
+      "bend": 1e-8,
+      "samples": 500,
+      "maxPositionDifferenceM": 1.4821483875836085e-17,
+      "maxTopSurfaceDifferenceM": 6.938893903907228e-18,
+      "maxMaterialPointDifferenceM": 1.734723475976807e-18,
+      "worstAt": [
+        -0.8196601125009995,
+        0.07106781184999988,
+        1
+      ]
+    },
+    {
+      "size": [
+        0.12,
+        0.16,
+        0.02
+      ],
+      "bend": 0.45,
+      "samples": 500,
+      "maxPositionDifferenceM": 9.049567285980361e-11,
+      "maxTopSurfaceDifferenceM": 9.813077866773595e-18,
+      "maxMaterialPointDifferenceM": 1.734723475976807e-18,
+      "worstAt": [
+        -1,
+        0.19595949272000013,
+        0.9948452233599951
+      ]
+    },
+    {
+      "size": [
+        0.12,
+        0.16,
+        0.02
+      ],
+      "bend": 0.9,
+      "samples": 500,
+      "maxPositionDifferenceM": 1.0399364573472137e-8,
+      "maxTopSurfaceDifferenceM": 1.5515838457795457e-17,
+      "maxMaterialPointDifferenceM": 1.734723475976807e-18,
+      "worstAt": [
+        -1,
+        0.19595949272000013,
+        0.9948452233599951
+      ]
+    },
+    {
+      "size": [
+        0.12,
+        0.16,
+        0.02
+      ],
+      "bend": 1,
+      "samples": 500,
+      "maxPositionDifferenceM": 8.459725221805006e-8,
+      "maxTopSurfaceDifferenceM": 1.5515838457795457e-17,
+      "maxMaterialPointDifferenceM": 1.734723475976807e-18,
+      "worstAt": [
+        -1,
+        0.19595949272000013,
+        0.9948452233599951
+      ]
+    },
+    {
+      "size": [
+        0.48,
+        0.1,
+        0.006
+      ],
+      "bend": -1,
+      "samples": 500,
+      "maxPositionDifferenceM": 2.537917566708648e-8,
+      "maxTopSurfaceDifferenceM": 7.664258822861523e-17,
+      "maxMaterialPointDifferenceM": 4.336808689942018e-19,
+      "worstAt": [
+        -1,
+        0.19595949272000013,
+        0.9948452233599951
+      ]
+    },
+    {
+      "size": [
+        0.48,
+        0.1,
+        0.006
+      ],
+      "bend": -0.9,
+      "samples": 500,
+      "maxPositionDifferenceM": 3.1198092656161624e-9,
+      "maxTopSurfaceDifferenceM": 4.2207643840401616e-17,
+      "maxMaterialPointDifferenceM": 4.336808689942018e-19,
+      "worstAt": [
+        -1,
+        0.19595949272000013,
+        0.9948452233599951
+      ]
+    },
+    {
+      "size": [
+        0.48,
+        0.1,
+        0.006
+      ],
+      "bend": -0.45,
+      "samples": 500,
+      "maxPositionDifferenceM": 2.7150865096989195e-11,
+      "maxTopSurfaceDifferenceM": 9.813077866773595e-18,
+      "maxMaterialPointDifferenceM": 4.336808689942018e-19,
+      "worstAt": [
+        -1,
+        0.19595949272000013,
+        0.9948452233599951
+      ]
+    },
+    {
+      "size": [
+        0.48,
+        0.1,
+        0.006
+      ],
+      "bend": -1e-8,
+      "samples": 500,
+      "maxPositionDifferenceM": 1.3884562417838567e-17,
+      "maxTopSurfaceDifferenceM": 6.938893903907228e-18,
+      "maxMaterialPointDifferenceM": 4.336808689942018e-19,
+      "worstAt": [
+        -1,
+        0.6833329074700032,
+        0.10373654635998264
+      ]
+    },
+    {
+      "size": [
+        0.48,
+        0.1,
+        0.006
+      ],
+      "bend": 0,
+      "samples": 500,
+      "maxPositionDifferenceM": 6.938893903907228e-18,
+      "maxTopSurfaceDifferenceM": 6.938893903907228e-18,
+      "maxMaterialPointDifferenceM": 4.336808689942018e-19,
+      "worstAt": [
+        -1,
+        0,
+        0
+      ]
+    },
+    {
+      "size": [
+        0.48,
+        0.1,
+        0.006
+      ],
+      "bend": 1e-8,
+      "samples": 500,
+      "maxPositionDifferenceM": 1.3884562417838567e-17,
+      "maxTopSurfaceDifferenceM": 6.938893903907228e-18,
+      "maxMaterialPointDifferenceM": 4.336808689942018e-19,
+      "worstAt": [
+        1,
+        0.30865786486000246,
+        0.09996298967999451
+      ]
+    },
+    {
+      "size": [
+        0.48,
+        0.1,
+        0.006
+      ],
+      "bend": 0.45,
+      "samples": 500,
+      "maxPositionDifferenceM": 2.7150874908845377e-11,
+      "maxTopSurfaceDifferenceM": 9.813077866773595e-18,
+      "maxMaterialPointDifferenceM": 4.336808689942018e-19,
+      "worstAt": [
+        -1,
+        0.19595949272000013,
+        0.9948452233599951
+      ]
+    },
+    {
+      "size": [
+        0.48,
+        0.1,
+        0.006
+      ],
+      "bend": 0.9,
+      "samples": 500,
+      "maxPositionDifferenceM": 3.119809349949639e-9,
+      "maxTopSurfaceDifferenceM": 4.2207643840401616e-17,
+      "maxMaterialPointDifferenceM": 4.336808689942018e-19,
+      "worstAt": [
+        -1,
+        0.19595949272000013,
+        0.9948452233599951
+      ]
+    },
+    {
+      "size": [
+        0.48,
+        0.1,
+        0.006
+      ],
+      "bend": 1,
+      "samples": 500,
+      "maxPositionDifferenceM": 2.5379175820355533e-8,
+      "maxTopSurfaceDifferenceM": 7.664258822861523e-17,
+      "maxMaterialPointDifferenceM": 4.336808689942018e-19,
+      "worstAt": [
+        -1,
+        0.19595949272000013,
+        0.9948452233599951
+      ]
+    },
+    {
+      "size": [
+        0.24,
+        0.21,
+        0.042
+      ],
+      "bend": -1,
+      "samples": 500,
+      "maxPositionDifferenceM": 1.7765422911027688e-7,
+      "maxTopSurfaceDifferenceM": 7.076311083754596e-17,
+      "maxMaterialPointDifferenceM": 3.469446951953614e-18,
+      "worstAt": [
+        -1,
+        0.19595949272000013,
+        0.9948452233599951
+      ]
+    },
+    {
+      "size": [
+        0.24,
+        0.21,
+        0.042
+      ],
+      "bend": -0.9,
+      "samples": 500,
+      "maxPositionDifferenceM": 2.1838665445741646e-8,
+      "maxTopSurfaceDifferenceM": 7.076311083754596e-17,
+      "maxMaterialPointDifferenceM": 3.469446951953614e-18,
+      "worstAt": [
+        -1,
+        0.19595949272000013,
+        0.9948452233599951
+      ]
+    },
+    {
+      "size": [
+        0.24,
+        0.21,
+        0.042
+      ],
+      "bend": -0.45,
+      "samples": 500,
+      "maxPositionDifferenceM": 1.9004832433758484e-10,
+      "maxTopSurfaceDifferenceM": 2.501853776554201e-17,
+      "maxMaterialPointDifferenceM": 3.469446951953614e-18,
+      "worstAt": [
+        -1,
+        0.19595949272000013,
+        0.9948452233599951
+      ]
+    },
+    {
+      "size": [
+        0.24,
+        0.21,
+        0.042
+      ],
+      "bend": -1e-8,
+      "samples": 500,
+      "maxPositionDifferenceM": 2.797157557069881e-17,
+      "maxTopSurfaceDifferenceM": 1.3877787807814457e-17,
+      "maxMaterialPointDifferenceM": 3.469446951953614e-18,
+      "worstAt": [
+        1,
+        0.21320343555000054,
+        0.9807621133999991
+      ]
+    },
+    {
+      "size": [
+        0.24,
+        0.21,
+        0.042
+      ],
+      "bend": 0,
+      "samples": 500,
+      "maxPositionDifferenceM": 1.3877787807814457e-17,
+      "maxTopSurfaceDifferenceM": 1.3877787807814457e-17,
+      "maxMaterialPointDifferenceM": 3.469446951953614e-18,
+      "worstAt": [
+        -1,
+        0,
+        0
+      ]
+    },
+    {
+      "size": [
+        0.24,
+        0.21,
+        0.042
+      ],
+      "bend": 1e-8,
+      "samples": 500,
+      "maxPositionDifferenceM": 2.964296775167217e-17,
+      "maxTopSurfaceDifferenceM": 1.3877787807814457e-17,
+      "maxMaterialPointDifferenceM": 3.469446951953614e-18,
+      "worstAt": [
+        0.8498101049476077,
+        1,
+        0.7973115807199918
+      ]
+    },
+    {
+      "size": [
+        0.24,
+        0.21,
+        0.042
+      ],
+      "bend": 0.45,
+      "samples": 500,
+      "maxPositionDifferenceM": 1.9004829505685611e-10,
+      "maxTopSurfaceDifferenceM": 1.962615573354719e-17,
+      "maxMaterialPointDifferenceM": 3.469446951953614e-18,
+      "worstAt": [
+        -1,
+        0.19595949272000013,
+        0.9948452233599951
+      ]
+    },
+    {
+      "size": [
+        0.24,
+        0.21,
+        0.042
+      ],
+      "bend": 0.9,
+      "samples": 500,
+      "maxPositionDifferenceM": 2.1838665328493992e-8,
+      "maxTopSurfaceDifferenceM": 7.076311083754596e-17,
+      "maxMaterialPointDifferenceM": 3.469446951953614e-18,
+      "worstAt": [
+        -1,
+        0.19595949272000013,
+        0.9948452233599951
+      ]
+    },
+    {
+      "size": [
+        0.24,
+        0.21,
+        0.042
+      ],
+      "bend": 1,
+      "samples": 500,
+      "maxPositionDifferenceM": 1.7765422896935215e-7,
+      "maxTopSurfaceDifferenceM": 7.076311083754596e-17,
+      "maxMaterialPointDifferenceM": 3.469446951953614e-18,
+      "worstAt": [
+        -1,
+        0.19595949272000013,
+        0.9948452233599951
+      ]
+    },
+    {
+      "size": [
+        0.004,
+        0.003,
+        0.0001
+      ],
+      "bend": -1,
+      "samples": 500,
+      "maxPositionDifferenceM": 4.2298626110980165e-10,
+      "maxTopSurfaceDifferenceM": 1.1056736068366556e-18,
+      "maxMaterialPointDifferenceM": 6.776263578034403e-21,
+      "worstAt": [
+        -1,
+        0.19595949272000013,
+        0.9948452233599951
+      ]
+    },
+    {
+      "size": [
+        0.004,
+        0.003,
+        0.0001
+      ],
+      "bend": -0.9,
+      "samples": 500,
+      "maxPositionDifferenceM": 5.1996820545108936e-11,
+      "maxTopSurfaceDifferenceM": 8.940560153363745e-19,
+      "maxMaterialPointDifferenceM": 6.776263578034403e-21,
+      "worstAt": [
+        -1,
+        0.19595949272000013,
+        0.9948452233599951
+      ]
+    },
+    {
+      "size": [
+        0.004,
+        0.003,
+        0.0001
+      ],
+      "bend": -0.45,
+      "samples": 500,
+      "maxPositionDifferenceM": 4.525016304338628e-13,
+      "maxTopSurfaceDifferenceM": 3.909146525865939e-19,
+      "maxMaterialPointDifferenceM": 6.776263578034403e-21,
+      "worstAt": [
+        -1,
+        0.19595949272000013,
+        0.9948452233599951
+      ]
+    },
+    {
+      "size": [
+        0.004,
+        0.003,
+        0.0001
+      ],
+      "bend": -1e-8,
+      "samples": 500,
+      "maxPositionDifferenceM": 4.337338053226252e-19,
+      "maxTopSurfaceDifferenceM": 2.168404344971009e-19,
+      "maxMaterialPointDifferenceM": 6.776263578034403e-21,
+      "worstAt": [
+        0.896221334905249,
+        0.33722856337999474,
+        1
+      ]
+    },
+    {
+      "size": [
+        0.004,
+        0.003,
+        0.0001
+      ],
+      "bend": 0,
+      "samples": 500,
+      "maxPositionDifferenceM": 2.168404344971009e-19,
+      "maxTopSurfaceDifferenceM": 2.168404344971009e-19,
+      "maxMaterialPointDifferenceM": 6.776263578034403e-21,
+      "worstAt": [
+        -0.9311162925026011,
+        0.3847763108100004,
+        0.5166604982800003
+      ]
+    },
+    {
+      "size": [
+        0.004,
+        0.003,
+        0.0001
+      ],
+      "bend": 1e-8,
+      "samples": 500,
+      "maxPositionDifferenceM": 4.341570635890622e-19,
+      "maxTopSurfaceDifferenceM": 2.168404344971009e-19,
+      "maxMaterialPointDifferenceM": 6.776263578034403e-21,
+      "worstAt": [
+        -0.8909163025737712,
+        0.8448045145300114,
+        1
+      ]
+    },
+    {
+      "size": [
+        0.004,
+        0.003,
+        0.0001
+      ],
+      "bend": 0.45,
+      "samples": 500,
+      "maxPositionDifferenceM": 4.525016304338628e-13,
+      "maxTopSurfaceDifferenceM": 3.909146525865939e-19,
+      "maxMaterialPointDifferenceM": 6.776263578034403e-21,
+      "worstAt": [
+        -1,
+        0.19595949272000013,
+        0.9948452233599951
+      ]
+    },
+    {
+      "size": [
+        0.004,
+        0.003,
+        0.0001
+      ],
+      "bend": 0.9,
+      "samples": 500,
+      "maxPositionDifferenceM": 5.199682050008066e-11,
+      "maxTopSurfaceDifferenceM": 8.940560153363745e-19,
+      "maxMaterialPointDifferenceM": 6.776263578034403e-21,
+      "worstAt": [
+        -1,
+        0.19595949272000013,
+        0.9948452233599951
+      ]
+    },
+    {
+      "size": [
+        0.004,
+        0.003,
+        0.0001
+      ],
+      "bend": 1,
+      "samples": 500,
+      "maxPositionDifferenceM": 4.2298626110980165e-10,
+      "maxTopSurfaceDifferenceM": 1.1056736068366556e-18,
+      "maxMaterialPointDifferenceM": 6.776263578034403e-21,
+      "worstAt": [
+        -1,
+        0.19595949272000013,
+        0.9948452233599951
+      ]
+    },
+    {
+      "size": [
+        10,
+        10,
+        0.1
+      ],
+      "bend": -1,
+      "samples": 500,
+      "maxPositionDifferenceM": 4.229862629448129e-7,
+      "maxTopSurfaceDifferenceM": 6.280369834735101e-16,
+      "maxMaterialPointDifferenceM": 6.938893903907228e-18,
+      "worstAt": [
+        -1,
+        0.19595949272000013,
+        0.9948452233599951
+      ]
+    },
+    {
+      "size": [
+        10,
+        10,
+        0.1
+      ],
+      "bend": -0.9,
+      "samples": 500,
+      "maxPositionDifferenceM": 5.199682353140783e-8,
+      "maxTopSurfaceDifferenceM": 6.280369834735101e-16,
+      "maxMaterialPointDifferenceM": 6.938893903907228e-18,
+      "worstAt": [
+        -1,
+        0.19595949272000013,
+        0.9948452233599951
+      ]
+    },
+    {
+      "size": [
+        10,
+        10,
+        0.1
+      ],
+      "bend": -0.45,
+      "samples": 500,
+      "maxPositionDifferenceM": 4.524897848699367e-10,
+      "maxTopSurfaceDifferenceM": 4.577566798522237e-16,
+      "maxMaterialPointDifferenceM": 6.938893903907228e-18,
+      "worstAt": [
+        -1,
+        0.19595949272000013,
+        0.9948452233599951
+      ]
+    },
+    {
+      "size": [
+        10,
+        10,
+        0.1
+      ],
+      "bend": -1e-8,
+      "samples": 500,
+      "maxPositionDifferenceM": 8.882868333007365e-16,
+      "maxTopSurfaceDifferenceM": 4.440892098500626e-16,
+      "maxMaterialPointDifferenceM": 6.938893903907228e-18,
+      "worstAt": [
+        -0.8196601125009995,
+        0.07106781184999988,
+        1
+      ]
+    },
+    {
+      "size": [
+        10,
+        10,
+        0.1
+      ],
+      "bend": 0,
+      "samples": 500,
+      "maxPositionDifferenceM": 4.440892098500626e-16,
+      "maxTopSurfaceDifferenceM": 4.440892098500626e-16,
+      "maxMaterialPointDifferenceM": 6.938893903907228e-18,
+      "worstAt": [
+        0.7082039324994001,
+        1,
+        0.19615242268
+      ]
+    },
+    {
+      "size": [
+        10,
+        10,
+        0.1
+      ],
+      "bend": 1e-8,
+      "samples": 500,
+      "maxPositionDifferenceM": 8.884223316973178e-16,
+      "maxTopSurfaceDifferenceM": 4.440892098500626e-16,
+      "maxMaterialPointDifferenceM": 6.938893903907228e-18,
+      "worstAt": [
+        -0.8483438300696093,
+        0.14631970476000333,
+        1
+      ]
+    },
+    {
+      "size": [
+        10,
+        10,
+        0.1
+      ],
+      "bend": 0.45,
+      "samples": 500,
+      "maxPositionDifferenceM": 4.524907317633353e-10,
+      "maxTopSurfaceDifferenceM": 4.577566798522237e-16,
+      "maxMaterialPointDifferenceM": 6.938893903907228e-18,
+      "worstAt": [
+        -1,
+        0.19595949272000013,
+        0.9948452233599951
+      ]
+    },
+    {
+      "size": [
+        10,
+        10,
+        0.1
+      ],
+      "bend": 0.9,
+      "samples": 500,
+      "maxPositionDifferenceM": 5.199682353140783e-8,
+      "maxTopSurfaceDifferenceM": 6.280369834735101e-16,
+      "maxMaterialPointDifferenceM": 6.938893903907228e-18,
+      "worstAt": [
+        -1,
+        0.19595949272000013,
+        0.9948452233599951
+      ]
+    },
+    {
+      "size": [
+        10,
+        10,
+        0.1
+      ],
+      "bend": 1,
+      "samples": 500,
+      "maxPositionDifferenceM": 4.2298626285158056e-7,
+      "maxTopSurfaceDifferenceM": 6.280369834735101e-16,
+      "maxMaterialPointDifferenceM": 6.938893903907228e-18,
+      "worstAt": [
+        -1,
+        0.19595949272000013,
+        0.9948452233599951
+      ]
+    }
+  ]
+}

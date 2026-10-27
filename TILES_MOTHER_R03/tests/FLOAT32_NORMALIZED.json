@@ -1,0 +1,33 @@
+{
+  "summary": [
+    {
+      "size": [
+        0.24,
+        0.21,
+        0.014
+      ],
+      "count": 26400,
+      "misses": 0
+    },
+    {
+      "size": [
+        1,
+        1,
+        0.05
+      ],
+      "count": 26400,
+      "misses": 0
+    },
+    {
+      "size": [
+        10,
+        8,
+        0.4
+      ],
+      "count": 26400,
+      "misses": 0
+    }
+  ],
+  "examples": [],
+  "note": "Float32 emulation, not actual GPU. False misses target shader tolerance sensitivity."
+}
