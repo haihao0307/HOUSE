@@ -1,0 +1,98 @@
+{
+  "status": "PASS_DESKTOP_CPU_ANALYTIC_BROWSER_ACCEPTANCE",
+  "testedAtUTC": "2026-10-27T02:09:28Z",
+  "commit": "77a2fee99b4e90c92b82b0667a01d524fd140e9c",
+  "url": "https://raw.githack.com/haihao0307/HOUSE/77a2fee99b4e90c92b82b0667a01d524fd140e9c/brick-tiles-mother/09j/START_HERE.html",
+  "expectedHTML": {
+    "bytes": 23100,
+    "sha256": "26e2d068991a35cad288999385ef833c74e2faaccfe27b46a5e6dc765b4f73e3",
+    "identitySource": "Publisher exact remote readback; browser title and fixed-commit URL independently verified"
+  },
+  "surface": "Supported CUA cloud Chrome/CDP, genuine HTTPS UI interaction; no local file server, DevTools override, browser launch flags or network bypass",
+  "backend": "CPU analytic rays",
+  "backendEvidence": "Visible status: CPU 解析三维 · 无物体网格; actual rendered nonuniform 3D image, not a screenshot placeholder. DOM canvas backing size observed 587×480.",
+  "openingNotice": "raw.githack showed a generic third-party external-content disclosure; normal Open the page navigation was used for the known user-owned source.",
+  "checks": {
+    "initial_visible_frame": {
+      "pass": true,
+      "observed": "Gray solid flat plate with visible thickness at size 240×210×14 mm, bend 0"
+    },
+    "three_presets": {
+      "pass": true,
+      "observed": "Flat box at 0; concave pan at +0.45; convex cover at -0.9. All retained 240/210/14 mm, Time 2026-10-27 and same object id/mother."
+    },
+    "location_metadata_only": {
+      "pass": true,
+      "observed": "Native text entry 昆明→香港验收→香港. Read DOM-rendered JSON: Time unchanged and Object JSON byte-equal to cover record. Visible shape remained cover."
+    },
+    "continuous_bend": {
+      "pass": true,
+      "observed": "Arrow keys changed -0.90→-0.87; near-zero sequence 0→0.01→0→-0.01 produced ready CPU frame and valid final record."
+    },
+    "rapid_latest_request": {
+      "pass": true,
+      "observed": "Rapid pan→cover→flat clicks ended in bend 0 JSON and a visible flat plate, not stale cover frame."
+    },
+    "invalid_size_rollback_recovery": {
+      "pass": true,
+      "observed": "Native length 0 rejected with 保持上一有效形体; field/record retained 240 mm. Native length 300 accepted as 0.3 m with error cleared. Reset restored 240/210/14."
+    },
+    "rotation": {
+      "pass": true,
+      "observed": "Canvas drag visibly changed cover orientation and re-rendered through CPU."
+    },
+    "wheel_zoom": {
+      "pass": true,
+      "observed": "Wheel zoom visibly enlarged rotated cover; overall-view control restored view."
+    },
+    "normal_view": {
+      "pass": true,
+      "observed": "Normals view showed continuous cyan/green curved surface and distinct end face; return-to-gray button worked."
+    },
+    "reload": {
+      "pass": true,
+      "observed": "Reload reinitialized default 昆明/240/210/14/bend0 and visible CPU flat frame."
+    },
+    "back_navigation_update": {
+      "pass": true,
+      "observed": "Navigated to preserved 09I then Back to 09J; clicking pan produced a fresh visible concave frame. Does not assert browser BFCache was definitely used."
+    },
+    "close_and_reopen": {
+      "pass": true,
+      "observed": "Closed tab 15; new tab 16 opened same fixed URL and produced default CPU flat plate. Tab 16 marked deliverable."
+    },
+    "old_entry": {
+      "pass": true,
+      "scope": "Link reachability/preservation only",
+      "url": "https://raw.githack.com/haihao0307/HOUSE/b51759ffb33ad3d12d31d9735f692527691cecb0/brick-tiles-mother/09i/START_HERE.html",
+      "observed": "Loaded title Tiles Mother · 09I · 共同基础片 and old controls. Old 09I explicitly could not initialize WebGL 2 in this cloud browser; old renderer NOT passed and not modified."
+    },
+    "normal_export_download": {
+      "pass": true,
+      "testedAtUTC": "2026-10-27T02:09:28Z",
+      "interaction": "Clicked original 导出 TLO button in default 昆明/bend0 state; observed documented normal download event and completed path; read only that returned file.",
+      "evidenceCopy": "TILES_MOTHER_R03/tests/export-default-actual.json",
+      "actualDownloadedBytes": 221,
+      "sha256": "4d5c1d558786d43f1d907833d1b9124037f20041201e642adff8bf9f387b9434",
+      "contentMatchesDefaultInstance": true,
+      "compactJSONBytes": 146,
+      "format": "Pretty-printed JSON (221 bytes), not the compact 146-byte encoding",
+      "intendedFilenameFromSource": "Tiles-TLO-2026-10-27.json",
+      "displayFilenameVerification": "Selected supported download API exposes an opaque saved path, not suggested filename; exact browser display filename not independently observed.",
+      "finalPageState": "Unchanged default 昆明, 240/210/14 mm, bend0, CPU flat frame; deliverable tab16 retained."
+    }
+  },
+  "observedErrors": {
+    "app": "No unexpected 09J visible error; deliberate invalid-size error recovered.",
+    "freshTabConsole": "One browser extension content-script metadata-send error; no 09J application error in the retrieved fresh-tab error logs."
+  },
+  "notTested": [
+    "Real hardware GPU/WebGL2 rendering: current browser uses CPU fallback",
+    "Physical mobile device and multitouch pinch",
+    "Responsive mobile viewport emulation: not exposed by selected supported API"
+  ],
+  "interpretation": "Confirms working desktop CPU analytic UI on exact published revision. Does not claim all GPUs, phone devices, manufacturing accuracy, historical tile dimensions, or complete R02 library equivalence.",
+  "sourceChangesDuringBrowserQA": false,
+  "evidence": "CUA accessibility snapshots, read-only DOM rendered record, screenshots inspected during live test; no screenshot delivered as replacement for workbench.",
+  "privacy": "Internal browser download storage path omitted from public evidence; actual bytes and hash retained."
+}

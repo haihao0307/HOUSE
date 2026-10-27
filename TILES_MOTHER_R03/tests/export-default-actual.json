@@ -1,0 +1,16 @@
+{
+  "Time": "2026-10-27",
+  "Location": {
+    "site": "昆明"
+  },
+  "Object": {
+    "id": "tile-001",
+    "mother": "kaopu.brick-tiles-tlo/1",
+    "size": [
+      0.24,
+      0.21,
+      0.014
+    ],
+    "bend": 0
+  }
+}
