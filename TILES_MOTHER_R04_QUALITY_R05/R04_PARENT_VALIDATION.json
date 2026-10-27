@@ -1,0 +1,117 @@
+{
+  "pass": true,
+  "baseline": "Local R03",
+  "scope": "Sampled continuous single-object R03 queries, including small-end, shoulders, material, wave, boundary and TLO graph; not all real tile types or complete 09H scene",
+  "counts": {
+    "flat": 1620,
+    "pan-L9": 1620,
+    "cover-L9": 1620,
+    "pan-D7": 1620,
+    "cover-D7": 1620
+  },
+  "checks": 8100,
+  "materialChecks": 145800,
+  "maxErrors": {
+    "aVsOriginal_m": 1.002055819765301e-14,
+    "bVsOriginal_m": 8.952601815586565e-15,
+    "aVsB_m": 7.096129534584204e-15,
+    "shapeA_m": 1.002055819765301e-14,
+    "shapeB_m": 8.952601815586565e-15
+  },
+  "knownCoverSmallEnd": {
+    "cover-L9": {
+      "largeEnd_m": 0.12458794612362609,
+      "smallEnd_m": 0.10191522365588124
+    },
+    "cover-D7": {
+      "largeEnd_m": 0.11436514488114247,
+      "smallEnd_m": 0.08984841736772332
+    }
+  },
+  "boundaryAndEmbossPass": true,
+  "graphPass": true,
+  "shapesAndBytes": {
+    "tile.cjs": {
+      "bytes": 238,
+      "sha256": "da08d0183a956a873a9362c3388cdfcb0937ff034a7e398837ed8056517dcabc"
+    },
+    "tile.glsl": {
+      "bytes": 143,
+      "sha256": "517b08f6f0feb22dc211039b6301379296c438dd4fd0031b9776a4110f57dc1d"
+    },
+    "section.cjs": {
+      "bytes": 598,
+      "sha256": "b435d4a595d6d8623af1aebc3762ac4a3b7f0760020daeeffb912db09c5ecd21"
+    },
+    "route-a.cjs": {
+      "bytes": 12641,
+      "sha256": "340f3c873afa1854617e5313fe9dba6db0261cf10cf8b6ee92daf5ceca5f7960"
+    },
+    "route-b.cjs": {
+      "bytes": 12515,
+      "sha256": "d163df21b7230d0548b68ad2c1ec171d4dae0a599d88edb0ad226ec687ba31da"
+    },
+    "objects-route-a.cjs": {
+      "bytes": 3930,
+      "sha256": "b127a57d6ee417410a46e321e5baee0c80e8ab7647e7887be59e3ab28b4ed624"
+    },
+    "objects-route-b.cjs": {
+      "bytes": 3930,
+      "sha256": "ddddb40671936f929a5a2d02bdcb6d623b513b4d281b578ed5743dc35903e5d2"
+    },
+    "library.json": {
+      "bytes": 4768,
+      "sha256": "e1d2932f5b97af8e660de20bee86749e0400148b6e56b9e3bf2e49a93830b8eb"
+    }
+  },
+  "closure": {
+    "routeA": 18245,
+    "routeB": 17881,
+    "objectGraphA": 3930,
+    "objectGraphB": 3930,
+    "display": "not included"
+  },
+  "timing": {
+    "environment": {
+      "platform": "win32",
+      "arch": "x64",
+      "node": "v24.19.0",
+      "cpu": "AMD Ryzen 9 7940H w/Radeon 780M Graphics"
+    },
+    "note": "Three alternating warmups then seven alternating measured trials; shape and material CPU queries, not browser frames; implementation and device dependent",
+    "A": {
+      "samplesPerTrial": 3000,
+      "trialsMs": [
+        34.24959999999999,
+        34.31189999999992,
+        34.71950000000015,
+        35.70730000000003,
+        36.04990000000009,
+        38.5856,
+        40.71849999999995
+      ],
+      "medianMs": 35.70730000000003,
+      "checksum": 2879.145922321768
+    },
+    "B": {
+      "samplesPerTrial": 3000,
+      "trialsMs": [
+        32.75980000000004,
+        33.537000000000035,
+        35.43579999999997,
+        35.51239999999984,
+        36.696500000000015,
+        36.71769999999992,
+        36.74260000000004
+      ],
+      "medianMs": 35.51239999999984,
+      "checksum": 2879.145922321768
+    }
+  },
+  "limits": [
+    "Tolerance-based numerical verification, not bitwise identity and not exhaustive over all parameters",
+    "TLO, source and old production files are retained; full 09H scene, rare patterns, GPU equivalence and visual acceptance not established",
+    "Arbitrary spine/path and two-wave coupled shape not implemented",
+    "Same bounded circular cross-sections and full legacy material rules; no universal ranking of representations from code size or timing"
+  ]
+}

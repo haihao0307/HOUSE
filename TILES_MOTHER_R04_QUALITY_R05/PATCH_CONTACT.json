@@ -1,0 +1,178 @@
+{
+  "pass": true,
+  "spacing_m": 0.235,
+  "coverY_m": 0.022305701115618113,
+  "coverRotation_rad": [
+    -0.035,
+    0,
+    -0.005
+  ],
+  "metrics": [
+    {
+      "side": -1,
+      "samples": 97,
+      "minGap_m": 0.00005000000000000143,
+      "maxGap_m": 0.004915686895596502,
+      "minPanU": 0.6183826845522046,
+      "maxPanU": 0.786631266866216,
+      "maxXZResidual_m": 1.708390306999827e-7
+    },
+    {
+      "side": 1,
+      "samples": 97,
+      "minGap_m": 0.00023217230193270724,
+      "maxGap_m": 0.005270683442144066,
+      "minPanU": -0.7773759793087018,
+      "maxPanU": -0.621304818147696,
+      "maxXZResidual_m": 1.4082072762741462e-7
+    }
+  ],
+  "areaMetrics": {
+    "samples": 1228,
+    "minGap_m": 0.0002780256499486655,
+    "maxGap_m": 0.024557514363540665,
+    "maxXZResidual_m": 1.9189927349067213e-7
+  },
+  "panSeparation": {
+    "samples": 202,
+    "minGap_m": 0.005229353062212103
+  },
+  "graph": {
+    "id": "demo-roof-01",
+    "kind": "demonstration-roof",
+    "time": null,
+    "location": null,
+    "rules": {
+      "id": "tiles-r04-09m-sampled-v1",
+      "sharedEvaluatorVersion": "kaopu.sheet/3",
+      "routeA_sha256": "340f3c873afa1854617e5313fe9dba6db0261cf10cf8b6ee92daf5ceca5f7960",
+      "routeB_sha256": "d163df21b7230d0548b68ad2c1ec171d4dae0a599d88edb0ad226ec687ba31da",
+      "section_sha256": "b435d4a595d6d8623af1aebc3762ac4a3b7f0760020daeeffb912db09c5ecd21",
+      "library_sha256": "e1d2932f5b97af8e660de20bee86749e0400148b6e56b9e3bf2e49a93830b8eb",
+      "r04_glsl_sha256": "517b08f6f0feb22dc211039b6301379296c438dd4fd0031b9776a4110f57dc1d"
+    },
+    "frame": "right-handed metre; x transverse, y up, z length",
+    "tiles": [
+      {
+        "id": "demo-pan-left",
+        "recipe": "pan-L9",
+        "ruleRef": "tiles-r04-09m-sampled-v1",
+        "owner": "demo-roof-01",
+        "frame": "demo-roof-01",
+        "position": [
+          -0.1175,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "variables": {
+          "sheet": {
+            "seed": 23
+          },
+          "wave": {
+            "seed": 31
+          },
+          "material": {
+            "tint": 0.49
+          }
+        }
+      },
+      {
+        "id": "demo-pan-right",
+        "recipe": "pan-L9",
+        "ruleRef": "tiles-r04-09m-sampled-v1",
+        "owner": "demo-roof-01",
+        "frame": "demo-roof-01",
+        "position": [
+          0.1175,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "variables": {
+          "sheet": {
+            "seed": 29
+          },
+          "wave": {
+            "seed": 33
+          },
+          "material": {
+            "tint": 0.52
+          }
+        }
+      },
+      {
+        "id": "demo-cover-mid",
+        "recipe": "cover-L9",
+        "ruleRef": "tiles-r04-09m-sampled-v1",
+        "owner": "demo-roof-01",
+        "frame": "demo-roof-01",
+        "position": [
+          0,
+          0.022305701115618113,
+          0
+        ],
+        "rotation": [
+          -0.035,
+          0,
+          -0.005
+        ],
+        "variables": {
+          "sheet": {
+            "seed": 41
+          },
+          "wave": {
+            "seed": 37
+          },
+          "material": {
+            "tint": 0.5
+          }
+        }
+      }
+    ],
+    "connections": [
+      {
+        "id": "cover-left",
+        "kind": "sampled edge-to-pan projection",
+        "from": "demo-cover-mid",
+        "to": "demo-pan-left",
+        "status": "sampled-numerical",
+        "scope": "matched x-z, q=1 cover edge against q=0 pan face; t=0.02..0.98 step 0.01",
+        "side": -1,
+        "samples": 97,
+        "minGap_m": 0.00005000000000000143,
+        "maxGap_m": 0.004915686895596502,
+        "minPanU": 0.6183826845522046,
+        "maxPanU": 0.786631266866216,
+        "maxXZResidual_m": 1.708390306999827e-7
+      },
+      {
+        "id": "cover-right",
+        "kind": "sampled edge-to-pan projection",
+        "from": "demo-cover-mid",
+        "to": "demo-pan-right",
+        "status": "sampled-numerical",
+        "scope": "matched x-z, q=1 cover edge against q=0 pan face; t=0.02..0.98 step 0.01",
+        "side": 1,
+        "samples": 97,
+        "minGap_m": 0.00023217230193270724,
+        "maxGap_m": 0.005270683442144066,
+        "minPanU": -0.7773759793087018,
+        "maxPanU": -0.621304818147696,
+        "maxXZResidual_m": 1.4082072762741462e-7
+      }
+    ],
+    "notes": [
+      "Synthetic arrangement; not a historic roof or physical construction proof.",
+      "Finite samples are verification, not object data; contact between sampled addresses is not proven."
+    ]
+  }
+}

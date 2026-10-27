@@ -1,0 +1,9 @@
+{
+  "pass": true,
+  "identities": 3,
+  "connections": 2,
+  "transformedCameraRays": 300,
+  "maxWorldCoordinateError_m": 1.3877787807814457e-16,
+  "contactScope": "194 edge queries and 1228 overlap-area queries; only sampled x-z projections, not a watertight, load or historical construction proof",
+  "contactSha256": "6b0f65421c8128f033337082801b54a9ac9e96d3d2487357ae8ff5b157f81754"
+}

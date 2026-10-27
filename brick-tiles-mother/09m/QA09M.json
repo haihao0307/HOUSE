@@ -1,0 +1,104 @@
+{
+  "version": "09M",
+  "status": "candidate, not 09H visual acceptance",
+  "htmlSha256": "9661b61ee9370493190dcda1df6c6ded97b49607de83b72d5a06662393c1f5d5",
+  "measuredIn": "Desktop in-app browser, WebKit WebGL; 2026-10-27",
+  "shapeAndMaterial": {
+    "pass": true,
+    "configurationCount": 94,
+    "queries": 6016,
+    "maxPositionError_m": 0.000018037075661336832,
+    "maxReferenceError_m": 0.000010503692235097617,
+    "maxColorError": 0.000010041405291622008,
+    "maxRoughnessError": 0.00003482329173409848,
+    "maxDisplacementError_m": 0.000002194869194731123,
+    "maxMicroGradientError": 0.00013551964101868666,
+    "microGradientLimit": "0.0001 times max(1,wave strength); initial 0.00005 failed at strength 1 (0.00006776)",
+    "scope": "Four recipes, three press states, extrema of press/width/wave, and three sample assembly instances on A and B; GPU vs CPU tolerance, not bitwise identity"
+  },
+  "rays": {
+    "pass": true,
+    "rays": 8512,
+    "cpuHits": 962,
+    "gpuHits": 962,
+    "misses": 0,
+    "invalid": 0,
+    "unresolved": 0,
+    "oldCpuSolverMissedNearer": 4,
+    "maxRefinedError_m": 0.00002950423005021463,
+    "scope": "Two routes, four default recipes, four cameras, numerical CPU refinement; no universal ray guarantee"
+  },
+  "pixels": {
+    "nearSurroundedHoles": {
+      "pass": true,
+      "cases": 32,
+      "resolution": [
+        640,
+        480
+      ],
+      "remaining": 0,
+      "cpuDirectRepairs": 12,
+      "unattempted": 0
+    },
+    "darkPixelRechecks": {
+      "pass": true,
+      "cases": 32,
+      "resolution": [
+        480,
+        360
+      ],
+      "checked": 509,
+      "wrongNearerHit": 0,
+      "cpuNoHit": 0,
+      "unattempted": 0
+    },
+    "scope": "Heuristic candidates only, not all pixels or all angles"
+  },
+  "assembly": {
+    "pass": true,
+    "identities": 3,
+    "connections": 2,
+    "transformedCameraRays": 300,
+    "maxWorldCoordinateError_m": 1.3877787807814457e-16,
+    "edgeQueries": 194,
+    "areaQueries": 1228,
+    "edgeMinGap_m": [
+      0.00005000000000000143,
+      0.00023217230193270724
+    ],
+    "edgeMaxGap_m": [
+      0.004915686895596502,
+      0.005270683442144066
+    ],
+    "scope": "Sampled projected relationships, not a physical, historical or structural validation"
+  },
+  "runtime": {
+    "resolution": [
+      640,
+      480
+    ],
+    "firstRenderMs": 1217.9,
+    "warmRenderMs": [
+      702.8,
+      578.3,
+      572.1
+    ],
+    "textureBytes": 122880000,
+    "scope": "One machine and browser, still render, not FPS or phone guarantee"
+  },
+  "browser": {
+    "contextRecovery": true,
+    "contextStatePreserved": true,
+    "mobileSimulatedViewport": [
+      390,
+      844
+    ],
+    "realPhoneTested": false,
+    "baseline09HFilesUnchanged": 71
+  },
+  "notVerified": [
+    "Full 09H roof and its decorated tile ends, supports, fold contacts and interactions",
+    "Same-camera and same-light complete 09H visual acceptance",
+    "All parameters, hardware families, exact pixels and physical or historical construction"
+  ]
+}
