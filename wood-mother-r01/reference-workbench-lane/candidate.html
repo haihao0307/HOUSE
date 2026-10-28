@@ -190,7 +190,10 @@ const S=typeof require==='function'?require('./scene.js'):root.WoodReferenceScen
 const add=S.add,sub=S.sub,mul=S.mul,dot=S.dot,norm=a=>mul(a,1/Math.hypot(...a)),cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]],clamp=x=>Math.max(0,Math.min(1,x));
 function render(source,view,material){
  const start=Date.now(),scene=S.compile(source),w=view.width,h=view.height,yaw=view.yaw??.38,pitch=view.pitch??.38,zoom=view.zoom??1;
- const target=[0,1.25,.25],front=[Math.sin(yaw)*Math.cos(pitch),Math.sin(pitch),Math.cos(yaw)*Math.cos(pitch)],right=norm(cross([0,1,0],front)),up=cross(front,right),origin=add(target,mul(front,12)),span=7.8/zoom,rig=L.createRig(right,front,{samples:1,ambient:.065}),pixels=new Uint8ClampedArray(w*h*4),stats={};
+ const target=[0,1.25,.25],front=[Math.sin(yaw)*Math.cos(pitch),Math.sin(pitch),Math.cos(yaw)*Math.cos(pitch)],right=norm(cross([0,1,0],front)),up=cross(front,right),span=7.8/zoom;
+ // Shift only along the same orthographic rays: projection and material footprint stay fixed.
+ if(front[1]<=1e-8)throw new RangeError('Orthographic studio pitch must be above the ground horizon');
+ const verticalHalfSpan=span*h/w*.5,originDistance=Math.max(12,(Math.abs(up[1])*verticalHalfSpan-target[1]+.05)/front[1]),origin=add(target,mul(front,originDistance)),rig=L.createRig(right,front,{samples:1,ambient:.065}),pixels=new Uint8ClampedArray(w*h*4),stats={};
  const footprint=span/w;
  for(let y=view.part||0;y<h;y+=(view.parts||1))for(let x=0;x<w;x++){
  const ro=add(origin,add(mul(right,((x+.5)/w-.5)*span),mul(up,(.5-(y+.5)/h)*span*h/w))),rd=mul(front,-1);let hit=scene.hit(ro,rd),color;
