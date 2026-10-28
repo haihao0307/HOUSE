@@ -22,13 +22,7 @@ jobs:
       - run: test -x /opt/google/chrome/chrome && google-chrome --version
       - run: python wood-mother-r01/test_field.py
       - name: Real browser test, no sandbox override or unsafe GPU flags
-        run: python wood-mother-r01/ci/browser_check.py
-      - name: Runtime large-window and context recovery tests
-        run: python wood-mother-r01/runtime-lane/test_runtime.py
-      - name: Native-pixel-budget tiled context-loss repair verification
-        run: python wood-mother-r01/tiled-lane/test_tiled.py
-      - name: CPU-only rendering with unavailable WebGL and Worker fallback
-        run: python wood-mother-r01/cpu-lane/test_cpu_browser.py
+        run: python wood-mother-r01/interaction-audit/test_interaction.py --candidate wood-mother-r01/integrated-lane/candidate.html --out wood-mother-r01/ci/evidence/interaction
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:
