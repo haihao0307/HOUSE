@@ -171,6 +171,7 @@ html=html.replace('<button id="settings"', '<button id="objectInfoToggle">对象
 html=html.replace('<div id="busy">', infoPanel+'<div id="busy">');
 requiredReplace('JSON.stringify({definition:workshop.definition,objects:workshop.records,study:STUDY},null,2)', 'JSON.stringify(TilesRecord.pack({definition:workshop.definition,records:workshop.records,study:STUDY,ruleManifest:TILE_RULE_MANIFEST}),null,2)');
 html=html.replace('function initStudy(){','function initStudy(){\ninstallObjectInfo09N();\nconst press=document.getElementById("sheetPress");press.oninput=()=>{document.getElementById("sheetPressValue").textContent=Math.round(press.value*100)+"%";};press.onchange=()=>{STUDY.sheetPress=+press.value;rebuild(false)};document.getElementById("sheetFlat").onclick=()=>{press.value=0;press.oninput();press.onchange()};document.getElementById("sheetFormed").onclick=()=>{press.value=1;press.oninput();press.onchange()};\n');
+requiredReplace("studyUpdate();$('#busy').hidden=true;document.body.dataset.ready='true';resolve(true);","studyUpdate();if(!document.getElementById('objectInfoPanel').hidden)refreshObjectInfo09N();$('#busy').hidden=true;document.body.dataset.ready='true';resolve(true);");
 // Refresh controls when the retained catalogue changes; assembly instances remain formed.
 html=html.replace('function updateEvidence(){','function updateEvidence(){document.getElementById("sheetControls").hidden=!(["pan","cover"].includes(STUDY.id));');
 if(!html.includes('function updateEvidence(){')){

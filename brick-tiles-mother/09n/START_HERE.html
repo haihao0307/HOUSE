@@ -535,12 +535,15 @@ function stats(packed){
 module.exports={pack,stats,version:'tiles.scene/compact-1'};
 
 return module.exports})();
+function refreshObjectInfo09N(){
+  const packed=TilesRecord.pack({definition:workshop.definition,records:workshop.records,study:STUDY,ruleManifest:TILE_RULE_MANIFEST}),stats=TilesRecord.stats(packed);
+  const range=stats.tiles.count?stats.tiles.min+'–'+stats.tiles.max+' B':'当前场景无瓦对象';
+  document.getElementById('objectInfoText').textContent='当前场景：'+stats.all.count+' 个对象，'+stats.tiles.count+' 个瓦对象\n单个瓦实例记录：'+range+'\n共用形状定义：'+stats.templatesCount+' 组，'+stats.templatesBytes.toLocaleString()+' B\n本场景紧凑记录：'+stats.sceneBytes.toLocaleString()+' B\n共享函数：'+TILE_RULE_MANIFEST.ruleBytes.toLocaleString()+' B\n新增连接规则：'+TILE_RULE_MANIFEST.assemblyBytes.toLocaleString()+' B\n新增显示适配器：'+TILE_RULE_MANIFEST.newAdapterBytes.toLocaleString()+' B\n共享配方：'+TILE_RULE_MANIFEST.libraryBytes.toLocaleString()+' B\n六组纹样轮廓：'+TILE_RULE_MANIFEST.sourceBytes.toLocaleString()+' B\n完整工作台 HTML：1,422,551 B';
+}
 function installObjectInfo09N(){
  const panel=document.getElementById('objectInfoPanel');
  document.getElementById('objectInfoToggle').onclick=()=>{
-  const packed=TilesRecord.pack({definition:workshop.definition,records:workshop.records,study:STUDY,ruleManifest:TILE_RULE_MANIFEST}),stats=TilesRecord.stats(packed);
-  const range=stats.tiles.count?stats.tiles.min+'–'+stats.tiles.max+' B':'当前场景无瓦对象';
-  document.getElementById('objectInfoText').textContent='当前场景：'+stats.all.count+' 个对象，'+stats.tiles.count+' 个瓦对象\n单个瓦实例记录：'+range+'\n共用形状定义：'+stats.templatesCount+' 组，'+stats.templatesBytes.toLocaleString()+' B\n本场景紧凑记录：'+stats.sceneBytes.toLocaleString()+' B\n共享函数：'+TILE_RULE_MANIFEST.ruleBytes.toLocaleString()+' B\n新增连接规则：'+TILE_RULE_MANIFEST.assemblyBytes.toLocaleString()+' B\n新增显示适配器：'+TILE_RULE_MANIFEST.newAdapterBytes.toLocaleString()+' B\n共享配方：'+TILE_RULE_MANIFEST.libraryBytes.toLocaleString()+' B\n六组纹样轮廓：'+TILE_RULE_MANIFEST.sourceBytes.toLocaleString()+' B\n完整工作台 HTML：1,422,410 B';
+  refreshObjectInfo09N();
   panel.hidden=false;
  };
  document.getElementById('objectInfoClose').onclick=()=>panel.hidden=true;
@@ -5643,7 +5646,7 @@ function rebuild(reset=false){document.getElementById("sheetControls").hidden=!(
   $('#caption').textContent=names[settings.scene];let roof=settings.scene.startsWith('roof');$('#timeline').hidden=false;
   $('#subcaption').textContent=roof?'圆椽承托 · 四道横梁 · 板瓦排水 / 筒瓦盖缝':settings.scene==='wood'?'顺纹细部 · 独立端面 · 本色与灰化':'手工成型薄壳 · 非模具平整 · 灰青瓦面';
   $('#smallstats').textContent=roof?`在役 ${workshop.stats.panLive+workshop.stats.coverLive} / ${workshop.stats.originalTiles} · 失养 ${settings.care?'持续修缮':settings.year+' 年'} · 悬空 ${workshop.stats.unsupportedLive}`:'';
-  studyUpdate();$('#busy').hidden=true;document.body.dataset.ready='true';resolve(true);
+  studyUpdate();if(!document.getElementById('objectInfoPanel').hidden)refreshObjectInfo09N();$('#busy').hidden=true;document.body.dataset.ready='true';resolve(true);
  }catch(e){fail(e);resolve(false)}},16));
 }
 function updateButtons(){document.querySelectorAll('[data-scene]').forEach(b=>b.classList.toggle('active',b.dataset.scene===settings.scene));$('#care').classList.toggle('active',settings.care);$('#years').textContent=settings.year;$('#year').value=settings.year}

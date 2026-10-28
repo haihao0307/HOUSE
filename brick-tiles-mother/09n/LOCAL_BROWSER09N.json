@@ -1,6 +1,5 @@
 {
   "version": "09N",
-  "htmlSha256": "9c672b6567656044278072a835ce531be1b3458ec0a18388a58cb2fd4c3e240d",
   "pass": true,
   "observed": [
     "Tile overview and original head/drip catalogue rendered",
@@ -15,5 +14,11 @@
     "visual check is limited to the observed scenes and device; not pixel equivalence or user acceptance",
     "09H remains the quality baseline",
     "no real mobile or physical construction validation"
+  ],
+  "scope": "The earlier visual and GPU observations used previousHtmlSha256. The current HTML differs in panel refresh logic and was checked separately through the local browser.",
+  "previousHtmlSha256": "9c672b6567656044278072a835ce531be1b3458ec0a18388a58cb2fd4c3e240d",
+  "currentHtmlSha256": "1032862fb68bf5c829c95e3bad9b250151aaedf4ad16e4ec83cf0055fa7a5fa8",
+  "currentHtmlChecks": [
+    "Opened the updated local page, opened object size panel, switched from overview to eaves, and observed 32 objects and 14 tile records with 302–421 B per record."
   ]
 }
