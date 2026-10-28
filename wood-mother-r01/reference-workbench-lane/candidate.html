@@ -19,9 +19,34 @@ function withWoodChecks(input,damage=0,seed=1709){if(!Number.isFinite(damage)||d
 const api={compileShape,withBoundaryDamage,withWoodChecks};if(typeof module!=='undefined'&&module.exports)module.exports=api;root.WoodShapes=api;
 })(typeof globalThis!=='undefined'?globalThis:this);
 
-/* Original KAOPU WoodExposure V1. binary64, local Y longitudinal; source is fields, not textures.
+/* Original interval convolution for phi(r)=(1-sqrt(r*r+epsilon))^2.
+   Exact for a UNIFORM interval in a locally linear r field; not exact across noise cells. */
+(function(root){
+const E=.008,clamp=x=>Math.max(-1,Math.min(1,x));
+function phi(r){r=clamp(r);const a=1-Math.sqrt(r*r+E);return a*a}
+function derivative(r){if(r<=-1||r>=1)return 0;return 2*r*(1-1/Math.sqrt(r*r+E))}
+function primitiveInside(r){const h=Math.sqrt(r*r+E);return (1+E)*r+r*r*r/3-r*h-E*Math.asinh(r/Math.sqrt(E))}
+const end=primitiveInside(1),tail=phi(1);
+function primitive(r){if(r>1)return end+(r-1)*tail;if(r< -1)return -end+(r+1)*tail;return primitiveInside(r)}
+function average(r,delta){
+ if(!(delta>0))return {value:phi(r),derivative:derivative(r)};
+ if(delta<1e-4){
+  if(Math.abs(r)-delta>=1)return {value:tail,derivative:0};
+  if(Math.abs(r)+delta<1){const q=r*r+E,second=2-2*E/Math.pow(q,1.5),third=6*E*r/Math.pow(q,2.5);return {value:phi(r)+second*delta*delta/6,derivative:derivative(r)+third*delta*delta/6};}
+  // Stable clipped endpoint Taylor integral; avoids subtracting nearly equal primitives.
+  const b=r>=0?1:-1,w=Math.max(0,Math.min(2*delta,delta+(1-Math.abs(r)))),first=2*b*(1-1/Math.sqrt(1+E)),second=2-2*E/Math.pow(1+E,1.5);
+  return {value:tail-b*first*w*w/(4*delta)+second*w*w*w/(12*delta),derivative:first*w/(2*delta)-b*second*w*w/(4*delta)};
+ }
+ return {value:(primitive(r+delta)-primitive(r-delta))/(2*delta),derivative:(phi(r+delta)-phi(r-delta))/(2*delta)};
+}
+const api={epsilon:E,phi,derivative,primitive,average,uniformMean:primitiveInside(1)};if(typeof module!=='undefined')module.exports=api;root.KAOPURidgeInterval=api;
+})(typeof globalThis!=='undefined'?globalThis:this);
+
+/* Original KAOPU WoodExposure ridge-filter-r01 experiment. binary64, local Y longitudinal; source is fields, not textures.
    height is NORMAL-ONLY relief. Boundary erosion belongs to WoodShapes' analytic primitives. */
 (function(root){
+const RI=typeof require==='function'?require('./filter.js'):root.KAOPURidgeInterval;
+const axes=fp=>typeof fp==='number'?null:fp;
 const clamp=(v,a=0,b=1)=>Math.max(a,Math.min(b,v)),mix=(a,b,t)=>a+(b-a)*t;
 function hash(x,y,z,seed=1709){let h=Math.imul(x,374761393)^Math.imul(y,668265263)^Math.imul(z,2147483647)^seed;h=Math.imul(h^(h>>>13),1274126177);return ((h^(h>>>16))>>>0)/4294967296}
 function noise(x,y,z,seed){const ix=Math.floor(x),iy=Math.floor(y),iz=Math.floor(z),t=[x-ix,y-iy,z-iz],u=t.map(t=>t*t*(3-2*t)),d=t.map(t=>6*t*(1-t));let v=0,g=[0,0,0];for(let a=0;a<2;a++)for(let b=0;b<2;b++)for(let c=0;c<2;c++){const h=hash(ix+a,iy+b,iz+c,seed),w=[a?u[0]:1-u[0],b?u[1]:1-u[1],c?u[2]:1-u[2]];v+=h*w[0]*w[1]*w[2];g[0]+=h*(a?1:-1)*d[0]*w[1]*w[2];g[1]+=h*(b?1:-1)*d[1]*w[0]*w[2];g[2]+=h*(c?1:-1)*d[2]*w[0]*w[1]}return {v,g}}
@@ -32,24 +57,25 @@ function organization(p,par={},footprint=0){
  const macro=noise(x*3.1,y*.55,z*3.1,seed+67),exposure=ex*(.65+.35*macro.v);
  let height=0,grad=[0,0,0],gully=0,ridge=0,unresolved=0;
  for(const [f0,fy,amp,k] of [[39,1.2,.016,0],[87,9.2,.0054,1],[179,23,.0018,2]]){
-  const freq=f0*clamp(par.grainDensity??1,.4,2.5);
-  const n=noise(x*freq,y*fy,z*freq,seed+101*k),r=2*n.v-1,abs=Math.sqrt(r*r+.008),val=1-abs;
-  // Narrow irregular ridges and valleys; no periodic sinusoidal band pattern.
-  const h=val*val,der=-4*val*r/abs;
-  const keep=clamp(1-footprint*freq/1.5),power=amp*(.35+.65*damage)*exposure;
-  height+=power*h*keep; const gg=[n.g[0]*freq,n.g[1]*fy-n.g[0]*freq*warpDerivative,n.g[2]*freq];
-  for(let j=0;j<3;j++)grad[j]+=power*der*gg[j]*keep;
-  ridge+=h*keep/[1.6,3,6][k];gully+=(1-h)*keep/[1.6,3,6][k];unresolved+=(1-keep)*power*freq*.13;
+  const freq=f0*clamp(par.grainDensity??1,.4,2.5),n=noise(x*freq,y*fy,z*freq,seed+101*k),r=2*n.v-1,gg=[n.g[0]*freq,n.g[1]*fy-n.g[0]*freq*warpDerivative,n.g[2]*freq],rg=gg.map(v=>v*2);
+  let delta,band;const fp=axes(footprint);
+  if(fp){delta=.5*(Math.abs(fp.dx.reduce((s,v,i)=>s+v*rg[i],0))+Math.abs(fp.dy.reduce((s,v,i)=>s+v*rg[i],0)));band=Math.max(...[fp.dx,fp.dy].map(v=>Math.hypot((v[0]-warpDerivative*v[1])*freq,v[1]*fy,v[2]*freq)));}
+  else{delta=.5*footprint*rg.reduce((s,v)=>s+Math.abs(v),0);band=footprint*freq;}
+  const filtered=RI.average(r,delta),cross=clamp((band-.55)/.95),lost=cross*cross*(3-2*cross),h=mix(filtered.value,.49988568031047664,lost),der=filtered.derivative*(1-lost),power=amp*(.35+.65*damage)*exposure;
+  height+=power*h;for(let j=0;j<3;j++)grad[j]+=power*der*rg[j];
+  ridge+=h/[1.6,3,6][k];gully+=(1-h)/[1.6,3,6][k];
+  const attenuation=clamp(delta/.6),slopeLoss=1-(1-lost)*(1-attenuation);unresolved+=slopeLoss*power*freq*Math.sqrt(.6019052308015957)*.16;
  }
  if(exposure>0){const f=height/exposure*ex*.35,mg=[macro.g[0]*3.1,macro.g[1]*.55-macro.g[0]*3.1*warpDerivative,macro.g[2]*3.1];for(let j=0;j<3;j++)grad[j]+=f*mg[j];}
- return {version:'WoodExposure/1',seed,height,gradient:grad,ridge,gully,exposure,damage,roughVariance:unresolved,macro:macro.v};
+ return {version:'WoodExposure/ridge-filter-r01',seed,height,gradient:grad,ridge,gully,exposure,damage,roughVariance:unresolved,macro:macro.v};
 }
 function queryDamageEvents(p,events=[]){let influence=0;for(const e of events){if(e.kind!=='ellipsoid-void')continue;const a=e.angleY||0,c=Math.cos(a),s=Math.sin(a),dx=p[0]-e.center[0],dz=p[2]-e.center[2],q=Math.hypot((c*dx-s*dz)/e.radii[0],(p[1]-e.center[1])/e.radii[1],(s*dx+c*dz)/e.radii[2]),t=clamp((q-.85)/.8);influence=Math.max(influence,(1-t*t*(3-2*t))*clamp(e.strength??1));}return influence;}
 function evaluate(p,ng,par={},footprint=0){
  const f=organization(p,par,footprint),palette=presets[par.style||'pale']||presets.pale;
  // A single radial growth coordinate across cut end and longitudinal side. Not a UV decal.
  const y=p[1],x=p[0]-(par.fiberLean??.025)*y-(par.fiberCurve??.012)*y*y,z=p[2],rho=Math.hypot(x+.07,z-.04),theta=Math.atan2(z-.04,x+.07);
- const age=rho*(1+.024*Math.sin(theta*3+y*.3)),phase=age*18*clamp(par.grainDensity??1,.4,2.5)+.42*noise(age*19,0,0,par.seed??1709).v+.10*Math.sin(theta*5+age*11),a=phase-Math.floor(phase),sigma=Math.sqrt(.105**2+(footprint*18*clamp(par.grainDensity??1,.4,2.5)*.5)**2),rawRing=[-1,0,1].reduce((v,k)=>v+Math.exp(-(((a-.78+k)/sigma)**2))*.105/sigma,0),ring=mix(rawRing,.105*Math.sqrt(Math.PI),clamp((sigma-.35)/.3)),keep=1;
+ const fp=axes(footprint),radial=[(x+.07)/Math.max(rho,1e-9),-(par.fiberLean??.025)*((x+.07)/Math.max(rho,1e-9))-2*(par.fiberCurve??.012)*y*((x+.07)/Math.max(rho,1e-9)),(z-.04)/Math.max(rho,1e-9)],radialFootprint=fp?Math.hypot(fp.dx.reduce((v,x,i)=>v+x*radial[i],0),fp.dy.reduce((v,x,i)=>v+x*radial[i],0)):footprint;
+ const age=rho*(1+.024*Math.sin(theta*3+y*.3)),phase=age*18*clamp(par.grainDensity??1,.4,2.5)+.42*noise(age*19,0,0,par.seed??1709).v+.10*Math.sin(theta*5+age*11),a=phase-Math.floor(phase),sigma=Math.sqrt(.105**2+(radialFootprint*18*clamp(par.grainDensity??1,.4,2.5)*.5)**2),rawRing=[-1,0,1].reduce((v,k)=>v+Math.exp(-(((a-.78+k)/sigma)**2))*.105/sigma,0),ring=mix(rawRing,.105*Math.sqrt(Math.PI),clamp((sigma-.35)/.3)),keep=1;
  const end=Math.abs(ng[1]),ringContrast=(.08+.58*end)*ring*keep;
  const tint=clamp(.12+.86*f.ridge-.22*f.gully),variation=.75+.42*f.macro;
  let base=palette.base.map((v,i)=>mix(v,palette.ridge[i],tint)*variation*(1-ringContrast));
@@ -62,7 +88,7 @@ function evaluate(p,ng,par={},footprint=0){
  const rough=clamp(eventInfluence*.07+(par.surface==='chip'?.73:.68)+.12*f.exposure+.09*f.gully+f.roughVariance,.45,.96);
  return {base,normal:normal.map(v=>v/len),rough,coat:0,coatRough:.6,coatIOR:1.5,weather:clamp(f.exposure+eventInfluence*.1),eventInfluence,field:f};
 }
-const api={version:'WoodExposure/1',hash,organization,queryDamageEvents,evaluate,presets};if(typeof module!=='undefined'&&module.exports)module.exports=api;root.WoodExposure=api;
+const api={version:'WoodExposure/ridge-filter-r01',hash,noise,organization,queryDamageEvents,evaluate,presets};if(typeof module!=='undefined'&&module.exports)module.exports=api;root.WoodExposure=api;
 })(typeof globalThis!=='undefined'?globalThis:this);
 
 /* Reference lighting r01. Pure evaluator: no source mutation, meshes or textures.
@@ -200,7 +226,7 @@ function sampleWoodAnimation(base,time,cycle,mode='both'){
 const canvas=document.getElementById('view'),ctx=canvas.getContext('2d'),status=document.getElementById('status');let yaw=.38,pitch=.38,zoom=1,playing=false,active=false,pending=false,seq=0,last=0,worker=null,lastTick=performance.now(),visible=true,epoch=0,playStart=0,playYaw=0,dirty=false,activeSeq=null,workerSession=0,workers=[],assembly=null;
 const timeline=makeWoodTimeline();
 const qa=window.woodReferenceQA={version:WoodReferenceAuthority.VERSION,renderedState:null,renderedCount:0,source:null,active:0,queued:0};
-function snapshot(){const source=WoodReferenceAuthority.source({length:+lengthInput.value,damage:+damageInput.value,grainDensity:+densityInput.value});const dpr=Math.min(devicePixelRatio,1.5),w=Math.round(canvas.clientWidth*dpr),h=Math.round(canvas.clientHeight*dpr);return {source,view:{width:w,height:h,yaw:yaw+timeline.time()*.18,animationTime:timeline.time(),pitch,zoom,gray:grayInput.checked},seq:++seq,epoch}}
+function snapshot(){const source=WoodReferenceAuthority.source({length:+lengthInput.value,damage:+damageInput.value,grainDensity:+densityInput.value});const dpr=Math.min(devicePixelRatio,1.5),w=Math.round(canvas.clientWidth*dpr),h=Math.round(canvas.clientHeight*dpr);return {source,view:{footprintMode:'differential',width:w,height:h,yaw:yaw+timeline.time()*.18,animationTime:timeline.time(),pitch,zoom,gray:grayInput.checked},seq:++seq,epoch}}
 function material(p,n,m,f,spec){const a=WoodExposure.evaluate(p,n,{seed:m.seed,exposure:m.exposure,damage:m.damage,style:'pale',grainDensity:m.grainDensity,surface:m.surface,damageEvents:spec.damageEvents},f);a.coat=m.finish;return a}
 const workerSource=WORKER_SOURCE+'\n'+material.toString()+'\nonmessage=e=>{try{let r=WoodReferenceRenderer.render(e.data.source,e.data.view,material);postMessage({ok:true,...r,seq:e.data.seq,epoch:e.data.epoch},[r.pixels.buffer])}catch(e){postMessage({ok:false,error:String(e),seq:e.data.seq,epoch:e.data.epoch})}}';
 function spawnWorker(){const token=++workerSession;workers=[];try{const count=Math.max(1,Math.min(6,(navigator.hardwareConcurrency||4)-1));for(let i=0;i<count;i++){let w=new Worker(URL.createObjectURL(new Blob([workerSource],{type:'text/javascript'})));workers.push(w);w.onmessage=e=>{if(token===workerSession)receive(e.data)};w.onerror=e=>{if(token!==workerSession)return;workerSession++;workers.forEach(w=>w.terminate());workers=[];worker=null;active=false;qa.active=0;timeline.stop(qa.renderedState?.view.animationTime??0);playing=false;document.getElementById('play').textContent='转台播放';status.textContent='工作线程不可用，静态计算';request()}}worker=workers[0];qa.workerCount=count}catch(e){workers.forEach(w=>w.terminate());workers=[];worker=null;qa.workerCount=0;status.textContent='本机静态渲染'}}
