@@ -1,0 +1,218 @@
+<!DOCTYPE html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>WOOD MOTHER · 参考形态</title><style>*{box-sizing:border-box}html,body{margin:0;height:100%;background:#aaa;font:12px system-ui;color:#282a2b}main{position:absolute;inset:0 0 calc(56px + env(safe-area-inset-bottom,0px))}canvas,iframe{width:100%;height:100%;display:block;border:0}canvas{touch-action:none}canvas[hidden],iframe[hidden],[hidden]{display:none!important}footer{position:absolute;bottom:0;width:100%;height:calc(56px + env(safe-area-inset-bottom,0px));background:#e3e3e3ee;display:flex;align-items:center;gap:12px;padding:8px 14px calc(8px + env(safe-area-inset-bottom,0px));flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;white-space:nowrap}#params{display:flex;gap:12px;align-items:center;flex-wrap:nowrap;flex-shrink:0}label{display:flex;gap:5px;align-items:center;flex-shrink:0}footer>select,footer>span{flex-shrink:0}input[type=range]{width:85px}button,select{padding:7px;border:1px solid #aaa;border-radius:5px;background:#f5f5f5}#status{color:#555;font-size:10px}@media(max-width:650px){footer{gap:9px;padding-left:9px;padding-right:9px}#params{gap:9px}input[type=range]{width:65px}}</style><main><canvas id="view" aria-label="可旋转的木头参考形态"></canvas><iframe id="legacy" title="保留的八种材质总览 v13" hidden></iframe></main><footer><select id="mode"><option value="reference">参考形态</option><option value="eight">八种材质 · 保留版</option></select><div id="params"><button id="play">转台播放</button><label>长度<input id="length" type="range" min="1.8" max="4" step=".1" value="2.8"></label><label>旧损<input id="damage" type="range" min="0" max="1" step=".05" value=".45"></label><label>纹密<input id="density" type="range" min=".5" max="2" step=".05" value="1"></label><label><input id="gray" type="checkbox">灰模</label></div><span id="status">初始化</span></footer><script>/* KAOPU Wood shape Mother r1. Analytic interval domains; no mesh or distance-field claim. */
+(function(root){'use strict';
+const clone=x=>Array.isArray(x)?x.map(clone):x&&typeof x==='object'?Object.fromEntries(Object.entries(x).map(([k,v])=>[k,clone(v)])):x;
+const norm=v=>{const l=Math.hypot(...v);return v.map(x=>x/l)},neg=v=>v.map(x=>-x),at=(o,d,t)=>o.map((x,i)=>x+d[i]*t);
+function box(c,s,label){const b=s.map(x=>x/2);return {min:c.map((x,i)=>x-b[i]),max:c.map((x,i)=>x+b[i]),inside:p=>p.every((x,i)=>Math.abs(x-c[i])<=b[i]),ray(o,d){let a=-Infinity,z=Infinity,na, nz;for(let i=0;i<3;i++){if(Math.abs(d[i])<1e-15){if(Math.abs(o[i]-c[i])>b[i])return [];continue}let x=(c[i]-b[i]-o[i])/d[i],y=(c[i]+b[i]-o[i])/d[i],n=[0,0,0],m=[0,0,0];n[i]=-1;m[i]=1;if(x>y){[x,y]=[y,x];[n,m]=[m,n]}if(x>a){a=x;na=n}if(y<z){z=y;nz=m}if(a>=z)return []}return [{a,z,na,nz,la:label,lz:label}]}}}
+function cylinder(c,r,l,label,sphere=false){return {min:c.map((x,i)=>x-(i===1&&!sphere?l/2:r)),max:c.map((x,i)=>x+(i===1&&!sphere?l/2:r)),inside:p=>{const q=p.map((x,i)=>x-c[i]);return sphere?q.reduce((a,x)=>a+x*x,0)<=r*r:q[0]*q[0]+q[2]*q[2]<=r*r&&Math.abs(q[1])<=l/2},ray(o,d){let q=o.map((x,i)=>x-c[i]),axes=sphere?[0,1,2]:[0,2],A=axes.reduce((s,i)=>s+d[i]*d[i],0),B=axes.reduce((s,i)=>s+q[i]*d[i],0),C=axes.reduce((s,i)=>s+q[i]*q[i],0)-r*r,a=-Infinity,z=Infinity,na,nz;if(A<1e-30){if(C>0)return []}else{const disc=B*B-A*C;if(disc<=0)return [];let v=Math.sqrt(disc);a=(-B-v)/A;z=(-B+v)/A;na=norm(q.map((x,i)=>axes.includes(i)?x+d[i]*a:0));nz=norm(q.map((x,i)=>axes.includes(i)?x+d[i]*z:0))}if(!sphere){if(Math.abs(d[1])<1e-15){if(Math.abs(q[1])>l/2)return []}else{let t=(-l/2-q[1])/d[1],u=(l/2-q[1])/d[1],n=[0,-1,0],m=[0,1,0];if(t>u){[t,u]=[u,t];[n,m]=[m,n]}if(t>a){a=t;na=n}if(u<z){z=u;nz=m}}}return a<z?[{a,z,na,nz,la:label,lz:label}]:[]}}}
+function ellipsoid(c,r,label){const unit=cylinder([0,0,0],1,0,label,true);return {min:c.map((x,i)=>x-r[i]),max:c.map((x,i)=>x+r[i]),inside:p=>unit.inside(p.map((x,i)=>(x-c[i])/r[i])),ray(o,d){return unit.ray(o.map((x,i)=>(x-c[i])/r[i]),d.map((x,i)=>x/r[i])).map(v=>({...v,na:norm(v.na.map((x,i)=>x/r[i])),nz:norm(v.nz.map((x,i)=>x/r[i]))}))}}}
+function rotatedY(domain,c,angle){if(!Number.isFinite(angle))throw Error('angleY must be finite');if(!angle)return domain;const a=Math.cos(angle),b=Math.sin(angle),rot=v=>[a*v[0]+b*v[2],v[1],-b*v[0]+a*v[2]],inv=v=>[a*v[0]-b*v[2],v[1],b*v[0]+a*v[2]],local=p=>inv(p.map((x,i)=>x-c[i])).map((x,i)=>x+c[i]);let corners=[];for(const x of [domain.min[0],domain.max[0]])for(const y of [domain.min[1],domain.max[1]])for(const z of [domain.min[2],domain.max[2]])corners.push(rot([x-c[0],y-c[1],z-c[2]]).map((v,i)=>v+c[i]));return {min:[0,1,2].map(i=>Math.min(...corners.map(v=>v[i]))),max:[0,1,2].map(i=>Math.max(...corners.map(v=>v[i]))),inside:p=>domain.inside(local(p)),ray(o,d){return domain.ray(local(o),inv(d)).map(v=>({...v,na:rot(v.na),nz:rot(v.nz)}))}}}
+function union(xs){xs.sort((a,b)=>a.a-b.a);let out=[];for(const x of xs){let p=out[out.length-1];if(!p||x.a>p.z)out.push({...x});else if(x.z>p.z){p.z=x.z;p.nz=x.nz;p.lz=x.lz}}return out}
+function subtract(xs,ys){for(const y of ys){let out=[];for(const x of xs){if(y.z<=x.a||y.a>=x.z){out.push(x);continue}if(y.a>x.a)out.push({...x,z:y.a,nz:neg(y.na),lz:y.la});if(y.z<x.z)out.push({...x,a:y.z,na:neg(y.nz),la:y.lz})}xs=out}return xs}
+function compileShape(input){const s=clone(input),positive=[],voids=[];const finite=(x,n)=>{if(!Number.isFinite(x)||x<=0)throw Error(n+' must be positive finite');return x};const vec=(v,n,positive=false)=>{if(!Array.isArray(v)||v.length!==3||v.some(x=>!Number.isFinite(x)||(positive&&x<=0)))throw Error(n+' invalid');return v};let L=finite(s.length,'length');if(s.kind==='box'){let w=finite(s.width,'width'),h=finite(s.depth,'depth'),r=Math.max(s.rounding??0,...(s.damageEvents||[]).filter(e=>e.kind==='longitudinal-bevel').map(e=>e.radius));if(!Number.isFinite(r)||r<0||r>=Math.min(w,h)/2)throw Error('rounding out of range');if(!r)positive.push(box([0,0,0],[w,L,h],'body'));else{positive.push(box([0,0,0],[w-2*r,L,h],'body'),box([0,0,0],[w,L,h-2*r],'body'));for(const x of [-1,1])for(const z of [-1,1])positive.push(cylinder([x*(w/2-r),0,z*(h/2-r)],r,L,'rounded-edge'))}}else if(s.kind==='cylinder')positive.push(cylinder([0,0,0],finite(s.radius,'radius'),L,'body'));else throw Error('unknown kind');
+for(const [key,list,isVoid] of [['tenons',positive,false],['slots',voids,true],['mortises',voids,true]])for(const v of s[key]||[])list.push(box(vec(v.center,key),vec(v.size,key,true),key));for(const e of s.damageEvents||[])if(!['longitudinal-bevel','ellipsoid-void'].includes(e.kind))throw Error('unknown damage event');for(const c of [...(s.chips||[]),...(s.damageEvents||[]).filter(e=>e.kind==='ellipsoid-void')])voids.push(rotatedY(ellipsoid(vec(c.center,'chip'),c.radii?vec(c.radii,'chip radii',true):[1,1,1].map(()=>finite(c.radius,'chip radius')),c.surface||'chip'),c.center,c.angleY??0));
+const bounds={min:[0,1,2].map(i=>Math.min(...positive.map(p=>p.min[i]))),max:[0,1,2].map(i=>Math.max(...positive.map(p=>p.max[i])))};
+const intervals=(o,d)=>subtract(union(positive.flatMap(p=>p.ray(o,d))),union(voids.flatMap(p=>p.ray(o,d))));
+return {spec:s,bounds,contains:p=>positive.some(x=>x.inside(p))&&!voids.some(x=>x.inside(p)),intervals,hit(o,d,tMin=1e-7){for(const x of intervals(o,d)){let t,n,surface;if(x.a>=tMin){t=x.a;n=x.na;surface=x.la}else if(x.z>=tMin){t=x.z;n=x.nz;surface=x.lz}else continue;return {t,p:at(o,d,t),n,surface}}return null},occluded(o,d,maxT=Infinity,tMin=1e-7){return intervals(o,d).some(x=>x.z>tMin&&x.a<maxT)}};
+}
+function withBoundaryDamage(input,damage=0,seed=1709){if(!Number.isFinite(damage)||damage<0||damage>1)throw Error('boundaryDamage must be 0..1');const s=clone(input);if(damage===0)return s;const rand=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296};const scale=s.kind==='box'?Math.min(s.width,s.depth):2*s.radius;s.damageEvents=(s.damageEvents||[]).slice();if(s.kind==='box')s.damageEvents.push({id:'edge-bevel',kind:'longitudinal-bevel',radius:(s.rounding||0)+(Math.max(s.rounding||0,scale*.045)-(s.rounding||0))*damage,halfSize:[s.width/2,s.length/2,s.depth/2],strength:damage});for(let i=0;i<3;i++){const side=i%2?1:-1,ry=Math.min(s.length*.11,scale*.42)*(0.65+.5*rand())*damage;let x,z;if(s.kind==='box'){x=side*s.width*.49;z=s.depth*(i===2?-.49:.49)}else{const a=(i*.71+.21)*Math.PI;x=Math.cos(a)*s.radius*.98;z=Math.sin(a)*s.radius*.98}s.damageEvents.push({id:'edge-chip-'+i,kind:'ellipsoid-void',center:[x,(i-1)*s.length*.36,z],radii:[scale*(.035+.025*rand())*damage,ry,scale*(.025+.025*rand())*damage],angleY:0,strength:damage,surface:'chip'})}return s}
+function withWoodChecks(input,damage=0,seed=1709){if(!Number.isFinite(damage)||damage<0||damage>1)throw Error('check damage must be 0..1');const s=clone(input);if(!damage||(s.tenons||[]).length||(s.mortises||[]).length)return s;const scale=s.kind==='box'?Math.min(s.width,s.depth):2*s.radius;const edge=s.kind==='box'?s.depth/2:s.radius;s.chips=(s.chips||[]).slice();const phase=((seed>>>0)%997)/997;for(let i=0;i<2;i++){let angle=i===0?0:1.9+phase*.5;let radial=scale*.21;s.chips.push({center:[Math.cos(angle)*radial,s.length/2+scale*.01,-Math.sin(angle)*radial],radii:[scale*.34,scale*.16*damage,scale*.009*damage],angleY:angle,surface:'end-check'})}s.chips.push({center:[scale*(phase-.5)*.18,-s.length*.05,edge+scale*.006],radii:[scale*.013*damage,s.length*.37,scale*.032*damage],surface:'fiber-check'});return s}
+const api={compileShape,withBoundaryDamage,withWoodChecks};if(typeof module!=='undefined'&&module.exports)module.exports=api;root.WoodShapes=api;
+})(typeof globalThis!=='undefined'?globalThis:this);
+
+/* Original KAOPU WoodExposure V1. binary64, local Y longitudinal; source is fields, not textures.
+   height is NORMAL-ONLY relief. Boundary erosion belongs to WoodShapes' analytic primitives. */
+(function(root){
+const clamp=(v,a=0,b=1)=>Math.max(a,Math.min(b,v)),mix=(a,b,t)=>a+(b-a)*t;
+function hash(x,y,z,seed=1709){let h=Math.imul(x,374761393)^Math.imul(y,668265263)^Math.imul(z,2147483647)^seed;h=Math.imul(h^(h>>>13),1274126177);return ((h^(h>>>16))>>>0)/4294967296}
+function noise(x,y,z,seed){const ix=Math.floor(x),iy=Math.floor(y),iz=Math.floor(z),t=[x-ix,y-iy,z-iz],u=t.map(t=>t*t*(3-2*t)),d=t.map(t=>6*t*(1-t));let v=0,g=[0,0,0];for(let a=0;a<2;a++)for(let b=0;b<2;b++)for(let c=0;c<2;c++){const h=hash(ix+a,iy+b,iz+c,seed),w=[a?u[0]:1-u[0],b?u[1]:1-u[1],c?u[2]:1-u[2]];v+=h*w[0]*w[1]*w[2];g[0]+=h*(a?1:-1)*d[0]*w[1]*w[2];g[1]+=h*(b?1:-1)*d[1]*w[0]*w[2];g[2]+=h*(c?1:-1)*d[2]*w[0]*w[1]}return {v,g}}
+const presets={pale:{base:[.39,.29,.18],ridge:[.62,.53,.39],recess:[.16,.11,.063]},dark:{base:[.105,.071,.039],ridge:[.22,.16,.093],recess:[.038,.025,.014]},red:{base:[.23,.069,.029],ridge:[.38,.16,.069],recess:[.065,.018,.009]}};
+function organization(p,par={},footprint=0){
+ const seed=par.seed??1709,ex=clamp(par.exposure??.85),damage=clamp(par.damage??.75),lean=par.fiberLean??.025,curve=par.fiberCurve??.012;
+ const x=p[0]-lean*p[1]-curve*p[1]*p[1],y=p[1],z=p[2],warpDerivative=lean+2*curve*y;
+ const macro=noise(x*3.1,y*.55,z*3.1,seed+67),exposure=ex*(.65+.35*macro.v);
+ let height=0,grad=[0,0,0],gully=0,ridge=0,unresolved=0;
+ for(const [f0,fy,amp,k] of [[39,1.2,.016,0],[87,9.2,.0054,1],[179,23,.0018,2]]){
+  const freq=f0*clamp(par.grainDensity??1,.4,2.5);
+  const n=noise(x*freq,y*fy,z*freq,seed+101*k),r=2*n.v-1,abs=Math.sqrt(r*r+.008),val=1-abs;
+  // Narrow irregular ridges and valleys; no periodic sinusoidal band pattern.
+  const h=val*val,der=-4*val*r/abs;
+  const keep=clamp(1-footprint*freq/1.5),power=amp*(.35+.65*damage)*exposure;
+  height+=power*h*keep; const gg=[n.g[0]*freq,n.g[1]*fy-n.g[0]*freq*warpDerivative,n.g[2]*freq];
+  for(let j=0;j<3;j++)grad[j]+=power*der*gg[j]*keep;
+  ridge+=h*keep/[1.6,3,6][k];gully+=(1-h)*keep/[1.6,3,6][k];unresolved+=(1-keep)*power*freq*.13;
+ }
+ if(exposure>0){const f=height/exposure*ex*.35,mg=[macro.g[0]*3.1,macro.g[1]*.55-macro.g[0]*3.1*warpDerivative,macro.g[2]*3.1];for(let j=0;j<3;j++)grad[j]+=f*mg[j];}
+ return {version:'WoodExposure/1',seed,height,gradient:grad,ridge,gully,exposure,damage,roughVariance:unresolved,macro:macro.v};
+}
+function queryDamageEvents(p,events=[]){let influence=0;for(const e of events){if(e.kind!=='ellipsoid-void')continue;const a=e.angleY||0,c=Math.cos(a),s=Math.sin(a),dx=p[0]-e.center[0],dz=p[2]-e.center[2],q=Math.hypot((c*dx-s*dz)/e.radii[0],(p[1]-e.center[1])/e.radii[1],(s*dx+c*dz)/e.radii[2]),t=clamp((q-.85)/.8);influence=Math.max(influence,(1-t*t*(3-2*t))*clamp(e.strength??1));}return influence;}
+function evaluate(p,ng,par={},footprint=0){
+ const f=organization(p,par,footprint),palette=presets[par.style||'pale']||presets.pale;
+ // A single radial growth coordinate across cut end and longitudinal side. Not a UV decal.
+ const y=p[1],x=p[0]-(par.fiberLean??.025)*y-(par.fiberCurve??.012)*y*y,z=p[2],rho=Math.hypot(x+.07,z-.04),theta=Math.atan2(z-.04,x+.07);
+ const age=rho*(1+.024*Math.sin(theta*3+y*.3)),phase=age*18*clamp(par.grainDensity??1,.4,2.5)+.42*noise(age*19,0,0,par.seed??1709).v+.10*Math.sin(theta*5+age*11),a=phase-Math.floor(phase),sigma=Math.sqrt(.105**2+(footprint*18*clamp(par.grainDensity??1,.4,2.5)*.5)**2),rawRing=[-1,0,1].reduce((v,k)=>v+Math.exp(-(((a-.78+k)/sigma)**2))*.105/sigma,0),ring=mix(rawRing,.105*Math.sqrt(Math.PI),clamp((sigma-.35)/.3)),keep=1;
+ const end=Math.abs(ng[1]),ringContrast=(.08+.58*end)*ring*keep;
+ const tint=clamp(.12+.86*f.ridge-.22*f.gully),variation=.75+.42*f.macro;
+ let base=palette.base.map((v,i)=>mix(v,palette.ridge[i],tint)*variation*(1-ringContrast));
+ const recess=clamp(f.gully*.20);base=base.map((v,i)=>mix(v,palette.recess[i],recess));
+ const endBase=palette.base.map((v,i)=>mix(v,palette.ridge[i],.34)*(1-.72*ring*keep));base=base.map((v,i)=>mix(v,endBase[i],end*end));
+ // Projection on tangent plane: no displacement, no silhouette claim.
+ const g=f.gradient,along=g[0]*ng[0]+g[1]*ng[1]+g[2]*ng[2],normal=ng.map((v,i)=>v-(g[i]-v*along)*(1-end)),len=Math.hypot(...normal);
+ const eventInfluence=queryDamageEvents(p,par.damageEvents||[]);base=base.map((v,i)=>mix(v,palette.ridge[i],eventInfluence*.30));
+ if(par.surface==='chip')base=base.map((v,i)=>mix(v,palette.recess[i],.18*f.damage));
+ const rough=clamp(eventInfluence*.07+(par.surface==='chip'?.73:.68)+.12*f.exposure+.09*f.gully+f.roughVariance,.45,.96);
+ return {base,normal:normal.map(v=>v/len),rough,coat:0,coatRough:.6,coatIOR:1.5,weather:clamp(f.exposure+eventInfluence*.1),eventInfluence,field:f};
+}
+const api={version:'WoodExposure/1',hash,organization,queryDamageEvents,evaluate,presets};if(typeof module!=='undefined'&&module.exports)module.exports=api;root.WoodExposure=api;
+})(typeof globalThis!=='undefined'?globalThis:this);
+
+/* Reference lighting r01. Pure evaluator: no source mutation, meshes or textures.
+ * World-space coordinates; opaque boolean scene query, never solid-thickness opacity.
+ * Two deterministic directional lamps, optional two angular samples per lamp.
+ */
+(function(root,factory){const api=factory();if(typeof module==='object')module.exports=api;else root.KAOPUReferenceLighting=api})(typeof globalThis==='object'?globalThis:this,function(){
+'use strict';
+const dot=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2],add=(a,b)=>a.map((x,i)=>x+b[i]),mul=(a,k)=>a.map(x=>x*k),norm=a=>mul(a,1/Math.max(1e-20,Math.hypot(...a))),cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]],clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+function createRig(right=[1,0,0],front=[0,0,1],opts={}){
+ const count=opts.samples===2?2:1, spread=opts.angularRadius??.085;
+ const definitions=[{dir:norm(add(add(mul(right,-1.4),mul(front,.5)),[0,1.65,0])),color:[3.4,2.95,2.5]},{dir:norm(add(add(mul(right,1.3),mul(front,.3)),[0,1.3,0])),color:[1.65,1.95,2.45]}];
+ return {version:'reference-lighting-r01',samplesPerLamp:count,lamps:definitions.map(d=>{const t=norm(cross(d.dir,front));return {...d,samples:count===1?[d.dir]:[-1,1].map(k=>norm(add(d.dir,mul(t,k*spread))))}}),ambient:opts.ambient??.045};
+}
+function offsetOrigin(p,ng,opts={}){
+ // Bias is solver tolerance, NOT pixel footprint. Larger footprint would erase cracks.
+ const scale=Math.abs(opts.sceneScale??1),roundoff=64*Number.EPSILON*Math.max(scale,...p.map(Math.abs));
+ const e=Math.max(2e-7*scale,roundoff,opts.hitError?4*opts.hitError:0);
+ return {origin:add(p,mul(ng,e)),epsilon:e};
+}
+function boundsIntersect(ro,rd,bounds,maxT=Infinity){
+ let lo=0,hi=maxT;for(let i=0;i<3;i++){if(Math.abs(rd[i])<1e-15){if(ro[i]<bounds.min[i]||ro[i]>bounds.max[i])return false;continue}const a=(bounds.min[i]-ro[i])/rd[i],b=(bounds.max[i]-ro[i])/rd[i];lo=Math.max(lo,Math.min(a,b));hi=Math.min(hi,Math.max(a,b));if(hi<lo)return false}return hi>=lo;
+}
+function brdf(base,rough,n,v,l){
+ const nl=Math.max(0,dot(n,l)),nv=Math.max(1e-5,dot(n,v));if(!nl)return [0,0,0];
+ const h=norm(add(v,l)),nh=Math.max(0,dot(n,h)),vh=Math.max(0,dot(v,h)),r=clamp(rough,.06,1),a=r*r,a2=a*a,D=a2/(Math.PI*(nh*nh*(a2-1)+1)**2),k=(r+1)**2/8,G=nv/(nv*(1-k)+k)*nl/(nl*(1-k)+k),F=.04+.96*(1-vh)**5;
+ return base.map(b=>((1-F)*b/Math.PI+D*G*F/(4*nv*Math.max(nl,1e-5)))*nl);
+}
+function shade(surface,rig,sceneOccluded,opts={}){
+ const {p,ng,v,base}=surface,n=surface.n||ng,rough=surface.rough??.7,coat=clamp(surface.coat??0,0,1),bias=offsetOrigin(p,ng,opts),visibility=[],stats=opts.stats;
+ // Modest unoccluded studio fill: explicitly approximation, not AO or global illumination.
+ let out=mul(base,rig.ambient*(.7+.3*Math.max(0,ng[1])));
+ const F=.04+.96*(1-Math.max(0,dot(ng,v)))**5;
+ for(const lamp of rig.lamps){let lit=0,eligible=0;for(const l of lamp.samples){
+  // Geometric hemisphere must gate shading normal (normal-map leak protection).
+  if(dot(ng,l)<=0)continue;eligible++;if(stats)stats.shadowRays=(stats.shadowRays||0)+1;
+  if(sceneOccluded(bias.origin,l,Infinity)){if(stats)stats.blocked=(stats.blocked||0)+1;continue}lit++;
+  const diffuse=brdf(base,rough,n,v,l),clear=coat?brdf([0,0,0],surface.coatRough??.3,ng,v,l):[0,0,0];
+  out=out.map((q,i)=>q+lamp.color[i]*(diffuse[i]*(1-coat*F)+clear[i]*coat)/lamp.samples.length);
+ }visibility.push({visible:lit,total:lamp.samples.length,eligible})}
+ return {color:out,visibility,epsilon:bias.epsilon};
+}
+function display(linear){return linear.map(v=>Math.round(255*Math.pow(Math.max(0,v)/(Math.max(0,v)+.7),1/2.2)))}
+return {createRig,shade,offsetOrigin,boundsIntersect,brdf,display};
+});
+
+/* Public restricted KAOPU adapter. Demo dimensions are not measurements of reference images. */
+(function(root){
+'use strict';
+const VERSION='WOOD-REFERENCE-MOTHER-R01';
+function source(overrides={}){
+ return {language:'KAOPU-TLO',version:VERSION,Time:{manufactured:null,created:'2026-10-28'},Location:{region:null,placement:null},Object:{id:'wood-reference-study',mother:VERSION,origin:'material-axis-midpoint',axes:'Y=longitudinal; X,Z=cross-section',units:'normalized-design-demo-not-measured',parameters:{length:2.8,width:.62,depth:.62,rounding:.055,damage:.45,grainDensity:1,exposure:.72,finish:0,jointWidth:.26,jointHeight:.28,clearance:.012,seed:17,...overrides},relations:[{id:'frame-joint',type:'common-fit-domain',members:['frame-left','frame-crossbeam','frame-right'],evidence:'designed-demonstration-not-reconstructed'}]}};
+}
+function expand(a){
+ if(a?.language!=='KAOPU-TLO'||a.version!==VERSION||a.Object?.mother!==VERSION)throw Error('Unsupported reference authority');
+ if(a.Object.origin!=='material-axis-midpoint'||a.Object.axes!=='Y=longitudinal; X,Z=cross-section'||a.Object.units!=='normalized-design-demo-not-measured')throw Error('Unsupported local coordinate contract');
+ const p=a.Object.parameters,keys=['length','width','depth','rounding','damage','grainDensity','exposure','finish','jointWidth','jointHeight','clearance','seed'];if(Object.keys(p).some(k=>!keys.includes(k)))throw Error('Unsupported reference parameter');for(const k of keys)if(!Number.isFinite(p[k]))throw Error('Nonfinite '+k);
+ if(p.exposure<0||p.exposure>1||p.finish<0||p.finish>1||!Number.isSafeInteger(p.seed)||p.seed<0||p.seed>65535)throw Error('Unsupported material domain');
+ if(p.length<1.8||p.length>4||p.width<.4||p.width>.9||p.depth<.4||p.depth>.9||p.rounding<0||p.rounding>Math.min(p.width,p.depth)/4||p.damage<0||p.damage>1||p.grainDensity<.5||p.grainDensity>2||p.jointWidth<=0||p.jointWidth>p.depth*.7||p.jointHeight<=0||p.jointHeight>p.width*.7||p.clearance<0||p.clearance>.04)throw Error('Reference parameter outside supported domain');
+ const I=[[1,0,0],[0,1,0],[0,0,1]],Z=[[1,0,0],[0,0,-1],[0,1,0]],X=[[0,1,0],[-1,0,0],[0,0,1]];
+ const records=[], common={length:p.length,width:p.width,depth:p.depth,rounding:p.rounding};
+ const add=(id,kind,center,rotation,spec={},parent='wood-reference-study')=>records.push({id,parent,mother:'WOOD-SHAPE-R01',spec:{...common,kind,...spec},placement:{center,rotation},material:{version:'AGED-WOOD-FIELD-R01',seed:p.seed,grainDensity:p.grainDensity,exposure:p.exposure,finish:p.finish,damage:p.damage}});
+ // All placements below are display staging; physical site Location remains unknown.
+ add('round-log','cylinder',[-2.5,p.length/2,0],I,{radius:p.width*.66});
+ add('square-beam','box',[-1.4,p.depth/2,1.25],Z);
+ add('grooved-log','cylinder',[-.15,p.width*.6,1.45],Z,{radius:p.width*.6,slots:[{center:[0,0,-p.width*.5],size:[p.width*.31,p.length+.02,p.width*.45]}]});
+ add('tenoned-beam','box',[1.2,p.depth/2,1.35],Z,{tenons:[{center:[0,p.length/2+.14,0],size:[p.width*.45,.30,p.depth*.45]}]});
+ const span=2.5,postX=1.35,postZ=-1.1,postH=p.length+.45,crossY=postH*.72,beamLen=span-p.width,jw=p.jointWidth,jh=p.jointHeight,clear=p.clearance;
+ const joint={width:jw,height:jh,clearance:clear,span,axis:'world-X',worldY:crossY};
+ for(const sign of [-1,1])add(sign<0?'frame-left':'frame-right','box',[postX+sign*span/2,postH/2,postZ],I,{length:postH,mortises:[{center:[0,crossY-postH/2,0],size:[p.width+.04,jh+2*clear,jw+2*clear]}]},'mortise-tenon-frame');
+ add('frame-crossbeam','box',[postX,crossY,postZ],X,{length:beamLen,width:p.width,depth:p.depth,tenons:[-1,1].map(s=>({center:[0,s*(beamLen/2+p.width*.55),0],size:[jh,p.width*1.12,jw]}))},'mortise-tenon-frame');
+ return {version:VERSION,parameters:{...p},records,assemblies:[{id:'mortise-tenon-frame',parent:'wood-reference-study',joint}],evidence:{actualDimensions:null,scale:'normalized-design-demo',physicalPlacement:null},source:a};
+}
+const api={VERSION,source,expand};if(typeof module!=='undefined')module.exports=api;root.WoodReferenceAuthority=api;
+})(typeof globalThis!=='undefined'?globalThis:this);
+
+(function(root){
+'use strict';
+const A=typeof require==='function'?require('./authority.js'):root.WoodReferenceAuthority,G=typeof require==='function'?require('../reference-shapes-lane/geometry.js'):root.WoodShapes;
+const dot=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2],add=(a,b)=>a.map((v,i)=>v+b[i]),sub=(a,b)=>a.map((v,i)=>v-b[i]),mul=(a,b)=>a.map(v=>v*b),mat=(m,v)=>m.map(r=>dot(r,v)),inv=(m,v)=>[0,1,2].map(j=>m[0][j]*v[0]+m[1][j]*v[1]+m[2][j]*v[2]);
+function compile(authority){
+ const data=A.expand(authority),records=data.records.map(r=>{
+ const spec=G.withBoundaryDamage(JSON.parse(JSON.stringify(r.spec)),r.parent==='mortise-tenon-frame'?0:data.parameters.damage,data.parameters.seed);
+ const checked=G.withWoodChecks(spec,r.parent==='mortise-tenon-frame'?0:data.parameters.damage,data.parameters.seed);const shape=G.compileShape(checked),m=r.placement.rotation,c=r.placement.center;
+ const corners=[];for(const x of [shape.bounds.min[0],shape.bounds.max[0]])for(const y of [shape.bounds.min[1],shape.bounds.max[1]])for(const z of [shape.bounds.min[2],shape.bounds.max[2]])corners.push(add(c,mat(m,[x,y,z])));
+ return {...r,compiledSpec:checked,shape,bounds:{min:[0,1,2].map(i=>Math.min(...corners.map(p=>p[i]))),max:[0,1,2].map(i=>Math.max(...corners.map(p=>p[i])))}};
+ });
+ function bound(o,d,b,maxT){let lo=0,hi=maxT;for(let i=0;i<3;i++){if(Math.abs(d[i])<1e-14){if(o[i]<b.min[i]||o[i]>b.max[i])return false;continue}const a=(b.min[i]-o[i])/d[i],c=(b.max[i]-o[i])/d[i];lo=Math.max(lo,Math.min(a,c));hi=Math.min(hi,Math.max(a,c));if(hi<lo)return false}return true}
+ function hit(o,d,maxT=Infinity,tMin=1e-5){let best=null;for(const r of records){if(!bound(o,d,r.bounds,best?best.t:maxT))continue;const m=r.placement.rotation,h=r.shape.hit(inv(m,sub(o,r.placement.center)),inv(m,d),tMin);if(h&&h.t<maxT&&(!best||h.t<best.t))best={...h,localP:h.p,localN:h.n,p:add(r.placement.center,mat(m,h.p)),n:mat(m,h.n),record:r};}return best}
+ function occluded(o,d,maxT=Infinity){for(const r of records){if(!bound(o,d,r.bounds,maxT))continue;const m=r.placement.rotation;if(r.shape.occluded(inv(m,sub(o,r.placement.center)),inv(m,d),maxT,1e-5))return true}return false}
+ return {data,records,hit,occluded};
+}
+const api={compile,mat,inv,add,sub,mul,dot};if(typeof module!=='undefined')module.exports=api;root.WoodReferenceScene=api;
+})(typeof globalThis!=='undefined'?globalThis:this);
+
+(function(root){
+'use strict';
+const S=typeof require==='function'?require('./scene.js'):root.WoodReferenceScene,L=typeof require==='function'?require('../reference-lighting-lane/lighting.js'):root.KAOPUReferenceLighting;
+const add=S.add,sub=S.sub,mul=S.mul,dot=S.dot,norm=a=>mul(a,1/Math.hypot(...a)),cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]],clamp=x=>Math.max(0,Math.min(1,x));
+function render(source,view,material){
+ const start=Date.now(),scene=S.compile(source),w=view.width,h=view.height,yaw=view.yaw??.38,pitch=view.pitch??.38,zoom=view.zoom??1;
+ const target=[0,1.25,.25],front=[Math.sin(yaw)*Math.cos(pitch),Math.sin(pitch),Math.cos(yaw)*Math.cos(pitch)],right=norm(cross([0,1,0],front)),up=cross(front,right),origin=add(target,mul(front,12)),span=7.8/zoom,rig=L.createRig(right,front,{samples:1,ambient:.065}),pixels=new Uint8ClampedArray(w*h*4),stats={};
+ const footprint=span/w;
+ for(let y=view.part||0;y<h;y+=(view.parts||1))for(let x=0;x<w;x++){
+ const ro=add(origin,add(mul(right,((x+.5)/w-.5)*span),mul(up,(.5-(y+.5)/h)*span*h/w))),rd=mul(front,-1);let hit=scene.hit(ro,rd),color;
+ const gt=rd[1]<-1e-8?-ro[1]/rd[1]:Infinity;
+ if(gt>0&&(!hit||gt<hit.t)){const p=add(ro,mul(rd,gt));color=L.shade({p,ng:[0,1,0],n:[0,1,0],v:front,base:[.32,.32,.325],rough:.9,coat:0},rig,scene.occluded,{sceneScale:8,hitError:1e-7,stats}).color;}
+ else if(hit){let m={base:[.45,.45,.45],normal:hit.localN,rough:.8,coat:0};if(!view.gray&&material){let fp=footprint/Math.max(.12,Math.abs(dot(hit.n,front)));if(view.footprintMode==='differential'){const rawDen=dot(hit.n,rd),den=(rawDen<0?-1:1)*Math.max(1e-8,Math.abs(rawDen)),project=d=>S.inv(hit.record.placement.rotation,sub(d,mul(rd,dot(hit.n,d)/den)));fp={dx:project(mul(right,footprint)),dy:project(mul(up,-footprint))}}m=material(hit.localP,hit.localN,{...hit.record.material,surface:hit.surface},fp,hit.record.compiledSpec)}const n=S.mat(hit.record.placement.rotation,m.normal||hit.localN);color=L.shade({p:hit.p,ng:hit.n,n,v:front,base:m.base,rough:m.rough,coat:m.coat||0,coatRough:m.coatRough},rig,scene.occluded,{sceneScale:8,hitError:1e-7,stats}).color;}
+ else color=[.23,.23,.24];
+ const c=L.display(color),i=(y*w+x)*4;pixels[i]=c[0];pixels[i+1]=c[1];pixels[i+2]=c[2];pixels[i+3]=255;
+ }
+ return {pixels,width:w,height:h,milliseconds:Date.now()-start,stats,instances:scene.records.map(r=>({id:r.id,parent:r.parent,spec:r.compiledSpec,placement:r.placement})),source,view};
+}
+const api={render};if(typeof module!=='undefined')module.exports=api;root.WoodReferenceRenderer=api;
+})(typeof globalThis!=='undefined'?globalThis:this);
+</script><script>const WORKER_SOURCE=document.scripts[0].textContent;
+// A parameter demonstration, not a biological tree-growth simulation.
+function makeWoodTimeline(now=()=>performance.now()){
+ let elapsed=0,started=0,running=false,cycle=16;
+ return {
+  get running(){return running},get cycle(){return cycle},
+  time(){return elapsed+(running?(now()-started)/1000:0)},
+  phase(){return ((this.time()%cycle)+cycle)%cycle/cycle},
+  start(){if(!running){started=now();running=true}},
+  stop(at){elapsed=Number.isFinite(at)?Math.max(0,at):this.time();running=false;return elapsed},
+  seek(t){elapsed=Math.max(0,t);started=now()},
+  setCycle(seconds){const phase=this.phase();cycle=Math.max(8,Math.min(48,seconds));elapsed=phase*cycle;started=now()},
+ };
+}
+function sampleWoodAnimation(base,time,cycle,mode='both'){
+ const phase=((time%cycle)+cycle)%cycle/cycle,theta=phase*Math.PI*2;
+ const khAmplitude=Math.max(0,Math.min(.22,.65-Math.abs(base.kh))),krAmplitude=Math.max(0,Math.min(.045,base.kr-.08,.30-base.kr)),ringAmplitude=Math.max(0,Math.min(3,base.rings-8,32-base.rings));
+ return {...base,kh:base.kh+((mode==='both'||mode==='knot')?khAmplitude*Math.sin(theta):0),kr:base.kr+((mode==='both'||mode==='knot')?krAmplitude*Math.sin(theta*2):0),rings:base.rings+((mode==='both'||mode==='rings')?ringAmplitude*Math.sin(theta):0),crackDepth:(base.crackDepth||0)*((mode==='both'||mode==='cracks')?1+.40*Math.sin(theta):1),crackWidth:(base.crackWidth||0)*((mode==='both'||mode==='cracks')?1+.35*Math.sin(theta*2):1),relief:(base.relief||0)*((mode==='both'||mode==='cracks')?1+.4*Math.sin(theta):1),animationTime:time,animationPhase:phase,animationMode:mode};
+}
+const canvas=document.getElementById('view'),ctx=canvas.getContext('2d'),status=document.getElementById('status');let yaw=.38,pitch=.38,zoom=1,playing=false,active=false,pending=false,seq=0,last=0,worker=null,lastTick=performance.now(),visible=true,epoch=0,playStart=0,playYaw=0,dirty=false,activeSeq=null,workerSession=0,workers=[],assembly=null;
+const timeline=makeWoodTimeline();
+const qa=window.woodReferenceQA={version:WoodReferenceAuthority.VERSION,renderedState:null,renderedCount:0,source:null,active:0,queued:0};
+function snapshot(){const source=WoodReferenceAuthority.source({length:+lengthInput.value,damage:+damageInput.value,grainDensity:+densityInput.value});const dpr=Math.min(devicePixelRatio,1.5),w=Math.round(canvas.clientWidth*dpr),h=Math.round(canvas.clientHeight*dpr);return {source,view:{width:w,height:h,yaw:yaw+timeline.time()*.18,animationTime:timeline.time(),pitch,zoom,gray:grayInput.checked},seq:++seq,epoch}}
+function material(p,n,m,f,spec){const a=WoodExposure.evaluate(p,n,{seed:m.seed,exposure:m.exposure,damage:m.damage,style:'pale',grainDensity:m.grainDensity,surface:m.surface,damageEvents:spec.damageEvents},f);a.coat=m.finish;return a}
+const workerSource=WORKER_SOURCE+'\n'+material.toString()+'\nonmessage=e=>{try{let r=WoodReferenceRenderer.render(e.data.source,e.data.view,material);postMessage({ok:true,...r,seq:e.data.seq,epoch:e.data.epoch},[r.pixels.buffer])}catch(e){postMessage({ok:false,error:String(e),seq:e.data.seq,epoch:e.data.epoch})}}';
+function spawnWorker(){const token=++workerSession;workers=[];try{const count=Math.max(1,Math.min(6,(navigator.hardwareConcurrency||4)-1));for(let i=0;i<count;i++){let w=new Worker(URL.createObjectURL(new Blob([workerSource],{type:'text/javascript'})));workers.push(w);w.onmessage=e=>{if(token===workerSession)receive(e.data)};w.onerror=e=>{if(token!==workerSession)return;workerSession++;workers.forEach(w=>w.terminate());workers=[];worker=null;active=false;qa.active=0;timeline.stop(qa.renderedState?.view.animationTime??0);playing=false;document.getElementById('play').textContent='转台播放';status.textContent='工作线程不可用，静态计算';request()}}worker=workers[0];qa.workerCount=count}catch(e){workers.forEach(w=>w.terminate());workers=[];worker=null;qa.workerCount=0;status.textContent='本机静态渲染'}}
+function cancelWork(){epoch++;activeSeq=null;assembly=null;workers.forEach(w=>w.terminate());workers=[];worker=null;spawnWorker();active=false;qa.active=0;qa.queued=0}
+spawnWorker();
+function request(){if(!visible||document.hidden){pending=true;return}if(active){pending=true;qa.queued=1;return}active=true;pending=false;qa.active=1;qa.queued=0;const s=snapshot();activeSeq=s.seq;qa.source=s.source;status.textContent=playing?'旋转中 · 整帧计算':'静态画面更新';if(worker){assembly={seq:s.seq,count:workers.length,stats:{},done:new Set(),pixels:new Uint8ClampedArray(s.view.width*s.view.height*4),started:performance.now()};workers.forEach((w,i)=>w.postMessage({...s,view:{...s.view,part:i,parts:workers.length}}))}else setTimeout(()=>{try{receive({ok:true,...WoodReferenceRenderer.render(s.source,s.view,material),seq:s.seq,epoch:s.epoch})}catch(e){receive({ok:false,error:String(e),seq:s.seq,epoch:s.epoch})}},0)}
+function receive(r){if(r.seq!==activeSeq)return;if(r.ok&&assembly&&r.epoch===epoch){const part=r.view.part;if(assembly.done.has(part))return;assembly.done.add(part);for(const [k,v] of Object.entries(r.stats||{}))assembly.stats[k]=(assembly.stats[k]||0)+v;const stride=r.width*4;for(let y=part;y<r.height;y+=assembly.count)assembly.pixels.set(r.pixels.subarray(y*stride,(y+1)*stride),y*stride);if(assembly.done.size<assembly.count)return;r.pixels=assembly.pixels;r.stats=assembly.stats;r.milliseconds=Math.round(performance.now()-assembly.started);delete r.view.part;delete r.view.parts;assembly=null}activeSeq=null;active=false;qa.active=0;if(r.epoch!==epoch||!visible||document.hidden){if(pending&&visible&&!document.hidden)request();return}if(!r.ok){status.textContent=r.error;return}canvas.width=r.width;canvas.height=r.height;ctx.putImageData(new ImageData(new Uint8ClampedArray(r.pixels),r.width,r.height),0,0);qa.renderedState={source:r.source,view:r.view,instances:r.instances,stats:r.stats,milliseconds:r.milliseconds};qa.renderedCount++;dirty=false;status.textContent=(playing?'播放中':'已暂停')+' · '+r.milliseconds+' ms/帧 · 归一化设计，非实测';if(pending&&visible&&!document.hidden)request()}
+const lengthInput=document.getElementById('length'),damageInput=document.getElementById('damage'),densityInput=document.getElementById('density'),grayInput=document.getElementById('gray');for(const el of [lengthInput,damageInput,densityInput,grayInput])el.addEventListener('input',()=>{dirty=true;epoch++;request()});
+document.getElementById('play').onclick=()=>{epoch++;playing=!playing;document.getElementById('play').textContent=playing?'暂停转台':'转台播放';if(playing){timeline.start();request()}else{timeline.stop(qa.renderedState?.view.animationTime??0);cancelWork();pending=dirty;if(dirty)request();status.textContent='已暂停'}};
+let dragging=false,lastX=0,lastY=0;canvas.onpointerdown=e=>{dragging=true;lastX=e.clientX;lastY=e.clientY;canvas.setPointerCapture(e.pointerId)};canvas.onpointermove=e=>{if(!dragging)return;yaw+=(e.clientX-lastX)*.008;pitch=Math.max(.10,Math.min(1.15,pitch+(e.clientY-lastY)*.005));lastX=e.clientX;lastY=e.clientY;epoch++;dirty=true;playYaw=yaw;playStart=performance.now();request()};canvas.onpointerup=()=>dragging=false;canvas.onwheel=e=>{e.preventDefault();zoom=Math.max(.65,Math.min(1.6,zoom*Math.exp(-e.deltaY*.001)));epoch++;dirty=true;request()};
+function tick(t){if(playing&&visible&&!document.hidden&&!active)request();requestAnimationFrame(tick)}requestAnimationFrame(tick);
+window.addEventListener('resize',()=>{epoch++;dirty=true;request()});document.addEventListener('visibilitychange',()=>{epoch++;if(document.hidden){timeline.stop(qa.renderedState?.view.animationTime??0);cancelWork();pending=true}else{if(playing)timeline.start();if(visible)request()}});
+document.getElementById('mode').onchange=e=>{epoch++;visible=e.target.value==='reference';canvas.hidden=!visible;document.getElementById('legacy').hidden=visible;document.getElementById('params').hidden=!visible;if(!visible){timeline.stop(qa.renderedState?.view.animationTime??0);cancelWork();playing=false;document.getElementById('play').textContent='转台播放';const frame=document.getElementById('legacy');frame.src='eight-v13.html'}else{document.getElementById('legacy').src='about:blank';request()}};
+request();
+</script></html>
