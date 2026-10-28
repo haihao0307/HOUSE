@@ -1,0 +1,195 @@
+<!doctype html><html lang="zh"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Wood Mother · 同场木材</title><style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#aaa;font:13px system-ui;color:#242424}body{display:flex;flex-direction:column;height:100dvh}main{position:relative;flex:1;min-height:0}canvas{display:block;width:100%;height:100%;touch-action:none}.caption{position:absolute;top:16px;left:20px;pointer-events:none;color:#3c3b39;font-size:13px;letter-spacing:.12em}.toolbar{flex:none;display:flex;align-items:center;gap:12px;overflow-x:auto;overflow-y:hidden;white-space:nowrap;padding:10px 14px calc(10px + env(safe-area-inset-bottom));background:#d0ceca;border-top:1px solid #b3b0aa;min-height:66px}.toolbar>*{flex:none}.toolbar label{display:flex;align-items:center;gap:6px;font-size:12px}input[type=range]{width:84px;accent-color:#6f5037}button,select{font:inherit;border:1px solid #aaa69f;background:#ebe9e4;border-radius:6px;padding:8px;color:inherit}button{cursor:pointer}output{font-size:11px;min-width:25px}#status{position:absolute;bottom:8px;left:14px;pointer-events:none;font-size:11px;color:#494744}details{display:none;position:absolute;right:12px;top:12px;width:min(340px,85vw);max-height:65vh;overflow:auto;background:#eee;padding:12px;z-index:2}details[open]{display:block}@media(max-width:600px){.caption{top:10px;left:12px}.toolbar{gap:10px;padding-left:10px}#status{font-size:10px}}
+</style><main><canvas id="view" aria-label="同一场景中的方木与圆木，可拖动旋转"></canvas><div class="caption">WOOD MOTHER</div><div id="status" role="status"></div></main><nav class="toolbar" aria-label="木材操作栏"><button id="play" aria-pressed="false">▶ 播放</button><button id="rewind" title="循环起点">↤</button>
+<label>循环<select id="animationMode"><option value="both">全部形态</option><option value="knot">木节</option><option value="rings">年轮</option><option value="cracks">裂纹 / 起伏</option></select></label>
+<label>木材<select id="family"><option value="0">针叶年轮</option><option value="1" selected>环孔粗纹</option><option value="2">细散孔</option><option value="3">半环孔</option><option value="4">交错纹</option><option value="5">波状纹</option><option value="6">红木风格</option><option value="7">金丝楠风格</option></select></label>
+<label>表面<select id="finish"><option value="0">哑光</option><option value="1">油润</option><option value="2">亮漆</option></select></label>
+<label>裂深<input id="crackDepth" type="range" min="0" max=".22" step=".005" value=".08"></label>
+<label>裂宽<input id="crackWidth" type="range" min="0" max=".10" step=".002" value=".025"></label>
+<label>起伏<input id="relief" type="range" min="0" max=".025" step=".002" value=".015"></label>
+<label>风化<input id="weather" type="range" min="0" max="1" step=".01" value="0"></label>
+<label>周期<input id="cycle" type="range" min="8" max="48" step="1" value="16"><output id="cycleOut">16 秒</output></label>
+<label>进度<input id="timeline" type="range" min="0" max="1" step=".001" value="0"><output id="timeOut">0%</output></label>
+<button id="reset">复位</button><button id="endgrain">端面</button><button id="diagnosticToggle" title="查看真实计算耗时">ⓘ</button></nav><div hidden><input id="shape" value="0"><input id="channel" value="0"><input id="height" value="0"><input id="radius" value=".18"><input id="cut" value=".7"><input id="rings" value="18"><input id="roughnessAdjust" value="0"><input id="coatGloss" value=".85"><input id="knot" type="checkbox" checked><output id="ko"></output><output id="ro"></output><output id="co"></output></div><!-- Growth-field study: Procedural Knots, Maria Larsson et al.
+MIT License
+
+Copyright (c) 2022 Maria Larsson
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+--><!-- MIT License
+
+Copyright (c) 2022 Maria Larsson
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+ --><script>
+function woodCPUEngine(send,subscribe){
+const PROFILES=[{"name": "\u9488\u53f6\u5e74\u8f6e\u578b", "early": [0.52, 0.34, 0.17], "late": [0.28, 0.12, 0.045], "contrast": 0.52, "porosity": 0, "poreScale": 105, "poreWidth": 0.04, "ringGate": 0, "warp": 0.045, "interlock": 0, "wave": 0, "rays": 0.02, "rough": 0.67}, {"name": "\u73af\u5b54\u7c97\u7eb9\u578b", "early": [0.39, 0.235, 0.105], "late": [0.22, 0.1, 0.033], "contrast": 0.43, "porosity": 0.8, "poreScale": 57, "poreWidth": 0.19, "ringGate": 1, "warp": 0.05, "interlock": 0, "wave": 0, "rays": 0.14, "rough": 0.65}, {"name": "\u7ec6\u6563\u5b54\u578b", "early": [0.65, 0.49, 0.29], "late": [0.47, 0.3, 0.14], "contrast": 0.2, "porosity": 0.25, "poreScale": 125, "poreWidth": 0.075, "ringGate": 0, "warp": 0.025, "interlock": 0, "wave": 0, "rays": 0.025, "rough": 0.58}, {"name": "\u534a\u73af\u5b54\u6e10\u53d8\u578b", "early": [0.22, 0.105, 0.043], "late": [0.1, 0.039, 0.016], "contrast": 0.37, "porosity": 0.6, "poreScale": 76, "poreWidth": 0.13, "ringGate": 0.55, "warp": 0.06, "interlock": 0, "wave": 0, "rays": 0.06, "rough": 0.61}, {"name": "\u4ea4\u9519\u7eb9\u7406\u578b", "early": [0.34, 0.13, 0.058], "late": [0.19, 0.055, 0.025], "contrast": 0.22, "porosity": 0.42, "poreScale": 97, "poreWidth": 0.09, "ringGate": 0, "warp": 0.04, "interlock": 0.11, "wave": 0, "rays": 0.06, "rough": 0.59}, {"name": "\u6ce2\u72b6\u7eb9\u7406\u578b", "early": [0.49, 0.29, 0.12], "late": [0.28, 0.13, 0.044], "contrast": 0.31, "porosity": 0.26, "poreScale": 112, "poreWidth": 0.07, "ringGate": 0, "warp": 0.025, "interlock": 0, "wave": 0.065, "rays": 0.04, "rough": 0.59}, {"name": "\u7ea2\u8910\u786c\u6728\u98ce\u683c \u00b7 \u672a\u7269\u79cd\u6807\u5b9a", "early": [0.24, 0.046, 0.026], "late": [0.055, 0.01, 0.008], "contrast": 0.64, "porosity": 0.43, "poreScale": 107, "poreWidth": 0.09, "ringGate": 0, "warp": 0.043, "interlock": 0.074, "wave": 0.021, "rays": 0.045, "rough": 0.64, "sheen": 0.18, "sheenWidth": 0.34, "sheenTint": [0.66, 0.28, 0.1]}, {"name": "\u91d1\u4e1d\u6960\u98ce\u683c \u00b7 \u672a\u7269\u79cd\u6807\u5b9a", "early": [0.51, 0.325, 0.105], "late": [0.27, 0.155, 0.037], "contrast": 0.3, "porosity": 0.2, "poreScale": 132, "poreWidth": 0.065, "ringGate": 0, "warp": 0.028, "interlock": 0.06, "wave": 0.052, "rays": 0.055, "rough": 0.62, "sheen": 0.44, "sheenWidth": 0.28, "sheenTint": [1, 0.68, 0.24]}];
+const clamp=(x,a,b)=>Math.max(a,Math.min(b,x)),mix=(a,b,t)=>a+(b-a)*t,smooth=(a,b,x)=>{let t=clamp((x-a)/(b-a),0,1);return t*t*(3-2*t)},dot=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2],add=(a,b)=>[a[0]+b[0],a[1]+b[1],a[2]+b[2]],scale=(a,s)=>[a[0]*s,a[1]*s,a[2]*s],sub=(a,b)=>[a[0]-b[0],a[1]-b[1],a[2]-b[2]],norm=a=>scale(a,1/Math.max(1e-12,Math.sqrt(a[0]*a[0]+a[1]*a[1]+a[2]*a[2]))),cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];
+// Contract: deterministic ECMAScript Number (binary64), radians, seed constants below.
+// This is the same mathematical sin hash; GPU sin/float32 rounding is not bit equivalent.
+const hcX=new Int32Array(65536),hcY=new Int32Array(65536),hcZ=new Int32Array(65536),hcV=new Float64Array(65536),hcUsed=new Uint8Array(65536);
+function hash(x,y,z){const k=(Math.imul(x,73856093)^Math.imul(y,19349663)^Math.imul(z,83492791))&65535;if(hcUsed[k]&&hcX[k]===x&&hcY[k]===y&&hcZ[k]===z)return hcV[k];let a=Math.sin(x*127.1+y*311.7+z*74.7)*43758.5453;const v=a-Math.floor(a);hcX[k]=x;hcY[k]=y;hcZ[k]=z;hcV[k]=v;hcUsed[k]=1;return v}
+function noiseXYZ(px,py,pz){let x=Math.floor(px),y=Math.floor(py),z=Math.floor(pz),u=px-x,v=py-y,w=pz-z;u=u*u*(3-2*u);v=v*v*(3-2*v);w=w*w*(3-2*w);return mix(mix(mix(hash(x,y,z),hash(x+1,y,z),u),mix(hash(x,y+1,z),hash(x+1,y+1,z),u),v),mix(mix(hash(x,y,z+1),hash(x+1,y,z+1),u),mix(hash(x,y+1,z+1),hash(x+1,y+1,z+1),u),v),w)}
+function noise(p){return noiseXYZ(p[0],p[1],p[2])}
+function fbm(p){let v=0,a=.5,x=p[0],y=p[1],z=p[2];for(let i=0;i<4;i++){v+=a*noiseXYZ(x,y,z);x=x*2.03+3;y=y*2.03+7;z=z*2.03+2;a*=.5}return v}
+
+function growth(p,s){p=fiberPoint(p,s);const f=s.profile||PROFILES[1];p=[p[0]+f.interlock*Math.sin(p[1]*3.2)+f.wave*Math.sin(p[1]*7.5),p[1],p[2]+f.wave*.45*Math.sin(p[1]*5.3)];let rho=Math.sqrt(p[0]*p[0]+p[2]*p[2]),ts=rho>1e-6?rho*(1+f.warp*Math.sin(3*Math.atan2(p[2],p[0])+p[1]*.8)):0;if(!s.knot)return ts;let db=Math.hypot(p[0]-rho,p[1]-s.kh-.22*rho*rho,p[2]),w=1-smooth(.1+.25*rho,.32+.42*rho,db);if(w===0)return ts;let rb=Math.max(.035,s.kr*(1-.18*Math.sqrt(rho))),tb=db/rb,a=Math.max(0,Math.min(ts,tb)),b=Math.max(ts,tb,1e-6),k=3.25+1.75*(ts-tb)/(.3+Math.abs(ts-tb)),q=a/Math.pow(1+Math.pow(a/b,k),1/k);return mix(ts,q,w)}
+function detail(p,s,age=growth(p,s)){const f=s.profile||PROFILES[1];let r=Math.max(Math.hypot(p[0],p[2]),.08);return [age*f.poreScale+p[0]/r*2,p[1]*.55,Math.atan2(p[2],p[0])*16/Math.PI]}
+function boxhit(ro,rd,s){let lo=[-.7,-1.5,-.55],hi=[s.cut,1.5,.55],near=-Infinity,far=Infinity;for(let i=0;i<3;i++){if(Math.abs(rd[i])<1e-14){if(ro[i]<lo[i]||ro[i]>hi[i])return [1,-1];continue}let a=(lo[i]-ro[i])/rd[i],b=(hi[i]-ro[i])/rd[i];near=Math.max(near,Math.min(a,b));far=Math.min(far,Math.max(a,b))}return [near,far]}
+function baseHit(ro,rd,s){let h=boxhit(ro,rd,s);if(s.shape){let a=rd[0]**2+rd[2]**2,b=ro[0]*rd[0]+ro[2]*rd[2],c=ro[0]**2+ro[2]**2-.55**2,d=b*b-a*c;if(d<0)return [1,-1];if(a<1e-14)return c<=0?h:[1,-1];h=[Math.max(h[0],(-b-Math.sqrt(d))/a),Math.min(h[1],(-b+Math.sqrt(d))/a)]}return h}
+function baseNormal(p,s){if(Math.abs(p[0]-s.cut)<.001)return [1,0,0];if(Math.abs(p[1])>1.499)return [0,Math.sign(p[1]),0];if(s.shape)return norm([p[0],0,p[2]]);if(Math.abs(p[2])>.549)return [0,0,Math.sign(p[2])];return [-1,0,0]}
+/* Geometry only. Continuous implicit halfspaces; no mesh, texture displacement,
+   signed-distance marching, or sample-dependent topology. Units: object-local. */
+function fiberPoint(p,s){const a=s.fiberLean||0,b=s.fiberCurve||0;return a||b?[p[0]-a*p[1]-b*p[1]*p[1],p[1],p[2]]:p}
+function crackCuts(s){
+ const depth=(s.crackWidth===0?0:clamp(s.crackDepth||0,0,.22)),width=clamp(s.crackWidth??.025,0,.12),relief=clamp(s.relief||0,0,.025),lean=clamp(s.fiberLean||0,-.04,.04),curve=clamp(s.fiberCurve||0,-.04,.04);
+ const key=[s.shape,s.cut,depth,width,relief,lean,curve].join(',');if(s._cutsKey===key)return s._cuts;s._cutsKey=key;
+ const cuts=[];
+ // Each convex void has a finite flat bottom, two smoothly tapered walls, two end caps.
+ function slot(nx,nz,surface,center,d,w,cy,len){
+  if(d<=0)return;const tx=nz,tz=-nx,bottom=surface-d,planes=[];
+  function plane(u,v,y,b){const x=u*tx+v*nx,z=u*tz+v*nz;planes.push([x,y-x*lean,z,b,-x*curve])}
+  plane(0,-1,0,-bottom);
+  for(const a of [-1,1]){plane(a/w,-.85/d,-2*cy/(len*len),.15-.85*bottom/d+a*center/w-cy*cy/(len*len));planes[planes.length-1][4]+=1/(len*len)}
+  plane(0,0,1,cy+len);plane(0,0,-1,-cy+len);
+  cuts.push(planes);
+ }
+ if(depth){if(s.shape){slot(0,1,.55,.10,depth,width,.1,1.7);slot(1,0,.55,-.16,depth*.72,width*.8,-.35,1.9)}else{slot(0,1,.55,.12,depth,width,.1,1.7);slot(1,0,s.cut,-.12,depth*.72,width*.8,-.35,1.9)}}
+ if(relief){for(const c of [-.32,-.12,.31])slot(0,1,.55,c,relief,.055,0,2.5)}
+ return s._cuts=cuts;
+}
+function voidIntervals(ro,rd,planes,lo,hi){
+ let spans=[[lo,hi]];
+ for(const p of planes){
+  const A=p[4]*rd[1]*rd[1],B=p[0]*rd[0]+p[1]*rd[1]+p[2]*rd[2]+2*p[4]*ro[1]*rd[1],C=p[0]*ro[0]+p[1]*ro[1]+p[2]*ro[2]+p[4]*ro[1]*ro[1]-p[3];
+  let allowed;
+  if(Math.abs(A)<1e-16){if(Math.abs(B)<1e-14){if(C>0)return [];continue}const r=-C/B;allowed=B>0?[[-Infinity,r]]:[[r,Infinity]]}
+  else{let D=B*B-4*A*C;if(D<0){if(A>0)return [];continue}const root=Math.sqrt(D),q=-.5*(B+(B>=0?root:-root));let a,b;if(q===0)a=b=-B/(2*A);else{a=q/A;b=C/q}if(a>b)[a,b]=[b,a];allowed=A>0?[[a,b]]:[[-Infinity,a],[b,Infinity]]}
+  const out=[];for(const a of spans)for(const b of allowed){const l=Math.max(a[0],b[0]),h=Math.min(a[1],b[1]);if(l<h)out.push([l,h])}spans=out;if(!spans.length)return [];
+ }return spans;
+}
+function hit(ro,rd,s){
+ const h=baseHit(ro,rd,s);if(h[0]>=h[1]||h[1]<=0||(!(s.crackDepth>0)&&!(s.relief>0)))return h;
+ const spans=[];for(const planes of crackCuts(s)){spans.push(...voidIntervals(ro,rd,planes,h[0],h[1]))}if(!spans.length)return h;
+ spans.sort((a,b)=>a[0]-b[0]);let start=h[0];
+ for(const q of spans){if(q[1]<=start)continue;if(q[0]>start+1e-10){if(q[0]>0)return [start,q[0]]}start=Math.max(start,q[1]);if(start>=h[1]-1e-10)return [1,-1]}
+ return [start,h[1]];
+}
+function normal(p,s){
+ if((s.crackDepth>0)||(s.relief>0))for(const planes of crackCuts(s)){
+  let outside=false;for(const a of planes){if(a[0]*p[0]+a[1]*p[1]+a[2]*p[2]+a[4]*p[1]*p[1]-a[3]>1e-6){outside=true;break}}if(outside)continue;
+  let max=-Infinity,face=null;for(const a of planes){const gy=a[1]+2*a[4]*p[1],len=Math.hypot(a[0],gy,a[2]),v=(a[0]*p[0]+a[1]*p[1]+a[2]*p[2]+a[4]*p[1]*p[1]-a[3])/len;if(v>max){max=v;face=[a[0],gy,a[2]]}}
+  if(Math.abs(max)<1e-7)return norm([-face[0],-face[1],-face[2]]);
+ }
+ return baseNormal(p,s);
+}
+
+function prepareGeometry(s){s.fiberLean=clamp(s.fiberLean||0,-.04,.04);s.fiberCurve=clamp(s.fiberCurve||0,-.04,.04);crackCuts(s);return s}
+
+function sceneHit(ro,rd,s){let closest=null;for(const instance of s.instances){const ls=instance.state,localRo=sub(ro,instance.center),h=hit(localRo,rd,ls);if(h[0]<h[1]&&h[1]>0){const t=Math.max(h[0],0);if(!closest||t<closest.t)closest={t,h,instance,localRo}}}return closest}
+function sample(x,y,s){let ux=(x+.5-s.w*.5)/s.h,uy=(y+.5-s.h*.5)/s.h,rd=norm(add(scale(s.ww,2.2),add(scale(s.uu,ux),scale(s.vv,uy)))),h=sceneHit(s.eye,rd,s);return {uv:[ux,uy],rd,t:h?.t,p:h?add(h.localRo,scale(rd,h.t)):null,instance:h?.instance,visible:!!h}}
+function helperP(a,s,instance){const ls=instance.state,ro=sub(s.eye,instance.center),rd=a.rd;let ht=boxhit(ro,rd,ls)[0];if(ls.shape)ht=-(ro[0]*rd[0]+ro[2]*rd[2])/Math.max(rd[0]**2+rd[2]**2,1e-6);let lo=[-.7,-1.5,-.55],hi=[ls.cut,1.5,.55],t=clamp(ht,0,2*s.dist),p=add(ro,scale(rd,t)).map((v,i)=>clamp(v,lo[i],hi[i]));if(ls.shape){let f=Math.min(1,.55/Math.max(Math.hypot(p[0],p[2]),1e-6));p[0]*=f;p[2]*=f}return p}
+function wood(a,d,s){const f=s.profile||PROFILES[1],weather=(s.weather||0)*(Math.abs(a.p[0]-s.cut)<.001&&s.cut<.69?0:1),finish=s.finish||0;let aa=Math.max(d.phase,.005),wave=.5+.5*Math.sin(a.phase*6.2831853),late=smooth(.80-aa,.98+aa,wave);late=mix(late,.20,smooth(.18,.7,aa));let macro=fbm([a.p[0]*3.7,a.p[1]*.32,a.p[2]*3.7]),keep=1-smooth(.1,.75,d.detail),pore=vessel(a.fp,a.p[1],s,d.detail)*keep*f.porosity*mix(1,.18+.82*(1-late),f.ringGate),fiber=(.5+.5*Math.sin(a.fp[0]*6.2831853+2*Math.sin(a.fp[2]*(Math.PI/4)+a.p[1]*.6)))*keep,theta=Math.atan2(a.p[2],a.p[0]),ray=Math.pow(Math.max(0,Math.cos(theta*32)),18)*f.rays*(.5+.5*Math.sin(a.age*9)),base=f.early.map((v,i)=>mix(v,f.late[i],late*f.contrast)*(.83+.30*macro)*(1-.32*pore-.04*fiber)+ray*.12);if(f.sheen){const ribbon=.5+.5*Math.sin(a.age*83+1.1*Math.sin(a.p[1]*.8+a.age*7)),streak=smooth(.70,.98,ribbon)*(1-smooth(.1,.75,d.detail));base=base.map(v=>v*(1-streak*(s.family===6?.20:.07)))}let gray=dot(base,[.2126,.7152,.0722]);base=base.map((v,i)=>mix(v,mix(gray,[.30,.285,.25][i],.48),weather*.74));let rough=clamp(f.rough+.06*pore+.025*fiber+.055*(macro-.5)+weather*.16+(s.roughnessAdjust||0),.25,.94);if(finish===1){base=base.map((v,i)=>v*[.67,.61,.55][i]);rough=Math.max(.32,rough-.19*(1-weather*.55))}let coat=finish===2?.90*(1-weather*.65):finish===1?.16*(1-weather*.75):0;return {base,rough,coat,coatRough:finish===2?(.36-.30*(s.coatGloss??.85))+weather*.26:.30+weather*.2,coatIOR:1.5,pore,ray,weather}}
+
+function bump(p,n,d,s){if(d.detail>=.75)return norm(n);let t=norm(cross(n,Math.abs(n[1])<.9?[0,1,0]:[1,0,0])),b=cross(n,t),step=Math.max(.002,d.footprint),weight=1-smooth(.10,.75,d.detail),height=q=>-.0007*vessel(detail(q,s),q[1],s,d.detail)*weight*(s.profile.porosity+(s.weather||0)*(Math.abs(p[0]-s.cut)<.001&&s.cut<.69?0:1)*.4),h=height(p),dx=(height(add(p,scale(t,step)))-h)/step,dy=(height(add(p,scale(b,step)))-h)/step;return norm(sub(sub(n,scale(t,dx)),scale(b,dy)))}
+function fiberLight(a,n,v,s,m){const f=s.profile;if(!f.sheen)return [0,0,0];const p=a.p,e=.004,grad=[0,1,2].map(i=>{let b=p.slice(),c=p.slice();b[i]+=e;c[i]-=e;return (growth(b,s)-growth(c,s))/(2*e)}),rad=Math.max(.0001,grad[0]*grad[0]+grad[2]*grad[2]),t=norm([-grad[0]*grad[1]/rad,1,-grad[2]*grad[1]/rad]),nv=Math.max(0,dot(n,v)),strength=f.sheen*(1-m.weather*.75)*(s.finish===0?.55:1),width=f.sheenWidth+(s.finish===0?.10:0);let result=[0,0,0];for(const [l,c] of [[s.l1,[5.1,4.2,3.05]],[s.l2,[1.6,2.05,2.75]]]){const nl=Math.max(0,dot(n,l)),along=dot(t,l)+dot(t,v),cone=Math.exp(-along*along/(width*width)),across=Math.sqrt(Math.max(0,1-dot(t,l)**2))*Math.sqrt(Math.max(0,1-dot(t,v)**2)),energy=strength*cone*across*nl*nv*.18;result=add(result,c.map((z,i)=>z*f.sheenTint[i]*energy))}return result}
+function light(al,r,n,v,l,col){let h=norm(add(v,l)),nv=Math.max(dot(n,v),.001),nl=Math.max(dot(n,l),0),nh=Math.max(dot(n,h),0),vh=Math.max(dot(v,h),0),a=r*r,a2=a*a,d=a2/(3.14159*Math.pow(nh*nh*(a2-1)+1,2)),k=Math.pow(r+1,2)/8,g=nv/(nv*(1-k)+k)*nl/(nl*(1-k)+k),f=.04+.96*Math.pow(1-vh,5);return al.map((v,i)=>((1-f)*v/3.14159+d*g*f/(4*nv*Math.max(nl,.001)))*nl*col[i])}
+function shade(a,d,s){let color;if(a.visible){s=a.instance.state;let m=wood(a,d,s),geom=normal(a.p,s),n=s.channel===0?bump(a.p,geom,d,s):null;if(s.channel===1)color=m.base;else if(s.channel===2)color=[m.rough,m.rough,m.rough];else if(s.channel===3)color=[0,2,4].map(v=>.5+.5*Math.cos(v+a.age*s.rings));else if(s.channel===4)color=geom.map(v=>v*.5+.5);else if(s.channel===5)color=[0,1,2].map(()=>clamp(a.t/(s.dist*2),0,1));else{let v=scale(a.rd,-1),under=add(scale(m.base,.10+.10*Math.max(n[1],0)),add(light(m.base,m.rough,n,v,s.l1,[5.1,4.2,3.05]),light(m.base,m.rough,n,v,s.l2,[1.6,2.05,2.75])));under=add(under,fiberLight(a,n,v,s,m));let fres=.04+.96*Math.pow(1-Math.max(0,dot(geom,v)),5);color=scale(under,1-m.coat*fres);if(m.coat){let coat=add(light([0,0,0],m.coatRough,geom,v,s.l1,[5.1,4.2,3.05]),light([0,0,0],m.coatRough,geom,v,s.l2,[1.6,2.05,2.75]));let refl=sub(scale(geom,2*dot(geom,v)),v),edge=.012+m.coatRough*.20,p1=smooth(.45-edge,.45+edge,dot(refl,s.l1)),p2=smooth(.45-edge,.45+edge,dot(refl,s.l2)),env=[p1*8+p2*4,p1*6.8+p2*5.4,p1*5+p2*7.6];color=add(color,add(scale(coat,m.coat),scale(env,m.coat*fres)))}}}else color=background(a,s);return color.map(v=>Math.round(255*Math.pow(Math.max(0,v)/(Math.max(0,v)+.7),1/2.2)))}
+function background(a,s){let vignet=clamp(Math.hypot(a.uv[0]*.65,a.uv[1]*.8),0,1),gray=.28+.11*(a.uv[1]+.5)-.06*vignet,color=[gray,gray,gray];let g=(-1.52-s.eye[1])/a.rd[1];if(g>0){let p=add(s.eye,scale(a.rd,g)),fall=Math.exp(-.035*(p[0]**2+p[2]**2));gray=.30+.055*fall-.025*vignet;color=[gray,gray,gray];if(Math.abs(p[0])<5&&Math.abs(p[2])<5){let h1=sceneHit(p,s.l1,s)?.h||[1,-1],h2=sceneHit(p,s.l2,s)?.h||[1,-1],oc1=h1[0]<h1[1]&&h1[1]>0?1:0,oc2=h2[0]<h2[1]&&h2[1]>0?1:0;let contact=s.instances.reduce((v,o)=>v+Math.exp(-((p[0]-o.center[0])**2+(p[2]-o.center[2])**2)*3)*.035,0);color=color.map((v,i)=>v-contact-oc1*[.105,.087,.067][i]-oc2*[.038,.051,.073][i])}}return color;}
+function vessel(fp,y,s,footprint=0){const f=s.profile||PROFILES[1];if(!f.porosity)return 0;let u=fp[0]*4,v=fp[2]*8,ix=Math.floor(u),iz=((Math.floor(v)%256)+256)%256,seed=hash(ix,0,iz),cx=.25+.5*seed,cz=.25+.5*hash(ix,3,iz),du=(u-Math.floor(u)-cx)/(f.poreWidth*.65*(.7+.6*seed)),dv=(v-Math.floor(v)-cz)/(.07+.07*seed);const raw=(1-smooth(.4,1.2,du*du+dv*dv))*(.72+.28*Math.sin(y*1.2+seed*20)**2),mean=Math.PI*f.poreWidth*.65*.105*.8;return mix(raw,mean,smooth(.12,.8,footprint*8))}
+function prepare(s){s.family=clamp(Math.round(s.family??1),0,PROFILES.length-1);s.finish=clamp(Math.round(s.finish??0),0,2);s.weather=clamp(s.weather??0,0,1);s.roughnessAdjust=clamp(s.roughnessAdjust??0,-.2,.2);s.coatGloss=clamp(s.coatGloss??.85,0,1);s.profile=PROFILES[s.family];const cameraForward=norm([Math.sin(s.yaw)*Math.cos(s.pitch),Math.sin(s.pitch),Math.cos(s.yaw)*Math.cos(s.pitch)]),right=norm(cross(scale(cameraForward,-1),[0,1,0])),up=cross(right,scale(cameraForward,-1));
+const centers=[scale(right,-1.10),scale(right,1.10)],aspect=s.w/s.h;let fit=0;for(const center of centers)for(const x of [-.72,.72])for(const y of [-1.52,1.52])for(const z of [-.57,.57]){const q=add(center,[x,y,z]),depth=dot(q,cameraForward);fit=Math.max(fit,depth+Math.abs(dot(q,right))*4.4/(aspect*.88),depth+Math.abs(dot(q,up))*4.4/.88)}s.dist=fit*(s.dist/8.8);
+s.eye=[s.dist*Math.sin(s.yaw)*Math.cos(s.pitch),s.dist*Math.sin(s.pitch),s.dist*Math.cos(s.yaw)*Math.cos(s.pitch)];s.ww=norm(scale(s.eye,-1));s.uu=norm(cross(s.ww,[0,1,0]));s.vv=cross(s.uu,s.ww);const front=norm([s.eye[0],0,s.eye[2]]);s.l1=norm(add(add(scale(s.uu,-1.4),scale(front,.45)),[0,1.8,0]));s.l2=norm(add(add(scale(s.uu,1.2),scale(front,.30)),[0,1.35,0]));s.instances=centers.map((center,shape)=>{let state={...s,shape};if(typeof prepareGeometry==='function')prepareGeometry(state);return {center,state}});return s}
+function tile(x,y,w,h,s){const data=new Uint8ClampedArray(w*h*4);let hitPixels=0;for(let by=y;by<y+h;by+=2)for(let bx=x;bx<x+w;bx+=2){const q=[sample(bx,by,s),sample(bx+1,by,s),sample(bx,by+1,s),sample(bx+1,by+1,s)];const reference=q.find(a=>a.visible)?.instance;if(reference)for(const a of q){if(!a.p){a.p=helperP(a,s,reference);a.instance=reference}const ls=a.instance.state;a.age=growth(a.p,ls);let z=a.age*ls.rings;a.phase=z+.22*Math.sin(1.618*z)+.09*Math.sin(.37*z);a.fp=detail(a.p,ls,a.age)}for(let j=0;j<4;j++){const px=bx+(j%2),py=by+(j>>1);if(px>=x+w||py>=y+h)continue;const a=q[j],xa=q[j&2],xb=q[(j&2)+1],ya=q[j&1],yb=q[(j&1)+2],d=!a.visible?null:{phase:Math.abs(xb.phase-xa.phase)+Math.abs(yb.phase-ya.phase),age:Math.abs(xb.age-xa.age)+Math.abs(yb.age-ya.age),detail:Math.max(...[0,1,2].map(i=>(i===2?Math.abs(((xb.fp[i]-xa.fp[i]+48)%32)-16):Math.abs(xb.fp[i]-xa.fp[i]))+(i===2?Math.abs(((yb.fp[i]-ya.fp[i]+48)%32)-16):Math.abs(yb.fp[i]-ya.fp[i])))),footprint:Math.max(Math.hypot(...sub(xb.p,xa.p)),Math.hypot(...sub(yb.p,ya.p)))};if(d&&[xa,xb,ya,yb].some(b=>b.instance!==a.instance)){const ls=a.instance.state,local=b=>{if(b.instance===a.instance)return b;const p=helperP(b,s,a.instance),age=growth(p,ls),z=age*ls.rings;return {p,age,phase:z+.22*Math.sin(1.618*z)+.09*Math.sin(.37*z),fp:detail(p,ls,age)}};const [ax,bx,ay,by]=[xa,xb,ya,yb].map(local);d.phase=Math.abs(bx.phase-ax.phase)+Math.abs(by.phase-ay.phase);d.age=Math.abs(bx.age-ax.age)+Math.abs(by.age-ay.age);d.detail=Math.max(...[0,1,2].map(i=>(i===2?Math.abs(((bx.fp[i]-ax.fp[i]+48)%32)-16):Math.abs(bx.fp[i]-ax.fp[i]))+(i===2?Math.abs(((by.fp[i]-ay.fp[i]+48)%32)-16):Math.abs(by.fp[i]-ay.fp[i]))));d.footprint=Math.max(Math.hypot(...sub(bx.p,ax.p)),Math.hypot(...sub(by.p,ay.p)));}let rgb=shade(a,d,s),i=((h-1-(py-y))*w+px-x)*4;data[i]=rgb[0];data[i+1]=rgb[1];data[i+2]=rgb[2];data[i+3]=255;if(a.visible)hitPixels++}}return {data,hitPixels}}
+const callbacks=[];const port=typeof MessageChannel==='function'?new MessageChannel():null;if(port)port.port1.onmessage=()=>callbacks.shift()?.();const yieldTask=()=>port?new Promise(r=>{callbacks.push(r);port.port2.postMessage(0)}):new Promise(r=>setTimeout(r,0));
+let latest=null,running=false;async function pump(){if(running)return;running=true;try{while(latest){let job=latest,s=prepare(job.state),start=performance.now(),tiles=0,hits=0,tileIndex=0;const total=Math.ceil(s.w/64)*Math.ceil(s.h/64);for(let y=0;y<s.h&&latest===job;y+=64)for(let x=0;x<s.w&&latest===job;x+=64){if(tileIndex++ % (job.parts||1)!==(job.part||0))continue;let w=Math.min(64,s.w-x),h=Math.min(64,s.h-y),r=tile(x,y,w,h,s);hits+=r.hitPixels;tiles++;send({type:'tile',generation:job.generation,x,y:s.h-y-h,w,h,data:r.data.buffer,tiles,total},[r.data.buffer]);await yieldTask()}if(latest===job){latest=null;send({type:'complete',generation:job.generation,tiles,total,hitPixels:hits,ms:performance.now()-start,state:job.state})}}}catch(e){send({type:'error',message:String(e.stack||e)})}finally{running=false}}
+subscribe(m=>{if(m.type==='render'){latest=m;pump()}else if(m.type==='cancel')latest=null;else if(m.type==='probe')send({type:'probe',hash:hash(1,2,3),noise:noise([.1,.2,.3]),growth:growth([.3,.2,.1],{kh:0,kr:.18,knot:true})})});send({type:'ready',backend:'CPU binary64 analytic ray casting'});
+}
+
+// A parameter demonstration, not a biological tree-growth simulation.
+function makeWoodTimeline(now=()=>performance.now()){
+ let elapsed=0,started=0,running=false,cycle=16;
+ return {
+  get running(){return running},get cycle(){return cycle},
+  time(){return elapsed+(running?(now()-started)/1000:0)},
+  phase(){return ((this.time()%cycle)+cycle)%cycle/cycle},
+  start(){if(!running){started=now();running=true}},
+  stop(at){elapsed=Number.isFinite(at)?Math.max(0,at):this.time();running=false;return elapsed},
+  seek(t){elapsed=Math.max(0,t);started=now()},
+  setCycle(seconds){const phase=this.phase();cycle=Math.max(8,Math.min(48,seconds));elapsed=phase*cycle;started=now()},
+ };
+}
+function sampleWoodAnimation(base,time,cycle,mode='both'){
+ const phase=((time%cycle)+cycle)%cycle/cycle,theta=phase*Math.PI*2;
+ const khAmplitude=Math.max(0,Math.min(.22,.65-Math.abs(base.kh))),krAmplitude=Math.max(0,Math.min(.045,base.kr-.08,.30-base.kr)),ringAmplitude=Math.max(0,Math.min(3,base.rings-8,32-base.rings));
+ return {...base,kh:base.kh+((mode==='both'||mode==='knot')?khAmplitude*Math.sin(theta):0),kr:base.kr+((mode==='both'||mode==='knot')?krAmplitude*Math.sin(theta*2):0),rings:base.rings+((mode==='both'||mode==='rings')?ringAmplitude*Math.sin(theta):0),crackDepth:(base.crackDepth||0)*((mode==='both'||mode==='cracks')?1+.40*Math.sin(theta):1),crackWidth:(base.crackWidth||0)*((mode==='both'||mode==='cracks')?1+.35*Math.sin(theta*2):1),relief:(base.relief||0)*((mode==='both'||mode==='cracks')?1+.4*Math.sin(theta):1),animationTime:time,animationPhase:phase,animationMode:mode};
+}
+
+const canvas=document.querySelector('canvas'),status=document.getElementById('status'),ctx=canvas.getContext('2d',{alpha:false,willReadFrequently:true});
+const diagnostic=document.createElement('details');diagnostic.innerHTML='<summary>CPU 渲染诊断</summary><pre style="white-space:pre-wrap;word-break:break-word;font-size:11px"></pre>';status.after(diagnostic);const report=diagnostic.querySelector('pre');
+const timeline=makeWoodTimeline();let playing=false;
+let workers=[],send=null,ready=false,fallbackUsed=false,backend='',epoch=0,frames=0,tiles=0,total=0,pending=null,lastError='',phase='starting',yaw=.9,pitch=.37,dist=8.8,last,committedGeneration=-1,renderedState=null,lastRenderMs=0,lastPixels=null,active=null,queued=null,commitTimes=[],requestedAt=0,lastInputToCommitMs=0,session=0,failed=false;
+// Status only: pausing still computes the existing queued static snapshot.
+function statusText(text){
+ if(failed)return 'CPU 显示失败：'+lastError;
+ if(document.hidden)return '标签页隐藏 · 已停止计算';
+ if(!playing&&phase==='rendering')return '播放已暂停 · 静态画面更新：'+text;
+ if(!playing&&phase==='complete'&&!text.startsWith('已暂停'))return '已暂停 · '+text;
+ return text;
+}
+function update(text){status.textContent=statusText(text);syncPlaybackUI();window.woodQA={version:'WOOD-DUAL-STAGE-R01',backend,webglRequests:0,phase,epoch,committedGeneration,frames,tiles,total,error:lastError,width:canvas.width,height:canvas.height,requestedDPR:devicePixelRatio,effectiveDPR:Math.min(devicePixelRatio,1.5),lastRenderMs,pixels:lastPixels,renderedState,instances:renderedState?.sceneInstances,commitTimes:[...commitTimes],lastInputToCommitMs,workerCount:workers.length||1,activeGeneration:active?.generation??null,playback:{playing,clockRunning:timeline.running,time:timeline.time(),phase:timeline.phase(),cycle:timeline.cycle,mode:document.getElementById('animationMode').value,hidden:document.hidden,queuedCount:queued?1:0,activeCount:active?1:0}};report.textContent=JSON.stringify(window.woodQA,null,2)}
+function fail(e){playing=false;timeline.stop();failed=true;session++;for(let w of workers){w.onmessage=null;w.onerror=null;w.terminate()}active=null;queued=null;lastError=String(e);phase='error';update('CPU 显示失败：'+lastError);diagnostic.open=true}
+function launch(){if(failed||document.hidden||!ready||active||!queued)return;const job=queued;queued=null;const s=job.state;active={...job,start:performance.now(),pixels:new Uint8ClampedArray(s.w*s.h*4),done:0,hits:0};tiles=0;total=Math.ceil(s.w/64)*Math.ceil(s.h/64);phase='rendering';update(frames?'计算中 · 保留完整帧':'首次计算中');send(job)}
+function handle(m){if(failed)return;if(m.type==='error'){fail(m.message);return}if(!active||m.generation!==active.generation)return;let a=active,s=a.state;if(m.type==='tile'){let src=new Uint8ClampedArray(m.data);for(let y=0;y<m.h;y++)a.pixels.set(src.subarray(y*m.w*4,(y+1)*m.w*4),((m.y+y)*s.w+m.x)*4);tiles++;if(tiles%16===0)update('计算中 '+Math.round(tiles/total*100)+'%');}else if(m.type==='complete'){a.sceneInstances=m.state.instances?.map(o=>({center:o.center,shape:o.state.shape,family:o.state.family,finish:o.state.finish,crackDepth:o.state.crackDepth,crackWidth:o.state.crackWidth,relief:o.state.relief}));a.done++;a.hits+=m.hitPixels;if(a.done!==(workers.length||1))return;let lo=255,hi=0,opaque=0;for(let y=1;y<=7;y++)for(let x=1;x<=7;x++){let i=(Math.floor(s.h*y/8)*s.w+Math.floor(s.w*x/8))*4;lo=Math.min(lo,a.pixels[i],a.pixels[i+1],a.pixels[i+2]);hi=Math.max(hi,a.pixels[i],a.pixels[i+1],a.pixels[i+2]);opaque+=a.pixels[i+3]===255}lastPixels={lo,hi,opaque,samples:49,computedHitPixels:a.hits};if(opaque!==49||hi-lo<3||a.hits<1)return fail('CPU canvas pixel validation failed');if(canvas.width!==s.w||canvas.height!==s.h){canvas.width=s.w;canvas.height=s.h}ctx.putImageData(new ImageData(a.pixels,s.w,s.h),0,0);frames++;committedGeneration=a.generation;renderedState={...s,sceneInstances:a.sceneInstances};lastRenderMs=performance.now()-a.start;lastInputToCommitMs=performance.now()-a.requestedAt;commitTimes.push(performance.now());if(commitTimes.length>120)commitTimes.shift();active=null;phase='complete';update('CPU 完整帧 · '+(lastRenderMs/1000).toFixed(2)+' 秒'+(playing?' · 循环':' · 拖动旋转'));if(playing&&!document.hidden)requestRender();else launch();}}
+function state(){let base={w:Math.round(canvas.clientWidth*Math.min(devicePixelRatio,1.5)),h:Math.round(canvas.clientHeight*Math.min(devicePixelRatio,1.5)),yaw,pitch,dist,crackDepth:+document.getElementById('crackDepth').value,crackWidth:+document.getElementById('crackWidth').value,fiberCurve:.025,fiberLean:0,relief:+document.getElementById('relief').value,shape:+document.getElementById('shape').value,channel:+document.getElementById('channel').value,kh:+document.getElementById('height').value,kr:+document.getElementById('radius').value,cut:+document.getElementById('cut').value,rings:+document.getElementById('rings').value,knot:document.getElementById('knot').checked,family:+document.getElementById('family').value,finish:+document.getElementById('finish').value,weather:+document.getElementById('weather').value,roughnessAdjust:+document.getElementById('roughnessAdjust').value,coatGloss:+document.getElementById('coatGloss').value};return sampleWoodAnimation(base,timeline.time(),timeline.cycle,document.getElementById('animationMode').value)}
+function syncPlaybackUI(){document.getElementById('play').textContent=playing?'Ⅱ 暂停':'▶ 播放';document.getElementById('play').setAttribute('aria-pressed',String(playing));document.getElementById('cycleOut').value=timeline.cycle+' 秒';document.getElementById('timeline').value=timeline.phase();document.getElementById('timeOut').value=Math.round(timeline.phase()*100)+'%';}
+function requestRender(snapshot){if(failed||document.hidden)return;if(!ctx)return fail('Canvas2D unavailable');let s=snapshot&&snapshot.w?{...snapshot}:state();if(s.w<4||s.h<4)return;epoch++;queued={type:'render',generation:epoch,state:s,requestedAt:performance.now()};for(let [out,key]of[['ko','kh'],['ro','kr'],['co','cut']])document.getElementById(out).value=Number(s[key]).toFixed(3).replace(/0+$/,'').replace(/\.$/,'');syncPlaybackUI();launch()}
+function cancelPending(){if(send)send({type:'cancel'});active=null;queued=null;tiles=0;total=0;}
+function pausePlayback(){playing=false;timeline.stop(renderedState?.animationTime??0);cancelPending();phase='complete';update('已暂停 · 保留当前完整画面');requestRender();}
+function startPlayback(){if(failed||playing)return;playing=true;if(!document.hidden)timeline.start();syncPlaybackUI();requestRender();}
+function setTimelinePhase(value){playing=false;timeline.stop();timeline.seek(timeline.cycle*Math.max(0,Math.min(1,value)));cancelPending();requestRender();}
+function fallback(reason){if(fallbackUsed)return fail(reason);fallbackUsed=true;session++;for(let w of workers){w.onmessage=null;w.onerror=null;w.terminate()}workers=[];active=null;ready=false;backend='CPU main-thread cooperative fallback';try{woodCPUEngine(m=>{if(m.type==='ready'){ready=true;requestRender()}else handle(m)},f=>send=f)}catch(e){fail(e)}}
+try{if(!ctx)throw Error('Canvas2D unavailable');const source='('+woodCPUEngine.toString()+')((m,t)=>postMessage(m,t),f=>onmessage=e=>f(e.data));',url=URL.createObjectURL(new Blob([source],{type:'text/javascript'})),count=Math.max(1,Math.min(6,(navigator.hardwareConcurrency||4)-1));let n=0,token=++session;for(let i=0;i<count;i++){let w=new Worker(url);workers.push(w);w.onmessage=e=>{if(token!==session)return;if(e.data.type==='ready'){if(++n===count){ready=true;requestRender()}}else handle(e.data)};w.onerror=e=>{e.preventDefault();if(token!==session)return;fallback(e.message)}}URL.revokeObjectURL(url);backend='CPU parallel '+count+' workers';send=m=>workers.forEach((w,i)=>w.postMessage({...m,part:i,parts:workers.length}));setTimeout(()=>{if(!failed&&token===session&&!ready)fallback('Worker startup unavailable')},5000)}catch(e){fallback(e.message)}
+document.querySelectorAll('input,select').forEach(e=>{if(!['cycle','timeline','animationMode'].includes(e.id))e.oninput=()=>requestRender()});
+document.getElementById('play').onclick=()=>playing?pausePlayback():startPlayback();document.getElementById('rewind').onclick=()=>setTimelinePhase(0);
+document.getElementById('timeline').oninput=e=>setTimelinePhase(+e.target.value);
+document.getElementById('cycle').oninput=e=>{timeline.setCycle(+e.target.value);cancelPending();requestRender();};
+document.getElementById('animationMode').oninput=()=>{cancelPending();requestRender();};
+document.getElementById('reset').onclick=()=>{yaw=.9;pitch=.37;dist=8.8;requestRender()};document.getElementById('endgrain').onclick=()=>{yaw=.9;pitch=1.05;dist=8.8;requestRender()};canvas.onpointerdown=e=>{last=[e.clientX,e.clientY];canvas.setPointerCapture(e.pointerId)};canvas.onpointermove=e=>{if(last){yaw-=(e.clientX-last[0])*.008;pitch=Math.max(-1.3,Math.min(1.3,pitch+(e.clientY-last[1])*.008));last=[e.clientX,e.clientY];requestRender()}};canvas.onpointerup=canvas.onpointercancel=()=>last=null;canvas.onwheel=e=>{e.preventDefault();dist=Math.min(12,Math.max(3,dist+e.deltaY*.005));requestRender()};new ResizeObserver(()=>requestRender()).observe(canvas);window.addEventListener('resize',()=>requestRender());window.addEventListener('pageshow',()=>requestRender());document.addEventListener('visibilitychange',()=>{if(document.hidden){timeline.stop(renderedState?.animationTime??0);cancelPending();phase='hidden';update('标签页隐藏 · 已停止计算')}else{if(playing)timeline.start();requestRender()}});window.addEventListener('error',e=>fail(e.message));
+syncPlaybackUI();
+
+document.getElementById('diagnosticToggle').onclick=()=>diagnostic.open=!diagnostic.open;
+
+</script></html>
