@@ -33,7 +33,7 @@ try:
   result['browser']=b.version;reference=None
   for name,vp,dpr in [('desktop',{'width':1280,'height':900},1),('user-size',{'width':1356,'height':1245},1.5),('mobile-viewport',{'width':390,'height':844},3)]:
    c=b.new_context(viewport=vp,device_scale_factor=dpr);c.add_init_script(INSTRUMENT);p=c.new_page();p.on('pageerror',lambda e:result['errors'].append(str(e)));p.goto(candidate.as_uri());q=settle(p);r={'name':name,'initial':q,'initialHash':p.evaluate(HASH),'steps':[]};result['cases'].append(r)
-   css=p.locator('#view').bounding_box();assert q['width']==round(css['width']*min(dpr,1.5));assert q['height']==round(css['height']*min(dpr,1.5));picture(p,name+'-initial')
+   expected=p.locator('#view').evaluate('(c)=>({width:Math.round(c.clientWidth*Math.min(devicePixelRatio,1.5)),height:Math.round(c.clientHeight*Math.min(devicePixelRatio,1.5)),clientWidth:c.clientWidth,clientHeight:c.clientHeight,dpr:devicePixelRatio})');r['expectedPixelBudget']=expected;assert q['width']==expected['width'];assert q['height']==expected['height'];picture(p,name+'-initial')
    if name=='desktop':reference=r['initialHash']
    before=capture(p);base_n=len(before['mutations']);change(p,'height',-.26);change(p,'radius',.25);change(p,'cut',.7);q=settle(p);assert q['renderedState']['kh']==-.26 and q['renderedState']['kr']==.25 and q['renderedState']['cut']==.7;r['steps'].append({'latest_parameters':q});picture(p,name+'-latest')
    new=capture(p)['mutations'][base_n:];assert all(e['full'] for e in new),f'Partial visible mutation: {new}';r['atomic_parameter_changes']=new
@@ -48,7 +48,7 @@ try:
     commits=q.get('commitTimes',[]);gaps=[commits[i]-commits[i-1] for i in range(1,len(commits))];r['drag']['commitIntervalsMs']=gaps
     if gaps:r['drag']['maxCommitIntervalMs']=max(gaps)
     p.mouse.wheel(0,80);q=settle(p);r['steps'].append({'wheel':q})
-    p.set_viewport_size({'width':1200,'height':860});q=settle(p);r['steps'].append({'resize':q});picture(p,'desktop-resize')
+    p.set_viewport_size({'width':1200,'height':860});p.wait_for_function("(()=>{let c=document.querySelector('#view'),d=Math.min(devicePixelRatio,1.5);return c.width===Math.round(c.clientWidth*d)&&c.height===Math.round(c.clientHeight*d)})()");q=settle(p);assert q['width']==920 and q['height']==602;r['steps'].append({'resize':q});picture(p,'desktop-resize')
     p.locator('#endgrain').click();q=settle(p);r['steps'].append({'endgrain':q});picture(p,'desktop-endgrain')
     change(p,'knot',False);q=settle(p);r['steps'].append({'no_knot':q});picture(p,'desktop-no-knot')
    r['audit']=capture(p);r['nominalRGBABytes']=q['width']*q['height']*4;assert all(e['full'] for e in r['audit']['mutations']);c.close()
