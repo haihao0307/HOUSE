@@ -41,7 +41,10 @@ try:
   ck('mobile viewport original pixel budget',ms['renderedState']['view']['width']==me['w'] and ms['renderedState']['view']['height']==me['h'])
   ck('mobile viewport seven instances',len(ms['renderedState']['instances'])==7)
   ck('mobile single-row toolbar',mp.locator('footer').evaluate('(e)=>getComputedStyle(e).flexWrap')=='nowrap')
-  mp.screenshot(path=str(out/'mobile-viewport.png'));R['mobileViewport']=ms;mobile.close();b.close()
+  mp.screenshot(path=str(out/'mobile-viewport.png'));R['mobileViewport']=ms;mobile.close()
+  wc=b.new_context(viewport={'width':1180,'height':756});wp=wc.new_page();wp.goto(src.as_uri());ws=settled(wp)
+  fit=wp.evaluate('''()=>{const s=woodReferenceQA.renderedState,scene=WoodReferenceScene.compile(s.source),c=WoodReferenceRenderer.camera(scene,s.view);let m=0;const dot=(a,b)=>a.reduce((v,x,i)=>v+x*b[i],0);for(const r of scene.records){const b=r.shape.bounds;for(const x of [b.min[0],b.max[0]])for(const y of [b.min[1],b.max[1]])for(const z of [b.min[2],b.max[2]]){let p=WoodReferenceScene.mat(r.placement.rotation,[x,y,z]).map((v,i)=>v+r.placement.center[i]-c.target[i]);m=Math.max(m,Math.abs(2*dot(p,c.right)/c.span),Math.abs(2*dot(p,c.up)/(c.span*s.view.height/s.view.width)))}}return m}''')
+  ck('wide viewport all shape bounds visible',fit<1);R['wideViewport']={'state':ws,'maxNDC':fit};wp.screenshot(path=str(out/'wide-viewport.png'));wc.close();b.close()
  R['status']='PASS_FUNCTIONAL_VISUAL_REVIEW_REQUIRED'
 except Exception as e:R['status']='FAIL_OR_BLOCKED';R['failure']=repr(e);raise
 finally:(out/'result.json').write_text(json.dumps(R,ensure_ascii=False,indent=2))
