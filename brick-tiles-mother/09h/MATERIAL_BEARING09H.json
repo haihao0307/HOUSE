@@ -1,9 +1,0 @@
-{
-  "version": "09H",
-  "bricks": 124,
-  "distinctSeeds": 124,
-  "stableRebuild": true,
-  "beamHeight_m": 0.2414323568227701,
-  "explodeDisabled": true,
-  "pass": true
-}

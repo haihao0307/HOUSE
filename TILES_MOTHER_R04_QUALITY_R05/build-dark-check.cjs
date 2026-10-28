@@ -1,1 +1,0 @@
-'use strict';const fs=require('fs'),r=__dirname,source=fs.readFileSync(r+'/build-batch-check.cjs','utf8').replace("read('batch-check.js')","read('dark-check.js')").replace("r+'/BATCH_CHECK.html'","r+'/DARK_CHECK.html'");require('vm').runInNewContext(source,{require,__dirname:r,console,Buffer});

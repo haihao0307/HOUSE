@@ -1,3 +1,0 @@
-uniform sampler2D stateTex,point0,pointA,pointB;uniform float maxStep,sampleStep;
-out vec4 outState;
-void main(){ivec2 xy=ivec2(gl_FragCoord.xy);vec4 s=texelFetch(stateTex,xy,0);if(s.w<.5){outState=s;return;}vec3 p=texelFetch(point0,xy,0).xyz,pa=texelFetch(pointA,xy,0).xyz,pb=texelFetch(pointB,xy,0).xyz,rd=rayDirection();float ea=s.x<1.-sampleStep?sampleStep:-sampleStep,eb=s.y<1.-sampleStep?sampleStep:-sampleStep;vec3 da=(pa-p)/ea,db=(pb-p)/eb,j=-rd,r=p-(eye+s.z*rd),rhs=-r;float det=dot(da,cross(db,j));if(abs(det)>1e-12&&length(r)>.000008){float x=dot(rhs,cross(db,j))/det,y=dot(da,cross(rhs,j))/det,z=dot(da,cross(db,rhs))/det;s.x=clamp(s.x+clamp(x,-.4,.4),0.,1.);s.y=clamp(s.y+clamp(y,-.4,.4),0.,1.);s.z+=clamp(z,-maxStep,maxStep);}outState=s;}
