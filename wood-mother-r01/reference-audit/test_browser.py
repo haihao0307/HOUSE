@@ -35,7 +35,13 @@ try:
   before=p.evaluate("()=>{const e=document.querySelector('#view'),d=e.getContext('2d').getImageData(0,0,e.width,e.height).data;let h=2166136261;for(const b of d)h=Math.imul(h^b,16777619)>>>0;document.querySelector('#play').click();return h}");p.wait_for_timeout(5000);ck('pause retains visible pixels',hashcanvas(p)==before)
   p.locator('#play').click();p.wait_for_timeout(150)
   p.evaluate("Object.defineProperty(document,'hidden',{configurable:true,get:()=>true});document.dispatchEvent(new Event('visibilitychange'))");f=q(p)['renderedCount'];h=hashcanvas(p);p.wait_for_timeout(5000);ck('hidden freezes commits',q(p)['renderedCount']==f and hashcanvas(p)==h)
-  ck('no page errors',not errors);R['errors']=errors;b.close()
+  ck('no page errors',not errors);R['errors']=errors
+  mobile=b.new_context(viewport={'width':390,'height':844},device_scale_factor=3);mp=mobile.new_page();mp.goto(src.as_uri());ms=settled(mp)
+  me=mp.locator('#view').evaluate('(e)=>({w:Math.round(e.clientWidth*Math.min(devicePixelRatio,1.5)),h:Math.round(e.clientHeight*Math.min(devicePixelRatio,1.5))})')
+  ck('mobile viewport original pixel budget',ms['renderedState']['view']['width']==me['w'] and ms['renderedState']['view']['height']==me['h'])
+  ck('mobile viewport seven instances',len(ms['renderedState']['instances'])==7)
+  ck('mobile single-row toolbar',mp.locator('footer').evaluate('(e)=>getComputedStyle(e).flexWrap')=='nowrap')
+  mp.screenshot(path=str(out/'mobile-viewport.png'));R['mobileViewport']=ms;mobile.close();b.close()
  R['status']='PASS_FUNCTIONAL_VISUAL_REVIEW_REQUIRED'
 except Exception as e:R['status']='FAIL_OR_BLOCKED';R['failure']=repr(e);raise
 finally:(out/'result.json').write_text(json.dumps(R,ensure_ascii=False,indent=2))
