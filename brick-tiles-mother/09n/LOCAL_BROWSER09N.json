@@ -1,0 +1,19 @@
+{
+  "version": "09N",
+  "htmlSha256": "9c672b6567656044278072a835ce531be1b3458ec0a18388a58cb2fd4c3e240d",
+  "pass": true,
+  "observed": [
+    "Tile overview and original head/drip catalogue rendered",
+    "Eaves, ridge and D5 scenes inspected alongside 09H with matching default camera and parameters",
+    "09N canvas 2400x1350 vs 09H 1920x1080 at CSS 1280x720 and DPR 1.5",
+    "09N shadow texture 2048 versus 09H 1024; fixed viewport mismatch and rechecked eave shadow",
+    "D7 board flat and formed control observed in local browser",
+    "Object size panel opened and reported real scene record range",
+    "WebGL2 CPU/GPU scalar rule check passed 256 samples"
+  ],
+  "limits": [
+    "visual check is limited to the observed scenes and device; not pixel equivalence or user acceptance",
+    "09H remains the quality baseline",
+    "no real mobile or physical construction validation"
+  ]
+}

@@ -1,0 +1,1 @@
+vec3 tile(vec3 q,vec4 d){q*=d.xyz;if(d.w==0.)return q;float a=q.y*d.w,s=sin(a),h=sin(a*.5);return vec3(q.x,s/d.w-q.z*s,2.*h*h/d.w+q.z*cos(a));}

@@ -1,0 +1,282 @@
+{
+  "schema": "tiles.instances/1",
+  "instances": [
+    {
+      "id": "pan-L9",
+      "mother": "kaopu.sheet/3",
+      "recipe": "pan-L9",
+      "unit": "m",
+      "frame": "tile-local",
+      "evidence": "L9",
+      "error_m": null
+    },
+    {
+      "id": "cover-L9",
+      "mother": "kaopu.sheet/3",
+      "recipe": "cover-L9",
+      "unit": "m",
+      "frame": "tile-local",
+      "evidence": "L9",
+      "error_m": null
+    },
+    {
+      "id": "pan-D7",
+      "mother": "kaopu.sheet/3",
+      "recipe": "pan-D7",
+      "unit": "m",
+      "frame": "tile-local",
+      "evidence": "D7",
+      "error_m": null
+    },
+    {
+      "id": "cover-D7",
+      "mother": "kaopu.sheet/3",
+      "recipe": "cover-D7",
+      "unit": "m",
+      "frame": "tile-local",
+      "evidence": "D7",
+      "error_m": null
+    },
+    {
+      "id": "seal-L9",
+      "mother": "kaopu.sheet/3",
+      "carrierRecipe": "cover-L9",
+      "faceRule": "tiles.end-face/1",
+      "sourceRef": "tile-source-curves.json#seal",
+      "depth_m": 0.012,
+      "relief_m": 0.0012,
+      "joint": "front-plane-union",
+      "frame": "tile-local",
+      "evidence": "L9",
+      "error_m": null
+    },
+    {
+      "id": "seeds-L9",
+      "mother": "kaopu.sheet/3",
+      "carrierRecipe": "cover-L9",
+      "faceRule": "tiles.end-face/1",
+      "sourceRef": "tile-source-curves.json#seeds",
+      "depth_m": 0.012,
+      "relief_m": 0.0012,
+      "joint": "front-plane-union",
+      "frame": "tile-local",
+      "evidence": "L9",
+      "error_m": null
+    },
+    {
+      "id": "flower-L9",
+      "mother": "kaopu.sheet/3",
+      "carrierRecipe": "cover-L9",
+      "faceRule": "tiles.end-face/1",
+      "sourceRef": "tile-source-curves.json#flower",
+      "depth_m": 0.012,
+      "relief_m": 0.0012,
+      "joint": "front-plane-union",
+      "frame": "tile-local",
+      "evidence": "L9",
+      "error_m": null
+    },
+    {
+      "id": "dripFloral-L9",
+      "mother": "kaopu.sheet/3",
+      "carrierRecipe": "pan-L9",
+      "faceRule": "tiles.end-face/1",
+      "sourceRef": "tile-source-curves.json#dripFloral",
+      "depth_m": 0.012,
+      "relief_m": 0.0012,
+      "joint": "front-plane-union",
+      "frame": "tile-local",
+      "evidence": "L9",
+      "error_m": null
+    },
+    {
+      "id": "dripBeast-L9",
+      "mother": "kaopu.sheet/3",
+      "carrierRecipe": "pan-L9",
+      "faceRule": "tiles.end-face/1",
+      "sourceRef": "tile-source-curves.json#dripBeast",
+      "depth_m": 0.012,
+      "relief_m": 0.0012,
+      "joint": "front-plane-union",
+      "frame": "tile-local",
+      "evidence": "L9",
+      "error_m": null
+    },
+    {
+      "id": "roundEnd-D7",
+      "mother": "kaopu.sheet/3",
+      "carrierRecipe": "cover-D7",
+      "faceRule": "tiles.end-face/1",
+      "shape": "circle",
+      "diameter_m": 0.123,
+      "depth_m": 0.01,
+      "joint": "front-plane-union",
+      "frame": "tile-local",
+      "evidence": "D7",
+      "error_m": null,
+      "totalLength_m": 0.278,
+      "bodyLength_m": 0.232,
+      "projectedHeight_m": 0.11
+    },
+    {
+      "id": "ridge-eye-L7",
+      "mother": "kaopu.sheet/3",
+      "rule": "tiles.rolled-sheet/1",
+      "variables": {
+        "outer_m": 0.067,
+        "inner_m": 0.047,
+        "length_m": 1.12,
+        "angle_rad": 6.283185307179586,
+        "geometryGain": 0.35
+      },
+      "evidence": "L7",
+      "error_m": null
+    },
+    {
+      "id": "ridge-hood-L7",
+      "mother": "kaopu.sheet/3",
+      "rule": "tiles.rolled-sheet/1",
+      "variables": {
+        "outer_m": 0.095,
+        "inner_m": 0.079,
+        "length_m": 0.188,
+        "angle_rad": 3.141592653589793,
+        "geometryGain": 0.35
+      },
+      "evidence": "L7",
+      "error_m": null
+    },
+    {
+      "id": "ridge-eye-D5",
+      "mother": "kaopu.sheet/3",
+      "rule": "tiles.rolled-sheet/1",
+      "variables": {
+        "outer_m": 0.058,
+        "inner_m": 0.045,
+        "length_m": 0.17,
+        "angle_rad": 6.283185307179586,
+        "geometryGain": 0.35
+      },
+      "evidence": "D5",
+      "error_m": null
+    },
+    {
+      "id": "folded-D5",
+      "mother": "kaopu.sheet/3",
+      "rule": "tiles.folded-sheet/1",
+      "variables": {
+        "outerHalf": 0.075,
+        "innerHalf": 0.065,
+        "outerRise": 0.065,
+        "innerRise": 0.06,
+        "innerDrop": 0.01,
+        "depth": 0.15
+      },
+      "evidence": "D5",
+      "error_m": null
+    },
+    {
+      "id": "ridge-board-L7",
+      "mother": "kaopu.sheet/3",
+      "rule": "tiles.flat-sheet/1",
+      "variables": {
+        "width": 1.15,
+        "length": 0.255,
+        "thickness": 0.022,
+        "geometryGain": 0.25
+      },
+      "evidence": "L7",
+      "error_m": null
+    },
+    {
+      "id": "snail-band-L7",
+      "mother": "kaopu.sheet/3",
+      "rule": "tiles.curved-band/1",
+      "curve": "snail",
+      "variables": {
+        "x0": -0.52,
+        "x1": 0.52,
+        "y": 0.06,
+        "thick": 0.025,
+        "depth": 0.09
+      },
+      "evidence": "L7",
+      "error_m": null
+    },
+    {
+      "id": "wave-band-L7",
+      "mother": "kaopu.sheet/3",
+      "rule": "tiles.curved-band/1",
+      "curve": "wave",
+      "variables": {
+        "x0": -0.6,
+        "x1": 0.6,
+        "y": 0.1,
+        "thick": 0.025,
+        "depth": 0.17
+      },
+      "evidence": "L7",
+      "error_m": null
+    },
+    {
+      "id": "tail-band-L7",
+      "mother": "kaopu.sheet/3",
+      "rule": "tiles.curved-band/1",
+      "curve": "tail",
+      "variables": {
+        "x0": -0.6,
+        "x1": 0.5,
+        "y": 0.25,
+        "thick": 0.045,
+        "depth": 0.23
+      },
+      "evidence": "L7",
+      "error_m": null
+    },
+    {
+      "id": "D5-bottom-border",
+      "mother": "kaopu.sheet/3",
+      "rule": "tiles.curved-band/1",
+      "curve": "d5",
+      "variables": {
+        "x0": -0.6,
+        "x1": 0.6,
+        "y": 0.03,
+        "thick": 0.018,
+        "depth": 0.2
+      },
+      "evidence": "D5",
+      "error_m": null
+    },
+    {
+      "id": "D5-middle-belt",
+      "mother": "kaopu.sheet/3",
+      "rule": "tiles.curved-band/1",
+      "curve": "d5",
+      "variables": {
+        "x0": -0.6,
+        "x1": 0.6,
+        "y": 0.355,
+        "thick": 0.035,
+        "depth": 0.2
+      },
+      "evidence": "D5",
+      "error_m": null
+    },
+    {
+      "id": "D5-upper-tile-band",
+      "mother": "kaopu.sheet/3",
+      "rule": "tiles.curved-band/1",
+      "curve": "d5",
+      "variables": {
+        "x0": -0.6,
+        "x1": 0.6,
+        "y": 0.505,
+        "thick": 0.025,
+        "depth": 0.23
+      },
+      "evidence": "D5",
+      "error_m": null
+    }
+  ]
+}

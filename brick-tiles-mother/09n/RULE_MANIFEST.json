@@ -1,0 +1,135 @@
+{
+  "version": "tiles-mother-r05-09n",
+  "files": [
+    {
+      "name": "route-a.cjs",
+      "bytes": 12641,
+      "sha256": "340f3c873afa1854617e5313fe9dba6db0261cf10cf8b6ee92daf5ceca5f7960"
+    },
+    {
+      "name": "section.cjs",
+      "bytes": 598,
+      "sha256": "b435d4a595d6d8623af1aebc3762ac4a3b7f0760020daeeffb912db09c5ecd21"
+    },
+    {
+      "name": "tile.cjs",
+      "bytes": 238,
+      "sha256": "da08d0183a956a873a9362c3388cdfcb0937ff034a7e398837ed8056517dcabc"
+    },
+    {
+      "name": "end-face.cjs",
+      "bytes": 4864,
+      "sha256": "ef647322bc681b086b09699daa092c6c7131548fb2514cbeb2788e3e9e39f7f6"
+    },
+    {
+      "name": "fit-drip.cjs",
+      "bytes": 4365,
+      "sha256": "531eb917bf76055f4de09763296e64136cdbf9fde2b78dde1ae9c2de25bbfa3d"
+    },
+    {
+      "name": "tile-end-object.cjs",
+      "bytes": 3832,
+      "sha256": "870c6eb753dbf252d401997cc240bdf5c102903a3138049fabf78d2af58e65a6"
+    },
+    {
+      "name": "round-end.cjs",
+      "bytes": 2416,
+      "sha256": "9e56413fb90d6de637cc293a80a3b4e4055d8e6c8da7af279405e599674275a3"
+    },
+    {
+      "name": "rolled-sheet.cjs",
+      "bytes": 2662,
+      "sha256": "93800b951ba210d416d725675e72c035f6d76ca1c4d2c23025f7a5360a7e915d"
+    },
+    {
+      "name": "band-sheet.cjs",
+      "bytes": 2350,
+      "sha256": "4ee4f32431e2eebe8f508aac8303dc5303d5d62c5b1b7529a20e34401c52cdbf"
+    },
+    {
+      "name": "folded-sheet.cjs",
+      "bytes": 2368,
+      "sha256": "7461627b6a3ac2a6f75b9bbea4bc77d9738400bc1567433e689f9aec7b41eed4"
+    },
+    {
+      "name": "flat-sheet.cjs",
+      "bytes": 1601,
+      "sha256": "9c0427e2aeb4e1901e70f0f6b4e65807e729e8bc21ea98ccf72b51a605e29567"
+    },
+    {
+      "name": "profile-tile.cjs",
+      "bytes": 1919,
+      "sha256": "b3a0b4f5188c9cc34f2f7888fdbd98b18a5f853d7788d3e18e6a5c3be92505ce"
+    },
+    {
+      "name": "record-compact.cjs",
+      "bytes": 1423,
+      "sha256": "851a81f6e908c80e86e9778d8b8127ffac00da1901b73bb920e3b2129878efdc"
+    },
+    {
+      "name": "ridge-stack.js",
+      "bytes": 1595,
+      "sha256": "cd721dc90b6cb7bee718e5358b035836fdc1d83db871c7689137c560ae6d0fe1"
+    },
+    {
+      "name": "warm-fold.js",
+      "bytes": 1988,
+      "sha256": "93ae4fb3212940248f2a3c4576d2403a04c41ccfe92835e507233d8d7ef40c95"
+    },
+    {
+      "name": "shader-adapter.cjs",
+      "bytes": 1637,
+      "sha256": "31b55a8ea840d51b8fd1ecbb47c280138762f082f5230681a6705a0ad3d19cd2"
+    },
+    {
+      "name": "display-adapter.cjs",
+      "bytes": 3196,
+      "sha256": "460090d747eed6671481fce071298a10bc36c1174356671a3b0a947e870e3bbc"
+    },
+    {
+      "name": "profile-display.js",
+      "bytes": 1410,
+      "sha256": "a864946699cbd1c8440159e8c79689b5323d63254d0b3b0338b654d9481e68df"
+    },
+    {
+      "name": "rolled-display.js",
+      "bytes": 2093,
+      "sha256": "1d45b831080d1760451cac2f32e6f9c2fdac93af5de2c01c254e1df1175a014f"
+    },
+    {
+      "name": "band-display.js",
+      "bytes": 1243,
+      "sha256": "3775120bbeac10e19ab8a8be3fc643ee74e1d5de60d002585a80f4317d9d304d"
+    },
+    {
+      "name": "folded-display.js",
+      "bytes": 1438,
+      "sha256": "bb38f39d290e97041724d80523157db842cbf117a14e7f75225461599fddfe77"
+    },
+    {
+      "name": "flat-display.js",
+      "bytes": 539,
+      "sha256": "57e94c62ce6190c23f4958534e26539a113e289c29bd654809df13045358ca30"
+    },
+    {
+      "name": "library.json",
+      "bytes": 4768,
+      "sha256": "e1d2932f5b97af8e660de20bee86749e0400148b6e56b9e3bf2e49a93830b8eb"
+    },
+    {
+      "name": "instance-recipes.json",
+      "bytes": 6853,
+      "sha256": "e646cf872460e4c7d799445ec5917da24e3caa290a61370f919fac489b9722fa"
+    },
+    {
+      "name": "tile-source-curves.json",
+      "bytes": 283970,
+      "sha256": "382e453c85402fd28fec53364800332496b202b2c558375a3441bcbe1ff8f91d"
+    }
+  ],
+  "ruleBytes": 41277,
+  "assemblyBytes": 3583,
+  "newAdapterBytes": 11556,
+  "sourceBytes": 283970,
+  "libraryBytes": 11621
+}

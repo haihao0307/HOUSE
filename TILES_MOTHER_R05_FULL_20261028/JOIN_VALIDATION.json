@@ -1,0 +1,42 @@
+{
+  "version": "09N",
+  "pass": true,
+  "results": [
+    {
+      "id": "seal",
+      "kind": "cover",
+      "matchingSamples": 405,
+      "maxGap_m": 6.938893903907228e-18,
+      "pass": true
+    },
+    {
+      "id": "seeds",
+      "kind": "cover",
+      "matchingSamples": 405,
+      "maxGap_m": 6.938893903907228e-18,
+      "pass": true
+    },
+    {
+      "id": "flower",
+      "kind": "cover",
+      "matchingSamples": 405,
+      "maxGap_m": 6.938893903907228e-18,
+      "pass": true
+    },
+    {
+      "id": "dripFloral",
+      "kind": "pan",
+      "matchingSamples": 405,
+      "maxGap_m": 0,
+      "pass": true
+    },
+    {
+      "id": "dripBeast",
+      "kind": "pan",
+      "matchingSamples": 405,
+      "maxGap_m": 0,
+      "pass": true
+    }
+  ],
+  "scope": "Finite samples at carrier front plane against end-face back, with model assumptions; not a physical join, waterproofing, continuous coverage or all-parameter proof."
+}

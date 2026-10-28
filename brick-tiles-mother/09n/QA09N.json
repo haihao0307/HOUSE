@@ -1,0 +1,622 @@
+{
+  "version": "09N",
+  "entries": [
+    {
+      "id": "tileSystem",
+      "buildMs": 7534.09,
+      "triangles": 1042960,
+      "draws": 13,
+      "removedLayerViolations": [],
+      "wood": [],
+      "stone": [],
+      "roof": null
+    },
+    {
+      "id": "seal",
+      "buildMs": 268.72440000000097,
+      "triangles": 101266,
+      "draws": 2,
+      "removedLayerViolations": [],
+      "wood": [],
+      "stone": [],
+      "roof": null
+    },
+    {
+      "id": "dripFloral",
+      "buildMs": 1318.4965999999986,
+      "triangles": 222960,
+      "draws": 2,
+      "removedLayerViolations": [],
+      "wood": [],
+      "stone": [],
+      "roof": null
+    },
+    {
+      "id": "brickSystem",
+      "buildMs": 156.60599999999977,
+      "triangles": 482174,
+      "draws": 16,
+      "removedLayerViolations": [],
+      "wood": [],
+      "stone": [],
+      "roof": null
+    },
+    {
+      "id": "eaves",
+      "buildMs": 1713.257599999999,
+      "triangles": 1665470,
+      "draws": 9,
+      "removedLayerViolations": [],
+      "wood": [],
+      "stone": [],
+      "roof": {
+        "deck": false,
+        "battens": false,
+        "mortar": false,
+        "roundSupportRadius_m": 0.024,
+        "supportSpacing_m": 0.230553684592247,
+        "status": "user requested bare round support scheme; dimensions are display assumptions"
+      }
+    },
+    {
+      "id": "roofPatch",
+      "buildMs": 208.5666000000001,
+      "triangles": 496642,
+      "draws": 5,
+      "removedLayerViolations": [],
+      "wood": [],
+      "stone": [],
+      "roof": {
+        "deck": false,
+        "battens": false,
+        "mortar": false,
+        "roundSupportRadius_m": 0.024,
+        "supportSpacing_m": 0.230553684592247,
+        "status": "user requested bare round support scheme; dimensions are display assumptions"
+      }
+    },
+    {
+      "id": "frame2",
+      "buildMs": 838.0069999999996,
+      "triangles": 961762,
+      "draws": 9,
+      "removedLayerViolations": [],
+      "wood": [
+        {
+          "id": "frame2-post-0",
+          "kind": "cylinder-member",
+          "round": true
+        },
+        {
+          "id": "frame2-post-1",
+          "kind": "cylinder-member",
+          "round": true
+        },
+        {
+          "id": "frame2-observed-beam-0",
+          "kind": "curved circular timber",
+          "round": true
+        }
+      ],
+      "stone": [
+        {
+          "id": "frame2-stone-0",
+          "type": 9
+        },
+        {
+          "id": "frame2-stone-1",
+          "type": 9
+        }
+      ],
+      "roof": {
+        "deck": false,
+        "battens": false,
+        "mortar": false,
+        "roundSupportRadius_m": 0.024,
+        "supportSpacing_m": 0.230553684592247,
+        "status": "user requested bare round support scheme; dimensions are display assumptions"
+      }
+    },
+    {
+      "id": "frame4",
+      "buildMs": 1421.5030000000006,
+      "triangles": 1461986,
+      "draws": 14,
+      "removedLayerViolations": [],
+      "wood": [
+        {
+          "id": "frame4-post-0",
+          "kind": "cylinder-member",
+          "round": true
+        },
+        {
+          "id": "frame4-post-1",
+          "kind": "cylinder-member",
+          "round": true
+        },
+        {
+          "id": "frame4-observed-beam-0",
+          "kind": "curved circular timber",
+          "round": true
+        },
+        {
+          "id": "frame4-observed-beam-1",
+          "kind": "curved circular timber",
+          "round": true
+        }
+      ],
+      "stone": [
+        {
+          "id": "frame4-stone-0",
+          "type": 9
+        },
+        {
+          "id": "frame4-stone-1",
+          "type": 9
+        }
+      ],
+      "roof": {
+        "deck": false,
+        "battens": false,
+        "mortar": false,
+        "roundSupportRadius_m": 0.024,
+        "supportSpacing_m": 0.230553684592247,
+        "status": "user requested bare round support scheme; dimensions are display assumptions"
+      }
+    },
+    {
+      "id": "frame6",
+      "buildMs": 2457.615099999999,
+      "triangles": 2165602,
+      "draws": 20,
+      "removedLayerViolations": [],
+      "wood": [
+        {
+          "id": "frame6-post-0",
+          "kind": "cylinder-member",
+          "round": true
+        },
+        {
+          "id": "frame6-post-1",
+          "kind": "cylinder-member",
+          "round": true
+        },
+        {
+          "id": "frame6-observed-beam-0",
+          "kind": "curved circular timber",
+          "round": true
+        },
+        {
+          "id": "frame6-observed-beam-1",
+          "kind": "curved circular timber",
+          "round": true
+        },
+        {
+          "id": "frame6-observed-beam-2",
+          "kind": "curved circular timber",
+          "round": true
+        },
+        {
+          "id": "frame6-observed-beam-3",
+          "kind": "curved circular timber",
+          "round": true
+        }
+      ],
+      "stone": [
+        {
+          "id": "frame6-stone-0",
+          "type": 9
+        },
+        {
+          "id": "frame6-stone-1",
+          "type": 9
+        }
+      ],
+      "roof": {
+        "deck": false,
+        "battens": false,
+        "mortar": false,
+        "roundSupportRadius_m": 0.024,
+        "supportSpacing_m": 0.230553684592247,
+        "status": "user requested bare round support scheme; dimensions are display assumptions"
+      }
+    },
+    {
+      "id": "frame7",
+      "buildMs": 2522.625200000002,
+      "triangles": 2904338,
+      "draws": 21,
+      "removedLayerViolations": [],
+      "wood": [
+        {
+          "id": "frame7-post-0",
+          "kind": "cylinder-member",
+          "round": true
+        },
+        {
+          "id": "frame7-post-1",
+          "kind": "cylinder-member",
+          "round": true
+        },
+        {
+          "id": "frame7-post-2",
+          "kind": "cylinder-member",
+          "round": true
+        },
+        {
+          "id": "frame7-observed-beam-0",
+          "kind": "curved circular timber",
+          "round": true
+        },
+        {
+          "id": "frame7-observed-beam-1",
+          "kind": "curved circular timber",
+          "round": true
+        },
+        {
+          "id": "frame7-observed-beam-2",
+          "kind": "curved circular timber",
+          "round": true
+        }
+      ],
+      "stone": [
+        {
+          "id": "frame7-stone-0",
+          "type": 9
+        },
+        {
+          "id": "frame7-stone-1",
+          "type": 9
+        },
+        {
+          "id": "frame7-stone-2",
+          "type": 9
+        }
+      ],
+      "roof": {
+        "deck": false,
+        "battens": false,
+        "mortar": false,
+        "roundSupportRadius_m": 0.024,
+        "supportSpacing_m": 0.230553684592247,
+        "status": "user requested bare round support scheme; dimensions are display assumptions"
+      }
+    },
+    {
+      "id": "frame13",
+      "buildMs": 5289.337399999997,
+      "triangles": 4931266,
+      "draws": 38,
+      "removedLayerViolations": [],
+      "wood": [
+        {
+          "id": "frame13-post-0",
+          "kind": "cylinder-member",
+          "round": true
+        },
+        {
+          "id": "frame13-post-1",
+          "kind": "cylinder-member",
+          "round": true
+        },
+        {
+          "id": "frame13-post-2",
+          "kind": "cylinder-member",
+          "round": true
+        },
+        {
+          "id": "frame13-post-3",
+          "kind": "cylinder-member",
+          "round": true
+        },
+        {
+          "id": "frame13-observed-beam-0",
+          "kind": "curved circular timber",
+          "round": true
+        },
+        {
+          "id": "frame13-observed-beam-1",
+          "kind": "curved circular timber",
+          "round": true
+        },
+        {
+          "id": "frame13-observed-beam-2",
+          "kind": "curved circular timber",
+          "round": true
+        },
+        {
+          "id": "frame13-observed-beam-3",
+          "kind": "curved circular timber",
+          "round": true
+        },
+        {
+          "id": "frame13-observed-beam-4",
+          "kind": "curved circular timber",
+          "round": true
+        },
+        {
+          "id": "frame13-observed-beam-5",
+          "kind": "curved circular timber",
+          "round": true
+        },
+        {
+          "id": "frame13-observed-beam-6",
+          "kind": "curved circular timber",
+          "round": true
+        }
+      ],
+      "stone": [
+        {
+          "id": "frame13-stone-0",
+          "type": 9
+        },
+        {
+          "id": "frame13-stone-1",
+          "type": 9
+        },
+        {
+          "id": "frame13-stone-2",
+          "type": 9
+        },
+        {
+          "id": "frame13-stone-3",
+          "type": 9
+        }
+      ],
+      "roof": {
+        "deck": false,
+        "battens": false,
+        "mortar": false,
+        "roundSupportRadius_m": 0.024,
+        "supportSpacing_m": 0.230553684592247,
+        "status": "user requested bare round support scheme; dimensions are display assumptions"
+      }
+    },
+    {
+      "id": "frame3",
+      "buildMs": 831.9485999999997,
+      "triangles": 1514722,
+      "draws": 11,
+      "removedLayerViolations": [],
+      "wood": [
+        {
+          "id": "frame3-post-0",
+          "kind": "cylinder-member",
+          "round": true
+        },
+        {
+          "id": "frame3-post-1",
+          "kind": "cylinder-member",
+          "round": true
+        },
+        {
+          "id": "frame3-observed-beam-0",
+          "kind": "curved circular timber",
+          "round": true
+        }
+      ],
+      "stone": [
+        {
+          "id": "frame3-stone-0",
+          "type": 9
+        },
+        {
+          "id": "frame3-stone-1",
+          "type": 9
+        }
+      ],
+      "roof": {
+        "deck": false,
+        "battens": false,
+        "mortar": false,
+        "roundSupportRadius_m": 0.024,
+        "supportSpacing_m": 0.230553684592247,
+        "status": "user requested bare round support scheme; dimensions are display assumptions"
+      }
+    },
+    {
+      "id": "youChun",
+      "buildMs": 1295.8811999999998,
+      "triangles": 410805,
+      "draws": 31,
+      "removedLayerViolations": [],
+      "wood": [
+        {
+          "id": "you-chun-post-0",
+          "kind": "cylinder-member",
+          "round": true
+        },
+        {
+          "id": "you-chun-post-1",
+          "kind": "cylinder-member",
+          "round": true
+        },
+        {
+          "id": "you-chun-right-post-head-cloud",
+          "round": false
+        }
+      ],
+      "stone": [
+        {
+          "id": "you-chun-base-0",
+          "type": 9
+        },
+        {
+          "id": "you-chun-base-1",
+          "type": 9
+        }
+      ],
+      "roof": null
+    },
+    {
+      "id": "mainHouse",
+      "buildMs": 3257.9428000000007,
+      "triangles": 2180570,
+      "draws": 39,
+      "removedLayerViolations": [],
+      "wood": [
+        {
+          "id": "mainHouse-central-column",
+          "kind": "cylinder-member",
+          "round": true
+        },
+        {
+          "id": "mainHouse-front-column",
+          "kind": "cylinder-member",
+          "round": true
+        },
+        {
+          "id": "mainHouse-porch-column",
+          "kind": "cylinder-member",
+          "round": true
+        }
+      ],
+      "stone": [
+        {
+          "id": "mainHouse-central-column-stone",
+          "type": 9
+        },
+        {
+          "id": "mainHouse-front-column-stone",
+          "type": 9
+        },
+        {
+          "id": "mainHouse-porch-column-stone",
+          "type": 9
+        },
+        {
+          "id": "mainHouse-lower-door-left-stone",
+          "type": 9
+        },
+        {
+          "id": "mainHouse-lower-door-right-stone",
+          "type": 9
+        }
+      ],
+      "roof": {
+        "deck": false,
+        "battens": false,
+        "mortar": false,
+        "roundSupportRadius_m": 0.024,
+        "supportSpacing_m": 0.230553684592247,
+        "status": "user requested bare round support scheme; dimensions are display assumptions"
+      }
+    },
+    {
+      "id": "sideHouse",
+      "buildMs": 2372.8728999999985,
+      "triangles": 1916432,
+      "draws": 29,
+      "removedLayerViolations": [],
+      "wood": [
+        {
+          "id": "sideHouse-front-post",
+          "kind": "subdivided-box-member",
+          "round": false
+        },
+        {
+          "id": "sideHouse-porch-hanging-post",
+          "kind": "subdivided-box-member",
+          "round": false
+        }
+      ],
+      "stone": [
+        {
+          "id": "sideHouse-front-post-stone",
+          "type": 9
+        }
+      ],
+      "roof": {
+        "deck": false,
+        "battens": false,
+        "mortar": false,
+        "roundSupportRadius_m": 0.024,
+        "supportSpacing_m": 0.230553684592247,
+        "status": "user requested bare round support scheme; dimensions are display assumptions"
+      }
+    },
+    {
+      "id": "gateHouse",
+      "buildMs": 909.7018000000025,
+      "triangles": 1451814,
+      "draws": 22,
+      "removedLayerViolations": [],
+      "wood": [
+        {
+          "id": "gateHouse-eave-post",
+          "kind": "subdivided-box-member",
+          "round": false
+        },
+        {
+          "id": "gateHouse-wall-side-post",
+          "kind": "subdivided-box-member",
+          "round": false
+        },
+        {
+          "id": "gateHouse-hanging-eave-post",
+          "kind": "subdivided-box-member",
+          "round": false
+        }
+      ],
+      "stone": [
+        {
+          "id": "gateHouse-eave-post-stone",
+          "type": 9
+        },
+        {
+          "id": "gateHouse-wall-side-post-stone",
+          "type": 9
+        },
+        {
+          "id": "gateHouse-ground-door-left-stone",
+          "type": 9
+        },
+        {
+          "id": "gateHouse-ground-door-right-stone",
+          "type": 9
+        }
+      ],
+      "roof": {
+        "deck": false,
+        "battens": false,
+        "mortar": false,
+        "roundSupportRadius_m": 0.024,
+        "supportSpacing_m": 0.230553684592247,
+        "status": "user requested bare round support scheme; dimensions are display assumptions"
+      }
+    },
+    {
+      "id": "joinery",
+      "buildMs": 332.29879999999685,
+      "triangles": 87958,
+      "draws": 7,
+      "removedLayerViolations": [],
+      "wood": [
+        {
+          "id": "mortised-column",
+          "kind": "mortised-post",
+          "round": false
+        }
+      ],
+      "stone": [],
+      "roof": null
+    }
+  ],
+  "wood": [
+    {
+      "name": "normal",
+      "maxDisplacement_m": 0.0018000009066129572,
+      "rms_m": 0.0004098022703375049,
+      "actualVertexChange": true,
+      "vertices": 15941
+    },
+    {
+      "name": "strong",
+      "maxDisplacement_m": 0.005400000300456695,
+      "rms_m": 0.0012294067441477113,
+      "actualVertexChange": true,
+      "vertices": 15941
+    }
+  ],
+  "pass": true
+}

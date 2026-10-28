@@ -1,0 +1,4 @@
+const fs=require('fs'),h=fs.readFileSync('G:/HOUSE/brick-tiles-mother-09n-20261028/START_HERE.html','utf8'),code=h.match(/<script>([\s\S]*?)<\/script>/)[1];
+const Q=Function('const settings={micStrength:1,micScale:1,micColor:.3,micRough:.3,brightness:.96,warmth:.36,patina:.38,wet:0,variation:.58,core:.48};'+code.slice(0,code.indexOf('const $=s=>'))+';return {STUDY,StudyWorkshop,M}')();
+Q.STUDY.id='ridge';Q.STUDY.family='roof';let w=new Q.StudyWorkshop({clear(){},add(){}});w.build({});
+for(let [id,g]of w.groups){if(!/eye-tile|board-tile|pitiaoxian|flower-ridge-core|baotong/.test(id))continue;let min=Infinity,max=-Infinity;for(const item of g.items)for(let i=0;i<g.mesh.p.length;i+=3){let p=Q.M.transform(item.m,Array.from(g.mesh.p.slice(i,i+3)));min=Math.min(min,p[1]);max=Math.max(max,p[1])}console.log(id,'bounds y',min,max,'items',g.items.length)}

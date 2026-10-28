@@ -1,0 +1,52 @@
+{
+  "version": "09N",
+  "htmlBytes": 1422410,
+  "htmlSha256": "9c672b6567656044278072a835ce531be1b3458ec0a18388a58cb2fd4c3e240d",
+  "localGzipBytes": 341636,
+  "sharedRuleBytes": 41277,
+  "addedAssemblyRuleBytes": 3583,
+  "addedDisplayAdapterBytes": 11556,
+  "sharedRecipeBytes": 11621,
+  "sharedSixMotifBytes": 283970,
+  "compactRecipeBytes": {
+    "pan-L9": 121,
+    "cover-L9": 125,
+    "pan-D7": 121,
+    "cover-D7": 125,
+    "seal-L9": 255,
+    "seeds-L9": 257,
+    "flower-L9": 259,
+    "dripFloral-L9": 265,
+    "dripBeast-L9": 263,
+    "roundEnd-D7": 301,
+    "ridge-eye-L7": 219,
+    "ridge-hood-L7": 221,
+    "ridge-eye-D5": 219,
+    "folded-D5": 219,
+    "ridge-board-L7": 187,
+    "snail-band-L7": 194,
+    "wave-band-L7": 189,
+    "tail-band-L7": 190,
+    "D5-bottom-border": 191,
+    "D5-middle-belt": 190,
+    "D5-upper-tile-band": 195
+  },
+  "sceneInstanceRecordBytes": {
+    "tileSystem": {
+      "count": 8,
+      "min": 188,
+      "max": 278
+    },
+    "eaves": {
+      "count": 14,
+      "min": 302,
+      "max": 421
+    },
+    "mainHouse": {
+      "count": 160,
+      "min": 356,
+      "max": 403
+    }
+  },
+  "scope": "Compact records refer to shared templates, rules and motif data. Scene ranges are UTF-8 JSON for tested configurations and exclude shared dependencies. HTML already embeds runtime and data; do not add each number to it. Legacy assembly/render code also remains in HTML; GPU and temporary display memory are not object bytes."
+}
