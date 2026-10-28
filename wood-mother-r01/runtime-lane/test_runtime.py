@@ -25,6 +25,10 @@ try:
    if name=='desktop':
     page.evaluate("()=>{window.qaLoss=document.querySelector('canvas').getContext('webgl2').getExtension('WEBGL_lose_context');qaLoss.loseContext()}");page.wait_for_function('woodQA.contextLost && woodQA.losses===1');c['loss_visible']=page.locator('#status').inner_text();page.screenshot(path=str(out/'context-lost-visible.png'))
     f=page.evaluate('woodQA.frames');page.get_by_role('button',name='尝试恢复一次').click();page.wait_for_function('(f)=>woodQA.restores===1 && woodQA.frames>f',arg=f,timeout=120000);assert not page.evaluate('woodQA.error');c['restored']=page.evaluate('woodQA');page.screenshot(path=str(out/'restored-cylinder.png'))
+   action('endgrain view',"()=>document.querySelector('#endgrain').click()")
+   action('minimum cut -.5',"()=>{let e=document.querySelector('#cut');e.value=-.5;e.dispatchEvent(new Event('input'))}")
+   action('roughness channel',"()=>{let e=document.querySelector('#channel');e.value=2;e.dispatchEvent(new Event('input'))}")
+   action('restore cut material',"()=>{for(let [id,value] of [['cut',.7],['channel',0]]){let e=document.getElementById(id);e.value=value;e.dispatchEvent(new Event('input'))}document.querySelector('#reset').click()}")
    c['final']=page.evaluate('woodQA');assert not c['final']['error'];result['cases'].append(c);context.close()
   assert not result['errors'];result['status']='PASS_SIMULATED_FAILURE_RECOVERY_NOT_USER_MACHINE_ROOT_CAUSE';browser.close()
 except Exception as e:result['failure']=str(e);raise
