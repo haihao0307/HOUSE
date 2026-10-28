@@ -38,3 +38,6 @@ Status: NUMERIC_CHECKED / BROWSER_BLOCKED. Public Site v3 published by coordinat
 
 ## Independent review repairs
 Reviewer study_wood_knot_functions identified GLSL atan(0,0) and misleading fiber claim. Both corrected in local post-v1 revision; high-frequency noise now fades to its average when pixel footprint is too wide (conservative heuristic, not analytically filtered noise). GPU tests remain required. Public v3 includes these fixes and explicit diagnostics. Cloud CUA confirmed WebGL2 unavailable and WebGL1=false; do not repeat in that environment.
+
+## Post-visual-review bounded candidate
+Public v3 baseline was truly rendered in sandboxed Chrome156 WebGL2 software ANGLE/SwiftShader: 16 frames, GL0, no page errors and all tested controls passed. Evidence CI40620928866. Review found framing cropped ends and uniform bands below material fidelity target. Current candidate is12,652B, camera distance8.8 with endgrain button; monotone age mapping q+.12sin(1.618q), lower-contrast asymmetric latewood, growth-correlated fine marks and shared microscopic H with surface finite-difference normals. Not physical fiber direction/BSDF. Current changed HTML not yet published. CI font installation affects runner only; old models/other workbenches unchanged.

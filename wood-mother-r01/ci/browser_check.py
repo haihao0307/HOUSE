@@ -28,6 +28,8 @@ try:
   action('board restored',lambda:page.select_option('#shape','0'))
   action('knot off',lambda:page.locator('#knot').uncheck());page.screenshot(path=str(evidence/'without-knot.png'))
   action('knot on',lambda:page.locator('#knot').check())
+  action('endgrain view',lambda:page.locator('#endgrain').click());page.screenshot(path=str(evidence/'endgrain.png'));action('full view restored',lambda:page.locator('#reset').click())
+  action('cut through active knot',lambda:slider('cut',.45));page.screenshot(path=str(evidence/'cut-through-knot.png'));action('cut full restored',lambda:slider('cut',.7))
   action('knot height',lambda:slider('height',.4));action('knot radius',lambda:slider('radius',.25));action('cut advance',lambda:slider('cut',0));page.screenshot(path=str(evidence/'cut.png'))
   action('cut restored',lambda:slider('cut',.7))
   for value in ['1','2','3','0']:action('channel '+value,lambda v=value:page.select_option('#channel',v))

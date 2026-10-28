@@ -12,6 +12,7 @@ assert growth((0,0,0))==0
 assert all(growth((-.6,y,.4))==growth((-.6,y,.4),False)for y in [0,.4,1])
 assert abs(growth((.6,.1,0))-growth((.600001,.1,0)))<.0001
 text=pathlib.Path(__file__).with_name('index.html').read_text();shader=re.search(r'<script id="fragment"[^>]*>(.*?)</script>',text,re.S).group(1)
+assert min(1+.12*1.618*math.cos(1.618*q) for q in [i/100 for i in range(10000)])>.805
 assert 'if(rho>1e-6)' in shader
 assert '木节与纤维的共同生长场' not in text
 assert all(math.isfinite(growth(p,kh=h,kr=r)) for p in points[:200] for h in [-.65,0,.65] for r in [.08,.18,.3])
