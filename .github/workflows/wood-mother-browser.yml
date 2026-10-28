@@ -22,7 +22,7 @@ jobs:
       - run: test -x /opt/google/chrome/chrome && google-chrome --version
       - run: python wood-mother-r01/test_field.py
       - name: Real browser test, no sandbox override or unsafe GPU flags
-        run: python wood-mother-r01/pause-status-lane/test_browser.py
+        run: python wood-mother-r01/eight-audit/test_browser.py --candidate wood-mother-r01/gallery-lane/candidate.html --out wood-mother-r01/ci/evidence/eight
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:
