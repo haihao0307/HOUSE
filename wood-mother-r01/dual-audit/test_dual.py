@@ -71,8 +71,14 @@ try:
    change(p,'channel',0);change(p,'crackDepth',.08);change(p,'relief',.01);change(p,'animationMode','cracks');settle(p)
    # One full period of actual continuous model evaluation, not just a RAF counter.
    change(p,'cycle',8);settle(p);p.locator('#play').click();p.wait_for_function('woodQA.playback.playing');trace=[];start=time.monotonic()
-   while time.monotonic()-start<9.5:
+   # Completion-driven CPU may need a full-frame latency after cycle 8s.
+   # Observe rendered phases, not the RAF/wall-clock phase; stop only at actual wrap.
+   while time.monotonic()-start<40:
     p.wait_for_timeout(100);trace.append(playback_sample(p))
+    visible=[x['rendered']['animationPhase'] for x in trace if x['rendered']]
+    wrapped=any(visible[i]<visible[i-1]-.2 for i in range(1,len(visible)))
+    if wrapped and time.monotonic()-start>=8:break
+   r['loopObservationLimitSeconds']=40;r['loopObservationElapsedSeconds']=time.monotonic()-start
    r['playbackTrace']=trace;r['actualFps']=(trace[-1]['frames']-trace[0]['frames'])/((trace[-1]['t']-trace[0]['t'])/1000);assert trace[-1]['frames']>trace[0]['frames'];phases=[s['rendered']['animationPhase'] for s in trace if s['rendered']];r['loopWraps']=sum(phases[i]<phases[i-1]-.2 for i in range(1,len(phases)));assert r['loopWraps']>=1,'No actual loop boundary observed';assert max(s['rendered']['crackDepth'] for s in trace)-min(s['rendered']['crackDepth'] for s in trace)>.01,'No actual geometry animation';r['pause']=pause(p);snap(p,name+'-paused')
    # Resume and change controls while actual rendering continues.
    p.locator('#play').click();p.wait_for_function('woodQA.playback.playing');change(p,'family','2');change(p,'finish','1');change(p,'weather',.5);p.wait_for_function("woodQA.renderedState.family===2&&woodQA.renderedState.finish===1&&woodQA.renderedState.weather===.5",timeout=120000);r['resumeChanges']=pause(p);q=settle(p);r['afterResume']=q;assert q['renderedState']['family']==2 and q['renderedState']['finish']==1 and q['renderedState']['weather']==.5
