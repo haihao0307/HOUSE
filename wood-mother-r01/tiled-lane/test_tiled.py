@@ -1,6 +1,6 @@
 from pathlib import Path
 from playwright.sync_api import sync_playwright
-import json,hashlib,base64
+import json,hashlib,base64,zlib
 root=Path(__file__).resolve().parents[1];out=root/'ci/evidence/tiled';out.mkdir(parents=True,exist_ok=True)
 result={'candidate_sha256':hashlib.sha256((root/'tiled-lane/candidate.html').read_bytes()).hexdigest(),'cases':[],'errors':[]}
 RAW="""()=>{const c=document.querySelector('canvas'),g=c.getContext('webgl2'),a=new Uint8Array(c.width*c.height*4);g.readPixels(0,0,c.width,c.height,g.RGBA,g.UNSIGNED_BYTE,a);let s='';for(let i=0;i<a.length;i+=32768)s+=String.fromCharCode(...a.subarray(i,i+32768));return btoa(s)}"""
@@ -16,8 +16,8 @@ try:
   control.evaluate("""()=>{window.g=document.querySelector('canvas').getContext('webgl2');window.old=g.fenceSync(g.SYNC_GPU_COMMANDS_COMPLETE,0);g.flush();window.ext=g.getExtension('WEBGL_lose_context');document.querySelector('canvas').addEventListener('webglcontextlost',e=>{e.preventDefault();setTimeout(()=>ext.restoreContext(),100)});document.querySelector('canvas').addEventListener('webglcontextrestored',()=>window.restored=true);ext.loseContext()}""")
   control.wait_for_function('window.restored===true');neg=control.evaluate('()=>({wait:g.clientWaitSync(old,0,0),error:g.getError(),failed:g.WAIT_FAILED,invalid:g.INVALID_OPERATION})');assert neg['wait']==neg['failed'] and neg['error']!=0;result['old_sync_negative_control']=neg;control.close()
   for name,vp,dpr in [('desktop',{'width':1280,'height':900},1),('user-large-hiDPR',{'width':1920,'height':1080},2),('mobile-viewport',{'width':390,'height':844},3)]:
-   context=browser.new_context(viewport=vp,device_scale_factor=dpr);page=context.new_page();page.on('pageerror',lambda e:result['errors'].append(str(e)));page.goto((root/'tiled-lane/candidate.html').as_uri());c={'name':name,'initial':wait(page),'steps':[]};page.screenshot(path=str(out/(name+'-board.png')))
-   tiled=base64.b64decode(page.evaluate(RAW));base=context.new_page();base.goto((root/'tiled-lane/baseline-v5.html').as_uri());base.wait_for_function('woodQA.frames>0',timeout=120000);baseline=base64.b64decode(base.evaluate(RAW));assert len(tiled)==len(baseline);diff=[abs(a-b) for a,b in zip(tiled,baseline)];c['whole_frame_comparison']={'bytes':len(tiled),'max_abs':max(diff),'different_bytes':sum(x!=0 for x in diff),'mean_abs':sum(diff)/len(diff)};assert max(diff)<=1;c['baseline']=base.evaluate('woodQA');base.close()
+   context=browser.new_context(viewport=vp,device_scale_factor=dpr);page=context.new_page();page.on('pageerror',lambda e:result['errors'].append(str(e)));page.goto((root/'tiled-lane/candidate.html').as_uri());c={'name':name,'initial':wait(page),'steps':[]};result['cases'].append(c);page.screenshot(path=str(out/(name+'-board.png')))
+   tiled=base64.b64decode(page.evaluate(RAW));base=context.new_page();base.goto((root/'tiled-lane/baseline-v5.html').as_uri());base.wait_for_function('woodQA.frames>0',timeout=120000);baseline=base64.b64decode(base.evaluate(RAW));assert len(tiled)==len(baseline);diff=[abs(a-b) for a,b in zip(tiled,baseline)];c['whole_frame_comparison']={'bytes':len(tiled),'max_abs':max(diff),'different_bytes':sum(x!=0 for x in diff),'mean_abs':sum(diff)/len(diff)};(out/(name+'-tiled.rgba.z')).write_bytes(zlib.compress(tiled));(out/(name+'-baseline.rgba.z')).write_bytes(zlib.compress(baseline));c['baseline']=base.evaluate('woodQA');base.screenshot(path=str(out/(name+'-baseline.png')));base.close()
    # Repeated async input must commit exactly the last state, not merely another frame.
    page.evaluate("()=>{for(let i=0;i<20;i++){const e=document.querySelector('#shape');e.value=i%2;e.dispatchEvent(new Event('input'))}}")
    q=wait(page);assert q['renderedState']['shape']==1;c['steps'].append({'rapid_shapes':q});page.screenshot(path=str(out/(name+'-cylinder.png')))
@@ -37,7 +37,7 @@ try:
     page.wait_for_function('woodQA.losses===1',timeout=10000);page.wait_for_function('woodQA.restores===1',timeout=20000);q=wait(page);assert q['restoreAttempts']==1;c['steps'].append({'loss_during_tile_restored':q});page.screenshot(path=str(out/'restored.png'))
     page.evaluate("()=>document.querySelector('canvas').getContext('webgl2').getExtension('WEBGL_lose_context').loseContext()")
     page.wait_for_function('woodQA.losses===2 && woodQA.stopped',timeout=10000);q=page.evaluate('woodQA');before=q['draws'];page.wait_for_timeout(800);assert page.evaluate('woodQA.draws')==before;c['steps'].append({'second_loss_stops_no_reload':page.evaluate('woodQA')})
-   result['cases'].append(c);context.close()
-  assert not result['errors'];result['status']='PASS_EQUIVALENT_PIXELS_AND_BOUNDED_RECOVERY_NOT_USER_GPU_PROOF';browser.close()
+   context.close()
+  assert not result['errors'];assert all(c['whole_frame_comparison']['max_abs']<=1 for c in result['cases']), 'Full-frame pixel mismatch; raw evidence retained';result['status']='PASS_EQUIVALENT_PIXELS_AND_BOUNDED_RECOVERY_NOT_USER_GPU_PROOF';browser.close()
 except Exception as e:result['failure']=str(e);raise
 finally:(out/'result.json').write_text(json.dumps(result,indent=2))
