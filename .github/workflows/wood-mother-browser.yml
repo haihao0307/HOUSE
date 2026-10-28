@@ -23,6 +23,8 @@ jobs:
       - run: python wood-mother-r01/test_field.py
       - name: Real browser test, no sandbox override or unsafe GPU flags
         run: python wood-mother-r01/ci/browser_check.py
+      - name: Isolated v4 footprint readback
+        run: python wood-mother-r01/diagnostic-lane/run.py
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:
