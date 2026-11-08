@@ -1,0 +1,1225 @@
+{
+  "schemaVersion": 2,
+  "date": "2026-11-08",
+  "repository": "haihao0307/HOUSE",
+  "branch": "main",
+  "baseCommit": "6679d2582c275c1f99b0e5fcd4ce8664f20d930d",
+  "scope": "Retire the old Yunnan courtyard/building workbench, old Yunnan timber system and their architecture reference records and three scan-derived GLBs from the current main tree. Preserve independent Brick/Tiles/Wood projects and unrelated files.",
+  "recovery": "Normal descendant commit; all deleted files remain recoverable from baseCommit or by reverting the cleanup commit. No refs, tags, Releases or Git history were deleted.",
+  "missingOriginals": {
+    "seventeenArchiveVolumes": {
+      "bytes": 96390973,
+      "status": "Not found in 87 current branch trees or the two existing GitHub Releases; open Issue #12 records incomplete upload."
+    },
+    "originalFbx": {
+      "name": "C2_Meirenkao_Source.fbx",
+      "originalName": "-1.fbx",
+      "bytes": 17127760,
+      "status": "Only catalog metadata found; original binary not found."
+    },
+    "noClaimOfDeletionForMissingFiles": true
+  },
+  "existingReferenceGlbsDeleted": [
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/assets/models/YN_DALI_001_REFERENCE_WEB.glb",
+      "sha": "db7b96f8ca6cc2b270b594bdca87f13da546c2f4",
+      "bytes": 66299108
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/assets/models/YN_HAOSI1_WULONG_WL_001_REFERENCE_WEB.glb",
+      "sha": "e82777f4a679e87cc6eaec7f141fe10d11b056a1",
+      "bytes": 54811052
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/assets/models/YN_TUANJIE_001_EDITABLE.glb",
+      "sha": "93d30c9a9dcecdab1348897aa76aa9da71b555c4",
+      "bytes": 45457960
+    }
+  ],
+  "verification": {
+    "oldArchitecturePathsAbsent": true,
+    "unrelatedBlobsUnchanged": true,
+    "branchHistoryRewritten": false,
+    "siteRedeployed": false,
+    "siteUnpublished": false,
+    "originalBytePreservationNotRequiredAfterLatestUserInstruction": true
+  },
+  "storage": {
+    "beforeLogicalBytes": 182742482,
+    "removedFiles": 213,
+    "removedLogicalBytes": 180940779,
+    "retainedOriginalBytes": 1801703,
+    "actualGitObjectBytesReclaimed": 0,
+    "warning": "The goal of actual storage recovery still requires a separately confirmed irreversible history/object cleanup. This commit does not achieve that goal."
+  },
+  "otherRefs": "Other branch heads and all tags/releases remain unchanged. The old architecture occurs in 81 existing branch heads; repeated ordinary cleanup commits would not reclaim historical objects.",
+  "deleted": [
+    {
+      "path": ".github/workflows/materialize-v544.yml",
+      "sha": "722eaeeb938b57a1f286ceb1845af1929f56fb1a",
+      "bytes": 3192
+    },
+    {
+      "path": ".github/workflows/pages.yml",
+      "sha": "ff3a6e83d0296bf47f0b66d0a6f46e2ca8a6cb64",
+      "bytes": 1510
+    },
+    {
+      "path": ".github/workflows/reference-model-lab.yml",
+      "sha": "2c7a44310ed0471701c4f1b888b8084bfd005424",
+      "bytes": 1903
+    },
+    {
+      "path": ".github/workflows/yunnan-understanding-lab.yml",
+      "sha": "39b77f3ad281606a83d5e86acd62ffbf12196ccf",
+      "bytes": 2437
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/.gitattributes",
+      "sha": "94d0305fcfc0836f74561ac0f13882356814982a",
+      "bytes": 231
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/.github/workflows/pages.yml",
+      "sha": "460bb7babbe308da99ab7e75d8b2410af0d03aeb",
+      "bytes": 1032
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/.github/workflows/quality.yml",
+      "sha": "67ff36ae8240c1d775ebe33505c8ddfb9dc24eba",
+      "bytes": 288
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/.gitignore",
+      "sha": "508341c8e8d06c8298fe4b1924d2b9bb9130905f",
+      "bytes": 312
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/.nojekyll",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "bytes": 0
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/404.html",
+      "sha": "8a01b4412092c676d3100c9a442cade7b15aaf17",
+      "bytes": 551414
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/AGENTS.md",
+      "sha": "728a958dc2d559387c6eff6c4eafb97f495972aa",
+      "bytes": 1699
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/CHANGELOG.md",
+      "sha": "1b7b5f30c9649f1a118ad247f4aa09c62f8448b6",
+      "bytes": 10805
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/CHECKSUMS.sha256",
+      "sha": "a71f9ac52ec5e2769166d6d22c3a03bb52312877",
+      "bytes": 24548
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/CODEX_TASK_V5_4_4_REFERENCE_SYNTHESIS.md",
+      "sha": "f1e981a999e23fe79abe34755c3ad848d67c4892",
+      "bytes": 8046
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/CONTRIBUTING.md",
+      "sha": "7cd8c95647b5544bf01025a82e733f074b9c85a2",
+      "bytes": 698
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/PROJECT_STATE.md",
+      "sha": "6b7591fb0fbbb68f7ec2ec9b5b4512e782cdff18",
+      "bytes": 8822
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/PUSH_TO_GITHUB.ps1",
+      "sha": "b87483331d3ff44f10b5f3174493249b53ee1c6c",
+      "bytes": 612
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/README.md",
+      "sha": "5be83bf4f237546f5ea030e473f4ec1ece21a2f2",
+      "bytes": 6721
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/START_LOCAL_WINDOWS.bat",
+      "sha": "5c831c1b4795397d09863764d15708fee046f60a",
+      "bytes": 103
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/START_LOCAL_WINDOWS.ps1",
+      "sha": "4e2d17e0a2bfd9d29c33a9a2c6ddb682d90a2a83",
+      "bytes": 165
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/VERSION",
+      "sha": "8ae03c11904c36aa529a034e1ab236c6def9cf54",
+      "bytes": 6
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/assets/css/yunnan-understanding-lab.css",
+      "sha": "f1f6e0d237938d7404b1e733bccea2e594ca9e77",
+      "bytes": 8253
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/assets/js/github-sync.js",
+      "sha": "9d96cd954d5d634959ccd01486e55cbd563c1001",
+      "bytes": 20266
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/assets/js/tuanjie-glb-viewer.js",
+      "sha": "1bfdfc09dc2f25b821bee23f45dbc60a0e8f8245",
+      "bytes": 17654
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/assets/js/yunnan-understanding-core.js",
+      "sha": "c47b2486838330cf30c9d31208ece43ef4b98bf7",
+      "bytes": 9809
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/assets/js/yunnan-understanding-demo.js",
+      "sha": "41b655b013b994ff0d32688cf0d6d36aa2f7c113",
+      "bytes": 4025
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/assets/js/yunnan-understanding-entry.js",
+      "sha": "6cdf08a680304e2e67139984dd4246246cbd9eb8",
+      "bytes": 5616
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/assets/js/yunnan-understanding-lab.js",
+      "sha": "62484cb170e618040de7e7e4723b56237d3ff675",
+      "bytes": 776
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/assets/js/yunnan-understanding-tile.js",
+      "sha": "e808d1b142edd206ffda6762f798b2b45d66b98e",
+      "bytes": 6126
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/assets/js/yunnan-understanding-wall.js",
+      "sha": "0d81936819898c71f0ede83f8f2c444e95820bde",
+      "bytes": 6111
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/assets/models/YN_DALI_001_REFERENCE_WEB.glb",
+      "sha": "db7b96f8ca6cc2b270b594bdca87f13da546c2f4",
+      "bytes": 66299108
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/assets/models/YN_HAOSI1_WULONG_WL_001_REFERENCE_WEB.glb",
+      "sha": "e82777f4a679e87cc6eaec7f141fe10d11b056a1",
+      "bytes": 54811052
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/assets/models/YN_TUANJIE_001_EDITABLE.glb",
+      "sha": "93d30c9a9dcecdab1348897aa76aa9da71b555c4",
+      "bytes": 45457960
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/data/assets/tuanjie_township_001_editable_glb_contract_v5_3_3.json",
+      "sha": "b8de485219cc5816c46e015292bec86083aca32a",
+      "bytes": 3138
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/data/assets/tuanjie_township_001_glb_quality_profiles_v5_3_5.json",
+      "sha": "74e5ac537356e95b0432fcf65e74c93b07866824",
+      "bytes": 2466
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/data/assets/yikeyin_asset_contract_v5_3_0.json",
+      "sha": "1cdd9ae045d01d89b8e5663521e818cd5c39fc23",
+      "bytes": 2297
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/data/assets/yunnan_c2_meirenkao_reference_asset_contract_v5_3_1.json",
+      "sha": "f0774834fc7c4f248c0d98da8271f5112ccfbdd8",
+      "bytes": 6647
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/data/assets/yunnan_three_bay_front_gallery_asset_contract_v5_3_0.json",
+      "sha": "9e1ddca216a7b4ab9d2186f015950cf29937f1b8",
+      "bytes": 3195
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/data/build_manifest.json",
+      "sha": "3c52c728c3fa8cab07bfb31d33575e3d7513e8e7",
+      "bytes": 40670
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/data/cases/tuanjie_township_001_reference_decomposition_v1.json",
+      "sha": "82590e090b16cd4d209748481e301a8df088bbcd",
+      "bytes": 11829
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/data/cases/yikeyin_basic_drawing_logic_v5_3_0.json",
+      "sha": "c46bd951e04275ca6201246a7224b3c74ab3abab",
+      "bytes": 4339
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/data/cases/yunnan_three_bay_front_gallery_two_storey_v5_3_0.json",
+      "sha": "5fbaf1ee1ee59623502b60eb14184e7f9d052aee",
+      "bytes": 5093
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/data/components/component_catalog_v5_2_1.json",
+      "sha": "8895b695f26f47021ba0b449b126049418c0f150",
+      "bytes": 30342
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/data/core/legacy_rejection_ledger_v5_2_1.json",
+      "sha": "04128cabeb28aec8f946fd4cdb613af10f0c8136",
+      "bytes": 2241
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/data/core/plan_first_pipeline_v5_2_1.json",
+      "sha": "654cfbc7dbb111f5176c82f213ced157629f77dd",
+      "bytes": 11008
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/data/evidence/reference_manifest.json",
+      "sha": "a45fe49d3823a091474abcabb2392bab78009dc6",
+      "bytes": 16867
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/data/evidence/tuanjie_township_001_editable_glb_v5_3_3.json",
+      "sha": "0cf75bf8558c96cde001c9bf27b5d0176dea9cba",
+      "bytes": 1161
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/data/evidence/tuanjie_township_001_material_weathering_reference_v5_3_6.json",
+      "sha": "62a0a297038a69c7726a7c9b6c2f148631e0de63",
+      "bytes": 8249
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/data/evidence/yikeyin_additional_sources_2026_08_21.json",
+      "sha": "51ef754fc2f6f220f2e7c04777ca8624ec13a38d",
+      "bytes": 9453
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/data/evidence/yikeyin_user_corrections_v5_3_0.json",
+      "sha": "53ff29f80809d6148911cf52beaa5d570920ef5d",
+      "bytes": 906
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/data/evidence/yunnan_c2_meirenkao_reference_sources_v5_3_1.json",
+      "sha": "dc1da9399dad2ba5f13c3c1826c02a272653e021",
+      "bytes": 3025
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/data/evidence/yunnan_reference_glb_catalog_v5_4_2.json",
+      "sha": "819511c110127b4b415b187b6282bf0a591b39e1",
+      "bytes": 2103
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/data/evidence/yunnan_three_bay_front_gallery_sources_v5_3_0.json",
+      "sha": "c57fbe6f7d8922513863ce1e294f12e980b36784",
+      "bytes": 7043
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/data/evidence/yunnan_three_reference_visual_knowledge_v5_4_3.json",
+      "sha": "e52276d7dd88ba426f69452fbacb98663c9077e4",
+      "bytes": 6755
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/data/interaction_renderer_route_v5_2_1.json",
+      "sha": "721b75c42bafe7a9a26412d657651d74c7b515d4",
+      "bytes": 2046
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/data/production/yunnan_threejs_production_system_v5_4_0.json",
+      "sha": "0a0fca43b6a25ac7cf5c20b702aa3882f02bc5e1",
+      "bytes": 6668
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/data/production/yunnan_wall_roof_entry_tool_contract_v5_4_4.json",
+      "sha": "10847a91b7458ff5fb1a3d2be124bb74ef92469f",
+      "bytes": 5745
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/data/qa/github_sync_validation_v5_4_1.json",
+      "sha": "30009246dbf02649b6f8a04ea40c9a11428f2d3a",
+      "bytes": 1227
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/data/qa/local_browser_smoke_test.json",
+      "sha": "c3c52988e4252bd8186d2d0c3033f13587a7f52a",
+      "bytes": 17779
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/data/qa/qa_report_v5_2_1.json",
+      "sha": "4b3de305c7ca702ae4b434d03f14baf3967cf362",
+      "bytes": 5823
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/data/qa/tuanjie_township_001_editable_glb_validation_v5_3_3.json",
+      "sha": "c44953253f48c8640ea37d7580667b566d8859b0",
+      "bytes": 1686
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/data/qa/tuanjie_township_001_glb_quality_validation_v5_3_5.json",
+      "sha": "a72608e81df549eada6a7c789cabdc550f6d22d6",
+      "bytes": 3083
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/data/qa/tuanjie_township_001_material_reference_validation_v5_3_6.json",
+      "sha": "7d758e9890c6fa227c689c443440450296ee8506",
+      "bytes": 1757
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/data/qa/yikeyin_orientation_correction_v5_3_0.json",
+      "sha": "915295fe67e3eea796c1ab0e73aa20a1aa192496",
+      "bytes": 5687
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/data/qa/yunnan_c2_meirenkao_reference_validation_v5_3_1.json",
+      "sha": "400ba0147ef513f3a86ff4b5b205136d70dfa2fb",
+      "bytes": 2466
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/data/qa/yunnan_reference_glb_validation_v5_4_2.json",
+      "sha": "7fbd39c2d252be4587ca5783fe553986a93616be",
+      "bytes": 1594
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/data/qa/yunnan_three_bay_front_gallery_validation_v5_3_0.json",
+      "sha": "f78fd4c883a8773194200398453e08ed00d7fd12",
+      "bytes": 4944
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/data/qa/yunnan_threejs_production_system_browser_smoke_v5_4_0.json",
+      "sha": "aac8a7127fcaf7bd3077f86d246a6319bd6983fd",
+      "bytes": 850
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/data/qa/yunnan_threejs_production_system_validation_v5_4_0.json",
+      "sha": "1d55261004e090aa8f6a83bb43b6c61b537ced9a",
+      "bytes": 2693
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/data/regions/tuanjie_township_reference_catalog_v1.json",
+      "sha": "5a866133a543a7853a48a3901e9ffc571bd05996",
+      "bytes": 2725
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/data/system_v5_2_1.json",
+      "sha": "1ca5196e0bc0137e4874e18389bacb633ac91183",
+      "bytes": 35181
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/data/typologies/central_yunnan_yikeyin_v5_2_1.json",
+      "sha": "ace9526a5fb3e23f5b04ec9ccf4c62f9f40dc50d",
+      "bytes": 12866
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/data/typologies/western_yunnan_naxi_v5_2_1.json",
+      "sha": "6ff8409218b192acadf93c22e7230515f81b4455",
+      "bytes": 14559
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/data/web-sync/README.md",
+      "sha": "126ff80538a4142d453e30e9f2017814a5c7f5ba",
+      "bytes": 1275
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/data/web-sync/inbox.schema.json",
+      "sha": "4cacfd33e01f9820e3d15a99f01c46344a09d01a",
+      "bytes": 1492
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/docs/ACCEPTANCE_CHECKLIST.md",
+      "sha": "946caff71339210a22cc7cd5013cc4d830dc0eef",
+      "bytes": 1184
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/docs/C2_MEIRENKAO_REFERENCE_INTEGRATION.md",
+      "sha": "c465862d5508435547449cce63b28dbf6ac6f2d6",
+      "bytes": 3378
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/docs/CORRECTION_LEDGER_V5_3_0.md",
+      "sha": "7186d89a6a31dcdec6e3d59ae82b195a2aca0de2",
+      "bytes": 6424
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/docs/EVIDENCE_AND_RIGHTS.md",
+      "sha": "3050691de465220290e6704b6f37bed102da8e9b",
+      "bytes": 774
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/docs/GITHUB_DEPLOYMENT.md",
+      "sha": "32e957b10834b16713d46617dc432d5983d4ce70",
+      "bytes": 839
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/docs/KNOWN_LIMITATIONS.md",
+      "sha": "917878b6f2c16f543badd44c08565205a079f70e",
+      "bytes": 705
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/docs/LOCAL_USAGE.md",
+      "sha": "fc7cbeec43ebd3d8c7af9c3b937936eced3c614c",
+      "bytes": 654
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/docs/RELEASE_NOTES_V5_2_1.md",
+      "sha": "4b9c1066bf6cf425fc815b554909905e0fde1cc2",
+      "bytes": 443
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/docs/RELEASE_NOTES_V5_3_0.md",
+      "sha": "e894a44ad7cd60ea77da0159d9cf8d22de3a3877",
+      "bytes": 1506
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/docs/ROADMAP.md",
+      "sha": "c9218e2a5fa4153da5fd7784e246aa1603576d25",
+      "bytes": 759
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/docs/SYSTEM_ARCHITECTURE.md",
+      "sha": "258316b9ac2406d0e59ece5c24725d55d83fb522",
+      "bytes": 2129
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/docs/TUANJIE_TOWNSHIP_REFERENCE_REGISTER.md",
+      "sha": "d771775c12632c04b15c8f8877b54e4aa5b9bd0c",
+      "bytes": 7103
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/docs/V5_4_4_REFERENCE_SYNTHESIS_RELEASE.md",
+      "sha": "39a5b664cf51827ae88c15602bad7714ba8c5514",
+      "bytes": 2005
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/docs/YUNNAN_THREEJS_PRODUCTION_SYSTEM.md",
+      "sha": "c4e7ac05406f96f87716bef4cbf808df6e209cee",
+      "bytes": 3920
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/docs/images/preview.png",
+      "sha": "5ca07fc2749f1c0cd6e066290f93f6310c4402cc",
+      "bytes": 355011
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/folk-building-production-line.html",
+      "sha": "f5e71d14c2d88c72f96d28dcbde6991aec19f70e",
+      "bytes": 2860
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/index.html",
+      "sha": "8a01b4412092c676d3100c9a442cade7b15aaf17",
+      "bytes": 551414
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/push_to_github.sh",
+      "sha": "c40008d51714d7ee91bb04c7f742b210ba742e57",
+      "bytes": 533
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/qa/screenshots/local_browser_smoke_test.png",
+      "sha": "a8f25f042d26d0638ff860ba72192938a112d75d",
+      "bytes": 422682
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/qa/screenshots/naxi_plan.png",
+      "sha": "493ed6f54e2007d7086652ae9c1c1aa51ef1f00f",
+      "bytes": 206320
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/qa/screenshots/v521_courtyard_camera_full_geometry.png",
+      "sha": "80407da27e5f84f77d8bddb072d06c202e361187",
+      "bytes": 364360
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/qa/screenshots/v521_default_complete.png",
+      "sha": "5ca07fc2749f1c0cd6e066290f93f6310c4402cc",
+      "bytes": 355011
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/qa/screenshots/v521_openings_demo.png",
+      "sha": "3541f7e1bbcb5619a4deec96fe3cb54708dc774d",
+      "bytes": 340988
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/qa/screenshots/v521_rotated_occlusion_fixed.png",
+      "sha": "6208954ad5dbf741ee2721488bd7ba9dd679031e",
+      "bytes": 355485
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/qa/screenshots/v521_visitor_destination.png",
+      "sha": "f897a16e761734c6d92b60091538ce4e9f2741b3",
+      "bytes": 341076
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/qa/screenshots/v521_visitor_on_stairs.png",
+      "sha": "077df7aea74b5ae18f1faae00599e90113248758",
+      "bytes": 341307
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/qa/screenshots/v521_visitor_upper_floor.png",
+      "sha": "d0ebc5e17453bde224b90ac99653e9d861f3d611",
+      "bytes": 341711
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/qa/screenshots/v530_measured_board_barrel_tile_exterior.png",
+      "sha": "4a9bb62310d8c67112aed3a7beb5d64ddfbc44dd",
+      "bytes": 86875
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/qa/screenshots/v530_measured_domestic_dogleg_stair_first_person.png",
+      "sha": "fb7b3ff0c39ef37f8a25b5a93678e3d105c26d87",
+      "bytes": 92975
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/qa/screenshots/v530_measured_gable_roof_underside_closed_tile_courses.png",
+      "sha": "4d35192ed83aec6496408379d5dbb5e8d762ac0e",
+      "bytes": 75651
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/qa/screenshots/v530_measured_gable_wall_closed.png",
+      "sha": "9adb953b0f5e9a3016a268753a155d79d225ffa5",
+      "bytes": 79128
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/qa/screenshots/v530_measured_half_doors_gable_to_ridge.png",
+      "sha": "319c0d0e31b600ce60dd6911e5f0fc025d6f9209",
+      "bytes": 75141
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/qa/screenshots/v530_measured_round_columns_curved_tile_roof.png",
+      "sha": "e7177e92801ab1abd7de5660622f5ee6d5742e81",
+      "bytes": 117840
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/qa/screenshots/v530_thirteen_step_stair_detail.png",
+      "sha": "55c3c732942e4bedab4811b4d8b010caa7c757be",
+      "bytes": 123319
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/qa/screenshots/v530_three_bay_front_gallery_exterior.png",
+      "sha": "ad3d52425ee29ebe5a11a676aabf3136791e384d",
+      "bytes": 79246
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/qa/screenshots/v530_three_bay_front_gallery_front_eave.png",
+      "sha": "88d9c11802c6f5edac38f5ae967a522a4b2d7fbd",
+      "bytes": 60049
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/qa/screenshots/v530_three_bay_front_gallery_plan.png",
+      "sha": "5ccc050177da39a44f74bf29f5f662d9f4fe23f9",
+      "bytes": 96018
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/qa/screenshots/v530_three_bay_front_gallery_section.png",
+      "sha": "d73ab3fb37af62368aa970b5c4264fe690f399f1",
+      "bytes": 90380
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/qa/screenshots/v530_three_bay_front_gallery_tile_roof.png",
+      "sha": "06867c019092dec6a8c3ffef5b9618479d307676",
+      "bytes": 61005
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/qa/screenshots/v530_yikeyin_basic_elevations_corrected.png",
+      "sha": "9163cdb6dea744b90e689e0f5327c85e5ddd53f2",
+      "bytes": 95075
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/qa/screenshots/v530_yikeyin_battered_earth_wall_concealed_timber.png",
+      "sha": "1c2abec88c6be892cd9ebbb7cdc34dc3990c58ca",
+      "bytes": 85521
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/qa/screenshots/v530_yikeyin_board_barrel_tile_overlap.png",
+      "sha": "ea54268ffe96eee2768b4dce50ed4ea5d209bb6f",
+      "bytes": 136371
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/qa/screenshots/v530_yikeyin_curved_tile_roof_ridge_no_leak.png",
+      "sha": "2e256d2b3b9475e0f9506585b2e2d75b2d201500",
+      "bytes": 128525
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/qa/screenshots/v530_yikeyin_detailed_gate_first_person.png",
+      "sha": "1443f706b6c9cf7dbd7f58ee2a87e5cb38aea80d",
+      "bytes": 85463
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/qa/screenshots/v530_yikeyin_domestic_dogleg_stair.png",
+      "sha": "be06e27d88bc9447b795d6fda1a36d19ef8dc13f",
+      "bytes": 99302
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/qa/screenshots/v530_yikeyin_door_head_tile_roof.png",
+      "sha": "e33f170c71f277ee915e0ca469c58f7248162fc8",
+      "bytes": 69777
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/qa/screenshots/v530_yikeyin_eave_tile_profiles.png",
+      "sha": "64e998175a72f07bfba8f2675b84e24c94ed4ec4",
+      "bytes": 59650
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/qa/screenshots/v530_yikeyin_gallery_roofs_corrected.png",
+      "sha": "62b2951debf998792c8e00c4943622f017e0f270",
+      "bytes": 78089
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/qa/screenshots/v530_yikeyin_half_gate_front.png",
+      "sha": "210250e49557888afbeda22126df7fa7326b281f",
+      "bytes": 70763
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/qa/screenshots/v530_yikeyin_half_gate_gables_closed.png",
+      "sha": "317ca2f8ba353bbdd06b1fb9e1f2822e85af5ef2",
+      "bytes": 81537
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/qa/screenshots/v530_yikeyin_half_gate_open.png",
+      "sha": "f507d8705467c83d27298be34438764a390d41d4",
+      "bytes": 79328
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/qa/screenshots/v530_yikeyin_human_entry.png",
+      "sha": "79d36aef7af490262acd1c3fab3c24ebd5ed08f2",
+      "bytes": 60993
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/qa/screenshots/v530_yikeyin_round_columns_open_gallery_timber_partitions.png",
+      "sha": "2c8c315abd4f041c20192cc6dc390de35b425083",
+      "bytes": 122075
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/qa/screenshots/v530_yikeyin_section_corrected.png",
+      "sha": "ce2d8359040a488cab333c9ae879fd4646095137",
+      "bytes": 86170
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/qa/screenshots/v530_yikeyin_tapered_pan_cover_courses.png",
+      "sha": "a5dd9d0037f051d8bc0441f7f76ddbfbc0f1ba4f",
+      "bytes": 32936
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/qa/screenshots/v531_c2_meirenkao_reference_high.png",
+      "sha": "166a2fa64a96d93e8a8527fdfe2071c97efefc94",
+      "bytes": 713692
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/qa/screenshots/v531_c2_meirenkao_reference_lite.png",
+      "sha": "4dcecfa3a6b04ecaf1ee93cbd95ae24327a501fb",
+      "bytes": 712784
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/qa/screenshots/v533_tuanjie_reference_viewer.png",
+      "sha": "80567f007ca75aeab40d2fdfc295844a1a40881e",
+      "bytes": 333587
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/qa/screenshots/v534_tuanjie_file_loader.png",
+      "sha": "3fd6ebd62a3b0651f76cd710596c008306a800fa",
+      "bytes": 333475
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/qa/screenshots/v534_tuanjie_reference_viewer.png",
+      "sha": "3fd6ebd62a3b0651f76cd710596c008306a800fa",
+      "bytes": 333475
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/qa/screenshots/v535_tuanjie_file_loader.png",
+      "sha": "55b080523145fea54722b4d8f6bd0cb10ac4f8ed",
+      "bytes": 334023
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/qa/screenshots/v535_tuanjie_reference_high.png",
+      "sha": "07e2f8b16c9c5844c7c425c739669c2aa70e56e9",
+      "bytes": 352835
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/qa/screenshots/v535_tuanjie_reference_standard.png",
+      "sha": "55b080523145fea54722b4d8f6bd0cb10ac4f8ed",
+      "bytes": 334023
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/qa/screenshots/v536_tuanjie_file_loader.png",
+      "sha": "55b080523145fea54722b4d8f6bd0cb10ac4f8ed",
+      "bytes": 334023
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/qa/screenshots/v536_tuanjie_reference_high.png",
+      "sha": "07e2f8b16c9c5844c7c425c739669c2aa70e56e9",
+      "bytes": 352835
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/qa/screenshots/v536_tuanjie_reference_standard.png",
+      "sha": "55b080523145fea54722b4d8f6bd0cb10ac4f8ed",
+      "bytes": 334023
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/qa/screenshots/v540_tuanjie_file_loader.png",
+      "sha": "595feef1188167a2fd22e097cd080cbba46216b1",
+      "bytes": 341211
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/qa/screenshots/v540_tuanjie_reference_high.png",
+      "sha": "94f0b6b22141d4111b2d38d3f1515c327cd40e94",
+      "bytes": 359638
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/qa/screenshots/v540_tuanjie_reference_standard.png",
+      "sha": "595feef1188167a2fd22e097cd080cbba46216b1",
+      "bytes": 341211
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/qa/screenshots/v540_yunnan_production_preview.png",
+      "sha": "5f487eb0d48bd174be9339b4dc88e98465210713",
+      "bytes": 351346
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/qa/screenshots/yikeyin_facade.png",
+      "sha": "a27f3993c592150468066e44fd67f9a6e70785be",
+      "bytes": 233640
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/qa/screenshots/yikeyin_plan.png",
+      "sha": "f9402056798326b25f016e8052559b3d6ec5e489",
+      "bytes": 236835
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/qa/screenshots/yikeyin_section.png",
+      "sha": "5dab63519360667c98f3072544fe7bfbf16f6114",
+      "bytes": 217776
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/reference-model-lab.html",
+      "sha": "33bddab7153f093233b6d6305c190128af84dbca",
+      "bytes": 21317
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/reference-model-showcase.html",
+      "sha": "abfd51de31b3d1052a541afa345825590748cfb8",
+      "bytes": 15507
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/requirements-dev.txt",
+      "sha": "24b4715c902743f61e981e4f6e1b38da466c6bf2",
+      "bytes": 19
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/start_local_mac_linux.sh",
+      "sha": "aa69f074cad3d1142f2e13381d4fda9ca231ec00",
+      "bytes": 82
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/threejs/C2MeirenkaoAsset.js",
+      "sha": "835e4dc9febc107c8056fa44a1a390ec5e08e474",
+      "bytes": 2280
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/threejs/C2MeirenkaoAsset.manifest.json",
+      "sha": "bb7f174aac78b2621c2802885617b27fe495adb7",
+      "bytes": 1346
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/threejs/README.md",
+      "sha": "a227ab2c3a06b4c0ee1a905523b7a279747bf0c1",
+      "bytes": 2611
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/threejs/YunnanCourtyardProduction.js",
+      "sha": "7b254beeffde1325329101b50784e694249081bd",
+      "bytes": 21964
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/threejs/YunnanMaterialFactory.js",
+      "sha": "d16baad4ff18c5a9e97f7796f9e68d45cd6f9ff9",
+      "bytes": 9505
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/threejs/yunnan-courtyard-production-demo.html",
+      "sha": "58ae0bf5efa0aa9e06a4f49fed050fcf748873d8",
+      "bytes": 6799
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/tools/browser_smoke_test.py",
+      "sha": "df42c80bec6f53513ff9a56a3307ce6fa4a33843",
+      "bytes": 15909
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/tools/make_release.py",
+      "sha": "716b481df27f988491bc486874f6eddd7b3f110a",
+      "bytes": 1406
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/tools/materialize_v544.py",
+      "sha": "ef7e2fed1deb78632fce5da5b34bf91ec3a48e31",
+      "bytes": 1696
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/tools/prepare_reference_glb_web.py",
+      "sha": "861b1d34396fc6371147aae3f56d23986b24f4d2",
+      "bytes": 5935
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/tools/prepare_tuanjie_glb.py",
+      "sha": "d7a0e49c358510501c38f56f49a0bd48a5a9b209",
+      "bytes": 15098
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/tools/production_preview_smoke.py",
+      "sha": "0e7acd1d495fa62b4e9c635560d2b6381f309b1a",
+      "bytes": 4341
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/tools/reference_model_lab_smoke.py",
+      "sha": "4aa8aa7aaab88cca7314d43ca0c89576d3d6c474",
+      "bytes": 4899
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/tools/reference_model_showcase_smoke.py",
+      "sha": "7a464482083a29deb61ab81fd55d92d828a648da",
+      "bytes": 4846
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/tools/serve.py",
+      "sha": "a199b0a273a1bdfcee831530d3075bcc05e46a37",
+      "bytes": 1182
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/tools/update_build_metadata.py",
+      "sha": "1725e2aaf07d002064dc9bbbffd11fa9be6de693",
+      "bytes": 2745
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/tools/v544_payload/contract.001.b64",
+      "sha": "496f1acfde793acc790024af235a749a61d18b5c",
+      "bytes": 3928
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/tools/v544_payload/hub.001.b64",
+      "sha": "f8479dbbd264ebce87eb0d0faeebab55aa01e62f",
+      "bytes": 2268
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/tools/v544_payload/page.001.b64",
+      "sha": "8920ea2ecacd2054a94260406ce9fffdea10dc12",
+      "bytes": 6000
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/tools/v544_payload/page.002.b64",
+      "sha": "6f7f496ae14875a8563dbca57f5b204467487eef",
+      "bytes": 4833
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/tools/v544_payload/page.003.b64",
+      "sha": "61ed6d297d4eb25ef658138feb79a818a38d1048",
+      "bytes": 6000
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/tools/v544_payload/page.004.b64",
+      "sha": "b7e19521d5e7133837f96cb995f42eee623ac080",
+      "bytes": 5908
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/tools/v544_payload/smoke.001.b64",
+      "sha": "8d6a612517a461fb00987c74fe1f5d288f3de731",
+      "bytes": 2588
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/tools/validate.py",
+      "sha": "2a1bc21be2626fb5a31514760c11e90c5236776b",
+      "bytes": 3732
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/tools/yunnan_understanding_lab_smoke.py",
+      "sha": "fd8df2558a2593f1cb04a320fd563c15765d9c57",
+      "bytes": 4935
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-architecture-understanding-lab.html",
+      "sha": "896fd2d8ce8fa84ad406757b6a4cf9634d34c3ee",
+      "bytes": 15062
+    },
+    {
+      "path": "yunnan-timber-procedural-skill-v0.4.0-github-full/yunnan-timber-procedural-skill-v0.4.0-github-full/.github/workflows/pages.yml",
+      "sha": "344390d62ac89df6104f9b35314f8eeba18496d4",
+      "bytes": 995
+    },
+    {
+      "path": "yunnan-timber-procedural-skill-v0.4.0-github-full/yunnan-timber-procedural-skill-v0.4.0-github-full/.gitignore",
+      "sha": "344ccc9332afa4a5a62c7ea2788fab7f5e16d9c8",
+      "bytes": 56
+    },
+    {
+      "path": "yunnan-timber-procedural-skill-v0.4.0-github-full/yunnan-timber-procedural-skill-v0.4.0-github-full/.nojekyll",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "bytes": 0
+    },
+    {
+      "path": "yunnan-timber-procedural-skill-v0.4.0-github-full/yunnan-timber-procedural-skill-v0.4.0-github-full/CHANGELOG.md",
+      "sha": "84af4da7735d026be4bda520fbca2c61a9837419",
+      "bytes": 816
+    },
+    {
+      "path": "yunnan-timber-procedural-skill-v0.4.0-github-full/yunnan-timber-procedural-skill-v0.4.0-github-full/FILE_MANIFEST.sha256",
+      "sha": "c1504afb0fab6dffcd0212a37d7db85a53fc59e7",
+      "bytes": 3158
+    },
+    {
+      "path": "yunnan-timber-procedural-skill-v0.4.0-github-full/yunnan-timber-procedural-skill-v0.4.0-github-full/README.md",
+      "sha": "833b895ea0a24f0837074ee58dc3ab54923d0ad3",
+      "bytes": 3777
+    },
+    {
+      "path": "yunnan-timber-procedural-skill-v0.4.0-github-full/yunnan-timber-procedural-skill-v0.4.0-github-full/SKILL.md",
+      "sha": "4fdc39de28b97aeb1b899d92a24694c204f1b5f1",
+      "bytes": 2025
+    },
+    {
+      "path": "yunnan-timber-procedural-skill-v0.4.0-github-full/yunnan-timber-procedural-skill-v0.4.0-github-full/VALIDATION_REPORT.md",
+      "sha": "ef2c0e7218854a09857d062a5a2b87dc6dfe53ad",
+      "bytes": 3160
+    },
+    {
+      "path": "yunnan-timber-procedural-skill-v0.4.0-github-full/yunnan-timber-procedural-skill-v0.4.0-github-full/VERSION",
+      "sha": "1d0ba9ea182b0f7354f3daf12120744ec5e0c2f8",
+      "bytes": 6
+    },
+    {
+      "path": "yunnan-timber-procedural-skill-v0.4.0-github-full/yunnan-timber-procedural-skill-v0.4.0-github-full/docs/AXIS_RELIEF_SPEC.md",
+      "sha": "767c4450ebd9c471ae5f910bb301043847be05fd",
+      "bytes": 1467
+    },
+    {
+      "path": "yunnan-timber-procedural-skill-v0.4.0-github-full/yunnan-timber-procedural-skill-v0.4.0-github-full/docs/BUILDING_PIPELINE_INTEGRATION.md",
+      "sha": "720800c368de11dbf6af108f10b53a931b405d40",
+      "bytes": 1598
+    },
+    {
+      "path": "yunnan-timber-procedural-skill-v0.4.0-github-full/yunnan-timber-procedural-skill-v0.4.0-github-full/docs/GITHUB_PUBLISH.md",
+      "sha": "11f222fbe835f2f2952ea72f3d4b1396970bebfe",
+      "bytes": 1848
+    },
+    {
+      "path": "yunnan-timber-procedural-skill-v0.4.0-github-full/yunnan-timber-procedural-skill-v0.4.0-github-full/docs/MATERIAL_MODEL.md",
+      "sha": "ae602703e92b11b9c09b0316f82c4ea32faecd8d",
+      "bytes": 912
+    },
+    {
+      "path": "yunnan-timber-procedural-skill-v0.4.0-github-full/yunnan-timber-procedural-skill-v0.4.0-github-full/examples/building-material-config.json",
+      "sha": "d7b1c95655cb2def5eebd56015105500130ec89e",
+      "bytes": 1090
+    },
+    {
+      "path": "yunnan-timber-procedural-skill-v0.4.0-github-full/yunnan-timber-procedural-skill-v0.4.0-github-full/index.html",
+      "sha": "54b63d7ca99020af8bbf37daa9dab6e4b6fbf9c2",
+      "bytes": 40909
+    },
+    {
+      "path": "yunnan-timber-procedural-skill-v0.4.0-github-full/yunnan-timber-procedural-skill-v0.4.0-github-full/package.json",
+      "sha": "796068ab732cf39420bcd3ddf58afb74c2354b1f",
+      "bytes": 737
+    },
+    {
+      "path": "yunnan-timber-procedural-skill-v0.4.0-github-full/yunnan-timber-procedural-skill-v0.4.0-github-full/presets/yunnan-timber-presets.json",
+      "sha": "59c22521c7c927d4d8e49248f173626deb4a8a14",
+      "bytes": 2702
+    },
+    {
+      "path": "yunnan-timber-procedural-skill-v0.4.0-github-full/yunnan-timber-procedural-skill-v0.4.0-github-full/preview-standalone.html",
+      "sha": "54b63d7ca99020af8bbf37daa9dab6e4b6fbf9c2",
+      "bytes": 40909
+    },
+    {
+      "path": "yunnan-timber-procedural-skill-v0.4.0-github-full/yunnan-timber-procedural-skill-v0.4.0-github-full/release-manifest.json",
+      "sha": "85ef048980566631d5f4a5ed82bd8aecc684096d",
+      "bytes": 508
+    },
+    {
+      "path": "yunnan-timber-procedural-skill-v0.4.0-github-full/yunnan-timber-procedural-skill-v0.4.0-github-full/schemas/yunnan-timber-member.schema.json",
+      "sha": "27d0b0618cf59ffed44272a00f77cd45b1b1ef2a",
+      "bytes": 1428
+    },
+    {
+      "path": "yunnan-timber-procedural-skill-v0.4.0-github-full/yunnan-timber-procedural-skill-v0.4.0-github-full/scripts/publish-github.ps1",
+      "sha": "3a3a2fb5d35c6404cd5c8b570034aff3acb54611",
+      "bytes": 939
+    },
+    {
+      "path": "yunnan-timber-procedural-skill-v0.4.0-github-full/yunnan-timber-procedural-skill-v0.4.0-github-full/scripts/publish-github.sh",
+      "sha": "1e789825683d099ea5f41aad4dfd6af06ae3e670",
+      "bytes": 810
+    },
+    {
+      "path": "yunnan-timber-procedural-skill-v0.4.0-github-full/yunnan-timber-procedural-skill-v0.4.0-github-full/src/core/YunnanTimberSkill.mjs",
+      "sha": "1513ae0c0237d291216e00e668803e3874864513",
+      "bytes": 8236
+    },
+    {
+      "path": "yunnan-timber-procedural-skill-v0.4.0-github-full/yunnan-timber-procedural-skill-v0.4.0-github-full/src/index.mjs",
+      "sha": "74803a9e0af2e09eaf69df6730ee04d625a2abb0",
+      "bytes": 165
+    },
+    {
+      "path": "yunnan-timber-procedural-skill-v0.4.0-github-full/yunnan-timber-procedural-skill-v0.4.0-github-full/src/integration/HistoricalBuildingTimberSkill.mjs",
+      "sha": "a9035ead53090db593d3ea4588a8edf69c2fe798",
+      "bytes": 2608
+    },
+    {
+      "path": "yunnan-timber-procedural-skill-v0.4.0-github-full/yunnan-timber-procedural-skill-v0.4.0-github-full/src/three/YunnanTimberThreeAdapter.mjs",
+      "sha": "fd67dac0a32ef8bc3fa7db790c165bb485e6acdf",
+      "bytes": 18545
+    },
+    {
+      "path": "yunnan-timber-procedural-skill-v0.4.0-github-full/yunnan-timber-procedural-skill-v0.4.0-github-full/tests/_standalone-script-check.mjs",
+      "sha": "4da3b769bb7ce9997e2fd06fa904df673b19c89b",
+      "bytes": 32380
+    },
+    {
+      "path": "yunnan-timber-procedural-skill-v0.4.0-github-full/yunnan-timber-procedural-skill-v0.4.0-github-full/tests/browser-detection.txt",
+      "sha": "19684fcf5728007763a6785a2f50749ac747aa2d",
+      "bytes": 184
+    },
+    {
+      "path": "yunnan-timber-procedural-skill-v0.4.0-github-full/yunnan-timber-procedural-skill-v0.4.0-github-full/tests/browser-smoke-metrics.json",
+      "sha": "d394b516d86b647aeb0e18193c9ee921e59a6134",
+      "bytes": 284
+    },
+    {
+      "path": "yunnan-timber-procedural-skill-v0.4.0-github-full/yunnan-timber-procedural-skill-v0.4.0-github-full/tests/browser-smoke-result.json",
+      "sha": "90178d4b4f53d87e48cbb73ceaa44f7ee4b65857",
+      "bytes": 337
+    },
+    {
+      "path": "yunnan-timber-procedural-skill-v0.4.0-github-full/yunnan-timber-procedural-skill-v0.4.0-github-full/tests/browser-smoke-run.txt",
+      "sha": "87c741d974d63be8fbe7978734fa463e163bba23",
+      "bytes": 512
+    },
+    {
+      "path": "yunnan-timber-procedural-skill-v0.4.0-github-full/yunnan-timber-procedural-skill-v0.4.0-github-full/tests/browser_smoke.py",
+      "sha": "0c7cc64622250c13f3b96ad59ff3c0331a84f102",
+      "bytes": 4894
+    },
+    {
+      "path": "yunnan-timber-procedural-skill-v0.4.0-github-full/yunnan-timber-procedural-skill-v0.4.0-github-full/tests/node-syntax-result.txt",
+      "sha": "0b113b25fdc619c4b5872474e5b515ea6673dc08",
+      "bytes": 63
+    },
+    {
+      "path": "yunnan-timber-procedural-skill-v0.4.0-github-full/yunnan-timber-procedural-skill-v0.4.0-github-full/tests/run-tests.mjs",
+      "sha": "d80ea8cedf46681c653d048da54fb7f50be90f36",
+      "bytes": 12056
+    },
+    {
+      "path": "yunnan-timber-procedural-skill-v0.4.0-github-full/yunnan-timber-procedural-skill-v0.4.0-github-full/tests/unit-test-result.txt",
+      "sha": "55ec35127bdb88956472eeca2d95f3e3133e9a5b",
+      "bytes": 3436
+    }
+  ],
+  "kept": [
+    {
+      "path": ".github/workflows/brick-mother-smoke.yml",
+      "sha": "a3911b0e5f05e0c0aa50418180bbf2bf8c40fb24",
+      "bytes": 4308
+    },
+    {
+      "path": ".github/workflows/brick-mother-v1-package.yml",
+      "sha": "17860b006e3d3ef3f1b4fda1efa59e89968ae283",
+      "bytes": 6779
+    },
+    {
+      "path": ".gitignore",
+      "sha": "443a66a7f730cb08535f2f81eda74bcdeecc960d",
+      "bytes": 677
+    },
+    {
+      "path": "AGENTS.md",
+      "sha": "99db5994c572053fa45bf99ab57e38a22ed03965",
+      "bytes": 9977
+    },
+    {
+      "path": "Mother_System_Xiaoma_Full_Handoff_V1.1.1_2026-09-05.zip",
+      "sha": "f3fd21d92ebf66cdb92144d5d476e8334e873f2a",
+      "bytes": 1642048
+    },
+    {
+      "path": "docs/PUBLIC_WEB_DELIVERY_GATE.md",
+      "sha": "d85519c449ccd4ceb2dc5898cccc4f0ef0804c3d",
+      "bytes": 2259
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/VERSION.json",
+      "sha": "55a1a47638174028bab49509d5f80241a113e288",
+      "bytes": 1002
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/brick-mother-app-v04.js",
+      "sha": "3d6f704f88ea1ce37133036c3b912fa40efbaba2",
+      "bytes": 12426
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/brick-mother-app.js",
+      "sha": "1c4cd752d95b43b5cd6d03095e2aea7bde085921",
+      "bytes": 9310
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/brick-mother-geometry-v04.js",
+      "sha": "6fb994ff53aedd083fd6f544f939411fc485b8c1",
+      "bytes": 16048
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/brick-mother-geometry.js",
+      "sha": "ccf723ba8b943071f99fc39b810974f26fd3bae1",
+      "bytes": 13086
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/brick-mother-renderer-v04.js",
+      "sha": "506a88c42d17ae5fc4b5d92977866d92f766fe66",
+      "bytes": 24052
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/brick-mother-renderer.js",
+      "sha": "3fab6656bd8377e04a8ebdfabfc355ea0a8001f6",
+      "bytes": 14410
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/data/brick-material-profiles-v0.3.json",
+      "sha": "ab5685f28d257370434d76c3ef1004cd409c399d",
+      "bytes": 7256
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/data/brick-material-profiles-v0.4.json",
+      "sha": "231f97a5e2d2c6562b74fa0b1427e41cb10ae02d",
+      "bytes": 10179
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/docs/BRICK_MOTHER_V0_4_NOISE_FIDELITY.md",
+      "sha": "725b65296976d5653a78062806f32d9cc84f0d3d",
+      "bytes": 3294
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/index.html",
+      "sha": "a1608a7866e7457ddf8bdbad0e6621258639f13e",
+      "bytes": 9500
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/releases/v1.0/NEXT_V2_HANDOFF.md",
+      "sha": "a8dcf77f2475bee7566082ff9570c1bf9450690a",
+      "bytes": 966
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/releases/v1.0/README.md",
+      "sha": "b756b25dd5c9755bc6415340597e0c57c0cf80fc",
+      "bytes": 1882
+    },
+    {
+      "path": "yunnan-courtyard-architecture-factory-v5.2.1-full-local/yunnan-courtyard-architecture-factory-v5.2.1-full-local/brick-mother/style.css",
+      "sha": "ade48ef44eeeed0dae7e641fe910e3e89e436d6b",
+      "bytes": 12244
+    }
+  ]
+}
